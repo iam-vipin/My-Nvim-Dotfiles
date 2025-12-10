@@ -3,7 +3,7 @@ import type { EditorRefApi, CollaborationState } from "@plane/editor";
 // plane editor
 import { convertBinaryDataToBase64String, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
 // plane propel
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane types
 import type { TDocumentPayload } from "@plane/types";
 // hooks
@@ -32,11 +32,12 @@ export const usePageFallback = (args: TArgs) => {
 
     // Show toast notification when fallback mechanism kicks in (only once)
     if (!hasShownFallbackToast.current) {
-      setToast({
-        type: TOAST_TYPE.WARNING,
-        title: "Connection lost",
-        message: "Your changes are being saved using backup mechanism. ",
-      });
+      // setToast({
+      //   type: TOAST_TYPE.WARNING,
+      //   title: "Connection lost",
+      //   message: "Your changes are being saved using backup mechanism. ",
+      // });
+      console.log("Connection lost");
       hasShownFallbackToast.current = true;
     }
 
@@ -62,11 +63,12 @@ export const usePageFallback = (args: TArgs) => {
         description: json,
       });
     } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: `Failed to update description using backup mechanism, ${error?.message}`,
-      });
+      console.error(error);
+      // setToast({
+      //   type: TOAST_TYPE.ERROR,
+      //   title: "Error",
+      //   message: `Failed to update description using backup mechanism, ${error?.message}`,
+      // });
     } finally {
       setIsFetchingFallbackBinary(false);
     }

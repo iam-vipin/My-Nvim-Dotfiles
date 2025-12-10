@@ -373,7 +373,7 @@ class CycleViewSet(BaseViewSet):
             serializer.save()
 
             # EE starts
-            # Create EntityProgress for updation of the start_date only for active cycle
+            # Create EntityProgress for updating the start_date of the active cycle
             if (
                 request_data.get("start_date", None)
                 and (cycle_start_date and cycle_start_date <= timezone.now().date())
@@ -383,7 +383,7 @@ class CycleViewSet(BaseViewSet):
 
                 # Only when moving the start date backwards
                 if parsed_requested_start_date < cycle_start_date:
-                    list_of_entitiy_progress = list(
+                    list_of_entity_progress = list(
                         EntityProgress.objects.filter(cycle_id=pk, workspace__slug=slug, entity_type="CYCLE")
                         .values(
                             "total_issues",
@@ -406,7 +406,7 @@ class CycleViewSet(BaseViewSet):
 
                     # All existing progress dates for the cycle
                     existing_progress_dates = set(
-                        progress["progress_date"].date() for progress in list_of_entitiy_progress
+                        progress["progress_date"].date() for progress in list_of_entity_progress
                     )
 
                     # Get all the dates between the two dates without those that
@@ -430,7 +430,7 @@ class CycleViewSet(BaseViewSet):
                         for date_without_entity_progress in dates:
                             previous = [
                                 p
-                                for p in list_of_entitiy_progress
+                                for p in list_of_entity_progress
                                 if p["progress_date"].date() < date_without_entity_progress.date()
                             ]
 
@@ -440,7 +440,7 @@ class CycleViewSet(BaseViewSet):
                                 # fallback: nearest after
                                 future = [
                                     p
-                                    for p in list_of_entitiy_progress
+                                    for p in list_of_entity_progress
                                     if p["progress_date"].date() > date_without_entity_progress.date()
                                 ]
 
@@ -628,7 +628,7 @@ class CycleViewSet(BaseViewSet):
             notification=True,
             origin=base_host(request=request, is_app=True),
         )
-        # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
+        # TODO: Soft delete the cycle break the one to one relationship with cycle issue
         cycle.delete()
 
         # Delete the user favorite cycle

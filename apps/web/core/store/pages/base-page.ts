@@ -60,9 +60,9 @@ export type TBasePage = TPage & {
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
   mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
+  setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
   setVersionToBeRestored: (versionId: string | null, descriptionHTML: string | null) => void;
   setRestorationStatus: (inProgress: boolean) => void;
-  setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
   setConfig: (config: TPageConfig, getBasePath?: (params: TPageConfigParams) => string) => void;
   // sub-store
   editor: PageEditorInstance;

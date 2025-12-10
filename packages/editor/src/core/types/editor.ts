@@ -29,8 +29,8 @@ import type {
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
-  TExtendedCommandExtraProps,
   TExtendedEditorRefApi,
+  TExtendedCommandExtraProps,
 } from "@/types";
 
 export type TEditorCommands =

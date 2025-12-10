@@ -13,7 +13,7 @@ import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
 // types
 import type { IEditorPropsExtended } from "@/types";
-import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps } from "@/types/editor";
+import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps, IEditorProps } from "@/types/editor";
 
 export type TUseTitleEditorProps = {
   editable?: boolean;
@@ -25,8 +25,9 @@ export type TUseTitleEditorProps = {
   placeholder?: string;
   updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
   id: string;
-  onFocus?: () => void;
   extendedEditorProps?: IEditorPropsExtended;
+  getEditorMetaData?: IEditorProps["getEditorMetaData"];
+  onFocus?: () => void;
 };
 
 /**

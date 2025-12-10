@@ -8,8 +8,8 @@ import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
 import { usePageFallback } from "@/hooks/use-page-fallback";
-import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
+import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { PageModals } from "@/plane-web/components/pages";
 import { NestedPagesDownloadBanner } from "@/plane-web/components/wiki/nested-pages-download-banner";
 import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
@@ -73,7 +73,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
     editor: { setEditorRef },
     fetchEmbedsAndMentions,
   } = page;
-  // fallback logic
+  // page fallback
   const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
     fetchPageDescription: handlers.fetchDescriptionBinary,

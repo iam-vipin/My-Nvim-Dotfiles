@@ -37,7 +37,6 @@ type Props = {
 
 export function PageRenderer(props: Props) {
   const {
-    aiHandler,
     bubbleMenuEnabled,
     disabledExtensions,
     displayConfig,
@@ -54,6 +53,7 @@ export function PageRenderer(props: Props) {
     titleEditor,
     provider,
     state,
+    aiHandler,
   } = props;
   const { isSelfHosted, titleContainerClassName } = extendedDocumentEditorProps ?? {};
 
@@ -102,8 +102,8 @@ export function PageRenderer(props: Props) {
               <div>
                 {bubbleMenuEnabled && (
                   <EditorBubbleMenu
-                    disabledExtensions={disabledExtensions}
                     editor={editor}
+                    disabledExtensions={disabledExtensions}
                     extendedEditorProps={extendedEditorProps}
                     flaggedExtensions={flaggedExtensions}
                   />

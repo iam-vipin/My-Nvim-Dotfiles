@@ -8,6 +8,7 @@ import json
 import hmac
 from datetime import datetime
 from urllib.parse import urlparse
+
 # Third party imports
 import boto3
 from botocore.exceptions import ClientError
@@ -18,6 +19,7 @@ from django.conf import settings
 from plane.utils.exception_logger import log_exception
 from storages.backends.s3boto3 import S3Boto3Storage
 from plane.utils.host import base_host
+
 
 class S3Storage(S3Boto3Storage):
     file_overwrite = True
@@ -164,6 +166,9 @@ class S3Storage(S3Boto3Storage):
             scheme = url.scheme
             host = url.netloc
 
+        if expiration is None:
+            expiration = self.signed_url_expiration
+
         # Create download parameters
         download_params = {
             "object_name": object_name,
@@ -179,7 +184,6 @@ class S3Storage(S3Boto3Storage):
 
         # Base64 encode the parameters
         encoded_params = base64.urlsafe_b64encode(json.dumps(download_params).encode()).decode()
-
 
         return f"{scheme}://{host}/api/assets/proxy-download/{encoded_params}/"
 

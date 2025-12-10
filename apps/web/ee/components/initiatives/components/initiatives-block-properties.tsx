@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 // plane imports
 import { getRandomLabelColor } from "@plane/constants";
@@ -24,7 +23,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const InitiativesBlockProperties = observer((props: Props) => {
+export const InitiativesBlockProperties = observer(function InitiativesBlockProperties(props: Props) {
   const { initiative, isSidebarCollapsed, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

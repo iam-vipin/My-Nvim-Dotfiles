@@ -12,13 +12,13 @@ interface TruncatedUrlProps {
 
 const MAX_PATH_LENGTH = 15;
 
-export const TruncatedUrl: React.FC<TruncatedUrlProps> = ({
+export function TruncatedUrl({
   url,
   maxPathLength = MAX_PATH_LENGTH,
   className = "",
   showLinkIcon = false,
   onClick,
-}) => {
+}: TruncatedUrlProps) {
   const { pathname, full: fullURL } = url;
   const displayDomain = fullURL.hostname;
   const fullDisplayUrl = (pathname ?? "") + (fullURL.search ?? "") + (fullURL.hash ?? "");
@@ -53,4 +53,4 @@ export const TruncatedUrl: React.FC<TruncatedUrlProps> = ({
       )}
     </a>
   );
-};
+}

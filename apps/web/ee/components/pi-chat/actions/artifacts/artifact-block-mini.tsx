@@ -3,7 +3,7 @@ type TArtifactBlockMiniProps = {
   description: string;
 };
 
-const ArtifactBlockMini = (props: TArtifactBlockMiniProps) => {
+function ArtifactBlockMini(props: TArtifactBlockMiniProps) {
   const { title, description } = props;
   return (
     <div className="flex flex-col gap-2 p-2 rounded-lg bg-custom-background-90 max-w-[150px] overflow-hidden">
@@ -14,6 +14,6 @@ const ArtifactBlockMini = (props: TArtifactBlockMiniProps) => {
       <div className="text-sm font-medium line-clamp-2">{description}</div>
     </div>
   );
-};
+}
 
 export default ArtifactBlockMini;

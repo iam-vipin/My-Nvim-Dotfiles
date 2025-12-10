@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -19,7 +17,7 @@ type TIssueWorklogProperty = {
   disabled: boolean;
 };
 
-export const IssueWorklogProperty: FC<TIssueWorklogProperty> = observer((props) => {
+export const IssueWorklogProperty = observer(function IssueWorklogProperty(props: TIssueWorklogProperty) {
   const { workspaceSlug, projectId, issueId } = props;
   // hooks
   const { issueWorklogTotalMinutes, isWorklogsEnabledByProjectId, getIssueWorklogTotalMinutes } =

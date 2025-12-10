@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -25,7 +23,7 @@ type InitiativeLabelDragPreviewProps = {
   label: TInitiativeLabel;
 };
 
-export const InitiativeLabelDragPreview = (props: InitiativeLabelDragPreviewProps) => {
+export function InitiativeLabelDragPreview(props: InitiativeLabelDragPreviewProps) {
   const { label } = props;
 
   return (
@@ -33,7 +31,7 @@ export const InitiativeLabelDragPreview = (props: InitiativeLabelDragPreviewProp
       <InitiativeLabelName name={label.name} color={label.color} />
     </div>
   );
-};
+}
 
 type Props = {
   label: TInitiativeLabel;
@@ -42,7 +40,7 @@ type Props = {
   onDrop: (draggingLabelId: string, droppedLabelId: string | undefined, dropAtEndOfList: boolean) => void;
 };
 
-export const InitiativeLabelDndHOC = observer((props: Props) => {
+export const InitiativeLabelDndHOC = observer(function InitiativeLabelDndHOC(props: Props) {
   const { label, isLastChild, children, onDrop } = props;
 
   // states

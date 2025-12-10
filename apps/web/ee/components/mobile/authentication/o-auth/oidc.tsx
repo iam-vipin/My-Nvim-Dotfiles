@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 import { Key } from "lucide-react";
@@ -11,7 +9,7 @@ export type TOIDCAuthButton = {
   invitationId?: string;
 };
 
-export const OIDCAuthButton: FC<TOIDCAuthButton> = (props) => {
+export function OIDCAuthButton(props: TOIDCAuthButton) {
   // props
   const { title, invitationId } = props;
   // hooks
@@ -34,4 +32,4 @@ export const OIDCAuthButton: FC<TOIDCAuthButton> = (props) => {
       {title}
     </button>
   );
-};
+}

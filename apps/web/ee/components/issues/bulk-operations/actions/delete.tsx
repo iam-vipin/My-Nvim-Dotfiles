@@ -18,7 +18,7 @@ type Props = {
   selectedIssueIds: string[];
 };
 
-export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
+export const BulkDeleteIssues = observer(function BulkDeleteIssues(props: Props) {
   const { handleClearSelection, selectedIssueIds } = props;
   // states
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);

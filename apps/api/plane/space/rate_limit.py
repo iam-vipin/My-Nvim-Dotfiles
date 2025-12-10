@@ -6,12 +6,12 @@ from rest_framework.throttling import AnonRateThrottle
 
 
 class SpaceRateThrottle(AnonRateThrottle):
-    rate = os.environ.get("SPACE_RATE_LIMIT", "5/minute")
+    rate = os.environ.get("SPACE_RATE_LIMIT", "200/minute")
     scope = "space"
 
 
 class AnchorBasedRateThrottle(AnonRateThrottle):
-    rate = os.environ.get("SPACE_ANCHOR_RATE_LIMIT", "5/minute")
+    rate = os.environ.get("SPACE_ANCHOR_RATE_LIMIT", "200/minute")
 
     def get_cache_key(self, request, view):
         # Get the anchor from the URL parameters

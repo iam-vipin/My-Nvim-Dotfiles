@@ -12,7 +12,9 @@ type TRecurringWorkItemsSettingsListProps = {
   workspaceSlug: string;
 };
 
-export const RecurringWorkItemsSettingsList = observer((props: TRecurringWorkItemsSettingsListProps) => {
+export const RecurringWorkItemsSettingsList = observer(function RecurringWorkItemsSettingsList(
+  props: TRecurringWorkItemsSettingsListProps
+) {
   const { projectId, workspaceSlug } = props;
   // store hooks
   const {

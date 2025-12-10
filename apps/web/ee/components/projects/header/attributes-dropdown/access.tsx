@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -17,7 +15,7 @@ type TFilterAccess = {
   handleUpdate: (val: EProjectAccess[]) => void;
 };
 
-export const FilterAccess: React.FC<TFilterAccess> = observer((props) => {
+export const FilterAccess = observer(function FilterAccess(props: TFilterAccess) {
   const { searchQuery, appliedFilters, handleUpdate } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -25,7 +23,7 @@ export const FilterAccess: React.FC<TFilterAccess> = observer((props) => {
 
   const sortedOptions = useMemo(
     () => PROJECT_ACCESS.filter((access) => access.key.includes(searchQuery.toLowerCase()) || searchQuery === ""),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [searchQuery]
   );
 

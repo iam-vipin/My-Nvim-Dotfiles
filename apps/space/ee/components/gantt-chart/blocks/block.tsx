@@ -12,13 +12,13 @@ import type { ChartDataType, IGanttBlock } from "../types";
 
 type Props = {
   blockId: string;
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock | undefined;
+  getBlockById: (id: string, currentViewData?: ChartDataType) => IGanttBlock | undefined;
   showAllBlocks: boolean;
   blockToRender: (data: any) => React.ReactNode;
   ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const GanttChartBlock: React.FC<Props> = observer((props) => {
+export const GanttChartBlock = observer(function GanttChartBlock(props: Props) {
   const { blockId, getBlockById, showAllBlocks, blockToRender, ganttContainerRef } = props;
   // store hooks
   const { currentViewData, updateActiveBlockId, isBlockActive } = useGanttChart();

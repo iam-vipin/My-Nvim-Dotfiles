@@ -19,7 +19,7 @@ type Props = {
   handleLinkClick: () => void;
 };
 
-export const TeamspaceSidebarListItem = observer((props: Props) => {
+export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListItem(props: Props) {
   const { teamspaceId, handleLinkClick } = props;
   // router params
   const { workspaceSlug } = useParams();

@@ -12,7 +12,7 @@ type TProps = {
   automationId: string;
 };
 
-export const AutomationDetailsSidebarFooter: React.FC<TProps> = observer((props) => {
+export const AutomationDetailsSidebarFooter = observer(function AutomationDetailsSidebarFooter(props: TProps) {
   const { automationId } = props;
   // plane hooks
   const { t } = useTranslation();

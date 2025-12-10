@@ -16,7 +16,7 @@ type TProps = {
   disabled: boolean;
 };
 
-export const CustomerRequestsCollapsible: FC<TProps> = observer((props) => {
+export const CustomerRequestsCollapsible = observer(function CustomerRequestsCollapsible(props: TProps) {
   const { workspaceSlug, workItemId, disabled } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail();

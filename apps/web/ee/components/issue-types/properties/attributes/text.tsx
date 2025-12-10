@@ -20,7 +20,7 @@ type TTextAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const TextAttributes = observer((props: TTextAttributesProps) => {
+export const TextAttributes = observer(function TextAttributes(props: TTextAttributesProps) {
   const { textPropertyDetail, currentOperationMode, onTextDetailChange, isUpdateAllowed } = props;
   // states
   const [data, setData] = useState<string[]>([]);

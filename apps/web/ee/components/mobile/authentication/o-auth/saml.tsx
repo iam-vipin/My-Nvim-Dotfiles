@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 import { Key } from "lucide-react";
@@ -11,7 +9,7 @@ export type TSAMLButton = {
   invitationId?: string;
 };
 
-export const SAMLButton: FC<TSAMLButton> = (props) => {
+export function SAMLButton(props: TSAMLButton) {
   // props
   const { title, invitationId } = props;
   // hooks
@@ -34,4 +32,4 @@ export const SAMLButton: FC<TSAMLButton> = (props) => {
       {title}
     </button>
   );
-};
+}

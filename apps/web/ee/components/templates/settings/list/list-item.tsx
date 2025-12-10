@@ -22,7 +22,9 @@ type TemplateListItemProps<T extends TBaseTemplateWithData> = {
   handleUseTemplateAction: () => void;
 };
 
-export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props: TemplateListItemProps<T>) => {
+export const TemplateListItem = observer(function TemplateListItem<T extends TBaseTemplateWithData>(
+  props: TemplateListItemProps<T>
+) {
   const {
     templateId,
     workspaceSlug,

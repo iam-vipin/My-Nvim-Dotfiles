@@ -55,11 +55,13 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
   const rootParentDetails = orderedParentPages?.[0]; // First item is the root
   const middleParents = orderedParentPages?.slice(1, -1) ?? []; // Middle items (excluding root and current)
 
-  const BreadcrumbSeparator = () => (
-    <div className="flex items-center px-2 text-custom-text-300">
-      <ChevronRightIcon className="size-3" />
-    </div>
-  );
+  function BreadcrumbSeparator() {
+    return (
+      <div className="flex items-center px-2 text-custom-text-300">
+        <ChevronRightIcon className="size-3" />
+      </div>
+    );
+  }
 
   const switcherOptions = projectPageIds
     .map((id) => {

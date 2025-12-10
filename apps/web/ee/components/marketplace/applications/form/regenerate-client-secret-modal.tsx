@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Copy } from "lucide-react";
@@ -21,7 +19,7 @@ type Props = {
   handleClose: () => void;
 };
 
-export const RegenerateClientSecretModal: React.FC<Props> = observer((props) => {
+export const RegenerateClientSecretModal = observer(function RegenerateClientSecretModal(props: Props) {
   const { application, isOpen, handleClose } = props;
 
   // hooks

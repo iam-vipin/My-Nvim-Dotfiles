@@ -24,7 +24,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const ProjectItem = observer((props: Props) => {
+export const ProjectItem = observer(function ProjectItem(props: Props) {
   const { workspaceSlug, initiativeId, projectId } = props;
   // store hooks
   const { getProjectById, getProjectAnalyticsCountById, updateProject } = useProject();

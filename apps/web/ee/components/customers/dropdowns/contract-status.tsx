@@ -16,7 +16,7 @@ type TProps = {
   disabled: boolean;
 };
 
-export const ContractStatusDropDown: FC<TProps> = (props) => {
+export function ContractStatusDropDown(props: TProps) {
   const { value, onChange, maxHeight, tabIndex, buttonClassName, chevronClassName, className, disabled } = props;
 
   const { t } = useTranslation();
@@ -61,4 +61,4 @@ export const ContractStatusDropDown: FC<TProps> = (props) => {
       disabled={disabled}
     />
   );
-};
+}

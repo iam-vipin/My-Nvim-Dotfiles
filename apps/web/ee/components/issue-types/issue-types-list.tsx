@@ -15,7 +15,7 @@ type TIssueTypesList = {
   onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
 };
 
-export const IssueTypesList = observer((props: TIssueTypesList) => {
+export const IssueTypesList = observer(function IssueTypesList(props: TIssueTypesList) {
   const { onEditIssueTypeIdChange, onDeleteIssueTypeIdChange, onEnableDisableIssueType } = props;
   // router
   const { projectId } = useParams();

@@ -36,7 +36,9 @@ type TCreateUpdateRecurringWorkItemProps = {
   workspaceSlug: string;
 };
 
-export const CreateUpdateRecurringWorkItem = observer((props: TCreateUpdateRecurringWorkItemProps) => {
+export const CreateUpdateRecurringWorkItem = observer(function CreateUpdateRecurringWorkItem(
+  props: TCreateUpdateRecurringWorkItemProps
+) {
   const { projectId, recurringWorkItemId, workspaceSlug } = props;
   // router
   const router = useAppRouter();

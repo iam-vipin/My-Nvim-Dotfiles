@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -18,7 +16,7 @@ import { ThemeSwitch } from "../core/theme/theme-switch";
 import type { PreferenceOption } from "./config";
 import { PreferencesSection } from ".";
 
-export const ThemeSwitcher = observer((props: { option: PreferenceOption }) => {
+export const ThemeSwitcher = observer(function ThemeSwitcher(props: { option: PreferenceOption }) {
   // hooks
   const { setTheme } = useTheme();
   const { data: userProfile, updateUserTheme } = useUserProfile();

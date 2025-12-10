@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ type TProjectItemsRootProps = {
   projectId: string;
 };
 
-export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props) => {
+export const ProjectNavigationRoot = observer(function ProjectNavigationRoot(props: TProjectItemsRootProps) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getPartialProjectById } = useProject();

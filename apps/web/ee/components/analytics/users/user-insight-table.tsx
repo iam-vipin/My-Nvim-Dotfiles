@@ -13,7 +13,7 @@ interface UsersInsightTableProps {
   isLoading: boolean;
 }
 
-const UsersInsightTable = observer(({ data: usersData, isLoading }: UsersInsightTableProps) => {
+const UsersInsightTable = observer(function UsersInsightTable({ data: usersData, isLoading }: UsersInsightTableProps) {
   const { t } = useTranslation();
 
   // derived values

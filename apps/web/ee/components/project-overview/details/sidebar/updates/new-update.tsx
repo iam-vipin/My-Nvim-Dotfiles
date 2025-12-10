@@ -13,7 +13,7 @@ type TProps = {
   handleClose: () => void;
   handleCreate: (data: Partial<TProjectUpdate>) => void;
 };
-export const NewUpdate = (props: TProps) => {
+export function NewUpdate(props: TProps) {
   const { handleClose, handleCreate, initialValues } = props;
 
   const [input, setInput] = useState(initialValues?.description ?? "");
@@ -52,4 +52,4 @@ export const NewUpdate = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

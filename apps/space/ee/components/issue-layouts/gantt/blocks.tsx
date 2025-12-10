@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -18,7 +16,7 @@ type Props = {
   issueId: string;
 };
 
-export const IssueGanttBlock: React.FC<Props> = observer((props) => {
+export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
   const { issueId } = props;
   // store hooks
   const { getStateById } = useStates();
@@ -62,7 +60,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
 });
 
 // rendering issues on gantt sidebar
-export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
+export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(props: Props) {
   const { issueId } = props;
   // router
   const { anchor } = useParams();

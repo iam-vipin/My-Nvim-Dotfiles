@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
@@ -27,7 +25,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];
 
 const currentStepKey = E_IMPORTER_STEPS.MAP_STATES;
 
-export const MapStatesRoot: FC = observer(() => {
+export const MapStatesRoot = observer(function MapStatesRoot() {
   // hooks
   const {
     workspace,
@@ -56,10 +54,10 @@ export const MapStatesRoot: FC = observer(() => {
   // project states
   const asanaProjectSections = ((asanaProjectGid && getAsanaSectionByProjectGid(asanaProjectGid)) || []).filter(
     (asanaSection) => asanaSection && asanaSection.gid
-  ) as AsanaSection[];
+  );
   const planeProjectStates = ((planeProjectId && stateIdsByProjectId(planeProjectId)) || [])
     .map((id) => (planeProjectId && getStateById(planeProjectId, id)) || undefined)
-    .filter((jiraState) => jiraState != undefined && jiraState != null) as IState[];
+    .filter((jiraState) => jiraState != undefined && jiraState != null);
   // derived values
   const isNextButtonDisabled = asanaProjectSections?.length === Object.keys(formData).length ? false : true;
   // handlers
@@ -125,7 +123,7 @@ export const MapStatesRoot: FC = observer(() => {
         const result = fuse.search(asanaState.name);
 
         if (result.length > 0) {
-          const planeState = result[0].item as IState;
+          const planeState = result[0].item;
           if (asanaState.gid && planeState.id) {
             handleFormData(asanaState.gid, planeState.id);
           }

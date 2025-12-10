@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { CircleAlert, XCircle } from "lucide-react";
@@ -23,7 +21,7 @@ type TMobileAuthEmailValidationForm = {
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
 };
 
-export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> = (props) => {
+export function MobileAuthEmailValidationForm(props: TMobileAuthEmailValidationForm) {
   const {
     email: defaultEmail,
     handleEmail,
@@ -160,4 +158,4 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
       </form>
     </div>
   );
-};
+}

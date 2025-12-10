@@ -2,7 +2,7 @@
 import { useTranslation } from "@plane/i18n";
 import { WorkItemsIcon } from "@plane/propel/icons";
 
-export const IssueTypePropertiesEmptyState = () => {
+export function IssueTypePropertiesEmptyState() {
   // plane hooks
   const { t } = useTranslation();
 
@@ -21,4 +21,4 @@ export const IssueTypePropertiesEmptyState = () => {
       </div>
     </div>
   );
-};
+}

@@ -37,7 +37,7 @@ type TProps = {
 
 const customerService = new CustomerService();
 
-export const CustomerRequestListItem: FC<TProps> = observer((props) => {
+export const CustomerRequestListItem = observer(function CustomerRequestListItem(props: TProps) {
   const { requestId, workspaceSlug, customerId, isEditable = false } = props;
   // states
   const [isEditing, setEditing] = useState<boolean>(false);

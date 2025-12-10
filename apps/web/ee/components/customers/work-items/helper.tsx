@@ -1,4 +1,3 @@
-"use client";
 import { useMemo } from "react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

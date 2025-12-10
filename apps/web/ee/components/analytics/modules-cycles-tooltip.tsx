@@ -15,14 +15,14 @@ export interface ICycleModuleTooltipProps {
   completedCount: number;
 }
 
-const ModulesCyclesTooltip = ({
+function ModulesCyclesTooltip({
   title,
   startDate,
   endDate,
   rows,
   totalCount,
   completedCount,
-}: ICycleModuleTooltipProps) => {
+}: ICycleModuleTooltipProps) {
   const completionPercentage = useMemo(() => {
     // Edge case 1: Both are 0
     if (completedCount === 0 || totalCount === 0) return 0;
@@ -66,6 +66,6 @@ const ModulesCyclesTooltip = ({
       </div>
     </Card>
   );
-};
+}
 
 export default ModulesCyclesTooltip;

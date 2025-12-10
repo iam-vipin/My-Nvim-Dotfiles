@@ -50,7 +50,7 @@ export const insertEmptyParagraphAtNodeBoundaries: (
         }
 
         case "down": {
-          const insertPosDown = pos + (node as ProseMirrorNode).nodeSize;
+          const insertPosDown = pos + node.nodeSize;
 
           // Ensure the insert position is within the document boundaries
           if (insertPosDown < 0 || insertPosDown > docSize) return false;

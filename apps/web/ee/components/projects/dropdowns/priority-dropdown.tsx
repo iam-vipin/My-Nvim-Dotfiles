@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";
@@ -50,7 +48,7 @@ type ButtonProps = {
   showTooltip: boolean;
 };
 
-const BorderButton = (props: ButtonProps) => {
+function BorderButton(props: ButtonProps) {
   const {
     className,
     dropdownArrow,
@@ -128,9 +126,9 @@ const BorderButton = (props: ButtonProps) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-const BackgroundButton = (props: ButtonProps) => {
+function BackgroundButton(props: ButtonProps) {
   const {
     className,
     dropdownArrow,
@@ -208,9 +206,9 @@ const BackgroundButton = (props: ButtonProps) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-const TransparentButton = (props: ButtonProps) => {
+function TransparentButton(props: ButtonProps) {
   const {
     className,
     dropdownArrow,
@@ -290,9 +288,9 @@ const TransparentButton = (props: ButtonProps) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-export const PriorityDropdown: React.FC<Props> = (props) => {
+export function PriorityDropdown(props: Props) {
   const {
     button,
     buttonClassName,
@@ -479,4 +477,4 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       )}
     </Combobox>
   );
-};
+}

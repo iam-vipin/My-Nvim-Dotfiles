@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -13,7 +11,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { InitiativeScopeModals } from "../common/scope-modals";
 import { InitiativeView } from "./view";
 
-export const InitiativePeekOverview: FC = observer(() => {
+export const InitiativePeekOverview = observer(function InitiativePeekOverview() {
   // store hook
   const { allowPermissions } = useUserPermissions();
 

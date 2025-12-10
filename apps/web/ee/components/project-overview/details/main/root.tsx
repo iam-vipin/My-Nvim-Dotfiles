@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import useSWR from "swr";
 // helpers
@@ -21,7 +19,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
+export function ProjectOverviewMainContentRoot(props: Props) {
   const { workspaceSlug, projectId, disabled } = props;
   // store hooks
   const { fetchAttachments } = useProjectAttachments();
@@ -66,4 +64,4 @@ export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

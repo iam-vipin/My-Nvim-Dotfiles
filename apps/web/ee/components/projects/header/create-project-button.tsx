@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -10,8 +8,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const ProjectCreateButton: FC = observer((props) => {
-  const {} = props;
+export const ProjectCreateButton = observer(function ProjectCreateButton() {
   // hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();

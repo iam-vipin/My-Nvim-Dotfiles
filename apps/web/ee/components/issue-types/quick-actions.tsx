@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
@@ -22,7 +20,7 @@ type Props = {
   onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
 };
 
-export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
+export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(props: Props) {
   const {
     issueTypeId,
     getWorkItemTypeById,

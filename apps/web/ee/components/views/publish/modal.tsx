@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -30,7 +28,7 @@ const defaultValues: TPublishViewSettings = {
   is_votes_enabled: false,
 };
 
-export const PublishViewModal: React.FC<Props> = observer((props) => {
+export const PublishViewModal = observer(function PublishViewModal(props: Props) {
   const { isOpen, view, onClose } = props;
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);

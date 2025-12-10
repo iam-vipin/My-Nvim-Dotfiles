@@ -19,7 +19,7 @@ type Props = {
   handleAddEpic: () => void;
   handleAddProject: () => void;
 };
-export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
+export function InitiativeScopeGanttView(props: Props) {
   const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject, initiativeId, disabled } = props;
 
   const { t } = useTranslation();
@@ -57,4 +57,4 @@ export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
       />
     </TimeLineTypeContext.Provider>
   );
-};
+}

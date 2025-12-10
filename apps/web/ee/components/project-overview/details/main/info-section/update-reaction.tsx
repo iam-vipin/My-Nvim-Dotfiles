@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ export type TProjectReaction = {
   disabled?: boolean;
 };
 
-export const ProjectReaction: FC<TProjectReaction> = observer((props) => {
+export const ProjectReaction = observer(function ProjectReaction(props: TProjectReaction) {
   const { workspaceSlug, projectId, currentUser, disabled = false } = props;
 
   // state

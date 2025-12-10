@@ -21,7 +21,7 @@ import { TeamspaceViewTableLayout } from "@/plane-web/components/issues/issue-la
 import { TeamspaceLevelWorkItemFiltersHOC } from "@/plane-web/components/work-item-filters/filters-hoc/teamspace-level";
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 
-const TeamspaceViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+function TeamspaceViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <TeamspaceViewListLayout />;
@@ -34,9 +34,9 @@ const TeamspaceViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | und
     default:
       return null;
   }
-};
+}
 
-export const TeamspaceViewLayoutRoot: React.FC = observer(() => {
+export const TeamspaceViewLayoutRoot = observer(function TeamspaceViewLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

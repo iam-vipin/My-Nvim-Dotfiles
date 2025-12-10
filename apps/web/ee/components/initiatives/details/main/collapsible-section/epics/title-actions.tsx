@@ -24,7 +24,7 @@ type TEpicsTitleActionsProps = {
   workspaceSlug: string;
 };
 
-export const EpicsTitleActions: FC<TEpicsTitleActionsProps> = observer((props) => {
+export const EpicsTitleActions = observer(function EpicsTitleActions(props: TEpicsTitleActionsProps) {
   const { disabled, toggleEpicModal, initiativeId, workspaceSlug } = props;
 
   // store hooks

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FormEvent } from "react";
 import { useState } from "react";
 // types
@@ -30,7 +28,7 @@ type Props = {
   >;
 };
 
-export const SavePageModal: React.FC<Props> = observer((props) => {
+export const SavePageModal = observer(function SavePageModal(props: Props) {
   const { workspaceSlug, isOpen, handleModalClose, handleConvertToPage } = props;
   // state
   const [isSubmitting, setIsSubmitting] = useState(false);

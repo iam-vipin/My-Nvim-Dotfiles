@@ -10,7 +10,13 @@ import { Avatar, Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 
-export const UserAvatarName: FC<{ userId: string; showName?: boolean }> = observer(({ userId, showName = true }) => {
+export const UserAvatarName = observer(function UserAvatarName({
+  userId,
+  showName = true,
+}: {
+  userId: string;
+  showName?: boolean;
+}) {
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const {
@@ -18,7 +24,7 @@ export const UserAvatarName: FC<{ userId: string; showName?: boolean }> = observ
     workspace: { isUserSuspended, getWorkspaceMemberDetails },
   } = useMember();
   const user = getUserDetails(userId);
-  const isSuspended = workspaceSlug && isUserSuspended(userId, workspaceSlug as string);
+  const isSuspended = workspaceSlug && isUserSuspended(userId, workspaceSlug);
   const workspaceMember = getWorkspaceMemberDetails(userId);
 
   // Get role badge text

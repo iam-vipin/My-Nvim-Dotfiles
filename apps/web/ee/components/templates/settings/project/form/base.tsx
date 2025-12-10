@@ -123,7 +123,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
   },
 };
 
-export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRootProps) => {
+export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot(props: TProjectTemplateFormRootProps) {
   const { workspaceSlug, templateId, operation, handleFormCancel, handleFormSubmit } = props;
   const formRef = useRef<HTMLFormElement>(null);
   // router

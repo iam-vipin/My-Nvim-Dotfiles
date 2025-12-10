@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
@@ -34,7 +33,7 @@ type Props = {
 // move this to workspace service
 const workspaceService = new WorkspaceService();
 
-export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
+export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal(props: Props) {
   const { workspaceSlug, isOpen, handleClose: onClose, handleOnSubmit, searchParams, selectedEpicIds } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

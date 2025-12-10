@@ -23,7 +23,7 @@ type TDateValueSelectProps = {
   onDateValueChange: (value: string[]) => Promise<void>;
 };
 
-export const DateValueSelect = observer((props: TDateValueSelectProps) => {
+export const DateValueSelect = observer(function DateValueSelect(props: TDateValueSelectProps) {
   const {
     propertyDetail,
     value,
@@ -54,7 +54,7 @@ export const DateValueSelect = observer((props: TDateValueSelectProps) => {
         value={data?.[0]}
         onChange={handleDateChange}
         placeholder="Choose date"
-        buttonVariant={variant === "update" && !Boolean(error) ? "transparent-with-text" : "border-with-text"}
+        buttonVariant={variant === "update" && !error ? "transparent-with-text" : "border-with-text"}
         disabled={isDisabled}
         className="w-full flex-grow group"
         buttonContainerClassName="w-full text-left"

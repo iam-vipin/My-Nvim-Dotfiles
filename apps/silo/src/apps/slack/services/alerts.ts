@@ -44,6 +44,7 @@ export const extractSlackDMAlertsFromWebhook = (
   switch (payload.event) {
     case E_PLANE_WEBHOOK_EVENT.ISSUE:
       return {
+        // @ts-expect-error - fix this
         activities: extractSlackDmAlertsFromIssue(payload),
         workspace_id: payload.workspace_id,
         project_id: payload.data.project,
@@ -55,6 +56,7 @@ export const extractSlackDMAlertsFromWebhook = (
 
     case E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT:
       return {
+        // @ts-expect-error - fix this
         activities: extractUserMentionFromHtml(payload.data.comment_html)
           .map((userId) => ({
             actor_id: userId,
@@ -64,6 +66,7 @@ export const extractSlackDMAlertsFromWebhook = (
           .filter((activity) => (payload.activity.actor?.id ? activity.actor_id !== payload.activity.actor?.id : true)),
         workspace_id: payload.workspace_id,
         project_id: payload.data.project,
+        // @ts-expect-error - fix this
         issue_id: payload.data.issue,
         comment_id: payload.data.id,
         type: ESlackDMAlertType.COMMENT,

@@ -8,12 +8,12 @@ interface IActiveCycleDetails {
   showHeader?: boolean;
 }
 
-export const ActiveCycleRoot = (props: IActiveCycleDetails) => {
+export function ActiveCycleRoot(props: IActiveCycleDetails) {
   const { workspaceSlug, projectId, cycleId, showHeader = true } = props;
   const isFeatureEnabled = useFlag(workspaceSlug.toString(), "CYCLE_PROGRESS_CHARTS");
   const ActiveCycle = useMemo(
-    () =>
-      lazy(() =>
+    function ActiveCycle() {
+      return lazy(() =>
         isFeatureEnabled
           ? import(`ee/components/cycles/active-cycle/base`).then((module) => ({
               default: module["ActiveCycleBase"],
@@ -21,7 +21,8 @@ export const ActiveCycleRoot = (props: IActiveCycleDetails) => {
           : import("ce/components/cycles/active-cycle/root").then((module) => ({
               default: module["ActiveCycleRoot"],
             }))
-      ),
+      );
+    },
     [isFeatureEnabled]
   );
 
@@ -35,4 +36,4 @@ export const ActiveCycleRoot = (props: IActiveCycleDetails) => {
       />
     </Suspense>
   );
-};
+}

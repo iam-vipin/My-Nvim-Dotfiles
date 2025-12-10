@@ -18,7 +18,9 @@ type RecurringWorkItemListItemProps = {
   workspaceSlug: string;
 };
 
-export const RecurringWorkItemListItem = observer((props: RecurringWorkItemListItemProps) => {
+export const RecurringWorkItemListItem = observer(function RecurringWorkItemListItem(
+  props: RecurringWorkItemListItemProps
+) {
   const { getRecurringWorkItemById, getRecurringWorkItemTypeById, recurringWorkItemId } = props;
   // refs
   const parentRef = useRef<HTMLDivElement>(null);

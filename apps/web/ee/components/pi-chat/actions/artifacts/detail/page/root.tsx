@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
@@ -17,7 +15,7 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
 };
 
-export const PageFormRoot: React.FC<Props> = observer((props) => {
+export const PageFormRoot = observer(function PageFormRoot(props: Props) {
   const { artifactId, workspaceSlug, preloadedData, handleOnChange, editorRef } = props;
   // states
   const [isEmojiIconPickerOpen, setIsEmojiIconPickerOpen] = useState(false);

@@ -33,7 +33,7 @@ type TEstimatePointSwitchRoot = {
   setEstimateSystemSwitchType?: Dispatch<SetStateAction<TEstimateSystemKeys | undefined>>;
 };
 
-export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((props) => {
+export const EstimatePointSwitchRoot = observer(function EstimatePointSwitchRoot(props: TEstimatePointSwitchRoot) {
   // props
   const {
     setEstimateEditType,

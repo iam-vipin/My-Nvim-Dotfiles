@@ -22,7 +22,7 @@ type TSubscriptionButtonProps = {
   handleSubscriptionUpgrade: (subscriptionType: EProductSubscriptionEnum) => void;
 };
 
-export const SubscriptionButton: FC<TSubscriptionButtonProps> = observer((props) => {
+export const SubscriptionButton = observer(function SubscriptionButton(props: TSubscriptionButtonProps) {
   const { subscriptionType, isProductsAPILoading, currentProduct, upgradeLoader, handleSubscriptionUpgrade } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -37,7 +37,7 @@ export const SubscriptionButton: FC<TSubscriptionButtonProps> = observer((props)
   const isHigherTierPlan = EProductSubscriptionTier[subscriptionType] >= EProductSubscriptionTier[currentPlan];
   // If the workspace is on trial, allow upgrade if the user has not added a payment method
   // Else, allow upgrade if the current plan is a higher tier than the subscription type
-  const showUpgradeButton = !!subscriptionDetail?.is_on_trial
+  const showUpgradeButton = subscriptionDetail?.is_on_trial
     ? !subscriptionDetail?.has_added_payment_method
     : isHigherTierPlan && currentPlan !== subscriptionType;
   const upgradeButtonStyle =

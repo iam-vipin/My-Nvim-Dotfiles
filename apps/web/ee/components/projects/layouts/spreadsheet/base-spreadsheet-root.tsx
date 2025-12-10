@@ -9,7 +9,7 @@ import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 import { SpreadsheetView } from "./spreadsheet-view";
 
-export const BaseSpreadsheetRoot = observer(() => {
+export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot() {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -35,9 +35,7 @@ export const BaseSpreadsheetRoot = observer(() => {
       displayFilters={filters?.display_filters as TProjectDisplayFilters}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       projectIds={filteredProjectIds}
-      updateProject={(projectId, data) =>
-        updateProject(workspaceSlug.toString(), projectId || "", data) as Promise<TProject>
-      }
+      updateProject={(projectId, data) => updateProject(workspaceSlug.toString(), projectId || "", data)}
       canEditProperties={() => true}
     />
   );

@@ -13,7 +13,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { InitiativeScopeGanttView } from "./gantt/root";
 import { InitiativeScopeListView } from "./list/root";
 
-export const InitiativeScopeRoot = observer(() => {
+export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
   const { initiativeId, workspaceSlug } = useParams();
   // store hooks
   const {

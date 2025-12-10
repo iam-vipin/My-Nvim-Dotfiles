@@ -18,7 +18,7 @@ type TPropertyAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const PropertyAttributes = observer((props: TPropertyAttributesProps) => {
+export const PropertyAttributes = observer(function PropertyAttributes(props: TPropertyAttributesProps) {
   const { propertyDetail, currentOperationMode, onPropertyDetailChange, error, isUpdateAllowed } = props;
   // list of property types that should not be allowed to change attributes
   const DISABLE_ATTRIBUTE_CHANGE_LIST = [EIssuePropertyType.BOOLEAN, EIssuePropertyType.DATETIME];

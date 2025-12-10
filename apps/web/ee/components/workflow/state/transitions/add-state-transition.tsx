@@ -20,7 +20,7 @@ type Props = {
   onTransitionAdd?: () => void;
 };
 
-export const AddStateTransition = observer((props: Props) => {
+export const AddStateTransition = observer(function AddStateTransition(props: Props) {
   const { workspaceSlug, projectId, parentStateId, onTransitionAdd } = props;
   // plane hooks
   const { t } = useTranslation();

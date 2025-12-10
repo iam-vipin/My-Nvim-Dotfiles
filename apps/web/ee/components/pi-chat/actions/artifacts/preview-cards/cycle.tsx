@@ -9,7 +9,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const CyclePreviewCard = observer((props: TProps) => {
+export const CyclePreviewCard = observer(function CyclePreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = useCycleData(artifactId);
   if (!data) return <></>;

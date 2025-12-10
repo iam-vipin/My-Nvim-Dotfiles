@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // types
 import { useTranslation } from "@plane/i18n";
@@ -16,7 +14,7 @@ type TMapStatesSelection = {
   planeStates: IState[];
 };
 
-export const MapStatesSelection: FC<TMapStatesSelection> = (props) => {
+export function MapStatesSelection(props: TMapStatesSelection) {
   const { value, handleValue, planeStates } = props;
   const { t } = useTranslation();
 
@@ -39,4 +37,4 @@ export const MapStatesSelection: FC<TMapStatesSelection> = (props) => {
       queryExtractor={(option) => option.name}
     />
   );
-};
+}

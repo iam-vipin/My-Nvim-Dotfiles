@@ -16,7 +16,7 @@ interface Props {
   selectionHelpers: TSelectionHelper;
 }
 
-export const SpreadsheetHeader = observer((props: Props) => {
+export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Props) {
   const { displayFilters, handleDisplayFilterUpdate, spreadsheetColumnsList } = props;
 
   return (

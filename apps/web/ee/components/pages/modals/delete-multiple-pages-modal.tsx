@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // constants
@@ -28,7 +26,7 @@ type TConfirmPagesDeleteProps = {
   editorRef?: EditorRefApi | null;
 };
 
-export const DeleteMultiplePagesModal: React.FC<TConfirmPagesDeleteProps> = observer((props) => {
+export const DeleteMultiplePagesModal = observer(function DeleteMultiplePagesModal(props: TConfirmPagesDeleteProps) {
   const { isOpen, onClose, pages, storeType, editorRef } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);

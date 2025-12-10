@@ -8,7 +8,9 @@ import { cn } from "@plane/utils";
 import { TEAM_STATISTICS_DATA_KEY_MAP } from "@/plane-web/constants/teamspace";
 import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
-export const StatisticsDataKeyFilter: React.FC<TStatisticsFilterProps<"data_key">> = observer((props) => {
+export const StatisticsDataKeyFilter = observer(function StatisticsDataKeyFilter(
+  props: TStatisticsFilterProps<"data_key">
+) {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
   // derived values
   const options = Object.entries(TEAM_STATISTICS_DATA_KEY_MAP).map(([data, value]) => ({

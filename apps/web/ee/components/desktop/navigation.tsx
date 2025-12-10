@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { webContents } from "@todesktop/client-core";
 import { observer } from "mobx-react";
@@ -9,7 +7,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 
-export const DesktopAppNavigation = observer(() => {
+export const DesktopAppNavigation = observer(function DesktopAppNavigation() {
   // states
   const [isForwardNavigationDisabled, setIsForwardNavigationDisabled] = useState<boolean>(true);
   const [isBackwardNavigationDisabled, setIsBackwardNavigationDisabled] = useState<boolean>(true);

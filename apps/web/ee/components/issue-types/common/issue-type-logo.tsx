@@ -31,11 +31,13 @@ const containerSizeMap = {
   xl: 35.5,
 };
 
-export const IssueTypeLogo: FC<Props> = (props) => {
+export function IssueTypeLogo(props: Props) {
   const { icon_props, size = "sm", containerClassName, isDefault = false, isEpic = false } = props;
 
   // derived values
-  const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name);
+  const LucideIcon = LUCIDE_ICONS_LIST.find(function LucideIcon(item) {
+    return item.name === icon_props?.name;
+  });
   const renderDefaultIcon = isDefault && (!icon_props?.name || !icon_props?.background_color);
 
   // if no value, return empty fragment
@@ -88,4 +90,4 @@ export const IssueTypeLogo: FC<Props> = (props) => {
       </span>
     </>
   );
-};
+}

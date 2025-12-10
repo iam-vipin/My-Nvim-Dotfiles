@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -30,7 +28,7 @@ type Props = {
   publishSettings: PublishStore;
 };
 
-export const ViewLayoutsRoot: FC<Props> = observer((props) => {
+export const ViewLayoutsRoot = observer(function ViewLayoutsRoot(props: Props) {
   const { peekId, publishSettings } = props;
   // router
   const router = useRouter();

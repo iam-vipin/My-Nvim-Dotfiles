@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,60 +17,60 @@ type TIssueAdditionalPropertyValuesCreateProps = {
   shouldLoadDefaultValues: boolean;
 };
 
-export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPropertyValuesCreateProps> = observer(
-  (props) => {
-    const {
-      arePropertyValuesInitializing,
-      getWorkItemTypeById,
-      issuePropertyValues,
-      issueTypeId,
-      projectId,
-      shouldLoadDefaultValues,
-    } = props;
-    // store hooks
-    const {
-      issuePropertyValues: issuePropertyDefaultValues,
-      issuePropertyValueErrors,
-      setIssuePropertyValues: handleIssuePropertyValueUpdate,
-    } = useIssueModal();
-    const issueType = getWorkItemTypeById(issueTypeId);
-    // derived values
-    const issueTypeDetail = issueType?.asJSON;
-    const activeProperties = issueType?.activeProperties;
+export const IssueAdditionalPropertyValuesCreate = observer(function IssueAdditionalPropertyValuesCreate(
+  props: TIssueAdditionalPropertyValuesCreateProps
+) {
+  const {
+    arePropertyValuesInitializing,
+    getWorkItemTypeById,
+    issuePropertyValues,
+    issueTypeId,
+    projectId,
+    shouldLoadDefaultValues,
+  } = props;
+  // store hooks
+  const {
+    issuePropertyValues: issuePropertyDefaultValues,
+    issuePropertyValueErrors,
+    setIssuePropertyValues: handleIssuePropertyValueUpdate,
+  } = useIssueModal();
+  const issueType = getWorkItemTypeById(issueTypeId);
+  // derived values
+  const issueTypeDetail = issueType?.asJSON;
+  const activeProperties = issueType?.activeProperties;
 
-    useEffect(() => {
-      // Only set default values if shouldLoadDefaultValues is true and we have active properties
-      if (shouldLoadDefaultValues && activeProperties?.length && !arePropertyValuesInitializing) {
-        handleIssuePropertyValueUpdate({
-          ...getPropertiesDefaultValues(activeProperties),
-          ...issuePropertyValues,
-        });
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeProperties, arePropertyValuesInitializing, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
+  useEffect(() => {
+    // Only set default values if shouldLoadDefaultValues is true and we have active properties
+    if (shouldLoadDefaultValues && activeProperties?.length && !arePropertyValuesInitializing) {
+      handleIssuePropertyValueUpdate({
+        ...getPropertiesDefaultValues(activeProperties),
+        ...issuePropertyValues,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProperties, arePropertyValuesInitializing, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
 
-    const handlePropertyValueChange = (propertyId: string, value: string[]) => {
-      handleIssuePropertyValueUpdate((prev) => ({
-        ...prev,
-        [propertyId]: value,
-      }));
-    };
+  const handlePropertyValueChange = (propertyId: string, value: string[]) => {
+    handleIssuePropertyValueUpdate((prev) => ({
+      ...prev,
+      [propertyId]: value,
+    }));
+  };
 
-    if (!issueTypeDetail || !activeProperties?.length) return null;
+  if (!issueTypeDetail || !activeProperties?.length) return null;
 
-    return (
-      <div className="pt-2">
-        <IssueAdditionalPropertyValues
-          getWorkItemTypeById={getWorkItemTypeById}
-          handlePropertyValueChange={handlePropertyValueChange}
-          arePropertyValuesInitializing={arePropertyValuesInitializing}
-          issuePropertyValueErrors={issuePropertyValueErrors}
-          issuePropertyValues={issuePropertyDefaultValues}
-          issueTypeId={issueTypeId}
-          projectId={projectId}
-          variant="create"
-        />
-      </div>
-    );
-  }
-);
+  return (
+    <div className="pt-2">
+      <IssueAdditionalPropertyValues
+        getWorkItemTypeById={getWorkItemTypeById}
+        handlePropertyValueChange={handlePropertyValueChange}
+        arePropertyValuesInitializing={arePropertyValuesInitializing}
+        issuePropertyValueErrors={issuePropertyValueErrors}
+        issuePropertyValues={issuePropertyDefaultValues}
+        issueTypeId={issueTypeId}
+        projectId={projectId}
+        variant="create"
+      />
+    </div>
+  );
+});

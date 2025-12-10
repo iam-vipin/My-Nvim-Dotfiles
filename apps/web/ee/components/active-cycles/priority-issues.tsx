@@ -26,7 +26,9 @@ export type ActiveCyclePriorityIssuesProps = {
   cycle: IActiveCycle;
 };
 
-export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = observer((props) => {
+export const ActiveCyclePriorityIssues = observer(function ActiveCyclePriorityIssues(
+  props: ActiveCyclePriorityIssuesProps
+) {
   const { workspaceSlug, projectId, cycle } = props;
   // store hooks
   const {

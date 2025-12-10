@@ -38,7 +38,7 @@ type Props = {
   onAssetUpload?: (assetId: string) => void;
 };
 
-export const DefaultProperties: FC<Props> = (props) => {
+export function DefaultProperties(props: Props) {
   const { workspaceSlug, submitBtnRef, customerId, onAssetUpload } = props;
   //states
   const [logo, setLogo] = useState<File | null>(null);
@@ -457,4 +457,4 @@ export const DefaultProperties: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

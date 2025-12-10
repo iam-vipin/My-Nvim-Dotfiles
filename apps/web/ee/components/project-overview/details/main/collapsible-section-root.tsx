@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -23,7 +21,9 @@ type Props = {
   disabled?: boolean;
 };
 
-export const ProjectOverviewCollapsibleSectionRoot: FC<Props> = observer((props) => {
+export const ProjectOverviewCollapsibleSectionRoot = observer(function ProjectOverviewCollapsibleSectionRoot(
+  props: Props
+) {
   const { workspaceSlug, projectId, disabled = false } = props;
   // store hooks
   const { openCollapsibleSection, toggleOpenCollapsibleSection } = useProject();

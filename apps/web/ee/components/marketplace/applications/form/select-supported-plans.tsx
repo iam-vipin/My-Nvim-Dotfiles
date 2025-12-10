@@ -22,7 +22,7 @@ const PLAN_OPTIONS = [
   { data: EProductSubscriptionEnum.ENTERPRISE, value: "Enterprise" },
 ];
 
-export const SelectSupportedPlans: React.FC<TSelectSupportedPlansProps> = observer((props) => {
+export const SelectSupportedPlans = observer(function SelectSupportedPlans(props: TSelectSupportedPlansProps) {
   const { value, handleChange } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ export const SelectSupportedPlans: React.FC<TSelectSupportedPlansProps> = observ
     <MultiSelectDropdown
       value={value}
       options={PLAN_OPTIONS}
-      onChange={(value) => handleChange(value as string[])}
+      onChange={(value) => handleChange(value)}
       keyExtractor={(option) => option.data}
       buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
       buttonContent={(isOpen, val) => (

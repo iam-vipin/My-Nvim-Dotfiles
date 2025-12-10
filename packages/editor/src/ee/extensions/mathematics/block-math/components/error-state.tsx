@@ -9,7 +9,7 @@ type TBlockMathErrorProps = TMathComponentProps & {
   isEditable?: boolean;
 };
 
-export const BlockMathErrorState: React.FC<TBlockMathErrorProps> = ({ errorMessage, onClick, isEditable }) => {
+export function BlockMathErrorState({ errorMessage, onClick, isEditable }: TBlockMathErrorProps) {
   const latexMessage = errorMessage.replace("KaTeX", "LaTeX");
 
   return (
@@ -17,4 +17,4 @@ export const BlockMathErrorState: React.FC<TBlockMathErrorProps> = ({ errorMessa
       <div className="block-equation-inner text-red-400 text-sm">{latexMessage}</div>
     </BlockMathContainer>
   );
-};
+}

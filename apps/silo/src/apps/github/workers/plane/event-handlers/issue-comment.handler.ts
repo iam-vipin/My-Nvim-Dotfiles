@@ -107,11 +107,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       return;
     }
 
-    const githubService = getGithubService(
-      workspaceConnection as TGithubWorkspaceConnection,
-      credentials.source_access_token,
-      payload.isEnterprise
-    );
+    const githubService = getGithubService(workspaceConnection, credentials.source_access_token, payload.isEnterprise);
 
     const comment = await planeClient.issueComment.getComment(
       entityConnection.workspace_slug,
@@ -179,7 +175,7 @@ const createOrUpdateGitHubComment = async (
 
   // Find the credentials for the comment creator
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for enum mapping
     source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
     workspace_id: entityConnection.workspace_id,
     user_id: comment.updated_by || comment.created_by,
@@ -188,11 +184,7 @@ const createOrUpdateGitHubComment = async (
   let userGithubService = githubService;
 
   if (userCredential?.source_access_token) {
-    userGithubService = getGithubUserService(
-      workspaceConnection as TGithubWorkspaceConnection,
-      userCredential.source_access_token,
-      isEnterprise
-    );
+    userGithubService = getGithubUserService(workspaceConnection, userCredential.source_access_token, isEnterprise);
   }
 
   if (comment.external_id && comment.external_source && comment.external_source === ghIntegrationKey) {

@@ -13,7 +13,9 @@ type TWorkspaceSettingsTemplatesListRoot = {
   workspaceSlug: string;
 };
 
-export const WorkspaceSettingsTemplatesListRoot = observer((props: TWorkspaceSettingsTemplatesListRoot) => {
+export const WorkspaceSettingsTemplatesListRoot = observer(function WorkspaceSettingsTemplatesListRoot(
+  props: TWorkspaceSettingsTemplatesListRoot
+) {
   const { workspaceSlug } = props;
   // store hooks
   const {

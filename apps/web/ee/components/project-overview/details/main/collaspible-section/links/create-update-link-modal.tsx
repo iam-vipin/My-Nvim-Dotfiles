@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -30,7 +28,9 @@ const defaultValues: TProjectLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const ProjectLinkCreateUpdateModal: FC<TProjectLinkCreateEditModal> = observer((props) => {
+export const ProjectLinkCreateUpdateModal = observer(function ProjectLinkCreateUpdateModal(
+  props: TProjectLinkCreateEditModal
+) {
   // props
   const { setLinkData, isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
   // react hook form

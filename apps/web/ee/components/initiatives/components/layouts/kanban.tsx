@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,7 +23,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { getGroupList, getInitiativeUpdatePayload } from "../../utils";
 import { InitiativeKanbanCard } from "../initiative-kanban-card";
 
-export const InitiativeKanbanLayout = observer(() => {
+export const InitiativeKanbanLayout = observer(function InitiativeKanbanLayout() {
   const { workspaceSlug } = useParams();
   const { t } = useTranslation();
 

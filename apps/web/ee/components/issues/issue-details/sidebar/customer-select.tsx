@@ -21,7 +21,7 @@ type TProps = {
   compact?: boolean;
 };
 
-export const CustomerSelect: FC<TProps> = observer((props) => {
+export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
   const { workItemId, value, workspaceSlug, compact = false } = props;
   // hooks
   const {

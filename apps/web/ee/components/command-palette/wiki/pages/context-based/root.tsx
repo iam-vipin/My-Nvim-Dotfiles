@@ -9,7 +9,9 @@ export type ContextBasedActionsProps = {
   handleSelection: (data: unknown) => void;
 };
 
-export const WikiAppPowerKContextBasedPagesList: React.FC<ContextBasedActionsProps> = (_props) => <></>;
+export function WikiAppPowerKContextBasedPagesList(_props: ContextBasedActionsProps) {
+  return <></>;
+}
 
 export const useWikiAppPowerKContextBasedActions = (): TPowerKCommandConfig[] => {
   const pageCommands = useWikiAppPowerKPageContextBasedActions();

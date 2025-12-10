@@ -12,5 +12,5 @@ export const getTimelineStore = (timelineStore: ITimelineStore, timelineType: TT
   if (timelineType === GANTT_TIMELINE_TYPE.INITIATIVE) {
     return timelineStore.initiativesTimeLineStore as IBaseTimelineStore;
   }
-  return getBaseTimelineStore(timelineStore, timelineType as TTimelineTypeCore);
+  return getBaseTimelineStore(timelineStore, timelineType);
 };

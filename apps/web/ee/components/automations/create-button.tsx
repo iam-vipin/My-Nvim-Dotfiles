@@ -12,7 +12,7 @@ type TProps = {
   variant?: TButtonVariant;
 };
 
-export const CreateAutomationButton = (props: TProps) => {
+export function CreateAutomationButton(props: TProps) {
   const { variant = "primary" } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -33,4 +33,4 @@ export const CreateAutomationButton = (props: TProps) => {
       {t("automations.settings.create_automation")}
     </Button>
   );
-};
+}

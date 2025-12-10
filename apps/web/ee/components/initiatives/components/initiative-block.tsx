@@ -26,7 +26,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeBlock = observer((props: Props) => {
+export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
   const { initiativeId } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);

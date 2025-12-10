@@ -13,7 +13,7 @@ type Props = {
   item: TMovePageModalListItem;
 };
 
-export const MovePageModalListItem: React.FC<Props> = (props) => {
+export function MovePageModalListItem(props: Props) {
   const { item } = props;
 
   return (
@@ -48,4 +48,4 @@ export const MovePageModalListItem: React.FC<Props> = (props) => {
       )}
     </Combobox.Option>
   );
-};
+}

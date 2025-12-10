@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
@@ -19,7 +17,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.CONFIGURE_JIRA];
 
 const currentStepKey = E_IMPORTER_STEPS.CONFIGURE_JIRA;
 
-export const ConfigureJiraRoot: FC = observer(() => {
+export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
   // hooks
   const { currentStep, handleStepper, importerData, handleImporterData } = useJiraServerImporter();
   const { t } = useTranslation();

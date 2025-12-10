@@ -79,7 +79,7 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
         response.forEach((stats) => {
           if (!stats) return;
 
-          this.rootStore.epicAnalytics.epicStatsMap![stats.epic_id] = stats;
+          this.rootStore.epicAnalytics.epicStatsMap[stats.epic_id] = stats;
         });
       });
 

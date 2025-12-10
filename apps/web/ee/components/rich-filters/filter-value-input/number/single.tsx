@@ -25,7 +25,9 @@ type TNumberFilterValueInputProps<P extends TFilterProperty> = {
   onChange: (value: number | null) => void;
 };
 
-export const NumberFilterValueInput = observer(<P extends TFilterProperty>(props: TNumberFilterValueInputProps<P>) => {
+export const NumberFilterValueInput = observer(function NumberFilterValueInput<P extends TFilterProperty>(
+  props: TNumberFilterValueInputProps<P>
+) {
   const { config, condition, onChange, isDisabled } = props;
   // derived values
   const conditionValue = condition.value;

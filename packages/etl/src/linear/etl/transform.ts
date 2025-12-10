@@ -48,7 +48,7 @@ export const transformIssue = async (
     target_date: getFormattedDate(issue.dueDate?.toString()),
     start_date: getFormattedDate(issue.startedAt?.toString()),
     created_at: issue.createdAt,
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for possible undefined
     state: targetState.id ?? "",
     // external_source_state_id: targetState?.external_id ?? "",
     priority: issue.priority == 0 ? "none" : issue.priorityLabel.toLowerCase(),
@@ -125,9 +125,9 @@ export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => ({
 });
 
 const breakAndGetAssignee = async (issue: Issue, users: User[]): Promise<string | undefined> => {
-  // @ts-expect-error
+  // @ts-expect-error - Ignoring ts error for private property access
   if (issue._assignee) {
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for private property access
     const assigneeId = issue._assignee.id;
     const user = users.find((u) => u.id === assigneeId);
     if (user) {
@@ -142,7 +142,7 @@ const breakAndGetAssignee = async (issue: Issue, users: User[]): Promise<string 
 };
 
 const breakAndGetParent = (issue: Issue): string | undefined => {
-  // @ts-expect-error
+  // @ts-expect-error - Ignoring ts error for private property access
   const parent = issue._parent;
   if (parent) {
     return parent.id;
@@ -150,9 +150,9 @@ const breakAndGetParent = (issue: Issue): string | undefined => {
 };
 
 const breakAndGetCreator = (issue: Issue, users: User[]): string | undefined => {
-  // @ts-expect-error
+  // @ts-expect-error - Ignoring ts error for private property access
   if (issue._creator) {
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for private property access
     const creatorId = issue._creator.id;
     const user = users.find((u) => u.id === creatorId);
     return user?.displayName;
@@ -160,9 +160,9 @@ const breakAndGetCreator = (issue: Issue, users: User[]): string | undefined => 
 };
 
 const breakAndGetState = (issue: Issue): string | undefined => {
-  // @ts-expect-error
+  // @ts-expect-error - Ignoring ts error for private property access
   if (issue._state) {
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for private property access
     return issue._state.id;
   }
 };

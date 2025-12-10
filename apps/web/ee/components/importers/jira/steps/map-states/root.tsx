@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
@@ -25,7 +23,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];
 
 const currentStepKey = E_IMPORTER_STEPS.MAP_STATES;
 
-export const MapStatesRoot: FC = observer(() => {
+export const MapStatesRoot = observer(function MapStatesRoot() {
   // hooks
   const {
     workspace,
@@ -55,10 +53,10 @@ export const MapStatesRoot: FC = observer(() => {
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
   const jiraProjectStates = ((jiraProjectId && jiraStateIdsByProjectId(jiraProjectId)) || [])
     .map((id) => (jiraProjectId && getJiraStateById(jiraProjectId, id)) || undefined)
-    .filter((jiraState) => jiraState != undefined && jiraState != null) as JiraStatus[];
+    .filter((jiraState) => jiraState != undefined && jiraState != null);
   const planeProjectStates = ((planeProjectId && stateIdsByProjectId(planeProjectId)) || [])
     .map((id) => (planeProjectId && getStateById(planeProjectId, id)) || undefined)
-    .filter((jiraState) => jiraState != undefined && jiraState != null) as IState[];
+    .filter((jiraState) => jiraState != undefined && jiraState != null);
 
   const isNextButtonDisabled = jiraProjectStates?.length === Object.keys(formData).length ? false : true;
   // handlers
@@ -123,7 +121,7 @@ export const MapStatesRoot: FC = observer(() => {
         const result = fuse.search(jiraState.name);
 
         if (result.length > 0) {
-          const planeState = result[0].item as IState;
+          const planeState = result[0].item;
           if (jiraState.id && planeState.id) {
             handleFormData(jiraState.id, planeState.id);
           }

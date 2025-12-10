@@ -27,7 +27,9 @@ type TIssuePropertyOptionsProviderProps = {
   children: React.ReactNode;
 };
 
-export const IssuePropertyOptionsProvider = observer((props: TIssuePropertyOptionsProviderProps) => {
+export const IssuePropertyOptionsProvider = observer(function IssuePropertyOptionsProvider(
+  props: TIssuePropertyOptionsProviderProps
+) {
   const { customPropertyId, customPropertyOperations, children } = props;
   const { getSortedActivePropertyOptions } = customPropertyOperations;
   // states

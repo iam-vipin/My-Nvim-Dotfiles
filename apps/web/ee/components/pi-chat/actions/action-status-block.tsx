@@ -19,7 +19,7 @@ type TProps = {
   dialogue: TDialogue;
 };
 
-const ActionStatusBlock = (props: TProps) => {
+function ActionStatusBlock(props: TProps) {
   // props
 
   const { isLatest, isPiThinking, workspaceSlug, workspaceId, query_id, activeChatId, isPiTyping, dialogue } = props;
@@ -98,6 +98,6 @@ const ActionStatusBlock = (props: TProps) => {
       )}
     </div>
   );
-};
+}
 
 export default ActionStatusBlock;

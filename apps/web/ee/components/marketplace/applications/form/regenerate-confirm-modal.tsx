@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { AlertCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +13,7 @@ type Props = {
   handleRegenerated: (data: TUserApplication) => void;
 };
 
-export const RegenerateConfirmModal: React.FC<Props> = observer((props) => {
+export const RegenerateConfirmModal = observer(function RegenerateConfirmModal(props: Props) {
   const { isOpen, handleClose, applicationId, handleRegenerated } = props;
 
   const { regenerateApplicationSecret } = useApplications();

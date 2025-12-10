@@ -9,7 +9,7 @@ import { cn } from "@plane/utils";
 import emptyWorkspaceDarkPng from "@/app/assets/empty-state/marketplace/empty-workspace-dark.png?url";
 import emptyWorkspaceLightPng from "@/app/assets/empty-state/marketplace/empty-workspace-light.png?url";
 
-export const WorkspaceSelectorEmptyState = observer(() => {
+export const WorkspaceSelectorEmptyState = observer(function WorkspaceSelectorEmptyState() {
   // plane hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -30,6 +30,7 @@ export const WorkspaceSelectorEmptyState = observer(() => {
               href="https://docs.plane.so/core-concepts/workspaces/overview"
               target="_blank"
               className={cn(getButtonStyling("outline-primary", "md"), "border-custom-border-200 text-custom-text-100")}
+              rel="noreferrer"
             >
               {t("learn_more_about_workspaces")}
             </a>

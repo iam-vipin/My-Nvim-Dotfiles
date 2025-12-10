@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { CircleMinus } from "lucide-react";
@@ -26,7 +24,7 @@ type Props = {
   teamspaceIds: string[];
 };
 
-export const ProjectTeamspaceListItem: React.FC<Props> = observer((props) => {
+export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListItem(props: Props) {
   const { workspaceSlug, projectId, teamspaceIds } = props;
   // states
   const [selectedTeamspaceIdToRemove, setSelectedTeamspaceIdToRemove] = useState<string | null>(null);

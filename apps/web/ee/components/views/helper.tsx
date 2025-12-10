@@ -21,7 +21,7 @@ const ALLOWED_LAYOUTS = [EIssueLayoutTypes.SPREADSHEET, EIssueLayoutTypes.GANTT]
  * @param {TLayoutSelectionProps} props
  * @returns {React.ReactNode}
  */
-export const GlobalViewLayoutSelection = ({ onChange, selectedLayout, workspaceSlug }: TLayoutSelectionProps) => {
+export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceSlug }: TLayoutSelectionProps) {
   const isGanttLayoutEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
 
   const {
@@ -42,22 +42,22 @@ export const GlobalViewLayoutSelection = ({ onChange, selectedLayout, workspaceS
   if (!isGanttLayoutEnabled) return null;
 
   return <LayoutSelection layouts={ALLOWED_LAYOUTS} onChange={onChange} selectedLayout={selectedLayout} />;
-};
+}
 
-export const WorkspaceAdditionalLayouts = (props: TWorkspaceLayoutProps) => {
+export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.GANTT:
       return <WorkspaceGanttRoot {...props} />;
     default:
       return null;
   }
-};
+}
 
-export const AdditionalHeaderItems = ({ isLocked }: { isLocked: boolean }) => {
+export function AdditionalHeaderItems({ isLocked }: { isLocked: boolean }) {
   if (!isLocked) return null;
   return (
     <div className="h-6 min-w-[76px] flex items-center justify-center gap-1.5 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 text-xs font-medium">
       <LockIcon className="size-3.5 flex-shrink-0" /> Locked
     </div>
   );
-};
+}

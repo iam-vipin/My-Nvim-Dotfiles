@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ type Props = {
   handleClose: () => void;
 };
 
-export const DeleteCustomerModal: React.FC<Props> = observer((props) => {
+export const DeleteCustomerModal = observer(function DeleteCustomerModal(props: Props) {
   const { isModalOpen, customerId, handleClose } = props;
   // i18n
   const { t } = useTranslation(); // router

@@ -11,7 +11,7 @@ type Props = {
   updateSearchTerm: (searchTerm: string) => void;
 };
 
-export const MovePageModalInput: React.FC<Props> = (props) => {
+export function MovePageModalInput(props: Props) {
   const { canPageBeMovedToTeamspace, searchTerm, updateSearchTerm } = props;
   // navigation
   const { teamspaceId, projectId } = useParams();
@@ -47,4 +47,4 @@ export const MovePageModalInput: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

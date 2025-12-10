@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -15,7 +13,9 @@ interface AppRailVisibilityProviderProps {
  * EE AppRailVisibilityProvider
  * Wraps core provider with feature flag and subscription checks
  */
-export const AppRailVisibilityProvider = observer(({ children }: AppRailVisibilityProviderProps) => {
+export const AppRailVisibilityProvider = observer(function AppRailVisibilityProvider({
+  children,
+}: AppRailVisibilityProviderProps) {
   const { workspaceSlug } = useParams();
 
   // Check feature flag

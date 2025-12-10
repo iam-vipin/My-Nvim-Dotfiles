@@ -12,7 +12,7 @@ export type EmbedLinkViewProps = {
   closeLinkView: () => void;
 };
 
-export const EmbedLinkView = (props: EmbedLinkViewProps) => {
+export function EmbedLinkView(props: EmbedLinkViewProps) {
   const { editor, posToInsert, url, closeLinkView } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -143,4 +143,4 @@ export const EmbedLinkView = (props: EmbedLinkViewProps) => {
       </div>
     </div>
   );
-};
+}

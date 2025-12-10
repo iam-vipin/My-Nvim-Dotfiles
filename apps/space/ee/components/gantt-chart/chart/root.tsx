@@ -20,12 +20,12 @@ type ChartViewRootProps = {
   sidebarToRender: (props: any) => React.ReactNode;
   bottomSpacing: boolean;
   showAllBlocks: boolean;
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock | undefined;
+  getBlockById: (id: string, currentViewData?: ChartDataType) => IGanttBlock | undefined;
   loadMoreBlocks?: () => void;
   canLoadMoreBlocks?: boolean;
 };
 
-export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
+export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRootProps) {
   const {
     border,
     title,

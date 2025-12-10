@@ -41,7 +41,7 @@ const workItemService = new IssueService();
 const issuePropertyValuesService = new IssuePropertyValuesService();
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
-export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
+export const IssueModalProvider = observer(function IssueModalProvider(props: TIssueModalProviderProps) {
   const { children, templateId, dataForPreload, allowedProjectIds } = props;
   // states
   const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(templateId ?? null);

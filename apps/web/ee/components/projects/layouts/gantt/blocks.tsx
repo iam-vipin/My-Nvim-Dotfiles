@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -22,7 +20,7 @@ type SidebarProps = {
   block: IGanttBlock;
 };
 
-export const ProjectGanttBlock: React.FC<Props> = observer((props) => {
+export const ProjectGanttBlock = observer(function ProjectGanttBlock(props: Props) {
   const { projectId } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -66,7 +64,7 @@ export const ProjectGanttBlock: React.FC<Props> = observer((props) => {
 });
 
 // rendering projects on gantt sidebar
-export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props) => {
+export const ProjectGanttSidebarBlock = observer(function ProjectGanttSidebarBlock(props: SidebarProps) {
   const { block } = props;
   const { filters } = useProjectFilter();
 
@@ -98,7 +96,7 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
       )}
     </>
   );
-  return !!projectDetails.member_role ? (
+  return projectDetails.member_role ? (
     <Link
       href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
       className="px-page-x w-full cursor-pointer text-sm text-custom-text-100 flex justify-between h-11"

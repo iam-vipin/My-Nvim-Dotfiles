@@ -13,7 +13,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const DonutChartAppearanceConfig: React.FC<Props> = (props) => {
+export function DonutChartAppearanceConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -65,4 +65,4 @@ export const DonutChartAppearanceConfig: React.FC<Props> = (props) => {
       />
     </>
   );
-};
+}

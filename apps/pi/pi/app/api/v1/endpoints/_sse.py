@@ -17,13 +17,16 @@ def sse_done() -> str:
     return sse_event("done", {"done": True})
 
 
-def normalize_error_chunk(chunk: str) -> Optional[str]:
+def normalize_error_chunk(chunk: Any) -> Optional[str]:
     """Convert plain text error chunks to a proper SSE error event.
 
     Recognizes patterns like "error: <message>" (with optional quotes) and
     a set of known fallback error strings used across the pipeline.
     Returns a formatted SSE error event string or None if not applicable.
     """
+
+    if not isinstance(chunk, str):
+        return None
 
     if chunk.startswith("error:"):
         msg = chunk.split("error:", 1)[1].strip()

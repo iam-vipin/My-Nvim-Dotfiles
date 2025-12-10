@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -13,7 +11,7 @@ import TemplatesUpgradeLight from "@/app/assets/empty-state/templates/upgrade-li
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 
-export const ApplicationsUpgrade: FC = observer(() => {
+export const ApplicationsUpgrade = observer(function ApplicationsUpgrade() {
   // router
   // store hooks
   const { resolvedTheme } = useTheme();

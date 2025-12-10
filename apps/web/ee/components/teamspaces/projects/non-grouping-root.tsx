@@ -16,7 +16,9 @@ export type TTeamspaceProjectsWithoutGroupingRootProps = {
   teamspace: TTeamspace;
 };
 
-export const TeamspaceProjectsWithoutGroupingRoot = observer((props: TTeamspaceProjectsWithoutGroupingRootProps) => {
+export const TeamspaceProjectsWithoutGroupingRoot = observer(function TeamspaceProjectsWithoutGroupingRoot(
+  props: TTeamspaceProjectsWithoutGroupingRootProps
+) {
   const { workspaceSlug, teamspace } = props;
   // hooks
   const { totalProjectIds: storeTotalProjectIds, filteredProjectIds: storeFilteredProjectIds } = useProject();

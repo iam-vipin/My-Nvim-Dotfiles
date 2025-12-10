@@ -3,7 +3,7 @@ import { Crown } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const IssueEmbedUpgradeCard: React.FC<any> = (props) => {
+export function IssueEmbedUpgradeCard(props: any) {
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   return (
     <div
@@ -31,4 +31,4 @@ export const IssueEmbedUpgradeCard: React.FC<any> = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -24,7 +24,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
+export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot(props: Props) {
   const { className, selectionHelpers } = props;
   // router
   const { workspaceSlug } = useParams();

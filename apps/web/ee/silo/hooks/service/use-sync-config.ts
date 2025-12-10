@@ -9,7 +9,7 @@ type TUseSyncConfig = {
   data: TServiceAuthConfiguration | undefined;
   isLoading: boolean;
   error: Error | undefined;
-  mutate: (data?: TServiceAuthConfiguration | undefined) => Promise<TServiceAuthConfiguration | undefined>;
+  mutate: (data?: TServiceAuthConfiguration) => Promise<TServiceAuthConfiguration | undefined>;
 };
 
 export const useSyncConfig = (service: TImporterKeys): TUseSyncConfig => {

@@ -7,7 +7,7 @@ type TProps = {
 };
 const MIN_HEIGHT = 2; // px minimum height for a bar
 
-export const Waveform: React.FC<TProps> = ({ data, barCount = 100 }) => {
+export function Waveform({ data, barCount = 100 }: TProps) {
   if (!data || data.length === 0) return null;
 
   // --- Resample data so we always render `barCount` bars ---
@@ -45,4 +45,4 @@ export const Waveform: React.FC<TProps> = ({ data, barCount = 100 }) => {
       </ResponsiveContainer>
     </div>
   );
-};
+}

@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -10,7 +9,7 @@ import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { PiSidebar } from "@/plane-web/components/pi-chat/sidebar";
 
-export const PiAppSidebar: FC = observer(() => {
+export const PiAppSidebar = observer(function PiAppSidebar() {
   // store hooks
   const {
     sidebarCollapsed,

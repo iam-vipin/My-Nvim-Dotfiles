@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Link, Paperclip } from "lucide-react";
@@ -18,7 +16,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const InitiativeInfoActionItems: FC<Props> = observer((props) => {
+export const InitiativeInfoActionItems = observer(function InitiativeInfoActionItems(props: Props) {
   const { workspaceSlug, initiativeId, disabled } = props;
   const { t } = useTranslation();
   // store hooks

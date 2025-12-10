@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -16,7 +14,7 @@ type TFilterState = {
   handleUpdate: (val: string[]) => void;
 };
 
-export const FilterState: React.FC<TFilterState> = observer((props) => {
+export const FilterState = observer(function FilterState(props: TFilterState) {
   const { workspaceId, searchQuery, appliedFilters, handleUpdate } = props;
   // hooks
   const { getProjectStateById, getProjectStateIdsWithGroupingByWorkspaceId } = useWorkspaceProjectStates();

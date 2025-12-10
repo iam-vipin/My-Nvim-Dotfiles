@@ -8,12 +8,12 @@ export type ActiveCycleInfoCardProps = {
   projectId: string;
 };
 
-export const WorkspaceActiveCycleRoot = (props: ActiveCycleInfoCardProps) => {
+export function WorkspaceActiveCycleRoot(props: ActiveCycleInfoCardProps) {
   const { workspaceSlug, cycle } = props;
   const isFeatureEnabled = useFlag(workspaceSlug.toString(), "CYCLE_PROGRESS_CHARTS");
   const ActiveCycle = useMemo(
-    () =>
-      lazy(() =>
+    function ActiveCycle() {
+      return lazy(() =>
         isFeatureEnabled
           ? import(`./card-v2`).then((module) => ({
               default: module["ActiveCycleInfoCard"],
@@ -21,7 +21,8 @@ export const WorkspaceActiveCycleRoot = (props: ActiveCycleInfoCardProps) => {
           : import("./card-v1").then((module) => ({
               default: module["ActiveCycleInfoCard"],
             }))
-      ),
+      );
+    },
     [isFeatureEnabled]
   );
 
@@ -30,4 +31,4 @@ export const WorkspaceActiveCycleRoot = (props: ActiveCycleInfoCardProps) => {
       <ActiveCycle workspaceSlug={workspaceSlug?.toString()} projectId={cycle.project_id} cycle={cycle} />
     </Suspense>
   );
-};
+}

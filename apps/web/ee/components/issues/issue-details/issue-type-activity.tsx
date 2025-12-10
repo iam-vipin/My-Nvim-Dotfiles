@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -26,7 +24,7 @@ type TIssueTypeDetail = {
   className?: string;
 };
 
-const IssueTypeDetail: FC<TIssueTypeDetail> = observer((props) => {
+const IssueTypeDetail = observer(function IssueTypeDetail(props: TIssueTypeDetail) {
   const { issueTypeId, className = "" } = props;
   // hooks
   const { getIssueTypeById } = useIssueTypes();
@@ -41,7 +39,7 @@ const IssueTypeDetail: FC<TIssueTypeDetail> = observer((props) => {
   );
 });
 
-export const IssueTypeActivity: FC<TIssueTypeActivity> = observer((props) => {
+export const IssueTypeActivity = observer(function IssueTypeActivity(props: TIssueTypeActivity) {
   const { activityId, showIssue = false, ends } = props;
   // router
   const { workspaceSlug } = useParams();

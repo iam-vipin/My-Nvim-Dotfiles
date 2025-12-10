@@ -14,7 +14,7 @@ type Props = {
   block: IGanttBlock;
 };
 
-export const EpicSidebarBlock = observer((props: Props) => {
+export const EpicSidebarBlock = observer(function EpicSidebarBlock(props: Props) {
   const { block } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();

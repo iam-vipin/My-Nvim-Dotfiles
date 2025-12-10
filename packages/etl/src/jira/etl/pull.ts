@@ -121,18 +121,13 @@ export async function pullSprints(client: JiraService, projectId: string): Promi
         const boardIssues: unknown[] = [];
         await fetchPaginatedData(
           (startAt) =>
-            client.getBoardSprintsIssues(
-              board.id as number,
-              sprint.id as number,
-              startAt
-            ) as Promise<PaginatedResponse>,
+            client.getBoardSprintsIssues(board.id as number, sprint.id, startAt) as Promise<PaginatedResponse>,
           (values) => boardIssues.push(...(values as IJiraIssue[])),
           "issues"
         );
         jiraSprints.push({ sprint, issues: boardIssues as IJiraIssue[] });
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: any) {
     console.error("Could not fetch sprints, something went wrong", e.response?.data);
   }
@@ -156,7 +151,6 @@ export async function pullComponents(client: JiraService, projectKey: string): P
         jiraComponents.push({ component, issues: issues });
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: any) {
     console.error("Could not fetch components, something went wrong", e.response?.data);
   }

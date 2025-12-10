@@ -43,7 +43,9 @@ export const usePageActionsMenu = (props: {
   ];
 
   // Empty modals component
-  const ModalsComponent = observer(() => <></>);
+  const ModalsComponent = observer(function ModalsComponent() {
+    return <></>;
+  });
 
   return {
     customMenuItems,

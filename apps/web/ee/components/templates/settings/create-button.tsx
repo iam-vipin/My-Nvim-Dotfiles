@@ -47,7 +47,7 @@ type TCreateTemplateOption = {
   featureFlagKey: E_FEATURE_FLAGS;
 };
 
-export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProps) => {
+export const CreateTemplatesButton = observer(function CreateTemplatesButton(props: TCreateTemplatesButtonProps) {
   // router
   const router = useAppRouter();
   // plane hooks

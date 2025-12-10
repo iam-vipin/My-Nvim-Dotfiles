@@ -1,5 +1,3 @@
-"use client";
-
 import useSWR from "swr";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

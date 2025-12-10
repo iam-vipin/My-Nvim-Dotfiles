@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -17,7 +15,7 @@ type Props = {
   uploadStatus: TAttachmentUploadStatus;
 };
 
-export const RequestAttachmentsUploadItem: React.FC<Props> = observer((props) => {
+export const RequestAttachmentsUploadItem = observer(function RequestAttachmentsUploadItem(props: Props) {
   // props
   const { uploadStatus } = props;
   // derived values

@@ -12,7 +12,7 @@ type Props = {
   isCreateModal?: boolean;
 };
 
-export const ProjectFeatureToggle = (props: Props) => {
+export function ProjectFeatureToggle(props: Props) {
   const { featureItem, value, handleSubmit, disabled, isCreateModal } = props;
 
   const handleToggle = () => {
@@ -47,4 +47,4 @@ export const ProjectFeatureToggle = (props: Props) => {
   }
 
   return <ToggleSwitch {...toggleSwitchProps} data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE} />;
-};
+}

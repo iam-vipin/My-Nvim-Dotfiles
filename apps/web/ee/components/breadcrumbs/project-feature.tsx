@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // ui
 import { EProjectFeatureKey } from "@plane/constants";
@@ -19,7 +17,9 @@ type TProjectFeatureBreadcrumbProps = {
   isLast?: boolean;
 };
 
-export const ProjectFeatureBreadcrumb = observer((props: TProjectFeatureBreadcrumbProps) => {
+export const ProjectFeatureBreadcrumb = observer(function ProjectFeatureBreadcrumb(
+  props: TProjectFeatureBreadcrumbProps
+) {
   const { workspaceSlug, projectId, featureKey, isLast = false } = props;
   // store hooks
   const { getPartialProjectById } = useProject();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
@@ -21,7 +19,7 @@ type TProjectForm = {
   isEnterprise: boolean;
 };
 
-export const ProjectForm: FC<TProjectForm> = observer((props) => {
+export const ProjectForm = observer(function ProjectForm(props: TProjectForm) {
   // props
   const { value, handleChange, isEnterprise } = props;
 

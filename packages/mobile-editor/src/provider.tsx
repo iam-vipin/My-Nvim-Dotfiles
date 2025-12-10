@@ -1,5 +1,3 @@
-"use client";
-
 import { FC, ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 // mobx store provider
@@ -11,7 +9,7 @@ export interface IAppProvider {
 
 const themes = ["light", "dark"];
 
-export const AppProvider: FC<IAppProvider> = (props) => {
+export function AppProvider(props: IAppProvider) {
   const { children } = props;
   return (
     <>
@@ -22,4 +20,4 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       </StoreProvider>
     </>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ type Props = {
   projectId: string;
 };
 
-export const ProjectOverviewProgressSectionRoot: FC<Props> = observer((props) => {
+export const ProjectOverviewProgressSectionRoot = observer(function ProjectOverviewProgressSectionRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -54,5 +52,5 @@ export const ProjectOverviewProgressSectionRoot: FC<Props> = observer((props) =>
       </SectionWrapper>
     );
   }
-  return <ProgressSection data={analytics as TStateAnalytics} />;
+  return <ProgressSection data={analytics} />;
 });

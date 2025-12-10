@@ -24,7 +24,7 @@ type Props = {
   dashboardId: string;
 };
 
-export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((props) => {
+export const DashboardsWidgetConfigSidebarRoot = observer(function DashboardsWidgetConfigSidebarRoot(props: Props) {
   const { className, dashboardId } = props;
 
   // store hooks
@@ -65,7 +65,7 @@ export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((prop
     async (data: Partial<TDashboardWidget>) => {
       try {
         await updateWidget?.(data);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         const { config, ...rest } = data;
         if (!isConfigurationMissing && Object.keys(rest).length) {
           fetchWidgetData?.();

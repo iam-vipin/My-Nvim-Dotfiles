@@ -130,5 +130,5 @@ export const getTransformedCustomFieldValues = (
 
 export const getTransformedComments = (entities: AsanaEntity): Partial<ExIssueComment>[] => {
   const issueComments = entities.comments.map((comment) => transformComments(comment, entities.users));
-  return issueComments.filter(Boolean) as Partial<ExIssueComment>[];
+  return issueComments.filter(Boolean);
 };

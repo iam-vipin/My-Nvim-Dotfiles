@@ -12,7 +12,10 @@ export type CommentFiltersProps = {
   onFilterChange: (filterKey: "showAll" | "showActive" | "showResolved") => void;
 };
 
-export const PageCommentFilterControls = observer(({ filters, onFilterChange }: CommentFiltersProps) => {
+export const PageCommentFilterControls = observer(function PageCommentFilterControls({
+  filters,
+  onFilterChange,
+}: CommentFiltersProps) {
   const isFiltersApplied = filters.showActive || filters.showResolved;
 
   return (

@@ -66,17 +66,12 @@ export async function pullSprints(client: JiraV2Service, projectId: string): Pro
       for (const sprint of sprints.values) {
         const boardIssues = await fetchPaginatedDataByKey<IJiraIssue>(
           (startAt) =>
-            client.getBoardSprintsIssues(
-              board.id as number,
-              sprint.id as number,
-              startAt
-            ) as Promise<PaginatedResponse>,
+            client.getBoardSprintsIssues(board.id as number, sprint.id, startAt) as Promise<PaginatedResponse>,
           "issues"
         );
         jiraSprints.push({ sprint, issues: boardIssues });
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: any) {
     console.error("Could not fetch sprints, something went wrong", e.response?.data);
   }
@@ -95,7 +90,6 @@ export async function pullComponents(client: JiraV2Service, projectKey: string):
         jiraComponents.push({ component, issues: issues.issues });
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: any) {
     console.error("Could not fetch components, something went wrong", e.response?.data);
   }

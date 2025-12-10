@@ -31,7 +31,7 @@ type TUpdateListTabs = {
   className?: string;
 };
 
-const UpdateListTabs = (props: TUpdateListTabs) => {
+function UpdateListTabs(props: TUpdateListTabs) {
   const { updates, customTitle, className } = props;
   const { getUserDetails } = useMember();
   return (
@@ -63,9 +63,9 @@ const UpdateListTabs = (props: TUpdateListTabs) => {
       </div>
     )
   );
-};
+}
 
-export const UpdateList = observer((props: TUpdateList) => {
+export const UpdateList = observer(function UpdateList(props: TUpdateList) {
   const { count, workspaceSlug, entityId, getUpdates, entityType, status, customTitle, showTabs, handleTabChange } =
     props;
   const { data: updates, isLoading } = useSWR(

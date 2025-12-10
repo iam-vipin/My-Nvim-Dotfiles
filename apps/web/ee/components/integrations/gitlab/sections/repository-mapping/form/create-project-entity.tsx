@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ type TProjectEntityFormCreate = {
   isEnterprise: boolean;
 };
 
-export const ProjectEntityFormCreate: FC<TProjectEntityFormCreate> = observer((props) => {
+export const ProjectEntityFormCreate = observer(function ProjectEntityFormCreate(props: TProjectEntityFormCreate) {
   // props
   const { modal, handleModal, isEnterprise } = props;
 

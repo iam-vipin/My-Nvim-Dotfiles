@@ -20,7 +20,7 @@ type Props = {
   searchTerm: string;
 };
 
-export const MovePageModalSections: React.FC<Props> = observer((props) => {
+export const MovePageModalSections = observer(function MovePageModalSections(props: Props) {
   const { canPageBeMovedToTeamspace, searchTerm } = props;
   // navigation
   const { workspaceSlug, teamspaceId, projectId } = useParams();

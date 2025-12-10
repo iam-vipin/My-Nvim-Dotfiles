@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 
 // icons
@@ -12,7 +10,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
+export const AppliedPriorityFilters = observer(function AppliedPriorityFilters(props: Props) {
   const { handleRemove, values } = props;
 
   return (

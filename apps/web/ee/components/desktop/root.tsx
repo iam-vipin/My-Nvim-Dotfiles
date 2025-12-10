@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";

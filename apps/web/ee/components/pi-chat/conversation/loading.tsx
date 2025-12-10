@@ -8,7 +8,7 @@ type TProps = {
   isFullScreen: boolean;
 };
 
-export const Loading = observer((props: TProps) => {
+export const Loading = observer(function Loading(props: TProps) {
   const { isLoading } = props;
 
   return (

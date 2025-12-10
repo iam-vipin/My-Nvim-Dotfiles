@@ -9,7 +9,7 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
   onChange?: (value: string) => void;
 };
 
-export const InputField = <T extends FieldValues>(props: Props<T>) => {
+export function InputField<T extends FieldValues>(props: Props<T>) {
   const { id, type, placeholder, disabled, tabIndex, error, className = "", register, validation, onChange } = props;
 
   return (
@@ -29,4 +29,4 @@ export const InputField = <T extends FieldValues>(props: Props<T>) => {
       />
     </FieldWrapper>
   );
-};
+}

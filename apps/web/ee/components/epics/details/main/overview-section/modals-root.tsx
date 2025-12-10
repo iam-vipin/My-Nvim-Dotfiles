@@ -18,7 +18,7 @@ type Props = {
   epicId: string;
 };
 
-export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
+export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModals(props: Props) {
   const { workspaceSlug, projectId, epicId } = props;
   // store hooks
   const {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Avatar, Table } from "@plane/ui";
 // helpers
@@ -17,7 +15,7 @@ export type TWorklogsPaginatedTableRoot = {
   workspaceId: string;
 };
 
-export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (props) => {
+export function WorklogsPaginatedTableRoot(props: TWorklogsPaginatedTableRoot) {
   const {} = props;
   // hooks
   const { getProjectById } = useProject();
@@ -98,4 +96,4 @@ export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (prop
       />
     </div>
   );
-};
+}

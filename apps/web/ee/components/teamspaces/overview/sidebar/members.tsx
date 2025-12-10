@@ -24,7 +24,9 @@ export type TTeamsOverviewSidebarMembersProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSidebarMembersProps) => {
+export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSidebarMembers(
+  props: TTeamsOverviewSidebarMembersProps
+) {
   const { teamspaceId, isEditingAllowed } = props;
   // router
   const router = useAppRouter();

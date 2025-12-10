@@ -8,7 +8,7 @@ import lightState from "@/app/assets/auth/pi-chat-light.webp?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
-export const UnauthorizedView = (props: { className?: string; imgClassName?: string }) => {
+export function UnauthorizedView(props: { className?: string; imgClassName?: string }) {
   const { className, imgClassName } = props;
   // router
   const pathname = usePathname();
@@ -18,7 +18,7 @@ export const UnauthorizedView = (props: { className?: string; imgClassName?: str
   const { resolvedTheme } = useTheme();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   // SWR
   const { data: instance } = useSWR(
     workspaceId ? `PI_STARTER_${workspaceId}` : null,
@@ -64,4 +64,4 @@ export const UnauthorizedView = (props: { className?: string; imgClassName?: str
       </div>
     </div>
   );
-};
+}

@@ -18,7 +18,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const BulkArchiveConfirmationModal: React.FC<Props> = observer((props) => {
+export const BulkArchiveConfirmationModal = observer(function BulkArchiveConfirmationModal(props: Props) {
   const { handleClose, isOpen, issueIds, onSubmit, projectId, workspaceSlug } = props;
   // states
   const [isArchiving, setIsDeleting] = useState(false);

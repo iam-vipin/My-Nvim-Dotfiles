@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
@@ -11,7 +10,9 @@ type TCreateCustomerCreateToastActions = {
   customerId: string;
 };
 
-export const CreateCustomerCreateToastActions: FC<TCreateCustomerCreateToastActions> = observer((props) => {
+export const CreateCustomerCreateToastActions = observer(function CreateCustomerCreateToastActions(
+  props: TCreateCustomerCreateToastActions
+) {
   const { workspaceSlug, customerId } = props;
   // state
   const [copied, setCopied] = useState(false);

@@ -25,7 +25,12 @@ type CommentItemProps = {
   className?: string;
 };
 
-export const PageCommentDisplay = observer(({ comment, page, isParent, className = "" }: CommentItemProps) => {
+export const PageCommentDisplay = observer(function PageCommentDisplay({
+  comment,
+  page,
+  isParent,
+  className = "",
+}: CommentItemProps) {
   // Local state for UI controls (optimized to only essential states)
   const [isEditing, setIsEditing] = useState(false);
   const [deleteCommentModal, setDeleteCommentModal] = useState(false);

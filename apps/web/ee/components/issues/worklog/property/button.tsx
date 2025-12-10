@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Loader, Plus } from "lucide-react";
 // helpers
@@ -7,7 +5,7 @@ import { cn } from "@plane/utils";
 
 type TIssueWorklogPropertyButton = { content?: string; isLoading?: boolean };
 
-export const IssueWorklogPropertyButton: FC<TIssueWorklogPropertyButton> = (props) => {
+export function IssueWorklogPropertyButton(props: TIssueWorklogPropertyButton) {
   const { content, isLoading } = props;
 
   return (
@@ -30,4 +28,4 @@ export const IssueWorklogPropertyButton: FC<TIssueWorklogPropertyButton> = (prop
       )}
     </div>
   );
-};
+}

@@ -2,8 +2,8 @@
 fastapi==0.111.1
 requests==2.32.5
 pydantic==2.8.2
-plane-sdk==0.1.10
-openai==1.77.0
+plane-sdk==0.2.0
+openai==2.8.1
 html2text==2024.2.26
 python-json-logger==3.3.0
 sqlglot==27.2.0
@@ -16,8 +16,8 @@ boto3==1.40.16
 deepgram-sdk==4.8.1
 
 # langchain
-langchain_openai==0.3.19
-langchain_community==0.3.23
+langchain_openai==1.1.0
+langchain_community==0.4.1
 
 # sentry
 sentry-sdk==2.17.0
@@ -62,3 +62,7 @@ ruff==0.5.5
 pylint==3.1.0
 types-requests==2.32.0.20240712
 pytest==8.3.2
+
+# markdown to html
+markdown-it-py==4.0.0
+mdit-py-plugins==0.5.0

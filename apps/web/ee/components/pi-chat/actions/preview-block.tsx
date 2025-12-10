@@ -38,7 +38,7 @@ export const getIcon = (type: string, color?: string, defaultRender: "text" | "i
       );
   }
 };
-export const PreviewBlock = (props: { type: string; name: string; url?: string | null; data?: TArtifact }) => {
+export function PreviewBlock(props: { type: string; name: string; url?: string | null; data?: TArtifact }) {
   const { type, name, url, data } = props;
   return (
     <Link
@@ -51,9 +51,7 @@ export const PreviewBlock = (props: { type: string; name: string; url?: string |
           <div>{getIcon(type, "", "text")}</div>
           {(type === "workitem" || type === "project") && data && (
             <div className="text-sm font-medium text-custom-text-350">
-              {(data as TArtifact).issue_identifier ||
-                (data as TArtifact).project_identifier ||
-                (data as TArtifact).parameters?.project?.identifier}
+              {data.issue_identifier || data.project_identifier || data.parameters?.project?.identifier}
             </div>
           )}
         </div>
@@ -64,4 +62,4 @@ export const PreviewBlock = (props: { type: string; name: string; url?: string |
       <div className="text-sm font-medium line-clamp-2 text-start">{name}</div>
     </Link>
   );
-};
+}

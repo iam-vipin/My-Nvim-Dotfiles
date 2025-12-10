@@ -11,12 +11,13 @@ type Props = {
   value: string | undefined;
 };
 
-export const WidgetColorPicker: React.FC<Props> = (props) => {
+export function WidgetColorPicker(props: Props) {
   const { onChange, title, value } = props;
   // unique id
   const id = useId();
 
   const debouncedColorUpdate = useCallback(
+    // eslint-disable-next-line react-hooks/use-memo
     debounce((color: string) => {
       onChange(color);
     }, 500),
@@ -50,4 +51,4 @@ export const WidgetColorPicker: React.FC<Props> = (props) => {
       }
     />
   );
-};
+}

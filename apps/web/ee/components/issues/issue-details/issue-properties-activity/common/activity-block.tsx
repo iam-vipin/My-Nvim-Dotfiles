@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import { useEffect, useRef } from "react";
 // plane imports
@@ -21,7 +19,7 @@ type TIssueActivityBlockComponent = {
   children: ReactNode;
 };
 
-export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (props) => {
+export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent) {
   const { activityId, propertyId, ends, children } = props;
   const activityBlockRef = useRef<HTMLDivElement>(null);
   // hooks
@@ -80,4 +78,4 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
       </div>
     </div>
   );
-};
+}

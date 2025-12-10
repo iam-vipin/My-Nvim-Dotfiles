@@ -24,7 +24,9 @@ type TTeamspaceRelationIssueListItemProps = {
   issue: TTeamspaceDependencyWorkItem;
 };
 
-export const TeamspaceRelationIssueListItem = observer((props: TTeamspaceRelationIssueListItemProps) => {
+export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelationIssueListItem(
+  props: TTeamspaceRelationIssueListItemProps
+) {
   const { type, issue } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();

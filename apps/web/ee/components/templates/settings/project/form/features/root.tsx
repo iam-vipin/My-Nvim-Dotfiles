@@ -11,7 +11,7 @@ import { PROJECT_FEATURES_LIST_FOR_TEMPLATE } from "@/plane-web/constants";
 // local imports
 import { ProjectFeatureChildren } from "./children";
 
-export const ProjectFeatures = observer(() => {
+export const ProjectFeatures = observer(function ProjectFeatures() {
   // plane hooks
   const { t } = useTranslation();
   // form context

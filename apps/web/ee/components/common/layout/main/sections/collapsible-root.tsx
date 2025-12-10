@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useMemo } from "react";
 // ui
@@ -16,7 +14,7 @@ type TCollapsibleDetailSectionProps = {
   collapsibleContent: React.ReactNode;
 };
 
-export const CollapsibleDetailSection: FC<TCollapsibleDetailSectionProps> = (props) => {
+export function CollapsibleDetailSection(props: TCollapsibleDetailSectionProps) {
   const { title, actionItemElement, collapsibleContent, isOpen, count, onToggle } = props;
 
   const collapsibleButton = useMemo(
@@ -45,4 +43,4 @@ export const CollapsibleDetailSection: FC<TCollapsibleDetailSectionProps> = (pro
       </Collapsible>
     </SectionWrapper>
   );
-};
+}

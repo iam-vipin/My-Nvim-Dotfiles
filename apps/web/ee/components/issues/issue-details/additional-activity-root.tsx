@@ -9,7 +9,7 @@ import { EpicActivity } from "./epic-activity-root";
 import { IssueEstimateTimeActivity } from "./estimate-time-activity";
 import { MilestoneActivity } from "./milestone-activity-root";
 
-export const AdditionalActivityRoot: FC<TAdditionalActivityRoot> = (props) => {
+export function AdditionalActivityRoot(props: TAdditionalActivityRoot) {
   const { field, activityId, ends } = props;
 
   switch (field) {
@@ -28,4 +28,4 @@ export const AdditionalActivityRoot: FC<TAdditionalActivityRoot> = (props) => {
     default:
       return <></>;
   }
-};
+}

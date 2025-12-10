@@ -41,7 +41,7 @@ type Props = TDropdownProps & {
       }
   );
 const workspaceService = new WorkspaceService();
-export const EpicsDropdown: React.FC<Props> = observer((props) => {
+export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
   const {
     button,
     buttonClassName,

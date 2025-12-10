@@ -77,7 +77,7 @@ export type IntegrationsListProps = {
   supportedIntegrations: E_INTEGRATION_KEYS[];
 };
 
-export const IntegrationsList: FC<IntegrationsListProps> = observer((props) => {
+export const IntegrationsList = observer(function IntegrationsList(props: IntegrationsListProps) {
   const { workspaceSlug, supportedIntegrations } = props;
 
   return (

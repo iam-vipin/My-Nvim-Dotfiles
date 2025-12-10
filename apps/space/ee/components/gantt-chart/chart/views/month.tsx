@@ -7,7 +7,7 @@ import { useGanttChart } from "../..";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
 import type { IMonthBlock } from "../../views";
 
-export const MonthChartView: FC<any> = observer(() => {
+export const MonthChartView = observer(function MonthChartView(_props: any) {
   // chart hook
   const { currentViewData, renderView } = useGanttChart();
   const monthBlocks: IMonthBlock[] = renderView;

@@ -30,7 +30,7 @@ export const SIDEBAR_MENU_ITEMS: {
   },
 ];
 
-export const PagesAppSidebarMenu = observer(() => {
+export const PagesAppSidebarMenu = observer(function PagesAppSidebarMenu() {
   // params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();

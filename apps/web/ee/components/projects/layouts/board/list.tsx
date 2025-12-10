@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -7,7 +5,7 @@ import { ProjectBoardListItem } from "@/plane-web/components/projects/layouts/bo
 
 type ProjectBoardList = { groupByKey: string; projectIds: string[] };
 
-export const ProjectBoardList: FC<ProjectBoardList> = observer((props) => {
+export const ProjectBoardList = observer(function ProjectBoardList(props: ProjectBoardList) {
   const { groupByKey, projectIds } = props;
 
   return (

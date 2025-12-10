@@ -19,7 +19,7 @@ type Props = {
   workspaceSlug?: string;
 };
 
-export const IssueEmbedCard: React.FC<Props> = (props) => {
+export function IssueEmbedCard(props: Props) {
   const { issueId, projectId, workspaceSlug } = props;
 
   // states
@@ -86,4 +86,4 @@ export const IssueEmbedCard: React.FC<Props> = (props) => {
       <h4 className="!text-lg !font-medium !mt-2 line-clamp-2 break-words">{issueDetails?.name}</h4>
     </div>
   );
-};
+}

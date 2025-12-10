@@ -1,4 +1,3 @@
-"use client";
 import { useMemo, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { MILESTONE_TRACKER_EVENTS } from "@plane/constants";
@@ -110,7 +109,7 @@ type MilestoneQuickActionButtonProps = {
   projectId: string;
 };
 
-export const MilestoneQuickActionButton = (props: MilestoneQuickActionButtonProps) => {
+export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProps) {
   const { milestoneId, workspaceSlug, projectId } = props;
 
   const [isCreateUpdateMilestoneModalOpen, setIsCreateUpdateMilestoneModalOpen] = useState(false);
@@ -181,4 +180,4 @@ export const MilestoneQuickActionButton = (props: MilestoneQuickActionButtonProp
       </CustomMenu>
     </>
   );
-};
+}

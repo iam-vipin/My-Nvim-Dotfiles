@@ -13,7 +13,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const PieChartAppearanceConfig: React.FC<Props> = (props) => {
+export function PieChartAppearanceConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -85,4 +85,4 @@ export const PieChartAppearanceConfig: React.FC<Props> = (props) => {
       <WidgetColorSchemeSelect handleConfigUpdate={handleConfigUpdate} />
     </>
   );
-};
+}

@@ -1,7 +1,7 @@
 from typing import List
 
-from langchain.callbacks.manager import AsyncCallbackManagerForRetrieverRun
-from langchain.callbacks.manager import CallbackManagerForRetrieverRun
+from langchain_core.callbacks.manager import AsyncCallbackManagerForRetrieverRun
+from langchain_core.callbacks.manager import CallbackManagerForRetrieverRun
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
@@ -76,7 +76,8 @@ class PageChunkRetriever(BaseRetriever):
                 Document(
                     page_content=description,
                     metadata={
-                        "page_title": title,
+                        # Use 'name' to match downstream formatter
+                        "name": title,
                         "relevance": round(hit.get("Score", 0), 3),
                         "page_id": issue_id,
                     },

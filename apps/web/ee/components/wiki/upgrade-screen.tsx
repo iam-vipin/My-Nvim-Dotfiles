@@ -23,8 +23,6 @@ import { captureView } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { EPageStoreType, usePageStore, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { WorkspacePageService } from "@/plane-web/services/page/workspace-page.service";
-// local imports
-import { PaidPlanUpgradeModal } from "../license/modal/upgrade-modal";
 // services
 const workspacePageService = new WorkspacePageService();
 
@@ -51,12 +49,12 @@ const TABS_LIST = [
   },
 ];
 
-export const WikiUpgradeScreen: React.FC<Props> = observer((props) => {
+export const WikiUpgradeScreen = observer(function WikiUpgradeScreen(props: Props) {
   const { workspaceSlug } = props;
   // states
   const [isDownloading, setIsDownloading] = useState(false);
   // store hooks
-  const { isPaidPlanModalOpen, togglePaidPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   const { pagesSummary } = usePageStore(EPageStoreType.WORKSPACE);
   // derived values
   const totalPagesCount =
@@ -92,29 +90,31 @@ export const WikiUpgradeScreen: React.FC<Props> = observer((props) => {
     });
   };
 
-  const handleDownloadData = async () => {
-    setIsDownloading(true);
-    const response = workspacePageService.downloadWikiDirectory(workspaceSlug);
-    setPromiseToast(response, {
-      loading: "Preparing download",
-      success: {
-        title: "Successful!",
-        message: () =>
-          "Wiki data has been prepared for download. You will receive a link to the download in your email once ready.",
-      },
-      error: {
-        title: "Failed to prepare download",
-        message: () => "Failed to prepare wiki data for download. Please try again later.",
-      },
-    });
-    response.finally(() => {
+  const handleDownloadData = () => {
+    try {
+      setIsDownloading(true);
+      const response = workspacePageService.downloadWikiDirectory(workspaceSlug);
+      setPromiseToast(response, {
+        loading: "Preparing download",
+        success: {
+          title: "Successful!",
+          message: () =>
+            "Wiki data has been prepared for download. You will receive a link to the download in your email once ready.",
+        },
+        error: {
+          title: "Failed to prepare download",
+          message: () => "Failed to prepare wiki data for download. Please try again later.",
+        },
+      });
+    } catch (error) {
+      console.error("Failed to prepare wiki data for download", error);
+    } finally {
       setIsDownloading(false);
-    });
+    }
   };
 
   return (
     <>
-      <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className="size-full grid place-items-center px-page-x">
         <div className="w-full md:w-3/4 xl:w-1/2 2xl:w-1/3">
           <div className="text-center">

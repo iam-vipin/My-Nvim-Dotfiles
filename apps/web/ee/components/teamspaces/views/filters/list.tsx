@@ -21,7 +21,7 @@ type TeamspaceViewListHeaderProps = {
   teamspaceId: string;
 };
 
-export const TeamspaceViewListHeader = observer((props: TeamspaceViewListHeaderProps) => {
+export const TeamspaceViewListHeader = observer(function TeamspaceViewListHeader(props: TeamspaceViewListHeaderProps) {
   const { teamspaceId } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);

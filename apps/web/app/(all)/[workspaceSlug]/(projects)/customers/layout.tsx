@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";

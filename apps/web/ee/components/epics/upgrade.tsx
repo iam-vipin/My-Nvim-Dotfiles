@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -15,7 +13,7 @@ import EpicsUpgradeLight from "@/app/assets/empty-state/epics/settings-light.web
 import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const EpicsUpgrade: FC = observer(() => {
+export const EpicsUpgrade = observer(function EpicsUpgrade() {
   // store hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -26,7 +24,12 @@ export const EpicsUpgrade: FC = observer(() => {
   const getUpgradeButton = (): React.ReactNode => {
     if (isPlaneOneInstance) {
       return (
-        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+        <a
+          href="https://prime.plane.so/"
+          target="_blank"
+          className={getButtonStyling("primary", "md")}
+          rel="noreferrer"
+        >
           Upgrade to higher subscription
         </a>
       );

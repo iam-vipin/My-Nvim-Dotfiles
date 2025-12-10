@@ -11,7 +11,7 @@ type Props = {
   stateId: string;
 };
 
-export const StatePill = observer((props: Props) => {
+export const StatePill = observer(function StatePill(props: Props) {
   const { stateId } = props;
   // plane hooks
   const { t } = useTranslation();

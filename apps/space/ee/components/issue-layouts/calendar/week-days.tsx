@@ -20,7 +20,7 @@ type Props = {
   setSelectedDate: (date: Date) => void;
 };
 
-export const CalendarWeekDays: React.FC<Props> = observer((props) => {
+export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props) {
   const {
     getIssueById,
     groupedIssueIds,

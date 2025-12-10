@@ -163,7 +163,7 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
   const workspaceDetail = workspaceId ? store.workspaceRoot.getWorkspaceById(workspaceId) : null;
   const getUserDetails = store.memberRoot.getUserDetails;
 
-  const MemberDetail = ({ id }: { id: string }) => {
+  function MemberDetail({ id }: { id: string }) {
     const userDetail = getUserDetails(id);
     const memberDetailContent = (
       <span className="font-medium text-custom-text-100">{userDetail?.first_name + " " + userDetail?.last_name}</span>
@@ -181,7 +181,7 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
     ) : (
       memberDetailContent
     );
-  };
+  }
 
   return (
     <>

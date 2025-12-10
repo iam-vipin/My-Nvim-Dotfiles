@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
+export const InitiativeCollapsibleSection = observer(function InitiativeCollapsibleSection(props: Props) {
   const { workspaceSlug, initiativeId, disabled } = props;
 
   // store hooks

@@ -25,7 +25,7 @@ type Props = {
   anchor: string;
 };
 
-export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
+export const PageDetailsMainContent = observer(function PageDetailsMainContent(props: Props) {
   const { anchor } = props;
 
   const editorRef = useRef<EditorRefApi>(null);

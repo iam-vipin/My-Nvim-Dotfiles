@@ -6,7 +6,7 @@ import type { TEditorMentionComponentProps } from "../root";
 import { EditorWorkItemMentionContent } from "./content";
 import { EditorWorkItemMentionPreview } from "./preview";
 
-export const EditorWorkItemMention: React.FC<TEditorMentionComponentProps> = observer((props) => {
+export const EditorWorkItemMention = observer(function EditorWorkItemMention(props: TEditorMentionComponentProps) {
   const { entity_identifier: workItemId, getMentionDetails } = props;
   // derived values
   const workItemDetails = getMentionDetails?.("issue_mention", workItemId);

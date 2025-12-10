@@ -10,7 +10,7 @@ type Props = {
   searchTerm: string;
 };
 
-export const MovePageModalBody: React.FC<Props> = (props) => {
+export function MovePageModalBody(props: Props) {
   const { canPageBeMovedToTeamspace, searchTerm } = props;
   // translation
   const { t } = useTranslation();
@@ -28,4 +28,4 @@ export const MovePageModalBody: React.FC<Props> = (props) => {
       <MovePageModalSections canPageBeMovedToTeamspace={canPageBeMovedToTeamspace} searchTerm={searchTerm} />
     </Combobox.Options>
   );
-};
+}

@@ -13,7 +13,7 @@ type Props = {
   currentTransitionMap?: TStateTransitionMap;
 };
 
-export const StateTransitionCount = observer((props: Props) => {
+export const StateTransitionCount = observer(function StateTransitionCount(props: Props) {
   const { currentTransitionMap } = props;
   //router
   const { workspaceSlug } = useParams();

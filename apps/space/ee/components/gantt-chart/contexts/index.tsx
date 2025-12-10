@@ -17,7 +17,7 @@ type GanttStoreProviderProps = {
   children: React.ReactNode;
 };
 
-export const GanttStoreProvider: FC<GanttStoreProviderProps> = ({ children }) => {
+export function GanttStoreProvider({ children }: GanttStoreProviderProps) {
   const store = initializeStore();
   return <GanttStoreContext.Provider value={store}>{children}</GanttStoreContext.Provider>;
-};
+}

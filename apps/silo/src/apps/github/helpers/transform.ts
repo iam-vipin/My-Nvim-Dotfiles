@@ -245,7 +245,7 @@ export const transformGitHubComment = async (
     githubService,
   });
 
-  comment_html = replaceIssueNumber(comment_html!, repository);
+  comment_html = replaceIssueNumber(comment_html, repository);
   comment_html = replaceMentionedGhUsers(comment_html, workspaceSlug, userMap, planeUsers);
 
   return {

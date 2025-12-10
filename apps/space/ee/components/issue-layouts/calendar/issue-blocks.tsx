@@ -18,7 +18,7 @@ type Props = {
   issueIdList: string[];
 };
 
-export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
+export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: Props) {
   const { date, getIssueById, issueIdList, loadMoreIssues } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
 

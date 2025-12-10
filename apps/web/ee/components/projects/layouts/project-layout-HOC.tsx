@@ -26,7 +26,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 
-const ActiveLoader = (props: { layout: EProjectLayouts }) => {
+function ActiveLoader(props: { layout: EProjectLayouts }) {
   const { layout } = props;
   switch (layout) {
     case EProjectLayouts.TABLE:
@@ -40,14 +40,14 @@ const ActiveLoader = (props: { layout: EProjectLayouts }) => {
     default:
       return null;
   }
-};
+}
 
 interface Props {
   children: string | React.ReactNode | React.ReactNode[];
   layout: EProjectLayouts;
 }
 
-export const ProjectLayoutHOC = observer((props: Props) => {
+export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props) {
   const { layout } = props;
   // plane hooks
   const { t } = useTranslation();

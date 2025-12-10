@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -10,7 +9,7 @@ type Props = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export const ProjectActionButton: FC<Props> = observer((props) => {
+export const ProjectActionButton = observer(function ProjectActionButton(props: Props) {
   const { customButton, setIsModalOpen, disabled = false } = props;
 
   // handlers

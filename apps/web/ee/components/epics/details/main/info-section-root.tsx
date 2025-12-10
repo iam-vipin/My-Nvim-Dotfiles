@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -24,7 +22,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const EpicInfoSection: FC<Props> = observer((props) => {
+export const EpicInfoSection = observer(function EpicInfoSection(props: Props) {
   const { editorRef, workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const {
@@ -50,9 +48,10 @@ export const EpicInfoSection: FC<Props> = observer((props) => {
           name: value,
         })
       }
-      onDescriptionSubmit={async (value) =>
+      onDescriptionSubmit={async (value, isMigrationUpdate) =>
         epicOperations.update(workspaceSlug, projectId, issue.id, {
           description_html: value,
+          ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
         })
       }
       indicatorElement={<EpicInfoIndicatorItem epicId={epicId} />}

@@ -1,5 +1,3 @@
-"use client";
-
 // store
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -9,4 +7,6 @@ export type TPageCommentControlProps = {
   storeType: EPageStoreType;
 };
 
-export const PageCommentControl = ({}: TPageCommentControlProps) => null;
+export function PageCommentControl({}: TPageCommentControlProps) {
+  return null;
+}

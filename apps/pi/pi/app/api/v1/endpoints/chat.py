@@ -4,7 +4,9 @@ import json
 from typing import Any
 from typing import AsyncGenerator
 from typing import Coroutine
+from typing import Dict
 from typing import Optional
+from typing import Union
 from typing import cast
 from urllib.parse import urlparse
 from uuid import UUID
@@ -28,11 +30,7 @@ from pi.app.api.v1.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
-from pi.app.api.v1.helpers.batch_execution_helpers import execute_batch_actions
-from pi.app.api.v1.helpers.batch_execution_helpers import format_execution_response
-from pi.app.api.v1.helpers.batch_execution_helpers import prepare_execution_data
-from pi.app.api.v1.helpers.batch_execution_helpers import update_assistant_message_with_execution_results
-from pi.app.api.v1.helpers.batch_execution_helpers import validate_session_and_get_user
+from pi.app.api.v1.helpers.execution import chosen_llm
 from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
@@ -61,9 +59,8 @@ from pi.app.utils.exceptions import SQLGenerationError
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.actions.oauth_service import PlaneOAuthService
+from pi.services.chat.action_executor import BuildModeToolExecutor
 from pi.services.chat.chat import PlaneChatBot
-from pi.services.chat.helpers.batch_execution_helpers import get_original_user_query
-from pi.services.chat.helpers.batch_execution_helpers import get_planned_actions_for_execution
 from pi.services.chat.helpers.tool_utils import format_clarification_as_text
 from pi.services.chat.search import ChatSearchService
 from pi.services.chat.templates import tiles_factory
@@ -183,17 +180,19 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
     final_response = ""
     actions_data = {}
     clarification_data = {}
-    formatted_context = {}
+    formatted_context: dict[str, Any] = {}
     response_type = "response"
 
     # listen to all the stream chunks, join the chunks and return the complete response
     # as json object
     async with get_streaming_db_session() as stream_db:
-        base_iter = chatbot.process_query_stream(data, db=stream_db)
+        data.mode = "build"  # type: ignore
+        base_iter = chatbot.process_chat_stream(data, db=stream_db)
         async for chunk in base_iter:
-            # Ignore all intermediate chunks
-            if chunk.startswith("πspecial reasoning block"):
+            if isinstance(chunk, dict):
+                # Currently only reasoning chunk is sent as dict.
                 continue
+            # Ignore all intermediate chunks
             if chunk.startswith("πspecial actions blockπ: "):
                 response_type = "actions"
                 actions_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
@@ -232,7 +231,9 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
         else:
             return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
 
-        execution_data = await prepare_execution_data(
+        # Execute batch actions using the service
+        service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
+        result = await service.execute(
             ActionBatchExecutionRequest(
                 workspace_id=workspace_id,
                 chat_id=chat_id,
@@ -241,29 +242,23 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
                 access_token=access_token,
             ),
             user_id,
-            db,
         )
-        if not execution_data:
-            # Determine the specific error based on what failed
-            if not await get_planned_actions_for_execution(message_id, chat_id, db):
-                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_PLANNED_ACTIONS"]})
-            elif not await get_original_user_query(message_id, db):
-                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_ORIGINAL_QUERY"]})
-            else:
-                # OAuth or workspace issue
-                return JSONResponse(
-                    status_code=401,
-                    content={
-                        "detail": BATCH_EXECUTION_ERRORS["OAUTH_REQUIRED"],
-                        "error_code": "OAUTH_REQUIRED",
-                        "workspace_id": str(data.workspace_id),
-                        "user_id": str(data.user_id),
-                    },
-                )
 
-        # Execute batch actions
-        context = await execute_batch_actions(execution_data, db)
-        formatted_context = format_execution_response(context)
+        # Check if service returned an error
+        if result.get("error"):
+            status_code = result.get("status_code", 500)
+            detail = result.get("detail", "Unknown error")
+            content = {"detail": detail}
+            if "error_code" in result:
+                content["error_code"] = result["error_code"]
+            if "workspace_id" in result:
+                content["workspace_id"] = result["workspace_id"]
+            if "user_id" in result:
+                content["user_id"] = result["user_id"]
+            return JSONResponse(status_code=status_code, content=content)
+
+        # Extract the formatted context from successful result
+        formatted_context = result
 
     return JSONResponse(
         status_code=200,
@@ -300,7 +295,6 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
     async def stream_response() -> AsyncGenerator[str, None]:
         token_id = None
         try:
-            pending_backticks = ""
             # Open a short-lived session for the duration of the streaming work
             async with get_streaming_db_session() as stream_db:
                 # Heartbeat mechanism that does not cancel the underlying generator
@@ -313,8 +307,11 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
                     with contextlib.suppress(asyncio.CancelledError):
                         await asyncio.sleep(10)
 
-                base_iter = chatbot.process_query_stream(data, db=stream_db)
-                next_chunk_task: asyncio.Task[str] = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
+                # Single unified call; internal routing happens in chat service
+                base_iter = chatbot.process_chat_stream(data, db=stream_db)
+                next_chunk_task: asyncio.Task[Union[str, Dict[str, Any]]] = asyncio.create_task(
+                    cast(Coroutine[None, None, Union[str, Dict[str, Any]]], base_iter.__anext__())
+                )
 
                 # Start initial heartbeat timer
                 heartbeat_task = asyncio.create_task(heartbeat_emitter())
@@ -326,7 +323,7 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
 
                         # If heartbeat timer completed first, emit heartbeat and restart timer
                         if heartbeat_task in done and not heartbeat_stop.is_set():
-                            payload = {"reasoning": "⏳ Still working...\n\n"}
+                            payload: Dict[str, Any] = {"header": "⏳ Still working...\n\n", "content": ""}
                             yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
                             # Restart heartbeat timer
                             heartbeat_task = asyncio.create_task(heartbeat_emitter())
@@ -348,17 +345,26 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
                             heartbeat_task = asyncio.create_task(heartbeat_emitter())
 
                             # Normalize plain-text error chunks to SSE error events
-                            normalized_error = normalize_error_chunk(chunk)
+                            normalized_error = normalize_error_chunk(chunk) if isinstance(chunk, str) else None
                             if normalized_error:
                                 yield normalized_error
-                                next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
+                                next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, Union[str, Dict[str, Any]]], base_iter.__anext__()))
                                 continue
-
-                            if chunk.startswith("πspecial reasoning blockπ: "):
-                                reasoning_content = chunk.replace("πspecial reasoning blockπ: ", "")
-                                payload = {"reasoning": reasoning_content}
-                                yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
-                            elif chunk.startswith("πspecial actions blockπ: "):
+                            # change point: "πspecial reasoning blockπ:
+                            # handle the new json string format of reasoning blocks. It is a json string with header and content.
+                            # add a condition to check if the chunk is a json string with header and content.
+                            if isinstance(chunk, dict):
+                                if "chunk_type" in chunk and chunk["chunk_type"] == "reasoning":
+                                    payload = {"header": chunk["header"], "content": chunk["content"]}
+                                    yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
+                                    # for backward compatibility, we also need to yield the chunk as a string
+                                    # bwc_payload = {"reasoning": f"{chunk["header"]}\n\n{chunk["content"]}\n\n"}
+                                    # yield f"event: reasoning\ndata: {json.dumps(bwc_payload)}\n\n"
+                                else:
+                                    log.warning(f"ChatID: {data.chat_id} - Chunk is not a json string: {chunk}")
+                                    payload = {"chunk": chunk}
+                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                            elif isinstance(chunk, str) and chunk.startswith("πspecial actions blockπ: "):
                                 actions_content = chunk.replace("πspecial actions blockπ: ", "")
                                 try:
                                     actions_data = json.loads(actions_content)
@@ -367,11 +373,13 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
                                     log.warning(f"Failed to parse actions JSON: {actions_content}")
                                     payload = {"chunk": chunk}
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                            elif chunk.startswith("πspecial clarification blockπ: "):
+                            elif isinstance(chunk, str) and chunk.startswith("πspecial clarification blockπ: "):
                                 clarification_content = chunk.replace("πspecial clarification blockπ: ", "")
                                 try:
                                     clarification_data = json.loads(clarification_content)
+                                    log.info(f"ChatID: {data.chat_id} - Clarification data received in the endpoint: {clarification_data}")
                                     formatted_text = format_clarification_as_text(clarification_data)
+                                    log.info(f"ChatID: {data.chat_id} - Clarification formatted text: {formatted_text}")
                                     payload = {"chunk": formatted_text}
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
                                 except json.JSONDecodeError:
@@ -381,24 +389,8 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
                                     }
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
                             else:
-                                # Handle code block formatting
-                                if chunk.startswith("```"):
-                                    if pending_backticks:
-                                        payload = {"chunk": pending_backticks}
-                                        yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                                        pending_backticks = ""
-                                    payload = {"chunk": chunk}
-                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                                elif chunk in ["`", "``"]:
-                                    pending_backticks += chunk
-                                    next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
-                                    continue
-                                else:
-                                    if pending_backticks:
-                                        chunk = pending_backticks + chunk
-                                        pending_backticks = ""
-                                    payload = {"chunk": chunk}
-                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                                payload = {"chunk": chunk}
+                                yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
 
                             # Prepare next iteration
                             next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
@@ -408,11 +400,6 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
                         heartbeat_task.cancel()
                         with contextlib.suppress(asyncio.CancelledError):
                             await heartbeat_task
-
-            # Handle any remaining pending backticks at the end of stream
-            if pending_backticks:
-                payload = {"chunk": pending_backticks}
-                yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
 
             # Extract token_id from data.context if available for background task
             if hasattr(data, "context") and isinstance(data.context, dict):
@@ -587,8 +574,11 @@ async def get_chat_history(
                         "feedback": results.get("feedback", ""),
                         "reasoning": results.get("reasoning", ""),
                         "is_focus_enabled": results.get("is_focus_enabled", False),
+                        "focus_entity_type": results.get("focus_entity_type", None),
+                        "focus_entity_id": results.get("focus_entity_id", None),
                         "focus_project_id": results.get("focus_project_id", None),
                         "focus_workspace_id": results.get("focus_workspace_id", None),
+                        "mode": results.get("mode", "ask"),
                     },
                 },
             )
@@ -604,8 +594,11 @@ async def get_chat_history(
                         "feedback": results.get("feedback", ""),
                         "reasoning": results.get("reasoning", ""),
                         "is_focus_enabled": results.get("is_focus_enabled", False),
+                        "focus_entity_type": results.get("focus_entity_type", None),
+                        "focus_entity_id": results.get("focus_entity_id", None),
                         "focus_project_id": results.get("focus_project_id", None),
                         "focus_workspace_id": results.get("focus_workspace_id", None),
+                        "mode": results.get("mode", "ask"),
                     },
                 },
             )
@@ -619,8 +612,11 @@ async def get_chat_history(
                     "feedback": results["feedback"],
                     "reasoning": results.get("reasoning", ""),
                     "is_focus_enabled": results.get("is_focus_enabled", False),
+                    "focus_entity_type": results.get("focus_entity_type", None),
+                    "focus_entity_id": results.get("focus_entity_id", None),
                     "focus_project_id": results.get("focus_project_id", None),
                     "focus_workspace_id": results.get("focus_workspace_id", None),
+                    "mode": results.get("mode", "ask"),
                 }
             }
         )
@@ -671,8 +667,11 @@ async def get_chat_history_object(
                     "feedback": results["feedback"],
                     "reasoning": results.get("reasoning", ""),
                     "is_focus_enabled": results.get("is_focus_enabled", False),
+                    "focus_entity_type": results.get("focus_entity_type", None),
+                    "focus_entity_id": results.get("focus_entity_id", None),
                     "focus_project_id": results.get("focus_project_id", None),
                     "focus_workspace_id": results.get("focus_workspace_id", None),
+                    "mode": results.get("mode", "ask"),
                 }
             }
         )
@@ -947,6 +946,7 @@ async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_s
         user_type=UserTypeChoices.USER.value,
         llm_model=data.llm,
         workspace_slug=resolved_workspace_slug,
+        source=data.source or None,
         db=db,
     )
 
@@ -1029,14 +1029,14 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
     if not flow_step:
         # REGENERATE FLOW: No QUEUE flow step means this is regenerate
         log.info(f"No QUEUE flow step found for token {token}. Treating as regenerate request.")
-        # 1. Get the user message
+        # Get the user message
         user_message = await get_message_by_id(db, token)
 
         if not user_message:
             log.warning(f"Message not found for token {token}")
             return JSONResponse(status_code=404, content={"detail": "Message not found"})
 
-        # 2. Mark old assistant response as replaced BEFORE generating new one
+        # Mark old assistant response as replaced BEFORE generating new one
         # This ensures retrieve_chat_history() won't include it in context for new generation
         marked = await mark_assistant_response_as_replaced(db, user_message.id)
         if marked:
@@ -1044,14 +1044,14 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
         else:
             log.info(f"No existing assistant response found for message {token} (first generation or already replaced)")
 
-        # 4. Reconstruct ChatRequest from user message
+        # Reconstruct ChatRequest from user message
         try:
             queued_request = await reconstruct_chat_request_from_message(db, user_message, user_id)
         except Exception as e:
             log.error(f"Error reconstructing ChatRequest from message {token}: {e}")
             return JSONResponse(status_code=500, content={"detail": "Failed to reconstruct request"})
 
-        # 5. Pass token_id so new assistant message reuses same user message as parent
+        # Pass token_id so new assistant message reuses same user message as parent
         try:
             queued_request.context["token_id"] = str(token)
         except Exception as e:
@@ -1059,7 +1059,7 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
 
         log.info(f"Regenerating response for message {token}")
 
-        # 6. Stream new response (get_answer will call process_query_stream)
+        # Stream new response (get_answer will call process_query_stream)
         #    When process_query_stream calls retrieve_chat_history,
         #    it will NOT see the old response because is_replaced=True
         return await get_answer(data=queued_request, session=session)
@@ -1123,40 +1123,37 @@ async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession 
     # 3. Assistant messages are updated with execution results and entity information
     # 4. Conversation history includes explicit text about executed vs. not executed actions
     # This ensures complete context for follow-up questions and LLM understanding.
+
     try:
         # Validate session and get user
-        user_id = await validate_session_and_get_user(session)
-        if not user_id:
-            return JSONResponse(status_code=401, content={"detail": BATCH_EXECUTION_ERRORS["INVALID_SESSION"]})
+        auth = await is_valid_session(session)
+        if not auth.user:
+            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
 
-        # Validate and prepare execution data
-        execution_data = await prepare_execution_data(request, user_id, db)
-        if not execution_data:
-            # Determine the specific error based on what failed
-            if not await get_planned_actions_for_execution(request.message_id, request.chat_id, db):
-                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_PLANNED_ACTIONS"]})
-            elif not await get_original_user_query(request.message_id, db):
-                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_ORIGINAL_QUERY"]})
-            else:
-                # OAuth or workspace issue
-                return JSONResponse(
-                    status_code=401,
-                    content={
-                        "detail": BATCH_EXECUTION_ERRORS["OAUTH_REQUIRED"],
-                        "error_code": "OAUTH_REQUIRED",
-                        "workspace_id": str(request.workspace_id),
-                        "user_id": str(user_id),
-                    },
-                )
+        llm_model = await chosen_llm(db=db, message_id=request.message_id)
+        # Use default model if none was found in the message
+        chatbot = PlaneChatBot(llm_model or "gpt-4.1")
+        build_mode_tool_executor = BuildModeToolExecutor(chatbot=chatbot, db=db)
+        result = await build_mode_tool_executor.execute(request, auth.user.id)
 
-        # Execute batch actions
-        context = await execute_batch_actions(execution_data, db)
+        # Check if service returned an error
+        if result.get("error"):
+            status_code = result.get("status_code", 500)
+            detail = result.get("detail", "Unknown error")
 
-        # Update the assistant message with execution results
-        await update_assistant_message_with_execution_results(request.message_id, request.chat_id, context, db)
+            # Build response content
+            content = {"detail": detail}
+            if "error_code" in result:
+                content["error_code"] = result["error_code"]
+            if "workspace_id" in result:
+                content["workspace_id"] = result["workspace_id"]
+            if "user_id" in result:
+                content["user_id"] = result["user_id"]
 
-        # Return appropriate response based on execution status
-        return JSONResponse(content=format_execution_response(context))
+            return JSONResponse(status_code=status_code, content=content)
+
+        # Return successful response
+        return JSONResponse(content=result)
 
     except Exception as e:
         log.error(f"Error in execute_action: {str(e)}")

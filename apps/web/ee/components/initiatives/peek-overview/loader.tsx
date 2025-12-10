@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -11,7 +9,7 @@ type TInitiativePeekOverviewLoader = {
   removeRoutePeekId: () => void;
 };
 
-export const InitiativePeekOverviewLoader: FC<TInitiativePeekOverviewLoader> = (props) => {
+export function InitiativePeekOverviewLoader(props: TInitiativePeekOverviewLoader) {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -91,4 +89,4 @@ export const InitiativePeekOverviewLoader: FC<TInitiativePeekOverviewLoader> = (
       </div>
     </Loader>
   );
-};
+}

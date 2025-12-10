@@ -25,7 +25,9 @@ type TIssuePropertyQuickActions = {
   };
 };
 
-export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickActions) => {
+export const IssuePropertyQuickActions = observer(function IssuePropertyQuickActions(
+  props: TIssuePropertyQuickActions
+) {
   const { isPropertyDisabled, onDisable, onDelete, onIssuePropertyOperationMode, trackers } = props;
   // plane hooks
   const { t } = useTranslation();

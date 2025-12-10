@@ -9,6 +9,7 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";
+import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 
 const getEntityData = (
   params: Record<string, string | undefined>
@@ -45,7 +46,7 @@ const getEntityData = (
   return null;
 };
 
-export const PiChatFloatingBot = observer(() => {
+export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
   // query params
   const pathName = usePathname();
   const params = useParams();
@@ -60,7 +61,8 @@ export const PiChatFloatingBot = observer(() => {
   const isSidePanelOpen = searchParams.get("pi_sidebar_open");
   const chatId = searchParams.get("chat_id");
   const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
-  const shouldRenderPiChat = !pathName.includes(`/${workspaceSlug?.toString()}/pi-chat/`) && (projectId || workItem);
+  const shouldRenderPiChat =
+    isPiAllowed(pathName, workspaceSlug?.toString() ?? "") && isPiEnabled && (projectId || workItem);
   useEffect(() => {
     if (!isPiEnabled || !isSidePanelOpen) return;
     // initialize chat
@@ -83,6 +85,7 @@ export const PiChatFloatingBot = observer(() => {
           "rounded-lg border border-custom-border-200 h-full max-w-[400px]",
           isOpen ? "translate-x-0 w-[400px] mr-2" : "px-0 translate-x-[100%] w-0 border-none"
         )}
+        data-prevent-outside-click
       >
         <PiChatLayout isFullScreen={false} isProjectLevel isOpen={isOpen}>
           <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel contextData={contextData} />

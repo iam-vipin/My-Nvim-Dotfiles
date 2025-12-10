@@ -8,7 +8,6 @@ from typing import Optional
 
 import colorlog
 from dotenv import load_dotenv
-from pythonjsonlogger.json import JsonFormatter
 
 load_dotenv()
 
@@ -197,8 +196,8 @@ class LLMConfig:
     )
     CONTEXT_OFF_TEMPERATURE: float = 0.6
     OPENAI_RANDOM_SEED: int = 314
-    LITE_LLM_HOST: str = field(default_factory=lambda: os.getenv("LITE_LLM_HOST", "https://litellm.plane.town"))
-    LITE_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("LITE_LLM_API_KEY", "sk-uFlW27K1uuF9hekh13QT9A"))
+    LITE_LLM_HOST: str = field(default_factory=lambda: os.getenv("LITE_LLM_HOST", ""))
+    LITE_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("LITE_LLM_API_KEY", ""))
     ENABLE_MODEL_VERIFICATION_LOGGING: bool = (
         False  # field(default_factory=lambda: os.getenv("ENABLE_MODEL_VERIFICATION_LOGGING", "false").lower() == "true")
     )
@@ -397,6 +396,8 @@ class Settings:
 
     @classmethod
     def setup_logger(cls):
+        handler = colorlog.StreamHandler()
+
         # Suppress APScheduler logs below error
         colorlog.getLogger("apscheduler").setLevel(colorlog.ERROR)
         colorlog.getLogger("apscheduler.scheduler").setLevel(colorlog.ERROR)
@@ -429,8 +430,6 @@ class Settings:
         colorlog.getLogger("ddtrace.writer").setLevel(colorlog.INFO)
         colorlog.getLogger("ddtrace.internal").setLevel(colorlog.INFO)
         colorlog.getLogger("ddtrace.internal.module").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal.telemetry").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal.telemetry.writer").setLevel(colorlog.INFO)
         colorlog.getLogger("ddtrace.internal.runtime").setLevel(colorlog.INFO)
         colorlog.getLogger("ddtrace.internal.runtime.container").setLevel(colorlog.INFO)
         colorlog.getLogger("ddtrace._trace.processor").setLevel(colorlog.INFO)
@@ -440,7 +439,10 @@ class Settings:
         colorlog.getLogger("datadog").setLevel(colorlog.INFO)
         colorlog.getLogger("datadog.dogstatsd").setLevel(colorlog.INFO)
 
-        handler = colorlog.StreamHandler()
+        colorlog.getLogger("ddtrace.internal.telemetry").setLevel(colorlog.INFO)
+        colorlog.getLogger("ddtrace.internal.telemetry.writer").setLevel(colorlog.INFO)
+
+        from pythonjsonlogger.json import JsonFormatter
 
         json_formatter = JsonFormatter(fmt="%(asctime)s %(name)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
         handler.setFormatter(json_formatter)

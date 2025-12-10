@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
@@ -14,7 +13,9 @@ type TConversionToastActionItems = {
   workItemId: string | undefined;
 };
 
-export const ConversionToastActionItems: FC<TConversionToastActionItems> = observer((props) => {
+export const ConversionToastActionItems = observer(function ConversionToastActionItems(
+  props: TConversionToastActionItems
+) {
   const { workspaceSlug, workItemId } = props;
   // state
   const [copied, setCopied] = useState(false);

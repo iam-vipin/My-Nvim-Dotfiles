@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,9 @@ type TConfigureClickUpSelectFolder = {
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
   "bg-custom-background-100 border border-custom-border-200 rounded-md px-2 py-1";
 
-export const ConfigureClickUpSelectFolder: FC<TConfigureClickUpSelectFolder> = observer((props) => {
+export const ConfigureClickUpSelectFolder = observer(function ConfigureClickUpSelectFolder(
+  props: TConfigureClickUpSelectFolder
+) {
   // props
   const { value, handleFormData, spaceId } = props;
 
@@ -45,9 +45,9 @@ export const ConfigureClickUpSelectFolder: FC<TConfigureClickUpSelectFolder> = o
   const userId = user?.id || undefined;
   const clickUpFolderIds = spaceId ? getClickUpFolderIdsBySpaceId(spaceId) : [];
   const clickUpFolders = spaceId
-    ? (getClickUpFolderIdsBySpaceId(spaceId)
+    ? getClickUpFolderIdsBySpaceId(spaceId)
         .map((id) => (id ? getClickUpFolderById(spaceId, id) : undefined))
-        .filter((project) => project != undefined && project != null) as TClickUpFolder[])
+        .filter((project) => project != undefined && project != null)
     : [];
 
   // Add useEffect to handle prefilling
@@ -62,7 +62,10 @@ export const ConfigureClickUpSelectFolder: FC<TConfigureClickUpSelectFolder> = o
     // updating the config data
     if (value && spaceId) {
       const folderData = value.map((id) => getClickUpFolderById(spaceId, id));
-      handleSyncJobConfig("folders", folderData.filter((folder) => folder !== undefined) as TClickUpFolder[]);
+      handleSyncJobConfig(
+        "folders",
+        folderData.filter((folder) => folder !== undefined)
+      );
     }
   };
 
@@ -93,7 +96,7 @@ export const ConfigureClickUpSelectFolder: FC<TConfigureClickUpSelectFolder> = o
         <MultiSelectDropdown
           value={value}
           options={options}
-          onChange={(value) => handleData(value as string[])}
+          onChange={(value) => handleData(value)}
           keyExtractor={(option) => option.data}
           buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
           buttonContent={(isOpen, val) => (

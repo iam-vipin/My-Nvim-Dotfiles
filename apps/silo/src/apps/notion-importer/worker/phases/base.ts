@@ -98,7 +98,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
       return JSON.parse(credentials) as TWorkspaceCredential;
     }
 
-    const credentialsData = await getJobCredentials(job as TImportJob);
+    const credentialsData = await getJobCredentials(job);
     this.store.set(credentialsKey, JSON.stringify(credentialsData), 60 * 60 * 4); // 4 hours
     return credentialsData;
   }
@@ -131,7 +131,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
       // Get the services required for the migration
       const zipManager = await this.getZipManager(fileId);
       const client = await this.getPlaneClient(job as TImportJob);
-      const zipDriver = await this.getZipDriver(zipManager, type as EZipDriverType);
+      const zipDriver = await this.getZipDriver(zipManager, type);
 
       // Determine the current node to process
       let currentNode: TZipFileNode | undefined = data.node;
@@ -233,7 +233,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @throws Error if access token is not available
    */
   async getPlaneClient(job: TImportJob): Promise<Client> {
-    const credentials = await this.getCachesJobCredentials(job as TImportJob);
+    const credentials = await this.getCachesJobCredentials(job);
     if (!credentials?.target_access_token) {
       throw new Error(`Job ${job.id} has no target access token`);
     }

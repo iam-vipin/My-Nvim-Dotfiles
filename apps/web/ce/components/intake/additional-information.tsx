@@ -4,4 +4,6 @@ type TIntakeAdditionalInformationProps = {
   workItemDetails: TIssue;
 };
 
-export const IntakeAdditionalInformation: React.FC<TIntakeAdditionalInformationProps> = () => <></>;
+export function IntakeAdditionalInformation(_props: TIntakeAdditionalInformationProps) {
+  return <></>;
+}

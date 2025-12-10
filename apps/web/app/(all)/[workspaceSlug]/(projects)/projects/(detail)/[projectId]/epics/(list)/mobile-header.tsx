@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -22,12 +20,9 @@ const SUPPORTED_LAYOUTS = [
   { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
-export const ProjectEpicMobileHeader = () => {
+export function ProjectEpicMobileHeader() {
   // router
-  const { workspaceSlug, projectId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-  };
+  const { workspaceSlug, projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -119,4 +114,4 @@ export const ProjectEpicMobileHeader = () => {
       </div>
     </>
   );
-};
+}

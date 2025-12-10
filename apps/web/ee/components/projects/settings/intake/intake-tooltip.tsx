@@ -12,7 +12,7 @@ import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import IntakeSubFeatures from "./intake-sub-features";
 import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";
 
-const IntakeTooltip = observer(({ projectId }: { projectId: string }) => {
+const IntakeTooltip = observer(function IntakeTooltip({ projectId }: { projectId: string }) {
   const { workspaceSlug } = useParams();
   const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
   const isFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);

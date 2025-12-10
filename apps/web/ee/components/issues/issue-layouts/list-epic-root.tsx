@@ -11,7 +11,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 
-export const EpicListLayout: FC = observer(() => {
+export const EpicListLayout = observer(function EpicListLayout() {
   const { workspaceSlug, projectId } = useParams();
   const { allowPermissions } = useUserPermissions();
 

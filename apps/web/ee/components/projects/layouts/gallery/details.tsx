@@ -28,7 +28,7 @@ type Props = {
   setDeleteProjectModal: (value: boolean) => void;
 };
 
-export const Details: React.FC<Props> = observer((props) => {
+export const Details = observer(function Details(props: Props) {
   const { project, workspaceSlug, setArchiveRestoreProject, setDeleteProjectModal } = props;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();

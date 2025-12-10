@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane web constants
 import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
@@ -27,7 +25,7 @@ const projectStateIconComponents = {
 
 type TProjectStateIconProps = TProjectStateIcon & { projectStateGroup?: TProjectStateGroupKey };
 
-export const ProjectStateIcon: FC<TProjectStateIconProps> = (props) => {
+export function ProjectStateIcon(props: TProjectStateIconProps) {
   const {
     projectStateGroup = EProjectStateGroup.DRAFT,
     width = "20",
@@ -48,4 +46,4 @@ export const ProjectStateIcon: FC<TProjectStateIconProps> = (props) => {
       className={`flex-shrink-0 ${className}`}
     />
   );
-};
+}

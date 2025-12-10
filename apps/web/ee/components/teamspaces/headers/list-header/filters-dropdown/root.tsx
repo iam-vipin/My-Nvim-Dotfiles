@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -12,7 +10,7 @@ type TTeamListFiltersDropdown = {
   menuButton?: React.ReactNode;
 };
 
-export const TeamListFiltersDropdown: FC<TTeamListFiltersDropdown> = observer((props) => {
+export const TeamListFiltersDropdown = observer(function TeamListFiltersDropdown(props: TTeamListFiltersDropdown) {
   const { menuButton } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

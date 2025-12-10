@@ -3,7 +3,7 @@ import { IssuesHeader as CeIssueHeader } from "@/ce/components/issues/header";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { AdvancedIssuesHeader } from "./advanced-header";
 
-export const IssuesHeader = () => {
+export function IssuesHeader() {
   const { workspaceSlug } = useParams();
   return (
     // Add CE component for fallback
@@ -11,4 +11,4 @@ export const IssuesHeader = () => {
       <AdvancedIssuesHeader />
     </WithFeatureFlagHOC>
   );
-};
+}

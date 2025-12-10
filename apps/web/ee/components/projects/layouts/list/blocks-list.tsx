@@ -6,7 +6,7 @@ interface Props {
   projectIds: string[] | undefined;
 }
 
-export const ProjectBlocksList: FC<Props> = (props) => {
+export function ProjectBlocksList(props: Props) {
   const { projectIds = [] } = props;
 
   return (
@@ -16,4 +16,4 @@ export const ProjectBlocksList: FC<Props> = (props) => {
         projectIds.map((projectId: string) => <ProjectBlock key={projectId} projectId={projectId} />)}
     </div>
   );
-};
+}

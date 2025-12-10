@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Rocket, TriangleAlert, CircleAlert } from "lucide-react";
@@ -28,11 +26,11 @@ export type TStatusDropdown = {
   setStatus: (status: EUpdateStatus) => void;
 };
 
-export const StatusDropdown: FC<TStatusDropdown> = observer((props) => {
+export const StatusDropdown = observer(function StatusDropdown(props: TStatusDropdown) {
   const { className, setStatus, selectedStatus } = props;
 
-  const DropdownOptions = () =>
-    StatusOptions?.map((status) => (
+  function DropdownOptions() {
+    return StatusOptions?.map((status) => (
       <CustomMenu.MenuItem
         key={status.key}
         className="flex items-center gap-2 truncate"
@@ -51,6 +49,7 @@ export const StatusDropdown: FC<TStatusDropdown> = observer((props) => {
         <div className="truncate font-medium text-sm capitalize">{status.key.replaceAll("-", " ").toLowerCase()}</div>
       </CustomMenu.MenuItem>
     ));
+  }
 
   const selectedStatusObj = StatusOptions.find((status) => status.key === selectedStatus);
 

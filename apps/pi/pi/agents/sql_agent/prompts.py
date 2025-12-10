@@ -168,57 +168,37 @@ Here is the list of available tables in Plane's database with their descriptions
 {table_descriptions}
 </table_descriptions>
 
-Your goal is to select only the tables that are directly relevant to fulfilling this query. Follow these steps:
+Your goal is to select only the tables that are directly relevant to fulfilling this query.
 
-1. Analyze the user's query to identify key elements and requirements.
-2. Review each table in the table_descriptions, considering:
-   - The table's purpose and description
-   - What the table contains and does not contain
-   - The table's relationships with other tables
-3. Categorize each table as "Highly Relevant", "Possibly Relevant", or "Not Relevant" to the query.
-4. Select the tables that are essential for answering the query.
-5. If a table contains the data directly related to the query, classify it as 'Highly Relevant' immediately.
-6. Format your final response as a JSON object with a "relevant_tables" key containing an array of selected table names.
+**Selection Process:**
+1. Identify key entities and concepts mentioned in the user query (e.g., issues, users, projects, cycles, states).
+2. For each identified concept, find the corresponding table(s) that contain that data.
+3. Include related tables needed for joins or filtering.
+4. Include related tables needed to display human-readable names (e.g., if selecting `issue_assignees`, also include `users` table).
 
-Before providing your final answer, wrap your analysis in <table_analysis> tags. In this analysis:
-1. Summarize the key elements from the user query.
-2. For each table in the table_descriptions:
-   a. Briefly describe its purpose
-   b. Explain its relevance (or lack thereof) to the query
-   c. Categorize it as "Highly Relevant", "Possibly Relevant", or "Not Relevant"
-3. *Important Note*
-       Do not ignore tables whose descriptions directly match the query, even if they have relationships with other tables.
-       For example, for queries about "users," always consider the users table as Highly Relevant.
-4. Justify your final selections based on this categorization
+**Incomplete/Active Work:**
+- When the user's intent implies items that should be worked on NOW (e.g., "to add to the 
+  current cycle", "missed to add", "should be in this cycle", "to pick up", "pending", 
+  "open", "to-do"), and the user has not explicitly asked for completed/closed items, 
+  you MUST include the states table in the selection.
 
-It's OK for this section to be quite long.
-
-Example of the expected output format:
-{{"relevant_tables": ["table1", "table2", "table3"]}}
-
-Additional Instructions Related to Issue Ownership:
-- Ownership of an issue lies with the users assigned to it. Not with the ones who created it.
-- When determining ownership of an issue, always use the issue_assignees table as the primary source. Treat it as the most relevant table for any query about who an issue belongs to, such as ownership, assignments, or responsibility. Do not prioritize issues table alone for such cases.
+**Issue Ownership:**
+- Ownership of an issue lies with the users assigned to it, not with the ones who created it.
+- When determining ownership, always include BOTH `issue_assignees` AND `users` tables.
 - Phrases containing "my/mine" related to issues:
-   - "My issues" = Issues where the user is an assignee. Use issue_assignees for this.
-   - "My backlog" = Issues in backlog state where user is an assignee. Use issue_assignees for this.
-   - "Created by me" = Issues where created_by_id matches the user. Use issues table for this.
-   - When both creation and ownership appear ("my issues that I created"), use BOTH issue_assignees and issues.
+   - "My issues" → include `issue_assignees`, `users`, `states` tables
+   - "My backlog" → include `issue_assignees`, `users`, `states` tables
+   - "Created by me" → include `issues`, `users`, `states` tables
+   - "Issues assigned to [person]" → include `issue_assignees`, `users`, `states` tables
 
-Additional Instructions Related to Incomplete/Active Work:
-- For queries that imply items that should be worked on (e.g., "to add to the current cycle", "missed to add", "to pick up", "open", "pending", "not done"), prioritize uncompleted states.
-- Treat the states table as Highly Relevant and include it in selections when the query does not specify states but implies active/to-do/pending items.
-- Default uncompleted buckets/groups: backlog, unstarted, started. Exclude completed/cancelled unless explicitly requested by the user.
+**Priority Queries:**
+- For priority-related queries, include the `issues` table (which contains the priority attribute).
 
-Additional Instructions Related to Priority Canonicalization:
-- Canonical priority values are: urgent, high, medium, low (case-insensitive). No other priority names should be assumed.
-- Map common synonyms to canonical values for interpretation: "highest"/"critical"/"blocker"/"p0" → urgent; "very high"/"p1" → high; "normal"/"standard" → medium; "lowest" → low.
-- Consider the priority attribute on the issues table the canonical source when selecting tables for priority-driven queries.
-
-Important requirements:
+**Output Format:**
+- Your response must be ONLY a valid JSON object with this exact format:
+{{"relevant_tables": ["table1", "table2", "table3"]}}
 - Include ONLY tables that exist in the provided table_descriptions.
 - Select only tables that are directly relevant to the query or necessary due to relationships.
+- Do not include any additional text, explanations, or analysis outside the JSON object.
 - Do not generate SQL queries or any other extraneous information.
-- Ensure your final output is a valid JSON object.
-- Do not include any additional text or explanations outside the JSON object.
 """

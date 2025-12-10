@@ -13,7 +13,7 @@ type Props = {
   searchTerm: string;
 };
 
-export const MovePageModalTeamspacesListSection: React.FC<Props> = observer((props) => {
+export const MovePageModalTeamspacesListSection = observer(function MovePageModalTeamspacesListSection(props: Props) {
   const { searchTerm } = props;
   // navigation
   const { teamspaceId } = useParams();

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 // plane imports
 import { Popover } from "@plane/propel/popover";
 import type { TEditorWorkItemMention } from "@plane/types";
@@ -17,7 +17,7 @@ import { EditorWorkItemMentionPreview } from "./preview";
 // services init
 const workspaceService = new WorkspaceService();
 
-export const EditorWorkItemMention: React.FC<TEditorMentionComponentProps> = observer((props) => {
+export const EditorWorkItemMention = observer(function EditorWorkItemMention(props: TEditorMentionComponentProps) {
   const { entity_identifier: workItemId, getMentionDetails } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -46,23 +46,26 @@ export const EditorWorkItemMention: React.FC<TEditorMentionComponentProps> = obs
   // derived values
   const savedWorkItemDetails = formattedWorkItemDetails || getMentionDetails?.("issue_mention", workItemId);
   // fetch work item details
-  const { data: fetchedWorkItemDetails, isLoading: isFetchingWorkItemDetails } = useSWR(
+  const {
+    data: fetchedWorkItemDetails,
+    isLoading: isFetchingWorkItemDetails,
+    error: errorFetchingWorkItemDetails,
+  } = useSWRImmutable(
     workspaceSlug && !savedWorkItemDetails ? `WORK_ITEM_MENTION_DETAILS_${workItemId}` : null,
     workspaceSlug && !savedWorkItemDetails
       ? () => workspaceService.retrieveWorkspaceWorkItem(workspaceSlug, workItemId)
       : null,
     {
-      revalidateIfStale: false,
-      revalidateOnReconnect: false,
+      shouldRetryOnError: false,
     }
   );
   const workItemDetails = savedWorkItemDetails || fetchedWorkItemDetails;
 
   return (
-    <div className="not-prose !inline px-1 py-0.5 rounded bg-custom-primary-100/10 border border-custom-border-400 no-underline cursor-pointer">
+    <div className="not-prose !inline px-1 py-0.5 rounded bg-custom-primary-100/10 border border-custom-border-400 no-underline cursor-pointer max-w-full truncate">
       <Popover delay={100} openOnHover>
-        <Popover.Button>
-          {workItemDetails ? (
+        <Popover.Button className="truncate" nativeButton={false}>
+          {workItemDetails && !errorFetchingWorkItemDetails ? (
             <EditorWorkItemMentionContent workItemDetails={workItemDetails} />
           ) : (
             <span className="text-custom-text-300">{isFetchingWorkItemDetails ? "..." : "work item not found"}</span>

@@ -19,7 +19,7 @@ type Props = {
   handleSubmit: (data: Partial<TDashboardWidget>) => Promise<void>;
 };
 
-export const WidgetConfigSidebarAxisConfig: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarAxisConfig(props: Props) {
   const { handleSubmit } = props;
   // states
   const [isCollapsibleIcon, setIsCollapsibleIcon] = useState(true);
@@ -82,4 +82,4 @@ export const WidgetConfigSidebarAxisConfig: React.FC<Props> = (props) => {
       </Collapsible>
     </div>
   );
-};
+}

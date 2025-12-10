@@ -256,7 +256,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
 }
 
 const breakAndGetParent = (issue: Issue): string | undefined => {
-  // @ts-expect-error
+  // @ts-expect-error - Ignoring ts error for private property access
   const parent = issue._parent;
   if (parent) {
     return parent.id;

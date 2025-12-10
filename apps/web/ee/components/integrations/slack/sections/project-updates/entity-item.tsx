@@ -13,7 +13,7 @@ interface ConnectionItemProps {
   onDelete: (connection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>) => void;
 }
 
-export const ConnectionItem: React.FC<ConnectionItemProps> = ({ connection, onEdit, onDelete }) => {
+export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemProps) {
   const { getProjectById } = useSlackIntegration();
 
   if (!connection.project_id || !connection.entity_slug) return null;
@@ -168,4 +168,4 @@ export const ConnectionItem: React.FC<ConnectionItemProps> = ({ connection, onEd
       </div>
     </div>
   );
-};
+}

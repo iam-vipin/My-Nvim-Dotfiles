@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -14,7 +12,7 @@ type Props = {
   onDiscard: () => void;
 };
 
-export const DiscardModal: React.FC<Props> = observer((props) => {
+export const DiscardModal = observer(function DiscardModal(props: Props) {
   const { isOpen, onClose, onDiscard } = props;
 
   return (

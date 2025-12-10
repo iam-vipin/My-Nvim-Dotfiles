@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -19,7 +17,7 @@ import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 import type { Route } from "./+types/page";
 import { InstanceSAMLConfigForm } from "./form";
 
-const InstanceSAMLAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceSAMLAuthenticationPage = observer(function InstanceSAMLAuthenticationPage(_props: Route.ComponentProps) {
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store

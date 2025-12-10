@@ -14,7 +14,7 @@ type TProps = {
   disabled?: boolean;
 };
 
-export const EpicCustomersRoot: FC<TProps> = observer((props) => {
+export const EpicCustomersRoot = observer(function EpicCustomersRoot(props: TProps) {
   const { workspaceSlug, epicId, disabled = false } = props;
   // store hooks
   const {

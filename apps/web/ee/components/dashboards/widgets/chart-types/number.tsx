@@ -4,7 +4,7 @@ import type { TNumberWidgetConfig } from "@plane/types";
 // local imports
 import type { TWidgetComponentProps } from ".";
 
-export const DashboardNumberWidget: React.FC<TWidgetComponentProps> = observer((props) => {
+export const DashboardNumberWidget = observer(function DashboardNumberWidget(props: TWidgetComponentProps) {
   const { widget } = props;
   // derived values
   const { data, height } = widget ?? {};

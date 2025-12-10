@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -29,7 +27,9 @@ type TIssueAdditionalPropertiesProps = {
  * Store-connected wrapper for issue additional properties.
  * Handles work item type store integration and data fetching.
  */
-export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps> = observer((props) => {
+export const IssueAdditionalProperties = observer(function IssueAdditionalProperties(
+  props: TIssueAdditionalPropertiesProps
+) {
   const {
     entityType = EWorkItemTypeEntity.WORK_ITEM,
     isDraft = false,

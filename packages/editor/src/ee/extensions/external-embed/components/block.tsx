@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import type { ExternalEmbedNodeViewProps } from "@/types";
 import { ExternalEmbedInputModal } from "./floating-input-modal";
 
-export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((externalEmbedProps) => {
+export const ExternalEmbedBlock = memo(function ExternalEmbedBlock(externalEmbedProps: ExternalEmbedNodeViewProps) {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const embedButtonRef = useRef<HTMLDivElement>(null);

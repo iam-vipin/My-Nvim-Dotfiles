@@ -29,7 +29,9 @@ const defaultTeamData: Partial<TTeamspace> = {
   project_ids: [],
 };
 
-export const CreateOrUpdateTeamspaceModal: FC<TCreateOrUpdateTeamspaceModalProps> = observer((props) => {
+export const CreateOrUpdateTeamspaceModal = observer(function CreateOrUpdateTeamspaceModal(
+  props: TCreateOrUpdateTeamspaceModalProps
+) {
   const { teamspaceId, isModalOpen, handleModalClose } = props;
   // router
   const { workspaceSlug } = useParams();

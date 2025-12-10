@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // ui
 // components
@@ -15,7 +13,7 @@ type TProjectBreadcrumbProps = {
   projectId: string;
 };
 
-export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
+export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TProjectBreadcrumbProps) {
   const { workspaceSlug, projectId } = props;
   // router
   const router = useAppRouter();

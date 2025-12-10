@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { PageHead } from "@/components/core/page-title";
 // hooks

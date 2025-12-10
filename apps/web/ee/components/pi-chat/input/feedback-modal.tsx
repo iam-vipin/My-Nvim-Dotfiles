@@ -10,7 +10,7 @@ type TProps = {
   onSubmit: (feedbackMessage: string) => void;
 };
 
-export const FeedbackModal = observer((props: TProps) => {
+export const FeedbackModal = observer(function FeedbackModal(props: TProps) {
   const { isOpen, onClose, onSubmit } = props;
   // react hook form
   const {

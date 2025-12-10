@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
@@ -22,7 +20,9 @@ type TNotificationItemReadOption = {
   unreadCount: number;
 };
 
-export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
+export const NotificationItemReadOption = observer(function NotificationItemReadOption(
+  props: TNotificationItemReadOption
+) {
   const { workspaceSlug, notificationList, issueId, unreadCount } = props;
   // hooks
   const { currentNotificationTab } = useWorkspaceNotifications();

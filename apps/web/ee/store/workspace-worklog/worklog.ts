@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-catch */
-
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane web services
@@ -141,6 +139,7 @@ export class Worklog implements IWorklog {
       runInAction(() => {
         this.mutateWorklog(worklog);
         this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId] =
+          // eslint-disable-next-line no-self-assign
           this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId];
       });
       throw error;

@@ -150,7 +150,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
     },
     {
       id: "oidc",
-      text: `Continue with ${!!config?.oidc_provider_name ? config.oidc_provider_name : "OIDC"}`,
+      text: `Continue with ${config?.oidc_provider_name ? config.oidc_provider_name : "OIDC"}`,
       icon: <Key height={18} width={18} />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/oidc/${next_path ? `?next_path=${next_path}` : ``}`);
@@ -159,7 +159,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
     },
     {
       id: "saml",
-      text: `Continue with ${!!config?.saml_provider_name ? config.saml_provider_name : "SAML"}`,
+      text: `Continue with ${config?.saml_provider_name ? config.saml_provider_name : "SAML"}`,
       icon: <Key height={18} width={18} />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/saml/${next_path ? `?next_path=${next_path}` : ``}`);

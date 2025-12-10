@@ -26,7 +26,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const InitiativeMultiSelectModal: React.FC<Props> = observer((props) => {
+export const InitiativeMultiSelectModal = observer(function InitiativeMultiSelectModal(props: Props) {
   const { isOpen, onClose, selectedInitiativeIds: selectedInitiativeIdsProp, onSubmit } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");

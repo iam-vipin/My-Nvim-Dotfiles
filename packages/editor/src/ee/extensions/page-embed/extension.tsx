@@ -39,8 +39,8 @@ declare module "@tiptap/core" {
   }
 }
 
-export const PageEmbedExtension = (props: Props) =>
-  PageEmbedExtensionConfig.extend({
+export function PageEmbedExtension(props: Props) {
+  return PageEmbedExtensionConfig.extend({
     selectable: true,
     draggable: true,
 
@@ -131,3 +131,4 @@ export const PageEmbedExtension = (props: Props) =>
       ];
     },
   });
+}

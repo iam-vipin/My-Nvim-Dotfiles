@@ -11,7 +11,7 @@ type TDateSelectProps = {
   required?: boolean;
 };
 
-export const DateSelect: React.FC<TDateSelectProps> = ({ property, isPreview = false, required = false }) => {
+export function DateSelect({ property, isPreview = false, required = false }: TDateSelectProps) {
   const {
     control,
     formState: { errors },
@@ -85,4 +85,4 @@ export const DateSelect: React.FC<TDateSelectProps> = ({ property, isPreview = f
       {error && <span className="text-xs text-red-500">{error.message as string}</span>}
     </div>
   );
-};
+}

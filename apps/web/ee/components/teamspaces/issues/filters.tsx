@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -25,7 +23,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const TeamHeaderFilters = observer((props: Props) => {
+export const TeamHeaderFilters = observer(function TeamHeaderFilters(props: Props) {
   const { teamspaceId, workspaceSlug } = props;
   const { t } = useTranslation();
   // store hooks

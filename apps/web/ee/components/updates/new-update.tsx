@@ -11,7 +11,7 @@ type TProps = {
   handleClose: () => void;
   handleCreate: (data: Partial<TUpdate>) => void;
 };
-export const NewUpdate = (props: TProps) => {
+export function NewUpdate(props: TProps) {
   const { handleClose, handleCreate, initialValues } = props;
   const { t } = useTranslation();
   const [input, setInput] = useState(initialValues?.description ?? "");
@@ -54,4 +54,4 @@ export const NewUpdate = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

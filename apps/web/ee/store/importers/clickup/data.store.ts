@@ -213,7 +213,7 @@ export class ClickUpDataStore implements IClickUpDataStore {
       this.isLoading = false;
       return teams;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -318,7 +318,7 @@ export class ClickUpDataStore implements IClickUpDataStore {
       return folders;
     } catch (error) {
       console.log("error in fetchClickUpFolders", error);
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -348,7 +348,7 @@ export class ClickUpDataStore implements IClickUpDataStore {
       this.isLoading = false;
       return taskCountResponse?.taskCount;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -381,7 +381,7 @@ export class ClickUpDataStore implements IClickUpDataStore {
       }
       return additionalUserResponse;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
     }
   };
 }

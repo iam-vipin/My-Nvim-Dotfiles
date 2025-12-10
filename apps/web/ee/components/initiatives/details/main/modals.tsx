@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -12,7 +10,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeModalsRoot: FC<Props> = observer((props) => {
+export const InitiativeModalsRoot = observer(function InitiativeModalsRoot(props: Props) {
   const { workspaceSlug, initiativeId } = props;
   // store hooks
   const {

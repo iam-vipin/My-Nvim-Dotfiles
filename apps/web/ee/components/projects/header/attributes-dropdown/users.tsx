@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane ui
@@ -18,7 +16,7 @@ type TFilterUser = {
   handleUpdate: (val: string[]) => void;
 };
 
-export const FilterUser: React.FC<TFilterUser> = observer((props) => {
+export const FilterUser = observer(function FilterUser(props: TFilterUser) {
   const { filterTitle = "Users", searchQuery, appliedFilters, handleUpdate } = props;
   // hooks
   const {

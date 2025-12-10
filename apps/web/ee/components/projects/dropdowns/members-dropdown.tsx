@@ -12,19 +12,23 @@ type Props = {
   button?: React.ReactNode;
 };
 
-export const MembersDropdown: React.FC<Props> = (props) => {
+export function MembersDropdown(props: Props) {
   const { value, onChange, disabled = false, buttonClassName = "", className = "", button } = props;
-  const DropdownLabel = () => (
-    <div
-      className={cn(
-        "px-2 text-xs h-full flex cursor-pointer items-center gap-2 text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded",
-        buttonClassName
-      )}
-    >
-      <MembersPropertyIcon className="h-3 w-3 flex-shrink-0" />
-      <span>{value ? value.length : "Members"}</span>
-    </div>
-  );
+
+  function DropdownLabel() {
+    return (
+      <div
+        className={cn(
+          "px-2 text-xs h-full flex cursor-pointer items-center gap-2 text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded",
+          buttonClassName
+        )}
+      >
+        <MembersPropertyIcon className="h-3 w-3 flex-shrink-0" />
+        <span>{value ? value.length : "Members"}</span>
+      </div>
+    );
+  }
+
   return (
     <MemberDropdown
       value={value}
@@ -40,4 +44,4 @@ export const MembersDropdown: React.FC<Props> = (props) => {
       multiple
     />
   );
-};
+}

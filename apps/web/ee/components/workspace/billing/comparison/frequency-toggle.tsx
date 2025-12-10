@@ -17,7 +17,7 @@ type TPlanFrequencyToggleProps = {
   setSelectedFrequency: (frequency: TBillingFrequency) => void;
 };
 
-export const PlanFrequencyToggle: FC<TPlanFrequencyToggleProps> = observer((props) => {
+export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: TPlanFrequencyToggleProps) {
   const { subscriptionType, isProductsAPILoading, selectedFrequency, subscriptionPriceDetails, setSelectedFrequency } =
     props;
   // store hooks

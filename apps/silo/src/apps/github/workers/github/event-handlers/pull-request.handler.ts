@@ -12,7 +12,7 @@ import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { PullRequestBehaviour } from "@/lib/behaviours";
 
 export const handlePullRequestEvents = async (action: PullRequestWebhookActions, data: unknown) => {
-  await handlePullRequestOpened(data as unknown as GithubPullRequestDedupPayload);
+  await handlePullRequestOpened(data as GithubPullRequestDedupPayload);
   return true;
 };
 
@@ -44,7 +44,7 @@ const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
   // Get the workspace connection for the installation
   // get all entity connections for the installation and do pr automation on them
   const { workspaceConnection, allEntityConnections } = await getConnDetailsForGithubToPlaneSync({
-    wsAdminCredentials: wsAdminCredentials as TWorkspaceCredential,
+    wsAdminCredentials: wsAdminCredentials,
     type: EGithubEntityConnectionType.PROJECT_PR_AUTOMATION,
     isEnterprise: data.isEnterprise,
   });
@@ -55,7 +55,7 @@ const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
   // Create the pull request service based on the type of integration
   let pullRequestService: GithubIntegrationService;
   if (data.isEnterprise) {
-    const appConfig = (workspaceConnection as TGithubWorkspaceConnection)?.connection_data?.appConfig;
+    const appConfig = workspaceConnection?.connection_data?.appConfig;
     if (!appConfig) {
       logger.error("[PULL-REQUEST] GitHub Enterprise app config not found", {
         installationId: data.installationId,

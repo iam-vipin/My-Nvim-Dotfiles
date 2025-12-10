@@ -33,7 +33,7 @@ export class SentryOAuthStrategy implements OAuthStrategy {
     state: string,
     additionalParams: Record<string, string>
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
-    const sentryAuthState: SentryAuthState = JSON.parse(Buffer.from(state as string, "base64").toString());
+    const sentryAuthState: SentryAuthState = JSON.parse(Buffer.from(state, "base64").toString());
     const installationId = additionalParams.installationId;
     const org = additionalParams.orgSlug;
 

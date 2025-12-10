@@ -16,7 +16,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const AskPiMenu: React.FC<Props> = (props) => {
+export function AskPiMenu(props: Props) {
   const { handleInsertText, handleRegenerate, isRegenerating, response, workspaceSlug } = props;
   // states
   const [query, setQuery] = useState("");
@@ -109,4 +109,4 @@ export const AskPiMenu: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

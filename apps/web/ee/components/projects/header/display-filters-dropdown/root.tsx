@@ -18,7 +18,9 @@ type TProjectDisplayFiltersDropdown = {
   isArchived?: boolean;
 };
 
-export const ProjectDisplayFiltersDropdown: FC<TProjectDisplayFiltersDropdown> = observer((props) => {
+export const ProjectDisplayFiltersDropdown = observer(function ProjectDisplayFiltersDropdown(
+  props: TProjectDisplayFiltersDropdown
+) {
   const { workspaceSlug, menuButton, isArchived = false } = props;
   // hooks
   const { filters, updateDisplayFilters } = useProjectFilter();

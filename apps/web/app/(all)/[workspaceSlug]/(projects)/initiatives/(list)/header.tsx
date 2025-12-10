@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -23,7 +21,7 @@ import { HeaderFilters } from "@/plane-web/components/initiatives/header/filters
 import { DEFAULT_INITIATIVE_LAYOUT } from "@/plane-web/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
-export const InitiativesListHeader = observer(() => {
+export const InitiativesListHeader = observer(function InitiativesListHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();

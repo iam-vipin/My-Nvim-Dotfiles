@@ -24,7 +24,7 @@ type TDataCardProps = {
   count: number;
 };
 
-const DataCard = (props: TDataCardProps) => {
+function DataCard(props: TDataCardProps) {
   const { type, data, workspaceSlug, initiativeId, count } = props;
   const router = useRouter();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
@@ -104,14 +104,14 @@ const DataCard = (props: TDataCardProps) => {
       )}
     </ControlLink>
   );
-};
+}
 
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled?: boolean;
 };
-export const ScopeBreakdown = observer((props: Props) => {
+export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
   const { workspaceSlug, initiativeId, disabled } = props;
   const {
     initiative: {

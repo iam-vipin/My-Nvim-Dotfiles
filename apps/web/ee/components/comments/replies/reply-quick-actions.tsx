@@ -16,7 +16,7 @@ type TReplyQuickActions = {
   setEditMode: () => void;
 };
 
-export const ReplyQuickActions: FC<TReplyQuickActions> = observer((props) => {
+export const ReplyQuickActions = observer(function ReplyQuickActions(props: TReplyQuickActions) {
   const { handleDelete, reply, setEditMode } = props;
   // store hooks
   const { data: currentUser } = useUser();

@@ -5,7 +5,6 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 from pydantic import UUID4
@@ -13,7 +12,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.agents.sql_agent import text2sql
 from pi.agents.sql_agent.tools import construct_entity_urls_vectordb
 from pi.agents.sql_agent.tools import extract_ids_from_sql_result
 from pi.agents.sql_agent.tools import format_as_bullet_points
@@ -31,14 +29,12 @@ from pi.services.retrievers import pg_store
 from pi.services.retrievers.docs_search import DocsRetriever
 from pi.services.retrievers.issue_search import IssueRetriever
 from pi.services.retrievers.pages_search import PageChunkRetriever
-from pi.services.schemas.chat import Agents
 from pi.services.schemas.chat import QueryFlowStore
 
+from .helpers.build_mode_helpers import build_method_executor_and_context
 from .mixins import AttachmentMixin
 from .prompts import combination_system_prompt
 from .prompts import combination_user_prompt
-from .prompts import generic_prompt as GENERIC_PROMPT
-from .prompts import generic_prompt_non_plane
 from .prompts import title_generation_prompt
 from .utils import StandardAgentResponse
 from .utils import format_message_with_attachments
@@ -64,21 +60,22 @@ class ChatKit(AttachmentMixin):
         use_custom_model = switch_llm is not None and not (switch_llm.startswith("gpt-5") or switch_llm == "gpt-5.1")
 
         # Model name mapping for user-friendly names to actual LiteLLM model names
-        model_name_mapping = {
+        claude_model_name_mapping = {
             "claude-sonnet-4": settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
             "claude-sonnet-4-0": settings.llm_model.CLAUDE_SONNET_4_0,
             "claude-sonnet-4-5": settings.llm_model.CLAUDE_SONNET_4_5,
         }
 
+        tool_llm_streaming = False
         if not switch_llm:
             switch_llm = settings.llm_model.GPT_4_1
             TOOL_LLM = settings.llm_model.GPT_4_1
-            tool_config = LLMConfig(model=TOOL_LLM, temperature=0.2, streaming=False)
+            tool_config = LLMConfig(model=TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
         else:
             # Map user-friendly model names to actual model names
-            actual_model_name = model_name_mapping.get(switch_llm, switch_llm)
+            actual_model_name = claude_model_name_mapping.get(switch_llm, switch_llm)
 
-            if switch_llm in model_name_mapping:
+            if switch_llm in claude_model_name_mapping:
                 # This is a Claude model
                 if actual_model_name in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5]:
                     # Direct Anthropic API models
@@ -90,7 +87,7 @@ class ChatKit(AttachmentMixin):
                     tool_config = LLMConfig(
                         model=TOOL_LLM,
                         temperature=0.2,
-                        streaming=False,
+                        streaming=tool_llm_streaming,
                         base_url=settings.llm_config.LITE_LLM_HOST,
                         api_key=settings.llm_config.LITE_LLM_API_KEY,
                     )
@@ -102,7 +99,7 @@ class ChatKit(AttachmentMixin):
                 TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
                 tool_config = LLMConfig(
                     model=TOOL_LLM,
-                    streaming=False,
+                    streaming=tool_llm_streaming,
                     reasoning_effort="medium",
                     use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
                 )
@@ -111,7 +108,7 @@ class ChatKit(AttachmentMixin):
                 TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
                 tool_config = LLMConfig(
                     model=TOOL_LLM,
-                    streaming=False,
+                    streaming=tool_llm_streaming,
                     reasoning_effort="low",
                     use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
                 )
@@ -125,7 +122,7 @@ class ChatKit(AttachmentMixin):
             else:
                 # This is a regular OpenAI model
                 TOOL_LLM = switch_llm
-                tool_config = LLMConfig(model=TOOL_LLM, temperature=0.2, streaming=False)
+                tool_config = LLMConfig(model=TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
 
         # Initialize LLMs using LLMFactory with switch_llm support
         if use_custom_model:
@@ -163,15 +160,13 @@ class ChatKit(AttachmentMixin):
         self.chat_llm = llms.get_chat_llm(switch_llm)
 
         # Log key model info
-        chat_model = getattr(self.chat_llm, "model_name", "unknown")
-        reasoning_effort = "N/A"
+        getattr(self.chat_llm, "model_name", "unknown")
         if switch_llm == "gpt-5-standard":
-            reasoning_effort = "medium"
+            pass
         elif switch_llm == "gpt-5-fast":
-            reasoning_effort = "low"
-        log.info(f"Using model: {chat_model} (reasoning_effort: {reasoning_effort}), switch_llm: {switch_llm}")
+            pass
 
-        self.tool_llm = create_openai_llm(tool_config)
+        self.tool_llm = llms.LazyLLM(lambda: create_openai_llm(tool_config))
         self.issue_retriever = IssueRetriever(
             num_docs=settings.chat.NUM_SIMILAR_DOCS, chunk_similarity_threshold=settings.vector_db.ISSUE_VECTOR_SEARCH_CUTOFF
         )
@@ -190,19 +185,19 @@ class ChatKit(AttachmentMixin):
         self.vector_search_issue_ids: list[str] = []
         self.vector_search_page_ids: list[str] = []
         self.current_context: dict[str, Any] = {}
-        # Store standardized agent responses for URL access
-        self.agent_responses: dict[str, Dict[str, Any]] = {}
+        # Store standardized tool responses for URL access
+        self.tool_responses: dict[str, Dict[str, Any]] = {}
 
         # Token tracking context (set externally when needed)
         self._token_tracking_context: Optional[Dict[str, Any]] = None
 
     def _store_agent_response(self, tool_name: str, response: Dict[str, Any]) -> None:
-        """Store standardized agent response for later URL access"""
-        self.agent_responses[tool_name] = response
+        """Store standardized tool response for later URL access"""
+        self.tool_responses[tool_name] = response
 
     def _get_stored_response(self, tool_name: str) -> Optional[Dict[str, Any]]:
-        """Get stored agent response"""
-        return self.agent_responses.get(tool_name)
+        """Get stored tool response"""
+        return self.tool_responses.get(tool_name)
 
     def set_token_tracking_context(self, message_id: UUID4, db: AsyncSession, chat_id: Optional[str] = None) -> None:
         """Set token tracking context for this chat session"""
@@ -365,13 +360,13 @@ Provide concise, relevant context from the attachment(s):"""
         entity_urls = None
         try:
             extracted_ids = extract_ids_from_sql_result(query_execution_result)
-
+            log.info(f"ChatID: {chat_id} - _create_entity_urls_for_db_search: Extracted IDs: {extracted_ids}")
             # Construct URLs using dynamic function (no need for user_meta)
             if any(extracted_ids.values()):
                 api_base_url = settings.plane_api.FRONTEND_URL
-
+                log.info(f"ChatID: {chat_id} - kit.py:_create_entity_urls_for_db_search: API Base URL: {api_base_url}")
                 entity_urls = await construct_entity_urls_vectordb(entity_ids=extracted_ids, api_base_url=api_base_url)
-
+                log.info(f"ChatID: {chat_id} - kit.py:_create_entity_urls_for_db_search: Entity URLs: {entity_urls}")
                 # intermediate_results["entity_urls"] = entity_urls
 
                 query_flow_store["tool_response"] += f"Entity extraction: {sum(len(ids) for ids in extracted_ids.values())} entities found\n"
@@ -646,35 +641,6 @@ Provide concise, relevant context from the attachment(s):"""
             return json.dumps(payload)
 
         @tool
-        async def no_actions_planned(
-            reason: str,
-            explanation: Optional[str] = None,
-        ) -> str:
-            """Use this when you determine that no actions need to be planned for the user's request.
-
-            This should be used when:
-            - The request is asking for information only (no data modification needed)
-            - The request is for unsupported features (analytics, external integrations, etc.)
-            - The request cannot be fulfilled with available tools
-            - All necessary information has been retrieved and no further actions are needed
-
-            Args:
-                reason: Short description of why no actions are needed (e.g., "Request is for information only").
-                explanation: Optional detailed explanation for the user about why no actions were planned.
-
-            Returns:
-                JSON string with the reasoning for downstream handling.
-            """
-            payload: Dict[str, Any] = {
-                "reason": reason,
-                "explanation": explanation or "",
-                "token": "NO_ACTIONS_PLANNED",
-            }
-
-            # The action executor will intercept this and handle the no-actions flow
-            return json.dumps(payload)
-
-        @tool
         async def vector_search_tool(query: str) -> str:
             """Search for issues using semantic vector search. Use this first when you need to find issues related to specific topics or keywords.
             Remember that this tool is designed to search for issues, not to retrieve detailed information or metadata about them."""
@@ -729,7 +695,10 @@ Provide concise, relevant context from the attachment(s):"""
                 self._store_agent_response("structured_db_tool", response)
 
                 # Extract and return the results text
-                return StandardAgentResponse.extract_results(response)
+                # result = StandardAgentResponse.extract_results(response)
+                result = StandardAgentResponse.format_response_with_entity_urls(response)
+                log.info(f"ChatID: {chat_id} - kit.py:structured_db_tool: format_response_with_entity_urls result: {result}")
+                return result
             except Exception as e:
                 log.error(f"Error in structured_db_tool: {str(e)}")
                 return f"Error querying database: {str(e)}"
@@ -1135,32 +1104,21 @@ Provide concise, relevant context from the attachment(s):"""
                 log.error(f"Error in docs_search_tool: {str(e)}")
                 return f"Error searching documentation: {str(e)}"
 
-        @tool
-        async def generic_query_tool(query: str) -> str:
-            """Handle general questions that don't require specific data retrieval from the workspace."""
-            try:
-                # Get attachment blocks from the shared context
-                attachment_blocks = self.get_current_attachment_blocks()
-                result = await self.handle_generic_query(query, user_id, conversation_history, attachment_blocks=attachment_blocks)
-
-                # Store the standardized response for consistency
-                self._store_agent_response("generic_query_tool", result)
-
-                # Extract and return the results text
-                return StandardAgentResponse.extract_results(result)
-            except Exception as e:
-                log.error(f"Error in generic_query_tool: {str(e)}")
-                return f"Error handling generic query: {str(e)}"
-
         # Store fetch_cycle_details in self for later access by _get_selected_tools
         self._fetch_cycle_details_tool = fetch_cycle_details
 
-        return [ask_for_clarification, vector_search_tool, structured_db_tool, pages_search_tool, docs_search_tool, generic_query_tool]
+        return [
+            ask_for_clarification,
+            vector_search_tool,
+            structured_db_tool,
+            pages_search_tool,
+            docs_search_tool,
+            fetch_cycle_details,
+        ]
 
-    async def _get_selected_tools(
+    async def _create_tools_for_ask_mode(
         self,
         db,
-        selected_agents,
         user_meta,
         workspace_id,
         workspace_slug,
@@ -1171,112 +1129,17 @@ Provide concise, relevant context from the attachment(s):"""
         conversation_history,
         message_id,
         is_project_chat=None,
-        pi_sidebar_open=None,
-        sidebar_open_url=None,
+        workspace_in_context=True,
+        chatbot_instance=None,
     ):
-        """Get tools based on selected agents, with dynamic OAuth token retrieval for action agents."""
+        """Create tools for ask mode.
 
-        # Check for action executor agent
-        is_action_agent = any(agent_query.agent == Agents.PLANE_ACTION_EXECUTOR_AGENT for agent_query in selected_agents)
-        if is_action_agent:
-            # Build context for selector and executor - prefer provided workspace_slug; resolve only if missing
-            if not workspace_slug:
-                from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
-
-                workspace_slug = await get_workspace_slug(workspace_id)
-            if not workspace_slug:
-                log.warning(f"Could not resolve workspace slug for workspace {workspace_id}")
-                return self._create_auth_error_tools(f"Could not resolve workspace information for {workspace_id}")
-
-            # Get OAuth token for user and workspace (development mode will return hardcoded API key)
-            access_token = await self._get_oauth_token_for_user(db, user_id, workspace_id)
-
-            if not access_token:
-                # No valid OAuth token - return special "auth required" tool
-                log.info(f"OAuth required for user {user_id} in workspace {workspace_id}")
-                return self._create_auth_required_tools(
-                    workspace_id,
-                    user_id,
-                    chat_id,
-                    str(message_id),
-                    is_project_chat=is_project_chat,
-                    project_id=project_id,
-                    pi_sidebar_open=pi_sidebar_open,
-                    sidebar_open_url=sidebar_open_url,
-                    workspace_slug=workspace_slug,
-                )
-
-            # Initialize the executor with OAuth token or API key
-            action_tools: list = []
-            try:
-                from pi.services.actions.category_selector import CategorySelector
-                from pi.services.actions.method_executor import MethodExecutor
-                from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
-
-                # Create actions executor
-                if access_token and access_token.startswith("plane_api_"):
-                    actions_executor = PlaneActionsExecutor(api_key=access_token, base_url=settings.plane_api.HOST)
-                else:
-                    actions_executor = PlaneActionsExecutor(access_token=access_token, base_url=settings.plane_api.HOST)
-
-                # Create hierarchical tools
-                category_selector = CategorySelector()
-                method_executor = MethodExecutor(actions_executor)
-
-                @tool
-                async def get_available_plane_actions(user_intent: str) -> str:
-                    """
-                    Return available Plane API methods across all categories (advisory catalog).
-                    Used to inform the LLM router; does not decide categories itself.
-                    Categories include: cycles, workitems (for issues/tasks), projects, labels, states, modules, pages, assets, users, intake, members, activity, attachments, comments, links, properties, types, worklogs.
-                    """  # noqa: E501
-                    categories = category_selector.get_available_categories()
-
-                    lines: list[str] = []
-                    lines.append("Available Plane action categories and methods:\n")
-                    for cat, description in categories.items():
-                        try:
-                            cat_methods = method_executor.get_category_methods(cat)
-                            method_names = ", ".join(cat_methods.keys()) if cat_methods else "-"
-                        except Exception as exc:
-                            log.warning(f"Failed to get methods for category '{cat}': {exc}")
-                            method_names = "(error retrieving methods)"
-                        lines.append(f"- {cat}: {description}")
-                        lines.append(f"  Methods: {method_names}")
-
-                    return "\n".join(lines)
-
-                action_tools = [get_available_plane_actions]
-
-            except Exception as e:
-                log.error(f"Error creating action tools: {e}")
-                return self._create_auth_error_tools(str(e))
-
-            # ALSO include existing retrieval tools so LLM can mix retrieval + actions
-            all_static_tools = self._create_tools(
-                db,
-                user_meta,
-                workspace_id,
-                project_id,
-                user_id,
-                chat_id,
-                query_flow_store,
-                conversation_history,
-                message_id,
-                is_project_chat=is_project_chat,
-            )
-            # Combine action tools with retrieval tools
-            combined_tools = action_tools + all_static_tools
-            return combined_tools
-
-        # Default: static retrieval tools
-        agent_to_tool_map = {
-            Agents.PLANE_STRUCTURED_DATABASE_AGENT: "structured_db_tool",
-            Agents.PLANE_VECTOR_SEARCH_AGENT: "vector_search_tool",
-            Agents.PLANE_PAGES_AGENT: "pages_search_tool",
-            Agents.PLANE_DOCS_AGENT: "docs_search_tool",
-            Agents.GENERIC_AGENT: "generic_query_tool",
-        }
+        Args:
+            workspace_in_context: If False, filters out workspace-specific tools like
+                structured_db_tool, vector_search_tool, pages_search_tool, fetch_cycle_details,
+                entity search tools, and ask_for_clarification. Only keeps docs_search_tool.
+        """
+        # Create all the retrieval tools except the generic query tool, which is no longer needed in ask mode
         all_tools = self._create_tools(
             db,
             user_meta,
@@ -1289,15 +1152,19 @@ Provide concise, relevant context from the attachment(s):"""
             message_id,
             is_project_chat=is_project_chat,
         )
-        selected_tool_names = [agent_to_tool_map.get(agent_query.agent) for agent_query in selected_agents]
-        tools = [tool for tool in all_tools if tool.name in selected_tool_names]
 
-        # Inject entity search tools and fetch_cycle_details so retrieval-only flows can disambiguate entities
-        # and get cycle details without SQL generation
-        try:
+        # Filter tools based on workspace_in_context
+        if workspace_in_context:
+            # Include all workspace-specific tools when workspace is in context
+            retrieval_tools = [
+                tool
+                for tool in all_tools
+                if tool.name in ["vector_search_tool", "structured_db_tool", "pages_search_tool", "docs_search_tool", "fetch_cycle_details"]
+            ]
+            clarification_tool = next((t for t in all_tools if getattr(t, "name", "") == "ask_for_clarification"), None)
+            # Add all the entity search tools
             from pi.services.actions.tools.entity_search import get_entity_search_tools
 
-            # Build minimal context for entity search and cycle details tool
             search_ctx = {
                 "workspace_id": workspace_id,
                 "workspace_slug": workspace_slug,
@@ -1305,33 +1172,35 @@ Provide concise, relevant context from the attachment(s):"""
                 "user_id": user_id,
             }
             entity_tools = get_entity_search_tools(method_executor=None, context=search_ctx) or []
-            log.info(f"ChatID: {chat_id} - Got {len(entity_tools)} entity search tools")
+            retrieval_tools.extend(entity_tools)
 
-            # Add fetch_cycle_details tool (stored in self during _create_tools)
-            if hasattr(self, "_fetch_cycle_details_tool"):
-                entity_tools.append(self._fetch_cycle_details_tool)
-                log.info(f"ChatID: {chat_id} - Added fetch_cycle_details to multi-agent tools")
-            else:
-                log.warning(f"ChatID: {chat_id} - fetch_cycle_details tool not available (was _create_tools called?)")
+            # add projects_retrieve tool till the retrieval and entity search tools are merged
+            method_executor, context, workspace_slug = await build_method_executor_and_context(
+                chatbot_instance=chatbot_instance,
+                user_id=user_id,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                conversation_history=conversation_history,
+                user_meta=user_meta,
+                is_project_chat=is_project_chat,
+                chat_id=chat_id,
+                db=db,
+            )
+            project_tools = get_tools_for_category("projects", method_executor=method_executor, context=context) or []
+            project_tools = [t for t in project_tools if getattr(t, "name", "") in ["projects_retrieve"]]
+            retrieval_tools.extend(project_tools)
 
-            # Merge while avoiding duplicates by name
-            existing = {getattr(t, "name", "") for t in tools}
-            for t in entity_tools:
-                if getattr(t, "name", "") not in existing:
-                    tools.append(t)
-            log.info(f"ChatID: {chat_id} - After adding entity tools, total tools: {len(tools)}, names: {[t.name for t in tools]}")
-        except Exception as e:
-            # Best-effort only; skip if unavailable
-            log.error(f"ChatID: {chat_id} - Error adding entity tools: {e}")
-            pass
-        # Always include clarification tool for retrieval flows so LLM can resolve ambiguity
-        try:
-            clar_tool = next((t for t in all_tools if getattr(t, "name", "") == "ask_for_clarification"), None)
-            if clar_tool and all(getattr(t, "name", "") != "ask_for_clarification" for t in tools):
-                tools = [clar_tool] + tools
-        except Exception:
-            pass
-        return tools
+            return retrieval_tools + [clarification_tool] if clarification_tool else retrieval_tools
+        else:
+            # When workspace is not in context, only include non-workspace-specific tools
+            log.info(f"ChatID: {chat_id} - Workspace not in context, filtering out workspace-specific tools")
+            retrieval_tools = [
+                tool
+                for tool in all_tools
+                if tool.name in ["docs_search_tool"]  # Only general documentation search
+            ]
+            # Don't include ask_for_clarification as it's designed for workspace entity clarifications
+            return retrieval_tools
 
     def _build_method_tools(self, category: str, method_executor, context: dict):
         """Build method-specific tools for the selected category using modular structure"""
@@ -1414,149 +1283,6 @@ Provide concise, relevant context from the attachment(s):"""
 
         return title
 
-    @llm_error_handler(
-        fallback_message="I'm having trouble processing your request right now. Please try again later.", max_retries=2, log_context="[GENERIC_QUERY]"
-    )
-    async def handle_generic_query(
-        self,
-        query: str,
-        user_id: str,
-        conversation_history: list[BaseMessage],
-        user_meta: Optional[dict[str, Any]] = None,
-        attachment_blocks: Optional[List[Dict[str, Any]]] = None,
-        include_user_context_on_followup: bool = False,
-    ) -> Dict[str, Any]:
-        """
-        Handle generic queries using LLM without database or vector search.
-        input: query - user query
-        output: Generic response based on LLM knowledge only
-        """
-        if user_meta is None:
-            user_meta = {}
-        date_time_context = await get_current_timestamp_context(user_id)
-        first_name = user_meta.get("first_name") or user_meta.get("firstName", "")
-        last_name = user_meta.get("last_name") or user_meta.get("lastName", "")
-
-        # Compose user context for possible use in system prompt
-        user_only_context = f"**User's Firstname**: {first_name} and Lastname: {last_name}"
-
-        # Compose message content with attachments if present
-        time_context_query = f"{query}\n\n**Context**: {date_time_context}"
-        message_content = time_context_query if not attachment_blocks else format_message_with_attachments(time_context_query, attachment_blocks)
-
-        recent_history = [(m.type, m.content) for m in conversation_history]
-        system_prompt = GENERIC_PROMPT
-
-        if conversation_history:
-            system_prompt = f"{system_prompt}\n\n{date_time_context}"
-            if include_user_context_on_followup:
-                log.debug("[GENERIC_QUERY] Adding user context on follow-up (include_user_context_on_followup=True)")
-                system_prompt = f"{system_prompt}\n\n{user_only_context}"
-            system_prompt = f"{system_prompt}\n\nSkip greetings and get straight to the point."
-        else:
-            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\n{user_only_context}"
-
-        recent_history = [(m.type, m.content) for m in conversation_history]
-
-        generic_prompt = ChatPromptTemplate.from_messages([
-            ("system", system_prompt),
-            ("placeholder", "{recent_history}"),
-            ("human", "{question}"),
-        ])
-
-        # Set tracking context for generic query
-        if self._token_tracking_context:
-            self.chat_llm.set_tracking_context(
-                self._token_tracking_context["message_id"],
-                self._token_tracking_context["db"],
-                MessageMetaStepType.COMBINATION,
-                chat_id=self._token_tracking_context.get("chat_id"),
-            )
-
-        # Use LLM chain
-        generic_llm_chain = generic_prompt | self.chat_llm
-        llm_response = await generic_llm_chain.ainvoke({"question": message_content, "recent_history": recent_history})
-        response_content = llm_response.content if hasattr(llm_response, "content") else str(llm_response)
-
-        return StandardAgentResponse.create_response(response_content)
-
-    async def handle_generic_query_stream(
-        self,
-        query: str,
-        user_id: str,
-        conv_history: list[BaseMessage],
-        user_meta: dict[str, Any],
-        non_plane: bool = False,
-        include_user_context_on_followup: bool = False,
-        attachment_blocks: Optional[List[Dict[str, Any]]] = None,
-    ) -> AsyncIterator[str]:
-        date_time_context = await get_current_timestamp_context(user_id)
-        first_name = user_meta.get("first_name") or user_meta.get("firstName", "")
-        last_name = user_meta.get("last_name") or user_meta.get("lastName", "")
-
-        user_only_context = f"**User's Firstname**: {first_name} and Lastname: {last_name}"
-
-        if non_plane:
-            system_prompt = generic_prompt_non_plane
-        else:
-            system_prompt = GENERIC_PROMPT
-
-        if conv_history:
-            system_prompt = f"{system_prompt}\n\n{date_time_context}"
-            if include_user_context_on_followup:
-                log.debug("[GENERIC_QUERY_STREAM] Adding user context on follow-up (include_user_context_on_followup=True)")
-                system_prompt = f"{system_prompt}\n\n{user_only_context}"
-            system_prompt = f"{system_prompt}\n\nSkip greetings and get straight to the point."
-        else:
-            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\n{user_only_context}"
-
-        # Filter out any non-BaseMessage objects (defensive check)
-        valid_conv_history = [m for m in conv_history if isinstance(m, BaseMessage)]
-        if len(valid_conv_history) != len(conv_history):
-            log.warning(f"[GENERIC_QUERY_STREAM] Filtered out {len(conv_history) - len(valid_conv_history)} non-BaseMessage items from conv_history")
-        recent_history = [(m.type, m.content) for m in valid_conv_history]
-
-        # Format message content with attachments if present
-        message_content = query if not attachment_blocks else format_message_with_attachments(query, attachment_blocks)
-
-        generic_prompt = ChatPromptTemplate.from_messages([
-            ("system", system_prompt),
-            ("placeholder", "{recent_history}"),
-            ("human", "{question}"),
-        ])
-
-        # Set tracking context for generic query
-        if self._token_tracking_context:
-            self.chat_llm.set_tracking_context(
-                self._token_tracking_context["message_id"],
-                self._token_tracking_context["db"],
-                MessageMetaStepType.COMBINATION,
-                chat_id=self._token_tracking_context.get("chat_id"),
-            )
-
-        # Use LLM chain for streaming
-        generic_llm_chain = generic_prompt | self.chat_llm
-
-        # Use streaming error handler context manager
-        async with streaming_error_handler("[GENERIC_QUERY_STREAM]") as error_context:
-            try:
-                if non_plane:
-                    stream_generator = generic_llm_chain.astream(
-                        {"question": message_content, "recent_history": recent_history}, temperature=NON_PLANE_TEMPERATURE
-                    )
-                else:
-                    stream_generator = generic_llm_chain.astream({"question": message_content, "recent_history": recent_history})
-
-                async for chunk in stream_generator:
-                    error_context.add_chunk(chunk)
-                    content = chunk.content if hasattr(chunk, "content") else str(chunk)
-                    yield content
-
-            except Exception:
-                # Error was handled by context manager, yield fallback message
-                fallback_message = "I'm having trouble processing your request right now. Please try again later."
-                yield fallback_message
-
     async def handle_structured_db_query(
         self,
         db: AsyncSession,
@@ -1569,7 +1295,7 @@ Provide concise, relevant context from the attachment(s):"""
         chat_id: Optional[str] = None,
         vector_search_issue_ids: Optional[List[str]] = None,
         vector_search_page_ids: Optional[List[str]] = None,
-        is_multi_agent: Optional[bool] = False,
+        is_multi_tool: Optional[bool] = False,
         user_meta: Optional[Dict[str, Any]] = None,
         conv_history: Optional[List[str]] = None,
         preset_tables: Optional[List[str]] = None,
@@ -1585,6 +1311,9 @@ Provide concise, relevant context from the attachment(s):"""
             user_meta = {"time_context": timestamp_context}
 
         log.info(f"Processing structured DB query: {query}")
+        # Import here to avoid circular import
+        from pi.agents.sql_agent import text2sql
+
         intermediate_results, response_data = await text2sql(
             db,
             query,
@@ -1596,7 +1325,7 @@ Provide concise, relevant context from the attachment(s):"""
             chat_id,
             vector_search_issue_ids,
             vector_search_page_ids,
-            is_multi_agent,
+            is_multi_tool,
             user_meta,
             conv_history,
             preset_tables,
@@ -1608,12 +1337,13 @@ Provide concise, relevant context from the attachment(s):"""
         query_execution_result: str = response_data.get("results", "")
 
         entity_urls = await self._create_entity_urls_for_db_search(query_execution_result, query_flow_store, intermediate_results, chat_id)
-
+        log.info(f"ChatID: {chat_id} - kit.py:handle_structured_db_query: Entity URLs: {entity_urls}")
         # Format results into a string, passing SQL query so we can detect LIMIT clauses
         sql_query_for_format = intermediate_results.get("generated_sql") if isinstance(intermediate_results, dict) else None
         formatted_query_result = await format_as_bullet_points(query_execution_result, sql_query_for_format)
 
-        return StandardAgentResponse.create_response(formatted_query_result, entity_urls, intermediate_results=intermediate_results)
+        result = StandardAgentResponse.create_response(formatted_query_result, entity_urls, intermediate_results=intermediate_results)
+        return result
 
     async def handle_vector_search_query(
         self, query: str, workspace_id: str, project_id: str, user_id: str, vector_search_issue_ids: list[str]
@@ -1797,18 +1527,20 @@ Provide concise, relevant context from the attachment(s):"""
 
         # log.info(f"Formatting {len(retrieved_docs)} {doc_type} results")
         formatted_results = []
-
+        log.info(f"kit.py:format_retrieved_results: Formatting {len(retrieved_docs)} {doc_type} results")
+        log.info(f"kit.py:format_retrieved_results: Retrieved docs: {retrieved_docs}")
         for doc in retrieved_docs:
             if doc_type == "issues":
-                title = doc.metadata.get("title", "Untitled Issue")
+                # Accept both legacy and new metadata keys
+                title = doc.metadata.get("title") or doc.metadata.get("name") or "Untitled Issue"
                 issue_id = doc.metadata.get("issue_id", "Unknown ID")
-                project_name = doc.metadata.get("project__name", "Unknown Project")
-                state = doc.metadata.get("state__name", "Unknown State")
+                project_name = doc.metadata.get("project_name", "Unknown Project")
+                state = doc.metadata.get("state_name", "Unknown State")
                 priority = doc.metadata.get("priority", "Unknown Priority")
 
                 # Chunk metadata
                 chunk_type = doc.metadata.get("chunk_type", "content")
-                issue_content = doc.page_content.strip()
+                issue_content = (doc.page_content or "").strip()
 
                 formatted_results.append(
                     f"**Issue: {title}** (ID: {issue_id})\n"
@@ -1817,11 +1549,11 @@ Provide concise, relevant context from the attachment(s):"""
                 )
 
             elif doc_type == "pages":
-                page_name = doc.metadata.get("name", "Untitled Page")
+                page_name = doc.metadata.get("name") or doc.metadata.get("page_title") or "Untitled Page"
                 page_id = doc.metadata.get("page_id", "Unknown ID")
-                project_name = doc.metadata.get("project__name", "Unknown Project")
+                project_name = doc.metadata.get("project_name", "Unknown Project")
 
-                page_content = doc.page_content.strip()
+                page_content = (doc.page_content or "").strip()
 
                 formatted_results.append(f"**Page: {page_name}** (ID: {page_id})\n" f"Project: {project_name}\n" f"Content: {page_content}\n")
 

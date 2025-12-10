@@ -11,7 +11,7 @@ import { TypeFormCreateUpdateRoot } from "./create-update-form";
 import { TypeFormListItem } from "./form-list-item";
 import { SelectTypesModal } from "./select-types-modal";
 
-export const TypeFormsRoot = () => {
+export function TypeFormsRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -103,4 +103,4 @@ export const TypeFormsRoot = () => {
       />
     </>
   );
-};
+}

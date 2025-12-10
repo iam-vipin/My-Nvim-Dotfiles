@@ -8,7 +8,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const TemplatePreviewCard = observer((props: TProps) => {
+export const TemplatePreviewCard = observer(function TemplatePreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = useTemplateData(artifactId);
   if (!data) return <></>;

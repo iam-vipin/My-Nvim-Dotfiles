@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
@@ -22,7 +20,9 @@ type TRequestAttachmentsListItem = {
   disabled?: boolean;
 };
 
-export const RequestAttachmentsListItem: FC<TRequestAttachmentsListItem> = observer((props) => {
+export const RequestAttachmentsListItem = observer(function RequestAttachmentsListItem(
+  props: TRequestAttachmentsListItem
+) {
   const { t } = useTranslation();
   // props
   const { attachmentId, disabled } = props;

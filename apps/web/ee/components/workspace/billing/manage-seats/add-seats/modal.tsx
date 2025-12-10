@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -13,7 +11,7 @@ type TAddSeatsModalProps = {
   onClose: () => void;
 };
 
-export const AddSeatsModal: React.FC<TAddSeatsModalProps> = observer((props) => {
+export const AddSeatsModal = observer(function AddSeatsModal(props: TAddSeatsModalProps) {
   const { data, onClose } = props;
   const { isOpen } = data;
 

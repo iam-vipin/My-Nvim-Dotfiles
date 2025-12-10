@@ -51,7 +51,7 @@ const progressXAxisOptions = Object.entries(TEAM_WORKLOAD_X_AXIS_LABEL_MAP).map(
   value,
 }));
 
-export const TeamspaceProgressChart: React.FC<TTeamspaceProgressChartProps> = observer((props) => {
+export const TeamspaceProgressChart = observer(function TeamspaceProgressChart(props: TTeamspaceProgressChartProps) {
   const { teamspaceId, data, xAxisKey, yAxisKey, handleXAxisKeyChange } = props;
   // store hooks
   const { getTeamspaceEntitiesLoaderById } = useTeamspaces();
@@ -67,7 +67,7 @@ export const TeamspaceProgressChart: React.FC<TTeamspaceProgressChartProps> = ob
         ...item,
         [xAxisKey]:
           item[xAxisKey] && typeof item[xAxisKey] === "string"
-            ? renderFormattedDateWithoutYear(item[xAxisKey] as string)
+            ? renderFormattedDateWithoutYear(item[xAxisKey])
             : item[xAxisKey],
       }));
     }

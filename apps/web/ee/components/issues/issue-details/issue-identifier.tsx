@@ -25,7 +25,7 @@ type TIdentifierTextProps = {
   textContainerClassName?: string;
 };
 
-export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
+export function IdentifierText(props: TIdentifierTextProps) {
   const { identifier, enableClickToCopyIdentifier = false, textContainerClassName } = props;
   // handlers
   const handleCopyIssueIdentifier = () => {
@@ -55,7 +55,7 @@ export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
       </span>
     </Tooltip>
   );
-};
+}
 
 type TIssueTypeIdentifier = {
   getWorkItemTypeById?: (workItemTypeId: string) => IIssueType | undefined;
@@ -63,7 +63,7 @@ type TIssueTypeIdentifier = {
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => {
+export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(props: TIssueTypeIdentifier) {
   const { getWorkItemTypeById, issueTypeId, size = "sm" } = props;
   // derived values
   const workItemTypeFromStore = useIssueType(issueTypeId);
@@ -88,7 +88,7 @@ type TIssueIdentifierPropsExtended = TIssueIdentifierProps & {
   isWorkItemTypeEntityEnabled?: (workspaceSlug: string, projectId: string, entityType: EWorkItemTypeEntity) => boolean;
 };
 
-export const IssueIdentifier: React.FC<TIssueIdentifierPropsExtended> = observer((props) => {
+export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueIdentifierPropsExtended) {
   const {
     displayProperties,
     enableClickToCopyIdentifier = false,

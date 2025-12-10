@@ -9,7 +9,7 @@ type Props = {
   item: IWorkspaceSidebarNavigationItem;
 };
 
-export const SidebarItem: FC<Props> = ({ item }) => {
+export function SidebarItem({ item }: Props) {
   const { workspaceSlug } = useParams();
 
   if (!isSidebarFeatureEnabled(item.key, workspaceSlug.toString())) return null;
@@ -26,4 +26,4 @@ export const SidebarItem: FC<Props> = ({ item }) => {
       }
     />
   );
-};
+}

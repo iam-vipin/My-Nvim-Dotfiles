@@ -21,7 +21,7 @@ export type TActivityOperations = {
   remove: (commentId: string) => Promise<void>;
 };
 
-export const CommentList = observer((props: TProps) => {
+export const CommentList = observer(function CommentList(props: TProps) {
   const { isCollapsed, updateId, workspaceSlug, projectId } = props;
   const [newComment, setNewComment] = useState("");
 

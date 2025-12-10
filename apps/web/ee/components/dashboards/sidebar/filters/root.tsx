@@ -68,7 +68,7 @@ type Props = {
   initialFilters?: TExternalDashboardWidgetFilterExpression;
 };
 
-const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, handleSubmit }) => {
+const FilterContent = observer(function FilterContent({ projectIds, initialFilters, handleSubmit }: Props) {
   const filterInstance = useMemo(
     () =>
       new FilterInstance<TDashboardWidgetFilterKeys, TExternalDashboardWidgetFilterExpression>({
@@ -352,13 +352,15 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
   );
 });
 
-const WidgetConfigSidebarFilters: React.FC<Props> = observer((props) => (
-  <div className="flex flex-col gap-4 w-full overflow-x-hidden flex-shrink-0">
-    <div className="flex items-center justify-between w-full">
-      <h6 className="font-semibold text-custom-text-200 text-sm">Filters</h6>
+const WidgetConfigSidebarFilters = observer(function WidgetConfigSidebarFilters(props: Props) {
+  return (
+    <div className="flex flex-col gap-4 w-full overflow-x-hidden flex-shrink-0">
+      <div className="flex items-center justify-between w-full">
+        <h6 className="font-semibold text-custom-text-200 text-sm">Filters</h6>
+      </div>
+      {props.initialFilters ? <FilterContent {...props} /> : <Loader.Item height="24px" width="100%" />}
     </div>
-    {props.initialFilters ? <FilterContent {...props} /> : <Loader.Item height="24px" width="100%" />}
-  </div>
-));
+  );
+});
 
 export { WidgetConfigSidebarFilters };

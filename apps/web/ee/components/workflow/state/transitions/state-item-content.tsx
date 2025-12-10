@@ -15,7 +15,7 @@ export type StateItemContentProps = {
   shouldEnableNewTransitionAddition: boolean;
 };
 
-export const StateItemContent = observer((props: StateItemContentProps) => {
+export const StateItemContent = observer(function StateItemContent(props: StateItemContentProps) {
   const { workspaceSlug, projectId, disabled, state, transitionIds, shouldEnableNewTransitionAddition } = props;
 
   return (

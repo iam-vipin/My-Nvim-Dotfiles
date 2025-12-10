@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type TProps = {
   isWorkItemLevel?: boolean;
 };
 
-export const CustomerRequestSearch: FC<TProps> = observer((props) => {
+export const CustomerRequestSearch = observer(function CustomerRequestSearch(props: TProps) {
   const { isWorkItemLevel = false } = props;
   // i18n
   const { t } = useTranslation();

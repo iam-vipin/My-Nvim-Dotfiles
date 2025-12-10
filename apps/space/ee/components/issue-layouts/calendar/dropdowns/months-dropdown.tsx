@@ -13,7 +13,7 @@ type Props = {
   calendarLayout: "month" | "week" | undefined;
 };
 
-export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) => {
+export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
   const { calendarLayout } = props;
 
   const issueCalendarView = useCalendarView();

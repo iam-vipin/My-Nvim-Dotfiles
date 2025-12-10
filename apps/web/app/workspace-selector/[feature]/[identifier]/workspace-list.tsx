@@ -13,7 +13,7 @@ type TWorkspaceList = {
   handleWorkspaceSelection: (workspace: IWorkspace) => void;
 };
 
-export const WorkspaceList = (props: TWorkspaceList) => {
+export function WorkspaceList(props: TWorkspaceList) {
   const { selectedWorkspaceSlug, workspace, handleWorkspaceSelection } = props;
 
   return (
@@ -47,4 +47,4 @@ export const WorkspaceList = (props: TWorkspaceList) => {
       </div>
     </div>
   );
-};
+}

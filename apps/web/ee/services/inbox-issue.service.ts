@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-catch */
-
 // plane imports
 import type { TInboxForm } from "@plane/types";
 // services

@@ -82,7 +82,7 @@ export const createOrUpdateIssueProperties = async (
   // Process all issue properties in batches of 5
   const createdUpdatedIssueProperties = await processBatchPromises(issueProperties, processIssueProperty, 2);
 
-  return createdUpdatedIssueProperties.filter((property) => property !== undefined) as ExIssueProperty[];
+  return createdUpdatedIssueProperties.filter((property) => property !== undefined);
 };
 
 export const createOrUpdateIssuePropertiesOptions = async (
@@ -145,5 +145,5 @@ export const createOrUpdateIssuePropertiesOptions = async (
     2
   );
 
-  return createdUpdatedIssuePropertiesOptions.filter((option) => option !== undefined) as ExIssuePropertyOption[];
+  return createdUpdatedIssuePropertiesOptions.filter((option) => option !== undefined);
 };

@@ -29,7 +29,7 @@ const defaultValues: Partial<TAutomation> = {
   scope: EAutomationScope.WORK_ITEM,
 };
 
-export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => {
+export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomationModal(props: Props) {
   const { data, isOpen, onClose } = props;
   // app router
   const router = useAppRouter();

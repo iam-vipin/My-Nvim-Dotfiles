@@ -22,7 +22,7 @@ type Props = {
   redirectionEnabled?: boolean;
 };
 
-export const WikiCreatePageModal: FC<Props> = observer((props) => {
+export const WikiCreatePageModal = observer(function WikiCreatePageModal(props: Props) {
   const { workspaceSlug, isModalOpen, pageAccess, handleModalClose, redirectionEnabled = false } = props;
   // states
   const [pageFormData, setPageFormData] = useState<Partial<TPage>>({

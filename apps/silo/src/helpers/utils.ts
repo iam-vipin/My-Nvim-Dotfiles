@@ -15,7 +15,7 @@ export const removeSpanAroundImg = (htmlContent: string): string => {
   const imgTags = root.querySelectorAll("img");
 
   imgTags.forEach((img) => {
-    const parent = img.parentNode as HTMLElement;
+    const parent = img.parentNode;
 
     // Check if the parent is a <span> tag
     if (parent && parent.tagName === "SPAN") {
@@ -47,7 +47,7 @@ export const splitStringTillPart = (input: string, part: string): string => {
   return "/" + result;
 };
 
-export const downloadFile = async (url: string, authToken?: string | undefined): Promise<Blob | undefined> => {
+export const downloadFile = async (url: string, authToken?: string): Promise<Blob | undefined> => {
   try {
     const response = await axios({
       url,

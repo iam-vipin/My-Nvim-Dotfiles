@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -40,7 +38,9 @@ interface IProjectPRStateMappingRootProps {
   isEnterprise: boolean;
 }
 
-export const ProjectPRStateMappingRoot: FC<IProjectPRStateMappingRootProps> = observer(({ isEnterprise }) => {
+export const ProjectPRStateMappingRoot = observer(function ProjectPRStateMappingRoot({
+  isEnterprise,
+}: IProjectPRStateMappingRootProps) {
   // hooks
   const {
     workspace,

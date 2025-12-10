@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,9 @@ type TProjectIssueSyncEntityItem = {
   isEnterprise: boolean;
 };
 
-export const ProjectIssueSyncEntityItem: FC<TProjectIssueSyncEntityItem> = observer((props) => {
+export const ProjectIssueSyncEntityItem = observer(function ProjectIssueSyncEntityItem(
+  props: TProjectIssueSyncEntityItem
+) {
   // props
   const { project, entityConnection, isEnterprise } = props;
 

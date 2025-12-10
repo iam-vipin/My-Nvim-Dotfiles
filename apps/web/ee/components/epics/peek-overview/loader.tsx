@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { MoveRight } from "lucide-react";
 // plane imports
@@ -12,7 +10,7 @@ type TIssuePeekOverviewLoader = {
   removeRoutePeekId: () => void;
 };
 
-export const EpicPeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => {
+export function EpicPeekOverviewLoader(props: TIssuePeekOverviewLoader) {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -105,4 +103,4 @@ export const EpicPeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => {
       </div>
     </Loader>
   );
-};
+}

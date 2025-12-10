@@ -3,8 +3,7 @@ import { observer } from "mobx-react";
 import { useGanttChart } from "../..";
 // hooks
 
-export const BiWeekChartView: FC<any> = observer(() => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const BiWeekChartView = observer(function BiWeekChartView(_props: any) {
   const { currentViewData, renderView } = useGanttChart();
 
   return (

@@ -1,7 +1,10 @@
 """
-Comments API tools for Plane issue comment management.
+Comments API tools for Plane issue comments operations.
 """
 
+import uuid
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from langchain_core.tools import tool
@@ -21,36 +24,46 @@ def get_comment_tools(method_executor, context):
         comment_html: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+        external_source: Optional[str] = None,
+        external_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """Create a comment on an issue.
 
         Args:
-            issue_id: Parameter description (required)
-            comment_html: Parameter description (required)
-            project_id: Parameter description (optional)
-            workspace_slug: Parameter description (optional)
+            issue_id: Issue ID (required)
+            comment_html: Comment content in HTML format (required)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
+            workspace_slug: Workspace slug (optional, auto-filled from context)
+            external_source: External source identifier (e.g., "jira")
+            external_id: External system ID
         """
+        print(f"Context in comments_create: {context}")
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
 
+        # Note: issue_id and project_id validation/resolution is handled centrally
+        # in action_execution_helpers.validate_and_resolve_ids() before tool execution
+
         result = await method_executor.execute(
             "comments",
             "create",
             issue_id=issue_id,
             comment_html=comment_html,
+            external_source=external_source,
+            external_id=external_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully created comment", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully created comment", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to create comment", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create comment", result["error"])
 
     @tool
-    async def comments_list(issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def comments_list(issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """List comments for an issue."""
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -60,85 +73,179 @@ def get_comment_tools(method_executor, context):
 
         result = await method_executor.execute("comments", "list", issue_id=issue_id, project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved comments list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved comments list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list comments", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list comments", result["error"])
 
     @tool
     async def comments_retrieve(
         comment_id: str,
+        issue_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
-        """Get a single comment by ID."""
+    ) -> Dict[str, Any]:
+        """Get a single comment by ID.
+
+        Args:
+            comment_id: Comment ID (required)
+            issue_id: Issue ID (required)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
+            workspace_slug: Workspace slug (optional, auto-filled from context)
+        """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         result = await method_executor.execute(
             "comments",
             "retrieve",
             comment_id=comment_id,
+            issue_id=issue_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved comment", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved comment", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve comment", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve comment", result["error"])
 
     @tool
     async def comments_update(
         comment_id: str,
-        comment_html: str,
+        issue_id: str,
+        comment_html: Optional[str] = None,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
-        """Update comment details."""
+        external_source: Optional[str] = None,
+        external_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Update comment details.
+
+        Args:
+            comment_id: Comment ID (required)
+            issue_id: Issue ID (required)
+            comment_html: Comment content in HTML format
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
+            workspace_slug: Workspace slug (optional, auto-filled from context)
+            external_source: External source identifier (e.g., "jira")
+            external_id: External system ID
+        """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         result = await method_executor.execute(
             "comments",
             "update",
             comment_id=comment_id,
+            issue_id=issue_id,
             comment_html=comment_html,
+            external_source=external_source,
+            external_id=external_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully updated comment", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully updated comment", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to update comment", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update comment", result["error"])
 
     @tool
     async def comments_delete(
         comment_id: str,
+        issue_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
-        """Delete a comment."""
+    ) -> Dict[str, Any]:
+        """Delete a comment.
+
+        Args:
+            comment_id: Comment ID (required)
+            issue_id: Issue ID (required)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
+            workspace_slug: Workspace slug (optional, auto-filled from context)
+        """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
 
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
+
         result = await method_executor.execute(
             "comments",
             "delete",
             comment_id=comment_id,
+            issue_id=issue_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully deleted comment", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully deleted comment", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to delete comment", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to delete comment", result["error"])
 
     return [comments_create, comments_list, comments_retrieve, comments_update, comments_delete]

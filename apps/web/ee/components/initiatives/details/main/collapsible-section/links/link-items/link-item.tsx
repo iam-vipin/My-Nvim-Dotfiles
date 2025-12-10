@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
@@ -24,7 +22,7 @@ type TInitiativeLinkItem = {
   isNotAllowed: boolean;
 };
 
-export const InitiativeLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
+export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TInitiativeLinkItem) {
   // props
   const { link, linkOperations, isNotAllowed } = props;
   // hooks

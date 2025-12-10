@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ type TPageShareControlProps = {
   storeType: EPageStoreType;
 };
 
-export const PageShareControl: React.FC<TPageShareControlProps> = observer((props) => {
+export const PageShareControl = observer(function PageShareControl(props: TPageShareControlProps) {
   const { page, storeType } = props;
 
   // states

@@ -19,7 +19,7 @@ type TProps = {
   currentEstimateType?: TEstimateSystemKeys;
 };
 
-export const EstimateSwitchDropdown: FC<TProps> = (props) => {
+export function EstimateSwitchDropdown(props: TProps) {
   const { t } = useTranslation();
   const { estimateType, onChange, currentEstimateType } = props;
   const options = useMemo(
@@ -62,4 +62,4 @@ export const EstimateSwitchDropdown: FC<TProps> = (props) => {
       keyExtractor={(option) => option.value}
     />
   );
-};
+}

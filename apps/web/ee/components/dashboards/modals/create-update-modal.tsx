@@ -29,7 +29,7 @@ const defaultValues: Partial<TDashboard> = {
   project_ids: [],
 };
 
-export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((props) => {
+export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdateWorkspaceDashboardModal(props: Props) {
   const { data, isOpen, onClose } = props;
   // navigation
   const { workspaceSlug } = useParams();

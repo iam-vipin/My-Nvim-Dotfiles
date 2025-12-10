@@ -20,7 +20,7 @@ type TProps = {
   multiple?: boolean;
 };
 
-export const CustomerDropDown: FC<TProps> = observer((props) => {
+export const CustomerDropDown = observer(function CustomerDropDown(props: TProps) {
   const {
     value,
     onChange,

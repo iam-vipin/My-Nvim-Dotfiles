@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ export type TLicenseFileFormProps = {
   handleClose: () => void;
 };
 
-export const LicenseFileForm: FC<TLicenseFileFormProps> = observer((props) => {
+export const LicenseFileForm = observer(function LicenseFileForm(props: TLicenseFileFormProps) {
   const { workspaceSlug, hasPermission, onSuccess, onError, handleClose } = props;
   // hooks
   const { activateUsingLicenseFile } = useSelfHostedSubscription();

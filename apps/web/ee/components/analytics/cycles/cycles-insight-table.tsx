@@ -32,9 +32,9 @@ declare module "@tanstack/react-table" {
 
 const analyticsService = new AnalyticsService();
 
-const CyclesInsightTable = observer(() => {
+const CyclesInsightTable = observer(function CyclesInsightTable() {
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug;
   const { t } = useTranslation();
   const { selectedDuration, selectedProjects } = useAnalytics();
   const { getUserDetails } = useMember();

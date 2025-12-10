@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -15,7 +13,9 @@ type TRecurringWorkItemActivityItemProps = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const RecurringWorkItemActivityItem = observer((props: TRecurringWorkItemActivityItemProps) => {
+export const RecurringWorkItemActivityItem = observer(function RecurringWorkItemActivityItem(
+  props: TRecurringWorkItemActivityItemProps
+) {
   const { activity, ends } = props;
   // return if activity details are not available
   if (!activity) return <></>;

@@ -1,4 +1,3 @@
-"use client";
 import { useMemo } from "react";
 // plane ui
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";

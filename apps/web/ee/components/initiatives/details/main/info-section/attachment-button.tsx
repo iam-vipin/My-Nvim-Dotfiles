@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const InitiativeAttachmentActionButton: FC<Props> = observer((props) => {
+export const InitiativeAttachmentActionButton = observer(function InitiativeAttachmentActionButton(props: Props) {
   const { workspaceSlug, initiativeId, customButton, disabled = false } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);

@@ -8,8 +8,8 @@ import { ExternalEmbedExtensionConfig } from "./extension-config";
 import { createExternalEmbedPastePlugin } from "./plugins";
 import type { ExternalEmbedExtensionOptions, ExternalEmbedExtensionStorage, ExternalEmbedProps } from "./types";
 
-export const ExternalEmbedExtension = (props: ExternalEmbedProps) =>
-  ExternalEmbedExtensionConfig.extend<ExternalEmbedExtensionOptions, ExternalEmbedExtensionStorage>({
+export function ExternalEmbedExtension(props: ExternalEmbedProps) {
+  return ExternalEmbedExtensionConfig.extend<ExternalEmbedExtensionOptions, ExternalEmbedExtensionStorage>({
     selectable: true,
     draggable: true,
 
@@ -54,3 +54,4 @@ export const ExternalEmbedExtension = (props: ExternalEmbedProps) =>
       ));
     },
   });
+}

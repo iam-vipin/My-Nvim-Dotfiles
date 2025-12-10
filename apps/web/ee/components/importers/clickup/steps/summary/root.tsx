@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ import { useClickUpImporter, useWorkspaceSubscription } from "@/plane-web/hooks/
 // plane web types
 import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
 
-export const SummaryRoot: FC = observer(() => {
+export const SummaryRoot = observer(function SummaryRoot() {
   // hooks
   const {
     workspace,

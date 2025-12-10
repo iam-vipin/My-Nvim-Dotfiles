@@ -28,7 +28,7 @@ const chartLegends = [
   },
 ];
 
-const SidebarChartPro = observer((props: TProps) => {
+const SidebarChartPro = observer(function SidebarChartPro(props: TProps) {
   const { workspaceSlug, projectId } = props;
   const { cycle, cycleProgress, plotType, estimateType } = useCycleDetails({
     workspaceSlug: workspaceSlug.toString(),

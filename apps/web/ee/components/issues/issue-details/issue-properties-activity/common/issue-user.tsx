@@ -9,7 +9,7 @@ type TIssueUser = {
   activityId: string;
 };
 
-export const IssueUser: FC<TIssueUser> = (props) => {
+export function IssueUser(props: TIssueUser) {
   const { activityId } = props;
   // hooks
   const { getPropertyActivityById } = useIssuePropertiesActivity();
@@ -29,4 +29,4 @@ export const IssueUser: FC<TIssueUser> = (props) => {
       </Link>
     </>
   );
-};
+}

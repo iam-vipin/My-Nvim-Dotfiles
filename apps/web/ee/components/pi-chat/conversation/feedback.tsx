@@ -19,7 +19,7 @@ export type TProps = {
   handleConvertToPage?: () => void;
 };
 
-export const Feedback = observer((props: TProps) => {
+export const Feedback = observer(function Feedback(props: TProps) {
   // props
   const { answer, activeChatId, id, workspaceId, feedback, queryId, isLatest, handleConvertToPage } = props;
   // states
@@ -62,7 +62,7 @@ export const Feedback = observer((props: TProps) => {
   };
 
   return (
-    <div className="flex gap-4 mt-6">
+    <div className="flex gap-4">
       {/* Copy */}
       <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
         <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-custom-text-300" />

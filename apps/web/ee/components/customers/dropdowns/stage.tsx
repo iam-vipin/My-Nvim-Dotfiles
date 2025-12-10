@@ -16,7 +16,7 @@ type TProps = {
   disabled: boolean;
 };
 
-export const StageDropDown: FC<TProps> = (props) => {
+export function StageDropDown(props: TProps) {
   const { value, onChange, maxHeight, tabIndex, buttonClassName, chevronClassName, className, disabled } = props;
 
   const { t } = useTranslation();
@@ -61,4 +61,4 @@ export const StageDropDown: FC<TProps> = (props) => {
       disabled={disabled}
     />
   );
-};
+}

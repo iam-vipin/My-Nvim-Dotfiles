@@ -22,7 +22,7 @@ const cycleBurnDownChartOptions = [
   { value: "points", label: "Points" },
 ];
 
-export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
+export const ActiveCycleProductivity = observer(function ActiveCycleProductivity(props: ActiveCycleProductivityProps) {
   const { cycle, workspaceSlug } = props;
 
   const { data: estimate_distribution } = useSWR(

@@ -1,5 +1,3 @@
-"use client";
-
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WikiPagesListLayoutRoot } from "@/plane-web/components/pages";

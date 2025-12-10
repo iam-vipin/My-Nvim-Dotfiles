@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
@@ -20,7 +19,7 @@ type TProps = {
   isProjectLevel?: boolean;
   contextData?: TChatContextData;
 };
-export const PiChatDetail = observer((props: TProps) => {
+export const PiChatDetail = observer(function PiChatDetail(props: TProps) {
   const { isFullScreen: isFullScreenProp = false, shouldRedirect = true, isProjectLevel = false, contextData } = props;
   const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(false);
   // router

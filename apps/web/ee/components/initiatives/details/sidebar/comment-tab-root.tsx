@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -23,7 +21,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
+export const InitiativeSidebarCommentsRoot = observer(function InitiativeSidebarCommentsRoot(props: Props) {
   const { workspaceSlug, initiativeId, disabled = false } = props;
   // states
   const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
@@ -21,7 +19,7 @@ type Props = {
   readonly?: boolean;
 };
 
-export const MilestonesDropdown: React.FC<Props> = observer((props) => {
+export const MilestonesDropdown = observer(function MilestonesDropdown(props: Props) {
   const {
     projectId,
     value,

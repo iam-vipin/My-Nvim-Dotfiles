@@ -15,7 +15,9 @@ type TProps = {
   workspaceSlug: string;
 };
 
-export const AutomationActionAddCommentConfiguration: React.FC<TProps> = observer((props) => {
+export const AutomationActionAddCommentConfiguration = observer(function AutomationActionAddCommentConfiguration(
+  props: TProps
+) {
   const { automationId, editorRef, isDisabled, workspaceId, workspaceSlug } = props;
   // form hooks
   const { control } = useFormContext<TAutomationActionFormData>();

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
@@ -31,7 +29,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const EpicListItem: React.FC<Props> = observer((props) => {
+export const EpicListItem = observer(function EpicListItem(props: Props) {
   const { workspaceSlug, epicId, initiativeId, disabled = false } = props;
   // store hooks
   const {

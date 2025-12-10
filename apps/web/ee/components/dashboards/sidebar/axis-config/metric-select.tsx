@@ -15,7 +15,7 @@ type Props = {
   value: TDashboardWidget["y_axis_metric"];
 };
 
-export const WidgetMetricSelect: React.FC<Props> = (props) => {
+export function WidgetMetricSelect(props: Props) {
   const { onChange, options, placeholder, title, value } = props;
   // translation
   const { t } = useTranslation();
@@ -45,4 +45,4 @@ export const WidgetMetricSelect: React.FC<Props> = (props) => {
       }
     />
   );
-};
+}

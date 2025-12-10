@@ -27,12 +27,12 @@ const convertToExState = (state: IState): ExState => ({
   status: "to_be_created" as const,
 });
 
-export const StateMappingFormContent: FC<StateMappingFormContentProps> = ({
+export function StateMappingFormContent({
   value,
   availableProjects,
   handleChange,
   isEditMode,
-}) => {
+}: StateMappingFormContentProps) {
   const { getProjectById } = useProject();
   const { workspace, fetchStates } = useSentryIntegration();
 
@@ -298,4 +298,4 @@ export const StateMappingFormContent: FC<StateMappingFormContentProps> = ({
       )}
     </div>
   );
-};
+}

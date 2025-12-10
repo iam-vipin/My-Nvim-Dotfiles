@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -27,7 +25,7 @@ export type TIssueDetailRoot = {
   epicId: string;
 };
 
-export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
+export const EpicDetailRoot = observer(function EpicDetailRoot(props: TIssueDetailRoot) {
   const { editorRef, workspaceSlug, projectId, epicId } = props;
   // hooks
   const { fetchEpicAnalytics } = useEpicAnalytics();

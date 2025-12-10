@@ -61,13 +61,13 @@ export const createIssuesWithParent = async (payload: IssueWithParentPayload): P
         // If the parent issue is not found, then try to find the issue from
         // external id and source from the api
         try {
-          const parent = (await protect(
+          const parent = await protect(
             planeClient.issue.getIssueWithExternalId.bind(planeClient.issue),
             workspaceSlug,
             projectId,
             issue.parent,
             issue.external_source
-          )) as ExIssue;
+          );
           issue.parent = parent.id;
         } catch (error) {
           logger.error("Error while fetching the parent issue", error);
@@ -588,7 +588,7 @@ export const createOrUpdateIssue = async (
     logger.info(
       `[${issue.external_source}][${issue.external_id.slice(0, 5)}...][${meta.batchId}] Created Issue: ${issue.external_id.slice(0, 7)} ----------- [${issueProcessIndex} / ${meta.batch_end}][${meta.total.issues}]`
     );
-    return createdIssue as ExIssue;
+    return createdIssue;
   } catch (error) {
     if (AssertAPIErrorResponse(error)) {
       // Update the issue if the issue already exist
@@ -826,7 +826,7 @@ const createIssueLinks = async (
       });
       await Promise.all(linkPromises);
     } catch (error) {
-      // @ts-expect-error
+      // @ts-expect-error - Need to check with AssertAPIErrorResponse
       if (error.error && !error.error.includes("already exists")) {
         logger.error(`[${jobId.slice(0, 7)}] Error while creating the link for the issue: ${issue.external_id}`, error);
       }
@@ -959,7 +959,7 @@ const getPlaneIssueLabels = (issue: ExIssue, planeLabels: ExIssueLabel[]): strin
           return createdLabel.id;
         }
       })
-      .filter((label) => label !== undefined) as string[];
+      .filter((label) => label !== undefined);
   }
   return [];
 };

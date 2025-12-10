@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -24,7 +22,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const InitiativeInfoSection: FC<Props> = observer((props) => {
+export const InitiativeInfoSection = observer(function InitiativeInfoSection(props: Props) {
   const { editorRef, workspaceSlug, initiativeId, disabled = false } = props;
   const [isOpen, setIsOpen] = useState(false);
   // store hooks

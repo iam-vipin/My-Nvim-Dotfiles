@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -36,7 +34,7 @@ type Props = {
   teamspaceId: string;
 };
 
-export const TeamspaceStatisticsRoot: FC<Props> = observer((props) => {
+export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot(props: Props) {
   const { teamspaceId } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -68,7 +66,7 @@ export const TeamspaceStatisticsRoot: FC<Props> = observer((props) => {
   // fetching teamspace statistics
   useSWR(
     workspaceSlug && teamspaceId ? ["teamspaceStatistics", workspaceSlug, teamspaceId] : null,
-    workspaceSlug && teamspaceId ? () => fetchTeamspaceStatistics(workspaceSlug!.toString(), teamspaceId) : null,
+    workspaceSlug && teamspaceId ? () => fetchTeamspaceStatistics(workspaceSlug.toString(), teamspaceId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -101,7 +99,7 @@ export const TeamspaceStatisticsRoot: FC<Props> = observer((props) => {
     captureClick({
       elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.STATISTICS_FILTER_DROPDOWN,
     });
-    await updateTeamspaceStatisticsFilter(workspaceSlug!.toString(), teamspaceId, key, value)
+    await updateTeamspaceStatisticsFilter(workspaceSlug.toString(), teamspaceId, key, value)
       .then(() => {
         captureSuccess({
           eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_UPDATED,

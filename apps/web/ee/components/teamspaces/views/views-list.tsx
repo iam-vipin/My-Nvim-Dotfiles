@@ -26,7 +26,7 @@ type Props = {
   teamspaceId: string;
 };
 
-export const TeamspaceViewsList = observer((props: Props) => {
+export const TeamspaceViewsList = observer(function TeamspaceViewsList(props: Props) {
   const { teamspaceId } = props;
   // plane hooks
   const { t } = useTranslation();

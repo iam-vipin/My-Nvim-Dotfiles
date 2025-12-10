@@ -19,7 +19,7 @@ const getPortalNode = () => {
   return node;
 };
 
-export const WorkFlowDisabledOverlay = observer((props: TWorkflowDisabledOverlayProps) => {
+export const WorkFlowDisabledOverlay = observer(function WorkFlowDisabledOverlay(props: TWorkflowDisabledOverlayProps) {
   const { messageContainerRef, workflowDisabledSource, shouldOverlayBeVisible } = props;
   // refs
   const workflowMessageRef = useRef<HTMLDivElement>(null);

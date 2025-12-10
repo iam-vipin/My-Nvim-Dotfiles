@@ -21,7 +21,7 @@ type Props = {
   member?: IUserLite;
 };
 
-export const CustomTooltip = React.memo((props: Props) => {
+export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
   const { active, payload, member } = props;
   const { t } = useTranslation();
 

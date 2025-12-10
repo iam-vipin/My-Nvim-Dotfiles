@@ -4,7 +4,7 @@ import { Input } from "@plane/ui";
 import { convertMinutesToHoursAndMinutes, convertHoursMinutesToMinutes } from "@plane/utils";
 import type { TEstimateTimeInputProps } from "@/ce/components/estimates/inputs";
 
-export const EstimateTimeInput: FC<TEstimateTimeInputProps> = (props) => {
+export function EstimateTimeInput(props: TEstimateTimeInputProps) {
   const { value, handleEstimateInputValue } = props;
 
   const { hours, minutes } = useMemo(() => convertMinutesToHoursAndMinutes(value || 0), [value]);
@@ -47,4 +47,4 @@ export const EstimateTimeInput: FC<TEstimateTimeInputProps> = (props) => {
       </div>
     </>
   );
-};
+}

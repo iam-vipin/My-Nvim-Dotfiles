@@ -1,5 +1,3 @@
-"use client";
-
 import { CheckCircle, Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -18,7 +16,7 @@ type Props = {
   mode?: "create" | "update";
 };
 
-export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
+export function GeneratedCredentialsModal(props: Props) {
   const { isOpen, clientSecret, clientId, handleClose, mode = "create" } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -116,4 +114,4 @@ export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
       </div>
     </ModalCore>
   );
-};
+}

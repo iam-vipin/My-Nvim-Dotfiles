@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -15,7 +13,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeProgressSection: FC<Props> = observer((props) => {
+export const InitiativeProgressSection = observer(function InitiativeProgressSection(props: Props) {
   const { initiativeId } = props;
   // store hooks
   const {

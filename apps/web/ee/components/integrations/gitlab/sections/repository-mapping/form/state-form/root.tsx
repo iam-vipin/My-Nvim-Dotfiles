@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { EMPTY_PLANE_STATE } from "@plane/etl/core";
@@ -46,7 +44,7 @@ const GIT_PR_DATA: { key: TStateMapKeys; title: string }[] = [
   },
 ];
 
-export const StateForm: FC<TStateForm> = observer((props) => {
+export const StateForm = observer(function StateForm(props: TStateForm) {
   // props
   const { projectId, value, handleChange, isEnterprise } = props;
 
@@ -57,7 +55,7 @@ export const StateForm: FC<TStateForm> = observer((props) => {
   // derived values
   const planeProjectStates = ((projectId && stateIdsByProjectId(projectId)) || [])
     .map((id) => (projectId && getStateById(projectId, id)) || undefined)
-    .filter((state) => state != undefined && state != null) as IState[];
+    .filter((state) => state != undefined && state != null);
 
   return (
     <div className="w-full min-h-44 max-h-full overflow-y-auto">

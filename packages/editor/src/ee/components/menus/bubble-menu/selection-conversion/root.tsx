@@ -14,7 +14,7 @@ type Props = {
   editor: Editor;
 } & Pick<IEditorPropsExtended, "selectionConversion">;
 
-export const BubbleMenuSelectionConversion: React.FC<Props> = (props) => {
+export function BubbleMenuSelectionConversion(props: Props) {
   const { editor, selectionConversion } = props;
   // states
   const [isProjectsListModalOpen, setIsProjectsListModalOpen] = useState(false);
@@ -66,4 +66,4 @@ export const BubbleMenuSelectionConversion: React.FC<Props> = (props) => {
       </Tooltip>
     </div>
   );
-};
+}

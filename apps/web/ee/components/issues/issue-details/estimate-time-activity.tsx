@@ -12,7 +12,9 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type TIssueEstimateTimeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueEstimateTimeActivity: FC<TIssueEstimateTimeActivity> = observer((props) => {
+export const IssueEstimateTimeActivity = observer(function IssueEstimateTimeActivity(
+  props: TIssueEstimateTimeActivity
+) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

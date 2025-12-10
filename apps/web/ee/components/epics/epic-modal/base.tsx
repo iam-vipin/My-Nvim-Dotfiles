@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,7 +23,7 @@ const fileService = new FileService();
 import type { EpicFormProps } from "./form";
 import { EpicFormRoot } from "./form";
 
-export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModalBase(props: IssuesModalProps) {
   const {
     data,
     isOpen,

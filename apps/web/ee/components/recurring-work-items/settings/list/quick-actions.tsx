@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
@@ -24,7 +22,9 @@ type TRecurringWorkItemQuickActionsProps = {
   workspaceSlug: string;
 };
 
-export const RecurringWorkItemQuickActions = observer((props: TRecurringWorkItemQuickActionsProps) => {
+export const RecurringWorkItemQuickActions = observer(function RecurringWorkItemQuickActions(
+  props: TRecurringWorkItemQuickActionsProps
+) {
   const {
     deleteRecurringWorkItem,
     getRecurringWorkItemById,

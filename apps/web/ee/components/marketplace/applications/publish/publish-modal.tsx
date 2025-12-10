@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
@@ -24,7 +23,7 @@ const defaultFormData: TApplicationPublishDetails = {
   photo_urls: "",
 };
 
-export const ApplicationPublishModal: React.FC<ApplicationPublishModalProps> = observer((props) => {
+export const ApplicationPublishModal = observer(function ApplicationPublishModal(props: ApplicationPublishModalProps) {
   const { isOpen, handleClose, app } = props;
   // states
   const [isPublishing, setIsPublishing] = React.useState(false);

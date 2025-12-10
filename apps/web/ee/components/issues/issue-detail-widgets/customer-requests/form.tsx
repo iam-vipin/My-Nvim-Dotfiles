@@ -46,7 +46,7 @@ const defaultValues = {
 // services
 const workspaceService = new WorkspaceService();
 
-export const WorkItemRequestForm: FC<TProps> = observer((props) => {
+export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: TProps) {
   const { isOpen, handleClose, workspaceSlug, data, workItemId } = props;
   // states
   const [isSubmitting, setSubmitting] = useState<boolean>(false);

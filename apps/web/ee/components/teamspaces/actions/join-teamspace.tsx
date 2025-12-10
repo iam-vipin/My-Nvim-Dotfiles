@@ -15,7 +15,7 @@ type TJoinTeamButtonProps = {
   trackerElement: string;
 };
 
-export const JoinTeamspaceButton = observer((props: TJoinTeamButtonProps) => {
+export const JoinTeamspaceButton = observer(function JoinTeamspaceButton(props: TJoinTeamButtonProps) {
   const { teamspaceId, trackerElement } = props;
   // router
   const { workspaceSlug } = useParams();

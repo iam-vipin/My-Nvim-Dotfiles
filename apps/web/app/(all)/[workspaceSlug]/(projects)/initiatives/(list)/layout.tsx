@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
@@ -9,13 +7,15 @@ import { InitiativesFilterProvider } from "@/plane-web/components/initiatives/co
 // local components
 import { InitiativesListHeader } from "./header";
 
-const InitiativesListLayout = () => (
-  <InitiativesFilterProvider>
-    <AppHeader header={<InitiativesListHeader />} />
-    <ContentWrapper>
-      <Outlet />
-    </ContentWrapper>
-  </InitiativesFilterProvider>
-);
+function InitiativesListLayout() {
+  return (
+    <InitiativesFilterProvider>
+      <AppHeader header={<InitiativesListHeader />} />
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
+    </InitiativesFilterProvider>
+  );
+}
 
 export default InitiativesListLayout;

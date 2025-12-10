@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useMemo, useRef, useState } from "react";
 import { debounce } from "lodash-es";
@@ -10,7 +9,7 @@ import { cn } from "@plane/utils";
 // plane web hooks
 import { useTeamspaceFilter } from "@/plane-web/hooks/store";
 
-export const TeamspacesListSearch: FC = observer(() => {
+export const TeamspacesListSearch = observer(function TeamspacesListSearch() {
   // hooks
   const { searchQuery, updateSearchQuery } = useTeamspaceFilter();
   // refs

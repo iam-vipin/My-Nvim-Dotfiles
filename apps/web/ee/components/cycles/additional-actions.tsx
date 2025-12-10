@@ -12,7 +12,7 @@ type Props = {
   cycleId: string;
   projectId: string;
 };
-export const CycleAdditionalActions: FC<Props> = observer((props) => {
+export const CycleAdditionalActions = observer(function CycleAdditionalActions(props: Props) {
   //props
   const { projectId, cycleId } = props;
   // router

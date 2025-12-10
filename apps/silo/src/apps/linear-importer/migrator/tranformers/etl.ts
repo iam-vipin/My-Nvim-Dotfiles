@@ -136,7 +136,7 @@ export const getTransformedDocuments = async (
     userMap: userMap,
   };
 
-  const pages = await Promise.all(documents.map((document) => transformDocument(document as LinearDocument, options)));
+  const pages = await Promise.all(documents.map((document) => transformDocument(document, options)));
   return pages;
 };
 
@@ -173,5 +173,5 @@ export const getTransformedProjects = (job: TImportJob<LinearConfig>, entities: 
     };
   });
 
-  return modules as Partial<ExModule>[];
+  return modules;
 };

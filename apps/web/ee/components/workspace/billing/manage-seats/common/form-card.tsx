@@ -4,7 +4,7 @@ type TFormCardProps = {
   infoComponent?: React.ReactNode;
 };
 
-export const FormCard: React.FC<TFormCardProps> = (props) => {
+export function FormCard(props: TFormCardProps) {
   const { title, children, infoComponent } = props;
 
   return (
@@ -16,4 +16,4 @@ export const FormCard: React.FC<TFormCardProps> = (props) => {
       {infoComponent}
     </div>
   );
-};
+}

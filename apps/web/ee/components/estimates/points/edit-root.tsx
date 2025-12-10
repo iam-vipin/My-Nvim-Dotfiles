@@ -26,7 +26,7 @@ type TEstimatePointEditRoot = {
   handleClose: () => void;
 };
 
-export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props) => {
+export const EstimatePointEditRoot = observer(function EstimatePointEditRoot(props: TEstimatePointEditRoot) {
   // props
   const { workspaceSlug, projectId, estimateId, setEstimateEditType, handleClose } = props;
   // hooks

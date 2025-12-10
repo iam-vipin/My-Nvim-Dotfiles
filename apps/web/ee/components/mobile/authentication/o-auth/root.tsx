@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import type { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
 // plane web components
@@ -13,7 +11,7 @@ type TOAuthRoot = {
   config: TInstanceConfig;
 };
 
-export const OAuthRoot: FC<TOAuthRoot> = (props) => {
+export function OAuthRoot(props: TOAuthRoot) {
   const { invitationDetails, config } = props;
 
   // derived values
@@ -63,4 +61,4 @@ export const OAuthRoot: FC<TOAuthRoot> = (props) => {
       </div>
     </div>
   );
-};
+}

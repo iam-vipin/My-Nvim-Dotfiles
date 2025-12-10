@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -20,7 +18,7 @@ type TConfirmPageDeletionProps = {
   page: TPageInstance;
 };
 
-export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+export const WikiDeletePageModal = observer(function WikiDeletePageModal(props: TConfirmPageDeletionProps) {
   const { isOpen, onClose, page } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);

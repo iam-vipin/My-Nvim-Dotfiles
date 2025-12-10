@@ -20,7 +20,7 @@ import { useFlatfileImporter } from "@/plane-web/hooks/store/importers/user-flat
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers";
 import { getWorkbookConfig } from "./workbook";
 
-export const ConfigureFlatfile: FC = observer(() => {
+export const ConfigureFlatfile = observer(function ConfigureFlatfile() {
   const PUBLISHABLE_KEY = process.env.VITE_FLATFILE_PUBLISHABLE_KEY;
   if (!PUBLISHABLE_KEY)
     return (
@@ -36,7 +36,7 @@ export const ConfigureFlatfile: FC = observer(() => {
   );
 });
 
-export const ConfigureFlatfileChild: FC = observer(() => {
+export const ConfigureFlatfileChild = observer(function ConfigureFlatfileChild() {
   const {
     workspace,
     user,

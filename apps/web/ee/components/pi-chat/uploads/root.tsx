@@ -8,7 +8,7 @@ type Props = {
   onRemove?: (id: string) => void;
 };
 
-export const PreviewUploads = observer((props: Props) => {
+export const PreviewUploads = observer(function PreviewUploads(props: Props) {
   const { attachmentId, onRemove } = props;
   const {
     attachmentStore: { getAttachmentById },

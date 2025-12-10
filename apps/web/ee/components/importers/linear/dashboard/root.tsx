@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -12,7 +10,7 @@ import { useLinearImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 
-export const LinearDashboardRoot: FC = observer(() => {
+export const LinearDashboardRoot = observer(function LinearDashboardRoot() {
   const getWorkspaceName = (job: TImportJob<LinearConfig>) => job?.config?.workspaceDetail?.name || "---";
   const getProjectName = (job: TImportJob<LinearConfig>) =>
     job?.config?.teamDetail?.name || job?.config?.teamName || "---";

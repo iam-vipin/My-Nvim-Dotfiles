@@ -7,7 +7,7 @@ type Props = {
   projectId: string;
 };
 
-export const IntakeHeaderQuickActions = (props: Props) => {
+export function IntakeHeaderQuickActions(props: Props) {
   const { workspaceSlug, projectId } = props;
 
   const handleCopyLink = () => {
@@ -45,4 +45,4 @@ export const IntakeHeaderQuickActions = (props: Props) => {
       {modals}
     </>
   );
-};
+}

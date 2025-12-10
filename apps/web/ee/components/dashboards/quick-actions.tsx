@@ -19,7 +19,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const DashboardQuickActions: React.FC<Props> = observer((props) => {
+export const DashboardQuickActions = observer(function DashboardQuickActions(props: Props) {
   const { dashboardId, parentRef, showEdit = true, customClassName } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

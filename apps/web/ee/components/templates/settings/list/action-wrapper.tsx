@@ -44,7 +44,9 @@ type TTemplateListActionWrapperProps = {
   children: (props: TChildProps) => React.ReactElement;
 } & (TWorkspaceTemplateListActionWrapperProps | TProjectTemplateListActionWrapperProps);
 
-export const TemplateListActionWrapper = observer((props: TTemplateListActionWrapperProps) => {
+export const TemplateListActionWrapper = observer(function TemplateListActionWrapper(
+  props: TTemplateListActionWrapperProps
+) {
   const { workspaceSlug, level, children } = props;
   // states
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);

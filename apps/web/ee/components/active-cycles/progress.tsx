@@ -15,7 +15,7 @@ export type ActiveCycleProgressProps = {
   cycle: ICycle;
 };
 
-export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
+export function ActiveCycleProgress(props: ActiveCycleProgressProps) {
   const { cycle } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -98,4 +98,4 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
       )}
     </div>
   );
-};
+}

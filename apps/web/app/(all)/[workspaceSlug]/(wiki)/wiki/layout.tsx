@@ -1,5 +1,3 @@
-"use client";
-
 import { Outlet } from "react-router";
 import useSWR from "swr";
 // components

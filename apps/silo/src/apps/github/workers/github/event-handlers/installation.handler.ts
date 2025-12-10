@@ -15,7 +15,7 @@ type GithubWebhookInstallationDeleted = GithubWebhookPayload["webhook-installati
 export const handleInstallationEvents = async (action: string, data: unknown): Promise<boolean> => {
   switch (action) {
     case "deleted": {
-      await handleInstallationDeletion(data as unknown as GithubWebhookInstallationDeleted);
+      await handleInstallationDeletion(data as GithubWebhookInstallationDeleted);
       return true;
     }
     default: {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -15,7 +13,7 @@ import { cn } from "@plane/utils";
 import useDebounce from "@/hooks/use-debounce";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomerSearch: FC = observer(() => {
+export const CustomerSearch = observer(function CustomerSearch() {
   // params
   const { workspaceSlug } = useParams();
   // i18n

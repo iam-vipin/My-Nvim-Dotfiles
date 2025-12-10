@@ -11,7 +11,9 @@ type TWorkspaceTemplatesSettingsRootProps = {
   workspaceSlug: string;
 };
 
-export const WorkspaceTemplatesSettingsRoot: FC<TWorkspaceTemplatesSettingsRootProps> = observer((props) => {
+export const WorkspaceTemplatesSettingsRoot = observer(function WorkspaceTemplatesSettingsRoot(
+  props: TWorkspaceTemplatesSettingsRootProps
+) {
   const { workspaceSlug } = props;
   // store hooks
   const { isInitializingTemplates: isInitializingProjectTemplates, isAnyProjectTemplatesAvailable } =

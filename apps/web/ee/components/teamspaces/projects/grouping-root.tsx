@@ -13,7 +13,9 @@ export type TTeamspaceProjectsWithGroupingRootProps = {
   workspaceSlug: string;
 };
 
-export const TeamspaceProjectsWithGroupingRoot = observer((props: TTeamspaceProjectsWithGroupingRootProps) => {
+export const TeamspaceProjectsWithGroupingRoot = observer(function TeamspaceProjectsWithGroupingRoot(
+  props: TTeamspaceProjectsWithGroupingRootProps
+) {
   const { workspaceSlug } = props;
   // hooks
   const { currentWorkspace } = useWorkspace();

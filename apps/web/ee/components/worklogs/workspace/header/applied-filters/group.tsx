@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import { CloseIcon } from "@plane/propel/icons";
 
@@ -9,7 +7,7 @@ type TAppliedFilterGroup = {
   children: ReactNode;
 };
 
-export const AppliedFilterGroup: FC<TAppliedFilterGroup> = (props) => {
+export function AppliedFilterGroup(props: TAppliedFilterGroup) {
   const { groupTitle, onClear, children } = props;
 
   return (
@@ -24,4 +22,4 @@ export const AppliedFilterGroup: FC<TAppliedFilterGroup> = (props) => {
       </div>
     </div>
   );
-};
+}

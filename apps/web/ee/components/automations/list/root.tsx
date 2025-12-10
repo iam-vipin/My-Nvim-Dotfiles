@@ -15,7 +15,7 @@ type TProps = {
   projectId: string;
 };
 
-export const AutomationsListRoot: FC<TProps> = observer((props) => {
+export const AutomationsListRoot = observer(function AutomationsListRoot(props: TProps) {
   const { projectId } = props;
   // router
   const router = useAppRouter();

@@ -60,12 +60,12 @@ type TProps = {
   };
 };
 
-const PropertyWrapper = (props: {
+function PropertyWrapper(props: {
   children: (props: { className: string }) => React.ReactNode;
   title: string;
   Icon?: React.ElementType;
   showContainer: boolean;
-}) => {
+}) {
   const { children, title, Icon = ProjectIcon, showContainer } = props;
   if (!showContainer) return <>{children({ className: "" })}</>;
   return (
@@ -79,8 +79,9 @@ const PropertyWrapper = (props: {
       </div>
     </div>
   );
-};
-export const Properties = (props: TProps) => {
+}
+
+export function Properties(props: TProps) {
   const {
     state,
     priority,
@@ -190,4 +191,4 @@ export const Properties = (props: TProps) => {
       )}
     </div>
   );
-};
+}

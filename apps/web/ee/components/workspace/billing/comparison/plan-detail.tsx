@@ -36,7 +36,7 @@ type TPlanDetailProps = {
   handleTrial: (trialParams: TUpgradeParams) => void;
 };
 
-export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
+export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) {
   const {
     subscriptionType,
     planDetail,

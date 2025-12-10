@@ -7,7 +7,7 @@ import { EmptyStateCompact } from "@plane/propel/empty-state";
 type TCustomerSettingsDisabled = {
   toggleCustomersFeature: () => void;
 };
-export const CustomerSettingsDisabled: FC<TCustomerSettingsDisabled> = (props) => {
+export function CustomerSettingsDisabled(props: TCustomerSettingsDisabled) {
   const { toggleCustomersFeature } = props;
   // hooks
   const { t } = useTranslation();
@@ -23,4 +23,4 @@ export const CustomerSettingsDisabled: FC<TCustomerSettingsDisabled> = (props) =
       rootClassName="py-20"
     />
   );
-};
+}

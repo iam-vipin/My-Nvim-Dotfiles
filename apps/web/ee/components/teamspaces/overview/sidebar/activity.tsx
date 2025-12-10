@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
@@ -27,7 +25,7 @@ type TTeamspaceActivityItemProps = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const TeamspaceActivityItem = observer((props: TTeamspaceActivityItemProps) => {
+export const TeamspaceActivityItem = observer(function TeamspaceActivityItem(props: TTeamspaceActivityItemProps) {
   const { activity, ends } = props;
   // return if activity details are not available
   if (!activity) return <></>;
@@ -47,7 +45,9 @@ export const TeamspaceActivityItem = observer((props: TTeamspaceActivityItemProp
   return <></>;
 });
 
-export const TeamsOverviewSidebarActivity: FC<TTeamspaceActivityProps> = observer((props) => {
+export const TeamsOverviewSidebarActivity = observer(function TeamsOverviewSidebarActivity(
+  props: TTeamspaceActivityProps
+) {
   const { teamspaceId } = props;
   // store hooks
   const {

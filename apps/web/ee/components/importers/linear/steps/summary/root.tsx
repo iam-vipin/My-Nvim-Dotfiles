@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ import { useLinearImporter, useWorkspaceSubscription } from "@/plane-web/hooks/s
 import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
 import ImporterTable from "../../../ui/table";
 
-export const SummaryRoot: FC = observer(() => {
+export const SummaryRoot = observer(function SummaryRoot() {
   // hooks
   const {
     workspace,

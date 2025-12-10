@@ -35,7 +35,7 @@ export const defaultCustomProperty: Partial<TIssueProperty<EIssuePropertyType>> 
   is_required: false,
 };
 
-export const CustomerCustomPropertiesRoot: FC = observer(() => {
+export const CustomerCustomPropertiesRoot = observer(function CustomerCustomPropertiesRoot() {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [customerPropertyCreateList, setCustomerPropertyCreateList] = useState<TCustomerPropertyCreateList[]>([]);

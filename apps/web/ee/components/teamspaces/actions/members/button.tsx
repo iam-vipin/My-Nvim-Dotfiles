@@ -13,37 +13,42 @@ type TAddTeamspaceMembersButtonProps = {
   isEditingAllowed: boolean;
 };
 
-const AddMembersIcon = observer(
-  (props: { containerSize: number; iconSize: number; containerClassName?: string; iconClassName?: string }) => {
-    const { containerSize, iconSize, containerClassName, iconClassName } = props;
-    return (
-      <div
+const AddMembersIcon = observer(function AddMembersIcon(props: {
+  containerSize: number;
+  iconSize: number;
+  containerClassName?: string;
+  iconClassName?: string;
+}) {
+  const { containerSize, iconSize, containerClassName, iconClassName } = props;
+  return (
+    <div
+      style={{
+        width: containerSize,
+        height: containerSize,
+      }}
+      className={cn(
+        `bg-custom-background-80/60 hover:bg-custom-background-80 group-hover:bg-custom-background-80 rounded-full flex items-center justify-center`,
+        containerClassName
+      )}
+    >
+      <Plus
         style={{
-          width: containerSize,
-          height: containerSize,
+          width: iconSize,
+          height: iconSize,
         }}
         className={cn(
-          `bg-custom-background-80/60 hover:bg-custom-background-80 group-hover:bg-custom-background-80 rounded-full flex items-center justify-center`,
-          containerClassName
+          "text-custom-text-400 hover:text-custom-text-300 group-hover:text-custom-text-300",
+          iconClassName
         )}
-      >
-        <Plus
-          style={{
-            width: iconSize,
-            height: iconSize,
-          }}
-          className={cn(
-            "text-custom-text-400 hover:text-custom-text-300 group-hover:text-custom-text-300",
-            iconClassName
-          )}
-          strokeWidth={2}
-        />
-      </div>
-    );
-  }
-);
+        strokeWidth={2}
+      />
+    </div>
+  );
+});
 
-export const AddTeamspaceMembersButton = observer((props: TAddTeamspaceMembersButtonProps) => {
+export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersButton(
+  props: TAddTeamspaceMembersButtonProps
+) {
   const { teamspaceId, variant, isEditingAllowed } = props;
   // state
   const [isAddMembersModalOpen, setIsAddMembersModalOpen] = useState(false);

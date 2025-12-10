@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -11,7 +9,7 @@ import { SubscriptionButton } from "@/plane-web/components/common/subscription/s
 import { PlaneOneEditionBadge } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const SelfHostedEditionBadge = observer(() => {
+export const SelfHostedEditionBadge = observer(function SelfHostedEditionBadge() {
   // hooks
   const {
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,

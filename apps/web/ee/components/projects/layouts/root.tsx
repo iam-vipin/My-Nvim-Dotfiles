@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states";
@@ -10,13 +8,13 @@ import { BaseProjectRoot } from "./gallery/base-gallery-root";
 import { BaseGanttRoot } from "./gantt/base-gantt-root";
 import { BaseListRoot } from "./list/base-list-root";
 
-export const ProjectLayoutRoot = observer(() => {
+export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
   const { filters } = useProjectFilter();
 
   // derived values
   const currentLayout = filters?.layout;
 
-  const ProjectLayout = (props: { activeLayout: EProjectLayouts | undefined }) => {
+  function ProjectLayout(props: { activeLayout: EProjectLayouts | undefined }) {
     switch (props.activeLayout) {
       case EProjectLayouts.BOARD:
         return <ProjectBoardLayout />;
@@ -29,7 +27,7 @@ export const ProjectLayoutRoot = observer(() => {
       default:
         return <></>;
     }
-  };
+  }
 
   return <ProjectLayout activeLayout={currentLayout} />;
 });

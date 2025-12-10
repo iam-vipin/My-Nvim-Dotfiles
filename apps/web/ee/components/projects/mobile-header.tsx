@@ -11,7 +11,7 @@ import { ProjectAttributesDropdown } from "./header/attributes-dropdown/root";
 import { ProjectDisplayFiltersDropdown } from "./header/display-filters-dropdown/root";
 import { ProjectLayoutSelection } from "./header/layout-selection";
 
-export const ProjectsListMobileHeader = observer(() => {
+export const ProjectsListMobileHeader = observer(function ProjectsListMobileHeader() {
   // router
   const { workspaceSlug } = useParams();
   const { currentWorkspace } = useWorkspace();

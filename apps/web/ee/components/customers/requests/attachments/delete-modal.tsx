@@ -21,7 +21,7 @@ type Props = {
   attachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
-export const RequestAttachmentDeleteModal: FC<Props> = observer((props) => {
+export const RequestAttachmentDeleteModal = observer(function RequestAttachmentDeleteModal(props: Props) {
   const { t } = useTranslation();
   const { isOpen, onClose, attachmentId, attachmentOperations } = props;
   // states

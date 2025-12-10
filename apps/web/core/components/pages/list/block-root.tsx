@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -26,7 +24,7 @@ type TPageListBlock = {
   sectionType?: "public" | "private" | "archived" | "shared";
 };
 
-export const PageListBlockRoot: React.FC<TPageListBlock> = observer((props) => {
+export const PageListBlockRoot = observer(function PageListBlockRoot(props: TPageListBlock) {
   const { paddingLeft, pageId, storeType, pageType, expandedPageIds = [], setExpandedPageIds, sectionType } = props;
   // states
   const [localIsExpanded, setLocalIsExpanded] = useState(false);

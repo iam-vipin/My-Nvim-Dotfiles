@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -8,7 +6,7 @@ import { cn } from "@plane/utils";
 // silo types
 import type { TStepper, TStepperNavigation } from "@/plane-web/silo/types/ui";
 
-export const Stepper = <T,>(props: TStepper<T>) => {
+export function Stepper<T>(props: TStepper<T>) {
   // props
   const { logo, steps, currentStepIndex } = props;
   // derived value
@@ -75,9 +73,9 @@ export const Stepper = <T,>(props: TStepper<T>) => {
       {currentStepDetails?.component && <div className="h-full overflow-hidden">{currentStepDetails.component()}</div>}
     </div>
   );
-};
+}
 
-export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
+export function StepperNavigation<T>(props: TStepperNavigation<T>) {
   const { currentStep, handleStep, children } = props;
   const { t } = useTranslation();
   return (
@@ -104,4 +102,4 @@ export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
       )}
     </div>
   );
-};
+}

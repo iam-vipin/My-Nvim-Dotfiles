@@ -26,8 +26,9 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { DesktopHeaderProvider } from "../desktop/root";
 import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
 import { TopNavSearch } from "./top-nav-search";
+import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 
-export const TopNavigationRoot = observer(() => {
+export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
   const { config } = useInstance();
   const { togglePiChatDrawer, isPiChatDrawerOpen } = usePiChat();
@@ -55,7 +56,7 @@ export const TopNavigationRoot = observer(() => {
 
   const shouldRenderPiChat =
     useFlag(workspaceSlug?.toString() ?? "", E_FEATURE_FLAGS.PI_CHAT) &&
-    !pathname.includes(`/${workspaceSlug?.toString()}/pi-chat/`) &&
+    isPiAllowed(pathname, workspaceSlug?.toString() ?? "") &&
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
     (projectId || workItem);
 
@@ -115,6 +116,7 @@ export const TopNavigationRoot = observer(() => {
                   }
                 )}
                 onClick={() => togglePiChatDrawer()}
+                data-prevent-outside-click
               >
                 <span className="shrink-0 size-5 grid place-items-center">
                   {isPiChatDrawerOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}

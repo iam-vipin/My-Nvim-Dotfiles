@@ -36,7 +36,7 @@ const defaultValues: Partial<IModule> = {
   member_ids: [],
 };
 
-export const ModuleForm: React.FC<Props> = (props) => {
+export function ModuleForm(props: Props) {
   const {
     handleFormSubmit,
     handleClose,
@@ -279,4 +279,4 @@ export const ModuleForm: React.FC<Props> = (props) => {
       )}
     </form>
   );
-};
+}

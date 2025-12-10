@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -16,7 +14,7 @@ import ProjectUpdatesUpgradeLight from "@/app/assets/empty-state/project-setting
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const ProjectUpdatesUpgrade = observer(() => {
+export const ProjectUpdatesUpgrade = observer(function ProjectUpdatesUpgrade() {
   // store hooks
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
@@ -43,7 +41,12 @@ export const ProjectUpdatesUpgrade = observer(() => {
 
             <div className="flex mt-6 gap-4 flex-wrap">
               {isSelfManagedUpgradeDisabled ? (
-                <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+                <a
+                  href="https://prime.plane.so/"
+                  target="_blank"
+                  className={getButtonStyling("primary", "md")}
+                  rel="noreferrer"
+                >
                   <Crown className="h-3.5 w-3.5" />
                   Get Pro
                 </a>

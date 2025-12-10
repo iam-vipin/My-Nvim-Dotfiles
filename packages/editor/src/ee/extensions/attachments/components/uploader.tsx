@@ -1,9 +1,10 @@
 import { FileUp } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+// icons
+import { VideoFileIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
-import { ACCEPTED_ATTACHMENT_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { EFileError } from "@/helpers/file";
@@ -11,25 +12,32 @@ import { EFileError } from "@/helpers/file";
 import { uploadFirstFileAndInsertRemaining, useDropZone, useUploader } from "@/hooks/use-file-upload";
 // local imports
 import { EAttachmentBlockAttributeNames } from "../types";
-import { getAttachmentExtensionErrorMap, getAttachmentExtensionFileMap } from "../utils";
+import { getAttachmentExtensionFileMap, getMimeTypesFromFileType } from "../utils";
 import type { CustomAttachmentNodeViewProps } from "./node-view";
 import { CustomAttachmentUploaderDetails } from "./uploader-details";
 
-export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> = (props) => {
+export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
   const { editor, extension, getPos, node, updateAttributes } = props;
   // states
   const [fileBeingUploaded, setFileBeingUploaded] = useState<File | null>(null);
+  const [fileUploadError, setFileUploadError] = useState<{ error: EFileError; file: File } | null>(null);
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasTriggeredFilePickerRef = useRef(false);
+  const hasTriedUploadingOnMountRef = useRef(false);
+
   // derived values
   const { id: attachmentBlockId } = node.attrs;
   const maxFileSize = editor.storage.attachmentComponent?.maxFileSize;
   const attachmentExtensionFileMap = useMemo(() => getAttachmentExtensionFileMap(editor), [editor]);
-  const attachmentExtensionErrorMap = useMemo(() => getAttachmentExtensionErrorMap(editor), [editor]);
   const isTouchDevice = !!editor.storage.utility.isTouchDevice;
   // extension options
   const { onClick } = extension.options;
+  // get accepted file type from node attributes or default to "all"
+  const acceptedFileType = node.attrs[EAttachmentBlockAttributeNames.ACCEPTED_FILE_TYPE] ?? "all";
+  const acceptedMimeTypes = getMimeTypesFromFileType(acceptedFileType);
+  const isVideoUploader = acceptedFileType === "video";
+  // get meta for event tracking
 
   // upload handler
   const onUpload = useCallback(
@@ -80,16 +88,13 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
         setFileBeingUploaded(file);
         return await extension.options.uploadAttachment?.(attachmentBlockId ?? "", file);
       } catch (error) {
-        attachmentExtensionErrorMap?.set(attachmentBlockId ?? "", {
-          error: EFileError.UPLOAD_FAILED,
-          file,
-        });
+        setFileUploadError({ error: EFileError.UPLOAD_FAILED, file });
         console.error("Error in uploading attachment via uploader:", error);
       } finally {
         setFileBeingUploaded(null);
       }
     },
-    [attachmentBlockId, attachmentExtensionErrorMap, extension.options]
+    [attachmentBlockId, extension.options]
   );
 
   const handleProgressStatus = useCallback(
@@ -99,20 +104,14 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
     [editor]
   );
 
-  const handleInvalidFile = useCallback(
-    (error: EFileError, file: File) => {
-      attachmentExtensionErrorMap?.set(attachmentBlockId ?? "", {
-        error,
-        file,
-      });
-      setFileBeingUploaded(null);
-    },
-    [attachmentBlockId, attachmentExtensionErrorMap]
-  );
+  const handleInvalidFile = useCallback((error: EFileError, file: File, _message: string) => {
+    setFileUploadError({ error, file });
+    setFileBeingUploaded(null);
+  }, []);
 
   // file upload
   const { uploadFile } = useUploader({
-    acceptedMimeTypes: ACCEPTED_ATTACHMENT_MIME_TYPES,
+    acceptedMimeTypes,
     editorCommand: uploadAttachmentEditorCommand,
     handleProgressStatus,
     maxFileSize,
@@ -134,6 +133,9 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
       const pos = getPos();
       if (!filesList || pos === undefined) return;
 
+      // Clear any existing errors when selecting new files
+      setFileUploadError(null);
+
       await uploadFirstFileAndInsertRemaining({
         editor,
         filesList,
@@ -145,29 +147,30 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
     [editor, getPos, uploadFile]
   );
 
-  // the meta data of the image component
-  const meta = useMemo(
-    () => attachmentExtensionFileMap?.get(attachmentBlockId ?? ""),
-    [attachmentBlockId, attachmentExtensionFileMap]
-  );
-
   // after the attachment component is mounted we start the upload process based on
   // its upload status
   useEffect(() => {
-    if (!meta || !attachmentBlockId) return;
+    if (hasTriedUploadingOnMountRef.current) return;
 
-    if (meta.event === "drop" && "file" in meta) {
-      uploadFile(meta.file);
-    } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
-      if (meta.hasOpenedFileInputOnce) return;
-      fileInputRef.current.click();
-      hasTriggeredFilePickerRef.current = true;
-      attachmentExtensionFileMap?.set(attachmentBlockId, {
-        ...meta,
-        hasOpenedFileInputOnce: true,
-      });
+    if (!attachmentBlockId) return;
+    const meta = attachmentExtensionFileMap?.get(attachmentBlockId);
+    if (meta) {
+      if (meta.event === "drop" && "file" in meta) {
+        hasTriedUploadingOnMountRef.current = true;
+        uploadFile(meta.file);
+      } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
+        if (meta.hasOpenedFileInputOnce) return;
+        fileInputRef.current.click();
+        hasTriggeredFilePickerRef.current = true;
+        attachmentExtensionFileMap?.set(attachmentBlockId, {
+          ...meta,
+          hasOpenedFileInputOnce: true,
+        });
+      } else {
+        hasTriedUploadingOnMountRef.current = true;
+      }
     }
-  }, [attachmentBlockId, attachmentExtensionFileMap, meta, uploadFile]);
+  }, [attachmentBlockId, attachmentExtensionFileMap, uploadFile]);
 
   return (
     <div
@@ -192,12 +195,17 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
       aria-disabled={!editor.isEditable}
     >
       <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
-        <FileUp className="flex-shrink-0 size-8 text-custom-text-300" />
+        {isVideoUploader ? (
+          <VideoFileIcon className="flex-shrink-0 size-8 text-custom-text-300" />
+        ) : (
+          <FileUp className="flex-shrink-0 size-8 text-custom-text-300" />
+        )}
       </div>
       <CustomAttachmentUploaderDetails
         blockId={attachmentBlockId ?? ""}
         editor={editor}
         fileBeingUploaded={fileBeingUploaded}
+        fileUploadError={fileUploadError}
         maxFileSize={maxFileSize}
       />
       <input
@@ -205,10 +213,10 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
         ref={fileInputRef}
         hidden
         type="file"
-        accept={ACCEPTED_ATTACHMENT_MIME_TYPES.join(",")}
+        accept={acceptedMimeTypes.join(",")}
         onChange={handleFileChange}
         multiple
       />
     </div>
   );
-};
+}

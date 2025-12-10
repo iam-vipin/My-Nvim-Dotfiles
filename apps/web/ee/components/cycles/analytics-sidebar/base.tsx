@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import type {
@@ -42,7 +40,7 @@ const chartLegends = [
   },
 ];
 
-export const SidebarChart = observer((props: TProps) => {
+export const SidebarChart = observer(function SidebarChart(props: TProps) {
   const { workspaceSlug, projectId, cycleId } = props;
 
   const { plotType, estimatedType } = useCycle();

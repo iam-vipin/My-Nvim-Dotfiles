@@ -27,7 +27,7 @@ type Props = {
   isTooltip?: boolean;
   className?: string;
 };
-const IntakeSubFeaturesUpgrade = observer((props: Props) => {
+const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(props: Props) {
   const { projectId, showDefault = true, featureList, isTooltip = false, className = "" } = props;
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();

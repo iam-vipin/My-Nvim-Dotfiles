@@ -12,7 +12,7 @@ export type ImportersListItemProps = {
   workspaceSlug: string;
 };
 
-export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
+export function ImportersListItem(props: ImportersListItemProps) {
   const { provider, workspaceSlug } = props;
 
   const { t } = useTranslation();
@@ -48,4 +48,4 @@ export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
       </div>
     </div>
   );
-};
+}

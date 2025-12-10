@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search, Crown } from "lucide-react";
 // ui
@@ -54,7 +52,7 @@ const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   },
 ];
 
-export const WorkspaceActiveCyclesUpgrade = observer(() => {
+export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyclesUpgrade() {
   // store hooks
   const {
     userProfile: { data: userProfile },

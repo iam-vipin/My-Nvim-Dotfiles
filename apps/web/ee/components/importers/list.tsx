@@ -85,7 +85,7 @@ export type ImportersListProps = {
   workspaceSlug: string;
 };
 
-export const ImportersList: FC<ImportersListProps> = observer((props) => {
+export const ImportersList = observer(function ImportersList(props: ImportersListProps) {
   const { workspaceSlug } = props;
 
   return (

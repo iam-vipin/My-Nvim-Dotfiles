@@ -14,7 +14,7 @@ type Props = {
   project: TProject;
 };
 
-export const SpreadsheetIssueColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetIssueColumn = observer(function SpreadsheetIssueColumn(props: Props) {
   const { project } = props;
   // router
   const router = useAppRouter();

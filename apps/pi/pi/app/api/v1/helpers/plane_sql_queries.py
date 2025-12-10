@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Any
 from typing import Dict
@@ -593,6 +594,41 @@ async def search_module_by_name(name: str, project_id: Optional[str] = None, wor
         return None
 
 
+async def search_type_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """Search for an issue type by name and return its details."""
+    query = """
+    SELECT it.id, it.name, pit.project_id
+    FROM issue_types it
+    JOIN project_issue_types pit ON it.id = pit.issue_type_id
+    JOIN projects p ON pit.project_id = p.id
+    JOIN workspaces w ON p.workspace_id = w.id
+    WHERE it.name ILIKE $1
+    AND it.deleted_at IS NULL
+    AND pit.deleted_at IS NULL
+    """
+
+    params = [f"%{name}%"]
+
+    if project_id:
+        query += " AND pit.project_id = $2"
+        params.append(project_id)
+
+    if workspace_slug:
+        query += " AND w.slug = $3"
+        params.append(workspace_slug)
+
+    query += " LIMIT 1"
+
+    try:
+        result = await PlaneDBPool.fetchrow(query, tuple(params))
+        if result:
+            return {"id": str(result["id"]), "name": result["name"], "project_id": str(result["project_id"])}
+        return None
+    except Exception as e:
+        log.error(f"Error searching for issue type '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        return None
+
+
 async def search_project_by_name(
     name: str,
     workspace_slug: Optional[str] = None,
@@ -691,15 +727,15 @@ async def search_cycle_by_name(name: str, project_id: Optional[str] = None, work
         return None
 
 
-async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
-    """Search for the current active cycle in a project (where today's date falls within start_date and end_date).
+async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Search for the current active cycles in a project (where today's date falls within start_date and end_date).
 
     Args:
         project_id: Project ID to search within (required)
         workspace_slug: Workspace slug (optional filter)
 
     Returns:
-        Dictionary with cycle details if found, None otherwise
+        List of dictionaries with cycle details, empty list if none found
     """
     query = """
     SELECT c.id, c.name, c.project_id, c.workspace_id, c.start_date, c.end_date, w.slug AS workspace_slug
@@ -709,8 +745,8 @@ async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = 
     WHERE c.project_id = $1
     AND c.deleted_at IS NULL
     AND c.archived_at IS NULL
-    AND c.start_date <= CURRENT_DATE
-    AND c.end_date >= CURRENT_DATE
+    AND c.start_date::date <= CURRENT_DATE
+    AND c.end_date::date >= CURRENT_DATE
     """
 
     params = [project_id]
@@ -721,12 +757,13 @@ async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = 
         params.append(workspace_slug)
         param_index += 1
 
-    query += " ORDER BY c.start_date DESC LIMIT 1"
+    query += " ORDER BY c.start_date DESC"
 
     try:
-        result = await PlaneDBPool.fetchrow(query, tuple(params))
-        if result:
-            return {
+        results = await PlaneDBPool.fetch(query, tuple(params))
+        cycles = []
+        for result in results:
+            cycles.append({
                 "id": str(result["id"]),
                 "name": result["name"],
                 "project_id": str(result["project_id"]),
@@ -734,13 +771,13 @@ async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = 
                 "workspace_slug": result.get("workspace_slug"),
                 "start_date": str(result["start_date"]) if result["start_date"] else None,
                 "end_date": str(result["end_date"]) if result["end_date"] else None,
-            }
-        return None
+            })
+        return cycles
     except Exception as e:
         log.error(
             f"Error searching for current cycle in project '{project_id}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}"  # noqa E501
         )  # noqa: E501
-        return None
+        return []
 
 
 async def search_label_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
@@ -879,6 +916,7 @@ async def search_user_by_name(
     WHERE ({where_name})
       AND wm.deleted_at IS NULL
       AND u.is_active IS TRUE
+      AND u.is_bot IS FALSE
     """
 
     if workspace_slug:
@@ -887,10 +925,8 @@ async def search_user_by_name(
         param_index += 1
 
     query += " LIMIT 20"
-    log.info(f"Searching for user by name query: {query}, params: {params}")
     try:
         rows = await PlaneDBPool.fetch(query, tuple(params))
-        log.info(f"Searching for user by name rows: {rows}")
         return [
             {
                 "id": str(r["id"]),
@@ -1033,76 +1069,153 @@ async def get_workspace_plans_batch(workspace_ids: List[str]) -> Dict[str, str]:
 
 async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """
-    Search for a work item by its unique identifier (e.g., 'WEB-821').
+    Search for a work item by its unique identifier or UUID.
 
     Args:
-        identifier: The unique identifier in format 'PROJECT-SEQUENCE' (e.g., 'WEB-821')
+        identifier: Either a UUID string or unique identifier in format 'PROJECT-SEQUENCE' (e.g., 'WEB-821')
         workspace_slug: Optional workspace slug for filtering
 
     Returns:
         Dictionary with work item details or None if not found
     """
     try:
-        # Parse the identifier (e.g., 'WEB-821' -> project_identifier='WEB', sequence_id=821)
-        if "-" not in identifier:
-            log.error(f"Invalid identifier format '{identifier}'. Expected format: 'PROJECT-SEQUENCE'")
-            return None
-
-        project_identifier, sequence_str = identifier.split("-", 1)
-
+        # Check if identifier is a UUID
         try:
-            sequence_id = int(sequence_str)
-        except ValueError:
-            log.error(f"Invalid sequence number '{sequence_str}' in identifier '{identifier}'")
-            return None
+            uuid.UUID(identifier)
+            is_uuid = True
+        except (ValueError, AttributeError):
+            is_uuid = False
 
-        # Build the query with workspace filtering if provided
-        workspace_filter = ""
-        params = [project_identifier, sequence_id]
+        if is_uuid:
+            # Handle UUID-based lookup
+            log.info(f"Searching for work item by UUID: {identifier}")
 
-        if workspace_slug:
-            workspace_filter = "AND w.slug = $3"
-            params.append(workspace_slug)
+            workspace_filter = ""
+            params: List[Any] = [identifier]
 
-        query = f"""
-        SELECT
-            i.id,
-            i.name,
-            i.project_id,
-            p.identifier as project_identifier,
-            i.sequence_id,
-            i.state_id,
-            i.priority,
-            i.workspace_id,
-            i.created_at,
-            i.updated_at,
-            i.description_stripped,
-            i.start_date,
-            i.target_date,
-            i.completed_at,
-            i.point,
-            i.is_draft,
-            i.archived_at,
-            i.type_id,
-            it.name as type_name,
-            it.is_epic as is_epic
-        FROM issues i
-        JOIN projects p ON i.project_id = p.id
-        JOIN workspaces w ON i.workspace_id = w.id
-        LEFT JOIN issue_types it ON i.type_id = it.id
-        WHERE p.identifier = $1
-        AND i.sequence_id = $2
-        AND i.deleted_at IS NULL
-        AND p.deleted_at IS NULL
-        {workspace_filter}
-        LIMIT 1
-        """
+            if workspace_slug:
+                workspace_filter = "AND w.slug = $2"
+                params.append(workspace_slug)
 
-        result = await PlaneDBPool.fetchrow(query, tuple(params))
+            query = f"""
+            SELECT
+                i.id,
+                i.name,
+                i.project_id,
+                p.identifier as project_identifier,
+                i.sequence_id,
+                i.state_id,
+                i.priority,
+                i.workspace_id,
+                i.created_at,
+                i.updated_at,
+                i.description_stripped,
+                i.start_date,
+                i.target_date,
+                i.completed_at,
+                i.point,
+                i.is_draft,
+                i.archived_at,
+                i.type_id,
+                it.name as type_name,
+                it.is_epic as is_epic
+            FROM issues i
+            JOIN projects p ON i.project_id = p.id
+            JOIN workspaces w ON i.workspace_id = w.id
+            LEFT JOIN issue_types it ON i.type_id = it.id
+            WHERE i.id = $1
+            AND i.deleted_at IS NULL
+            AND p.deleted_at IS NULL
+            {workspace_filter}
+            LIMIT 1
+            """
+
+            result = await PlaneDBPool.fetchrow(query, tuple(params))
+
+        else:
+            # Handle PROJECT-SEQUENCE identifier format
+            # Parse the identifier (e.g., 'WEB-821' -> project_identifier='WEB', sequence_id=821)
+            if "-" not in identifier:
+                log.error(f"Invalid identifier format '{identifier}'. Expected format: 'PROJECT-SEQUENCE' or UUID")
+                return None
+
+            project_identifier, sequence_str = identifier.split("-", 1)
+
+            try:
+                sequence_id = int(sequence_str)
+            except ValueError:
+                log.error(f"Invalid sequence number '{sequence_str}' in identifier '{identifier}'")
+                return None
+
+            # Build the query with workspace filtering if provided
+            workspace_filter = ""
+            params = [project_identifier, sequence_id]
+
+            if workspace_slug:
+                workspace_filter = "AND w.slug = $3"
+                params.append(workspace_slug)
+
+            query = f"""
+            SELECT
+                i.id,
+                i.name,
+                i.project_id,
+                p.identifier as project_identifier,
+                i.sequence_id,
+                i.state_id,
+                i.priority,
+                i.workspace_id,
+                i.created_at,
+                i.updated_at,
+                i.description_stripped,
+                i.start_date,
+                i.target_date,
+                i.completed_at,
+                i.point,
+                i.is_draft,
+                i.archived_at,
+                i.type_id,
+                it.name as type_name,
+                it.is_epic as is_epic
+            FROM issues i
+            JOIN projects p ON i.project_id = p.id
+            JOIN workspaces w ON i.workspace_id = w.id
+            LEFT JOIN issue_types it ON i.type_id = it.id
+            WHERE p.identifier = $1
+            AND i.sequence_id = $2
+            AND i.deleted_at IS NULL
+            AND p.deleted_at IS NULL
+            {workspace_filter}
+            LIMIT 1
+            """
+
+            result = await PlaneDBPool.fetchrow(query, tuple(params))
 
         if result:
             log.info(f"Found work item with identifier '{identifier}': {result["name"]}")
-            return dict(result)
+            # Convert UUID fields to strings and datetime/date fields to ISO format for JSON serialization
+            return {
+                "id": str(result["id"]),
+                "name": result["name"],
+                "project_id": str(result["project_id"]),
+                "project_identifier": result["project_identifier"],
+                "sequence_id": result["sequence_id"],
+                "state_id": str(result["state_id"]) if result["state_id"] else None,
+                "priority": result["priority"],
+                "workspace_id": str(result["workspace_id"]),
+                "created_at": result["created_at"].isoformat() if result["created_at"] else None,
+                "updated_at": result["updated_at"].isoformat() if result["updated_at"] else None,
+                "description_stripped": result["description_stripped"],
+                "start_date": result["start_date"].isoformat() if result["start_date"] else None,
+                "target_date": result["target_date"].isoformat() if result["target_date"] else None,
+                "completed_at": result["completed_at"].isoformat() if result["completed_at"] else None,
+                "point": result["point"],
+                "is_draft": result["is_draft"],
+                "archived_at": result["archived_at"].isoformat() if result["archived_at"] else None,
+                "type_id": str(result["type_id"]) if result["type_id"] else None,
+                "type_name": result["type_name"],
+                "is_epic": result["is_epic"],
+            }
         else:
             log.info(f"No work item found with identifier '{identifier}'")
             return None

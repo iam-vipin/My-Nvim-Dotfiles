@@ -57,7 +57,7 @@ export const useRealtimePageEvents = ({
     (userId: string | undefined) => {
       if (!userId) return "";
       try {
-        const userDetails = getUserDetails(userId as string);
+        const userDetails = getUserDetails(userId);
         return userDetails?.display_name ? ` by ${userDetails.display_name}` : "";
       } catch {
         return "";

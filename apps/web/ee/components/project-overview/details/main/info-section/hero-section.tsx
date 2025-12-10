@@ -22,7 +22,7 @@ type THeroSection = {
   workspaceSlug: string;
 };
 
-export const HeroSection = observer((props: THeroSection) => {
+export const HeroSection = observer(function HeroSection(props: THeroSection) {
   const { project, workspaceSlug } = props;
   const [isOpen, setIsOpen] = useState(false);
   const { allowPermissions } = useUserPermissions();

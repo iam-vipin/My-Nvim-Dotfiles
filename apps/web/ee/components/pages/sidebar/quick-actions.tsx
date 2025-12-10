@@ -14,7 +14,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-store";
 
-export const PagesAppSidebarQuickActions = observer(() => {
+export const PagesAppSidebarQuickActions = observer(function PagesAppSidebarQuickActions() {
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // params

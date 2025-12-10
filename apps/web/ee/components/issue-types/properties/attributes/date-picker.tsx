@@ -17,7 +17,7 @@ type TDatePickerAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const DatePickerAttributes = observer((props: TDatePickerAttributesProps) => {
+export const DatePickerAttributes = observer(function DatePickerAttributes(props: TDatePickerAttributesProps) {
   const { datePickerPropertyDetail, currentOperationMode, onDatePickerDetailChange, isUpdateAllowed } = props;
 
   return (

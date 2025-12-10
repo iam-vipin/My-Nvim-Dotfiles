@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -23,7 +21,7 @@ import { useWikiAppPowerKCommands } from "./config/commands";
  * MobX-aware wrapper for the Command Palette modal
  * Connects the modal to the MobX store
  */
-export const WikiAppPowerKProvider = observer(() => {
+export const WikiAppPowerKProvider = observer(function WikiAppPowerKProvider() {
   // navigation
   const router = useAppRouter();
   const params = useParams();

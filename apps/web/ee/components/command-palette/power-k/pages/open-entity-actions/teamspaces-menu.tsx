@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import type { TTeamspace } from "@plane/types";
@@ -13,7 +11,7 @@ type Props = {
   handleSelect: (teamspace: TTeamspace) => void;
 };
 
-export const PowerKOpenTeamspacesMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenTeamspacesMenu = observer(function PowerKOpenTeamspacesMenu(props: Props) {
   const { handleSelect } = props;
   // store hooks
   const { loader, joinedTeamSpaceIds, getTeamspaceById } = useTeamspaces();

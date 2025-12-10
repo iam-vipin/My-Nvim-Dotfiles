@@ -14,7 +14,7 @@ import type { LucideIcon } from "lucide-react";
 import { Copy, Link2, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
-// import { useTranslation } from "@plane/i18n";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // constants
@@ -36,7 +36,7 @@ type Props = {
   originUrl?: IEditorPropsExtended["originUrl"];
 };
 export type BlockMenuOption = {
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   key: string;
   label: string;
   onClick: (e: React.MouseEvent) => void;
@@ -44,7 +44,7 @@ export type BlockMenuOption = {
 };
 
 export type MenuItem = {
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   key: string;
   label: string;
   onClick: (e: React.MouseEvent) => void;
@@ -74,7 +74,7 @@ const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONCo
   return sanitizedNode;
 };
 
-export const BlockMenu = (props: Props) => {
+export function BlockMenu(props: Props) {
   const { editor, flaggedExtensions, disabledExtensions, originUrl } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
@@ -350,4 +350,4 @@ export const BlockMenu = (props: Props) => {
       </div>
     </FloatingPortal>
   );
-};
+}

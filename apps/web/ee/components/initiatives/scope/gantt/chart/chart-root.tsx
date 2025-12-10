@@ -17,7 +17,7 @@ type Props = {
   handleAddEpic: () => void;
   handleAddProject: () => void;
 };
-export const ScopeGanttChartRoot: React.FC<Props> = observer((props) => {
+export const ScopeGanttChartRoot = observer(function ScopeGanttChartRoot(props: Props) {
   const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject } = props;
 
   const { blockStructureUpdateHandler, blockDatesUpdateHandler } = useGanttOperations(workspaceSlug);

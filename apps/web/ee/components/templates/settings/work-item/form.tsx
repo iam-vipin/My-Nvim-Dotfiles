@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
@@ -68,231 +66,231 @@ const DEFAULT_WORK_ITEM_TEMPLATE_FORM_VALUES: TWorkItemTemplateForm = {
   },
 };
 
-export const WorkItemTemplateFormRoot: React.FC<TWorkItemTemplateFormRootProps> = observer(
-  (props: TWorkItemTemplateFormRootProps) => {
-    const {
-      currentLevel,
-      handleFormCancel,
-      handleFormSubmit,
-      handleTemplateInvalidIdsChange,
-      handleWorkItemListCustomPropertyValuesChange,
-      operation,
-      preloadedData,
-      subWorkItemCustomPropertyValues,
-      templateId,
-      templateInvalidIds,
-    } = props;
-    const ref = useRef<HTMLFormElement>(null);
-    // router
-    const router = useAppRouter();
-    const { workspaceSlug: routerWorkspaceSlug } = useParams();
-    const workspaceSlug = routerWorkspaceSlug?.toString();
-    // ref
-    const isDirtyRef = useRef<boolean>(false);
-    // state
-    const [bubbledHref, setBubbledHref] = useState<string | null>(null);
-    const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
-    // plane hooks
-    const { t } = useTranslation();
-    // store hooks
-    const { allowPermissions } = useUserPermissions();
-    const { getProjectDefaultStateId } = useProjectState();
-    const { getProjectDefaultWorkItemTypeId } = useIssueTypes();
-    const { getProjectById, joinedProjectIds } = useProject();
-    // form state
-    const defaultValueForReset = useMemo(
-      () =>
-        preloadedData
-          ? merge({}, DEFAULT_WORK_ITEM_TEMPLATE_FORM_VALUES, preloadedData)
-          : DEFAULT_WORK_ITEM_TEMPLATE_FORM_VALUES,
-      [preloadedData]
-    );
-    const methods = useForm<TWorkItemTemplateForm>({
-      defaultValues: defaultValueForReset,
-    });
-    const {
-      handleSubmit,
-      watch,
-      reset,
-      formState: { isSubmitting, isDirty },
-    } = methods;
-    // derived values
-    const projectId = watch("work_item.project_id");
-    const hasWorkspaceAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-    const hasProjectAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-    const allowLabelCreation =
-      currentLevel === ETemplateLevel.WORKSPACE ? hasWorkspaceAdminPermission : hasProjectAdminPermission;
+export const WorkItemTemplateFormRoot = observer(function WorkItemTemplateFormRoot(
+  props: TWorkItemTemplateFormRootProps
+) {
+  const {
+    currentLevel,
+    handleFormCancel,
+    handleFormSubmit,
+    handleTemplateInvalidIdsChange,
+    handleWorkItemListCustomPropertyValuesChange,
+    operation,
+    preloadedData,
+    subWorkItemCustomPropertyValues,
+    templateId,
+    templateInvalidIds,
+  } = props;
+  const ref = useRef<HTMLFormElement>(null);
+  // router
+  const router = useAppRouter();
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  // ref
+  const isDirtyRef = useRef<boolean>(false);
+  // state
+  const [bubbledHref, setBubbledHref] = useState<string | null>(null);
+  const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { allowPermissions } = useUserPermissions();
+  const { getProjectDefaultStateId } = useProjectState();
+  const { getProjectDefaultWorkItemTypeId } = useIssueTypes();
+  const { getProjectById, joinedProjectIds } = useProject();
+  // form state
+  const defaultValueForReset = useMemo(
+    () =>
+      preloadedData
+        ? merge({}, DEFAULT_WORK_ITEM_TEMPLATE_FORM_VALUES, preloadedData)
+        : DEFAULT_WORK_ITEM_TEMPLATE_FORM_VALUES,
+    [preloadedData]
+  );
+  const methods = useForm<TWorkItemTemplateForm>({
+    defaultValues: defaultValueForReset,
+  });
+  const {
+    handleSubmit,
+    watch,
+    reset,
+    formState: { isSubmitting, isDirty },
+  } = methods;
+  // derived values
+  const projectId = watch("work_item.project_id");
+  const hasWorkspaceAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const hasProjectAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const allowLabelCreation =
+    currentLevel === ETemplateLevel.WORKSPACE ? hasWorkspaceAdminPermission : hasProjectAdminPermission;
 
-    const onSubmit = async (data: TWorkItemTemplateForm) => {
-      await handleFormSubmit({ data });
-    };
+  const onSubmit = async (data: TWorkItemTemplateForm) => {
+    await handleFormSubmit({ data });
+  };
 
-    usePreventOutsideClick(
-      ref,
-      (anchorElement: HTMLAnchorElement | null) => {
-        if (!anchorElement || !anchorElement.href) return;
+  usePreventOutsideClick(
+    ref,
+    (anchorElement: HTMLAnchorElement | null) => {
+      if (!anchorElement || !anchorElement.href) return;
 
-        // Extract relative path instead of absolute URL
-        const relativePath = anchorElement.pathname + anchorElement.search + anchorElement.hash;
+      // Extract relative path instead of absolute URL
+      const relativePath = anchorElement.pathname + anchorElement.search + anchorElement.hash;
 
-        if (isDirtyRef.current) {
-          setIsDiscardModalOpen(true);
-          setBubbledHref(relativePath);
-        } else {
-          router.push(relativePath);
-        }
-      },
-      ["discard-modal-button"]
-    );
+      if (isDirtyRef.current) {
+        setIsDiscardModalOpen(true);
+        setBubbledHref(relativePath);
+      } else {
+        router.push(relativePath);
+      }
+    },
+    ["discard-modal-button"]
+  );
 
-    useEffect(() => {
-      if (isDirtyRef.current !== isDirty) isDirtyRef.current = isDirty;
-    }, [isDirty]);
+  useEffect(() => {
+    if (isDirtyRef.current !== isDirty) isDirtyRef.current = isDirty;
+  }, [isDirty]);
 
-    // Reset the form values when the projectId changes, apart from common fields
-    const handleProjectChange = useCallback(
-      (projectId: string) => {
-        const templateData = watch("template");
-        const workItemData = watch("work_item");
-        // Get default state id and issue type id for the project
-        const defaultStateId = getProjectDefaultStateId(projectId);
-        const defaultIssueTypeId = getProjectDefaultWorkItemTypeId(projectId);
+  // Reset the form values when the projectId changes, apart from common fields
+  const handleProjectChange = useCallback(
+    (projectId: string) => {
+      const templateData = watch("template");
+      const workItemData = watch("work_item");
+      // Get default state id and issue type id for the project
+      const defaultStateId = getProjectDefaultStateId(projectId);
+      const defaultIssueTypeId = getProjectDefaultWorkItemTypeId(projectId);
 
-        reset({
-          template: templateData,
-          work_item: {
-            ...defaultValueForReset.work_item,
-            project_id: projectId,
-            name: workItemData.name,
-            description_html: workItemData.description_html,
-            state_id: defaultStateId,
-            type_id: defaultIssueTypeId,
-          },
-        });
-      },
-      [watch, getProjectDefaultStateId, getProjectDefaultWorkItemTypeId, reset, defaultValueForReset]
-    );
+      reset({
+        template: templateData,
+        work_item: {
+          ...defaultValueForReset.work_item,
+          project_id: projectId,
+          name: workItemData.name,
+          description_html: workItemData.description_html,
+          state_id: defaultStateId,
+          type_id: defaultIssueTypeId,
+        },
+      });
+    },
+    [watch, getProjectDefaultStateId, getProjectDefaultWorkItemTypeId, reset, defaultValueForReset]
+  );
 
-    if (!workspaceSlug) return null;
-    return (
-      <>
-        <DiscardModal
-          isOpen={isDiscardModalOpen}
-          onClose={() => setIsDiscardModalOpen(false)}
-          onDiscard={() => {
-            if (bubbledHref) {
-              router.push(bubbledHref);
-            }
-          }}
-        />
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)} ref={ref}>
-            {/* Template Section */}
-            <div className="space-y-4 w-full max-w-4xl py-page-y">
-              <TemplateDetails
-                fieldPaths={{
-                  name: "template.name",
-                  shortDescription: "template.short_description",
-                }}
-                validation={{
-                  name: {
-                    required: t("templates.settings.form.work_item.template.name.validation.required"),
-                    maxLength: t("templates.settings.form.work_item.template.name.validation.maxLength"),
-                  },
-                }}
-                placeholders={{
-                  name: t("templates.settings.form.work_item.template.name.placeholder"),
-                  shortDescription: t("templates.settings.form.work_item.template.description.placeholder"),
-                }}
-              />
-            </div>
-            <div className="border-t border-custom-border-100 size-full">
-              <div className="w-full max-w-4xl py-page-y">
-                {/* Work Item Properties Section */}
-                <div className="space-y-2">
-                  {/* Work Item Properties */}
-                  <WorkItemBlueprintPropertiesWithMobx<TWorkItemTemplateForm>
-                    allowProjectSelection={currentLevel !== ETemplateLevel.PROJECT && !templateId}
-                    allowLabelCreation={allowLabelCreation}
-                    fieldPaths={{
-                      projectId: "work_item.project_id",
-                      issueTypeId: "work_item.type_id",
-                      name: "work_item.name",
-                      description: "work_item.description_html",
-                      state: "work_item.state_id",
-                      priority: "work_item.priority",
-                      assigneeIds: "work_item.assignee_ids",
-                      labelIds: "work_item.label_ids",
-                      moduleIds: "work_item.module_ids",
-                    }}
-                    getProjectById={getProjectById}
-                    handleInvalidIdsChange={handleTemplateInvalidIdsChange}
-                    handleProjectChange={handleProjectChange}
-                    inputTextSize="lg"
-                    invalidIds={templateInvalidIds}
-                    projectId={projectId}
-                    projectIds={joinedProjectIds}
-                    workspaceSlug={workspaceSlug}
-                    usePropsForAdditionalData={false}
-                  />
-                  {/* Sub Work Items */}
-                  <WorkItemBlueprintListRoot<TWorkItemTemplateForm>
-                    emptyStateDescription={t("templates.empty_state.no_sub_work_items.description")}
-                    getProjectById={getProjectById}
-                    handleWorkItemListInvalidIdsChange={(subWorkItemsInvalidIds) => {
-                      handleTemplateInvalidIdsChange("sub_workitems", subWorkItemsInvalidIds);
-                    }}
-                    modalTitle={t("issue.add.sub_issue")}
-                    modalInputBorderVariant="primary"
-                    projectId={projectId}
-                    sectionTitle={t("common.sub_work_items")}
-                    setWorkItemListCustomPropertyValues={handleWorkItemListCustomPropertyValuesChange}
-                    workItemFieldPath="work_item.sub_workitems"
-                    workItemListCustomPropertyValues={subWorkItemCustomPropertyValues}
-                    workItemListInvalidIds={templateInvalidIds?.sub_workitems}
-                    workspaceSlug={workspaceSlug}
-                    usePropsForAdditionalData={false}
-                  />
-                </div>
-                {/* Form Actions */}
-                <div className="flex items-center justify-end gap-2 pt-8 border-t border-custom-border-200">
-                  <Button
-                    variant="neutral-primary"
-                    size="sm"
-                    className={cn(COMMON_BUTTON_CLASS_NAME)}
-                    onClick={handleFormCancel}
-                    data-ph-element={
-                      currentLevel === ETemplateLevel.WORKSPACE
-                        ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_CANCEL_BUTTON
-                        : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_CANCEL_BUTTON
-                    }
-                  >
-                    {t("common.cancel")}
-                  </Button>
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    size="sm"
-                    className={cn("shadow-sm")}
-                    loading={isSubmitting}
-                    data-ph-element={
-                      currentLevel === ETemplateLevel.WORKSPACE
-                        ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_SUBMIT_BUTTON
-                        : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_SUBMIT_BUTTON
-                    }
-                  >
-                    {isSubmitting
-                      ? t("common.confirming")
-                      : operation === EWorkItemFormOperation.CREATE
-                        ? t("templates.settings.form.work_item.button.create")
-                        : t("templates.settings.form.work_item.button.update")}
-                  </Button>
-                </div>
+  if (!workspaceSlug) return null;
+  return (
+    <>
+      <DiscardModal
+        isOpen={isDiscardModalOpen}
+        onClose={() => setIsDiscardModalOpen(false)}
+        onDiscard={() => {
+          if (bubbledHref) {
+            router.push(bubbledHref);
+          }
+        }}
+      />
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} ref={ref}>
+          {/* Template Section */}
+          <div className="space-y-4 w-full max-w-4xl py-page-y">
+            <TemplateDetails
+              fieldPaths={{
+                name: "template.name",
+                shortDescription: "template.short_description",
+              }}
+              validation={{
+                name: {
+                  required: t("templates.settings.form.work_item.template.name.validation.required"),
+                  maxLength: t("templates.settings.form.work_item.template.name.validation.maxLength"),
+                },
+              }}
+              placeholders={{
+                name: t("templates.settings.form.work_item.template.name.placeholder"),
+                shortDescription: t("templates.settings.form.work_item.template.description.placeholder"),
+              }}
+            />
+          </div>
+          <div className="border-t border-custom-border-100 size-full">
+            <div className="w-full max-w-4xl py-page-y">
+              {/* Work Item Properties Section */}
+              <div className="space-y-2">
+                {/* Work Item Properties */}
+                <WorkItemBlueprintPropertiesWithMobx<TWorkItemTemplateForm>
+                  allowProjectSelection={currentLevel !== ETemplateLevel.PROJECT && !templateId}
+                  allowLabelCreation={allowLabelCreation}
+                  fieldPaths={{
+                    projectId: "work_item.project_id",
+                    issueTypeId: "work_item.type_id",
+                    name: "work_item.name",
+                    description: "work_item.description_html",
+                    state: "work_item.state_id",
+                    priority: "work_item.priority",
+                    assigneeIds: "work_item.assignee_ids",
+                    labelIds: "work_item.label_ids",
+                    moduleIds: "work_item.module_ids",
+                  }}
+                  getProjectById={getProjectById}
+                  handleInvalidIdsChange={handleTemplateInvalidIdsChange}
+                  handleProjectChange={handleProjectChange}
+                  inputTextSize="lg"
+                  invalidIds={templateInvalidIds}
+                  projectId={projectId}
+                  projectIds={joinedProjectIds}
+                  workspaceSlug={workspaceSlug}
+                  usePropsForAdditionalData={false}
+                />
+                {/* Sub Work Items */}
+                <WorkItemBlueprintListRoot<TWorkItemTemplateForm>
+                  emptyStateDescription={t("templates.empty_state.no_sub_work_items.description")}
+                  getProjectById={getProjectById}
+                  handleWorkItemListInvalidIdsChange={(subWorkItemsInvalidIds) => {
+                    handleTemplateInvalidIdsChange("sub_workitems", subWorkItemsInvalidIds);
+                  }}
+                  modalTitle={t("issue.add.sub_issue")}
+                  modalInputBorderVariant="primary"
+                  projectId={projectId}
+                  sectionTitle={t("common.sub_work_items")}
+                  setWorkItemListCustomPropertyValues={handleWorkItemListCustomPropertyValuesChange}
+                  workItemFieldPath="work_item.sub_workitems"
+                  workItemListCustomPropertyValues={subWorkItemCustomPropertyValues}
+                  workItemListInvalidIds={templateInvalidIds?.sub_workitems}
+                  workspaceSlug={workspaceSlug}
+                  usePropsForAdditionalData={false}
+                />
+              </div>
+              {/* Form Actions */}
+              <div className="flex items-center justify-end gap-2 pt-8 border-t border-custom-border-200">
+                <Button
+                  variant="neutral-primary"
+                  size="sm"
+                  className={cn(COMMON_BUTTON_CLASS_NAME)}
+                  onClick={handleFormCancel}
+                  data-ph-element={
+                    currentLevel === ETemplateLevel.WORKSPACE
+                      ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_CANCEL_BUTTON
+                      : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_CANCEL_BUTTON
+                  }
+                >
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  size="sm"
+                  className={cn("shadow-sm")}
+                  loading={isSubmitting}
+                  data-ph-element={
+                    currentLevel === ETemplateLevel.WORKSPACE
+                      ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_SUBMIT_BUTTON
+                      : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_SUBMIT_BUTTON
+                  }
+                >
+                  {isSubmitting
+                    ? t("common.confirming")
+                    : operation === EWorkItemFormOperation.CREATE
+                      ? t("templates.settings.form.work_item.button.create")
+                      : t("templates.settings.form.work_item.button.update")}
+                </Button>
               </div>
             </div>
-          </form>
-        </FormProvider>
-      </>
-    );
-  }
-);
+          </div>
+        </form>
+      </FormProvider>
+    </>
+  );
+});

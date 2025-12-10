@@ -71,7 +71,7 @@ type WorkspaceSyncPayload struct {
 type GetFlagsPayload struct {
 	WorkspaceSlug string `json:"workspace_slug"`
 	UserID        string `json:"user_id"`
-	FeatureKey    string `json:"feature_key"`
+	FeatureKey    string `json:"flag_key"`
 }
 
 type EncyptedFlagData struct {

@@ -42,77 +42,77 @@ export const DEFAULT_WORK_ITEM_BLUEPRINT_FORM_VALUES: TWorkItemBlueprintFormData
   module_ids: [],
 };
 
-export const CreateUpdateWorkItemBlueprintForm: React.FC<TCreateUpdateWorkItemBlueprintFormProps> = observer(
-  (props) => {
-    const { onClose, onSubmit, title, usePropsForAdditionalData } = props;
-    // plane hooks
-    const { t } = useTranslation();
-    // form state
-    const {
-      handleSubmit,
-      formState: { isSubmitting },
-    } = useFormContext<TWorkItemBlueprintFormData>();
-    // context hooks
-    const { issuePropertyValues } = useIssueModal();
+export const CreateUpdateWorkItemBlueprintForm = observer(function CreateUpdateWorkItemBlueprintForm(
+  props: TCreateUpdateWorkItemBlueprintFormProps
+) {
+  const { onClose, onSubmit, title, usePropsForAdditionalData } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // form state
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useFormContext<TWorkItemBlueprintFormData>();
+  // context hooks
+  const { issuePropertyValues } = useIssueModal();
 
-    const handleFormSubmit = (data: TWorkItemBlueprintFormData) => {
-      onSubmit(data, issuePropertyValues);
-    };
+  const handleFormSubmit = (data: TWorkItemBlueprintFormData) => {
+    onSubmit(data, issuePropertyValues);
+  };
 
-    return (
-      <div className="size-full py-5">
-        {/* Form Title */}
-        {title && <h3 className="text-xl font-medium text-custom-text-200 px-5 pb-4">{title}</h3>}
-        {/* Work Item Properties Section */}
-        <div className="space-y-2 px-5">
-          {usePropsForAdditionalData ? (
-            <WorkItemBlueprintPropertiesWithAdditionalProps<TWorkItemBlueprintFormData>
-              fieldPaths={{
-                assigneeIds: "assignee_ids",
-                description: "description_html",
-                issueTypeId: "type_id",
-                labelIds: "label_ids",
-                moduleIds: "module_ids",
-                name: "name",
-                priority: "priority",
-                projectId: "project_id",
-                state: "state_id",
-              }}
-              {...props}
-            />
-          ) : (
-            <WorkItemBlueprintPropertiesWithMobx<TWorkItemBlueprintFormData>
-              fieldPaths={{
-                assigneeIds: "assignee_ids",
-                description: "description_html",
-                issueTypeId: "type_id",
-                labelIds: "label_ids",
-                moduleIds: "module_ids",
-                name: "name",
-                priority: "priority",
-                projectId: "project_id",
-                state: "state_id",
-              }}
-              {...props}
-            />
-          )}
-        </div>
-        {/* Form Actions */}
-        <div className="flex items-center justify-end gap-2 pt-5 border-t border-custom-border-200 px-5">
-          <Button variant="neutral-primary" size="sm" className={cn(COMMON_BUTTON_CLASS_NAME)} onClick={onClose}>
-            {t("common.cancel")}
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            className={cn("shadow-sm")}
-            loading={isSubmitting}
-            onClick={handleSubmit(handleFormSubmit)}
-          >
-            {isSubmitting ? t("common.confirming") : t("save")}
-          </Button>
-        </div>
+  return (
+    <div className="size-full py-5">
+      {/* Form Title */}
+      {title && <h3 className="text-xl font-medium text-custom-text-200 px-5 pb-4">{title}</h3>}
+      {/* Work Item Properties Section */}
+      <div className="space-y-2 px-5">
+        {usePropsForAdditionalData ? (
+          <WorkItemBlueprintPropertiesWithAdditionalProps<TWorkItemBlueprintFormData>
+            fieldPaths={{
+              assigneeIds: "assignee_ids",
+              description: "description_html",
+              issueTypeId: "type_id",
+              labelIds: "label_ids",
+              moduleIds: "module_ids",
+              name: "name",
+              priority: "priority",
+              projectId: "project_id",
+              state: "state_id",
+            }}
+            {...props}
+          />
+        ) : (
+          <WorkItemBlueprintPropertiesWithMobx<TWorkItemBlueprintFormData>
+            fieldPaths={{
+              assigneeIds: "assignee_ids",
+              description: "description_html",
+              issueTypeId: "type_id",
+              labelIds: "label_ids",
+              moduleIds: "module_ids",
+              name: "name",
+              priority: "priority",
+              projectId: "project_id",
+              state: "state_id",
+            }}
+            {...props}
+          />
+        )}
       </div>
-    );
-  }
-);
+      {/* Form Actions */}
+      <div className="flex items-center justify-end gap-2 pt-5 border-t border-custom-border-200 px-5">
+        <Button variant="neutral-primary" size="sm" className={cn(COMMON_BUTTON_CLASS_NAME)} onClick={onClose}>
+          {t("common.cancel")}
+        </Button>
+        <Button
+          variant="primary"
+          size="sm"
+          className={cn("shadow-sm")}
+          loading={isSubmitting}
+          onClick={handleSubmit(handleFormSubmit)}
+        >
+          {isSubmitting ? t("common.confirming") : t("save")}
+        </Button>
+      </div>
+    </div>
+  );
+});

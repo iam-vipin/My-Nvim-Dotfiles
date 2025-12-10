@@ -26,7 +26,7 @@ function formatBytes(bytes: number | undefined | null): string {
   return `${size.toFixed(2)} ${units[i]}`;
 }
 
-export const TemplatePreview = (props: Props) => {
+export function TemplatePreview(props: Props) {
   const { attachment, onRemove, isLoading = false, loadingPercentage } = props;
   const displayStatus = useUploadStatus(loadingPercentage ?? 0);
   return (
@@ -51,4 +51,4 @@ export const TemplatePreview = (props: Props) => {
       />
     </div>
   );
-};
+}

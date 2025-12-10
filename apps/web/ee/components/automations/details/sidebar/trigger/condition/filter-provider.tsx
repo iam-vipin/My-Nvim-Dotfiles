@@ -20,7 +20,9 @@ type TAutomationConditionFilterHOCProps = {
   workspaceSlug: string;
 };
 
-export const AutomationConditionFilterHOC = observer((props: TAutomationConditionFilterHOCProps) => {
+export const AutomationConditionFilterHOC = observer(function AutomationConditionFilterHOC(
+  props: TAutomationConditionFilterHOCProps
+) {
   const { children, projectId, initialFilterExpression, updateFilterExpression, workspaceSlug } = props;
   // Create new filter instance
   const conditionFilter = useMemo(

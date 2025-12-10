@@ -25,7 +25,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeKanbanCard = observer((props: Props) => {
+export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props: Props) {
   const { initiativeId } = props;
   const parentRef = useRef<HTMLDivElement>(null);
   const { workspaceSlug } = useParams();

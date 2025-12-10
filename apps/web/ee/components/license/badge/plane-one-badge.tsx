@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { PlaneOneIcon } from "@plane/propel/icons";
@@ -13,7 +11,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const PlaneOneEditionBadge = observer(() => {
+export const PlaneOneEditionBadge = observer(function PlaneOneEditionBadge() {
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks

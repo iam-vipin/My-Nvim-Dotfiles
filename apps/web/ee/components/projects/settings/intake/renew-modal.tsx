@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@plane/propel/button";
@@ -21,7 +19,7 @@ const displayProperties: {
   intake: "Form",
 };
 
-export const RenewModal: React.FC<Props> = (props) => {
+export function RenewModal(props: Props) {
   const { workspaceSlug, projectId, isOpen, onClose, source, handleSubmit } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
@@ -103,4 +101,4 @@ export const RenewModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

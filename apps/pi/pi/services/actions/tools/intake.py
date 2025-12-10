@@ -28,7 +28,7 @@ def get_intake_tools(method_executor, context):
         assignee: Optional[str] = None,
         reporter: Optional[str] = None,
         labels: Optional[List[str]] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Submit work item to intake queue for triage.
 
         Args:
@@ -61,9 +61,9 @@ def get_intake_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response(f"Successfully submitted intake item '{name}'", result["data"])
+            return PlaneToolBase.format_success_payload(f"Successfully submitted intake item '{name}'", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to create intake item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create intake item", result["error"])
 
     @tool
     async def intake_list(
@@ -71,7 +71,7 @@ def get_intake_tools(method_executor, context):
         workspace_slug: Optional[str] = None,
         per_page: Optional[int] = 20,
         cursor: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """List intake items awaiting triage."""
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -89,16 +89,16 @@ def get_intake_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved intake list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved intake list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list intake items", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list intake items", result["error"])
 
     @tool
     async def intake_retrieve(
         intake_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Get a single intake work item by ID."""
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -115,9 +115,9 @@ def get_intake_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved intake item", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved intake item", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve intake item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve intake item", result["error"])
 
     @tool
     async def intake_update(
@@ -130,7 +130,7 @@ def get_intake_tools(method_executor, context):
         assignee: Optional[str] = None,
         reporter: Optional[str] = None,
         labels: Optional[List[str]] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Update intake work item details."""
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -163,16 +163,16 @@ def get_intake_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully updated intake item", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully updated intake item", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to update intake item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update intake item", result["error"])
 
     @tool
     async def intake_delete(
         intake_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Remove intake work item."""
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -189,8 +189,8 @@ def get_intake_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully deleted intake item", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully deleted intake item", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to delete intake item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to delete intake item", result["error"])
 
     return [intake_create, intake_list, intake_retrieve, intake_update, intake_delete]

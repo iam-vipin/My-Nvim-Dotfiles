@@ -15,7 +15,7 @@ export type TProjectCreationProviderProps = {
   children: React.ReactNode;
 };
 
-export const ProjectCreationProvider = observer((props: TProjectCreationProviderProps) => {
+export const ProjectCreationProvider = observer(function ProjectCreationProvider(props: TProjectCreationProviderProps) {
   const { templateId, children } = props;
   // states
   const [projectTemplateId, setProjectTemplateId] = useState<string | null>(templateId ?? null);

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -53,7 +51,7 @@ const defaultValues: TBulkIssueProperties = {
   type_id: null,
 };
 
-export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) => {
+export const IssueBulkOperationsProperties = observer(function IssueBulkOperationsProperties(props: Props) {
   const { snapshot } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -269,7 +267,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <CycleDropdown
-                    value={value as string | null}
+                    value={value}
                     onChange={onChange}
                     projectId={projectId.toString()}
                     buttonVariant="border-with-text"
@@ -287,7 +285,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <EstimateDropdown
-                    value={value as string | null}
+                    value={value}
                     onChange={onChange}
                     projectId={projectId.toString()}
                     buttonVariant="border-with-text"

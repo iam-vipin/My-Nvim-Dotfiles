@@ -93,7 +93,7 @@ export class JiraIssuePropertyOptionsStep implements IStep {
             transformIssueFieldOptions({ resourceId, projectId: job.project_id, source: this.source }, option)
           ) || []
       )
-      .filter(Boolean) as Partial<ExIssuePropertyOption>[];
+      .filter(Boolean);
 
     logger.info(`[${job.id}] [${this.name}] Transformed options`, {
       jobId: job.id,
@@ -245,7 +245,7 @@ export class JiraIssuePropertyOptionsStep implements IStep {
     const mappings = options
       .filter((option) => option.external_id && option.id)
       .map((option) => ({
-        externalId: option.external_id!,
+        externalId: option.external_id,
         planeId: option.id!,
       }));
 

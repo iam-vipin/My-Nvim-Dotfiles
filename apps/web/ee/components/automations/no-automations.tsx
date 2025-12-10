@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // local imports
 import { CreateAutomationButton } from "./create-button";
 
-export const NoAutomationsEmptyState = observer(() => {
+export const NoAutomationsEmptyState = observer(function NoAutomationsEmptyState() {
   // plane hooks
   const { t } = useTranslation();
 

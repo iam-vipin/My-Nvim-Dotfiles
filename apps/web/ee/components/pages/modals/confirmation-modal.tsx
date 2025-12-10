@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -22,7 +20,7 @@ type TConfirmationModalProps = {
   eventName: string;
 };
 
-export const ConfirmationModal: React.FC<TConfirmationModalProps> = observer((props) => {
+export const ConfirmationModal = observer(function ConfirmationModal(props: TConfirmationModalProps) {
   const { page, isOpen, onClose, action, title, contentText, successMessage, errorMessage, eventName } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

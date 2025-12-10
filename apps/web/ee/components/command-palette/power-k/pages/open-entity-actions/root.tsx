@@ -5,7 +5,7 @@ import { PowerKOpenCustomersMenu } from "./customers-menu";
 import { PowerKOpenInitiativesMenu } from "./initiatives-menu";
 import { PowerKOpenTeamspacesMenu } from "./teamspaces-menu";
 
-export const PowerKOpenEntityActionsExtended: React.FC<TPowerKOpenEntityActionsProps> = (props) => {
+export function PowerKOpenEntityActionsExtended(props: TPowerKOpenEntityActionsProps) {
   const { activePage, handleSelection } = props;
 
   return (
@@ -15,4 +15,4 @@ export const PowerKOpenEntityActionsExtended: React.FC<TPowerKOpenEntityActionsP
       {activePage === "open-customer" && <PowerKOpenCustomersMenu handleSelect={handleSelection} />}
     </>
   );
-};
+}

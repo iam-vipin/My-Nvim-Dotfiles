@@ -12,7 +12,7 @@ export type ImportersEmptyStateProps = {
   theme: string;
 };
 
-export const ImportersEmptyState: FC<ImportersEmptyStateProps> = observer((props) => {
+export const ImportersEmptyState = observer(function ImportersEmptyState(props: ImportersEmptyStateProps) {
   const { theme } = props;
 
   const isDarkMode = theme === "dark";

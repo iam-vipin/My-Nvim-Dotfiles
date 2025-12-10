@@ -36,7 +36,7 @@ interface IEpicView {
   issueOperations: TIssueOperations;
 }
 
-export const EpicView: FC<IEpicView> = observer((props) => {
+export const EpicView = observer(function EpicView(props: IEpicView) {
   const {
     workspaceSlug,
     projectId,

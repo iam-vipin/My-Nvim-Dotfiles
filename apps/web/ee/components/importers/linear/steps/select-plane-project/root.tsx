@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
@@ -26,7 +24,7 @@ type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.SELECT_PLANE
 
 const currentStepKey = E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT;
 
-export const SelectPlaneProjectRoot: FC = observer(() => {
+export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot() {
   // hooks
   const {
     workspace,

@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
@@ -21,7 +20,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const ProjectAttachmentRoot: FC<Props> = observer((props) => {
+export const ProjectAttachmentRoot = observer(function ProjectAttachmentRoot(props: Props) {
   const { workspaceSlug, projectId, disabled } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

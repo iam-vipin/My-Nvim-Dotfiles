@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
@@ -27,7 +25,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];
 
 const currentStepKey = E_IMPORTER_STEPS.MAP_PRIORITY;
 
-export const MapPriorityRoot: FC = observer(() => {
+export const MapPriorityRoot = observer(function MapPriorityRoot() {
   // hooks
   const {
     workspace,
@@ -53,7 +51,7 @@ export const MapPriorityRoot: FC = observer(() => {
   const asanaProjectGid = importerData[E_IMPORTER_STEPS.CONFIGURE_ASANA]?.projectGid;
   const asanaPriorities = ((asanaProjectGid && getAsanaPrioritiesByProjectGid(asanaProjectGid)) || []).filter(
     (priority: AsanaCustomField) => priority && priority.gid
-  ) as AsanaCustomField[];
+  );
   const asanaPriorityOptions = asanaPriorities.find(
     (priority) => priority.gid === formData.customFieldGid
   )?.enum_options;
@@ -137,7 +135,7 @@ export const MapPriorityRoot: FC = observer(() => {
         const result = fuse.search(asanaState.name);
 
         if (result.length > 0) {
-          const planeState = result[0].item as TPlanePriorityData;
+          const planeState = result[0].item;
           if (asanaState.gid && planeState.key) {
             newPriorityMap[asanaState.gid] = planeState.key;
           }

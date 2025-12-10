@@ -21,7 +21,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeDetailRoot = observer((props: Props) => {
+export const InitiativeDetailRoot = observer(function InitiativeDetailRoot(props: Props) {
   const { workspaceSlug, initiativeId } = props;
   // store hooks
   const {

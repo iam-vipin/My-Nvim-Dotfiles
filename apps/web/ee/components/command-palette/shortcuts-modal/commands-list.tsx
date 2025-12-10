@@ -8,7 +8,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const PagesAppShortcutCommandsList: React.FC<Props> = (props) => {
+export function PagesAppShortcutCommandsList(props: Props) {
   const { searchQuery } = props;
   const { platform } = usePlatformOS();
 
@@ -92,4 +92,4 @@ export const PagesAppShortcutCommandsList: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

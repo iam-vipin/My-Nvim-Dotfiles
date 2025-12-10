@@ -2,6 +2,8 @@
 Members API tools for Plane workspace and project member management.
 """
 
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from langchain_core.tools import tool
@@ -17,7 +19,7 @@ def get_member_tools(method_executor, context):
     """Get all Members API tools."""
 
     @tool
-    async def members_get_workspace_members(workspace_slug: Optional[str] = None) -> str:
+    async def members_get_workspace_members(workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Get all workspace members (excludes bot users).
 
         Args:
@@ -28,6 +30,7 @@ def get_member_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
 
         result = await method_executor.execute("members", "get_workspace_members", workspace_slug=workspace_slug)
+
         if result["success"]:
             # Filter out bot users from the results
             members_data = result["data"]
@@ -43,18 +46,18 @@ def get_member_tools(method_executor, context):
                         or (isinstance(member.get("email"), str) and "_bot@plane.so" in member.get("email", "").lower())
                     )
                 ]
-                return PlaneToolBase.format_success_response("Successfully retrieved workspace members", filtered_members)
+                return PlaneToolBase.format_success_payload("Successfully retrieved workspace members", filtered_members)
             else:
                 # If data is not a list, return as-is (edge case)
-                return PlaneToolBase.format_success_response("Successfully retrieved workspace members", members_data)
+                return PlaneToolBase.format_success_payload("Successfully retrieved workspace members", members_data)
         else:
-            return PlaneToolBase.format_error_response("Failed to get workspace members", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to get workspace members", result["error"])
 
     @tool
     async def members_get_project_members(
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Get all project members (excludes bot users).
 
         Args:
@@ -88,11 +91,11 @@ def get_member_tools(method_executor, context):
                         or (isinstance(member.get("email"), str) and "_bot@plane.so" in member.get("email", "").lower())
                     )
                 ]
-                return PlaneToolBase.format_success_response("Successfully retrieved project members", filtered_members)
+                return PlaneToolBase.format_success_payload("Successfully retrieved project members", filtered_members)
             else:
                 # If data is not a list, return as-is (edge case)
-                return PlaneToolBase.format_success_response("Successfully retrieved project members", members_data)
+                return PlaneToolBase.format_success_payload("Successfully retrieved project members", members_data)
         else:
-            return PlaneToolBase.format_error_response("Failed to get project members", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to get project members", result["error"])
 
     return [members_get_workspace_members, members_get_project_members]

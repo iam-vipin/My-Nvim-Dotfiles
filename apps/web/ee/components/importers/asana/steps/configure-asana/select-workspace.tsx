@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -16,7 +14,9 @@ type TConfigureAsanaSelectWorkspace = {
   handleFormData: (value: string | undefined) => void;
 };
 
-export const ConfigureAsanaSelectWorkspace: FC<TConfigureAsanaSelectWorkspace> = observer((props) => {
+export const ConfigureAsanaSelectWorkspace = observer(function ConfigureAsanaSelectWorkspace(
+  props: TConfigureAsanaSelectWorkspace
+) {
   // props
   const { value, handleFormData } = props;
   // hooks

@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
@@ -12,7 +10,7 @@ type Props = {
   value: string | undefined;
 };
 
-export const DashboardsListSearch: React.FC<Props> = observer((props) => {
+export const DashboardsListSearch = observer(function DashboardsListSearch(props: Props) {
   const { onChange, value } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);

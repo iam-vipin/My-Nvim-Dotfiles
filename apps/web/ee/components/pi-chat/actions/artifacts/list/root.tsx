@@ -1,7 +1,7 @@
 import type { TArtifact } from "@/plane-web/types";
 import { PreviewCard } from "../preview-cards/root";
 
-export const PiChatArtifactsListRoot = (props: { artifacts: TArtifact[] }) => {
+export function PiChatArtifactsListRoot(props: { artifacts: TArtifact[] }) {
   const { artifacts } = props;
   return (
     <div className="flex flex-col gap-4">
@@ -15,4 +15,4 @@ export const PiChatArtifactsListRoot = (props: { artifacts: TArtifact[] }) => {
       ))}
     </div>
   );
-};
+}

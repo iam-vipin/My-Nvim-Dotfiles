@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -16,7 +14,7 @@ type TWorklogCreate = {
   handleClose?: () => void;
 };
 
-export const WorklogCreate: FC<TWorklogCreate> = (props) => {
+export function WorklogCreate(props: TWorklogCreate) {
   const { workspaceSlug, projectId, issueId, handleClose } = props;
   // hooks
   const { createWorklog } = useWorkspaceWorklogs();
@@ -65,4 +63,4 @@ export const WorklogCreate: FC<TWorklogCreate> = (props) => {
       buttonTitle={loader ? `Saving` : `Save`}
     />
   );
-};
+}

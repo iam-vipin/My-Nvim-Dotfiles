@@ -24,7 +24,7 @@ type Props = {
 
 type OIDCConfigFormValues = Record<TInstanceOIDCAuthenticationConfigurationKeys, string>;
 
-export const InstanceOIDCConfigForm: FC<Props> = (props) => {
+export function InstanceOIDCConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -293,4 +293,4 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

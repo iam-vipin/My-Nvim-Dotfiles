@@ -15,7 +15,7 @@ type TCustomerSettingsRoot = {
   isCustomersFeatureEnabled: boolean;
 };
 
-export const CustomerSettingsRoot: FC<TCustomerSettingsRoot> = observer((props) => {
+export const CustomerSettingsRoot = observer(function CustomerSettingsRoot(props: TCustomerSettingsRoot) {
   const { toggleCustomersFeature, isCustomersFeatureEnabled } = props;
 
   const { loader } = useWorkspaceFeatures();

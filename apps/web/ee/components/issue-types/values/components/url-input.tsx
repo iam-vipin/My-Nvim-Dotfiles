@@ -19,7 +19,7 @@ type TUrlValueInputProps = {
   onTextValueChange: (value: string[]) => void;
 };
 
-export const UrlValueInput = observer((props: TUrlValueInputProps) => {
+export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInputProps) {
   const { propertyDetail, value, variant, error, className = "", isDisabled = false, onTextValueChange } = props;
 
   // states

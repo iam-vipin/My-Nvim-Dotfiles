@@ -6,9 +6,10 @@ import type {
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
   TInstanceWorkspaceConfigurationKeys,
-  // enterprise
-  TInstanceEnterpriseAuthenticationKeys,
+  TCoreLoginMediums,
 } from "./";
+// enterprise
+import type { TExtendedLoginMediums, TInstanceEnterpriseAuthenticationKeys } from "./auth-ee";
 // extended
 export type TProductType = "plane-ce" | "plane-one";
 
@@ -123,3 +124,5 @@ export interface IInstanceConfiguration {
 export type IFormattedInstanceConfiguration = {
   [key in TInstanceConfigurationKeys]: string;
 };
+
+export type TLoginMediums = TCoreLoginMediums | TExtendedLoginMediums;

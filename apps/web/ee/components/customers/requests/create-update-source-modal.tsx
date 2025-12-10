@@ -25,7 +25,7 @@ const defaultValues = {
   url: "",
 };
 
-export const SourceCreateUpdateModal: FC<TProps> = observer((props) => {
+export const SourceCreateUpdateModal = observer(function SourceCreateUpdateModal(props: TProps) {
   // props
   const { setLinkData, preloadedData, id } = props;
   // i18n

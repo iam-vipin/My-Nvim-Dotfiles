@@ -11,7 +11,9 @@ type TRecurringWorkItemsSettingsRootProps = {
   projectId: string;
 };
 
-export const RecurringWorkItemsSettingsRoot: FC<TRecurringWorkItemsSettingsRootProps> = observer((props) => {
+export const RecurringWorkItemsSettingsRoot = observer(function RecurringWorkItemsSettingsRoot(
+  props: TRecurringWorkItemsSettingsRootProps
+) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { isRecurringWorkItemsInitializing, isAnyRecurringWorkItemsAvailableForProject } = useRecurringWorkItems();

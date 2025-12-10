@@ -7,7 +7,7 @@ type Props = {
   nodeId: string;
 };
 
-export const CustomAttachmentUploadStatus: React.FC<Props> = (props) => {
+export function CustomAttachmentUploadStatus(props: Props) {
   const { editor, nodeId } = props;
   // Displayed status that will animate smoothly
   const [displayStatus, setDisplayStatus] = useState(0);
@@ -53,4 +53,4 @@ export const CustomAttachmentUploadStatus: React.FC<Props> = (props) => {
   if (uploadStatus === undefined) return null;
 
   return <>{displayStatus}%</>;
-};
+}

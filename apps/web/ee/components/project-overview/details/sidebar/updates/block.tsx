@@ -46,7 +46,7 @@ type TProps = {
     remove: (updateId: string) => Promise<void>;
   };
 };
-export const UpdateBlock = observer((props: TProps) => {
+export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
   const { updateId, workspaceSlug, projectId, handleUpdateOperations } = props;
   // state
   const [isEditing, setIsEditing] = useState(false);
@@ -91,7 +91,7 @@ export const UpdateBlock = observer((props: TProps) => {
           <div className="flex flex-1">
             <div className={cn(`mr-2`, {})}>
               {/* render icon here */}
-              <UpdateStatusIcons statusType={updateData.status as EUpdateStatus} size="md" />
+              <UpdateStatusIcons statusType={updateData.status} size="md" />
             </div>
             {/* Type and creator */}
             <div className="flex-1">

@@ -22,7 +22,7 @@ type TPlansComparisonProps = {
   setIsCompareAllFeaturesSectionOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const PlansComparison = observer((props: TPlansComparisonProps) => {
+export const PlansComparison = observer(function PlansComparison(props: TPlansComparisonProps) {
   const {
     products,
     isProductsAPILoading,

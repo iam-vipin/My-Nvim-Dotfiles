@@ -26,7 +26,7 @@ export type StateTransitionItemProps = {
   transitionId: string;
 };
 
-export const StateTransitionItem = observer((props: StateTransitionItemProps) => {
+export const StateTransitionItem = observer(function StateTransitionItem(props: StateTransitionItemProps) {
   const { workspaceSlug, projectId, parentStateId, transitionId } = props;
   // states
   const [removingTransition, setRemovingTransition] = useState(false);

@@ -1,6 +1,6 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import type { SWRResponse } from "swr";
 import useSWR from "swr";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
@@ -29,10 +29,12 @@ import {
 } from "@/plane-web/hooks/store";
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import type { TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { useInitiatives } from "../hooks/store/use-initiatives";
 import { usePiChat } from "../hooks/store/use-pi-chat";
-export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
+
+export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
   // props
   const { children } = props;
   // router
@@ -71,13 +73,15 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug.toString());
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   // fetching feature flags
-  const { isLoading: flagsLoader, error: flagsError } = useSWR(
+  const featureFlagsResponse: SWRResponse<TFeatureFlagsResponse, Error> = useSWR(
     workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false, errorRetryCount: 1 }
   );
+  const flagsLoader = featureFlagsResponse.isLoading;
+  const flagsError = featureFlagsResponse.error;
   // fetching integrations
   useSWR(
     workspaceSlug ? `WORKSPACE_INTEGRATIONS_${workspaceSlug}` : null,
@@ -104,11 +108,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // fetching project features
   useSWR(
     workspaceSlug ? `PROJECT_FEATURES_${workspaceSlug}` : null,
-    workspaceSlug
-      ? () => {
-          fetchProjectFeatures(workspaceSlug.toString());
-        }
-      : null,
+    workspaceSlug ? () => fetchProjectFeatures(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false }
   );
 

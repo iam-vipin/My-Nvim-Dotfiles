@@ -24,7 +24,7 @@ type Props = {
 const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
 
-export const AppliedFiltersList: React.FC<Props> = observer((props) => {
+export const AppliedFiltersList = observer(function AppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter } = props;
 
   if (!appliedFilters) return null;

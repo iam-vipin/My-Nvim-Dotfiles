@@ -12,7 +12,7 @@ type Props = {
   onStartNewComment?: (selection?: { from: number; to: number; referenceText?: string }) => void;
 };
 
-export const BubbleMenuCommentSelector: FC<Props> = (props) => {
+export function BubbleMenuCommentSelector(props: Props) {
   const { editor, isOpen, setIsOpen, onStartNewComment } = props;
 
   const handleCommentCreate = useCallback(() => {
@@ -51,4 +51,4 @@ export const BubbleMenuCommentSelector: FC<Props> = (props) => {
       </button>
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
@@ -25,7 +23,7 @@ type Props = {
   trackerElement: string;
 };
 
-export const TeamQuickActions: React.FC<Props> = observer((props) => {
+export const TeamQuickActions = observer(function TeamQuickActions(props: Props) {
   const { teamspaceId, workspaceSlug, parentRef, isEditingAllowed, hideEdit, buttonClassName, trackerElement } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

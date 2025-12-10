@@ -19,7 +19,7 @@ import { MovePageModalInput } from "./input";
 
 export type TMovePageSelectedValue = `project-${string}` | `teamspace-${string}` | "workspace";
 
-export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => {
+export const MovePageModal = observer(function MovePageModal(props: TMovePageModalProps) {
   const { isOpen, onClose, page } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");

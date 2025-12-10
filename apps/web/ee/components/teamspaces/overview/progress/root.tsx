@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -27,7 +25,7 @@ type Props = {
   teamspaceId: string;
 };
 
-export const TeamspaceProgressRoot: FC<Props> = observer((props) => {
+export const TeamspaceProgressRoot = observer(function TeamspaceProgressRoot(props: Props) {
   const { teamspaceId } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -64,7 +62,7 @@ export const TeamspaceProgressRoot: FC<Props> = observer((props) => {
   useSWR(
     workspaceSlug && teamspaceId ? ["teamspaceProgressChart", workspaceSlug, teamspaceId] : null,
     workspaceSlug && teamspaceId
-      ? () => fetchTeamspaceProgressChartDetails(workspaceSlug!.toString(), teamspaceId)
+      ? () => fetchTeamspaceProgressChartDetails(workspaceSlug.toString(), teamspaceId)
       : null,
     {
       revalidateIfStale: false,
@@ -73,7 +71,7 @@ export const TeamspaceProgressRoot: FC<Props> = observer((props) => {
   );
   useSWR(
     workspaceSlug && teamspaceId ? ["teamspaceProgressSummary", workspaceSlug, teamspaceId] : null,
-    workspaceSlug && teamspaceId ? () => fetchTeamspaceProgressSummary(workspaceSlug!.toString(), teamspaceId) : null,
+    workspaceSlug && teamspaceId ? () => fetchTeamspaceProgressSummary(workspaceSlug.toString(), teamspaceId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -100,7 +98,7 @@ export const TeamspaceProgressRoot: FC<Props> = observer((props) => {
   };
 
   const handleTeamspaceProgressFilterChange = async (payload: Partial<TWorkloadFilter>) => {
-    await updateTeamspaceProgressFilter(workspaceSlug!.toString(), teamspaceId, payload)
+    await updateTeamspaceProgressFilter(workspaceSlug.toString(), teamspaceId, payload)
       .then(() => {
         captureSuccess({
           eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.PROGRESS_FILTER_UPDATED,

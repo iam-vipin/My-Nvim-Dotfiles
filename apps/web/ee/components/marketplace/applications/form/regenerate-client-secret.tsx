@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Copy } from "lucide-react";
@@ -20,7 +18,7 @@ type Props = {
   handleRegenerateSuccess: (data: Partial<TUserApplication>) => void;
 };
 
-export const RegenerateClientSecret: React.FC<Props> = observer((props) => {
+export const RegenerateClientSecret = observer(function RegenerateClientSecret(props: Props) {
   const { application, handleRegenerateSuccess } = props;
 
   // hooks

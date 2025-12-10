@@ -12,7 +12,7 @@ interface Props {
   displayFilters: TProjectDisplayFilters;
   handleDisplayFilterUpdate: (data: Partial<TProjectDisplayFilters>) => void;
 }
-export const SpreadsheetHeaderColumn = observer((props: Props) => {
+export const SpreadsheetHeaderColumn = observer(function SpreadsheetHeaderColumn(props: Props) {
   const { displayFilters, property, handleDisplayFilterUpdate } = props;
 
   //hooks

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type Props = {
   isProjectLevel?: boolean;
 };
 
-export const Toolbar: FC<Props> = observer((props) => {
+export const Toolbar = observer(function Toolbar(props: Props) {
   const { searchQuery, updateSearchQuery, isProjectLevel = false } = props;
   const { workspaceSlug } = useParams();
   // refs

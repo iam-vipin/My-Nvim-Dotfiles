@@ -31,70 +31,72 @@ const createFilterInstance = (
     },
   });
 
-const InitiativesFilterInstanceProvider = observer(
-  ({
-    children,
-    filters,
-    workspaceSlug,
-  }: {
-    children: ReactNode;
-    filters: TExternalInitiativeFilterExpression;
-    workspaceSlug: string;
-  }) => {
-    const {
-      initiativeFilters: { updateFilters },
-      initiative: { getInitiativesLabels },
-    } = useInitiatives();
+const InitiativesFilterInstanceProvider = observer(function InitiativesFilterInstanceProvider({
+  children,
+  filters,
+  workspaceSlug,
+}: {
+  children: ReactNode;
+  filters: TExternalInitiativeFilterExpression;
+  workspaceSlug: string;
+}) {
+  const {
+    initiativeFilters: { updateFilters },
+    initiative: { getInitiativesLabels },
+  } = useInitiatives();
 
-    const [filterInstance] = useState(() =>
-      createFilterInstance(filters, (expression) => {
-        updateFilters(workspaceSlug, expression);
-      })
-    );
+  const [filterInstance] = useState(() =>
+    createFilterInstance(filters, (expression) => {
+      updateFilters(workspaceSlug, expression);
+    })
+  );
 
-    const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
-    const {
-      workspace: { workspaceMemberIds },
-      getUserDetails,
-    } = useMember();
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
+  const {
+    workspace: { workspaceMemberIds },
+    getUserDetails,
+  } = useMember();
 
-    const labels = getInitiativesLabels(workspaceSlug);
+  const labels = getInitiativesLabels(workspaceSlug);
 
-    const workspaceMembers = useMemo(() => {
-      if (!workspaceMemberIds) return [];
-      return workspaceMemberIds.map((memberId) => getUserDetails(memberId)).filter(Boolean) as IUserLite[];
-    }, [getUserDetails, workspaceMemberIds]);
+  const workspaceMembers = useMemo(() => {
+    if (!workspaceMemberIds) return [];
+    return workspaceMemberIds.map((memberId) => getUserDetails(memberId)).filter(Boolean) as IUserLite[];
+  }, [getUserDetails, workspaceMemberIds]);
 
-    const { leadFilterConfig, startDateFilterConfig, endDateFilterConfig, statesFilterConfig, labelsFilterConfig } =
-      useInitiativesFilterConfigs({
-        workspaceMembers,
-        operatorConfigs,
-        labels: Array.from(labels?.values() || []),
-      });
+  const { leadFilterConfig, startDateFilterConfig, endDateFilterConfig, statesFilterConfig, labelsFilterConfig } =
+    useInitiativesFilterConfigs({
+      workspaceMembers,
+      operatorConfigs,
+      labels: Array.from(labels?.values() || []),
+    });
 
-    // Register all filter configs
-    filterInstance.configManager.registerAll([
-      leadFilterConfig,
-      startDateFilterConfig,
-      endDateFilterConfig,
-      statesFilterConfig,
-      labelsFilterConfig,
-    ]);
+  // Register all filter configs
+  filterInstance.configManager.registerAll([
+    leadFilterConfig,
+    startDateFilterConfig,
+    endDateFilterConfig,
+    statesFilterConfig,
+    labelsFilterConfig,
+  ]);
 
-    const value = useMemo(
-      () => ({
-        filterInstance,
-        workspaceMembers,
-        isReady: true,
-      }),
-      [filterInstance, workspaceMembers]
-    );
+  const value = useMemo(
+    () => ({
+      filterInstance,
+      workspaceMembers,
+      isReady: true,
+    }),
+    [filterInstance, workspaceMembers]
+  );
 
-    return <InitiativesFilterContext.Provider value={value}>{children}</InitiativesFilterContext.Provider>;
-  }
-);
+  return <InitiativesFilterContext.Provider value={value}>{children}</InitiativesFilterContext.Provider>;
+});
 
-export const InitiativesFilterProvider = observer(({ children }: { children: ReactNode }) => {
+export const InitiativesFilterProvider = observer(function InitiativesFilterProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const { workspaceSlug } = useParams();
   const {
     initiativeFilters: { getInitiativeFilters },

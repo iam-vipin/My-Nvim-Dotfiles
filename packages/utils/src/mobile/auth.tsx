@@ -3,7 +3,7 @@ import type { TMobileAuthErrorCodes, TMobileAuthErrorInfo } from "@plane/constan
 import { EMobileAuthErrorCodes, EMobileErrorAlertType, SUPPORT_EMAIL } from "@plane/constants";
 
 const mobileAuthErrorCodeMessages: {
-  [key in TMobileAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in TMobileAuthErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
   // global
   [EMobileAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -32,7 +32,7 @@ const mobileAuthErrorCodeMessages: {
   },
   [EMobileAuthErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+    message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
   [EMobileAuthErrorCodes.INVALID_PASSWORD]: {
     title: `Invalid password`,
@@ -255,7 +255,7 @@ const mobileAuthErrorCodeMessages: {
 
 export const mobileAuthErrorHandler = (
   errorCode: TMobileAuthErrorCodes,
-  email?: string | undefined
+  email?: string
 ): TMobileAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EMobileAuthErrorCodes.INSTANCE_NOT_CONFIGURED,

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -23,7 +21,7 @@ type TPRStateMappingEntityItem = {
   isEnterprise: boolean;
 };
 
-export const PRStateMappingEntityItem: FC<TPRStateMappingEntityItem> = observer((props) => {
+export const PRStateMappingEntityItem = observer(function PRStateMappingEntityItem(props: TPRStateMappingEntityItem) {
   // props
   const { project, entityConnection, isEnterprise } = props;
 

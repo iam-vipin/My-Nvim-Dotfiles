@@ -28,7 +28,7 @@ type TOptionValueSelectProps = {
   getPropertyInstanceById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
 };
 
-export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
+export const OptionValueSelect = observer(function OptionValueSelect(props: TOptionValueSelectProps) {
   const {
     propertyDetail,
     value,

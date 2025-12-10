@@ -20,7 +20,7 @@ type TMemberPickerAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const MemberPickerAttributes = observer((props: TMemberPickerAttributesProps) => {
+export const MemberPickerAttributes = observer(function MemberPickerAttributes(props: TMemberPickerAttributesProps) {
   const { memberPickerPropertyDetail, currentOperationMode, onMemberPickerDetailChange, isUpdateAllowed } = props;
   // router
   const { projectId } = useParams();

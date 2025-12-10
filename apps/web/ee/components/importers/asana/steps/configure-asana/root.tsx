@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
@@ -20,7 +18,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.CONFIGURE_ASANA];
 
 const currentStepKey = E_IMPORTER_STEPS.CONFIGURE_ASANA;
 
-export const ConfigureAsanaRoot: FC = observer(() => {
+export const ConfigureAsanaRoot = observer(function ConfigureAsanaRoot() {
   // hooks
   const { importerData, handleImporterData, currentStep, handleStepper } = useAsanaImporter();
   const { t } = useTranslation();

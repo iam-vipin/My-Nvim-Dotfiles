@@ -14,8 +14,8 @@ type DrawioProps = {
   isFlagged: boolean;
   logoSpinner?: React.ComponentType;
 };
-export const DrawioExtension = (props: DrawioProps) =>
-  DrawioExtensionConfig.extend({
+export function DrawioExtension(props: DrawioProps) {
+  return DrawioExtensionConfig.extend({
     addOptions() {
       const { fileHandler } = props;
       const { getAssetSrc, restore, getFileContent, upload, reupload } = fileHandler;
@@ -50,3 +50,4 @@ export const DrawioExtension = (props: DrawioProps) =>
       ));
     },
   });
+}

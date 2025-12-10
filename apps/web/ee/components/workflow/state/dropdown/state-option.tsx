@@ -14,7 +14,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow";
 
-export const StateOption = observer((props: TStateOptionProps) => {
+export const StateOption = observer(function StateOption(props: TStateOptionProps) {
   const {
     projectId,
     option,

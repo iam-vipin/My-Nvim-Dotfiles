@@ -17,7 +17,7 @@ type TProps = {
   isEditable?: boolean;
 };
 
-export const RequestWorkItemsListCollapsible: FC<TProps> = observer((props) => {
+export const RequestWorkItemsListCollapsible = observer(function RequestWorkItemsListCollapsible(props: TProps) {
   const { workItemIds, workspaceSlug, openWorkItemModal, customerId, requestId, isEditable } = props;
   // i18n
   const { t } = useTranslation();

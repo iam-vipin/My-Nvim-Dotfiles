@@ -1,5 +1,3 @@
-"use client";
-
 import { IMPORTER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -9,7 +7,7 @@ import { cn } from "@plane/utils";
 import type { TStepper, TStepperNavigation } from "@/plane-web/types/importers";
 import ImporterHeader from "../header";
 
-export const Stepper = <T,>(props: TStepper<T>) => {
+export function Stepper<T>(props: TStepper<T>) {
   // props
   const { logo, steps, currentStepIndex, serviceName } = props;
 
@@ -82,9 +80,9 @@ export const Stepper = <T,>(props: TStepper<T>) => {
       </div>
     </div>
   );
-};
+}
 
-export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
+export function StepperNavigation<T>(props: TStepperNavigation<T>) {
   const { currentStep, handleStep, children } = props;
 
   // hooks
@@ -116,4 +114,4 @@ export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
       )}
     </div>
   );
-};
+}

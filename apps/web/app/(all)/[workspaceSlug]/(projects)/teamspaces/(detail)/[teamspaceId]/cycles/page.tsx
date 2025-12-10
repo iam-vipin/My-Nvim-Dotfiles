@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
@@ -13,12 +11,13 @@ import { TeamUpcomingCyclesRoot } from "@/plane-web/components/teamspaces/cycles
 import { useTeamspaceCycles } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";
 
-const TeamspaceCyclesLoader = ({ height }: { height: string }) =>
-  Array.from({ length: 3 }).map((_, index) => (
+function TeamspaceCyclesLoader({ height }: { height: string }) {
+  return Array.from({ length: 3 }).map((_, index) => (
     <Loader className="px-5 pt-5 last:pb-5" key={index}>
       <Loader.Item height={height} width="100%" />
     </Loader>
   ));
+}
 
 function TeamspaceCyclesPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, teamspaceId } = params;

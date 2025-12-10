@@ -1,5 +1,3 @@
-"use client";
-
 import type { FormEvent, FC } from "react";
 import { useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
@@ -17,7 +15,7 @@ type TProjectStateForm = {
   buttonTitle: string;
 };
 
-export const ProjectStateForm: FC<TProjectStateForm> = (props) => {
+export function ProjectStateForm(props: TProjectStateForm) {
   const { data, onSubmit, onCancel, buttonDisabled, buttonTitle } = props;
   // states
   const [formData, setFromData] = useState<Partial<TProjectState> | undefined>(undefined);
@@ -53,14 +51,16 @@ export const ProjectStateForm: FC<TProjectStateForm> = (props) => {
   };
 
   const PopoverButton = useMemo(
-    () => (
-      <div
-        className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
-        style={{
-          backgroundColor: formData?.color ?? "black",
-        }}
-      />
-    ),
+    function PopoverButton() {
+      return (
+        <div
+          className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
+          style={{
+            backgroundColor: formData?.color ?? "black",
+          }}
+        />
+      );
+    },
     [formData?.color]
   );
 
@@ -110,4 +110,4 @@ export const ProjectStateForm: FC<TProjectStateForm> = (props) => {
       </div>
     </form>
   );
-};
+}

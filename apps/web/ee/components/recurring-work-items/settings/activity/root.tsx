@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,9 @@ type TRecurringWorkItemActivityRootProps = {
   workspaceSlug: string;
 };
 
-export const RecurringWorkItemActivityRoot: FC<TRecurringWorkItemActivityRootProps> = observer((props) => {
+export const RecurringWorkItemActivityRoot = observer(function RecurringWorkItemActivityRoot(
+  props: TRecurringWorkItemActivityRootProps
+) {
   const { projectId, recurringWorkItemId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

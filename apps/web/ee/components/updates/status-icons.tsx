@@ -41,13 +41,13 @@ const sizes = {
   },
 };
 
-export const UpdateStatusIcons = ({
+export function UpdateStatusIcons({
   statusType,
   showBackground = true,
   size = "sm",
   showText = false,
   className = "",
-}: TUpdateStatusIcons) => {
+}: TUpdateStatusIcons) {
   const status = statusType ? StatusOptions[statusType] : null;
   const color = status?.color ? generateIconColors(status?.color) : null;
   const iconColor = color ? color.foreground : "transparent";
@@ -101,4 +101,4 @@ export const UpdateStatusIcons = ({
       )}
     </>
   );
-};
+}

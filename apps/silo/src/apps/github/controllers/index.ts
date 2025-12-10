@@ -268,7 +268,7 @@ export default class GithubController {
         credential_id: insertedId,
         connection_id: installation.data.account.id.toString(),
         connection_data: installation.data.account,
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for connection_slug
         connection_slug: installation.data.account.login,
         config: {
           userMap: [],
@@ -403,7 +403,7 @@ export default class GithubController {
 
     const { github_code, encoded_github_state } = githubState;
 
-    const authState: GithubUserAuthState = JSON.parse(Buffer.from(encoded_github_state as string, "base64").toString());
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(encoded_github_state, "base64").toString());
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
 
     if (authState.profile_redirect) {
@@ -412,7 +412,7 @@ export default class GithubController {
 
     try {
       const { response, state } = await githubAuthService.getUserAccessToken({
-        code: github_code as string,
+        code: github_code,
         state: authState,
       });
 
@@ -780,6 +780,7 @@ export default class GithubController {
         const id = payload.data.id;
         const workspace = payload.data.workspace;
         const project = payload.data.project;
+        // @ts-expect-error - fix this
         const issue = payload.data.issue;
 
         const log = {

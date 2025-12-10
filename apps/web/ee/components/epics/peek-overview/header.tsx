@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -65,7 +63,7 @@ export type PeekOverviewHeaderProps = {
   isSubmitting: "submitting" | "submitted" | "saved";
 };
 
-export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
+export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(props: PeekOverviewHeaderProps) {
   const {
     peekMode,
     setPeekMode,

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
@@ -11,7 +9,7 @@ import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/lice
 // plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const SelfHostedFreePlanCard = observer(() => {
+export const SelfHostedFreePlanCard = observer(function SelfHostedFreePlanCard() {
   // hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   const { toggleLicenseActivationModal } = useSelfHostedSubscription();

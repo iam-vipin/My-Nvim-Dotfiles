@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -14,7 +12,9 @@ type TWorkspaceWorklogHeaderRoot = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogHeaderRoot: FC<TWorkspaceWorklogHeaderRoot> = observer((props) => {
+export const WorkspaceWorklogHeaderRoot = observer(function WorkspaceWorklogHeaderRoot(
+  props: TWorkspaceWorklogHeaderRoot
+) {
   const { workspaceSlug, workspaceId } = props;
 
   return (

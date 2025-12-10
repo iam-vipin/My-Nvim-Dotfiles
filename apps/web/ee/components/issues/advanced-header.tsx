@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -29,11 +27,11 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const AdvancedIssuesHeader = observer(() => {
+export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
   const { t } = useTranslation();
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     issues: { getGroupIssueCount },

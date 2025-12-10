@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CustomSearchSelect } from "@plane/ui";
@@ -12,7 +10,9 @@ type TWorkspaceWorklogFilterProjects = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogFilterProjects: FC<TWorkspaceWorklogFilterProjects> = observer((props) => {
+export const WorkspaceWorklogFilterProjects = observer(function WorkspaceWorklogFilterProjects(
+  props: TWorkspaceWorklogFilterProjects
+) {
   const { workspaceSlug } = props;
   // hooks
   const { workspaceProjectIds, getProjectById } = useProject();

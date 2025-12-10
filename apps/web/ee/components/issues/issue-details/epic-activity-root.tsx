@@ -14,7 +14,7 @@ type TEpicActivityProps = {
 
 const commonIconClassName = "h-3 w-3 flex-shrink-0 text-custom-text-300";
 
-export const EpicActivity: FC<TEpicActivityProps> = observer((props) => {
+export const EpicActivity = observer(function EpicActivity(props: TEpicActivityProps) {
   const { activityId, ends } = props;
   // hooks
   const {

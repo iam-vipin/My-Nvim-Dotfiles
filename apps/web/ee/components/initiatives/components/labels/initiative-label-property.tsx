@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -37,7 +35,7 @@ export interface IInitiativeLabelProperty {
   fullHeight?: boolean;
 }
 
-export const InitiativeLabelProperty: React.FC<IInitiativeLabelProperty> = observer((props) => {
+export const InitiativeLabelProperty = observer(function InitiativeLabelProperty(props: IInitiativeLabelProperty) {
   const {
     workspaceSlug,
     value,
@@ -90,66 +88,76 @@ export const InitiativeLabelProperty: React.FC<IInitiativeLabelProperty> = obser
   if (storeLabels && storeLabels.size > 0) initiativeLabels = Array.from(storeLabels.values());
 
   const NoLabel = useMemo(
-    () => (
-      <Tooltip
-        position="top"
-        tooltipHeading={t("common.labels")}
-        tooltipContent="None"
-        isMobile={isMobile}
-        renderByDefault={false}
-      >
+    function NoLabel() {
+      return (
+        <Tooltip
+          position="top"
+          tooltipHeading={t("common.labels")}
+          tooltipContent="None"
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
+          <div
+            className={cn(
+              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+              fullWidth && "w-full"
+            )}
+          >
+            <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+            {placeholderText}
+          </div>
+        </Tooltip>
+      );
+    },
+    [placeholderText, fullWidth, noLabelBorder, isMobile, t]
+  );
+
+  const LabelSummary = useMemo(
+    function LabelSummary() {
+      return (
         <div
           className={cn(
-            "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+            "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
             noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
             fullWidth && "w-full"
           )}
         >
           <Tags className="h-3.5 w-3.5" strokeWidth={2} />
-          {placeholderText}
+          <span className="text-custom-text-200">{value.length} labels</span>
         </div>
-      </Tooltip>
-    ),
-    [placeholderText, fullWidth, noLabelBorder, isMobile, t]
-  );
-
-  const LabelSummary = useMemo(
-    () => (
-      <div
-        className={cn(
-          "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-          noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
-          fullWidth && "w-full"
-        )}
-      >
-        <Tags className="h-3.5 w-3.5" strokeWidth={2} />
-        <span className="text-custom-text-200">{value.length} labels</span>
-      </div>
-    ),
+      );
+    },
     [value.length, fullWidth, noLabelBorder]
   );
 
-  const LabelItem = useMemo(() => {
-    const LabelItemComponent = ({ label }: { label: TInitiativeLabel }) => (
-      <div
-        className={cn(
-          "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-          noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
-          fullWidth && "w-full"
-        )}
-      >
-        <span
-          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: label?.color,
-          }}
-        />
-        <span className="line-clamp-1 inline-block truncate">{label?.name}</span>
-      </div>
-    );
-    LabelItemComponent.displayName = "LabelItem";
-    return LabelItemComponent;
-  }, [fullWidth, noLabelBorder]);
+  const LabelItem = useMemo(
+    function LabelItem() {
+      function LabelItemComponent({ label }: { label: TInitiativeLabel }) {
+        return (
+          <div
+            className={cn(
+              "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+              fullWidth && "w-full"
+            )}
+          >
+            <span
+              className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+              style={{
+                backgroundColor: label?.color,
+              }}
+            />
+            <span className="line-clamp-1 inline-block truncate">{label?.name}</span>
+          </div>
+        );
+      }
+
+      LabelItemComponent.displayName = "LabelItem";
+      return LabelItemComponent;
+    },
+    [fullWidth, noLabelBorder]
+  );
 
   return (
     <>

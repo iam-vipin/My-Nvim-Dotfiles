@@ -21,7 +21,7 @@ type TeamspaceListItemProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamspaceListItem = observer((props: TeamspaceListItemProps) => {
+export const TeamspaceListItem = observer(function TeamspaceListItem(props: TeamspaceListItemProps) {
   const { teamspaceId, isEditingAllowed } = props;
   // router
   const { workspaceSlug } = useParams();

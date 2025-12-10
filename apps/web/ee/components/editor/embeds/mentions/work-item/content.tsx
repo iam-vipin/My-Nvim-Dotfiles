@@ -12,15 +12,12 @@ type Props = {
   workItemDetails: TEditorWorkItemMention;
 };
 
-export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) => {
+export const EditorWorkItemMentionContent = observer(function EditorWorkItemMentionContent(props: Props) {
   const { workItemDetails } = props;
   // params
   const { workspaceSlug } = useParams();
   // store hooks
   const { setPeekIssue } = useIssueDetail();
-  // derived values
-  const trimmedName =
-    workItemDetails.name.length > 64 ? workItemDetails.name.slice(0, 64) + "..." : workItemDetails.name;
   // handle click to open the peek overview
   const handleClick = useCallback(() => {
     if (!workItemDetails || !workItemDetails.project_id || !workspaceSlug) return;
@@ -35,7 +32,7 @@ export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) =>
   return (
     <button
       type="button"
-      className="group/work-item-mention not-prose inline-flex items-center gap-1 w-fit text-sm font-medium outline-none"
+      className="group/work-item-mention not-prose inline-flex items-center gap-1 text-sm font-medium outline-none"
       onClick={handleClick}
     >
       <EditorWorkItemMentionLogo
@@ -45,11 +42,11 @@ export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) =>
         stateGroup={workItemDetails.state__group}
         workItemTypeId={workItemDetails.type_id}
       />
-      <span className="text-custom-text-300">
+      <span className="shrink-0 text-custom-text-300">
         {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
       </span>
-      <span className="text-custom-text-200 group-hover/work-item-mention:text-custom-text-100 transition-colors">
-        {trimmedName}
+      <span className="text-custom-text-200 group-hover/work-item-mention:text-custom-text-100 transition-colors truncate">
+        {workItemDetails.name}
       </span>
     </button>
   );

@@ -4,14 +4,17 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { ACCEPTED_ATTACHMENT_MIME_TYPES, ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 // types
 import type { TEditorCommands, TExtensions } from "@/types";
+// helpers
+import { ACCEPTED_VIDEO_MIME_TYPES, isVideoMimeType } from "@/plane-editor/extensions/attachments/utils";
 
 type Props = {
   disabledExtensions?: TExtensions[];
+  flaggedExtensions?: TExtensions[];
   editor: Editor;
 };
 
 export const DropHandlerPlugin = (props: Props): Plugin => {
-  const { disabledExtensions, editor } = props;
+  const { disabledExtensions, flaggedExtensions, editor } = props;
 
   return new Plugin({
     key: new PluginKey("drop-handler-plugin"),
@@ -33,6 +36,7 @@ export const DropHandlerPlugin = (props: Props): Plugin => {
             const pos = view.state.selection.from;
             insertFilesSafely({
               disabledExtensions,
+              flaggedExtensions,
               editor,
               files: acceptedFiles,
               initialPos: pos,
@@ -67,6 +71,7 @@ export const DropHandlerPlugin = (props: Props): Plugin => {
               const pos = coordinates.pos;
               insertFilesSafely({
                 disabledExtensions,
+                flaggedExtensions,
                 editor,
                 files: acceptedFiles,
                 initialPos: pos,
@@ -84,6 +89,7 @@ export const DropHandlerPlugin = (props: Props): Plugin => {
 
 type InsertFilesSafelyArgs = {
   disabledExtensions?: TExtensions[];
+  flaggedExtensions?: TExtensions[];
   editor: Editor;
   event: "insert" | "drop";
   files: File[];
@@ -92,7 +98,7 @@ type InsertFilesSafelyArgs = {
 };
 
 export const insertFilesSafely = async (args: InsertFilesSafelyArgs) => {
-  const { disabledExtensions, editor, event, files, initialPos, type } = args;
+  const { disabledExtensions, flaggedExtensions, editor, event, files, initialPos, type } = args;
   let pos = initialPos;
 
   for (const file of files) {
@@ -118,10 +124,16 @@ export const insertFilesSafely = async (args: InsertFilesSafelyArgs) => {
           event,
         });
       } else if (fileType === "attachment" && !disabledExtensions?.includes("attachments")) {
+        const isVideo = isVideoMimeType(file.type);
+        // If video-attachments is flagged, set preview to false but still allow insertion
+        const shouldPreviewVideo = isVideo && !flaggedExtensions?.includes("video-attachments");
+        const acceptedFileType = isVideo ? "video" : "all";
         editor.commands.insertAttachmentComponent({
           file,
           pos,
           event,
+          preview: shouldPreviewVideo,
+          acceptedFileType,
         });
       }
     } catch (error) {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactElement } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -24,7 +22,7 @@ type TEntityConnectionItem = {
   isEnterprise: boolean;
 };
 
-export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) => {
+export const EntityConnectionItem = observer(function EntityConnectionItem(props: TEntityConnectionItem) {
   // props
   const { entityConnection, isEnterprise } = props;
   const { t } = useTranslation();

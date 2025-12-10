@@ -16,7 +16,7 @@ type TProps = {
   onDelete: () => Promise<void>;
 };
 
-export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
+export const DeleteConfirmationModal = observer(function DeleteConfirmationModal(props: TProps) {
   const { isOpen, isDisabledAlready, onClose, onDisable, onDelete } = props;
   // plane hooks
   const { t } = useTranslation();

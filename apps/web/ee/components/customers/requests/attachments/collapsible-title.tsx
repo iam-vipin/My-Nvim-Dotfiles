@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const RequestAttachmentCollapsibleTitle: FC<Props> = observer((props) => {
+export const RequestAttachmentCollapsibleTitle = observer(function RequestAttachmentCollapsibleTitle(props: Props) {
   const { workspaceSlug, requestId, isOpen, customerId, disabled = true } = props;
   // store hooks
   const { getRequestById } = useCustomers();

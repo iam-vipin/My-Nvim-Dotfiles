@@ -26,6 +26,7 @@ import {
   Sigma,
   SquareRadical,
   FileCode2,
+  Paperclip,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 // constants
@@ -54,7 +55,12 @@ import {
 } from "@/helpers/editor-commands";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "@/plane-editor/helpers/editor-commands";
+import {
+  insertBlockMath,
+  insertExternalEmbed,
+  insertInlineMath,
+  insertAttachment,
+} from "@/plane-editor/helpers/editor-commands";
 // plane editor
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 // types
@@ -306,6 +312,14 @@ export const ExternalEmbedItem = (editor: Editor): EditorMenuItem<"external-embe
   icon: FileCode2,
 });
 
+export const AttachmentItem = (editor: Editor): EditorMenuItem<"attachment"> => ({
+  key: "attachment",
+  name: "Attachment",
+  isActive: () => editor?.isActive(ADDITIONAL_EXTENSIONS.ATTACHMENT),
+  command: () => insertAttachment({ editor, event: "insert", pos: editor.state.selection.from }),
+  icon: Paperclip,
+});
+
 export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEditorCommands>[] => {
   if (!editor) return [];
 
@@ -328,6 +342,7 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     QuoteItem(editor),
     TableItem(editor),
     ImageItem(editor),
+    AttachmentItem(editor),
     HorizontalRuleItem(editor),
     LinkItem(editor),
     TextColorItem(editor),

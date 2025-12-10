@@ -18,9 +18,9 @@ import { AnalyticsService } from "@/services/analytics.service";
 
 const analyticsService = new AnalyticsService();
 
-const IntakeInsightTable = observer(() => {
+const IntakeInsightTable = observer(function IntakeInsightTable() {
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug;
   const { t } = useTranslation();
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView } = useAnalytics();
   const { data: intakeData, isLoading } = useSWR(

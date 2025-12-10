@@ -15,7 +15,7 @@ type Props = {
   selectionConversion: IEditorPropsExtended["selectionConversion"];
 };
 
-export const SelectionConversionProjectsListModal: React.FC<Props> = (props) => {
+export function SelectionConversionProjectsListModal(props: Props) {
   const { handleClose: onClose, handleSelectionConversion, isOpen, selectionConversion } = props;
   // states
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
@@ -138,4 +138,4 @@ export const SelectionConversionProjectsListModal: React.FC<Props> = (props) => 
       </div>
     </ModalCore>
   );
-};
+}

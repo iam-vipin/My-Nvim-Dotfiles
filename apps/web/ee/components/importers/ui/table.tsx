@@ -7,7 +7,7 @@ type TImporterTable = {
   iterator: ("" | { id: string; name: string | undefined; value: React.ReactNode } | undefined)[] | undefined;
 };
 
-const ImporterTable = (props: TImporterTable) => {
+function ImporterTable(props: TImporterTable) {
   const { isLoading = false, headerLeft, headerRight, iterator } = props;
   return (
     <div className="w-full min-h-44 max-h-full overflow-y-auto">
@@ -41,6 +41,6 @@ const ImporterTable = (props: TImporterTable) => {
       </div>
     </div>
   );
-};
+}
 
 export default ImporterTable;

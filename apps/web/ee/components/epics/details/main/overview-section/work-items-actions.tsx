@@ -30,7 +30,7 @@ type TSubWorkItemsActionsProps = {
   workspaceSlug: string;
 };
 
-export const SubWorkItemsActions: FC<TSubWorkItemsActionsProps> = observer((props) => {
+export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: TSubWorkItemsActionsProps) {
   const { workItemId, workItemServiceType, disabled, projectId, workspaceSlug } = props;
 
   // store hooks

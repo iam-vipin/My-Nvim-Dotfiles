@@ -12,7 +12,8 @@ type Props = {
   endDate: string;
   estimateType: TCycleEstimateSystemAdvanced;
 };
-const CustomTooltip = ({ active, payload, label, plotType, endDate, estimateType }: Props) => {
+
+function CustomTooltip({ active, payload, label, plotType, endDate, estimateType }: Props) {
   if (active && payload && payload.length && label) {
     payload = payload[0]?.payload;
     const [year, month, day] = label?.split("-");
@@ -27,7 +28,7 @@ const CustomTooltip = ({ active, payload, label, plotType, endDate, estimateType
           {isToday && (
             <svg x={-17} width="38" height="16px" xmlns="http://www.w3.org/2000/svg">
               <rect rx="2" width="100%" height="100%" fill="#667699" />
-              <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="10px">
+              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="10px">
                 Today
               </text>
             </svg>
@@ -78,5 +79,6 @@ const CustomTooltip = ({ active, payload, label, plotType, endDate, estimateType
   }
 
   return null;
-};
+}
+
 export default CustomTooltip;

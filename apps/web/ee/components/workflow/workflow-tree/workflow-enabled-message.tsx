@@ -11,7 +11,7 @@ type Props = {
   parentStateId: string;
 };
 
-export const WorkFlowEnabledMessage = observer((props: Props) => {
+export const WorkFlowEnabledMessage = observer(function WorkFlowEnabledMessage(props: Props) {
   const { parentStateId } = props;
   // plane imports
   const { t } = useTranslation();

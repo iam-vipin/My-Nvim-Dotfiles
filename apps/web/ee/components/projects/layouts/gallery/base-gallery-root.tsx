@@ -7,7 +7,7 @@ import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectCard } from "./card";
 
-export const BaseProjectRoot = observer(() => {
+export const BaseProjectRoot = observer(function BaseProjectRoot() {
   // store hooks
   const { getProjectById } = useProject();
   const { getFilteredProjectsByLayout } = useProjectFilter();

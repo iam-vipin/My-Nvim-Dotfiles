@@ -26,7 +26,9 @@ type TTemplateDetailsProps<T extends FieldValues> = {
   };
 };
 
-export const TemplateDetails = observer(<T extends FieldValues>(props: TTemplateDetailsProps<T>) => {
+export const TemplateDetails = observer(function TemplateDetails<T extends FieldValues>(
+  props: TTemplateDetailsProps<T>
+) {
   const { fieldPaths, validation, placeholders } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -22,7 +22,7 @@ type Props = {
   labelOperationsCallbacks: TInitiativeLabelOperationsCallbacks;
 };
 
-export const InitiativeLabelItem: React.FC<Props> = observer((props) => {
+export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: Props) {
   const { label, handleLabelDelete, setIsUpdating, isParentDragging, isLastChild, onDrop, labelOperationsCallbacks } =
     props;
 

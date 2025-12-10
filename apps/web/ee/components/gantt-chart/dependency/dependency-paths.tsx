@@ -13,7 +13,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const TimelineDependencyPaths: FC<Props> = observer((props) => {
+export const TimelineDependencyPaths = observer(function TimelineDependencyPaths(props: Props) {
   const { isEpic = false } = props;
   // state
   const [selectedRelation, setSelectedRelation] = useState<Relation | undefined>();

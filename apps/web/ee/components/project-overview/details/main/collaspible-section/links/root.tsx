@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
@@ -15,7 +13,7 @@ export type TProjectLinkRoot = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export const ProjectLinkRoot: FC<TProjectLinkRoot> = observer((props) => {
+export const ProjectLinkRoot = observer(function ProjectLinkRoot(props: TProjectLinkRoot) {
   // props
   const { workspaceSlug, projectId, disabled = false } = props;
   // hooks

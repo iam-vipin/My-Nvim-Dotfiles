@@ -251,6 +251,7 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
     set(this, "paginatedWorklogIds", {});
     set(this, "worklogs", {});
     this.setCurrentPaginatedKey(undefined);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.getWorkspaceWorklogs(workspaceSlug, EWorklogLoader.WORKSPACE_PAGINATION_LOADER, EWorklogQueryParamType.INIT);
   };
 

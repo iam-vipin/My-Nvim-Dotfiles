@@ -4,7 +4,7 @@ import { useTranslation } from "@plane/i18n";
 import GithubDarkLogo from "@/app/assets/services/github-dark.svg?url";
 import GithubLightLogo from "@/app/assets/services/github-light.svg?url";
 
-export const GithubHeader = () => {
+export function GithubHeader() {
   // hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -20,4 +20,4 @@ export const GithubHeader = () => {
       </div>
     </div>
   );
-};
+}

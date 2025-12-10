@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -14,7 +12,9 @@ type TWorkspaceWorklogAppliedFilterProjects = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogAppliedFilterProjects: FC<TWorkspaceWorklogAppliedFilterProjects> = observer((props) => {
+export const WorkspaceWorklogAppliedFilterProjects = observer(function WorkspaceWorklogAppliedFilterProjects(
+  props: TWorkspaceWorklogAppliedFilterProjects
+) {
   const { workspaceSlug } = props;
   // hooks
   const { getProjectById } = useProject();

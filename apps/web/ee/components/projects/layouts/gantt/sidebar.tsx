@@ -1,5 +1,3 @@
-"use client";
-
 import type { RefObject } from "react";
 import { observer } from "mobx-react";
 // plane
@@ -17,7 +15,7 @@ type Props = {
   showAllBlocks?: boolean;
 };
 
-export const ProjectGanttSidebar: React.FC<Props> = observer((props) => {
+export const ProjectGanttSidebar = observer(function ProjectGanttSidebar(props: Props) {
   const { blockIds, canLoadMoreBlocks, showAllBlocks = false } = props;
 
   const { getBlockById } = useTimeLineChartStore();

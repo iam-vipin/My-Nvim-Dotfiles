@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -27,7 +25,9 @@ const paymentService = new PaymentService();
 
 type TModalStep = "INVITE_MEMBERS" | "ADD_SEATS";
 
-export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModalProps> = observer((props) => {
+export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvitationModal(
+  props: TSendWorkspaceInvitationModalProps
+) {
   const { isOpen, onClose, onSubmit } = props;
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("INVITE_MEMBERS");

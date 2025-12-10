@@ -1,5 +1,3 @@
-"use client";
-
 import React, { memo } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -27,17 +25,7 @@ type ErrorData = {
 export type EmbedData = IframelyResponse | ErrorData | null;
 
 // Pure JSX Renderer Family - Clean JSX rendering without complex logic
-const EmbedRenderer: React.FC<{
-  isLoading: boolean;
-  currentEmbedData: EmbedData;
-  isThemeDark: boolean;
-  src: string;
-  isRichCardView: boolean;
-  directEmbedState: { hasTriedEmbedding: boolean; isEmbeddable: boolean };
-  isEmbedFailed: boolean;
-  handleDirectEmbedLoaded: () => void;
-  handleDirectEmbedError: () => void;
-}> = ({
+function EmbedRenderer({
   isLoading,
   currentEmbedData,
   isThemeDark,
@@ -47,7 +35,17 @@ const EmbedRenderer: React.FC<{
   isEmbedFailed,
   handleDirectEmbedLoaded,
   handleDirectEmbedError,
-}) => {
+}: {
+  isLoading: boolean;
+  currentEmbedData: EmbedData;
+  isThemeDark: boolean;
+  src: string;
+  isRichCardView: boolean;
+  directEmbedState: { hasTriedEmbedding: boolean; isEmbeddable: boolean };
+  isEmbedFailed: boolean;
+  handleDirectEmbedLoaded: () => void;
+  handleDirectEmbedError: () => void;
+}) {
   const theme = isThemeDark ? "dark" : "light";
   // Determine if we should show loading animations based on whether we have data
   const showLoading = !currentEmbedData;
@@ -103,7 +101,7 @@ const EmbedRenderer: React.FC<{
       <TwitterEmbed iframelyData={embedData} />
     );
   }
-};
+}
 
 // Main Entry Component - Simple orchestration
 export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
@@ -119,7 +117,7 @@ export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
 );
 
 // Main Component - Clean orchestration of families
-const EmbedHandlerRender: React.FC<ExternalEmbedNodeViewProps> = observer((externalEmbedNodeView) => {
+const EmbedHandlerRender = observer(function EmbedHandlerRender(externalEmbedNodeView: ExternalEmbedNodeViewProps) {
   // Data Management Family
   const { isLoading, currentEmbedData, isThemeDark } = useEmbedDataManager(externalEmbedNodeView);
 

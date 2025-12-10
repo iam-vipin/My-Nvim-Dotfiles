@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { ProjectOverviewRoot } from "@/plane-web/components/project-overview/details/root";
 import type { Route } from "./+types/page";

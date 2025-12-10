@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -27,7 +25,7 @@ type TCreatePRStateMappingForm = {
   isEnterprise: boolean;
 };
 
-export const CreatePRStateMappingForm: FC<TCreatePRStateMappingForm> = observer((props) => {
+export const CreatePRStateMappingForm = observer(function CreatePRStateMappingForm(props: TCreatePRStateMappingForm) {
   // props
   const { modal, handleModal, isEnterprise } = props;
 

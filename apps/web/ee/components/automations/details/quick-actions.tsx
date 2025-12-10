@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
@@ -29,7 +27,7 @@ type TAutomationQuickActionsMenuItem = TContextMenuItem & {
   tooltipContent?: React.ReactNode;
 };
 
-export const AutomationQuickActions = observer((props: TAutomationQuickActionsProps) => {
+export const AutomationQuickActions = observer(function AutomationQuickActions(props: TAutomationQuickActionsProps) {
   const { automationId, deleteAutomation } = props;
   // router
   const router = useAppRouter();

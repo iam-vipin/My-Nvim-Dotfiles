@@ -20,7 +20,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
-const TeamspaceProjectWorkItemLayout: FC<{ activeLayout: EIssueLayoutTypes | undefined }> = ({ activeLayout }) => {
+function TeamspaceProjectWorkItemLayout({ activeLayout }: { activeLayout: EIssueLayoutTypes | undefined }) {
   switch (activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ListLayout />;
@@ -33,9 +33,9 @@ const TeamspaceProjectWorkItemLayout: FC<{ activeLayout: EIssueLayoutTypes | und
     default:
       return null;
   }
-};
+}
 
-export const TeamspaceProjectWorkLayoutRoot: React.FC = observer(() => {
+export const TeamspaceProjectWorkLayoutRoot = observer(function TeamspaceProjectWorkLayoutRoot() {
   // router
   const {
     workspaceSlug: routerWorkspaceSlug,

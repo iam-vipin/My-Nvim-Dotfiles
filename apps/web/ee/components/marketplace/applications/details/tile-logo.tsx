@@ -6,7 +6,7 @@ type AppTileLogoProps = {
   app: TUserApplication;
 };
 
-export const AppTileLogo = (props: AppTileLogoProps) => {
+export function AppTileLogo(props: AppTileLogoProps) {
   const { app } = props;
   const logoUrl = getLogoUrl(app);
   return logoUrl ? (
@@ -16,7 +16,7 @@ export const AppTileLogo = (props: AppTileLogoProps) => {
       <div className="text-lg font-medium">{app.name?.charAt(0)}</div>
     </div>
   );
-};
+}
 
 /**
  * Get the logo url for the app

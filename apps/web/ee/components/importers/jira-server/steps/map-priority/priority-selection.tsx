@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +13,7 @@ type TMapPrioritiesSelection = {
   planePriorities: TPlanePriorityData[];
 };
 
-export const MapPrioritiesSelection: FC<TMapPrioritiesSelection> = observer((props) => {
+export const MapPrioritiesSelection = observer(function MapPrioritiesSelection(props: TMapPrioritiesSelection) {
   const { value, handleValue, planePriorities } = props;
 
   const { t } = useTranslation();

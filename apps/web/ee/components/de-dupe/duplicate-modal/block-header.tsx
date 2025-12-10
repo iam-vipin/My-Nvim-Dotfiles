@@ -1,4 +1,3 @@
-"use-client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -13,7 +12,9 @@ type DuplicateIssueReadOnlyHeaderRoot = {
   issue: TDeDupeIssue;
 };
 
-export const DuplicateIssueReadOnlyHeaderRoot: FC<DuplicateIssueReadOnlyHeaderRoot> = observer((props) => {
+export const DuplicateIssueReadOnlyHeaderRoot = observer(function DuplicateIssueReadOnlyHeaderRoot(
+  props: DuplicateIssueReadOnlyHeaderRoot
+) {
   const { issue } = props;
   // store
   const { getProjectById } = useProject();

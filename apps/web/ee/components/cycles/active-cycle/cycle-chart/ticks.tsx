@@ -14,18 +14,19 @@ type TProps = {
   showAllTicks?: boolean;
 };
 
-const Today = (props: any) => {
+function Today(props: any) {
   const { dy } = props;
   return (
     <svg x={-17} y={dy} dy={dy} width="34" height="16px" xmlns="http://www.w3.org/2000/svg">
       <rect rx="2" width="100%" height="100%" fill="#667699" />
-      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="10px">
+      <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="10px">
         Today
       </text>
     </svg>
   );
-};
-const CustomizedXAxisTicks = (props: TProps) => {
+}
+
+function CustomizedXAxisTicks(props: TProps) {
   const { x, y, payload, data, endDate, startDate, stroke, text, showToday, showAllTicks } = props;
   const [year, month, day] = payload.value.split("-");
   const monthName = new Date(payload.value).toLocaleString("default", { month: "short" });
@@ -72,7 +73,7 @@ const CustomizedXAxisTicks = (props: TProps) => {
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <line x1={"0"} y1="-8" x2="0" y2="0" stroke={stroke} stroke-width="1" />
+      <line x1={"0"} y1="-8" x2="0" y2="0" stroke={stroke} strokeWidth="1" />
       <text
         x={0}
         y={0}
@@ -99,8 +100,9 @@ const CustomizedXAxisTicks = (props: TProps) => {
       </>
     </g>
   );
-};
-const CustomizedYAxisTicks = (props: TProps) => {
+}
+
+function CustomizedYAxisTicks(props: TProps) {
   const { x, y, payload, text } = props;
   if (x === undefined || y === undefined || payload === undefined) return null;
   return (
@@ -108,6 +110,6 @@ const CustomizedYAxisTicks = (props: TProps) => {
       {payload.value % 1 === 0 ? payload.value : payload.value.toFixed(1)}
     </text>
   );
-};
+}
 
 export { CustomizedXAxisTicks, CustomizedYAxisTicks };

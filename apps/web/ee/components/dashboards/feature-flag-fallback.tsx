@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -47,7 +45,7 @@ const CARDS_LIST = [
   },
 ];
 
-export const DashboardsFeatureFlagFallback = observer(() => {
+export const DashboardsFeatureFlagFallback = observer(function DashboardsFeatureFlagFallback() {
   // router
   const { workspaceSlug } = useParams();
   // translation
@@ -80,6 +78,7 @@ export const DashboardsFeatureFlagFallback = observer(() => {
               href="https://plane.so/contact"
               target="_blank"
               className="bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"
+              rel="noreferrer"
             >
               {t("common.upgrade_cta.talk_to_sales")}
             </a>

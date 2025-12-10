@@ -26,7 +26,9 @@ type TPublishTemplateProps<T extends TBaseTemplateWithData> = {
   isInitializing: boolean;
 };
 
-export const PublishTemplate = observer(<T extends TBaseTemplateWithData>(props: TPublishTemplateProps<T>) => {
+export const PublishTemplate = observer(function PublishTemplate<T extends TBaseTemplateWithData>(
+  props: TPublishTemplateProps<T>
+) {
   const { workspaceSlug, templateInstance, isInitializing } = props;
   // router
   const router = useAppRouter();

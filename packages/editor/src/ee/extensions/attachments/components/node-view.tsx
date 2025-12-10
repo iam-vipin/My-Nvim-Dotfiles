@@ -17,10 +17,11 @@ export type CustomAttachmentNodeViewProps = Omit<NodeViewProps, "extension"> & {
   updateAttributes: (attrs: Partial<TAttachmentBlockAttributes>) => void;
 };
 
-export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> = (props) => {
+export function CustomAttachmentNodeView(props: CustomAttachmentNodeViewProps) {
   const { editor, extension, node } = props;
   // states
   const [resolvedSource, setResolvedSource] = useState<string | null>(null);
+  const [resolvedDownloadSource, setResolvedDownloadSource] = useState<string | null>(null);
   // refs
   const attachmentComponentRef = useRef<HTMLDivElement>(null);
   // derived values
@@ -30,13 +31,20 @@ export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> =
   const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   useEffect(() => {
-    if (!src || resolvedSource) return;
-    const getAttachmentSource = async () => {
+    setResolvedSource(null);
+    setResolvedDownloadSource(null);
+  }, [src]);
+
+  useEffect(() => {
+    if (!src || resolvedSource || resolvedDownloadSource) return;
+    const getAttachmentSources = async () => {
       const source = await extension.options.getAttachmentSource?.(src);
       setResolvedSource(source);
+      const downloadSource = await extension.options.getAttachmentDownloadSource?.(src);
+      setResolvedDownloadSource(downloadSource);
     };
-    getAttachmentSource();
-  }, [extension.options, resolvedSource, src]);
+    getAttachmentSources();
+  }, [src, extension.options, resolvedSource, resolvedDownloadSource]);
 
   return (
     <NodeViewWrapper
@@ -52,8 +60,13 @@ export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> =
         <div className="p-0 mx-0 py-2 not-prose" ref={attachmentComponentRef} contentEditable={false}>
           {isAttachmentUploaded ? (
             <>
-              {resolvedSource && (
-                <CustomAttachmentBlock {...props} isTouchDevice={isTouchDevice} resolvedSource={resolvedSource} />
+              {resolvedSource && resolvedDownloadSource && (
+                <CustomAttachmentBlock
+                  {...props}
+                  isTouchDevice={isTouchDevice}
+                  resolvedDownloadSource={resolvedDownloadSource}
+                  resolvedSource={resolvedSource}
+                />
               )}
             </>
           ) : (
@@ -63,4 +76,4 @@ export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> =
       )}
     </NodeViewWrapper>
   );
-};
+}

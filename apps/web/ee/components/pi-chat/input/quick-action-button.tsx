@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -11,7 +9,7 @@ type Props = {
   open: () => void;
 };
 
-export const AttachmentActionButton: FC<Props> = observer((props) => {
+export const AttachmentActionButton = observer(function AttachmentActionButton(props: Props) {
   const { isLoading, disabled = false, open } = props;
 
   return (

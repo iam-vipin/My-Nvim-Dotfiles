@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -19,7 +17,7 @@ export type TTrialButtonProps = {
   variant: EProductSubscriptionEnum;
 };
 
-export const TrialButton: React.FC<TTrialButtonProps> = (props: TTrialButtonProps) => {
+export function TrialButton(props: TTrialButtonProps) {
   const { handleClose, productId, priceId, variant } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -50,7 +48,7 @@ export const TrialButton: React.FC<TTrialButtonProps> = (props: TTrialButtonProp
         },
       });
     } catch (error) {
-      const currentError = error as unknown as { error: string; detail: string };
+      const currentError = error as { error: string; detail: string };
       console.error("Error in freeTrialSubscription", error);
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -81,4 +79,4 @@ export const TrialButton: React.FC<TTrialButtonProps> = (props: TTrialButtonProp
       <span className="transition-all duration-300">Start free trial</span>
     </button>
   );
-};
+}

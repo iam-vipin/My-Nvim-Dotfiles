@@ -71,7 +71,7 @@ export const mapAsanaState = (task: AsanaTask, projectGid: string): string | und
 
 export const getPropertyValues = (
   customField: AsanaCustomField,
-  // eslint-disable-next-line no-undef
+
   asanaUsersMap: Map<string, AsanaUser>
 ): ExIssuePropertyValue => {
   const propertyValues: ExIssuePropertyValue = [];

@@ -1,4 +1,3 @@
-"use-client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -34,7 +33,7 @@ type TDeDupeIssueBlockHeaderProps = {
   isIntakeIssue?: boolean;
 };
 
-export const DeDupeIssueBlockHeader: FC<TDeDupeIssueBlockHeaderProps> = observer((props) => {
+export const DeDupeIssueBlockHeader = observer(function DeDupeIssueBlockHeader(props: TDeDupeIssueBlockHeaderProps) {
   const {
     workspaceSlug,
     issue,

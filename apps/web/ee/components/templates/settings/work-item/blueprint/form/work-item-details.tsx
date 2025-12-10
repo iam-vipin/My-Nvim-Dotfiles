@@ -47,7 +47,7 @@ type TWorkItemBlueprintDetailsProps<T extends FieldValues> = {
   workspaceSlug: string;
 } & (TUseMobxData | TUsePropsData);
 
-export const WorkItemBlueprintDetails = <T extends FieldValues>(props: TWorkItemBlueprintDetailsProps<T>) => {
+export function WorkItemBlueprintDetails<T extends FieldValues>(props: TWorkItemBlueprintDetailsProps<T>) {
   const {
     assetEntityType = EFileAssetType.ISSUE_DESCRIPTION,
     fieldPaths,
@@ -203,4 +203,4 @@ export const WorkItemBlueprintDetails = <T extends FieldValues>(props: TWorkItem
       </div>
     </>
   );
-};
+}

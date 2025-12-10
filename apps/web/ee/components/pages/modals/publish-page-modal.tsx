@@ -20,7 +20,7 @@ type Props = {
   unpublishPage: () => Promise<void>;
 };
 
-export const PublishPageModal: React.FC<Props> = observer((props) => {
+export const PublishPageModal = observer(function PublishPageModal(props: Props) {
   const { anchor, fetchPagePublishSettings, isOpen, onClose, pagePublishSettings, publishPage, unpublishPage } = props;
   // states
   const [isPublishing, setIsPublishing] = useState(false);

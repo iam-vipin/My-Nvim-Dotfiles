@@ -18,7 +18,6 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class LinearService {
   private linearClient: LinearClient;
   private rateLimitDelay: number = 1000; // 1 second delay between requests
-  // eslint-disable-next-line no-undef
   private teamCache: Map<string, Team> = new Map();
 
   constructor(props: LinearProps) {
@@ -39,7 +38,6 @@ export class LinearService {
         await sleep(this.rateLimitDelay);
         return await request();
       } catch (error) {
-        error = error as LinearError;
         if (error instanceof RatelimitedLinearError) {
           await sleep(60000); // Wait for 1 minute before retrying
         } else {
@@ -264,20 +262,20 @@ export class LinearService {
 
   private breakAndGetIds(comment: Comment) {
     if (
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for private property access
       comment._issue &&
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for private property access
       comment._issue.id &&
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for private property access
       comment._user &&
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for private property access
       comment._user.id
     ) {
       return {
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for private property access
         issue_id: comment._issue.id,
 
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for private property access
         user_id: comment._user.id,
       };
     }

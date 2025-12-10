@@ -10,31 +10,37 @@ import { useCycle } from "@/hooks/store/use-cycle";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
 
-const TransferHistoryItem = observer(({ cycleDetails, isLast }: { cycleDetails: ICycle; isLast: boolean }) => (
-  <div className="relative flex items-start gap-3">
-    {/* Vertical line */}
-    {!isLast && <div className="absolute left-[3px] top-4 bottom-0 w-0.5 bg-custom-border-200" aria-hidden />}
-
-    {/* Dot indicator */}
-    <div className="flex-shrink-0 w-2 h-2 rounded-full bg-custom-text-400 my-1.5 z-[1]" />
-
-    {/* Content */}
-    <div
-      className={cn("flex-1 pb-4 truncate", {
-        "pb-0": isLast,
-      })}
-    >
-      <p className="text-sm font-medium text-custom-text-100 truncate">{cycleDetails.name}</p>
-      {cycleDetails.start_date && cycleDetails.end_date && (
-        <p className="text-xs text-custom-text-300 mt-0.5">
-          {renderFormattedDate(cycleDetails.start_date)} - {renderFormattedDate(cycleDetails.end_date)}
-        </p>
-      )}
+const TransferHistoryItem = observer(function TransferHistoryItem({
+  cycleDetails,
+  isLast,
+}: {
+  cycleDetails: ICycle;
+  isLast: boolean;
+}) {
+  return (
+    <div className="relative flex items-start gap-3">
+      {/* Vertical line */}
+      {!isLast && <div className="absolute left-[3px] top-4 bottom-0 w-0.5 bg-custom-border-200" aria-hidden />}
+      {/* Dot indicator */}
+      <div className="flex-shrink-0 w-2 h-2 rounded-full bg-custom-text-400 my-1.5 z-[1]" />
+      {/* Content */}
+      <div
+        className={cn("flex-1 pb-4 truncate", {
+          "pb-0": isLast,
+        })}
+      >
+        <p className="text-sm font-medium text-custom-text-100 truncate">{cycleDetails.name}</p>
+        {cycleDetails.start_date && cycleDetails.end_date && (
+          <p className="text-xs text-custom-text-300 mt-0.5">
+            {renderFormattedDate(cycleDetails.start_date)} - {renderFormattedDate(cycleDetails.end_date)}
+          </p>
+        )}
+      </div>
     </div>
-  </div>
-));
+  );
+});
 
-export const TransferHopInfo = ({ workItem }: { workItem: TIssue }) => {
+export function TransferHopInfo({ workItem }: { workItem: TIssue }) {
   // params
   const { workspaceSlug } = useParams();
   // hooks
@@ -73,4 +79,4 @@ export const TransferHopInfo = ({ workItem }: { workItem: TIssue }) => {
       </div>
     </Tooltip>
   );
-};
+}

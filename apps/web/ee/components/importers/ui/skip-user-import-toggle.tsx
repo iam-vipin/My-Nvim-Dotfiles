@@ -9,12 +9,12 @@ interface SkipUserImportProps {
   className?: string;
 }
 
-export const SkipUserImport: React.FC<SkipUserImportProps> = ({
+export function SkipUserImport({
   importSourceName = "Jira",
   userSkipToggle,
   handleUserSkipToggle,
   className = "",
-}) => {
+}: SkipUserImportProps) {
   const handleClick = (value: boolean) => {
     handleUserSkipToggle(value);
   };
@@ -46,4 +46,4 @@ export const SkipUserImport: React.FC<SkipUserImportProps> = ({
       )}
     </div>
   );
-};
+}

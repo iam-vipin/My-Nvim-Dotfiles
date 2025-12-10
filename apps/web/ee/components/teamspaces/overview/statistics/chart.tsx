@@ -28,7 +28,7 @@ type TTeamspaceStatisticsMapProps = {
   teamspaceId: string;
 };
 
-export const TeamspaceStatisticsMap: React.FC<TTeamspaceStatisticsMapProps> = observer((props) => {
+export const TeamspaceStatisticsMap = observer(function TeamspaceStatisticsMap(props: TTeamspaceStatisticsMapProps) {
   const { teamspaceId } = props;
   // router
   const { workspaceSlug } = useParams();

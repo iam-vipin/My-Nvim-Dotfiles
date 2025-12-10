@@ -17,7 +17,7 @@ type Props = {
   groupBy: TInitiativeGroupByOptions;
 };
 
-export const InitiativeGroup = observer((props: Props) => {
+export const InitiativeGroup = observer(function InitiativeGroup(props: Props) {
   const { group, initiativesIds, groupBy } = props;
 
   const [isExpanded, setIsExpanded] = useState(true);

@@ -9,13 +9,13 @@ import { EWidgetChartModels } from "@plane/types";
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const LineChart = lazy(() =>
-  import("@plane/propel/charts/line-chart").then((mod) => ({
+const LineChart = lazy(function LineChart() {
+  return import("@plane/propel/charts/line-chart").then((mod) => ({
     default: mod.LineChart,
-  }))
-);
+  }));
+});
 
-export const DashboardLineChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
+export const DashboardLineChartWidget = observer(function DashboardLineChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget } = props;
   // derived values
   const { chart_model } = widget ?? {};

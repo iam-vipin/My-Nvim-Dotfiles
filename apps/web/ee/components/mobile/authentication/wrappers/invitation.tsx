@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import { useEffect } from "react";
 import useSWR from "swr";
@@ -15,7 +13,7 @@ type TMobileAuthInvitationWrapper = {
   children: ReactNode;
 };
 
-export const MobileAuthInvitationWrapper: FC<TMobileAuthInvitationWrapper> = (props) => {
+export function MobileAuthInvitationWrapper(props: TMobileAuthInvitationWrapper) {
   // props
   const { invitationId, email, handleInvitationDetails, children } = props;
 
@@ -52,4 +50,4 @@ export const MobileAuthInvitationWrapper: FC<TMobileAuthInvitationWrapper> = (pr
   }
 
   return <div>{children}</div>;
-};
+}

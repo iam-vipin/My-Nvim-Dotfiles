@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Markdown from "react-markdown";
 import { Brain, ChevronDownIcon } from "lucide-react";
 import { cn } from "@plane/utils";
 
+const stripEmojis = (str: string) => str.replace(/\p{Emoji}/gu, "");
+
 type TProps = {
-  reasoning: string | undefined;
+  currentTick?: string;
+  reasoning?: string;
   isThinking: boolean | undefined;
 };
 
-export const ReasoningBlock = (props: TProps) => {
-  const { reasoning, isThinking } = props;
-  const [isOpen, setIsOpen] = useState(true);
+export function ReasoningBlock(props: TProps) {
+  const { currentTick, reasoning, isThinking } = props;
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className={cn("flex flex-col")}>
@@ -37,11 +40,14 @@ export const ReasoningBlock = (props: TProps) => {
             onClick={() => setIsOpen(!isOpen)}
             aria-expanded={isOpen}
             className={cn(
-              "flex items-center gap-2 w-full px-3 transition-all duration-500 ease-in-out hover:border-transparent py-2"
+              "flex justify-start items-center gap-2 w-full px-3 transition-all duration-500 ease-in-out hover:border-transparent py-2 max-w-full overflow-hidden"
             )}
           >
             <div className="w-2 h-4 rounded-[1px] pi-cursor animate-vertical-scale" />
-            <div className="flex gap-2 items-center shimmer">Thinking</div>
+            <div className={cn("shimmer truncate")}>{stripEmojis(currentTick || "Thinking")}</div>{" "}
+            <ChevronDownIcon
+              className={`w-4 h-4 transition-transform duration-500 ease-in-out flex-shrink-0 ${isOpen ? "transform rotate-180" : ""}`}
+            />
           </button>
         )}
 
@@ -50,7 +56,7 @@ export const ReasoningBlock = (props: TProps) => {
             "overflow-hidden",
             "transition-all duration-500 ease-in-out",
 
-            isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0 mt-0"
+            isOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 mt-0"
           )}
         >
           <div className="mx-4 overflow-hidden text-custom-text-300 relative">
@@ -62,4 +68,4 @@ export const ReasoningBlock = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

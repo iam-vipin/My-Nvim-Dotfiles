@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -18,7 +16,7 @@ type TTeamsOverviewRootProps = {
   teamspaceId: string;
 };
 
-export const TeamsOverviewRoot = observer((props: TTeamsOverviewRootProps) => {
+export const TeamsOverviewRoot = observer(function TeamsOverviewRoot(props: TTeamsOverviewRootProps) {
   const { teamspaceId } = props;
   // router
   const { workspaceSlug } = useParams();

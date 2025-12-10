@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,9 @@ type TProjectBoardGroupItemHeader = {
   ) => void;
 };
 
-export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = observer((props) => {
+export const ProjectBoardGroupItemHeader = observer(function ProjectBoardGroupItemHeader(
+  props: TProjectBoardGroupItemHeader
+) {
   const { groupByKey, projectIds, verticalAlign, setVerticalAlign } = props;
   //states
   const [open, setOpen] = useState(false);

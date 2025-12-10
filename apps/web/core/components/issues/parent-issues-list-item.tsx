@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type Props = {
   issue: ISearchIssueResponse;
 };
 
-export const ParentIssuesListItem: FC<Props> = observer((props) => {
+export const ParentIssuesListItem = observer(function ParentIssuesListItem(props: Props) {
   const { workspaceSlug, issue } = props;
 
   const { getIssueTypeById } = useIssueTypes();

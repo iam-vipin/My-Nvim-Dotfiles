@@ -13,7 +13,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const NumberAppearanceConfig: React.FC<Props> = (props) => {
+export function NumberAppearanceConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -73,4 +73,4 @@ export const NumberAppearanceConfig: React.FC<Props> = (props) => {
       />
     </>
   );
-};
+}

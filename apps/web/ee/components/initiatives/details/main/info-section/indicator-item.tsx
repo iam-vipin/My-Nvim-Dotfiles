@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
@@ -14,7 +12,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeInfoIndicatorItem: FC<Props> = observer((props) => {
+export const InitiativeInfoIndicatorItem = observer(function InitiativeInfoIndicatorItem(props: Props) {
   const { initiativeId } = props;
   // hooks
   const {

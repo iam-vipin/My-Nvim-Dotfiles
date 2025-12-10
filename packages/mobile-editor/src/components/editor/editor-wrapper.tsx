@@ -20,7 +20,7 @@ import { TEditorVariant } from "@/types/editor";
 // local imports
 import { EditorMentionsRoot } from "../mentions/mention-root";
 
-export const EditorWrapper = ({ variant }: { variant: TEditorVariant }) => {
+export function EditorWrapper({ variant }: { variant: TEditorVariant }) {
   const editorRef = useRef<EditorRefApi>(null);
   const [initialParams, setInitialParams] = useState<TEditorParams | undefined>();
   // It is a custom hook that disables zooming in the editor.
@@ -143,4 +143,4 @@ export const EditorWrapper = ({ variant }: { variant: TEditorVariant }) => {
       )}
     </div>
   );
-};
+}

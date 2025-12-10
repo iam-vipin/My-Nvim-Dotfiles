@@ -14,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-export const WorkFlowDisabledMessage = observer((props: Props) => {
+export const WorkFlowDisabledMessage = observer(function WorkFlowDisabledMessage(props: Props) {
   const { parentStateId, className } = props;
   // router
   const { workspaceSlug } = useParams();

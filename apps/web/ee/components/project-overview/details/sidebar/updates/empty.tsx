@@ -4,7 +4,7 @@ type TProps = {
   handleNewUpdate: () => void;
 };
 
-export const EmptyUpdates = (props: TProps) => {
+export function EmptyUpdates(props: TProps) {
   const { handleNewUpdate } = props;
 
   return (
@@ -22,4 +22,4 @@ export const EmptyUpdates = (props: TProps) => {
       rootClassName="p-10"
     />
   );
-};
+}

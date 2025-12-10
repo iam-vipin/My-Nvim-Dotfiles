@@ -210,7 +210,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId])) return;
 
       const _filters = {
-        richFilters: this.filters[viewId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[viewId].richFilters,
         displayFilters: this.filters[viewId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[viewId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[viewId].kanbanFilters as TIssueKanbanFilters,

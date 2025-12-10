@@ -294,7 +294,7 @@ export class PullRequestBehaviour {
       prDetails.repository.owner,
       prDetails.repository.name,
       prDetails.number.toString()
-    ) as Promise<IGitComment[]>;
+    );
   }
 
   /**

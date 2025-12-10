@@ -275,9 +275,7 @@ export default class SlackController {
 
     const { slack_code, encoded_slack_state } = slackState;
 
-    const authState = JSON.parse(
-      Buffer.from(encoded_slack_state as string, "base64").toString("utf-8")
-    ) as SlackUserAuthState;
+    const authState = JSON.parse(Buffer.from(encoded_slack_state, "base64").toString("utf-8")) as SlackUserAuthState;
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
     if (authState.profileRedirect) {
       redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/account/connections/?workspaceId=${authState.workspaceId}`;
@@ -285,7 +283,7 @@ export default class SlackController {
 
     try {
       const { state, response } = await slackAuth.getUserAuthToken({
-        code: slack_code as string,
+        code: slack_code,
         state: authState,
       });
 
@@ -841,6 +839,7 @@ export default class SlackController {
       const id = payload.data.id;
       const workspace = payload.data.workspace;
       const project = payload.data.project;
+      // @ts-expect-error - fix this
       const issue = payload.data.issue;
       const actor = payload.activity.actor;
       const event = payload.event;
@@ -974,6 +973,7 @@ export default class SlackController {
             `[SLACK] Entity connection found for issue ${id} in workspace ${workspace} and project ${project}`
           );
           // Register activity key for the particular issue
+          // @ts-expect-error - fix this
           await this.collectActivityForStacking(payload);
 
           // Register store task for stacking the issue

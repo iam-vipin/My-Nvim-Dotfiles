@@ -15,7 +15,7 @@ interface TEpicDetailProps {
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
 }
 
-export const EpicDetail = observer((props: TEpicDetailProps) => {
+export const EpicDetail = observer(function EpicDetail(props: TEpicDetailProps) {
   const { data, workspaceSlug, activeChatId, updateArtifact } = props;
   // state
   const [isSaving, setIsSaving] = useState(false);

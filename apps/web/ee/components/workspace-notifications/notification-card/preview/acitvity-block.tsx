@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactElement, ReactNode } from "react";
 import { ArrowRightLeft, CalendarDays, MessageSquare, Paperclip } from "lucide-react";
 // plane imports
@@ -62,7 +60,7 @@ export const activityIconMap: Record<string, ReactElement> = {
   customer_request: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
 };
 
-export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
+export function IssueActivityBlock(props: TIssueActivityBlock) {
   const { ends, children, createdAt, notificationField, triggeredBy } = props;
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
   const activityRelations = getValidKeysFromObject(ISSUE_RELATION_OPTIONS);
@@ -97,4 +95,4 @@ export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
       </div>
     </div>
   );
-};
+}

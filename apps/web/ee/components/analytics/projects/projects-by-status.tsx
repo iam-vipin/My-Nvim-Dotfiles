@@ -20,7 +20,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 
 const analyticsService = new AnalyticsService();
-const ProjectsByStatus = observer(() => {
+const ProjectsByStatus = observer(function ProjectsByStatus() {
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalytics();
   const params = useParams();

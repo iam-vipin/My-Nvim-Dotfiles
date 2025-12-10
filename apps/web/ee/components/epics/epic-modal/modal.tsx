@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // types
@@ -25,11 +23,12 @@ export interface EpicModalProps {
   isConversionOperation?: boolean;
 }
 
-export const CreateUpdateEpicModal: React.FC<EpicModalProps> = observer(
-  (props) =>
+export const CreateUpdateEpicModal = observer(function CreateUpdateEpicModal(props: EpicModalProps) {
+  return (
     props.isOpen && (
       <EpicModalProvider>
         <CreateUpdateEpicModalBase {...props} />
       </EpicModalProvider>
     )
-);
+  );
+});

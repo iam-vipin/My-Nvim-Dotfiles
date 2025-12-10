@@ -168,7 +168,7 @@ export class BroadcastController {
           if (matchingEmbeds.length > 0) {
             matchingEmbeds.forEach(({ parent, indexInParent }) => {
               const newPageEmbedNode = new Y.XmlElement("pageEmbedComponent");
-              newPageEmbedNode.setAttribute("entity_identifier", data.new_page_id as string);
+              newPageEmbedNode.setAttribute("entity_identifier", data.new_page_id);
               newPageEmbedNode.setAttribute("entity_name", "sub_page");
               newPageEmbedNode.setAttribute("id", uuidv4());
               newPageEmbedNode.setAttribute("workspace_identifier", workspace_slug || "");

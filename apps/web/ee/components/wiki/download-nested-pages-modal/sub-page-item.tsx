@@ -11,7 +11,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const DownloadNestedPagesModalSubPageItem: React.FC<Props> = observer((props) => {
+export const DownloadNestedPagesModalSubPageItem = observer(function DownloadNestedPagesModalSubPageItem(props: Props) {
   const { pageId, storeType } = props;
   // store hooks
   const page = usePage({

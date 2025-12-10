@@ -31,12 +31,12 @@ export interface SlackProjectNotificationMap {
  * Main Form Component for Project Updates Configuration
  * Handles the modal, data loading, and form state
  */
-const ProjectUpdatesForm: FC<ProjectUpdatesFormProps> = ({
+function ProjectUpdatesForm({
   modal,
   handleModal,
   projectConnection,
   handleSubmit: handleSubmitProp,
-}) => {
+}: ProjectUpdatesFormProps) {
   const { t } = useTranslation();
   const { appConnectionIds, getAppByConnectionId, fetchSlackChannels } = useSlackIntegration();
 
@@ -244,6 +244,6 @@ const ProjectUpdatesForm: FC<ProjectUpdatesFormProps> = ({
       </div>
     </ModalCore>
   );
-};
+}
 
 export default ProjectUpdatesForm;

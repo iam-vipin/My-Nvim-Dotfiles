@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";

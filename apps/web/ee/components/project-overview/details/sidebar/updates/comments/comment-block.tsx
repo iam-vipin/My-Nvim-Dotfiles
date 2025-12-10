@@ -17,7 +17,7 @@ type TProps = {
   projectId: string;
   operations: TActivityOperations;
 };
-export const CommentBlock = (props: TProps) => {
+export function CommentBlock(props: TProps) {
   const { commentData, workspaceSlug, projectId, operations } = props;
   const [isEditing, setIsEditing] = useState(false);
   // hooks
@@ -70,4 +70,4 @@ export const CommentBlock = (props: TProps) => {
       )}
     </div>
   );
-};
+}

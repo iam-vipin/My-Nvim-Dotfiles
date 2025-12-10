@@ -67,7 +67,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
               key={comment.id}
               workspaceSlug={workspaceSlug}
               entityId={entityId}
-              comment={comment as TIssueComment}
+              comment={comment}
               activityOperations={activityOperations}
               disabled={!isEditingAllowed}
               ends={index === 0 ? "top" : index === comments.length - 1 ? "bottom" : undefined}

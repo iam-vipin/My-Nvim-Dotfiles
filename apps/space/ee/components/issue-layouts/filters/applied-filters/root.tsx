@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
@@ -15,7 +13,7 @@ type Props = {
   anchor: string;
 };
 
-export const ViewAppliedFilters: FC<Props> = observer((props) => {
+export const ViewAppliedFilters = observer(function ViewAppliedFilters(props: Props) {
   const { anchor } = props;
   // store hooks
   const { getIssueFilters, initIssueFilters, updateIssueFilters } = useViewIssuesFilter();

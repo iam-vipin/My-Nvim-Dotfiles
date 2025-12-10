@@ -13,7 +13,7 @@ import { WithFeatureFlagHOC } from "../feature-flags";
 import { InputBox } from "../pi-chat/input";
 import { UnauthorizedView } from "../pi-chat/unauthorized";
 
-export const HomePageHeader = observer(() => {
+export const HomePageHeader = observer(function HomePageHeader() {
   const { workspaceSlug } = useParams();
   const { activeChatId, isWorkspaceAuthorized, initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();

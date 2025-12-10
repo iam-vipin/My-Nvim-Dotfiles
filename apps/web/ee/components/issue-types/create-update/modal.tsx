@@ -26,7 +26,7 @@ const defaultIssueTypeData: Partial<TIssueType> = {
   description: "",
 };
 
-export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
+export const CreateOrUpdateIssueTypeModal = observer(function CreateOrUpdateIssueTypeModal(props: Props) {
   const { issueTypeId, isModalOpen, handleModalClose } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);

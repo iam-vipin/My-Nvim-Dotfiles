@@ -15,7 +15,7 @@ type TConnectedAppCardProps = {
   handleDisconnect: (connectionId: string) => Promise<void>;
 };
 
-export const ConnectedAppCard = observer((props: TConnectedAppCardProps) => {
+export const ConnectedAppCard = observer(function ConnectedAppCard(props: TConnectedAppCardProps) {
   const { data, handleDisconnect } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

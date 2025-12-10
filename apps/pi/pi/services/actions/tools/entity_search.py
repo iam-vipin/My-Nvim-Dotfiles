@@ -4,10 +4,13 @@ Provides search functionality for all major entities using database queries.
 """
 
 import uuid
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from langchain_core.tools import tool
 
+from pi import settings
 from pi.core.db.plane import PlaneDBPool
 
 from .base import PlaneToolBase
@@ -42,7 +45,7 @@ def get_entity_search_tools(method_executor, context):
             return str(row["id"]) if row else None
 
     @tool
-    async def search_module_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def search_module_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for a module by name and return its ID.
 
         Args:
@@ -64,17 +67,17 @@ def get_entity_search_tools(method_executor, context):
             result = await search_module_by_name(name, project_id, workspace_slug)
 
             if result:
-                return PlaneToolBase.format_success_response(
+                return PlaneToolBase.format_success_payload(
                     f"Found module '{name}'", {"id": result["id"], "name": result["name"], "project_id": result["project_id"]}
                 )
             else:
-                return PlaneToolBase.format_error_response(f"No module found with name '{name}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No module found with name '{name}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for module '{name}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for module '{name}': {str(e)}", str(e))
 
     @tool
-    async def list_member_projects(workspace_id: Optional[str] = None, user_id: Optional[str] = None, limit: Optional[int] = 50) -> str:
+    async def list_member_projects(workspace_id: Optional[str] = None, user_id: Optional[str] = None, limit: Optional[int] = 50) -> Dict[str, Any]:
         """List active projects the current user is a member of (archived/deleted excluded).
 
         Args:
@@ -90,7 +93,7 @@ def get_entity_search_tools(method_executor, context):
 
         try:
             if not workspace_id or not user_id:
-                return PlaneToolBase.format_error_response(
+                return PlaneToolBase.format_error_payload(
                     "Failed to list projects",
                     "Missing workspace_id/user_id in context",
                 )
@@ -109,7 +112,7 @@ def get_entity_search_tools(method_executor, context):
                 ORDER BY p.name
                 LIMIT $3
             """
-            rows = await PlaneDBPool.fetch(query, (workspace_id, user_id, int(limit or 50)))
+            rows = await PlaneDBPool.fetch(query, (uuid.UUID(workspace_id), uuid.UUID(user_id), int(limit or 50)))
             projects = [
                 {
                     "id": str(r["id"]),
@@ -119,12 +122,12 @@ def get_entity_search_tools(method_executor, context):
                 }
                 for r in rows
             ]
-            return PlaneToolBase.format_success_response("Successfully retrieved member projects", {"projects": projects, "count": len(projects)})
+            return PlaneToolBase.format_success_payload("Successfully retrieved member projects", {"projects": projects, "count": len(projects)})
         except Exception as e:
-            return PlaneToolBase.format_error_response("Failed to list member projects", str(e))
+            return PlaneToolBase.format_error_payload("Failed to list member projects", str(e))
 
     @tool
-    async def search_project_by_name(name: str, workspace_slug: Optional[str] = None, user_id: Optional[str] = None) -> str:
+    async def search_project_by_name(name: str, workspace_slug: Optional[str] = None, user_id: Optional[str] = None) -> Dict[str, Any]:
         """Search for a project by name.
 
         Args:
@@ -167,15 +170,15 @@ def get_entity_search_tools(method_executor, context):
                 else:
                     message = f"Found 1 project matching '{name}'"
 
-                return PlaneToolBase.format_success_response(message, data)
+                return PlaneToolBase.format_success_payload(message, data)
             else:
-                return PlaneToolBase.format_error_response(f"No project found with name '{name}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No project found with name '{name}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for project '{name}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for project '{name}': {str(e)}", str(e))
 
     @tool
-    async def search_project_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> str:
+    async def search_project_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for a project by its identifier (e.g., 'HYDR', 'PARM') and return its UUID.
 
         CRITICAL: Project identifiers are short uppercase codes (like 'HYDR', 'PARM'), NOT UUIDs.
@@ -212,7 +215,7 @@ def get_entity_search_tools(method_executor, context):
             result = await PlaneDBPool.fetchrow(query, tuple(params))
 
             if result:
-                return PlaneToolBase.format_success_response(
+                return PlaneToolBase.format_success_payload(
                     f"Found project with identifier '{identifier}'",
                     {
                         "id": str(result["id"]),
@@ -222,13 +225,13 @@ def get_entity_search_tools(method_executor, context):
                     },
                 )
             else:
-                return PlaneToolBase.format_error_response(f"No project found with identifier '{identifier}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No project found with identifier '{identifier}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for project '{identifier}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for project '{identifier}': {str(e)}", str(e))
 
     @tool
-    async def search_cycle_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def search_cycle_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for a cycle by name and return its ID.
 
         Args:
@@ -255,15 +258,15 @@ def get_entity_search_tools(method_executor, context):
                     response_data["start_date"] = result["start_date"]
                 if result.get("end_date"):
                     response_data["end_date"] = result["end_date"]
-                return PlaneToolBase.format_success_response(f"Found cycle '{name}'", response_data)
+                return PlaneToolBase.format_success_payload(f"Found cycle '{name}'", response_data)
             else:
-                return PlaneToolBase.format_error_response(f"No cycle found with name '{name}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No cycle found with name '{name}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for cycle '{name}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for cycle '{name}': {str(e)}", str(e))
 
     @tool
-    async def search_current_cycle(project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def search_current_cycle(project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for the current active cycle in a project (where today's date falls within the cycle's start and end dates).
 
         IMPORTANT: Use this tool when the user asks about the "current cycle", "active cycle", "ongoing cycle", or "this cycle".
@@ -281,7 +284,7 @@ def get_entity_search_tools(method_executor, context):
 
         try:
             if not project_id:
-                return PlaneToolBase.format_error_response(
+                return PlaneToolBase.format_error_payload(
                     "Failed to search for current cycle",
                     "project_id is required to search for current cycle",
                 )
@@ -289,52 +292,64 @@ def get_entity_search_tools(method_executor, context):
             # Normalize project_id if an identifier like 'OGX' was passed
             normalized_project_id = await _normalize_project_id(project_id, workspace_slug)
             if not normalized_project_id:
-                return PlaneToolBase.format_error_response(
+                return PlaneToolBase.format_error_payload(
                     "Failed to search for current cycle",
                     "project_id is required to search for current cycle",
                 )
 
             from pi.app.api.v1.helpers.plane_sql_queries import search_current_cycle
 
-            result = await search_current_cycle(normalized_project_id, workspace_slug)
+            results = await search_current_cycle(normalized_project_id, workspace_slug)
 
-            if result:
-                response_data = {
-                    "id": result["id"],
-                    "name": result["name"],
-                    "project_id": result["project_id"],
-                    "start_date": result.get("start_date"),
-                    "end_date": result.get("end_date"),
-                    "is_current": True,
-                }
-
-                # Build cycle URL and include in response message
-                cycle_url = None
+            if results:
+                cycles_data = []
+                cycle_names = []
                 try:
-                    from pi import settings
-
-                    ws_slug = result.get("workspace_slug") or workspace_slug
-                    if ws_slug and result.get("project_id") and result.get("id"):
-                        api_base_url = settings.plane_api.FRONTEND_URL
-                        cycle_url = f"{api_base_url}/{ws_slug}/projects/{result["project_id"]}/cycles/{result["id"]}/"
-                        response_data["url"] = cycle_url
+                    api_base_url = settings.plane_api.FRONTEND_URL
                 except Exception:
-                    pass
+                    api_base_url = None
 
-                # Include URL in the message text so LLM sees it even without entity_urls
-                message = f"Found current active cycle: '{result["name"]}'"
-                if cycle_url:
-                    message += f"\nCycle URL: {cycle_url}"
+                for result in results:
+                    cycle_data = {
+                        "id": result["id"],
+                        "name": result["name"],
+                        "project_id": result["project_id"],
+                        "start_date": result.get("start_date"),
+                        "end_date": result.get("end_date"),
+                        "is_current": True,
+                    }
 
-                return PlaneToolBase.format_success_response(message, response_data)
+                    # Build cycle URL and include in response message
+                    cycle_url = None
+                    if api_base_url:
+                        ws_slug = result.get("workspace_slug") or workspace_slug
+                        if ws_slug and result.get("project_id") and result.get("id"):
+                            cycle_url = f"{api_base_url}/{ws_slug}/projects/{result["project_id"]}/cycles/{result["id"]}/"
+                            cycle_data["url"] = cycle_url
+
+                    cycles_data.append(cycle_data)
+                    cycle_names.append(result["name"])
+
+                # Build response message
+                if len(results) == 1:
+                    message = f"Found current active cycle: '{cycle_names[0]}'"
+                    if cycles_data[0].get("url"):
+                        message += f"\nCycle URL: {cycles_data[0]["url"]}"
+                    response_data = cycles_data[0]
+                else:
+                    cycle_names_str = ", ".join([f"'{name}'" for name in cycle_names])
+                    message = f"Found {len(results)} current active cycles: {cycle_names_str}"
+                    response_data = {"cycles": cycles_data, "count": len(results)}
+
+                return PlaneToolBase.format_success_payload(message, response_data)
             else:
-                return PlaneToolBase.format_error_response(
+                return PlaneToolBase.format_success_payload(
                     "No current active cycle found",
                     "No cycle is active today (no cycle where today falls between start_date and end_date)",
                 )
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for current cycle: {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for current cycle: {str(e)}", str(e))
 
     @tool
     async def list_recent_cycles(
@@ -342,7 +357,7 @@ def get_entity_search_tools(method_executor, context):
         status: Optional[str] = "completed",
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """List recent cycles in the current project/workspace context.
 
         Use this to resolve "last cycle" or "previous cycle" in project chats.
@@ -370,7 +385,7 @@ def get_entity_search_tools(method_executor, context):
                 workspace_id = str(row["id"]) if row else None
 
             if not project_id and not workspace_id:
-                return PlaneToolBase.format_error_response(
+                return PlaneToolBase.format_error_payload(
                     "Failed to list recent cycles",
                     "Missing project context; provide project_id or ensure project chat context",
                 )
@@ -388,12 +403,12 @@ def get_entity_search_tools(method_executor, context):
             if rows:
                 data["last_cycle_id"] = rows[0]["id"]
 
-            return PlaneToolBase.format_success_response("Successfully retrieved recent cycles", data)
+            return PlaneToolBase.format_success_payload("Successfully retrieved recent cycles", data)
         except Exception as e:
-            return PlaneToolBase.format_error_response("Failed to list recent cycles", str(e))
+            return PlaneToolBase.format_error_payload("Failed to list recent cycles", str(e))
 
     @tool
-    async def search_label_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def search_label_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for a label by name and return its ID.
 
         Args:
@@ -415,17 +430,17 @@ def get_entity_search_tools(method_executor, context):
             result = await search_label_by_name(name, project_id, workspace_slug)
 
             if result:
-                return PlaneToolBase.format_success_response(
+                return PlaneToolBase.format_success_payload(
                     f"Found label '{name}'", {"id": result["id"], "name": result["name"], "project_id": result["project_id"]}
                 )
             else:
-                return PlaneToolBase.format_error_response(f"No label found with name '{name}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No label found with name '{name}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for label '{name}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for label '{name}': {str(e)}", str(e))
 
     @tool
-    async def search_state_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def search_state_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for a state by name and return its ID.
 
         Args:
@@ -447,14 +462,14 @@ def get_entity_search_tools(method_executor, context):
             result = await search_state_by_name(name, project_id, workspace_slug)
 
             if result:
-                return PlaneToolBase.format_success_response(
+                return PlaneToolBase.format_success_payload(
                     f"Found state '{name}'", {"id": result["id"], "name": result["name"], "project_id": result["project_id"]}
                 )
             else:
-                return PlaneToolBase.format_error_response(f"No state found with name '{name}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No state found with name '{name}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for state '{name}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for state '{name}': {str(e)}", str(e))
 
     @tool
     async def search_user_by_name(
@@ -462,7 +477,7 @@ def get_entity_search_tools(method_executor, context):
         workspace_slug: Optional[str] = None,
         first_name: Optional[str] = None,
         last_name: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Search for a user by display, first, or last name and return matches.
 
         Args:
@@ -478,7 +493,7 @@ def get_entity_search_tools(method_executor, context):
 
             # Ensure at least one name parameter is present
             if not any([display_name, first_name, last_name]):
-                return PlaneToolBase.format_error_response(
+                return PlaneToolBase.format_error_payload(
                     "At least one of display_name, first_name, or last_name must be provided",
                     "missing_parameters",
                 )
@@ -535,15 +550,15 @@ def get_entity_search_tools(method_executor, context):
                 else:
                     message = f"Found 1 user matching '{display_name}'"
 
-                return PlaneToolBase.format_success_response(message, users_data)
+                return PlaneToolBase.format_success_payload(message, users_data)
             else:
-                return PlaneToolBase.format_error_response(f"No user found with display name '{display_name}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No user found with display name '{display_name}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for user '{display_name}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for user '{display_name}': {str(e)}", str(e))
 
     @tool
-    async def search_workitem_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def search_workitem_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for a work item by name and return its ID.
 
         Args:
@@ -565,7 +580,7 @@ def get_entity_search_tools(method_executor, context):
             result = await search_workitem_by_name(name, project_id, workspace_slug)
 
             if result:
-                return PlaneToolBase.format_success_response(
+                return PlaneToolBase.format_success_payload(
                     f"Found work item '{name}'",
                     {
                         "id": result["id"],
@@ -577,13 +592,13 @@ def get_entity_search_tools(method_executor, context):
                     },
                 )
             else:
-                return PlaneToolBase.format_error_response(f"No work item found with name '{name}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No work item found with name '{name}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for work item '{name}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for work item '{name}': {str(e)}", str(e))
 
     @tool
-    async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> str:
+    async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Search for a work item by its unique identifier (e.g., 'WEB-821') and return its details.
         Don't call this tool if the 'identifier' string is not in the format 'PROJECT-SEQUENCE'.
 
@@ -601,7 +616,7 @@ def get_entity_search_tools(method_executor, context):
             result = await search_workitem_by_identifier(identifier, workspace_slug)
 
             if result:
-                return PlaneToolBase.format_success_response(
+                return PlaneToolBase.format_success_payload(
                     f"Found work item '{identifier}'",
                     {
                         "id": result["id"],
@@ -619,10 +634,10 @@ def get_entity_search_tools(method_executor, context):
                     },
                 )
             else:
-                return PlaneToolBase.format_error_response(f"No work item found with identifier '{identifier}'", "Not found")
+                return PlaneToolBase.format_success_payload(f"No work item found with identifier '{identifier}'", "Not found")
 
         except Exception as e:
-            return PlaneToolBase.format_error_response(f"Error searching for work item '{identifier}': {str(e)}", str(e))
+            return PlaneToolBase.format_error_payload(f"Error searching for work item '{identifier}': {str(e)}", str(e))
 
     return [
         list_member_projects,

@@ -9,7 +9,7 @@ type Props = {
   selectedEntityIds: string[];
 };
 
-export const BulkOperationsActionsRoot: React.FC<Props> = observer((props) => {
+export const BulkOperationsActionsRoot = observer(function BulkOperationsActionsRoot(props: Props) {
   const { handleClearSelection, selectedEntityIds } = props;
 
   return (

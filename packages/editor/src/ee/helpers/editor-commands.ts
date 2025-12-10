@@ -2,8 +2,6 @@ import type { Editor, Range } from "@tiptap/core";
 // plane editor extensions
 import type { InsertAttachmentComponentProps } from "@/plane-editor/extensions/attachments/types";
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
-import type { TCommentMarkAttributes } from "../extensions/comments";
-// types
 
 export const insertAttachment = ({
   editor,
@@ -11,18 +9,26 @@ export const insertAttachment = ({
   pos,
   file,
   range,
+  preview,
+  acceptedFileType,
 }: {
   editor: Editor;
   event: "insert" | "drop";
   pos?: number | null;
   file?: File;
   range?: Range;
+  preview?: boolean;
+  acceptedFileType?: string | null;
 }) => {
   if (range) editor.chain().focus().deleteRange(range).run();
 
   const attachmentOptions: InsertAttachmentComponentProps = { event };
   if (pos) attachmentOptions.pos = pos;
   if (file) attachmentOptions.file = file;
+  if (preview !== undefined) attachmentOptions.preview = preview;
+  if (acceptedFileType !== undefined && acceptedFileType !== null) {
+    attachmentOptions.acceptedFileType = acceptedFileType;
+  }
   return editor?.chain().focus().insertAttachmentComponent(attachmentOptions).run();
 };
 

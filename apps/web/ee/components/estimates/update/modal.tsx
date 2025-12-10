@@ -20,7 +20,7 @@ type TUpdateEstimateModal = {
   handleClose: () => void;
 };
 
-export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) => {
+export const UpdateEstimateModal = observer(function UpdateEstimateModal(props: TUpdateEstimateModal) {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
   // states

@@ -11,7 +11,7 @@ type Props = {
   setAttachments: (attachments: TPiAttachment[]) => void;
 };
 
-export const InputPreviewUploads = observer((props: Props) => {
+export const InputPreviewUploads = observer(function InputPreviewUploads(props: Props) {
   const { chatId, attachments, setAttachments } = props;
   const {
     attachmentStore: { getAttachmentsUploadStatusByChatId },

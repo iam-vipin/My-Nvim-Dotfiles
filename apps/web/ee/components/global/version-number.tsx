@@ -2,10 +2,10 @@ import { observer } from "mobx-react";
 // assets
 import packageJson from "package.json";
 // hooks
-// eslint-disable-next-line import/order
+
 import { useInstance } from "@/hooks/store/use-instance";
 
-export const PlaneVersionNumber = observer(() => {
+export const PlaneVersionNumber = observer(function PlaneVersionNumber() {
   const { instance, config } = useInstance();
 
   if (config?.payment_server_base_url) {

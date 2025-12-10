@@ -17,7 +17,7 @@ type TNumberInputWithControlsProps = {
   className?: string;
 };
 
-export const NumberInputWithControls: React.FC<TNumberInputWithControlsProps> = ({
+export function NumberInputWithControls({
   value,
   onChange,
   error,
@@ -28,7 +28,7 @@ export const NumberInputWithControls: React.FC<TNumberInputWithControlsProps> = 
   min = 1,
   max = 10000,
   className = "",
-}) => {
+}: TNumberInputWithControlsProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (setError) setError("");
@@ -70,4 +70,4 @@ export const NumberInputWithControls: React.FC<TNumberInputWithControlsProps> = 
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
-};
+}

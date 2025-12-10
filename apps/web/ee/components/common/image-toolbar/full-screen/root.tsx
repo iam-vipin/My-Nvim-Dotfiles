@@ -16,7 +16,7 @@ type Props = {
   toggleToolbarViewStatus: (val: boolean) => void;
 };
 
-export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
+export function ImageFullScreenActionRoot(props: Props) {
   const { image, toggleToolbarViewStatus } = props;
   // states
   const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
@@ -53,4 +53,4 @@ export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
       </Tooltip>
     </>
   );
-};
+}

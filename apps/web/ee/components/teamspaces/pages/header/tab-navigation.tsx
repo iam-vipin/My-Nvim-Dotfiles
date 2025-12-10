@@ -22,7 +22,7 @@ const teamspacePageTabs: { key: TPageNavigationTabs; label: string }[] = [
   },
 ];
 
-export const TeamspacePageTabNavigation: FC<TTeamspacePageTabNavigation> = (props) => {
+export function TeamspacePageTabNavigation(props: TTeamspacePageTabNavigation) {
   const { workspaceSlug, teamspaceId, pageType } = props;
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
@@ -53,4 +53,4 @@ export const TeamspacePageTabNavigation: FC<TTeamspacePageTabNavigation> = (prop
       ))}
     </div>
   );
-};
+}

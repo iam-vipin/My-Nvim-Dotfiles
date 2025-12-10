@@ -15,7 +15,7 @@ export type TPowerKCommandsListProps = {
   setSearchTerm: (value: string) => void;
 };
 
-export const WikiAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> = (props) => {
+export function WikiAppPowerKCommandsList(props: TPowerKCommandsListProps) {
   const {
     activePage,
     context,
@@ -48,4 +48,4 @@ export const WikiAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> = (pr
       />
     </>
   );
-};
+}

@@ -1,8 +1,6 @@
-"use client";
-
 import { Button } from "@plane/propel/button";
 
-export const CustomError = () => {
+export function CustomError() {
   const handleRefresh = () => {
     window.location.reload();
   };
@@ -40,4 +38,4 @@ export const CustomError = () => {
       </div>
     </div>
   );
-};
+}

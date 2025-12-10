@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { WorkItemTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
 import { useFlag } from "@/plane-web/hooks/store";
 
-export const WorkItemTemplateSelect = observer((props: TWorkItemTemplateSelect) => {
+export const WorkItemTemplateSelect = observer(function WorkItemTemplateSelect(props: TWorkItemTemplateSelect) {
   const {
     projectId,
     typeId,

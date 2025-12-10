@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import type { TMobileAuthModes, TMobileAuthSteps } from "@plane/constants";
 import { EMobileAuthModes, EMobileAuthSteps } from "@plane/constants";
@@ -42,7 +40,7 @@ type TMobileAuthHeader = {
   invitationDetails: TMobileWorkspaceInvitation | undefined;
 };
 
-export const MobileAuthHeader: FC<TMobileAuthHeader> = (props) => {
+export function MobileAuthHeader(props: TMobileAuthHeader) {
   // props
   const { authMode, authStep, invitationDetails } = props;
 
@@ -75,4 +73,4 @@ export const MobileAuthHeader: FC<TMobileAuthHeader> = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -32,7 +30,7 @@ type Props = {
   isCreateModal?: boolean;
 };
 
-export const ProjectFeaturesList: FC<Props> = observer((props) => {
+export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: Props) {
   const { workspaceSlug, projectId, isAdmin, isCreateModal } = props;
   // router
   const navigate = useNavigate();

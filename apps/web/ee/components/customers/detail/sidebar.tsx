@@ -20,7 +20,7 @@ type TProps = {
   isDisabled: boolean;
 };
 
-export const CustomerDetailSidebar: FC<TProps> = observer((props) => {
+export const CustomerDetailSidebar = observer(function CustomerDetailSidebar(props: TProps) {
   const { customerId, workspaceSlug, isDisabled } = props;
 
   // hooks

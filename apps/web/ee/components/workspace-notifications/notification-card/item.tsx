@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { orderBy, uniq } from "lodash-es";
@@ -27,7 +25,7 @@ export interface INotificationItem {
   workspaceSlug: string;
   workspaceId: string;
 }
-export const NotificationItem: FC<INotificationItem> = observer((props) => {
+export const NotificationItem = observer(function NotificationItem(props: INotificationItem) {
   const { issueId, workspaceSlug, workspaceId } = props;
 
   //states

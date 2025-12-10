@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +12,7 @@ type TMapStatesSelection = {
   planeStates: IState[];
 };
 
-export const MapStatesSelection: FC<TMapStatesSelection> = observer((props) => {
+export const MapStatesSelection = observer(function MapStatesSelection(props: TMapStatesSelection) {
   const { value, handleValue, planeStates } = props;
   const { t } = useTranslation();
 

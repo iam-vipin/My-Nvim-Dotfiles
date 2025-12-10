@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -19,7 +17,7 @@ type TTeamspaceBreadcrumbProps = {
   isLast?: boolean;
 };
 
-export const TeamspaceBreadcrumb: FC<TTeamspaceBreadcrumbProps> = observer((props) => {
+export const TeamspaceBreadcrumb = observer(function TeamspaceBreadcrumb(props: TTeamspaceBreadcrumbProps) {
   const { workspaceSlug, teamspaceId, featureKey, isLast = false } = props;
 
   // store hooks

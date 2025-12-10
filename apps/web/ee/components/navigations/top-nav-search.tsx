@@ -12,7 +12,7 @@ import { cn } from "@plane/utils";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
-export const TopNavSearch = observer(() => {
+export const TopNavSearch = observer(function TopNavSearch() {
   // states
   const [searchQuery, setSearchQuery] = useState("");
   const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);

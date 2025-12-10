@@ -77,10 +77,10 @@ export class JiraV2Service {
   }
 
   async getJiraUsers(startAt?: number, maxResults?: number): Promise<JiraApiUser[]> {
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for return type
     return (await this.jiraClient.userSearch.findUsers({
       username: ".",
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for includeActive
       includeActive: true,
       startAt: startAt ?? 0,
       maxResults: maxResults ?? 1000,
@@ -238,7 +238,7 @@ export class JiraV2Service {
 
     const data = response.data;
     const issues = data.issues as Issue[];
-    // eslint-disable-next-line no-undef
+
     const allLabels = new Set();
     issues.forEach((issue) => {
       if (issue.fields.labels) {
@@ -269,7 +269,7 @@ export class JiraV2Service {
           method: "GET",
           url: `${this.hostname}/rest/api/2/issuetype/page?projectIds=${projectId}&startAt=${startAt}&maxResults=${maxResults}`,
         })
-        .then((res) => res.data as Paginated<IssueTypeDetails>);
+        .then((res) => res.data);
     } catch (e) {
       console.error("error getProjectIssueTypes", e);
       throw e;

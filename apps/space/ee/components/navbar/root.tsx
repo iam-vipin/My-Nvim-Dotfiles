@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // ui
@@ -15,7 +13,7 @@ type Props = {
   publishSettings: PublishStore;
 };
 
-export const ViewNavbarRoot: FC<Props> = observer((props) => {
+export const ViewNavbarRoot = observer(function ViewNavbarRoot(props: Props) {
   const { publishSettings } = props;
 
   const { viewData } = useView();

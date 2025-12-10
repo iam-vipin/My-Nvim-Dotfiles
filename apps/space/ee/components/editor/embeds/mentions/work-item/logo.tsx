@@ -9,7 +9,7 @@ type Props = {
   stateGroup: TStateGroups;
 };
 
-export const EditorWorkItemMentionLogo: React.FC<Props> = observer((props) => {
+export const EditorWorkItemMentionLogo = observer(function EditorWorkItemMentionLogo(props: Props) {
   const { className, stateColor, stateGroup } = props;
 
   return <StateGroupIcon stateGroup={stateGroup} color={stateColor} className={className} />;

@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -50,7 +49,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
+export const EpicSidebarPropertiesRoot = observer(function EpicSidebarPropertiesRoot(props: Props) {
   const { workspaceSlug, projectId, epicId, disabled } = props;
   // store hooks
   const {

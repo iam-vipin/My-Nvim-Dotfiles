@@ -10,8 +10,8 @@ type Props = {
   widgetCallback: TPageEmbedConfig["widgetCallback"];
 };
 
-export const PageEmbedReadOnlyExtension = (props: Props) =>
-  PageEmbedExtensionConfig.extend({
+export function PageEmbedReadOnlyExtension(props: Props) {
+  return PageEmbedExtensionConfig.extend({
     selectable: false,
     draggable: false,
 
@@ -32,3 +32,4 @@ export const PageEmbedReadOnlyExtension = (props: Props) =>
       );
     },
   });
+}

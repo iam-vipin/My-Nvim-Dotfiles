@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -24,7 +22,7 @@ type Props = {
   redirect?: boolean;
 };
 
-export const InitiativesUpgrade: FC<Props> = observer((props) => {
+export const InitiativesUpgrade = observer(function InitiativesUpgrade(props: Props) {
   const { workspaceSlug, redirect = false } = props;
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -81,7 +79,12 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
 
     if (isPlaneOneInstance) {
       return (
-        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+        <a
+          href="https://prime.plane.so/"
+          target="_blank"
+          className={getButtonStyling("primary", "md")}
+          rel="noreferrer"
+        >
           Upgrade to higher subscription
         </a>
       );

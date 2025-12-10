@@ -11,7 +11,7 @@ type RichCardProps = {
   theme: "dark" | "light";
 };
 
-export const RichCard = ({ iframelyData, src, theme, showLoading = true }: RichCardProps) => {
+export function RichCard({ iframelyData, src, theme, showLoading = true }: RichCardProps) {
   const domain = new URL(iframelyData.meta?.canonical || src).hostname;
   const thumbnail = iframelyData.links?.thumbnail?.[0]?.href;
   const icon = iframelyData.links?.icon?.[0]?.href;
@@ -72,4 +72,4 @@ export const RichCard = ({ iframelyData, src, theme, showLoading = true }: RichC
       </div>
     </div>
   );
-};
+}

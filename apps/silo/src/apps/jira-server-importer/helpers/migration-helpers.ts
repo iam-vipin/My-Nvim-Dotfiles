@@ -98,7 +98,7 @@ export const createJiraClient = (
 
   return new JiraV2Service({
     email: credentials.source_auth_email,
-    patToken: credentials.source_access_token!,
+    patToken: credentials.source_access_token,
     hostname: credentials.source_hostname,
     authenticationType,
   });

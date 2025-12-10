@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -38,7 +36,7 @@ const DEFAULT_VALUES: Partial<TTeamspaceView> = {
   }),
 };
 
-export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
+export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Props) {
   const { handleFormSubmit, handleClose, data, preLoadedData, teamspaceId, workspaceSlug } = props;
   // state
   const [isOpen, setIsOpen] = useState(false);

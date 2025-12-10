@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 const COMMON_BUTTON_STYLE =
   "flex flex-shrink-0 items-center justify-center py-1 px-2 w-fit text-xs font-medium rounded focus:outline-none transition-all duration-300 animate-slide-up";
 
-export const TrialBanner: FC = observer(() => {
+export const TrialBanner = observer(function TrialBanner() {
   // hooks
   const { config } = useInstance();
   const { allowPermissions } = useUserPermissions();
@@ -62,6 +60,7 @@ export const TrialBanner: FC = observer(() => {
               href={SUBSCRIPTION_WEBPAGE_URLS[currentPlan]}
               target="_blank"
               className={cn(getButtonStyling("neutral-primary", "sm"), COMMON_BUTTON_STYLE, "border-custom-border-400")}
+              rel="noreferrer"
             >
               Learn more
             </a>

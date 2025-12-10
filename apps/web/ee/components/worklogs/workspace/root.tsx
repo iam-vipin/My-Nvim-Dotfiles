@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -22,7 +20,7 @@ type TWorkspaceWorklogRoot = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogRoot: FC<TWorkspaceWorklogRoot> = observer((props) => {
+export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props: TWorkspaceWorklogRoot) {
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { loader, paginationInfo, worklogIdsByWorkspaceId, getWorkspaceWorklogs } = useWorkspaceWorklogs();

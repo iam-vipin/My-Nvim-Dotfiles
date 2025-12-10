@@ -7,7 +7,7 @@ type Props = {
   toggleFullScreenMode: () => void;
 };
 
-export const GanttChartHeader: React.FC<Props> = observer((props) => {
+export const GanttChartHeader = observer(function GanttChartHeader(props: Props) {
   const { fullScreenMode, handleToday, toggleFullScreenMode } = props;
   // chart hook
 

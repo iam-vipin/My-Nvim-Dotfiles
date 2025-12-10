@@ -10,7 +10,9 @@ import { WorkItemSideBarMilestoneItem } from "@/plane-web/components/issues/issu
 import { useCustomers } from "@/plane-web/hooks/store";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
-export const WorkItemAdditionalSidebarProperties: FC<TWorkItemAdditionalSidebarProperties> = observer((props) => {
+export const WorkItemAdditionalSidebarProperties = observer(function WorkItemAdditionalSidebarProperties(
+  props: TWorkItemAdditionalSidebarProperties
+) {
   const { workItemId, projectId, workItemTypeId, workspaceSlug, isEditable, isPeekView = false } = props;
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();

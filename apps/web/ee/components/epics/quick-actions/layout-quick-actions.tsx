@@ -7,7 +7,7 @@ type Props = {
   projectId: string;
 };
 
-export const EpicLayoutQuickActions = (props: Props) => {
+export function EpicLayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId } = props;
 
   const handleCopyLink = () => {
@@ -53,4 +53,4 @@ export const EpicLayoutQuickActions = (props: Props) => {
       {modals}
     </>
   );
-};
+}

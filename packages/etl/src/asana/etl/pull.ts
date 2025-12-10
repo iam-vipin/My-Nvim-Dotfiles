@@ -149,9 +149,9 @@ export async function pullCustomFields(client: AsanaService, projectGid: string)
       customFields.push(...response.data);
       pagination.offset = response._response.next_page?.offset || "";
     } while (pagination.offset);
+    return customFields;
   } catch (error: any) {
     console.log("error while fetching custom fields from asana", error?.message);
-  } finally {
     return customFields;
   }
 }
@@ -197,7 +197,13 @@ export async function pullComments(client: AsanaService, tasks: AsanaTask[]): Pr
       comments.push(
         ...response.data
           .filter((story: any) => story.type && story.type === "comment")
-          .map((story: any) => ({ ...story, task_gid: task.gid }) as AsanaTaskComment)
+          .map(
+            (story: any) =>
+              ({
+                ...story,
+                task_gid: task.gid,
+              }) as AsanaTaskComment
+          )
       );
 
       // Update pagination

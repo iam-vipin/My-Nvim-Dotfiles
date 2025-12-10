@@ -86,40 +86,67 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
    * @param workspaceSlug
    * @param projectId
    */
-  fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
+  fetchParentStats = (workspaceSlug: string, projectId?: string) => {
     if (!projectId) return;
-    this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+    this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId).catch((error) => {
+      console.error("Error fetching project details for epic store", error);
+    });
   };
 
   /** */
   updateParentStats = () => {};
 
-  private transformResponseResults = (results: TIssueResponseResults) => {
+  private transformResponseResults = (results: TIssueResponseResults): TIssueResponseResults => {
+    // Helper function to add is_epic to an issue
+    const addIsEpic = (issue: TBaseIssue): TBaseIssue => ({
+      ...issue,
+      is_epic: true,
+    });
+
+    // Handle array case
     if (Array.isArray(results)) {
-      // Directly modify the array of TBaseIssue
-      return results.map((issue) => ({
-        ...issue,
-        is_epic: true,
-      }));
-    } else {
-      // Handle the grouped case
-      const transformedResults: { [key: string]: { results: TBaseIssue[]; total_results: number } } = {};
-
-      for (const groupId in results) {
-        const groupData = results[groupId];
-        if (groupData && Array.isArray(groupData.results)) {
-          transformedResults[groupId] = {
-            results: groupData.results.map((issue) => ({
-              ...issue,
-              is_epic: true,
-            })),
-            total_results: groupData.total_results,
-          };
-        }
-      }
-
-      return transformedResults;
+      return results.map(addIsEpic);
     }
+
+    // Handle grouped case
+    const transformedResults: Record<
+      string,
+      {
+        results: TBaseIssue[] | Record<string, { results: TBaseIssue[]; total_results: number }>;
+        total_results: number;
+      }
+    > = {};
+
+    for (const [groupId, groupData] of Object.entries(results)) {
+      if (!groupData) continue;
+
+      // Handle simple group with array results
+      if (Array.isArray(groupData.results)) {
+        transformedResults[groupId] = {
+          results: groupData.results.map(addIsEpic),
+          total_results: groupData.total_results,
+        };
+      } else {
+        // Handle nested sub-groups
+        const transformedSubGroups: Record<string, { results: TBaseIssue[]; total_results: number }> = {};
+
+        for (const [subGroupId, subGroupData] of Object.entries(groupData.results)) {
+          if (subGroupData) {
+            transformedSubGroups[subGroupId] = {
+              results: subGroupData.results.map(addIsEpic),
+              total_results: subGroupData.total_results,
+            };
+          }
+        }
+
+        transformedResults[groupId] = {
+          results: transformedSubGroups,
+          total_results: groupData.total_results,
+        };
+      }
+    }
+
+    return transformedResults;
   };
 
   /**
@@ -313,7 +340,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
 
   // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
-  quickAddIssue = this.issueQuickAdd;
-  updateIssue = this.issueUpdate;
-  archiveIssue = this.issueArchive;
+  quickAddIssue = this.issueQuickAdd.bind(this);
+  updateIssue = this.issueUpdate.bind(this);
+  archiveIssue = this.issueArchive.bind(this);
 }

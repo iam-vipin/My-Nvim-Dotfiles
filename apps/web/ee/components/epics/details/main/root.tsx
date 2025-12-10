@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -23,7 +21,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const EpicMainContentRoot: React.FC<Props> = observer((props) => {
+export const EpicMainContentRoot = observer(function EpicMainContentRoot(props: Props) {
   const { editorRef, workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const { epicDetailSidebarCollapsed } = useAppTheme();

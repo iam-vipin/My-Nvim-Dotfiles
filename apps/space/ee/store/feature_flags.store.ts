@@ -13,6 +13,10 @@ export interface IFeatureFlagsStore {
   fetchMap: Record<string, TFeatureFlagsMaps>; // anchor -> has fetched feature flag details
   flags: Record<string, TFeatureFlagsMaps>; // anchor -> feature flag map
   fetchFeatureFlag: (anchor: string, flag: keyof typeof E_FEATURE_FLAGS) => Promise<{ value: boolean }>;
+  fetchFeatureFlags: (
+    anchor: string,
+    flags: ReadonlyArray<keyof typeof E_FEATURE_FLAGS>
+  ) => Promise<Array<{ value: boolean }>>;
   getFeatureFlag: (anchor: string, flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) => boolean;
   hasFetchedFeatureFlag: (anchor: string, flag: keyof typeof E_FEATURE_FLAGS) => boolean;
 }
@@ -26,6 +30,7 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
       fetchMap: observable,
       flags: observable,
       fetchFeatureFlag: action,
+      fetchFeatureFlags: action,
     });
   }
 
@@ -48,6 +53,11 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
       });
       throw error;
     }
+  };
+
+  fetchFeatureFlags: IFeatureFlagsStore["fetchFeatureFlags"] = async (anchor, flags) => {
+    const promises = flags.map((flag) => this.fetchFeatureFlag(anchor, flag));
+    return Promise.all(promises);
   };
 
   getFeatureFlag: IFeatureFlagsStore["getFeatureFlag"] = computedFn(

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -33,7 +31,7 @@ type Props = {
   handleFormSubmit: () => Promise<void>;
 };
 
-export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
+export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(props: Props) {
   const { teamDetail, formData, isSubmitting, handleFormDataChange, handleModalClose, handleFormSubmit } = props;
   // router
   const { workspaceSlug } = useParams();

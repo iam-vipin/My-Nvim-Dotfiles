@@ -1,29 +1,22 @@
 import type { Editor } from "@tiptap/core";
-import { useEditorState } from "@tiptap/react";
 import { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // helpers
 import { EFileError } from "@/helpers/file";
 // local imports
-import { getAttachmentExtensionErrorMap } from "../utils";
 import { CustomAttachmentUploadStatus } from "./upload-status";
 
 type Props = {
   blockId: string;
   editor: Editor;
   fileBeingUploaded: File | null;
+  fileUploadError: { error: EFileError; file: File } | null;
   maxFileSize: number;
 };
 
-export const CustomAttachmentUploaderDetails: React.FC<Props> = (props) => {
-  const { blockId, editor, fileBeingUploaded, maxFileSize } = props;
-  // subscribe to editor storage
-  const fileUploadErrorMap = useEditorState({
-    editor,
-    selector: ({ editor }) => getAttachmentExtensionErrorMap(editor),
-  });
-  const fileUploadError = fileUploadErrorMap?.get(blockId);
+export function CustomAttachmentUploaderDetails(props: Props) {
+  const { blockId, editor, fileBeingUploaded, fileUploadError, maxFileSize } = props;
 
   const errorMessage = useMemo(() => {
     let title = "";
@@ -97,4 +90,4 @@ export const CustomAttachmentUploaderDetails: React.FC<Props> = (props) => {
       </p>
     </div>
   );
-};
+}

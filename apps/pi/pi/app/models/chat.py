@@ -12,6 +12,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlmodel import Field
 
 from pi.app.models.base import BaseModel
+from pi.app.models.enums import FocusEntityType
 
 
 class Chat(BaseModel, table=True):
@@ -34,9 +35,23 @@ class UserChatPreference(BaseModel, table=True):
 
     # Fields
     is_focus_enabled: bool = Field(default=True, nullable=False)
+    # Polymorphic focus context - replaces focus_project_id and focus_workspace_id
+    focus_entity_type: Optional[str] = Field(default=None, nullable=True, max_length=50)
+    focus_entity_id: Optional[uuid.UUID] = Field(default=None, nullable=True)
+    # Legacy fields - kept for backward compatibility during migration
     focus_project_id: Optional[uuid.UUID] = Field(default=None, nullable=True)
     focus_workspace_id: Optional[uuid.UUID] = Field(default=None, nullable=True)
+    mode: str = Field(default="ask", nullable=False, max_length=10)  # "ask" or "build"
     user_id: uuid.UUID = Field(default=None, nullable=False)
 
     # Foreign keys
     chat_id: uuid.UUID = Field(sa_column=Column(UUID(as_uuid=True), ForeignKey("chats.id", name="fk_user_chat_preferences_chat_id"), nullable=False))
+
+    def get_focus_entity_type_enum(self) -> Optional[FocusEntityType]:
+        """Get focus_entity_type as enum if valid, otherwise None."""
+        if self.focus_entity_type:
+            try:
+                return FocusEntityType(self.focus_entity_type)
+            except ValueError:
+                return None
+        return None

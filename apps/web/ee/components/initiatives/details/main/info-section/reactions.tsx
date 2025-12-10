@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ export type TIssueReaction = {
   disabled?: boolean;
 };
 
-export const InitiativeReactions: FC<TIssueReaction> = observer((props) => {
+export const InitiativeReactions = observer(function InitiativeReactions(props: TIssueReaction) {
   const { workspaceSlug, initiativeId, disabled = false } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);

@@ -44,7 +44,7 @@ type Props = {
   realtimeEvents?: boolean;
 };
 
-export const PageActions: React.FC<Props> = observer((props) => {
+export const PageActions = observer(function PageActions(props: Props) {
   const { extraOptions, optionsOrder, page, parentRef, storeType, realtimeEvents = true } = props;
 
   // states for common modals

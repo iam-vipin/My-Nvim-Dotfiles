@@ -10,7 +10,7 @@ type TProps = {
   message?: string;
   attachments?: string[];
 };
-export const MyMessage = observer((props: TProps) => {
+export const MyMessage = observer(function MyMessage(props: TProps) {
   const { message, id = "", isLoading = false, attachments } = props;
   return (
     <div className="w-full flex flex-col gap-2 items-end" id={id}>

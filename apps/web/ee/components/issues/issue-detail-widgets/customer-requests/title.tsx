@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +18,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const CustomerRequestsCollapsibleTitle: FC<Props> = observer((props) => {
+export const CustomerRequestsCollapsibleTitle = observer(function CustomerRequestsCollapsibleTitle(props: Props) {
   const { isOpen, workspaceSlug, workItemId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hooks

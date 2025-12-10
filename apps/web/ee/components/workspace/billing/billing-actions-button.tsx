@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -10,7 +8,7 @@ import type { TBillingActionsButtonProps } from "@/ce/components/workspace/billi
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const BillingActionsButton = observer((props: TBillingActionsButtonProps) => {
+export const BillingActionsButton = observer(function BillingActionsButton(props: TBillingActionsButtonProps) {
   const { canPerformWorkspaceAdminActions } = props;
   // store hooks
   const { isSeatManagementEnabled, toggleAddWorkspaceSeatsModal, toggleRemoveUnusedSeatsConfirmationModal } =

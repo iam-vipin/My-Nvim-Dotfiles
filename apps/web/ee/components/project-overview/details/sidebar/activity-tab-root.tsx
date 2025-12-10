@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -25,7 +23,7 @@ type Props = {
 
 const projectActivityService = new ProjectActivityService();
 
-export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) => {
+export const ProjectOverviewSidebarActivityRoot = observer(function ProjectOverviewSidebarActivityRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   // states
   const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(

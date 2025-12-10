@@ -5,7 +5,7 @@ import { useUserProfile } from "@/hooks/store/user";
 import type { PreferenceOption } from "./config";
 import { PreferencesSection } from "./section";
 
-export const SmoothCursorToggle = observer((props: { option: PreferenceOption }) => {
+export const SmoothCursorToggle = observer(function SmoothCursorToggle(props: { option: PreferenceOption }) {
   const {
     data: { is_smooth_cursor_enabled },
     updateUserProfile,

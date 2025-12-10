@@ -9,7 +9,7 @@ type TProps = {
   setIsEditing: (isEditing: boolean) => void;
   operations: TActivityOperations;
 };
-export const EditComment = (props: TProps) => {
+export function EditComment(props: TProps) {
   const { commentData, operations, setIsEditing } = props;
   const [newComment, setNewComment] = useState(commentData.description);
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,4 +40,4 @@ export const EditComment = (props: TProps) => {
       </div>
     </form>
   );
-};
+}

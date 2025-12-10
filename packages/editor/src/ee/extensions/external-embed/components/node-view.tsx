@@ -14,7 +14,7 @@ export type ExternalEmbedNodeViewProps = Omit<NodeViewProps, "extension"> & {
   updateAttributes: (attrs: Partial<TExternalEmbedBlockAttributes>) => void;
 };
 
-export const ExternalEmbedNodeView: React.FC<ExternalEmbedNodeViewProps> = (props) => {
+export function ExternalEmbedNodeView(props: ExternalEmbedNodeViewProps) {
   const { extension, node, selected } = props;
   const ExternalEmbedComponent = extension.options.externalEmbedCallbackComponent;
 
@@ -32,4 +32,4 @@ export const ExternalEmbedNodeView: React.FC<ExternalEmbedNodeViewProps> = (prop
       )}
     </NodeViewWrapper>
   );
-};
+}

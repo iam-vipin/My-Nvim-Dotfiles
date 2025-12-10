@@ -16,7 +16,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const QuickActions: React.FC<Props> = observer((props: Props) => {
+export const QuickActions = observer(function QuickActions(props: Props) {
   const { workspaceSlug, initiativeId, project } = props;
   // store hooks
   const {

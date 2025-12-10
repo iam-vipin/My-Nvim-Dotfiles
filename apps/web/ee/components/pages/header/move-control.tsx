@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -13,7 +11,7 @@ import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // local imports
 import { MovePageModal } from "../modals/move";
 
-export const PageMoveControl = observer((props: TPageMoveControlProps) => {
+export const PageMoveControl = observer(function PageMoveControl(props: TPageMoveControlProps) {
   const { page } = props;
   // states
   const [isMovePageModalOpen, setIsMovePageModalOpen] = useState(false);

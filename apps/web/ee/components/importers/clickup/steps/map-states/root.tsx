@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
@@ -26,7 +24,7 @@ type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.MAP_STATES
 
 const currentStepKey = E_CLICKUP_IMPORTER_STEPS.MAP_STATES;
 
-export const MapStatesRoot: FC = observer(() => {
+export const MapStatesRoot = observer(function MapStatesRoot() {
   // hooks
   const {
     workspace,
@@ -51,11 +49,11 @@ export const MapStatesRoot: FC = observer(() => {
 
   const clickUpStatusesForASpace = ((clickupFolderId && getClickUpStatusIdsByFolderId(clickupFolderId)) || [])
     .map((id) => (clickupFolderId && getClickUpStatusById(clickupFolderId, id)) || undefined)
-    .filter((clickUpStatus) => clickUpStatus != undefined && clickUpStatus != null) as TClickUpStatus[];
+    .filter((clickUpStatus) => clickUpStatus != undefined && clickUpStatus != null);
 
   const planeProjectStates = ((planeProjectId && stateIdsByProjectId(planeProjectId)) || [])
     .map((id) => (planeProjectId && getStateById(planeProjectId, id)) || undefined)
-    .filter((planeState) => planeState != undefined && planeState != null) as IState[];
+    .filter((planeState) => planeState != undefined && planeState != null);
 
   const isNextButtonDisabled = clickUpStatusesForASpace?.length === Object.keys(formData).length ? false : true;
   // handlers
@@ -121,7 +119,7 @@ export const MapStatesRoot: FC = observer(() => {
         const result = fuse.search(clickUpStatus.status);
 
         if (result.length > 0) {
-          const planeState = result[0].item as IState;
+          const planeState = result[0].item;
           if (clickUpStatus.id && planeState.id) {
             handleFormData(clickUpStatus.id, planeState.id);
           }

@@ -7,7 +7,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const AddRemovePreviewCard = observer((props: TProps) => {
+export const AddRemovePreviewCard = observer(function AddRemovePreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = useTemplateData(artifactId);
   const artifactSubType = data?.parameters?.artifact_sub_type;

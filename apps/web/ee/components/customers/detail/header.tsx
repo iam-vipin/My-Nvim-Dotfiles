@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +18,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { CustomerQuickActions } from "@/plane-web/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomerDetailHeader: FC = observer(() => {
+export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
   const { workspaceSlug, customerId } = useParams();
   const router = useAppRouter();
   // hooks

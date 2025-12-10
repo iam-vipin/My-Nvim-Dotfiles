@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -20,7 +18,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { TeamspaceProjectDetailHeaderActions } from "@/plane-web/components/teamspaces/headers/detail-header/work-items";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
-export const TeamspaceProjectDetailHeader: React.FC = observer(() => {
+export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDetailHeader() {
   // router
   const { workspaceSlug, teamspaceId, projectId } = useParams();
   // store hooks

@@ -12,7 +12,7 @@ type Props = {
   value: TWidgetLineChartLineType | undefined;
 };
 
-export const WidgetLineTypeSelect: React.FC<Props> = (props) => {
+export function WidgetLineTypeSelect(props: Props) {
   const { onChange, value } = props;
   // translation
   const { t } = useTranslation();
@@ -44,4 +44,4 @@ export const WidgetLineTypeSelect: React.FC<Props> = (props) => {
       }
     />
   );
-};
+}

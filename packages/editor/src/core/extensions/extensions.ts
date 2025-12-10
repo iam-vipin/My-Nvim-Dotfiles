@@ -115,6 +115,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCalloutExtension,
     UtilityExtension({
       disabledExtensions,
+      flaggedExtensions,
       fileHandler,
       getEditorMetaData,
       isEditable: editable,
@@ -125,6 +126,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       extendedEditorProps,
       flaggedExtensions,
       fileHandler,
+      isEditable: editable,
       provider,
     }),
     UniqueID.configure({

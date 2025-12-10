@@ -1,5 +1,3 @@
-"use-client";
-
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
@@ -14,7 +12,7 @@ import { getIcon } from "../../preview-block";
 
 const buttonClass =
   "w-auto p-2 rounded-lg text-custom-text-200 grid place-items-center border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-200 hover:shadow-sm hover:text-custom-text-300";
-export const Header = observer((props: { artifact: TArtifact }) => {
+export const Header = observer(function Header(props: { artifact: TArtifact }) {
   const { artifact } = props;
   const { toggleSidebar } = useAppTheme();
   const {

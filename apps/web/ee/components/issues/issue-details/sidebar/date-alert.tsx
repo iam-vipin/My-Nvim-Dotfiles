@@ -3,7 +3,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { TDateAlertProps } from "@/ce/components/issues/issue-details/sidebar.tsx/date-alert";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
-export const DateAlert = (props: TDateAlertProps) => {
+export function DateAlert(props: TDateAlertProps) {
   const { date, workItem, projectId } = props;
 
   // store hooks
@@ -29,4 +29,4 @@ export const DateAlert = (props: TDateAlertProps) => {
       </span>
     </Tooltip>
   );
-};
+}

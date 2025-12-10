@@ -26,7 +26,7 @@ type TProps = {
   workItemId: string;
 };
 
-export const WorkItemRequestListItem: FC<TProps> = observer((props) => {
+export const WorkItemRequestListItem = observer(function WorkItemRequestListItem(props: TProps) {
   const { requestId, workspaceSlug, isEditable = false, workItemId } = props;
   // states
   const [link, setLink] = useState<string | undefined>();

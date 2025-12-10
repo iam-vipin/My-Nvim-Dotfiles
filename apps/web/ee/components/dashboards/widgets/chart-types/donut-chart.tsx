@@ -9,11 +9,11 @@ import { EWidgetChartModels } from "@plane/types";
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const PieChart = lazy(() =>
-  import("@plane/propel/charts/pie-chart").then((mod) => ({
+const PieChart = lazy(function PieChart() {
+  return import("@plane/propel/charts/pie-chart").then((mod) => ({
     default: mod.PieChart,
-  }))
-);
+  }));
+});
 
 export const parseDonutChartData = (
   originalData: TDashboardWidgetDatum[] | undefined,
@@ -41,7 +41,7 @@ export const parseDonutChartData = (
   return updatedData;
 };
 
-export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
+export const DashboardDonutChartWidget = observer(function DashboardDonutChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget } = props;
   // derived values
   const { chart_model, data, height, width } = widget ?? {};

@@ -14,61 +14,61 @@ type TPropertySettingsConfigurationProps<T extends EIssuePropertyType> = {
   getLabelDetails?: (labelKey: string) => string;
 };
 
-export const PropertyRadioInputSelect = observer(
-  <T extends EIssuePropertyType>(props: TPropertySettingsConfigurationProps<T>) => {
-    const { settings, settingsConfigurations, isDisabled, onChange, getLabelDetails } = props;
+export const PropertyRadioInputSelect = observer(function PropertyRadioInputSelect<T extends EIssuePropertyType>(
+  props: TPropertySettingsConfigurationProps<T>
+) {
+  const { settings, settingsConfigurations, isDisabled, onChange, getLabelDetails } = props;
 
-    const radioInputOptions = settingsConfigurations.configurations.options.map((option) => ({
-      label: getLabelDetails ? getLabelDetails(option.labelKey) : option.labelKey,
-      value: option.value,
-      disabled: isDisabled,
-    }));
+  const radioInputOptions = settingsConfigurations.configurations.options.map((option) => ({
+    label: getLabelDetails ? getLabelDetails(option.labelKey) : option.labelKey,
+    value: option.value,
+    disabled: isDisabled,
+  }));
 
-    const handleDataChange = (value: string) => {
-      const updatedSettings = {
-        ...settings,
-      };
-      set(updatedSettings, settingsConfigurations.keyToUpdate, value);
-      onChange(updatedSettings as TIssuePropertySettingsMap[T]);
+  const handleDataChange = (value: string) => {
+    const updatedSettings = {
+      ...settings,
     };
+    set(updatedSettings, settingsConfigurations.keyToUpdate, value);
+    onChange(updatedSettings as TIssuePropertySettingsMap[T]);
+  };
 
-    const selectedValue = get(settings, settingsConfigurations.keyToUpdate);
-    const isVerticalLayout = settingsConfigurations.configurations.verticalLayout;
+  const selectedValue = get(settings, settingsConfigurations.keyToUpdate);
+  const isVerticalLayout = settingsConfigurations.configurations.verticalLayout;
 
-    return (
-      <RadioInput
-        selected={selectedValue}
-        options={radioInputOptions}
-        onChange={handleDataChange}
-        className="z-10"
-        buttonClassName="size-3"
-        fieldClassName={cn("text-sm", {
-          "gap-1": !isVerticalLayout,
-        })}
-        wrapperClassName={cn(isVerticalLayout ? "gap-1.5" : "gap-3")}
-        vertical={isVerticalLayout}
-      />
-    );
+  return (
+    <RadioInput
+      selected={selectedValue}
+      options={radioInputOptions}
+      onChange={handleDataChange}
+      className="z-10"
+      buttonClassName="size-3"
+      fieldClassName={cn("text-sm", {
+        "gap-1": !isVerticalLayout,
+      })}
+      wrapperClassName={cn(isVerticalLayout ? "gap-1.5" : "gap-3")}
+      vertical={isVerticalLayout}
+    />
+  );
+});
+
+export const PropertySettingsConfiguration = observer(function PropertySettingsConfiguration<
+  T extends EIssuePropertyType,
+>(props: TPropertySettingsConfigurationProps<T>) {
+  const { settings, settingsConfigurations, isDisabled, onChange, getLabelDetails } = props;
+
+  switch (settingsConfigurations.configurations.componentToRender) {
+    case "radio-input":
+      return (
+        <PropertyRadioInputSelect
+          settings={settings}
+          settingsConfigurations={settingsConfigurations}
+          onChange={onChange}
+          isDisabled={isDisabled}
+          getLabelDetails={getLabelDetails}
+        />
+      );
+    default:
+      return null;
   }
-);
-
-export const PropertySettingsConfiguration = observer(
-  <T extends EIssuePropertyType>(props: TPropertySettingsConfigurationProps<T>) => {
-    const { settings, settingsConfigurations, isDisabled, onChange, getLabelDetails } = props;
-
-    switch (settingsConfigurations.configurations.componentToRender) {
-      case "radio-input":
-        return (
-          <PropertyRadioInputSelect
-            settings={settings}
-            settingsConfigurations={settingsConfigurations}
-            onChange={onChange}
-            isDisabled={isDisabled}
-            getLabelDetails={getLabelDetails}
-          />
-        );
-      default:
-        return null;
-    }
-  }
-);
+});

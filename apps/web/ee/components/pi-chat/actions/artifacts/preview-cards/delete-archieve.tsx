@@ -7,7 +7,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const DeleteArchivePreviewCard = observer((props: TProps) => {
+export const DeleteArchivePreviewCard = observer(function DeleteArchivePreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = useTemplateData(artifactId);
   if (!data) return <></>;

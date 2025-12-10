@@ -26,7 +26,7 @@ type TIssueAttachmentItemList = {
   isCollapsible?: boolean;
 };
 
-export const RequestAttachmentsList: FC<TIssueAttachmentItemList> = observer((props) => {
+export const RequestAttachmentsList = observer(function RequestAttachmentsList(props: TIssueAttachmentItemList) {
   const { workspaceSlug, requestId, customerId, disabled, isCollapsible } = props;
   const { t } = useTranslation();
   // states

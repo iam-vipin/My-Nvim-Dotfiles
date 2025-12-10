@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
@@ -17,7 +15,7 @@ import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 
-export const ProjectPageRoot = observer(() => {
+export const ProjectPageRoot = observer(function ProjectPageRoot() {
   // router
   const { workspaceSlug } = useParams();
   const pathname = usePathname();

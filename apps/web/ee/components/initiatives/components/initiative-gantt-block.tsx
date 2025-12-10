@@ -1,5 +1,3 @@
-"use client";
-
 import type { CSSProperties } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +20,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeGanttBlock: React.FC<Props> = observer((props) => {
+export const InitiativeGanttBlock = observer(function InitiativeGanttBlock(props: Props) {
   const { initiativeId } = props;
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
@@ -100,7 +98,7 @@ export const InitiativeGanttBlock: React.FC<Props> = observer((props) => {
 });
 
 // Rendering initiatives on gantt sidebar - just the content
-export const InitiativeGanttSidebarBlock: React.FC<Props> = observer((props) => {
+export const InitiativeGanttSidebarBlock = observer(function InitiativeGanttSidebarBlock(props: Props) {
   const { initiativeId } = props;
   const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();

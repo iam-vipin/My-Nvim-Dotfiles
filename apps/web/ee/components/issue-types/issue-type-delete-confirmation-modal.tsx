@@ -18,7 +18,7 @@ type TProps = {
   handleEnableDisable: (issueTypeId: string) => Promise<void>;
 };
 
-export const IssueTypeDeleteConfirmationModal: FC<TProps> = observer((props) => {
+export const IssueTypeDeleteConfirmationModal = observer(function IssueTypeDeleteConfirmationModal(props: TProps) {
   const { issueTypeId, isModalOpen, handleModalClose, handleEnableDisable } = props;
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   // plane hooks

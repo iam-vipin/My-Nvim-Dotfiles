@@ -13,7 +13,9 @@ type TWorkItemSideBarMilestoneItemProps = {
   isPeekView?: boolean;
 };
 
-export const WorkItemSideBarMilestoneItem = observer((props: TWorkItemSideBarMilestoneItemProps) => {
+export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMilestoneItem(
+  props: TWorkItemSideBarMilestoneItemProps
+) {
   const { workspaceSlug, projectId, workItemId, isPeekView } = props;
 
   //store hooks

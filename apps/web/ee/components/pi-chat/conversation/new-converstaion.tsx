@@ -17,13 +17,13 @@ type TProps = {
   shouldRedirect?: boolean;
   isProjectLevel?: boolean;
 };
-export const NewConversation = observer((props: TProps) => {
+export const NewConversation = observer(function NewConversation(props: TProps) {
   const { currentUser, isFullScreen, shouldRedirect = true, isProjectLevel = false } = props;
   // store hooks
   const { workspaceSlug } = useParams();
   const { getInstance } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   // SWR
   const { data: instance, isLoading } = useSWR(
     workspaceId ? `PI_STARTER_${workspaceId}` : null,

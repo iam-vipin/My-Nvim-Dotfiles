@@ -23,7 +23,7 @@ export class JiraService {
         },
       });
 
-      this.refreshToken = props.refreshToken as string;
+      this.refreshToken = props.refreshToken;
       this.jiraClient.handleFailedResponse = async (request) => {
         const error = request as AxiosError;
         if (error.response?.status === 401) {

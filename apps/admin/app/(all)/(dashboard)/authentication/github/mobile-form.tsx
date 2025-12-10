@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { Smartphone } from "lucide-react";
@@ -10,7 +8,7 @@ import { CodeBlock } from "@/components/common/code-block";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 
-export const GithubMobileForm: FC = () => {
+export function GithubMobileForm() {
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
   const GITHUB_MOBILE_SERVICE_DETAILS: TCopyField[] = [
@@ -48,4 +46,4 @@ export const GithubMobileForm: FC = () => {
       </div>
     </div>
   );
-};
+}

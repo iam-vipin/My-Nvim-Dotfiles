@@ -17,7 +17,7 @@ type TTrialDetailsProps = {
   handleTrial: (subscriptionType: EProductSubscriptionEnum) => void;
 };
 
-export const TrialDetails: FC<TTrialDetailsProps> = observer((props) => {
+export const TrialDetails = observer(function TrialDetails(props: TTrialDetailsProps) {
   const { subscriptionType, trialLoader, upgradeLoader, isProductsAPILoading, handleTrial } = props;
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, getIsInTrialPeriod } = useWorkspaceSubscription();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -12,7 +10,7 @@ import { useFlatfileImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 
-export const FlatfileDashboardRoot: FC = observer(() => {
+export const FlatfileDashboardRoot = observer(function FlatfileDashboardRoot() {
   const { getProjectById } = useFlatfileImporter();
 
   const getWorkspaceName = (job: TImportJob<FlatfileConfig>) => job.config.workbookId || "---";

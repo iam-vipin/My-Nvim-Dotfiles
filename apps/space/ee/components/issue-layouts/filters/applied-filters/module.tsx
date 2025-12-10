@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { CloseIcon, DiceIcon } from "@plane/propel/icons";
 // hooks
@@ -11,7 +9,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedModuleFilters: React.FC<Props> = observer((props) => {
+export const AppliedModuleFilters = observer(function AppliedModuleFilters(props: Props) {
   const { handleRemove, values } = props;
   // store hooks
   const { getModuleById } = useModule();

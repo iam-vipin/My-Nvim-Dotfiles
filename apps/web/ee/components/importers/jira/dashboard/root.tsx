@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -12,7 +10,7 @@ import { useJiraImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 
-export const JiraDashboardRoot: FC = observer(() => {
+export const JiraDashboardRoot = observer(function JiraDashboardRoot() {
   const getWorkspaceName = (job: TImportJob<JiraConfig>) => job.config.resource?.name || "---";
   const getProjectName = (job: TImportJob<JiraConfig>) => job.config.project?.name || "---";
   const getPlaneProject = (job: TImportJob<JiraConfig>) => job.config.planeProject;

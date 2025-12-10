@@ -4,7 +4,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 
-export const InitiativeOverviewHeaderActions = observer(() => {
+export const InitiativeOverviewHeaderActions = observer(function InitiativeOverviewHeaderActions() {
   const { initiativesSidebarCollapsed, toggleInitiativesSidebar } = useAppTheme();
   return (
     <button

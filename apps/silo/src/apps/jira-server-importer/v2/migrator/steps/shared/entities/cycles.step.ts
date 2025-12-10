@@ -192,7 +192,7 @@ export class JiraCyclesStep implements IStep {
     // Store mappings: sprint_external_id -> cycle_id
     const mappings = created
       ?.map((c) => ({
-        externalId: c.external_id!,
+        externalId: c.external_id,
         planeId: c.id,
       }))
       .filter((m) => m.externalId && m.planeId);

@@ -9,6 +9,7 @@ export type TExtensions =
   | "nested-pages"
   | "external-embed"
   | "attachments"
+  | "video-attachments"
   | "comments"
   | "mathematics"
   | "drawio"

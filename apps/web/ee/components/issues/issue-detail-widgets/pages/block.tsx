@@ -23,7 +23,7 @@ type TProps = {
   page: TIssuePage;
 };
 
-export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
+export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleContentBlock(props: TProps) {
   const { page, workspaceSlug, projectId, workItemId, issueServiceType } = props;
   // hooks
   const { t } = useTranslation();

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
@@ -25,7 +23,7 @@ export interface IPagesHeaderProps {
   showButton?: boolean;
 }
 
-export const PageDetailsHeader = observer(() => {
+export const PageDetailsHeader = observer(function PageDetailsHeader() {
   // params
   const { workspaceSlug, pageId } = useParams();
   const router = useRouter();
@@ -53,11 +51,13 @@ export const PageDetailsHeader = observer(() => {
   const rootParentDetails = orderedParentPages?.[0]; // First item is the root
   const middleParents = orderedParentPages?.slice(1, -1) ?? []; // Middle items (excluding root and current)
 
-  const BreadcrumbSeparator = () => (
-    <div className="flex items-center px-2 text-custom-text-300">
-      <ChevronRightIcon className="size-3" />
-    </div>
-  );
+  function BreadcrumbSeparator() {
+    return (
+      <div className="flex items-center px-2 text-custom-text-300">
+        <ChevronRightIcon className="size-3" />
+      </div>
+    );
+  }
 
   if (!page || !page.canCurrentUserAccessPage) return null;
 

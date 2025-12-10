@@ -14,7 +14,7 @@ type Props = {
   anchor: string;
 };
 
-export const BaseListRoot = observer((props: Props) => {
+export const BaseListRoot = observer(function BaseListRoot(props: Props) {
   const { anchor } = props;
   // store hooks
   const {

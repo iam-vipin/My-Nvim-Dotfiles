@@ -1,10 +1,4 @@
-"use client";
-
-import type { FC } from "react";
-
-export const UserMappingRoot: FC = (props) => {
-  const {} = props;
-
+export function UserMappingRoot() {
   return (
     <div className="relative space-y-2">
       {/* heading */}
@@ -25,4 +19,4 @@ export const UserMappingRoot: FC = (props) => {
       </div>
     </div>
   );
-};
+}

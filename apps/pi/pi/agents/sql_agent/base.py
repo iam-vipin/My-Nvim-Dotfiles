@@ -1,4 +1,5 @@
 import json
+import re
 import time
 from importlib.resources import read_text
 from typing import Any
@@ -8,9 +9,10 @@ from typing import Union
 from typing import cast
 from uuid import UUID
 
-from langchain.schema import AIMessage
-from langchain.schema import HumanMessage
-from langchain.schema import SystemMessage
+from langchain_core.messages import AIMessage
+from langchain_core.messages import HumanMessage
+from langchain_core.messages import SystemMessage
+from langchain_core.utils.json import parse_json_markdown
 from pydantic import BaseModel
 from rich.console import Console
 from rich.panel import Panel
@@ -20,8 +22,10 @@ from sqlglot import parse_one
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
 from pi.config import settings
+from pi.services.chat.helpers.flow_tracking import FlowStepCollector
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.llms import get_sql_agent_llm
 from pi.services.schemas.chat import QueryFlowStore
@@ -129,7 +133,8 @@ async def _perform_table_selection_llm_call(
     Note: For GPT-5 table selection, automatically uses gpt-5-fast instead of gpt-5-standard
     to prevent token limit issues with large schema context. SQL generation keeps original model.
     """
-    # Create structured model dynamically and set tracking context
+
+    # Create model instance dynamically and set tracking context
     # Use the provided model or fall back to the global one
     if llm_model:
         # For GPT-5 table selection, automatically reduce to fast variant to prevent token limits
@@ -143,9 +148,27 @@ async def _perform_table_selection_llm_call(
     else:
         table_selection_model_instance = table_selection_model
 
-    structured_table_selection_model = table_selection_model_instance.with_structured_output(TableSelectionResponse, include_raw=True)  # type: ignore[arg-type]
-    structured_table_selection_model.set_tracking_context(message_id, db, MessageMetaStepType.SQL_TABLE_SELECTION, chat_id=chat_id)  # type: ignore[attr-defined]
-    return await structured_table_selection_model.ainvoke(langchain_messages)
+    # Set tracking context on the model
+    table_selection_model_instance.set_tracking_context(message_id, db, MessageMetaStepType.SQL_TABLE_SELECTION, chat_id=chat_id)  # type: ignore[attr-defined]
+
+    # Get raw response from LLM
+    raw_response = await table_selection_model_instance.ainvoke(langchain_messages)
+
+    # Extract content and parse JSON (handles markdown-wrapped JSON from Claude)
+    content = raw_response.content if hasattr(raw_response, "content") else str(raw_response)
+
+    try:
+        # parse_json_markdown handles both raw JSON and markdown-wrapped JSON
+        parsed_data = parse_json_markdown(content)
+        # Validate against Pydantic model
+        parsed_obj = TableSelectionResponse.model_validate(parsed_data)
+        return {"parsed": parsed_obj, "raw": raw_response}
+    except Exception as e:
+        log.error(f"ChatID: {chat_id} - Failed to parse table selection response: {e}")
+        log.error(f"ChatID: {chat_id} - Raw content: {content}")
+        # Fallback to empty table list
+        parsed_obj = TableSelectionResponse(relevant_tables=[])
+        return {"parsed": parsed_obj, "raw": raw_response}
 
 
 # Function to select relevant tables for SQL query generation
@@ -258,11 +281,12 @@ async def sql_generation(
         llm_model: Model to use for SQL generation
 
     Returns:
-        Generated SQL query as string
+        Generated SQL query as string (with markdown wrappers stripped)
 
     Note: For GPT-5, table selection uses gpt-5-fast to prevent token limits,
     but SQL generation uses the original model for maximum quality.
     """
+
     # Prepare messages for the LLM
     langchain_messages: List[Message] = [SystemMessage(content=modified_sql_generator)]
     for msg in messages:
@@ -277,12 +301,25 @@ async def sql_generation(
         log.error("SQL generation failed after all retries")
         return "SELECT 'Error: Unable to generate SQL query due to processing limitations' as error_message;"
 
-    # Ensure we always return a string - fixed type handling
+    # Extract content
     if hasattr(response, "content"):
-        return str(response.content)
+        raw_sql = str(response.content)
     else:
-        # Handle any other case by converting to string
-        return str(response)
+        raw_sql = str(response)
+
+    # Strip markdown code blocks (```sql...``` or ```...```)
+    # Use regex to detect if content is wrapped in code blocks
+    pattern = r"^```(?:sql)?\s*\n(.*?)\n```\s*$"
+    match = re.match(pattern, raw_sql.strip(), re.DOTALL)
+
+    if match:
+        # Extract just the SQL from markdown wrapper
+        clean_sql = match.group(1).strip()
+    else:
+        # No markdown wrapper, return as-is
+        clean_sql = raw_sql.strip()
+
+    return clean_sql
 
 
 # SQL generation function
@@ -306,12 +343,23 @@ async def text2sql(
     attachment_blocks: list[dict[str, Any]] | None = None,
 ) -> tuple[Dict[str, Any], Dict[str, Any]]:
     try:
+        # Use caller-provided step_order from query_flow_store; no DB lookup
+        base_step_raw = query_flow_store.get("step_order")
+        try:
+            base_step = int(base_step_raw) if base_step_raw is not None else 0
+        except Exception:
+            base_step = 0
+        log.info(f"ChatID: {chat_id} - text2sql base_step from flow_store: {base_step}")
+
         # Initialize a single dictionary to collect all intermediate results
         intermediate_results: Dict[str, Any] = {
             "steps": [],  # Initialize steps as an empty list to avoid KeyError later
             "extracted_entity_ids": None,
             "entity_urls": None,
         }
+
+        # Initialize flow step collector for text2sql sub-steps
+        flow_collector = FlowStepCollector(query_id=message_id, chat_id=str(chat_id) if chat_id else "", db=db) if message_id and chat_id else None
 
         # Create user message for both preset and regular flows
         user_message = _create_message_with_attachments(query, attachment_blocks)
@@ -433,6 +481,21 @@ async def text2sql(
         # Store table validation step in our intermediate results
         intermediate_results["post_processed_relevant_tables"] = relevant_tables
 
+        # Add table selection step to collector
+        if flow_collector:
+            flow_collector.add_step(
+                step_order=base_step + 1,
+                step_type=FlowStepType.TOOL,
+                tool_name="structured_db_tool_table_selection",
+                content={"relevant_tables": relevant_tables},
+                execution_data={
+                    "relevant_tables": intermediate_results.get("relevant_tables"),
+                    "post_processed_relevant_tables": relevant_tables,
+                },
+                is_planned=False,
+                is_executed=True,
+            )
+
         # Step 2: Fetching whole schema for all the relevant tables
         try:
             relevant_tables_schemas = get_table_schemas(relevant_tables)
@@ -518,6 +581,22 @@ async def text2sql(
 
             # Store SQL generation in our intermediate results
             intermediate_results["generated_sql"] = generated_query
+
+            # Add preset SQL generation step to collector
+            if flow_collector:
+                flow_collector.add_step(
+                    step_order=base_step + 2,
+                    step_type=FlowStepType.TOOL,
+                    tool_name="structured_db_tool_sql_generation",
+                    content={"generated_sql": generated_query[:500]},
+                    execution_data={
+                        "generated_sql": generated_query,
+                        "is_preset": True,
+                        "relevant_tables": intermediate_results.get("post_processed_relevant_tables"),
+                    },
+                    is_planned=False,
+                    is_executed=True,
+                )
         else:
             # Regular SQL generation with LLM
             try:
@@ -570,6 +649,21 @@ async def text2sql(
                 # Store SQL generation in our intermediate results
                 intermediate_results["generated_sql"] = generated_query
 
+                # Add SQL generation step to collector
+                if flow_collector:
+                    flow_collector.add_step(
+                        step_order=base_step + 2,
+                        step_type=FlowStepType.TOOL,
+                        tool_name="structured_db_tool_sql_generation",
+                        content={"generated_sql": generated_query[:500]},
+                        execution_data={
+                            "generated_sql": generated_query,
+                            "relevant_tables": intermediate_results.get("post_processed_relevant_tables"),
+                        },
+                        is_planned=False,
+                        is_executed=True,
+                    )
+
             except Exception as e:
                 log.error(f"Error during SQL generation for chat ID {chat_id}: {e}")
                 intermediate_results["sql_generation_error"] = e
@@ -602,8 +696,8 @@ async def text2sql(
             generated_query_tables = set()
 
             # Extract tables from all SELECT statements in the query
-            for select in parsed_query.find_all(exp.Select):
-                select_tables = _get_available_tables(select)
+            for select_node in parsed_query.find_all(exp.Select):
+                select_tables = _get_available_tables(select_node)
                 generated_query_tables.update(select_tables)
 
             # Find extra tables that need to be added to CTE
@@ -633,6 +727,21 @@ async def text2sql(
             # Store CTE generation in our intermediate results
             intermediate_results["cte_head"] = CTE_head
 
+            # Add CTE generation step to collector
+            if flow_collector:
+                flow_collector.add_step(
+                    step_order=base_step + 3,
+                    step_type=FlowStepType.TOOL,
+                    tool_name="structured_db_tool_cte_generation",
+                    content={"cte_head": CTE_head[:500]},
+                    execution_data={
+                        "cte_head": CTE_head,
+                        "tables_for_cte": tables_for_cte,
+                    },
+                    is_planned=False,
+                    is_executed=True,
+                )
+
         except Exception as e:
             log.error(f"Error generating CTE query for chat ID {chat_id}: {e}")
             intermediate_results["cte_generation_error"] = e
@@ -657,6 +766,22 @@ async def text2sql(
             parsed_final_query = None
 
         intermediate_results["final_query"] = final_query
+
+        # Add final query step to collector
+        if flow_collector:
+            flow_collector.add_step(
+                step_order=base_step + 4,
+                step_type=FlowStepType.TOOL,
+                tool_name="structured_db_tool_final_query",
+                content={"final_query": final_query[:500]},
+                execution_data={
+                    "final_query": final_query,
+                    "generated_sql": intermediate_results.get("generated_sql"),
+                    "cte_head": intermediate_results.get("cte_head"),
+                },
+                is_planned=False,
+                is_executed=True,
+            )
 
         # Step 6: SQL Execution
         query_execution_result: Any
@@ -756,6 +881,11 @@ async def text2sql(
         # formatted_query_result = await format_as_bullet_points(query_execution_result)
 
         response_data: Dict[str, Any] = {"sql_query": final_query, "results": query_execution_result}
+
+        # Persist all collected flow steps
+        if flow_collector:
+            async with flow_collector:
+                pass  # Steps are persisted in __aexit__
 
         return intermediate_results, response_data
 

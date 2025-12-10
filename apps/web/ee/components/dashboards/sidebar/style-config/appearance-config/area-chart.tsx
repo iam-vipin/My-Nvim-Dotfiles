@@ -15,7 +15,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const AreaChartAppearanceConfig: React.FC<Props> = (props) => {
+export function AreaChartAppearanceConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -25,6 +25,7 @@ export const AreaChartAppearanceConfig: React.FC<Props> = (props) => {
   const selectedModel = watch("chart_model");
 
   const debouncedConfigUpdate = useCallback(
+    // eslint-disable-next-line react-hooks/use-memo
     debounce((updateData: Partial<TDashboardWidgetConfig>) => {
       handleConfigUpdate(updateData);
     }, 500),
@@ -145,4 +146,4 @@ export const AreaChartAppearanceConfig: React.FC<Props> = (props) => {
       />
     </>
   );
-};
+}

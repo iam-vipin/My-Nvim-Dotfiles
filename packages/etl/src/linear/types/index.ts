@@ -86,10 +86,6 @@ export interface LinearDocumentEntity {
   documents: Document[];
 }
 
-export interface LinearDocumentEntity {
-  documents: Document[];
-}
-
 export type LinearDocument = Document;
 
 export type LinearCycle = {

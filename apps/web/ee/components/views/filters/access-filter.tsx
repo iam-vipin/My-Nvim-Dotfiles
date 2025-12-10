@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import type { EViewAccess } from "@plane/types";
@@ -15,7 +13,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterByAccess: React.FC<Props> = observer((props: Props) => {
+export const FilterByAccess = observer(function FilterByAccess(props: Props) {
   const { appliedFilters, handleUpdate, accessFilters, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);

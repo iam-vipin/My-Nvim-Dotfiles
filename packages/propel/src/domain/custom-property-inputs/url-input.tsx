@@ -10,7 +10,7 @@ type TUrlInputProps = {
   required?: boolean;
 };
 
-export const UrlInput: React.FC<TUrlInputProps> = ({ property, isPreview = false, required = false }) => {
+export function UrlInput({ property, isPreview = false, required = false }: TUrlInputProps) {
   const {
     control,
     formState: { errors },
@@ -53,4 +53,4 @@ export const UrlInput: React.FC<TUrlInputProps> = ({ property, isPreview = false
       {error && <span className="text-xs text-red-500">{error.message as string}</span>}
     </div>
   );
-};
+}

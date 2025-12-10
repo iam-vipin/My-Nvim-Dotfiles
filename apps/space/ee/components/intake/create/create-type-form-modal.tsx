@@ -29,7 +29,7 @@ type TFormSubmitData = {
   attachment_ids: string[];
 };
 
-const CreateTypeFormModal = ({ formSettings, anchor }: TProps) => {
+function CreateTypeFormModal({ formSettings, anchor }: TProps) {
   // state
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -185,6 +185,6 @@ const CreateTypeFormModal = ({ formSettings, anchor }: TProps) => {
       </div>
     </div>
   );
-};
+}
 
 export default CreateTypeFormModal;

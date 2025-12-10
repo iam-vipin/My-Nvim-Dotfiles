@@ -13,7 +13,7 @@ type TMathModalProps = TMathModalBaseProps & {
   onPreview?: (latex: string, isValid: boolean, errorMessage?: string) => void;
 };
 
-export const MathInputModal = ({ latex, onSave, onClose, onPreview, nodeType }: TMathModalProps) => {
+export function MathInputModal({ latex, onSave, onClose, onPreview, nodeType }: TMathModalProps) {
   // refs
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // states
@@ -111,4 +111,4 @@ export const MathInputModal = ({ latex, onSave, onClose, onPreview, nodeType }: 
       </div>
     </div>
   );
-};
+}

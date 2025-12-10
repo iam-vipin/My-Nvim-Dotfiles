@@ -11,14 +11,14 @@ type GanttChartRootProps = {
   blockIds: string[];
   blockToRender: (data: any) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock | undefined;
+  getBlockById: (id: string, currentViewData?: ChartDataType) => IGanttBlock | undefined;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
   bottomSpacing?: boolean;
   showAllBlocks?: boolean;
 };
 
-export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
+export function GanttChartRoot(props: GanttChartRootProps) {
   const {
     border = true,
     title,
@@ -48,4 +48,4 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
       />
     </GanttStoreProvider>
   );
-};
+}

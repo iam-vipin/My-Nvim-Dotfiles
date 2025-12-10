@@ -14,7 +14,7 @@ type TDefaultOptionSelectProps = {
   isDisabled?: boolean;
 };
 
-export const DefaultOptionSelect = observer((props: TDefaultOptionSelectProps) => {
+export const DefaultOptionSelect = observer(function DefaultOptionSelect(props: TDefaultOptionSelectProps) {
   const { isMultiSelect = false, isDisabled = false } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -18,7 +18,7 @@ export class GitlabDataService {
    * @param { string } workspaceId
    * @returns { Promise<TGitlabRepository[] | undefined> }
    */
-  fetchGitlabRepositories = async (workspaceId: string): Promise<TGitlabRepository[] | undefined | undefined> =>
+  fetchGitlabRepositories = async (workspaceId: string): Promise<TGitlabRepository[] | undefined> =>
     await this.axiosInstance
       .get(`/${workspaceId}/repos`)
       .then((res) => res.data)

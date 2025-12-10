@@ -7,7 +7,7 @@ interface IGitlabHeaderProps {
   isEnterprise: boolean;
 }
 
-export const GitlabHeader: FC<IGitlabHeaderProps> = ({ isEnterprise }) => {
+export function GitlabHeader({ isEnterprise }: IGitlabHeaderProps) {
   // hooks
   const { t } = useTranslation();
 
@@ -26,4 +26,4 @@ export const GitlabHeader: FC<IGitlabHeaderProps> = ({ isEnterprise }) => {
       </div>
     </div>
   );
-};
+}

@@ -49,14 +49,14 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
 
     return {
       date: p,
-      scope: p! <= cycle.end_date! ? total : null,
+      scope: p <= cycle.end_date! ? total : null,
       completed,
       backlog: isTypeIssue ? cycle.backlog_issues : cycle.backlog_estimate_points,
       started: p === today ? cycle[isTypeIssue ? "started_issues" : "started_estimate_points"] : undefined,
       unstarted: p === today ? cycle[isTypeIssue ? "unstarted_issues" : "unstarted_estimate_points"] : undefined,
       cancelled: p === today ? cycle[isTypeIssue ? "cancelled_issues" : "cancelled_estimate_points"] : undefined,
       pending: Math.abs(pending || 0),
-      ideal: p! <= cycle.end_date! ? (isBurnDown ? total - idealDone : idealDone) : null,
+      ideal: p <= cycle.end_date! ? (isBurnDown ? total - idealDone : idealDone) : null,
       actual: p <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
     };
   });
@@ -78,9 +78,7 @@ const formatV2Data = (
   let today: Date | string = startOfToday();
   const extendedArray =
     endDate > today
-      ? generateDateArray(today as Date, endDate).filter(
-          (d) => d.date >= cycle.start_date! && d.date <= cycle.end_date!
-        )
+      ? generateDateArray(today, endDate).filter((d) => d.date >= cycle.start_date! && d.date <= cycle.end_date!)
       : [];
   if (!cycle?.progress) return null;
   if (isEmpty(cycle.progress)) return generateDateArray(new Date(cycle.start_date!), endDate);

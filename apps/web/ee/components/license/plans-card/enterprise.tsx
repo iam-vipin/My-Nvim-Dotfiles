@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +20,7 @@ type TEnterprisePlanCardProps = {
   handleUpgrade: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
 };
 
-export const EnterprisePlanCard: React.FC<TEnterprisePlanCardProps> = observer((props: TEnterprisePlanCardProps) => {
+export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TEnterprisePlanCardProps) {
   const { upgradeLoader, handleUpgrade } = props;
   // params
   const { workspaceSlug } = useParams();

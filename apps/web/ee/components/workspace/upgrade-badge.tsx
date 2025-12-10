@@ -14,7 +14,7 @@ type TUpgradeBadge = {
   flag?: keyof typeof E_FEATURE_FLAGS;
 };
 
-export const UpgradeBadge: FC<TUpgradeBadge> = observer((props) => {
+export const UpgradeBadge = observer(function UpgradeBadge(props: TUpgradeBadge) {
   const { className, size = "sm", flag } = props;
   // router
   const { workspaceSlug } = useParams();

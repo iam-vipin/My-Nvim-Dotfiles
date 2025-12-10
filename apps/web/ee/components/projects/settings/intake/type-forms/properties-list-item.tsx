@@ -10,7 +10,7 @@ type Props = {
   propertyId: string;
   handleRemove: () => void;
 };
-export const TypeFormPropertiesListItem: React.FC<Props> = observer((props: Props) => {
+export const TypeFormPropertiesListItem = observer(function TypeFormPropertiesListItem(props: Props) {
   const { typeId, propertyId, handleRemove } = props;
 
   const property = useIssueProperty(typeId, propertyId);

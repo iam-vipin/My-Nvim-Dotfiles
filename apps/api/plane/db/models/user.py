@@ -42,6 +42,7 @@ def get_mobile_default_onboarding():
 
 
 class BotTypeEnum(models.TextChoices):
+    WORKSPACE_SEED = "WORKSPACE_SEED", "Workspace Seed"
     SLACK_BOT = "SLACK_BOT", "Slack Bot"
     GITHUB_BOT = "GITHUB_BOT", "Github Bot"
     INTAKE_BOT = "INTAKE_BOT", "Intake Bot"

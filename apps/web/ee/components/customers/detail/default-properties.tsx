@@ -22,7 +22,7 @@ type TProps = {
   isDisabled?: boolean;
 };
 
-export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
+export function CustomerDefaultSidebarProperties(props: TProps) {
   const { updateProperty, customer, isDisabled = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -179,7 +179,7 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
       )}
     </div>
   );
-};
+}
 
 type TPropertyFiledProps = {
   value: string | number | undefined;
@@ -189,7 +189,8 @@ type TPropertyFiledProps = {
   placeholder?: string;
   disabled?: boolean;
 };
-const PropertyField: FC<TPropertyFiledProps> = (props) => {
+
+function PropertyField(props: TPropertyFiledProps) {
   const { value, type = "text", updateProperty, rules, placeholder, disabled = false } = props;
   const {
     control,
@@ -240,4 +241,4 @@ const PropertyField: FC<TPropertyFiledProps> = (props) => {
       )}
     />
   );
-};
+}

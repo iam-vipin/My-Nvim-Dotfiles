@@ -2,6 +2,8 @@
 Links API tools for Plane issue link management.
 """
 
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from langchain_core.tools import tool
@@ -22,15 +24,15 @@ def get_link_tools(method_executor, context):
         title: Optional[str] = None,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a link for an issue.
 
         Args:
-            issue_id: Parameter description (required)
-            url: Parameter description (required)
-            title: Parameter description (optional)
-            project_id: Parameter description (optional)
-            workspace_slug: Parameter description (optional)
+            issue_id: UUID of the work item to create a link for (required)
+            url: The URL of the link (required)
+            title: Optional title/label for the link
+            project_id: UUID of the project (optional, auto-filled from context)
+            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -48,12 +50,12 @@ def get_link_tools(method_executor, context):
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully created link", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully created link", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to create link", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create link", result["error"])
 
     @tool
-    async def links_list(issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def links_list(issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """List links for an issue."""
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -63,17 +65,25 @@ def get_link_tools(method_executor, context):
 
         result = await method_executor.execute("links", "list", issue_id=issue_id, project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved links list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved links list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list links", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list links", result["error"])
 
     @tool
     async def links_retrieve(
         link_id: str,
+        issue_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
-        """Get a single link by ID."""
+    ) -> Dict[str, Any]:
+        """Get a single link by ID.
+
+        Args:
+            link_id: UUID of the link to retrieve (required)
+            issue_id: UUID of the work item the link belongs to (required)
+            project_id: UUID of the project (optional, auto-filled from context)
+            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
+        """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
@@ -84,23 +94,34 @@ def get_link_tools(method_executor, context):
             "links",
             "retrieve",
             link_id=link_id,
+            issue_id=issue_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved link", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved link", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve link", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve link", result["error"])
 
     @tool
     async def links_update(
         link_id: str,
+        issue_id: str,
         url: Optional[str] = None,
         title: Optional[str] = None,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
-        """Update link details."""
+    ) -> Dict[str, Any]:
+        """Update link details.
+
+        Args:
+            link_id: UUID of the link to update (required)
+            issue_id: UUID of the work item the link belongs to (required)
+            url: New URL for the link (optional)
+            title: New title/label for the link (optional)
+            project_id: UUID of the project (optional, auto-filled from context)
+            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
+        """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
@@ -118,22 +139,31 @@ def get_link_tools(method_executor, context):
             "links",
             "update",
             link_id=link_id,
+            issue_id=issue_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
             **update_data,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully updated link", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully updated link", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to update link", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update link", result["error"])
 
     @tool
     async def links_delete(
         link_id: str,
+        issue_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
-        """Delete a link."""
+    ) -> Dict[str, Any]:
+        """Delete a link.
+
+        Args:
+            link_id: UUID of the link to delete (required)
+            issue_id: UUID of the work item the link belongs to (required)
+            project_id: UUID of the project (optional, auto-filled from context)
+            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
+        """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
@@ -144,12 +174,13 @@ def get_link_tools(method_executor, context):
             "links",
             "delete",
             link_id=link_id,
+            issue_id=issue_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully deleted link", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully deleted link", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to delete link", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to delete link", result["error"])
 
     return [links_create, links_list, links_retrieve, links_update, links_delete]

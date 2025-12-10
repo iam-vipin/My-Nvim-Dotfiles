@@ -4,7 +4,7 @@ import { getFileURL, sanitizeHTML } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
-export const CommentItem = ({ comment }: { comment: IWorkspaceCommentEnhancedSearchResult }) => {
+export function CommentItem({ comment }: { comment: IWorkspaceCommentEnhancedSearchResult }) {
   const { getUserDetails } = useMember();
   const userDetails = getUserDetails(comment.actor_id);
   return (
@@ -29,9 +29,9 @@ export const CommentItem = ({ comment }: { comment: IWorkspaceCommentEnhancedSea
       <div className="text-custom-text-200 border-l border-custom-border-400 pl-2">{sanitizeHTML(comment.comment)}</div>
     </div>
   );
-};
+}
 
-export const ActorAvatar = ({ actorId, size = "sm" }: { actorId: string; size?: "sm" | "md" | "lg" }) => {
+export function ActorAvatar({ actorId, size = "sm" }: { actorId: string; size?: "sm" | "md" | "lg" }) {
   const { getUserDetails } = useMember();
   const userDetails = getUserDetails(actorId);
   return (
@@ -43,4 +43,4 @@ export const ActorAvatar = ({ actorId, size = "sm" }: { actorId: string; size?: 
       />
     </div>
   );
-};
+}

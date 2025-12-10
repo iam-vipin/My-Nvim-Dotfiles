@@ -17,7 +17,7 @@ type TProps = {
   workItemId: string;
 };
 
-export const SidebarCustomersList: FC<TProps> = observer((props) => {
+export const SidebarCustomersList = observer(function SidebarCustomersList(props: TProps) {
   const { isPeekView, workspaceSlug, workItemId } = props;
   // hooks
   const { t } = useTranslation();

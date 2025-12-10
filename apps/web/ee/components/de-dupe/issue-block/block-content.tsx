@@ -1,5 +1,3 @@
-"use-client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -13,7 +11,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TDeDupeIssueBlockContentProps = { issue: TDeDupeIssue };
 
-export const DeDupeIssueBlockContent: FC<TDeDupeIssueBlockContentProps> = observer((props) => {
+export const DeDupeIssueBlockContent = observer(function DeDupeIssueBlockContent(props: TDeDupeIssueBlockContentProps) {
   const { issue } = props;
   // store
   const { getStateById } = useProjectState();

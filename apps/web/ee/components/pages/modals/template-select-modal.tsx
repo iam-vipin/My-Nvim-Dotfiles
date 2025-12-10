@@ -32,7 +32,7 @@ type TTemplateSelectModalProps = {
   workspaceSlug: string;
 };
 
-export const TemplateSelectModal: React.FC<TTemplateSelectModalProps> = observer((props) => {
+export const TemplateSelectModal = observer(function TemplateSelectModal(props: TTemplateSelectModalProps) {
   const { isOpen, onClose, page, projectId, titleEditorRef, workspaceSlug } = props;
   // refs
   const applyButtonRef = useRef<HTMLButtonElement>(null);

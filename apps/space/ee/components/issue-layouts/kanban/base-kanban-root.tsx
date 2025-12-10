@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -15,7 +13,7 @@ import { useViewIssues } from "@/plane-web/hooks/store/use-view-issues";
 type Props = {
   anchor: string;
 };
-export const BaseKanBanRoot: React.FC<Props> = observer((props: Props) => {
+export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: Props) {
   const { anchor } = props;
   // store hooks
   const {

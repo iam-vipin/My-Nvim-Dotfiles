@@ -22,7 +22,7 @@ type Props = {
   projectId: string;
 };
 
-export const MilestoneCard: FC<Props> = observer((props) => {
+export const MilestoneCard = observer(function MilestoneCard(props: Props) {
   const { milestoneId, workspaceSlug, projectId } = props;
   // state
   const [isLinkedWorkItemsOpen, setIsLinkedWorkItemsOpen] = useState(false);

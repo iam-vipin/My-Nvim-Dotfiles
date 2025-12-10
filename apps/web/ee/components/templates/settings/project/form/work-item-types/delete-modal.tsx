@@ -19,7 +19,7 @@ type TProps = {
   getWorkItemTypeById: (workItemTypeId: string) => IIssueType | undefined;
 };
 
-export const DeleteWorkItemTypeModal: FC<TProps> = observer((props) => {
+export const DeleteWorkItemTypeModal = observer(function DeleteWorkItemTypeModal(props: TProps) {
   const { issueTypeId, isModalOpen, handleModalClose, handleEnableDisable, handleDelete, getWorkItemTypeById } = props;
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   // plane hooks

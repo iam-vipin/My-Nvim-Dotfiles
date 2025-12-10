@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
@@ -33,7 +31,7 @@ const COMMON_TABLE_DISABLED_CELL_CLASSNAME = "text-custom-text-400";
 const COMMON_TABLE_TITLE_CELL_CLASSNAME =
   "font-medium text-custom-text-100 max-w-72 truncate sticky left-0 bg-custom-background-100 group-hover:bg-custom-background-90 border-r border-custom-border-100 z-10 min-w-[200px] transition-colors duration-75 py-3";
 
-export const AutomationsTable: React.FC<AutomationsTableProps> = observer((props) => {
+export const AutomationsTable = observer(function AutomationsTable(props: AutomationsTableProps) {
   const { automations, onAutomationClick } = props;
   // plane hooks
   const { t } = useTranslation();

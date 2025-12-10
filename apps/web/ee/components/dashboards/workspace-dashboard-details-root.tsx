@@ -9,7 +9,7 @@ import { useDashboards } from "@/plane-web/hooks/store";
 import { DashboardsWidgetsListRoot } from "./details/root";
 import { DashboardsWidgetConfigSidebarRoot } from "./sidebar";
 
-export const WorkspaceDashboardDetailsRoot = observer(() => {
+export const WorkspaceDashboardDetailsRoot = observer(function WorkspaceDashboardDetailsRoot() {
   // navigation
   const { dashboardId, workspaceSlug } = useParams();
   // store hooks

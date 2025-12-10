@@ -25,7 +25,7 @@ type TIssuePropertyList = {
   };
 };
 
-export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
+export const IssuePropertyList = observer(function IssuePropertyList(props: TIssuePropertyList) {
   const {
     properties,
     issuePropertyCreateList,

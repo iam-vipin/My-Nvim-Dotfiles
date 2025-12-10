@@ -14,7 +14,7 @@ type Props = {
   workItemType: IIssueType;
   selectedFields?: string[];
 };
-export const TypePropertiesDropdown: React.FC<Props> = observer((props: Props) => {
+export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(props: Props) {
   const { workItemType, selectedFields = [], onSelect } = props;
 
   // Filter out RELATION type properties for intake forms

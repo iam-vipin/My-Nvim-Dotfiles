@@ -1,6 +1,4 @@
 /* eslint-disable no-useless-catch */
-"use client";
-
 import type { ReactNode } from "react";
 import { createContext } from "react";
 import type { KeyedMutator, SWRResponse } from "swr";
@@ -30,7 +28,7 @@ type TImporterSyncJobContextProvider<T> = {
   children: ReactNode;
 };
 
-export const ImporterSyncJobContextProvider = <T extends object>(props: TImporterSyncJobContextProvider<T>) => {
+export function ImporterSyncJobContextProvider<T extends object>(props: TImporterSyncJobContextProvider<T>) {
   const { importerType, children } = props;
   // hooks
   const { workspaceSlug, workspaceId } = useBaseImporter();
@@ -126,6 +124,6 @@ export const ImporterSyncJobContextProvider = <T extends object>(props: TImporte
       {children}
     </ImporterSyncJobContext.Provider>
   );
-};
+}
 
 export default ImporterSyncJobContextProvider;

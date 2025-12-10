@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -24,7 +22,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 
-export const ProjectEpicDetailsHeader = observer(() => {
+export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, epicId } = useParams();

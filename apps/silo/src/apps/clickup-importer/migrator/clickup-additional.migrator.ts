@@ -131,7 +131,7 @@ export class ClickUpAdditionalDataMigrator extends TaskHandler {
      * Sometimes, we're getting multiple messages being injected for the same page.
      * We should lock the page to prevent same page being pulled multiple times.
      */
-    const lock = new Lock(this.store!, {
+    const lock = new Lock(this.store, {
       type: "custom",
       lockKey: `clickup_pull_${job.id}_${job.config.team.id}_${job.config.folder.id}_${page}`,
       ttl: 15 * 60, // 15 minutes TTL

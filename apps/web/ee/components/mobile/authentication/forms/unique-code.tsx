@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
@@ -34,7 +32,7 @@ const defaultFormValues: TFormValues = {
 
 const defaultResetTimerValue = 5;
 
-export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) => {
+export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
   const { authMode, invitationId, email, handleEmail, handleAuthStep, generateEmailUniqueCode } = props;
   // ref
   const authFormRef = useRef<HTMLFormElement>(null);
@@ -176,4 +174,4 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) =
       </div>
     </form>
   );
-};
+}

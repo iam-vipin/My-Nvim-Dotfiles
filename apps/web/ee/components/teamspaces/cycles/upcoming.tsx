@@ -19,7 +19,7 @@ type TTeamUpcomingCyclesRoot = {
   workspaceSlug: string;
 };
 
-export const TeamUpcomingCyclesRoot = observer((props: TTeamUpcomingCyclesRoot) => {
+export const TeamUpcomingCyclesRoot = observer(function TeamUpcomingCyclesRoot(props: TTeamUpcomingCyclesRoot) {
   const { teamspaceId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

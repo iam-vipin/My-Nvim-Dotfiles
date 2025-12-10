@@ -13,7 +13,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const AddScopeButton = observer((props: Props) => {
+export const AddScopeButton = observer(function AddScopeButton(props: Props) {
   const { customButton, disabled } = props;
   // store hooks
   const {

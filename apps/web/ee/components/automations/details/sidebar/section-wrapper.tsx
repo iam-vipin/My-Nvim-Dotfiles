@@ -12,7 +12,7 @@ type TProps = {
   title: string;
 };
 
-export const AutomationDetailsSidebarSectionWrapper: React.FC<TProps> = (props) => {
+export function AutomationDetailsSidebarSectionWrapper(props: TProps) {
   const { actionButtons, children, defaultOpen = true, headerActions, title } = props;
 
   return (
@@ -51,4 +51,4 @@ export const AutomationDetailsSidebarSectionWrapper: React.FC<TProps> = (props) 
       )}
     </Disclosure>
   );
-};
+}

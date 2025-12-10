@@ -28,7 +28,7 @@ type Props = {
   pageType: TPageNavigationTabs;
 };
 
-export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
+export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot(props: Props) {
   const { pageType } = props;
   const { workspaceSlug } = useParams();
   const [isCreatingPage, setIsCreatingPage] = useState(false);

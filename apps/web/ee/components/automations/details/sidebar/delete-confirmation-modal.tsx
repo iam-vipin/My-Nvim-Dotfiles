@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -15,7 +13,9 @@ type Props = {
   isOpen: boolean;
 };
 
-export const DeleteAutomationNodeConfirmationModal: React.FC<Props> = observer((props) => {
+export const DeleteAutomationNodeConfirmationModal = observer(function DeleteAutomationNodeConfirmationModal(
+  props: Props
+) {
   const { nodeType, handleClose, handleDelete, isOpen } = props;
   // states
   const [loader, setLoader] = useState(false);

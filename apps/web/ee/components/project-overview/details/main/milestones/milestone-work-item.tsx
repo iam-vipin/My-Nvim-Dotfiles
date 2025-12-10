@@ -25,7 +25,7 @@ type TProps = {
   milestoneId: string;
 };
 
-export const MilestoneWorkItem: FC<TProps> = observer((props) => {
+export const MilestoneWorkItem = observer(function MilestoneWorkItem(props: TProps) {
   // props
   const { workspaceSlug, workItemId, projectId, milestoneId } = props;
 

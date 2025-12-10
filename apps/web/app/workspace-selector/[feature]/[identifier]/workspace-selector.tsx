@@ -46,7 +46,7 @@ type TWorkspaceSelectorProps = {
   identifier: string;
 };
 
-export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
+export const WorkspaceSelector = observer(function WorkspaceSelector(props: TWorkspaceSelectorProps) {
   const { feature, identifier } = props;
   // router
   const router = useAppRouter();
@@ -149,12 +149,14 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
             router.push(`/${selectedWorkspaceSlug}/settings/templates`);
             break;
           }
+          break;
         default:
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error while submitting",
             message: error?.error,
           });
+          break;
       }
       setIsSubmitting(false);
     }

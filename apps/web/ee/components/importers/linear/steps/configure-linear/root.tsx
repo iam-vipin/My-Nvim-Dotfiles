@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
@@ -19,7 +17,7 @@ type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.CONFIGURE_LI
 
 const currentStepKey = E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR;
 
-export const ConfigureLinearRoot: FC = observer(() => {
+export const ConfigureLinearRoot = observer(function ConfigureLinearRoot() {
   // hooks
   const { currentStep, handleStepper, importerData, handleImporterData } = useLinearImporter();
   const { t } = useTranslation();

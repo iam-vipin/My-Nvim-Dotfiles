@@ -21,7 +21,7 @@ type Props = {
   isToolTip?: boolean;
 };
 
-export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
+export function IntakeFormsRoot(props: Props) {
   // props
   const {
     workspaceSlug,
@@ -139,7 +139,7 @@ export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
                             className="text-custom-text-400 w-[16px] cursor-pointer"
                             onClick={() => copyToClipboard()}
                           />
-                          <a href={publishLink} target="_blank">
+                          <a href={publishLink} target="_blank" rel="noreferrer">
                             <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
                           </a>
                         </div>
@@ -182,7 +182,10 @@ export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
                           <ExternalLink className="size-3" />
                         </Button>
                       ) : (
-                        <Tooltip tooltipContent="Ask your Workspace Admin to manage this.">
+                        <Tooltip
+                          tooltipContent="Ask your Workspace Admin
+to manage this."
+                        >
                           <InfoIcon className="size-3" />
                         </Tooltip>
                       )}
@@ -198,4 +201,4 @@ export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
       </div>
     </>
   );
-};
+}

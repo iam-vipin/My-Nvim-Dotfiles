@@ -16,7 +16,7 @@ import { DrawioIframeLoading } from "./loading";
 import type { DrawioNodeViewProps } from "./node-view";
 import { DrawioDialogWrapper } from "./wrapper";
 
-export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
+export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps) {
   // props
   const { node, updateAttributes, editor, selected, extension } = props;
   const { getDiagramSrc, getFileContent, isFlagged, onClick, logoSpinner } = extension.options;

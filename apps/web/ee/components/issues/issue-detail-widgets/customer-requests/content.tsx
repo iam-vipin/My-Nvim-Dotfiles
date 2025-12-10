@@ -13,7 +13,7 @@ type TProps = {
   isTabs?: boolean;
 };
 
-export const WorkItemRequestCollapsibleContent: FC<TProps> = observer((props) => {
+export const WorkItemRequestCollapsibleContent = observer(function WorkItemRequestCollapsibleContent(props: TProps) {
   const { workspaceSlug, workItemId, disabled, isTabs = false } = props;
 
   const {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -38,7 +36,7 @@ type TProjectStateListItem = {
   projectStateId: string;
 };
 
-export const ProjectStateListItem: FC<TProjectStateListItem> = observer((props) => {
+export const ProjectStateListItem = observer(function ProjectStateListItem(props: TProjectStateListItem) {
   const { workspaceSlug, workspaceId, groupProjectStates, groupKey, projectStateId } = props;
   // hooks
   const { projectStates, getProjectStatedByStateGroupKey } = useWorkspaceProjectStates();
@@ -88,13 +86,13 @@ export const ProjectStateListItem: FC<TProjectStateListItem> = observer((props) 
               const sourceData = source.data as TProjectStateDraggableData;
               const destinationData = location.current.dropTargets[0].data as TProjectStateDraggableData;
               if (sourceData && destinationData && sourceData.id) {
-                const destinationGroupKey = destinationData.groupKey as TProjectStateGroupKey;
+                const destinationGroupKey = destinationData.groupKey;
                 const edge = extractClosestEdge(destinationData) || undefined;
                 const projectStateDetails = Object.values(projectStates);
 
                 if (!projectStateDetails) return;
                 const payload: Partial<TProjectState> = {
-                  id: sourceData.id as string,
+                  id: sourceData.id,
                   group: destinationGroupKey,
                   sequence: getCurrentStateSequence(projectStateDetails, destinationData, edge),
                 };

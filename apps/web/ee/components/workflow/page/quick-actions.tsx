@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -23,7 +21,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const WorkflowSettingsQuickActions: React.FC<Props> = observer((props) => {
+export const WorkflowSettingsQuickActions = observer(function WorkflowSettingsQuickActions(props: Props) {
   const { projectId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

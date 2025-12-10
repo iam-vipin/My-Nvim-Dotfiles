@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -24,7 +22,7 @@ type TEpicInfoActionItemsProps = {
   disabled: boolean;
 };
 
-export const EpicInfoActionItems: FC<TEpicInfoActionItemsProps> = observer((props) => {
+export const EpicInfoActionItems = observer(function EpicInfoActionItems(props: TEpicInfoActionItemsProps) {
   const { editorRef, workspaceSlug, projectId, epicId, disabled } = props;
   // store hooks
   const { data: currentUser } = useUser();

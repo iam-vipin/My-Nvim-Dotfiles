@@ -14,7 +14,7 @@ type TSelectProjectState = {
   planeStates: IState[];
 };
 
-export const SelectProjectState: FC<TSelectProjectState> = observer((props) => {
+export const SelectProjectState = observer(function SelectProjectState(props: TSelectProjectState) {
   const { title, value, handleValue, planeStates } = props;
   const { t } = useTranslation();
 

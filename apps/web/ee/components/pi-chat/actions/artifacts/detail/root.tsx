@@ -11,33 +11,31 @@ import { PageDetail } from "./page";
 import { TemplateDetail } from "./template";
 import { WorkItemDetail } from "./work-item";
 
-const DetailCardRenderer = observer(
-  (props: {
-    artifactId: string;
-    activeChatId: string;
-    data: TArtifact;
-    workspaceSlug: string;
-    updateArtifact: (data: Partial<TUpdatedArtifact>) => Promise<void>;
-  }) => {
-    const { data } = props;
-    switch (data.artifact_type) {
-      case "workitem":
-        return <WorkItemDetail {...props} />;
-      case "page":
-        return <PageDetail {...props} />;
-      case "epic":
-        return <EpicDetail {...props} />;
-      case "module":
-        return <ModuleDetail {...props} />;
-      case "cycle":
-        return <CycleDetail {...props} />;
-      default:
-        return <TemplateDetail {...props} />;
-    }
+const DetailCardRenderer = observer(function DetailCardRenderer(props: {
+  artifactId: string;
+  activeChatId: string;
+  data: TArtifact;
+  workspaceSlug: string;
+  updateArtifact: (data: Partial<TUpdatedArtifact>) => Promise<void>;
+}) {
+  const { data } = props;
+  switch (data.artifact_type) {
+    case "workitem":
+      return <WorkItemDetail {...props} />;
+    case "page":
+      return <PageDetail {...props} />;
+    case "epic":
+      return <EpicDetail {...props} />;
+    case "module":
+      return <ModuleDetail {...props} />;
+    case "cycle":
+      return <CycleDetail {...props} />;
+    default:
+      return <TemplateDetail {...props} />;
   }
-);
+});
 
-export const PiChatArtifactsRoot = observer(() => {
+export const PiChatArtifactsRoot = observer(function PiChatArtifactsRoot() {
   // params
   const { workspaceSlug } = useParams();
   // hooks

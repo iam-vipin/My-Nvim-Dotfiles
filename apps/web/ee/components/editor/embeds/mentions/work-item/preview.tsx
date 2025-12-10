@@ -8,7 +8,7 @@ type Props = {
   workItemDetails: TEditorWorkItemMention;
 };
 
-export const EditorWorkItemMentionPreview: React.FC<Props> = observer((props) => {
+export const EditorWorkItemMentionPreview = observer(function EditorWorkItemMentionPreview(props: Props) {
   const { workItemDetails } = props;
 
   return (
@@ -32,7 +32,7 @@ export const EditorWorkItemMentionPreview: React.FC<Props> = observer((props) =>
         </div>
       </div>
       <div>
-        <h6 className="text-sm">{workItemDetails.name}</h6>
+        <h6 className="text-sm break-words">{workItemDetails.name}</h6>
       </div>
     </>
   );

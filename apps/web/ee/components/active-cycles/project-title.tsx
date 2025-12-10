@@ -8,7 +8,7 @@ export type ActiveCyclesProjectTitleProps = {
   project: Partial<IProject> | undefined;
 };
 
-export const ActiveCyclesProjectTitle: FC<ActiveCyclesProjectTitleProps> = (props) => {
+export function ActiveCyclesProjectTitle(props: ActiveCyclesProjectTitleProps) {
   const { project } = props;
   return (
     <div className="flex items-center gap-2 px-3">
@@ -16,4 +16,4 @@ export const ActiveCyclesProjectTitle: FC<ActiveCyclesProjectTitleProps> = (prop
       <h2 className="text-xl font-semibold">{project?.name}</h2>
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { useTheme } from "next-themes";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
@@ -18,7 +16,7 @@ type TUserListItemProps = {
   canCurrentUserChangeAccess?: boolean;
 };
 
-export const UserListItem = ({
+export function UserListItem({
   userId,
   displayName,
   avatarUrl,
@@ -29,7 +27,7 @@ export const UserListItem = ({
   onRemove,
   className = "",
   canCurrentUserChangeAccess = true,
-}: TUserListItemProps) => {
+}: TUserListItemProps) {
   const { resolvedTheme } = useTheme();
 
   return (
@@ -55,7 +53,7 @@ export const UserListItem = ({
         )}
         <AccessMenu
           currentAccess={access}
-          onUpdateAccess={(accessValue) => onUpdateAccess(userId, parseInt(accessValue) as number)}
+          onUpdateAccess={(accessValue) => onUpdateAccess(userId, parseInt(accessValue))}
           onRemove={() => onRemove(userId)}
           isOwner={isOwner}
           canCurrentUserChangeAccess={canCurrentUserChangeAccess}
@@ -63,6 +61,6 @@ export const UserListItem = ({
       </div>
     </div>
   );
-};
+}
 
 UserListItem.displayName = "UserListItem";

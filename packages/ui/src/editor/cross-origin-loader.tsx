@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 
 type CrossOriginLoaderProps = {
@@ -10,14 +9,14 @@ type CrossOriginLoaderProps = {
   style?: React.CSSProperties;
 };
 
-export const CrossOriginLoader = ({
+export function CrossOriginLoader({
   src,
   className = "",
   params = {},
   onLoaded = () => {},
   onError = () => {},
   style = {},
-}: CrossOriginLoaderProps) => {
+}: CrossOriginLoaderProps) {
   // state
 
   const [hasError, setHasError] = useState(false);
@@ -116,4 +115,4 @@ export const CrossOriginLoader = ({
   useEffect(loadContent, [loadContent]);
 
   return <div ref={containerRef} className={`w-full h-full ${hasError ? "hidden" : ""} ${className}`} style={style} />;
-};
+}

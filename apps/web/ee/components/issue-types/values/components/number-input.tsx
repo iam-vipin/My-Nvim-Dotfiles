@@ -18,7 +18,7 @@ type TNumberValueInputProps = {
   onNumberValueChange: (value: string[]) => Promise<void>;
 };
 
-export const NumberValueInput = observer((props: TNumberValueInputProps) => {
+export const NumberValueInput = observer(function NumberValueInput(props: TNumberValueInputProps) {
   const {
     propertyDetail,
     value,

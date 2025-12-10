@@ -17,7 +17,9 @@ type TPersonalAccountInstallationCardProps = {
   handleConnection: () => Promise<void>;
 };
 
-export const PersonalAccountInstallationCard = observer((props: TPersonalAccountInstallationCardProps) => {
+export const PersonalAccountInstallationCard = observer(function PersonalAccountInstallationCard(
+  props: TPersonalAccountInstallationCardProps
+) {
   const { providerName, isConnectionLoading, isUserConnected, handleConnection } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

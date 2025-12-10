@@ -8,7 +8,7 @@ type TCustomerActivityProps = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const CustomerActivity: FC<TCustomerActivityProps> = (props) => {
+export function CustomerActivity(props: TCustomerActivityProps) {
   const { activityId, ends } = props;
   // hooks
   const {
@@ -53,4 +53,4 @@ export const CustomerActivity: FC<TCustomerActivityProps> = (props) => {
       </>
     </IssueActivityBlockComponent>
   );
-};
+}

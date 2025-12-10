@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane internal packages
@@ -17,7 +15,7 @@ type Props = {
   allowedValues: string[] | undefined;
 };
 
-export const FilterPriority: React.FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, allowedValues } = props;
   // i18n
   const { t } = useTranslation();

@@ -9,7 +9,7 @@ import { SectionEmptyState } from "@/plane-web/components/common/layout/main/com
 type TProps = {
   linkWorkItem: () => void;
 };
-export const WorkItemEmptyState: FC<TProps> = (props) => {
+export function WorkItemEmptyState(props: TProps) {
   const { linkWorkItem } = props;
   // i18n
   const { t } = useTranslation();
@@ -29,4 +29,4 @@ export const WorkItemEmptyState: FC<TProps> = (props) => {
       }
     />
   );
-};
+}

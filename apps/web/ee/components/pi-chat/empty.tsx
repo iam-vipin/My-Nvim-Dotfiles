@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
@@ -17,7 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { BetaBadge } from "../common/beta";
 
-export const EmptyPiChat = observer(() => {
+export const EmptyPiChat = observer(function EmptyPiChat() {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
@@ -61,6 +59,7 @@ export const EmptyPiChat = observer(() => {
                 href="https://plane.so/pricing"
                 target="_blank"
                 className={"underline my-auto text-pi-700 font-medium"}
+                rel="noreferrer"
               >
                 Talk custom pricing
               </a>

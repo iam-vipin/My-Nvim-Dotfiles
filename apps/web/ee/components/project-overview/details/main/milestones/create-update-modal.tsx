@@ -33,7 +33,7 @@ const defaultValues = {
   },
 };
 
-export const CreateUpdateMilestoneModal = (props: Props) => {
+export function CreateUpdateMilestoneModal(props: Props) {
   const { workspaceSlug, projectId, isOpen, handleClose, milestoneId } = props;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,7 +96,7 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
     let payload: Partial<TMilestone> = {};
     if (milestoneId) {
       payload = getChangedFields<Partial<TMilestone>>(
-        formData as Partial<TMilestone>,
+        formData,
         dirtyFields as Partial<Record<Extract<keyof TMilestone, string>, boolean | undefined>>
       );
     } else payload = formData;
@@ -308,4 +308,4 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
       </div>
     </ModalCore>
   );
-};
+}

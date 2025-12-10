@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ import { useAsanaImporter, useWorkspaceSubscription } from "@/plane-web/hooks/st
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
 import ImporterTable from "../../../ui/table";
 
-export const SummaryRoot: FC = observer(() => {
+export const SummaryRoot = observer(function SummaryRoot() {
   // hooks
   const {
     workspace,
@@ -60,7 +58,7 @@ export const SummaryRoot: FC = observer(() => {
   const asanaWorkspaceGid = importerData[E_IMPORTER_STEPS.CONFIGURE_ASANA]?.workspaceGid;
   const asanaProjectSections = ((asanaProjectGid && getAsanaSectionByProjectGid(asanaProjectGid)) || []).filter(
     (asanaSection) => asanaSection && asanaSection.gid
-  ) as AsanaSection[];
+  );
   const asanaProjectTaskCount = (asanaProjectGid && getAsanaIssueCountByProjectId(asanaProjectGid)) || 0;
 
   const handleUserSkipToggle = (flag: boolean) => {

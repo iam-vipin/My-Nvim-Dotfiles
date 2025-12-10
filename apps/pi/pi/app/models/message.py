@@ -33,6 +33,9 @@ class Message(BaseModel, table=True):
     reasoning: Optional[str] = Field(default=None, nullable=True)
     user_type: str = Field(sa_column=Column(String(50), nullable=False, default=UserTypeChoices.USER.value))
     workspace_slug: Optional[str] = Field(default=None, nullable=True, max_length=255)
+    source: Optional[str] = Field(
+        default=None, nullable=True, max_length=50, description="Source of the chat request (e.g., 'web', 'mobile', 'api', 'agent)"
+    )
 
     # Foreign keys
     parent_id: Optional[uuid.UUID] = Field(

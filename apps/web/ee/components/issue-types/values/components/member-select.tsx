@@ -21,7 +21,7 @@ type TMemberValueSelectProps = {
   onMemberValueChange: (value: string[]) => Promise<void>;
 };
 
-export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
+export const MemberValueSelect = observer(function MemberValueSelect(props: TMemberValueSelectProps) {
   const {
     propertyDetail,
     value,
@@ -80,7 +80,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
             handleChange(memberIds);
           }}
           buttonVariant={
-            variant === "update" && !Boolean(error)
+            variant === "update" && !error
               ? value.length > 1
                 ? "transparent-without-text"
                 : "transparent-with-text"
@@ -104,7 +104,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
             }
           }}
           buttonVariant={
-            variant === "update" && !Boolean(error)
+            variant === "update" && !error
               ? value.length > 1
                 ? "transparent-without-text"
                 : "transparent-with-text"

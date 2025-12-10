@@ -14,7 +14,7 @@ export type DrawioNodeViewProps = Omit<NodeViewProps, "extension"> & {
   updateAttributes: (attrs: Partial<TDrawioBlockAttributes>) => void;
 };
 
-export const DrawioNodeView: React.FC<DrawioNodeViewProps> = memo((props) => {
+export const DrawioNodeView = memo(function DrawioNodeView(props: DrawioNodeViewProps) {
   const { selected } = props;
 
   return (

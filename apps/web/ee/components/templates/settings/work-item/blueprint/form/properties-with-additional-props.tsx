@@ -18,7 +18,9 @@ import type { TWorkItemBlueprintPropertiesWithAdditionalPropsProps } from "./com
  * Required Issue Modal context to be available in the parent component.
  */
 export const WorkItemBlueprintPropertiesWithAdditionalProps = observer(
-  <T extends FieldValues>(props: TWorkItemBlueprintPropertiesWithAdditionalPropsProps<T>) => {
+  function WorkItemBlueprintPropertiesWithAdditionalProps<T extends FieldValues>(
+    props: TWorkItemBlueprintPropertiesWithAdditionalPropsProps<T>
+  ) {
     const {
       fieldPaths,
       areCustomPropertiesInitializing,

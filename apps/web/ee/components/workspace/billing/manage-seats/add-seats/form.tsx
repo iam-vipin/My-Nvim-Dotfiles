@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -26,7 +24,7 @@ type TAddSeatsFormProps = {
   onPreviousStep?: () => void;
 };
 
-export const AddSeatsForm: React.FC<TAddSeatsFormProps> = observer((props) => {
+export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormProps) {
   const { onClose, onSuccess, onPreviousStep } = props;
   // router
   const { workspaceSlug } = useParams();

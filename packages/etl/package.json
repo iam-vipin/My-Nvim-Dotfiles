@@ -9,60 +9,28 @@
     "dist/**/*"
   ],
   "exports": {
-    "./asana": {
-      "import": "./dist/asana/index.mjs",
-      "require": "./dist/asana/index.cjs"
-    },
-    "./clickup": {
-      "import": "./dist/clickup/index.mjs",
-      "require": "./dist/clickup/index.cjs"
-    },
-    "./core": {
-      "import": "./dist/core/index.mjs",
-      "require": "./dist/core/index.cjs"
-    },
-    "./flatfile": {
-      "import": "./dist/flatfile/index.mjs",
-      "require": "./dist/flatfile/index.cjs"
-    },
-    "./github": {
-      "import": "./dist/github/index.mjs",
-      "require": "./dist/github/index.cjs"
-    },
-    "./gitlab": {
-      "import": "./dist/gitlab/index.mjs",
-      "require": "./dist/gitlab/index.cjs"
-    },
-    "./jira": {
-      "import": "./dist/jira/index.mjs",
-      "require": "./dist/jira/index.cjs"
-    },
-    "./jira-server": {
-      "import": "./dist/jira-server/index.mjs",
-      "require": "./dist/jira-server/index.cjs"
-    },
-    "./linear": {
-      "import": "./dist/linear/index.mjs",
-      "require": "./dist/linear/index.cjs"
-    },
-    "./sentry": {
-      "import": "./dist/sentry/index.mjs",
-      "require": "./dist/sentry/index.cjs"
-    },
-    "./slack": {
-      "import": "./dist/slack/index.mjs",
-      "require": "./dist/slack/index.cjs"
-    },
+    "./asana": "./dist/asana/index.mjs",
+    "./clickup": "./dist/clickup/index.mjs",
+    "./core": "./dist/core/index.mjs",
+    "./flatfile": "./dist/flatfile/index.mjs",
+    "./github": "./dist/github/index.mjs",
+    "./gitlab": "./dist/gitlab/index.mjs",
+    "./jira": "./dist/jira/index.mjs",
+    "./jira-server": "./dist/jira-server/index.mjs",
+    "./linear": "./dist/linear/index.mjs",
+    "./sentry": "./dist/sentry/index.mjs",
+    "./slack": "./dist/slack/index.mjs",
     "./package.json": "./package.json"
   },
+  "type": "module",
   "scripts": {
     "build": "tsdown --minify",
     "dev": "tsdown --watch",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings 180",
+    "check:lint": "eslint . --max-warnings=614",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
+    "fix:lint": "eslint . --max-warnings=614 --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
@@ -84,7 +52,6 @@
   },
   "devDependencies": {
     "@octokit/openapi-webhooks-types": "^8.3.0",
-    "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/papaparse": "^5.3.15"

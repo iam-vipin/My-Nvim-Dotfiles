@@ -16,7 +16,7 @@ type TProps = {
   isOpen?: boolean;
 };
 
-export const PiChatLayout = observer((props: TProps) => {
+export const PiChatLayout = observer(function PiChatLayout(props: TProps) {
   const {
     isFullScreen: isFullScreenProp = false,
     children,
@@ -41,7 +41,7 @@ export const PiChatLayout = observer((props: TProps) => {
   const pathName = usePathname();
   // derived states
   const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
 
   useSWR(
     workspaceSlug ? `PI_USER_THREADS_${workspaceSlug}_${isProjectLevel}` : null,
@@ -85,7 +85,7 @@ export const PiChatLayout = observer((props: TProps) => {
   // Handle initialization
   useEffect(() => {
     if (!chatId) return;
-    initPiChat(chatId as string);
+    initPiChat(chatId);
   }, [chatId]);
 
   if (!isOpen) return <></>;

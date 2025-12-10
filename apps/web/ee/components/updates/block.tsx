@@ -28,7 +28,7 @@ type TProps = {
   entityType: EUpdateEntityType;
   customTitle?: (updateData: TUpdate) => React.ReactNode;
 };
-export const UpdateBlock = observer((props: TProps) => {
+export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
   const { updateId, workspaceSlug, entityId, handleUpdateOperations, entityType, customTitle } = props;
   //router
   const { projectId } = useParams();

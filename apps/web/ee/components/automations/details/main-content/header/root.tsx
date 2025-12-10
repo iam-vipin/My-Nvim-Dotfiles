@@ -6,7 +6,7 @@ type TProps = {
   automationId: string;
 };
 
-export const AutomationDetailsMainContentHeader: React.FC<TProps> = observer((props) => {
+export const AutomationDetailsMainContentHeader = observer(function AutomationDetailsMainContentHeader(props: TProps) {
   const { automationId } = props;
   // store hooks
   const {

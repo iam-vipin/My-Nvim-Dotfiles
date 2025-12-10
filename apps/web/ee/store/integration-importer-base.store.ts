@@ -187,7 +187,7 @@ export abstract class IntegrationImporterBaseStore implements IIntegrationImport
       return externalApiToken;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
       });
       throw error;

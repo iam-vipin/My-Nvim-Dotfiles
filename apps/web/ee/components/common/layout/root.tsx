@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // utils
@@ -12,11 +10,11 @@ type TLayoutRootProps = {
   renderEmptyState?: boolean;
 };
 
-export const LayoutRoot: FC<TLayoutRootProps> = (props) => {
+export function LayoutRoot(props: TLayoutRootProps) {
   const { children, className = "", renderEmptyState, emptyStateComponent } = props;
   return (
     <div className={cn("flex h-full w-full overflow-hidden", className)}>
       {renderEmptyState ? emptyStateComponent : children}
     </div>
   );
-};
+}

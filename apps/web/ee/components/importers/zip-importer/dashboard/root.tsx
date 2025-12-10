@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -18,7 +16,11 @@ import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer
 import { EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
 import { DashboardLoaderTable, SyncJobStatus } from "../../common/dashboard";
 
-export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverType, logo, serviceName }) => {
+export const ZipImporterDashboard = observer(function ZipImporterDashboard({
+  driverType,
+  logo,
+  serviceName,
+}: TZipImporterProps) {
   const { t } = useTranslation();
 
   // hooks

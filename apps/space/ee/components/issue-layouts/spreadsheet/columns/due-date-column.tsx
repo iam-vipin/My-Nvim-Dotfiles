@@ -11,7 +11,7 @@ type Props = {
   issue: IIssue;
 };
 
-export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColumn(props: Props) {
   const { issue } = props;
 
   return (

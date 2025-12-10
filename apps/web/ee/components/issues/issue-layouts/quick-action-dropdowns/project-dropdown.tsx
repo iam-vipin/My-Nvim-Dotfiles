@@ -17,17 +17,19 @@ type ProjectOptionProps = {
   isEpic: boolean;
 };
 
-const ProjectOption: React.FC<ProjectOptionProps> = ({ project, isEpicsEnabled, isEpic }) => (
-  <div className="flex items-center gap-2 w-full">
-    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-      <Logo logo={project.logo_props} size={12} />
-    </span>
-    <p className="flex-grow truncate flex items-center justify-between gap-3">
-      <span>{project.name}</span>
-      {!isEpicsEnabled && isEpic && <span className="text-custom-text-400 text-xs">Epics not enabled</span>}
-    </p>
-  </div>
-);
+function ProjectOption({ project, isEpicsEnabled, isEpic }: ProjectOptionProps) {
+  return (
+    <div className="flex items-center gap-2 w-full">
+      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+        <Logo logo={project.logo_props} size={12} />
+      </span>
+      <p className="flex-grow truncate flex items-center justify-between gap-3">
+        <span>{project.name}</span>
+        {!isEpicsEnabled && isEpic && <span className="text-custom-text-400 text-xs">Epics not enabled</span>}
+      </p>
+    </div>
+  );
+}
 
 type Props = {
   value: string | null;
@@ -38,7 +40,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const ProjectDropdown: React.FC<Props> = observer((props) => {
+export const ProjectDropdown = observer(function ProjectDropdown(props: Props) {
   const { t } = useTranslation();
   const { value, onChange, placeholder = "Select project", disabled = false, currentProjectId, isEpic = false } = props;
 

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // components
@@ -14,7 +12,7 @@ type Props = {
   onPageDataSelect: (value: unknown) => void;
 };
 
-export const WikiAppPowerKModalPagesList: React.FC<Props> = observer((props) => {
+export const WikiAppPowerKModalPagesList = observer(function WikiAppPowerKModalPagesList(props: Props) {
   const { activePage, context, onCommandSelect, onPageDataSelect } = props;
 
   // Main page content (no specific page)

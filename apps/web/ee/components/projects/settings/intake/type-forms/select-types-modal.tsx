@@ -15,7 +15,7 @@ type Props = {
   onSelect: (typeId: string) => void;
 };
 
-export const SelectTypesModal = observer((props: Props) => {
+export const SelectTypesModal = observer(function SelectTypesModal(props: Props) {
   const { isOpen, onClose, onSelect } = props;
   // router
   const { projectId } = useParams();

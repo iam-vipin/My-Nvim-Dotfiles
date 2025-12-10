@@ -8,7 +8,7 @@ type Props = {
   workItemDetails: TEditorWorkItemMention;
 };
 
-export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) => {
+export const EditorWorkItemMentionContent = observer(function EditorWorkItemMentionContent(props: Props) {
   const { workItemDetails } = props;
   // derived values
   const trimmedName =

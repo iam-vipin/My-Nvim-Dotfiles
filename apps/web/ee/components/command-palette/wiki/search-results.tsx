@@ -1,5 +1,3 @@
-"use client";
-
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -17,7 +15,7 @@ type Props = {
   results: IAppSearchResults;
 };
 
-export const WikiAppPowerKModalSearchResults: React.FC<Props> = observer((props) => {
+export const WikiAppPowerKModalSearchResults = observer(function WikiAppPowerKModalSearchResults(props: Props) {
   const { closePalette, results } = props;
   // router
   const router = useAppRouter();

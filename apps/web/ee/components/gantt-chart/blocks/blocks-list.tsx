@@ -5,7 +5,7 @@ import { GanttChartBlock } from "@/components/gantt-chart/blocks/block";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 
-export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) => {
+export const GanttChartBlocksList = observer(function GanttChartBlocksList(props: GanttChartBlocksProps) {
   const {
     blockIds,
     blockToRender,

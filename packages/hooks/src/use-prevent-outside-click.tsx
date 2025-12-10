@@ -19,7 +19,7 @@ export const usePreventOutsideClick = (
       }
       const clickedElement = event.target as HTMLElement;
       // Find nearest anchor element (self or parent) and prevent default and stop propagation
-      const linkElement = clickedElement.closest("a") as HTMLAnchorElement | null;
+      const linkElement = clickedElement.closest("a");
       if (linkElement instanceof HTMLAnchorElement) {
         event.preventDefault();
         event.stopPropagation();

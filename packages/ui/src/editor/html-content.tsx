@@ -8,7 +8,7 @@ type HTMLContentProps = {
 };
 
 // User for Directly rendering content we got from iframely
-const HTMLContentComponent = ({ html, showLoading = true }: HTMLContentProps) => {
+function HTMLContentComponent({ html, showLoading = true }: HTMLContentProps) {
   // state
   const [contentReady, setContentReady] = useState(!showLoading);
   // ref
@@ -76,7 +76,7 @@ const HTMLContentComponent = ({ html, showLoading = true }: HTMLContentProps) =>
       />
     </div>
   );
-};
+}
 
 export const HTMLContent = React.memo(HTMLContentComponent);
 HTMLContent.displayName = "HTMLContent";

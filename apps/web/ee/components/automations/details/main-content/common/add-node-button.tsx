@@ -7,7 +7,7 @@ type TProps = {
   onClick: () => void;
 };
 
-export const AutomationDetailsMainContentAddNodeButton: React.FC<TProps> = (props) => {
+export function AutomationDetailsMainContentAddNodeButton(props: TProps) {
   const { label, isSelected, onClick } = props;
 
   return (
@@ -26,4 +26,4 @@ export const AutomationDetailsMainContentAddNodeButton: React.FC<TProps> = (prop
       </button>
     </AutomationDetailsMainContentBlockWrapper>
   );
-};
+}

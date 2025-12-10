@@ -11,7 +11,7 @@ type TProps = {
   iconVariant?: "outline" | "filled";
 };
 
-export const AutomationDetailsMainContentSectionWrapper: React.FC<TProps> = (props) => {
+export function AutomationDetailsMainContentSectionWrapper(props: TProps) {
   const { children, title, icon: Icon, iconVariant = "outline" } = props;
 
   return (
@@ -63,4 +63,4 @@ export const AutomationDetailsMainContentSectionWrapper: React.FC<TProps> = (pro
       )}
     </Disclosure>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -36,7 +34,7 @@ type Props = {
   showAllTicks?: boolean;
 };
 
-export const ActiveCycleChart = observer((props: Props) => {
+export const ActiveCycleChart = observer(function ActiveCycleChart(props: Props) {
   const {
     areaToHighlight,
     data = [],
@@ -83,7 +81,7 @@ export const ActiveCycleChart = observer((props: Props) => {
             height="8"
             patternTransform="rotate(-45 2 2)"
           >
-            <path d="M -1,2 l 6,0" stroke={colors.timeLeftStroke} stroke-width=".5" />
+            <path d="M -1,2 l 6,0" stroke={colors.timeLeftStroke} strokeWidth=".5" />
           </pattern>
 
           {/* Beyond Time */}
@@ -94,7 +92,7 @@ export const ActiveCycleChart = observer((props: Props) => {
             height="8"
             patternTransform="rotate(-45 2 2)"
           >
-            <path d="M -1,2 l 6,0" stroke={colors.beyondTimeStroke} stroke-width=".5" />
+            <path d="M -1,2 l 6,0" stroke={colors.beyondTimeStroke} strokeWidth=".5" />
           </pattern>
 
           {/* actual */}
@@ -219,7 +217,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         </ReferenceArea> */}
 
         {/* Today */}
-        {today < endDate && <ReferenceLine x={today as string} stroke={colors.todayLine} strokeDasharray="3 3" />}
+        {today < endDate && <ReferenceLine x={today} stroke={colors.todayLine} strokeDasharray="3 3" />}
         {/* Beyond Time */}
         <ReferenceLine x={endDate} stroke={colors.beyondTimeStroke} label="" strokeDasharray="3 3" />
         {/* Ideal - Actual */}

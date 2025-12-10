@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
@@ -17,7 +15,7 @@ type Props = {
   handleSelection: (data: unknown) => void;
 };
 
-export const PowerKInitiativeContextBasedPages: React.FC<Props> = observer((props) => {
+export const PowerKInitiativeContextBasedPages = observer(function PowerKInitiativeContextBasedPages(props: Props) {
   const { activePage, handleSelection } = props;
   // navigation
   const { workspaceSlug, initiativeId } = useParams();

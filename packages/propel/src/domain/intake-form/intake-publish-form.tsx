@@ -12,7 +12,7 @@ import { BooleanInput, DateSelect, NumberInput, OptionSelect, TextInput, UrlInpu
 import { AttachmentPreviewList, extractFileExtension } from "../work-items";
 import type { TAttachmentPreviewItem } from "../work-items";
 
-export const IntakePublishForm: React.FC<TIntakePublishFormProps> = ({
+export function IntakePublishForm({
   isPreview = false,
   projectName,
   projectLogo,
@@ -26,7 +26,7 @@ export const IntakePublishForm: React.FC<TIntakePublishFormProps> = ({
   onFileUpload,
   className = "",
   projectCoverImageFallback,
-}) => {
+}: TIntakePublishFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const methods = useForm<{
@@ -382,4 +382,4 @@ export const IntakePublishForm: React.FC<TIntakePublishFormProps> = ({
       </FormProvider>
     </div>
   );
-};
+}

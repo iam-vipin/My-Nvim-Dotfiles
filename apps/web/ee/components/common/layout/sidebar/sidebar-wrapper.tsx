@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // utils
@@ -10,7 +8,7 @@ type TSidebarWrapperProps = {
   isSidebarOpen: boolean;
 };
 
-export const SidebarWrapper: FC<TSidebarWrapperProps> = (props) => {
+export function SidebarWrapper(props: TSidebarWrapperProps) {
   const { children, isSidebarOpen } = props;
   return (
     <div
@@ -26,4 +24,4 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = (props) => {
       {children}
     </div>
   );
-};
+}

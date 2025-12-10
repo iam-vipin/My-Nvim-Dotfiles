@@ -15,7 +15,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const LineChartAppearanceConfig: React.FC<Props> = (props) => {
+export function LineChartAppearanceConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -103,4 +103,4 @@ export const LineChartAppearanceConfig: React.FC<Props> = (props) => {
       />
     </>
   );
-};
+}

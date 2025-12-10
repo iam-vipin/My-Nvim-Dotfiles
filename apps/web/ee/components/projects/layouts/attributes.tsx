@@ -35,7 +35,7 @@ type Props = {
   displayProperties: { [key: string]: boolean };
 };
 
-export const Attributes: React.FC<Props> = observer((props) => {
+export const Attributes = observer(function Attributes(props: Props) {
   const {
     project,
     isArchived,

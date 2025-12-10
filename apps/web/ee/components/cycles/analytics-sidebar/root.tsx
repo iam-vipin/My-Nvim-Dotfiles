@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
@@ -11,14 +10,14 @@ type Props = {
   cycleId: string;
 };
 
-export const SidebarChartRoot: FC<Props> = observer((props) => {
+export const SidebarChartRoot = observer(function SidebarChartRoot(props: Props) {
   const { workspaceSlug, projectId, cycleId } = props;
 
   const isFeatureEnabled = useFlag(workspaceSlug.toString(), "CYCLE_PROGRESS_CHARTS");
 
   const SidebarChart = useMemo(
-    () =>
-      lazy(() =>
+    function SidebarChart() {
+      return lazy(() =>
         isFeatureEnabled
           ? import(`ee/components/cycles/analytics-sidebar/base`).then((module) => ({
               default: module["SidebarChart"],
@@ -26,7 +25,8 @@ export const SidebarChartRoot: FC<Props> = observer((props) => {
           : import("@/ce/components/cycles/analytics-sidebar/base").then((module) => ({
               default: module["SidebarChart"],
             }))
-      ),
+      );
+    },
     [isFeatureEnabled]
   );
 

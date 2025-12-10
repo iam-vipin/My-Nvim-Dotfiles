@@ -212,7 +212,7 @@ export class AsanaDataStore implements IAsanaDataStore {
       this.isLoading = false;
       return workspaces;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -248,7 +248,7 @@ export class AsanaDataStore implements IAsanaDataStore {
       this.isLoading = false;
       return projects;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -287,7 +287,7 @@ export class AsanaDataStore implements IAsanaDataStore {
         return undefined;
       }
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -323,7 +323,7 @@ export class AsanaDataStore implements IAsanaDataStore {
       this.isLoading = false;
       return priorities;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -353,7 +353,7 @@ export class AsanaDataStore implements IAsanaDataStore {
       this.isLoading = false;
       return issueCount?.num_tasks;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -385,7 +385,7 @@ export class AsanaDataStore implements IAsanaDataStore {
       }
       return additionalUserResponse;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
     }
   };
 }

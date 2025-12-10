@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { TBaseActivityVerbs } from "@plane/types";
 // components
@@ -14,7 +12,7 @@ type Props = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const InitiativeActivityItem = observer((props: Props) => {
+export const InitiativeActivityItem = observer(function InitiativeActivityItem(props: Props) {
   const { activity, ends } = props;
   // return if activity details are not available
   if (!activity) return <></>;

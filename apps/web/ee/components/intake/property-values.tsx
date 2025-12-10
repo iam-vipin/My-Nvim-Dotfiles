@@ -8,9 +8,7 @@ import { cn, getFormattedWorkItemProperties } from "@plane/utils";
 // local imports
 import { IssuePropertyLogo } from "../issue-types/properties/common/issue-property-logo";
 
-const PropertyDetail: React.FC<{ property: Partial<TIssueProperty<EIssuePropertyType>> | undefined }> = ({
-  property,
-}) => {
+function PropertyDetail({ property }: { property: Partial<TIssueProperty<EIssuePropertyType>> | undefined }) {
   if (!property) return null;
   return (
     <>
@@ -32,9 +30,9 @@ const PropertyDetail: React.FC<{ property: Partial<TIssueProperty<EIssueProperty
       </span>
     </>
   );
-};
+}
 
-export const IntakePropertyValues: React.FC<TIssuePropertyDisplayContext> = observer((props) => {
+export const IntakePropertyValues = observer(function IntakePropertyValues(props: TIssuePropertyDisplayContext) {
   const { entries, workItemType } = props;
 
   const propertiesWithValues = getFormattedWorkItemProperties(workItemType, entries);

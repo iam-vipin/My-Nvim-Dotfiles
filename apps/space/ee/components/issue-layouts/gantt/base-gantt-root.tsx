@@ -22,7 +22,7 @@ interface IBaseGanttRoot {
   anchor: string;
 }
 
-export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
+export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRoot) {
   const { anchor } = props;
   // rstore
   const {
@@ -66,7 +66,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   if (!Array.isArray(issueIds)) return null;
 
   const getBlockById = useCallback(
-    (id: string, currentViewData?: ChartDataType | undefined) => {
+    (id: string, currentViewData?: ChartDataType) => {
       const issue = getIssueById(id);
 
       if (!issue) return;

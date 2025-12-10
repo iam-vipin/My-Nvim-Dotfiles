@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -20,7 +18,7 @@ type Props = {
   isSearching: boolean;
 };
 
-export const EpicSearchModalEmptyState: FC<Props> = ({ issues, searchTerm, debouncedSearchTerm, isSearching }) => {
+export function EpicSearchModalEmptyState({ issues, searchTerm, debouncedSearchTerm, isSearching }: Props) {
   // plane hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -28,9 +26,9 @@ export const EpicSearchModalEmptyState: FC<Props> = ({ issues, searchTerm, debou
   const searchResolvedPath = resolvedTheme === "light" ? searchLight : searchDark;
   const epicsResolvedPath = resolvedTheme === "light" ? issuesLight : issuesDark;
 
-  const EmptyStateContainer = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>
-  );
+  function EmptyStateContainer({ children }: { children: React.ReactNode }) {
+    return <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>;
+  }
 
   if (issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching) {
     return (
@@ -45,4 +43,4 @@ export const EpicSearchModalEmptyState: FC<Props> = ({ issues, searchTerm, debou
       </EmptyStateContainer>
     );
   }
-};
+}

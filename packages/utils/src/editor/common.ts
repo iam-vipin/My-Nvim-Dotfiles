@@ -8,22 +8,22 @@ type TEditorSrcArgs = {
 };
 
 /**
- * @description generate the file source using assetId
+ * @description generate the file source using assetId for inline viewing
  * @param {TEditorSrcArgs} args
  */
 export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
   const { assetId, projectId, workspaceSlug } = args;
   let url: string | undefined = "";
   if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/?disposition=inline`);
   } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/?disposition=inline`);
   }
   return url;
 };
 
 /**
- * @description generate the file source using assetId
+ * @description generate the file source using assetId for downloading
  * @param {TEditorSrcArgs} args
  */
 export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefined => {
@@ -37,7 +37,7 @@ export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefi
   return url;
 };
 
-export const getTextContent = (jsx: React.ReactNode | React.ReactNode | null | undefined): string => {
+export const getTextContent = (jsx: React.ReactNode | null | undefined): string => {
   if (!jsx) return "";
 
   const div = document.createElement("div");

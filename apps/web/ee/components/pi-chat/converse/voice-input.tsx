@@ -19,14 +19,25 @@ type TProps = {
   isFullScreen: boolean;
   focus: TFocus;
   loader: TPiLoaders;
+  mode: string;
   setLoader: Dispatch<SetStateAction<TPiLoaders>>;
-  createNewChat: (focus: TFocus, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
+  createNewChat: (focus: TFocus, mode: string, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
 };
 const piChatService = new PiChatService();
 
-const AudioRecorder = (props: TProps) => {
-  const { workspaceId, chatId, editorRef, createNewChat, isProjectLevel, isFullScreen, focus, loader, setLoader } =
-    props;
+function AudioRecorder(props: TProps) {
+  const {
+    workspaceId,
+    chatId,
+    editorRef,
+    createNewChat,
+    isProjectLevel,
+    isFullScreen,
+    focus,
+    loader,
+    setLoader,
+    mode,
+  } = props;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [waveformData, setWaveformData] = useState<{ index: number; amplitude: number }[]>([]);
@@ -111,7 +122,7 @@ const AudioRecorder = (props: TProps) => {
     try {
       setLoader("transcribing");
       let chatIdToUse = chatId;
-      if (!chatIdToUse) chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
+      if (!chatIdToUse) chatIdToUse = await createNewChat(focus, mode, isProjectLevel, workspaceId);
       const response = await piChatService.transcribeAudio(workspaceId, formData, chatIdToUse);
       editorRef.current?.appendText(" " + response);
     } catch (err) {
@@ -182,6 +193,6 @@ const AudioRecorder = (props: TProps) => {
       )}
     </div>
   );
-};
+}
 
 export default AudioRecorder;

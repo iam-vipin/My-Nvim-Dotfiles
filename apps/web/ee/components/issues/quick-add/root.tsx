@@ -24,7 +24,7 @@ export type TQuickAddIssueFormRoot = {
   isEpic?: boolean;
 };
 
-export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props) => {
+export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(props: TQuickAddIssueFormRoot) {
   const {
     isOpen,
     layout,

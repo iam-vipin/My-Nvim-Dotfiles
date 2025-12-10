@@ -21,7 +21,7 @@ type TWorkloadDetailItemProps = {
   isLoading?: boolean;
 };
 
-const WorkloadDetailItem = (props: TWorkloadDetailItemProps) => {
+function WorkloadDetailItem(props: TWorkloadDetailItemProps) {
   const { title, icon, value, containerClassName, titleClassName, valueClassName, isLoading } = props;
 
   return (
@@ -39,13 +39,15 @@ const WorkloadDetailItem = (props: TWorkloadDetailItemProps) => {
       )}
     </div>
   );
-};
+}
 
 type TTeamspaceProgressSummaryProps = {
   teamspaceId: string;
 };
 
-export const TeamspaceProgressSummary: React.FC<TTeamspaceProgressSummaryProps> = observer((props) => {
+export const TeamspaceProgressSummary = observer(function TeamspaceProgressSummary(
+  props: TTeamspaceProgressSummaryProps
+) {
   const { teamspaceId } = props;
   // store hooks
   const { getTeamspaceEntitiesLoaderById } = useTeamspaces();

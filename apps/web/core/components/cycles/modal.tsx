@@ -33,7 +33,7 @@ type CycleModalProps = {
 // services
 const cycleService = new CycleService();
 
-export const CycleCreateUpdateModal: React.FC<CycleModalProps> = observer((props) => {
+export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(props: CycleModalProps) {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);

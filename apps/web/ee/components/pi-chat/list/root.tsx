@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import PiChatList from "./list";
 
-export const AllChats = observer(() => {
+export const AllChats = observer(function AllChats() {
   // router
   const { workspaceSlug } = useParams();
   // store hooks

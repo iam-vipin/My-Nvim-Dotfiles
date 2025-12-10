@@ -13,7 +13,7 @@ import { useFlag } from "@/plane-web/hooks/store";
 type Props = {
   control: Control<IProjectView, any> | Control<IWorkspaceView, any>;
 };
-export const AccessController = (props: Props) => {
+export function AccessController(props: Props) {
   const { control } = props;
   // plane web hooks
   const { t } = useTranslation();
@@ -33,4 +33,4 @@ export const AccessController = (props: Props) => {
       )}
     />
   );
-};
+}

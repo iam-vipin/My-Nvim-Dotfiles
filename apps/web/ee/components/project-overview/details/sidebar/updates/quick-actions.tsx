@@ -11,7 +11,7 @@ type TProps = {
     remove: (updateId: string) => Promise<void>;
   };
 };
-export const UpdateQuickActions = (props: TProps) => {
+export function UpdateQuickActions(props: TProps) {
   const { operations, updateId } = props;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -56,4 +56,4 @@ export const UpdateQuickActions = (props: TProps) => {
       </CustomMenu>
     </>
   );
-};
+}

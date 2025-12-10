@@ -10,7 +10,7 @@ type TInlineMathComponentProps = TMathComponentProps & {
   latex: string;
 };
 
-export const InlineMathView: FC<TInlineMathComponentProps> = ({ latex, onClick, isEditable }) => {
+export function InlineMathView({ latex, onClick, isEditable }: TInlineMathComponentProps) {
   const { mathRef } = useMathRenderer<HTMLSpanElement>(latex, { displayMode: false, throwOnError: false });
 
   return (
@@ -18,4 +18,4 @@ export const InlineMathView: FC<TInlineMathComponentProps> = ({ latex, onClick, 
       <span ref={mathRef} role="math" aria-label={`Inline math equation: ${latex}`} />
     </InlineMathContainer>
   );
-};
+}

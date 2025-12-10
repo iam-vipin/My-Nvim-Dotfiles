@@ -21,7 +21,7 @@ interface UploadedFile {
   file: File;
 }
 
-export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceName }) => {
+export const UploadZip = observer(function UploadZip({ driverType, serviceName }: TZipImporterProps) {
   // hooks
   const { t } = useTranslation();
 

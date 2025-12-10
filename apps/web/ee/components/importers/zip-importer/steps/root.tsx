@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Stepper } from "@/plane-web/components/importers/ui";
@@ -8,7 +7,7 @@ import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-import
 import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
 
-export const StepsRoot: FC<TZipImporterProps> = observer(({ driverType, logo, serviceName }) => {
+export const StepsRoot = observer(function StepsRoot({ driverType, logo, serviceName }: TZipImporterProps) {
   const { currentStepIndex, resetImporterData } = useZipImporter(driverType);
 
   return (

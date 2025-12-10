@@ -1,7 +1,7 @@
 import { FilledCheck, FilledCross } from "@plane/propel/icons";
 import { Spinner } from "@plane/ui";
 
-export const Toast = (props: { error: string | null; isSaving: boolean }) => {
+export function Toast(props: { error: string | null; isSaving: boolean }) {
   const { error, isSaving } = props;
 
   if (isSaving) {
@@ -28,4 +28,4 @@ export const Toast = (props: { error: string | null; isSaving: boolean }) => {
       </div>
     );
   }
-};
+}

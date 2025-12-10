@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
@@ -7,7 +5,7 @@ import { cn } from "@plane/utils";
 import type { TPopoverMenuOptions } from "@/plane-web/components/marketplace";
 // helpers
 
-export const ApplicationTileMenuItem: FC<TPopoverMenuOptions> = observer((props) => {
+export const ApplicationTileMenuItem = observer(function ApplicationTileMenuItem(props: TPopoverMenuOptions) {
   const { type, label = "", isActive, prependIcon, appendIcon, onClick, isDanger } = props;
 
   if (!isActive) {

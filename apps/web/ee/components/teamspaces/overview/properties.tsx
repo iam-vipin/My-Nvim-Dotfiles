@@ -26,7 +26,7 @@ type TTeamsOverviewPropertiesProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamsOverviewProperties = observer((props: TTeamsOverviewPropertiesProps) => {
+export const TeamsOverviewProperties = observer(function TeamsOverviewProperties(props: TTeamsOverviewPropertiesProps) {
   const { teamspaceId, isEditingAllowed } = props;
   // router
   const { workspaceSlug } = useParams();

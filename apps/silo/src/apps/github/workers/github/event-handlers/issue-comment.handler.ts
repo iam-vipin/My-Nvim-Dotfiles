@@ -23,14 +23,14 @@ export type GithubCommentWebhookPayload = GithubWebhookPayload[
 
 export const handleIssueComment = async (store: Store, action: GithubCommentAction, data: unknown) => {
   // Check if this webhook was triggered by our own Plane->GitHub sync (loop prevention)
-  // @ts-expect-error
+  // @ts-expect-error - Ignoring ts error for data type
   if (data && data.comment && data.comment.id) {
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for store get
     const exist = await store.get(`silo:comment:gh:${data.comment.id}`);
     if (exist) {
       logger.info(`[ISSUE-COMMENT] Event triggered by Plane->GitHub sync, skipping to prevent loop`);
       // Remove the key so future legitimate webhooks are not blocked
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for store del
       await store.del(`silo:comment:gh:${data.comment.id}`);
       return true;
     }
@@ -71,7 +71,7 @@ export const syncCommentWithPlane = async (
 
   const { workspaceConnection, entityConnectionForRepository: entityConnection } =
     await getConnDetailsForGithubToPlaneSync({
-      wsAdminCredentials: wsAdminCredentials as TWorkspaceCredential,
+      wsAdminCredentials: wsAdminCredentials,
       type: EGithubEntityConnectionType.PROJECT_ISSUE_SYNC,
       repositoryId: data.repository.id.toString(),
       isEnterprise: data.isEnterprise,
@@ -91,11 +91,7 @@ export const syncCommentWithPlane = async (
 
   let planeClient: PlaneClient = await getPlaneAPIClient(wsAdminCredentials, ghIntegrationKey);
 
-  const ghService = getGithubService(
-    workspaceConnection as TGithubWorkspaceConnection,
-    data.installation?.id.toString(),
-    data.isEnterprise
-  );
+  const ghService = getGithubService(workspaceConnection, data.installation?.id.toString(), data.isEnterprise);
   const commentHtml = await ghService.getCommentHtml(
     data.repository.owner.login,
     data.repository.name,

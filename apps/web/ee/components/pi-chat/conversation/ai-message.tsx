@@ -22,7 +22,7 @@ type TProps = {
   isLoading?: boolean;
   handleConvertToPage?: () => void;
 };
-export const AiMessage = observer((props: TProps) => {
+export const AiMessage = observer(function AiMessage(props: TProps) {
   // props
   const { dialogue, id = "", isLatest, isLoading, handleConvertToPage } = props;
   // store
@@ -30,15 +30,15 @@ export const AiMessage = observer((props: TProps) => {
   const { activeChatId, isPiTyping } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
-  const { query_id, answer, reasoning, isPiThinking, feedback } = dialogue || {};
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const { query_id, answer, reasoning, current_tick, isPiThinking, feedback } = dialogue || {};
 
   return (
     <div className="flex gap-4" id={id}>
       <div className="flex flex-col text-base break-words w-full">
         {/* Message */}
         <div className="flex flex-col gap-4">
-          {!isLoading && <ReasoningBlock reasoning={reasoning} isThinking={isPiThinking} />}
+          {!isLoading && <ReasoningBlock reasoning={reasoning} currentTick={current_tick} isThinking={isPiThinking} />}
           <Markdown
             remarkPlugins={[remarkGfm]}
             className="pi-chat-root [&>*:first-child]:mt-0 animate-fade-in"
@@ -53,7 +53,7 @@ export const AiMessage = observer((props: TProps) => {
                   <table className="min-w-full border-collapse">{children}</table>
                 </div>
               ),
-              th: ({ children }) => <th className="px-2 py-3 border-custom-border-200">{children}</th>,
+              th: ({ children }) => <th className="px-2 py-3 border-custom-border-200"> {children}</th>,
               td: ({ children }) => <td className="px-2 py-3 border-custom-border-200">{children}</td>,
             }}
           >

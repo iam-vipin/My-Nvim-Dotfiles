@@ -27,6 +27,7 @@ jobs:
     env:
       TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
       TURBO_SCM_HEAD: ${{ github.sha }}
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,14 +44,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # - name: Lint Affected
-      #   run: pnpm turbo run check:lint --affected
+      - name: Build Affected
+        run: pnpm turbo run build --affected
 
-      # - name: Check Affected format
-      #   run: pnpm turbo run check:format --affected
+      - name: Lint Affected
+        run: pnpm turbo run check:lint --affected
+
+      - name: Check Affected format
+        run: pnpm turbo run check:format --affected
 
       - name: Check Affected types
         run: pnpm turbo run check:types --affected
-
-      - name: Build Affected
-        run: pnpm turbo run build --affected

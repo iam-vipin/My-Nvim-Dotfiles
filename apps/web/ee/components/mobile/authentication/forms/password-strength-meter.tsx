@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo } from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
@@ -10,7 +8,7 @@ type TMobilePasswordStrengthMeter = {
   isFocused?: boolean;
 };
 
-export const MobilePasswordStrengthMeter: FC<TMobilePasswordStrengthMeter> = (props) => {
+export function MobilePasswordStrengthMeter(props: TMobilePasswordStrengthMeter) {
   const { password, isFocused = false } = props;
 
   // derived values
@@ -72,4 +70,4 @@ export const MobilePasswordStrengthMeter: FC<TMobilePasswordStrengthMeter> = (pr
       </div>
     </div>
   );
-};
+}

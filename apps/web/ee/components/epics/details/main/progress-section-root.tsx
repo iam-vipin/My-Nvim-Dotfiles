@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ type Props = {
   epicId: string;
 };
 
-export const EpicProgressSection: FC<Props> = observer((props) => {
+export const EpicProgressSection = observer(function EpicProgressSection(props: Props) {
   const { epicId } = props;
   // store hooks
   const {

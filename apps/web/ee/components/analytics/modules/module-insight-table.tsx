@@ -21,9 +21,9 @@ import { UserAvatarName } from "../user-avatar-name";
 
 const analyticsService = new AnalyticsService();
 
-const ModulesInsightTable = observer(() => {
+const ModulesInsightTable = observer(function ModulesInsightTable() {
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug;
   const { t } = useTranslation();
   const { selectedDuration, selectedProjects } = useAnalytics();
   const { getUserDetails } = useMember();

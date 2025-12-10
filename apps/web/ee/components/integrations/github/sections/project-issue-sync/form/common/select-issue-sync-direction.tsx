@@ -1,5 +1,3 @@
-"use client";
-
 import { TriangleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { RadioInput } from "@/components/estimates/radio-select";
@@ -9,7 +7,7 @@ type TBidirectionalIssueSync = {
   onChange: (value: boolean) => void;
 };
 
-export const SelectIssueSyncDirection = ({ value, onChange }: TBidirectionalIssueSync) => {
+export function SelectIssueSyncDirection({ value, onChange }: TBidirectionalIssueSync) {
   const { t } = useTranslation();
   const options = [
     {
@@ -52,4 +50,4 @@ export const SelectIssueSyncDirection = ({ value, onChange }: TBidirectionalIssu
       )}
     </div>
   );
-};
+}

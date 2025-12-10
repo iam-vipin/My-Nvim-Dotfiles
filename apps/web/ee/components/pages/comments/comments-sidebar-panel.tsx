@@ -33,7 +33,7 @@ export type ThreadsSidebarProps = {
   handlers?: CommentHandlers;
 };
 
-export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
+export const PageCommentsSidebarPanel = observer(function PageCommentsSidebarPanel({
   page,
   selectedThreadId,
   pendingComment,

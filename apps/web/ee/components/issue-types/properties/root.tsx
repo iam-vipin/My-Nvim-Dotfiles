@@ -44,7 +44,7 @@ const defaultIssueProperty: Partial<TIssueProperty<EIssuePropertyType>> = {
   is_required: false,
 };
 
-export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
+export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: TIssuePropertiesRoot) {
   const { issueTypeId, propertiesLoader, getWorkItemTypeById } = props;
   // states
   const [issuePropertyCreateList, setIssuePropertyCreateList] = useState<TIssuePropertyCreateList[]>([]);
@@ -63,9 +63,9 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   const scrollIntoElementView = () => {
     if (lastElementRef.current) {
       lastElementRef.current.scrollIntoView({ behavior: "auto", block: "nearest", inline: "start" });
-      const propertyTitleDropdownElement = lastElementRef.current.querySelector(
+      const propertyTitleDropdownElement = lastElementRef.current.querySelector<HTMLButtonElement>(
         "button.property-title-dropdown"
-      ) as HTMLButtonElement | null;
+      );
       setTimeout(() => {
         propertyTitleDropdownElement?.focus();
         propertyTitleDropdownElement?.click();

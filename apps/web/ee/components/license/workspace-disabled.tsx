@@ -1,7 +1,4 @@
-"use client";
-
 import { useState } from "react";
-import { ProjectAppSidebar } from "app/(all)/[workspaceSlug]/(projects)/_sidebar";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
@@ -13,19 +10,19 @@ import { AlertModalCore } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web components
-import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
+import { GlobalModals } from "@/plane-web/components/common/modal/global";
 
-export const WorkspaceDisabledPage: React.FC = observer(() => {
+export const WorkspaceDisabledPage = observer(function WorkspaceDisabledPage() {
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   // state
-  const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
   const [isDowngradeModalOpen, toggleDowngradeModal] = useState(false);
   // hooks
   const { allowPermissions } = useUserPermissions();
   const { getWorkspaceBySlug } = useWorkspace();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const workspaceSlug = routerWorkspaceSlug?.toString();
   const workspace = getWorkspaceBySlug(workspaceSlug);
@@ -42,6 +39,7 @@ export const WorkspaceDisabledPage: React.FC = observer(() => {
 
   return (
     <>
+      <GlobalModals workspaceSlug={workspaceSlug} />
       <AlertModalCore
         variant="danger"
         isOpen={isDowngradeModalOpen}
@@ -55,9 +53,7 @@ export const WorkspaceDisabledPage: React.FC = observer(() => {
         handleSubmit={handleRemoveMembers}
         isSubmitting={false}
       />
-      <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className="relative flex h-full w-full overflow-hidden">
-        <ProjectAppSidebar />
         <main className="relative flex h-full w-full flex-col justify-center items-center overflow-hidden bg-custom-background-100">
           <div className="flex flex-col gap-12 items-center justify-center py-6 max-w-lg">
             <PlaneLockup className="h-5 w-auto text-custom-text-100" />

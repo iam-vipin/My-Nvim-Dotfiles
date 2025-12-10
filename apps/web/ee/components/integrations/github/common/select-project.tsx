@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
@@ -21,7 +19,7 @@ type TSelectProject = {
   excludeProjectIds?: string[];
 };
 
-export const SelectProject: FC<TSelectProject> = observer((props) => {
+export const SelectProject = observer(function SelectProject(props: TSelectProject) {
   // props
   const { value, handleChange, isEnterprise, excludeProjectIds } = props;
 

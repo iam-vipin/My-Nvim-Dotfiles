@@ -16,7 +16,7 @@ import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-lay
 import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
-export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
+export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IProjectAuthWrapper) {
   // props
   const { workspaceSlug, projectId, children } = props;
   // store hooks

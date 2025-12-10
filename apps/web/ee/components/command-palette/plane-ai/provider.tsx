@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ import { usePlaneAiAppPowerKCommands } from "./config/commands";
  * MobX-aware wrapper for the Command Palette modal
  * Connects the modal to the MobX store
  */
-export const PlaneAiAppPowerKProvider = observer(() => {
+export const PlaneAiAppPowerKProvider = observer(function PlaneAiAppPowerKProvider() {
   // navigation
   const router = useAppRouter();
   const params = useParams();

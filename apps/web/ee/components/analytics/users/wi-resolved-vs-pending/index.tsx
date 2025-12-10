@@ -24,114 +24,111 @@ interface WiResolvedVsPendingProps {
   selectedDurationLabel: string;
 }
 
-const WiResolvedVsPending = observer(
-  ({
-    data: resolvedVsPendingData,
-    isLoading: isResolvedVsPendingLoading,
-    selectedDurationLabel,
-  }: WiResolvedVsPendingProps) => {
-    const { t } = useTranslation();
-    const { getUserDetails } = useMember();
+const WiResolvedVsPending = observer(function WiResolvedVsPending({
+  data: resolvedVsPendingData,
+  isLoading: isResolvedVsPendingLoading,
+  selectedDurationLabel,
+}: WiResolvedVsPendingProps) {
+  const { t } = useTranslation();
+  const { getUserDetails } = useMember();
 
-    /**
-     * derived values
-     */
+  /**
+   * derived values
+   */
 
-    const resolvedVsPendingParsedData: TChartData<string, string>[] = useMemo(() => {
-      if (!resolvedVsPendingData) return [];
-      return resolvedVsPendingData.map((datum) => {
-        const userDetails = getUserDetails(datum.user_id);
-        return {
-          ...datum,
-          pending: datum.started_work_items + datum.un_started_work_items + datum.backlog_work_items,
-          total:
-            datum.completed_work_items +
-            datum.started_work_items +
-            datum.un_started_work_items +
-            datum.backlog_work_items,
-          name: userDetails?.display_name ?? "",
-        };
-      });
-    }, [resolvedVsPendingData, getUserDetails]);
+  const resolvedVsPendingParsedData: TChartData<string, string>[] = useMemo(() => {
+    if (!resolvedVsPendingData) return [];
+    return resolvedVsPendingData.map((datum) => {
+      const userDetails = getUserDetails(datum.user_id);
+      return {
+        ...datum,
+        pending: datum.started_work_items + datum.un_started_work_items + datum.backlog_work_items,
+        total:
+          datum.completed_work_items +
+          datum.started_work_items +
+          datum.un_started_work_items +
+          datum.backlog_work_items,
+        name: userDetails?.display_name ?? "",
+      };
+    });
+  }, [resolvedVsPendingData, getUserDetails]);
 
-    const CustomStyledXAxisTick = useCallback(
-      ({ x, y, payload }: any) => (
-        <g transform={`translate(${x - 8},${y})`}>
-          <foreignObject width={100} height={100}>
-            <UserAvatarName userId={payload.value} showName={false} />
-          </foreignObject>
-        </g>
-      ),
-      []
-    );
-
+  const CustomStyledXAxisTick = useCallback(function CustomStyledXAxisTick({ x, y, payload }: any) {
     return (
-      <AnalyticsSectionWrapper
-        title={t("workspace_analytics.workitem_resolved_vs_pending")}
-        subtitle={selectedDurationLabel}
-        className="col-span-1"
-      >
-        {isResolvedVsPendingLoading ? (
-          <ChartLoader />
-        ) : resolvedVsPendingParsedData && resolvedVsPendingParsedData.length > 0 ? (
-          <BarChart
-            className="h-[350px] w-full"
-            data={resolvedVsPendingParsedData}
-            bars={[
-              {
-                key: "pending",
-                label: "Pending",
-                fill: "#D7D7D7",
-                stackId: "bar-one",
-                textClassName: "",
-              },
-              {
-                key: "completed_work_items",
-                label: "Resolved",
-                fill: "#7CC474",
-                stackId: "bar-one",
-                textClassName: "",
-              },
-            ]}
-            xAxis={{
-              key: "user_id",
-              label: t("common.users"),
-            }}
-            yAxis={{
-              key: "count",
-              label: t("common.no_of", { entity: t("work_items") }),
-              offset: -30,
-              dx: -22,
-            }}
-            customTicks={{
-              x: CustomStyledXAxisTick,
-            }}
-            legend={{
-              align: "left",
-              verticalAlign: "bottom",
-              layout: "horizontal",
-              wrapperStyles: {
-                justifyContent: "start",
-                alignContent: "start",
-                paddingLeft: "40px",
-                paddingTop: "10px",
-              },
-            }}
-            customTooltipContent={({ active, label, payload }) => (
-              <CustomTooltip active={active} label={label} payload={payload} member={getUserDetails(label)} />
-            )}
-          />
-        ) : (
-          <EmptyStateCompact
-            assetKey="unknown"
-            assetClassName="size-20"
-            rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
-            title={t("workspace_empty_state.analytics_work_items.title")}
-          />
-        )}
-      </AnalyticsSectionWrapper>
+      <g transform={`translate(${x - 8},${y})`}>
+        <foreignObject width={100} height={100}>
+          <UserAvatarName userId={payload.value} showName={false} />
+        </foreignObject>
+      </g>
     );
-  }
-);
+  }, []);
+
+  return (
+    <AnalyticsSectionWrapper
+      title={t("workspace_analytics.workitem_resolved_vs_pending")}
+      subtitle={selectedDurationLabel}
+      className="col-span-1"
+    >
+      {isResolvedVsPendingLoading ? (
+        <ChartLoader />
+      ) : resolvedVsPendingParsedData && resolvedVsPendingParsedData.length > 0 ? (
+        <BarChart
+          className="h-[350px] w-full"
+          data={resolvedVsPendingParsedData}
+          bars={[
+            {
+              key: "pending",
+              label: "Pending",
+              fill: "#D7D7D7",
+              stackId: "bar-one",
+              textClassName: "",
+            },
+            {
+              key: "completed_work_items",
+              label: "Resolved",
+              fill: "#7CC474",
+              stackId: "bar-one",
+              textClassName: "",
+            },
+          ]}
+          xAxis={{
+            key: "user_id",
+            label: t("common.users"),
+          }}
+          yAxis={{
+            key: "count",
+            label: t("common.no_of", { entity: t("work_items") }),
+            offset: -30,
+            dx: -22,
+          }}
+          customTicks={{
+            x: CustomStyledXAxisTick,
+          }}
+          legend={{
+            align: "left",
+            verticalAlign: "bottom",
+            layout: "horizontal",
+            wrapperStyles: {
+              justifyContent: "start",
+              alignContent: "start",
+              paddingLeft: "40px",
+              paddingTop: "10px",
+            },
+          }}
+          customTooltipContent={({ active, label, payload }) => (
+            <CustomTooltip active={active} label={label} payload={payload} member={getUserDetails(label)} />
+          )}
+        />
+      ) : (
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace_empty_state.analytics_work_items.title")}
+        />
+      )}
+    </AnalyticsSectionWrapper>
+  );
+});
 
 export default WiResolvedVsPending;

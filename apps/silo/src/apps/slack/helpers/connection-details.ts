@@ -44,8 +44,8 @@ export const getConnectionDetails = async (
   // Create admin-based SlackService that we can use regardless of user credential state
   const refreshHandler = getRefreshCredentialHandler(
     workspaceConnection.workspace_id,
-    adminCredentials.user_id as string,
-    adminCredentials.target_access_token as string
+    adminCredentials.user_id,
+    adminCredentials.target_access_token
   );
 
   const slackService = createSlackService(
@@ -130,7 +130,7 @@ export const findPlaneUserId = async (
   slackUser: { id: string; email?: string }
 ): Promise<string | null> => {
   // Check for the userId in the workspace connection map
-  const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig;
+  const config = workspaceConnection.config;
 
   let planeUser: string | null = null;
 
@@ -190,7 +190,7 @@ export const updateUserMap = async (
   slackUserId: string | null
 ): Promise<void> => {
   const existingConfig = workspaceConnection.config || {};
-  const existingUserMap = (existingConfig as TSlackWorkspaceConnectionConfig)?.userMap || [];
+  const existingUserMap = existingConfig?.userMap || [];
   // If both IDs are null, no changes needed
   if (!planeUserId && !slackUserId) return;
   // Filter out any existing mappings that match either ID being removed

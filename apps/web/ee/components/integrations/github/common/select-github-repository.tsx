@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -22,7 +20,7 @@ type TSelectGithubRepository = {
   excludeGithubRepositoryIds?: string[];
 };
 
-export const SelectGithubRepository: FC<TSelectGithubRepository> = observer((props) => {
+export const SelectGithubRepository = observer(function SelectGithubRepository(props: TSelectGithubRepository) {
   // props
   const { value, handleChange, isEnterprise, excludeGithubRepositoryIds } = props;
 

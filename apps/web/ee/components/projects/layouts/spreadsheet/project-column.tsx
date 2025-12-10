@@ -16,7 +16,7 @@ type Props = {
   updateProject: ((projectId: string | null, data: Partial<TProject>) => Promise<TProject>) | undefined;
 };
 
-export const ProjectColumn = observer((props: Props) => {
+export const ProjectColumn = observer(function ProjectColumn(props: Props) {
   const { projectDetails, property, updateProject } = props;
   // router
   const { workspaceSlug } = useParams();

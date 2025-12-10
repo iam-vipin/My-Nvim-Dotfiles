@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // ui
@@ -15,7 +13,9 @@ type TCustomerAdditionalPropertiesProps = {
   workspaceSlug: string;
 };
 
-export const CustomerAdditionalProperties: React.FC<TCustomerAdditionalPropertiesProps> = observer((props) => {
+export const CustomerAdditionalProperties = observer(function CustomerAdditionalProperties(
+  props: TCustomerAdditionalPropertiesProps
+) {
   const { workspaceSlug, customerId } = props;
   // store hooks
   const { customerPropertyValues, setCustomerPropertyValues } = useCustomerModal();

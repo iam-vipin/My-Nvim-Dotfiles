@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -38,7 +36,7 @@ export interface IInitiativeLabels {
   fullHeight?: boolean;
 }
 
-export const InitiativeLabels: React.FC<IInitiativeLabels> = observer((props) => {
+export const InitiativeLabels = observer(function InitiativeLabels(props: IInitiativeLabels) {
   const {
     workspaceSlug,
     value,
@@ -87,90 +85,96 @@ export const InitiativeLabels: React.FC<IInitiativeLabels> = observer((props) =>
   const initiativeLabels = getInitiativeLabelsArray(storeLabels, defaultOptions as TInitiativeLabel[]);
 
   const NoLabel = useMemo(
-    () => (
-      <Tooltip
-        position="top"
-        tooltipHeading={t("common.labels")}
-        tooltipContent="None"
-        isMobile={isMobile}
-        renderByDefault={false}
-      >
-        <div
-          className={cn(
-            "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
-            fullWidth && "w-full"
-          )}
+    function NoLabel() {
+      return (
+        <Tooltip
+          position="top"
+          tooltipHeading={t("common.labels")}
+          tooltipContent="None"
+          isMobile={isMobile}
+          renderByDefault={false}
         >
-          <Tags className="h-3.5 w-3.5" strokeWidth={2} />
-          {placeholderText}
-        </div>
-      </Tooltip>
-    ),
+          <div
+            className={cn(
+              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+              fullWidth && "w-full"
+            )}
+          >
+            <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+            {placeholderText}
+          </div>
+        </Tooltip>
+      );
+    },
     [placeholderText, fullWidth, noLabelBorder, isMobile]
   );
 
   const LabelSummary = useMemo(
-    () => (
-      <div
-        className={cn(
-          "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-xs",
-          fullWidth && "w-full",
-          noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
-          disabled ? "cursor-not-allowed" : "cursor-pointer"
-        )}
-      >
-        <Tooltip
-          isMobile={isMobile}
-          position="top"
-          tooltipHeading={t("common.labels")}
-          tooltipContent={initiativeLabels
-            ?.filter((l) => value.includes(l?.id))
-            .map((l) => l?.name)
-            .join(", ")}
-          renderByDefault={false}
+    function LabelSummary() {
+      return (
+        <div
+          className={cn(
+            "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-xs",
+            fullWidth && "w-full",
+            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+            disabled ? "cursor-not-allowed" : "cursor-pointer"
+          )}
         >
-          <div className="flex h-full items-center gap-1.5 text-custom-text-200">
-            <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-            {`${value.length} Labels`}
-          </div>
-        </Tooltip>
-      </div>
-    ),
+          <Tooltip
+            isMobile={isMobile}
+            position="top"
+            tooltipHeading={t("common.labels")}
+            tooltipContent={initiativeLabels
+              ?.filter((l) => value.includes(l?.id))
+              .map((l) => l?.name)
+              .join(", ")}
+            renderByDefault={false}
+          >
+            <div className="flex h-full items-center gap-1.5 text-custom-text-200">
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+              {`${value.length} Labels`}
+            </div>
+          </Tooltip>
+        </div>
+      );
+    },
     [fullWidth, disabled, noLabelBorder, isMobile, initiativeLabels, value]
   );
 
   const LabelItem = useCallback(
-    ({ label }: { label: TInitiativeLabel }) => (
-      <Tooltip
-        key={label.id}
-        position="top"
-        tooltipHeading={t("common.labels")}
-        tooltipContent={label?.name ?? ""}
-        isMobile={isMobile}
-        renderByDefault={renderByDefault}
-      >
-        <div
-          key={label?.id}
-          className={cn(
-            "flex overflow-hidden justify-center hover:bg-custom-background-80 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-xs",
-            !disabled && "cursor-pointer",
-            fullWidth && "w-full",
-            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
-          )}
+    function LabelItem({ label }: { label: TInitiativeLabel }) {
+      return (
+        <Tooltip
+          key={label.id}
+          position="top"
+          tooltipHeading={t("common.labels")}
+          tooltipContent={label?.name ?? ""}
+          isMobile={isMobile}
+          renderByDefault={renderByDefault}
         >
-          <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
-            <span
-              className="h-2 w-2 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor: label?.color ?? "#000000",
-              }}
-            />
-            <div className="line-clamp-1 inline-block w-auto max-w-[200px] truncate">{label?.name}</div>
+          <div
+            key={label?.id}
+            className={cn(
+              "flex overflow-hidden justify-center hover:bg-custom-background-80 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-xs",
+              !disabled && "cursor-pointer",
+              fullWidth && "w-full",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
+            )}
+          >
+            <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+              <span
+                className="h-2 w-2 flex-shrink-0 rounded-full"
+                style={{
+                  backgroundColor: label?.color ?? "#000000",
+                }}
+              />
+              <div className="line-clamp-1 inline-block w-auto max-w-[200px] truncate">{label?.name}</div>
+            </div>
           </div>
-        </div>
-      </Tooltip>
-    ),
+        </Tooltip>
+      );
+    },
     [disabled, fullWidth, isMobile, noLabelBorder, renderByDefault]
   );
 

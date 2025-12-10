@@ -18,7 +18,7 @@ type Props = {
   projectId: string;
   workspaceSlug: string;
 };
-export const TypeFormListItem: React.FC<Props> = observer((props: Props) => {
+export const TypeFormListItem = observer(function TypeFormListItem(props: Props) {
   // props
   const { formId, projectId, workspaceSlug } = props;
   // states

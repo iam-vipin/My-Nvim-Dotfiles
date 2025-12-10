@@ -48,7 +48,7 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
         source_access_token: access_token,
         source_refresh_token: refresh_token,
         workspace_id: workspaceConnection.workspace_id,
-        user_id: credentials.user_id!,
+        user_id: credentials.user_id,
       });
     };
 

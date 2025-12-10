@@ -13,7 +13,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const TeamspacePagesListHeaderRoot: React.FC<Props> = observer((props) => {
+export const TeamspacePagesListHeaderRoot = observer(function TeamspacePagesListHeaderRoot(props: Props) {
   const { pageType, teamspaceId, workspaceSlug } = props;
 
   return (

@@ -48,7 +48,7 @@ type TWorkItemTypeDetail = {
   className?: string;
 };
 
-const WorkItemTypeDetail: FC<TWorkItemTypeDetail> = observer((props) => {
+const WorkItemTypeDetail = observer(function WorkItemTypeDetail(props: TWorkItemTypeDetail) {
   const { name, id, className = "" } = props;
   // store hooks
   const workItemTypeDetail = useIssueType(id);

@@ -21,7 +21,7 @@ type TSelectSeatsStepProps = {
   isOnTrial: boolean;
 };
 
-export const SelectSeatsStep: React.FC<TSelectSeatsStepProps> = (props) => {
+export function SelectSeatsStep(props: TSelectSeatsStepProps) {
   const {
     numberOfSeats,
     setNumberOfSeats,
@@ -89,4 +89,4 @@ export const SelectSeatsStep: React.FC<TSelectSeatsStepProps> = (props) => {
       />
     </>
   );
-};
+}

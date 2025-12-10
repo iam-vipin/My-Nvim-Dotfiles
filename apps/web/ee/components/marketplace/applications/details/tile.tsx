@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
@@ -27,7 +25,7 @@ type AppTileProps = {
   app: TUserApplication;
 };
 
-export const AppTile: React.FC<AppTileProps> = observer((props) => {
+export const AppTile = observer(function AppTile(props: AppTileProps) {
   const { app } = props;
   const { workspaceSlug } = useParams();
   const { t } = useTranslation();

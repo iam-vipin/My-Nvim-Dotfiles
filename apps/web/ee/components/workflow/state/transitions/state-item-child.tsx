@@ -25,7 +25,7 @@ export type StateItemChildProps = {
   state: IState;
 };
 
-export const StateItemChild = observer((props: StateItemChildProps) => {
+export const StateItemChild = observer(function StateItemChild(props: StateItemChildProps) {
   const { workspaceSlug, projectId, stateCount, state } = props;
   // plane hooks
   const { t } = useTranslation();

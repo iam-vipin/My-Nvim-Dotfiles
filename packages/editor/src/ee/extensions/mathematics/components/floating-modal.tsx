@@ -23,7 +23,7 @@ type TFloatingMathModalProps = TMathModalBaseProps & {
   onPreview?: (latex: string, isValid: boolean, errorMessage?: string) => void;
   isFlagged?: boolean;
 };
-export const FloatingMathModal: FC<TFloatingMathModalProps> = ({
+export function FloatingMathModal({
   isOpen,
   setIsOpen,
   referenceElement,
@@ -35,7 +35,7 @@ export const FloatingMathModal: FC<TFloatingMathModalProps> = ({
   editor,
   getPos,
   isFlagged,
-}) => {
+}: TFloatingMathModalProps) {
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
@@ -104,4 +104,4 @@ export const FloatingMathModal: FC<TFloatingMathModalProps> = ({
       </div>
     </FloatingPortal>
   );
-};
+}

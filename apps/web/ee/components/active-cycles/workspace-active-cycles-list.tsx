@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -24,7 +22,7 @@ const perPage = 100;
 const cycleService = new CycleService();
 const DEFAULT_LIMIT = 3;
 
-export const WorkspaceActiveCyclesList = observer(() => {
+export const WorkspaceActiveCyclesList = observer(function WorkspaceActiveCyclesList() {
   // router
   const { workspaceSlug } = useParams();
   // ref
@@ -41,7 +39,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   // fetching active cycles in workspace
   const { data: workspaceActiveCycles, isLoading } = useSWR(
     workspaceSlug && `${perPage}:${pageCount}:0`
-      ? WORKSPACE_ACTIVE_CYCLES_LIST(workspaceSlug as string, `${perPage}:${pageCount}:0`, `${perPage}`)
+      ? WORKSPACE_ACTIVE_CYCLES_LIST(workspaceSlug, `${perPage}:${pageCount}:0`, `${perPage}`)
       : null,
     workspaceSlug && `${perPage}:${pageCount}:0`
       ? () => cycleService.workspaceActiveCycles(workspaceSlug.toString(), `${perPage}:${pageCount}:0`, perPage)

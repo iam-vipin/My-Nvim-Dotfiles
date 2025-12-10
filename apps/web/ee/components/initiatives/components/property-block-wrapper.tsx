@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // plane imports
@@ -10,11 +8,11 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const PropertyBlockWrapper: FC<Props> = (props) => {
+export function PropertyBlockWrapper(props: Props) {
   const { className = "", children } = props;
   return (
     <div className="h-6">
       <div className={cn("h-full text-xs flex items-center gap-2", className)}>{children}</div>
     </div>
   );
-};
+}

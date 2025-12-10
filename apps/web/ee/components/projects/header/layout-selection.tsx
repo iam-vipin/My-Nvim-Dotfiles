@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ type TProjectLayoutSelection = {
   workspaceSlug: string;
 };
 
-export const ProjectLayoutSelection: FC<TProjectLayoutSelection> = observer((props) => {
+export const ProjectLayoutSelection = observer(function ProjectLayoutSelection(props: TProjectLayoutSelection) {
   const { workspaceSlug } = props;
   // hooks
   const { filters, updateLayout } = useProjectFilter();

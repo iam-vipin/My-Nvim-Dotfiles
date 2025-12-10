@@ -112,7 +112,7 @@ export const useQuickActionsFactory = () => {
       const [isOpen, setIsOpen] = useState(false);
       const { getFilter } = useWorkItemFilters();
       const richFilters = getFilter(EIssuesStoreType.CYCLE, props.cycleId)?.getExternalExpression();
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       const { issuesFilter: _issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
       const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS);
 

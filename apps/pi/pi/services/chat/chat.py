@@ -1,12 +1,15 @@
 import asyncio
+import json
 import uuid
 from collections.abc import AsyncIterator
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Literal
 from typing import Optional
 from typing import Tuple
 from typing import Union
+from typing import cast
 
 from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -14,30 +17,24 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi import settings
 from pi.app.models import Message
-from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
 from pi.app.schemas.chat import ChatRequest
-from pi.services.chat.utils import resolve_workspace_slug
-from pi.services.feature_flags import FeatureFlagContext
-from pi.services.feature_flags import feature_flag_service
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.query_utils import parse_query
 from pi.services.retrievers.pg_store.attachment import link_attachments_to_message
-from pi.services.retrievers.pg_store.chat import check_if_chat_exists
 from pi.services.retrievers.pg_store.message import upsert_message
-from pi.services.retrievers.pg_store.message import upsert_message_flow_steps
-from pi.services.schemas.chat import AgentQuery
-from pi.services.schemas.chat import Agents
 from pi.services.schemas.chat import QueryFlowStore
+from pi.services.schemas.chat import RetrievalTools
 
-from .helpers import action_executor
-from .helpers import agent_executor
-from .helpers import agent_selector
+from . import action_planner
+from . import askmode_tool_executor
 
 # Import helper modules
+from .helpers import ask_mode_helpers
 from .helpers import response_processor
 from .helpers import title_service
 from .helpers import tool_utils
+from .helpers.tool_utils import format_clarification_as_text
 
 # from pi.services.schemas.chat import AgentOrder
 from .kit import ChatKit
@@ -49,9 +46,7 @@ from .templates import preset_question_flow
 from .utils import StandardAgentResponse
 from .utils import conv_history_from_app_query
 from .utils import is_model_enabled_for_workspace
-from .utils import mask_uuids_in_text
 from .utils import process_conv_history
-from .utils import standardize_flow_step_content
 
 log = logger.getChild(__name__)
 MAX_CHAT_LENGTH = settings.chat.MAX_CHAT_LENGTH
@@ -87,8 +82,14 @@ class PlaneChatBot(ChatKit):
         is_project_chat = data.is_project_chat or False
 
         is_focus_enabled = data.workspace_in_context
+        # Use new polymorphic fields if available, otherwise fall back to legacy fields
+        focus_entity_type = getattr(data, "focus_entity_type", None)
+        focus_entity_id = getattr(data, "focus_entity_id", None)
         focus_project_id = data.project_id or None
         focus_workspace_id = data.workspace_id or None
+        mode_raw = getattr(data, "mode", "ask") or "ask"
+        # Ensure mode is one of the valid literal values
+        mode: Optional[Literal["ask", "build"]] = cast(Literal["ask", "build"], mode_raw if mode_raw in ("ask", "build") else "ask")
         if is_new:
             # For new chats, the chat record should already exist from initialize-chat endpoint
             # but if not, create it (backward compatibility)
@@ -118,8 +119,11 @@ class PlaneChatBot(ChatKit):
                 chat_id=chat_id,
                 db=db,
                 is_focus_enabled=is_focus_enabled,
+                focus_entity_type=focus_entity_type,
+                focus_entity_id=focus_entity_id,
                 focus_project_id=focus_project_id,
                 focus_workspace_id=focus_workspace_id,
+                mode=mode,
             )
             if user_chat_preference_result["message"] != "success":
                 return None, "An unexpected error occurred. Please try again"
@@ -154,61 +158,9 @@ class PlaneChatBot(ChatKit):
             "workspace_in_context": workspace_in_context,
         }
 
-    async def _select_agents(
-        self, target, parsed_query, enhanced_conversation_history, workspace_in_context, query_id, chat_id, step_order, db
-    ) -> Tuple[List[AgentQuery], int, Union[str, None]]:
-        """Select appropriate agents based on query and context."""
-        return await agent_selector.select_agents(
-            self, target, parsed_query, enhanced_conversation_history, workspace_in_context, query_id, chat_id, step_order, db
-        )
-
-    async def _execute_single_agent(
+    async def _execute_tools_for_build_mode(
         self,
-        agent,
-        sub_query,
-        user_meta,
-        message_id,
-        workspace_id,
-        project_id,
-        conversation_history,
-        user_id,
-        chat_id,
-        query_flow_store,
-        enhanced_query_for_processing,
-        query_id,
-        step_order,
-        workspace_in_context,
-        db,
-        preset_tables=None,
-        preset_sql_query=None,
-        preset_placeholders=None,
-    ):
-        """Execute a single agent and prepare response stream."""
-        return await agent_executor.execute_single_agent(
-            self,
-            agent,
-            sub_query,
-            user_meta,
-            message_id,
-            workspace_id,
-            project_id,
-            conversation_history,
-            user_id,
-            chat_id,
-            query_flow_store,
-            enhanced_query_for_processing,
-            query_id,
-            step_order,
-            workspace_in_context,
-            db,
-            preset_tables,
-            preset_sql_query,
-            preset_placeholders,
-        )
-
-    async def _execute_action_with_retrieval(
-        self,
-        selected_agents,
+        selected_tools,
         user_meta,
         workspace_id,
         workspace_slug,
@@ -226,11 +178,11 @@ class PlaneChatBot(ChatKit):
         is_project_chat=None,
         pi_sidebar_open=None,
         sidebar_open_url=None,
-    ) -> AsyncIterator[str]:
-        """Execute action with access to retrieval tools"""
-        async for chunk in action_executor.execute_action_with_retrieval(
+    ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+        """Execute tools for build mode"""
+        async for chunk in action_planner.execute_tools_for_build_mode(
             self,
-            selected_agents,
+            selected_tools,
             user_meta,
             workspace_id,
             workspace_slug,
@@ -251,9 +203,8 @@ class PlaneChatBot(ChatKit):
         ):
             yield chunk
 
-    async def _execute_multi_agents(
+    async def _execute_tools_for_ask_mode(
         self,
-        selected_agents,
         user_meta,
         workspace_id,
         workspace_slug,
@@ -267,14 +218,12 @@ class PlaneChatBot(ChatKit):
         query_id,
         step_order,
         db,
-        original_query,
+        parsed_query,
         reasoning_container=None,
-        workspace_in_context: bool | None = None,
-    ) -> AsyncIterator[str]:
-        """Execute multiple agents using LangChain tool calling for orchestration with real-time streaming."""
-        async for chunk in agent_executor.execute_multi_agents(
+    ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+        """Execute tools for ask mode."""
+        async for chunk in askmode_tool_executor.execute_tools_for_ask_mode(
             self,
-            selected_agents,
             user_meta,
             workspace_id,
             workspace_slug,
@@ -288,19 +237,14 @@ class PlaneChatBot(ChatKit):
             query_id,
             step_order,
             db,
-            original_query,
+            parsed_query,
             reasoning_container,
-            workspace_in_context=workspace_in_context,
         ):
             yield chunk
 
-    def _tool_name_to_agent(self, tool_name: str) -> str:
-        """Convert tool name back to agent name for response formatting."""
-        return tool_utils.tool_name_to_agent(tool_name)
-
-    def _tool_name_shown_to_user(self, tool_name: str) -> str:
-        """Convert tool name to a user-friendly name."""
-        return tool_utils.tool_name_shown_to_user(tool_name)
+    def _tool_name_to_retrieval_tool(self, tool_name: str) -> str:
+        """Convert tool name back to retrieval tool enum for response formatting."""
+        return tool_utils.tool_name_to_retrieval_tool(tool_name)
 
     async def _process_attachments_for_query(
         self, attachment_ids: Optional[List[UUID4]], chat_id: UUID4, user_id: Optional[UUID4], query: str, query_id: UUID4, db: AsyncSession
@@ -341,18 +285,24 @@ class PlaneChatBot(ChatKit):
 
         return attachment_blocks, attachment_context
 
-    def _agent_to_tool_name(self, agent_name: str) -> str:
-        """Convert agent name to corresponding tool name."""
-        return tool_utils.agent_to_tool_name(agent_name)
+    def _retrieval_tool_to_tool_name(self, retrieval_tool: str) -> str:
+        """Convert retrieval tool enum to corresponding LangChain tool name."""
+        return tool_utils.retrieval_tool_to_tool_name(retrieval_tool)
 
-    async def _process_response(self, base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning=""):
+    async def _process_response(self, base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning="", source=None):
         """Process streaming response and store the final result."""
-        async for chunk in response_processor.process_response(base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning):
+        async for chunk in response_processor.process_response(base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning, source):
             yield chunk
 
-    async def process_query_stream(self, data: ChatRequest, db: AsyncSession) -> AsyncIterator[str]:
+    async def process_chat_stream(self, data: ChatRequest, db: AsyncSession) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+        """Unified entry point that routes internally based on data.mode."""
+        mode = getattr(data, "mode", "ask") or "ask"
+        async for chunk in self._process_chat_stream_core(data, db, mode=mode):
+            yield chunk
+
+    async def _process_chat_stream_core(self, data: ChatRequest, db: AsyncSession, mode: str = "ask") -> AsyncIterator[Union[str, Dict[str, Any]]]:
         """
-        This method takes a user query, processes it through various stages (parsing, routing, agent selection, agent execution),
+        This method takes a user query, processes it through various stages (parsing, tool selection, tool execution),
         and streams back the response chunks as they're generated.
 
         Steps in the Process
@@ -370,23 +320,16 @@ class PlaneChatBot(ChatKit):
         3. Query Processing
          - Parses the query to extract any specific targets (via parse_query)
          - Creates a user message record in the database
-         - Context enhancement is now integrated into the router step
+         - Context enhancement is now integrated into the tool selection step
 
-        4. Agent Selection
-         - Determines which agent(s) should handle the query:
-           ~ For targeted queries, uses the appropriate agent
-           ~ For general queries with workspace context, uses a router to decompose the query
-           ~ Without workspace context, defaults to a generic agent
-         - Records routing decisions as flow steps
+        4. Tool Selection
+         - Determines which tool(s) should handle the query:
+           ~ For targeted queries, uses the appropriate tool
+           ~ For general queries with workspace context, uses the retrieval tools to along with appropriate tool queries
 
-        5. Agent Execution
-         - For single-agent cases:
-           ~ Calls the appropriate handler based on agent type
-           ~ Processes the response and prepares it for streaming
-         - For multi-agent cases:
-           ~ Prioritizes and executes multiple agents
-           ~ Collects and formats responses from all agents
-           ~ Combines them into a coherent answer
+        5. Tool Execution
+           ~ Prioritizes and executes the tools
+           ~ Collects and formats responses from all tools
 
         6. Response Streaming
          - Streams the response chunks to the user as they're generated
@@ -396,6 +339,7 @@ class PlaneChatBot(ChatKit):
          - Creates an assistant message record with the final response
          - For new chats, generates a title based on the query and response
         """
+        from pi.services.retrievers.pg_store.chat import check_if_chat_exists
 
         # Extract data
         query = data.query
@@ -409,20 +353,11 @@ class PlaneChatBot(ChatKit):
         workspace_in_context = data.workspace_in_context if await is_model_enabled_for_workspace(str(chat_id), switch_llm, db) else False
         workspace_slug = data.workspace_slug
         attachment_ids = data.attachment_ids or []
-        request_source = data.source
         step_order = 0
 
-        # If workspace_id is None but project_id is provided, resolve workspace_id from project_id
+        # Resolve workspace_id from project_id if needed
         if not workspace_id and project_id:
-            try:
-                from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
-
-                resolved_workspace_id = await resolve_workspace_id_from_project_id(project_id)
-                if resolved_workspace_id:
-                    workspace_id = str(resolved_workspace_id)
-                    log.info(f"Resolved workspace_id {workspace_id} from project_id {project_id}")
-            except Exception as e:
-                log.error(f"Failed to resolve workspace_id from project_id {project_id}: {e}")
+            workspace_id = await ask_mode_helpers.resolve_workspace_id_from_project(project_id)
 
         # Initialize variables for use in finally block
         parsed_query = query
@@ -430,24 +365,13 @@ class PlaneChatBot(ChatKit):
         reasoning = ""  # Single string to collect reasoning blocks
         chat_exists = False
 
-        # Create or reuse message ids
-        # If a queued token_id is provided (from two-step flow), reuse it as the user message id
-        query_id = None
-        try:
-            token_id = None
-            if isinstance(user_meta, dict):
-                token_id = user_meta.get("token_id")
-            if token_id:
-                query_id = uuid.UUID(str(token_id))
-        except Exception:
-            query_id = None
-        if query_id is None:
-            query_id = uuid.uuid4()
+        # Create or reuse message ids (extract from token_id if provided)
+        query_id = ask_mode_helpers.extract_or_create_query_id(user_meta)
         response_id = uuid.uuid4()
 
         # Validate chat_id is always provided
         if chat_id is None:
-            final_response = "Chat ID is required. For new chats, call /initialize-chat/ first."  # Set final_response for title generation
+            final_response = "Chat ID is required. For new chats, call /initialize-chat/ first."
             yield final_response
             return
 
@@ -459,7 +383,7 @@ class PlaneChatBot(ChatKit):
         query_flow_store = self._create_query_flow_store(data, workspace_in_context)
 
         # Parse query to detect target and get clean parsed content
-        target, parsed_query = parse_query(query)
+        _target, parsed_query = parse_query(query)
 
         # Initialize chat and get conversation history
         conversation_history_dict, error = await self._initialize_chat_context(data, chat_exists, db)
@@ -468,34 +392,15 @@ class PlaneChatBot(ChatKit):
             yield error
             return
 
-        # Collect all the previous previous attachments to pass to llm
-        all_attachment_ids = attachment_ids.copy() if attachment_ids else []
-
-        if not data.is_new and conversation_history_dict:
-            # Get raw conversation history with attachments
-            from pi.services.retrievers.pg_store.chat import retrieve_chat_history
-
-            raw_history = await retrieve_chat_history(chat_id=chat_id, db=db, dialogue_object=True)
-
-            if raw_history.get("dialogue"):
-                # Collect ALL attachments from ALL messages in history
-                attachment_count = 0
-                for qa_pair in raw_history["dialogue"]:
-                    if qa_pair.get("attachments"):
-                        for att in qa_pair["attachments"]:
-                            att_id = att.get("id")
-                            if att_id and att_id not in [str(aid) for aid in all_attachment_ids]:
-                                all_attachment_ids.append(uuid.UUID(att_id))
-                                attachment_count += 1
-
-                if attachment_count > 0:
-                    log.info(f"ChatID: {chat_id} - Collected {attachment_count} attachments from conversation history")
+        # Collect all attachments from conversation history
+        all_attachment_ids = (
+            await ask_mode_helpers.collect_conversation_attachments(chat_id=chat_id, db=db, current_attachment_ids=attachment_ids)
+            if not data.is_new and conversation_history_dict
+            else (attachment_ids.copy() if attachment_ids else [])
+        )
 
         if not workspace_slug:
-            # Use the resolved workspace_id (which might have been resolved from project_id)
-            # Convert string workspace_id to UUID if needed
-            workspace_uuid = uuid.UUID(workspace_id) if workspace_id else None
-            workspace_slug = await resolve_workspace_slug(workspace_uuid, data.workspace_slug)
+            workspace_slug = await ask_mode_helpers.resolve_workspace_slug_if_needed(workspace_id, data.workspace_slug)
 
         # TODO: Include storing parent_id as well
         # Reuse existing message row if query_id originated from a queued token; otherwise insert a new row.
@@ -507,6 +412,7 @@ class PlaneChatBot(ChatKit):
             user_type=UserTypeChoices.USER.value,
             llm_model=switch_llm,
             workspace_slug=workspace_slug,
+            source=getattr(data, "source", None) or None,
             db=db,
         )
 
@@ -521,7 +427,7 @@ class PlaneChatBot(ChatKit):
             all_attachment_ids, chat_id, user_id, parsed_query, query_id, db
         )
 
-        # Create enhanced query for routing/agent selection if we have attachment context
+        # Create enhanced query for tool selection if we have attachment context
         # But keep parsed_query clean for database storage
         enhanced_query_for_processing = self.enhance_query_with_context(parsed_query, attachment_context)
         if attachment_context:
@@ -531,20 +437,17 @@ class PlaneChatBot(ChatKit):
         if data.attachment_ids:
             await link_attachments_to_message(attachment_ids=data.attachment_ids, message_id=query_id, chat_id=data.chat_id, user_id=user_id, db=db)
 
-        # log input and other important info:
-        log.info(f"ChatID: {chat_id} - Input query: {query}")
-        log.info(f"ChatID: {chat_id} - Enhanced query: {enhanced_query_for_processing}")
-        log.info(f"ChatID: {chat_id} - Attachment context: {attachment_context}")
-        log.info(f"ChatID: {chat_id} - User meta: {user_meta}")
-        log.info(f"ChatID: {chat_id} - Workspace in context: {workspace_in_context}")
-        log.info(f"ChatID: {chat_id} - Workspace slug: {workspace_slug}")
-        log.info(f"ChatID: {chat_id} - Workspace ID: {workspace_id}")
-        log.info(f"ChatID: {chat_id} - Is New Chat: {data.is_new}")
-        log.info(f"ChatID: {chat_id} - Source: {data.source}")
-        log.info(f"ChatID: {chat_id} - Is Project Chat: {data.is_project_chat}")
-        log.info(f"ChatID: {chat_id} - User ID: {user_id}")
-        log.info(f"ChatID: {chat_id} - Project ID: {project_id}")
-        log.info(f"ChatID: {chat_id} - LLM: {switch_llm}")
+        # Log input and other important info
+        ask_mode_helpers.log_ask_mode_request_details(
+            data,
+            {
+                "enhanced_query_for_processing": enhanced_query_for_processing,
+                "attachment_context": attachment_context,
+                "workspace_in_context": workspace_in_context,
+                "workspace_slug": workspace_slug,
+                "workspace_id": workspace_id,
+            },
+        )
 
         # Handle case where conversation_history_dict might be None or a list
         if data.source == "app":
@@ -560,55 +463,11 @@ class PlaneChatBot(ChatKit):
                 conversation_history = conversation_history_dict["langchain_conv_history"]
                 enhanced_conversation_history = conversation_history_dict["enhanced_conv_history"]
 
+        # Check for pending clarifications in the `data.is_new=False` case
         if not data.is_new:
-            try:
-                # If a clarification is pending, enrich user_meta with context from message_clarifications
-                from pi.services.retrievers.pg_store.clarifications import get_latest_pending_for_chat as _get_pending_clar
-
-                log.info(f"ChatID: {chat_id} - Checking for pending clarifications...")
-                clar_row = await _get_pending_clar(db=db, chat_id=uuid.UUID(str(chat_id)))
-                if clar_row:
-                    clar_payload = clar_row.payload or {}
-                    log.info(
-                        f"ChatID: {chat_id} - Found pending clarification, enriching user_meta. Kind: {clar_row.kind}, Categories: {clar_row.categories}"  # noqa: E501
-                    )
-                    user_meta["clarification_context"] = {
-                        "reason": clar_payload.get("reason"),
-                        "missing_fields": clar_payload.get("missing_fields") or [],
-                        "disambiguation_options": clar_payload.get("disambiguation_options") or [],
-                        "category_hints": clar_payload.get("category_hints") or [],
-                        "answer_text": parsed_query,
-                        "original_query": clar_row.original_query,  # CRITICAL: Include original query for full context
-                        "clarifies_message_id": str(clar_row.message_id),
-                    }
-                    log.info(f"ChatID: {chat_id} - Enriched user_meta with clarification_context")
-                    # Record a clarification_response flow step for traceability (not marking resolved yet)
-                    try:
-                        await upsert_message_flow_steps(
-                            message_id=query_id,
-                            chat_id=chat_id,
-                            flow_steps=[
-                                {
-                                    "step_order": step_order + 1,
-                                    "step_type": FlowStepType.TOOL.value,
-                                    "tool_name": "clarification_response",
-                                    "content": standardize_flow_step_content(user_meta.get("clarification_context", {}), FlowStepType.TOOL),
-                                    "execution_data": {
-                                        "clarifies_message_id": str(clar_row.message_id),
-                                        "clarification_resolved": False,
-                                    },
-                                }
-                            ],
-                            db=db,
-                        )
-                        # Push subsequent steps by +1
-                        step_order = step_order + 2
-                    except Exception:
-                        pass
-                else:
-                    log.info(f"ChatID: {chat_id} - No pending clarification found")
-            except Exception as _e:
-                log.warning(f"ChatID: {chat_id} - Clarification table check failed: {_e}")
+            user_meta, step_order = await ask_mode_helpers.check_and_enrich_clarification_context(
+                chat_id=chat_id, db=db, user_meta=user_meta, parsed_query=parsed_query, query_id=query_id, step_order=step_order
+            )
 
         # Check if the query is a preset question
         preset_query_steps = preset_question_flow(query)
@@ -623,328 +482,184 @@ class PlaneChatBot(ChatKit):
             # Set attachment blocks context for tool execution
             self._current_attachment_blocks = attachment_blocks
 
-            reasoning_chunk = "🤖 Understanding the query...\n\n"
-            reasoning += reasoning_chunk
-            yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-
             # Query already parsed above, just set step_order
             step_order = 1
 
-            reasoning_chunk = "🤖 Curating the ideal response path...\n\n"
-            reasoning += reasoning_chunk
-            yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-
-            # Select appropriate agents
+            # Handle preset query flow if applicable
             if preset_query_steps:
-                # Use preset agents instead of routing
-                selected_agents = []
-                for step in preset_query_steps:
-                    reasoning_messages = step.get("reasoning_messages", [])
-                    agents = step.get("agents", [])
-
-                    # Show preset reasoning messages
-                    for reasoning_msg in reasoning_messages:
-                        masked_reasoning_msg = mask_uuids_in_text(reasoning_msg)
-                        reasoning_chunk = f"{masked_reasoning_msg}\n\n"
-                        reasoning += reasoning_chunk
-                        yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-
-                    # Convert preset agents to AgentQuery format
-                    for agent_config in agents:
-                        agent_name = agent_config.get("agent")
-                        agent_query = agent_config.get("query")
-                        if agent_name and agent_query:
-                            selected_agents.append(AgentQuery(agent=agent_name, query=agent_query))
-
-                # Record preset routing as flow step
-                if selected_agents:
-                    routing_content = [{"tool": agent.agent.name, "query": agent.query} for agent in selected_agents]
-                    flow_step_result = await upsert_message_flow_steps(
-                        message_id=query_id,
-                        chat_id=chat_id,
-                        flow_steps=[
-                            {
-                                "step_order": step_order,
-                                "step_type": FlowStepType.ROUTING.value,
-                                "tool_name": None,
-                                "content": standardize_flow_step_content(routing_content, FlowStepType.ROUTING),
-                                "execution_data": {},
-                            }
-                        ],
-                        db=db,
-                    )
-
-                    # Ensure routing flow step insert cannot stall the stream
-                    try:
-                        flow_step_result = await asyncio.wait_for(
-                            upsert_message_flow_steps(
-                                message_id=query_id,
-                                chat_id=chat_id,
-                                flow_steps=[
-                                    {
-                                        "step_order": step_order,
-                                        "step_type": FlowStepType.ROUTING.value,
-                                        "tool_name": None,
-                                        "content": standardize_flow_step_content(routing_content, FlowStepType.ROUTING),
-                                        "execution_data": {},
-                                    }
-                                ],
-                                db=db,
-                            ),
-                            timeout=2.0,
-                        )
-                    except asyncio.TimeoutError:
-                        log.warning("Timed out recording RAG routing flow step; continuing")
-                        flow_step_result = {"message": "error", "error": "timeout"}
-
-                    if flow_step_result["message"] != "success":
-                        # Log the error but continue - flow step logging is not critical for user experience
-                        log.warning(f"Failed to record RAG routing flow step: {flow_step_result.get("error", "Unknown error")}")
-                        # Continue with response generation - user should still get their answer
-
-                    step_order += 1
-                error = None
-            elif isinstance(user_meta, dict) and user_meta.get("clarification_context"):
-                # Skip routing for clarification follow-up and use deterministic clarification record
-                log.info(f"ChatID: {chat_id} - Processing clarification follow-up, skipping router")
-                try:
-                    from pi.services.retrievers.pg_store.clarifications import get_latest_pending_for_chat
-                    from pi.services.retrievers.pg_store.clarifications import resolve_clarification
-
-                    selected_agents = []
-                    clar_row = await get_latest_pending_for_chat(db=db, chat_id=uuid.UUID(str(chat_id)))
-
-                    if clar_row:
-                        # Build agents based on stored kind
-                        if (clar_row.kind or "").lower() == "action":
-                            selected_agents.append(AgentQuery(agent=Agents.PLANE_ACTION_EXECUTOR_AGENT, query=parsed_query))
-                            flow_kind = "action"
-                        else:
-                            for agent_name in clar_row.categories or []:
-                                selected_agents.append(AgentQuery(agent=agent_name, query=parsed_query))
-                            flow_kind = "retrieval"
-
-                        # Record skipped routing as flow step
-                        routing_content = [{"tool": agent.agent, "query": agent.query} for agent in selected_agents]
-                        flow_step_result = await upsert_message_flow_steps(
-                            message_id=query_id,
-                            chat_id=chat_id,
-                            flow_steps=[
-                                {
-                                    "step_order": step_order,
-                                    "step_type": FlowStepType.ROUTING.value,
-                                    "tool_name": "clarification_skip_router",
-                                    "content": standardize_flow_step_content(routing_content, FlowStepType.ROUTING),
-                                    "execution_data": {
-                                        "skipped_routing": True,
-                                        "source": "clarification_followup",
-                                        "flow": flow_kind,
-                                        "raw_user_input": parsed_query,
-                                    },
-                                }
-                            ],
-                            db=db,
-                        )
-                        if flow_step_result["message"] != "success":
-                            log.warning("Failed to record skipped routing flow step")
-                        step_order += 1
-
-                        # Mark clarification as resolved
-                        try:
-                            await resolve_clarification(
-                                db,
-                                clarification_id=clar_row.id,
-                                answer_text=parsed_query,
-                                resolved_by_message_id=query_id,
-                            )
-                        except Exception as e:
-                            log.warning(f"ChatID: {chat_id} - Failed to resolve clarification: {e}")
-
-                        error = None
-                    else:
-                        # No clarification record found - fall back to regular routing
-                        selected_agents, step_order, error = await self._select_agents(
-                            target,
-                            enhanced_query_for_processing,
-                            enhanced_conversation_history,
-                            workspace_in_context,
-                            query_id,
-                            chat_id,
-                            step_order,
-                            db,
-                        )
-
-                except Exception as e:
-                    log.error(f"ChatID: {chat_id} - Error processing clarification follow-up: {e}")
-                    selected_agents, step_order, error = await self._select_agents(
-                        target, enhanced_query_for_processing, enhanced_conversation_history, workspace_in_context, query_id, chat_id, step_order, db
-                    )
-            else:
-                # Regular agent selection
-                selected_agents, step_order, error = await self._select_agents(
-                    target, enhanced_query_for_processing, enhanced_conversation_history, workspace_in_context, query_id, chat_id, step_order, db
-                )
-
-            if error:
-                # Store error message
-                await upsert_message(
-                    message_id=response_id,
+                reasoning_container = {"content": reasoning}
+                async for chunk in ask_mode_helpers.handle_preset_query_flow(
+                    chatbot_instance=self,
+                    preset_query_steps=preset_query_steps,
+                    query_id=query_id,
                     chat_id=chat_id,
-                    content=error,
-                    user_type=UserTypeChoices.ASSISTANT.value,
-                    parent_id=query_id,
-                    llm_model=switch_llm,
-                    reasoning=reasoning,
+                    step_order=step_order,
                     db=db,
-                )
+                    user_meta=user_meta,
+                    workspace_id=workspace_id or "",
+                    project_id=project_id or "",
+                    conversation_history=conversation_history,
+                    user_id=str(user_id) if user_id else "",
+                    query_flow_store=query_flow_store,
+                    enhanced_query_for_processing=enhanced_query_for_processing,
+                    workspace_in_context=workspace_in_context,
+                    switch_llm=switch_llm,
+                    reasoning_container=reasoning_container,
+                    source=getattr(data, "source", None) or None,
+                ):
+                    yield chunk
 
-                # Error message search index upserted via Celery background task
-
-                final_response = error  # Set final_response for title generation
-                yield error
                 return
 
-            # Check if action execution agent is present
-            has_action_agent = any(agent.agent == Agents.PLANE_ACTION_EXECUTOR_AGENT for agent in selected_agents)
-            # Execute agent(s) and get response stream
-            if has_action_agent:
-                ### add feature flag check here
-                # Create feature flag context with user and workspace information
-                try:
-                    feature_context = FeatureFlagContext(user_id=str(user_id), workspace_slug=workspace_slug)
-                    # log.info(f"Checking action execution feature flag for user {user_id} in workspace {workspace_slug}")
-                    is_action_execution_enabled = await feature_flag_service.is_action_execution_enabled(feature_context)
-                    # log.info(f"Action execution feature flag result: {is_action_execution_enabled}")
-                except Exception as e:
-                    log.error(f"Error checking action execution feature flag: {e}")
-                    # Default to disabled if feature flag check fails
-                    is_action_execution_enabled = False
-                if not is_action_execution_enabled:
-                    # Feature flag check failed - show message that action execution is not available
-                    # This prevents the action execution agent from running when the feature is disabled
-                    reasoning_chunk = "🎯 Planning to execute action..\n\n"
-                    reasoning += reasoning_chunk
-                    yield f"πspecial reasoning blockπ: {reasoning_chunk}"
+            ## Resolve pending clarification if this is a follow-up
+            if isinstance(user_meta, dict) and user_meta.get("clarification_context"):
+                await ask_mode_helpers.resolve_pending_clarification(chat_id=chat_id, db=db, parsed_query=parsed_query, query_id=query_id)
 
-                    # Yield final response status to signal end of reasoning
-                    reasoning_chunk = "📝 Generating final response...\n\n"
-                    reasoning += reasoning_chunk
-                    yield f"πspecial reasoning blockπ: {reasoning_chunk}"
+            # Continue with normal tool execution flow for both normal queries and clarification follow-ups
+            # Clarification context is already in user_meta and the execution methods will handle it properly
+            if not preset_query_steps:
+                # Multi-tool execution - stream tool execution details and final response
+                final_response_chunks: List[Union[str, Dict[str, Any]]] = []
+                collecting_final_response = False
 
-                    # Add a small delay to ensure chunks are processed separately
-                    await asyncio.sleep(0.01)
-                    # Now yield the actual response content (not during reasoning)
-                    # static_response = "Action execution is not available yet in your workspace. Please contact your administrator to enable this feature. In the meantime, I can help you with any other questions."  # noqa E501
+                # Create a container for reasoning to allow modification by reference
+                reasoning_container = {"content": reasoning}
+                clarification_saved_multi = False
 
-                    static_response = (
-                        "Action execution is not available yet. It is coming soon. In the meantime, I can help you with any other questions."  # noqa E501
-                    )
-                    yield static_response
-
-                    # Save the response to database
-                    assistant_message_result = await upsert_message(
-                        message_id=response_id,
+                # No-workspace fast path: direct LLM (no tools)
+                if not workspace_in_context:
+                    execution_stream = ask_mode_helpers.create_fast_path_stream(
+                        chatbot_instance=self,
+                        query_id=query_id,
+                        db=db,
                         chat_id=chat_id,
-                        content=static_response,
-                        user_type=UserTypeChoices.ASSISTANT,
-                        parent_id=query_id,
-                        llm_model=switch_llm,
-                        reasoning=reasoning,
+                        user_meta=user_meta,
+                        user_id=str(user_id) if user_id else None,
+                        enhanced_query_for_processing=enhanced_query_for_processing,
+                        enhanced_conversation_history=enhanced_conversation_history,
+                        reasoning_container=reasoning_container,
+                    )
+
+                # Mode-specific execution branch
+                elif mode == "build":
+                    # Build mode: Action planning with user approval
+                    log.info(f"ChatID: {chat_id} - Using BUILD mode (action planning)")
+
+                    # Early OAuth check for build mode (before building any tools)
+                    from pi.services.chat.helpers.build_mode_helpers import check_oauth_for_build_mode
+
+                    oauth_message = await check_oauth_for_build_mode(
+                        chatbot_instance=self,
+                        user_id=str(user_id),
+                        workspace_id=workspace_id,
+                        workspace_slug=workspace_slug,
+                        project_id=project_id,
+                        chat_id=str(chat_id),
+                        query_id=query_id,
+                        step_order=step_order,
+                        combined_tool_query=enhanced_query_for_processing,
+                        enhanced_conversation_history=enhanced_conversation_history,
+                        is_project_chat=data.is_project_chat,
+                        pi_sidebar_open=data.pi_sidebar_open,
+                        sidebar_open_url=data.sidebar_open_url,
                         db=db,
                     )
 
-                    if assistant_message_result["message"] != "success":
-                        yield "An unexpected error occurred. Please try again"
+                    if oauth_message:
+                        # OAuth required - stream message and return early
+                        yield oauth_message
 
-                    # Static response search index upserted via Celery background task
+                        # Store the final response manually since we're returning early
+                        assistant_message_result = await upsert_message(
+                            message_id=response_id,
+                            chat_id=chat_id,
+                            content=oauth_message,
+                            user_type=UserTypeChoices.ASSISTANT.value,
+                            parent_id=query_id,
+                            llm_model=switch_llm,
+                            reasoning=reasoning_container.get("content", reasoning) if reasoning_container else reasoning,
+                            source=getattr(data, "source", None) or None,
+                            db=db,
+                        )
 
-                    final_response = static_response
+                        if assistant_message_result["message"] != "success":
+                            log.warning(f"ChatID: {chat_id} - Failed to store OAuth message in database")
 
-                elif request_source == "mobile":
-                    static_response = "Action execution is not available yet in the mobile app. This feature is coming soon! Meanwhile, you can try it on the web app, or let me know how else I can assist you."  # noqa E501
-                    yield static_response
+                        # Update query flow store
+                        query_flow_store["answer"] = oauth_message
+                        return
 
-                    assistant_message_result = await upsert_message(
-                        message_id=response_id,
-                        chat_id=chat_id,
-                        content=static_response,
-                        user_type=UserTypeChoices.ASSISTANT,
-                        parent_id=query_id,
-                        llm_model=switch_llm,
-                        reasoning=reasoning,
+                    # OAuth check passed - proceed with build mode execution
+                    execution_stream = self._execute_tools_for_build_mode(
+                        selected_tools=[],  # Build mode determines tools dynamically
+                        user_meta=user_meta,
+                        workspace_id=workspace_id,
+                        workspace_slug=workspace_slug,
+                        project_id=project_id,
+                        conversation_history=conversation_history,
+                        enhanced_conversation_history=enhanced_conversation_history,
+                        user_id=str(user_id),
+                        chat_id=str(chat_id),
+                        query_flow_store=query_flow_store,
+                        parsed_query=enhanced_query_for_processing,
+                        query_id=query_id,
+                        step_order=step_order,
                         db=db,
+                        reasoning_container=reasoning_container,
+                        is_project_chat=data.is_project_chat,
+                        pi_sidebar_open=data.pi_sidebar_open,
+                        sidebar_open_url=data.sidebar_open_url,
                     )
-
-                    if assistant_message_result["message"] != "success":
-                        yield "An unexpected error occurred. Please try again"
-
-                    final_response = static_response
-
                 else:
-                    # Feature flag check passed - proceed with action execution
-                    # Execute agent(s) and get response stream
-                    # Special handling for action execution agent (with or without retrieval tools)
-                    reasoning_chunk = "🎯 Planning to execute action using:\n\n"
-                    reasoning += reasoning_chunk
-                    yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-
-                    agent_queries = []
-                    for i, agent in enumerate(selected_agents, 1):
-                        tool_name = self._agent_to_tool_name(agent.agent)
-                        user_friendly_name = self._tool_name_shown_to_user(tool_name)
-                        agent_query = agent.query
-                        masked_agent_query = mask_uuids_in_text(agent_query)
-                        agent_queries.append(agent_query)
-                        if tool_name == "action_executor_agent":  # Updated to match new naming
-                            reasoning_chunk = f"&nbsp;&nbsp;&nbsp;{i}. {user_friendly_name} to process the request: '{masked_agent_query}'\n\n"
-                        else:
-                            reasoning_chunk = f"&nbsp;&nbsp;&nbsp;{i}. {user_friendly_name} to get details about: '{masked_agent_query}'\n\n"
-                        reasoning += reasoning_chunk
-                        yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-
-                    # Action execution with hierarchical flow - stream tool execution details and final response
-                    final_response_chunks = []
-                    collecting_final_response = False
-                    final_response = ""  # Initialize final_response variable
-
-                    # Create a container for reasoning to allow modification by reference
-                    reasoning_container = {"content": reasoning}
-                    combined_agent_query = "\n".join(agent_queries)
-                    clarification_saved = False
-                    async for chunk in self._execute_action_with_retrieval(
-                        selected_agents,
+                    # Ask mode: Retrieval and answering
+                    log.info(f"ChatID: {chat_id} - Using ASK mode (retrieval only)")
+                    execution_stream = self._execute_tools_for_ask_mode(
                         user_meta,
                         workspace_id,
                         workspace_slug,
                         project_id,
                         conversation_history,
-                        enhanced_conversation_history,  # 🔥 NEW: Pass enhanced context separately
+                        enhanced_conversation_history,
                         str(user_id),
                         str(chat_id),
                         query_flow_store,
-                        combined_agent_query,
+                        enhanced_query_for_processing,
                         query_id,
                         step_order,
                         db,
+                        parsed_query,
                         reasoning_container=reasoning_container,
-                        is_project_chat=data.is_project_chat,
-                        pi_sidebar_open=data.pi_sidebar_open,
-                        sidebar_open_url=data.sidebar_open_url,
-                    ):  # type: ignore
-                        # Persist clarification as assistant message when encountered
-                        if not clarification_saved and chunk.startswith("πspecial clarification blockπ: "):
+                    )
+
+                async for chunk in execution_stream:
+                    if isinstance(chunk, dict):
+                        if "chunk_type" in chunk and chunk["chunk_type"] == "reasoning":
+                            header_text = (chunk.get("header") or "").strip()
+                            stage_text = chunk.get("stage") or ""
+                            if stage_text == "final_response" or header_text.startswith("📝 Generating final response..."):
+                                collecting_final_response = True
+
+                            yield chunk
+                            continue
+                        # elif 'chunk_type' in chunk and chunk['chunk_type'] == 'actions':
+                        #     yield chunk
+                        #     continue
+                        # elif 'chunk_type' in chunk and chunk['chunk_type'] == 'clarification':
+                        #     yield chunk
+                        #     continue
+                    # Persist clarification as assistant message when encountered
+                    elif isinstance(chunk, str):
+                        if not clarification_saved_multi and chunk.startswith("πspecial clarification blockπ: "):
                             try:
-                                import json as _json
-
-                                from pi.services.chat.helpers.tool_utils import format_clarification_as_text as _fmt_clar
-
                                 clar_content = chunk.replace("πspecial clarification blockπ: ", "")
+                                log.info(f"ChatID: {chat_id} - Clarification content in the original chunk from the tool execution: {clar_content}")
                                 try:
-                                    clar_data = _json.loads(clar_content)
-                                except Exception:
+                                    clar_data = json.loads(clar_content)
+                                except json.JSONDecodeError:
+                                    log.warning(f"ChatID: {chat_id} - Failed to parse clarification JSON: {clar_content}")
                                     clar_data = {"raw": clar_content}
-                                clar_text = _fmt_clar(clar_data)
-                                # Save the clarification prompt as an assistant message
+                                clar_text = format_clarification_as_text(clar_data)
+                                log.info(f"ChatID: {chat_id} - Clarification in text format: {clar_text}")
                                 await upsert_message(
                                     message_id=response_id,
                                     chat_id=chat_id,
@@ -953,206 +668,32 @@ class PlaneChatBot(ChatKit):
                                     parent_id=query_id,
                                     llm_model=switch_llm,
                                     reasoning=reasoning_container.get("content", reasoning),
+                                    source=getattr(data, "source", None) or None,
                                     db=db,
                                 )
                             except Exception:
                                 pass
                             finally:
-                                clarification_saved = True
+                                clarification_saved_multi = True
+                        if chunk.startswith("__FINAL_RESPONSE__"):
+                            final_response = chunk[len("__FINAL_RESPONSE__") :]
+                            # Do not yield marker chunks to the client
+                            continue
+
+                        # Build mode: Collect action summaries as final response content
+                        # Action summaries are streamed with special markers
+                        if mode == "build" and chunk.startswith("πspecial action summaryπ:"):
+                            # Stream to client for UI rendering
+                            yield chunk
+                            # Also collect for final response storage
+                            final_response_chunks.append(chunk)
+                            continue
 
                         # Check if this chunk indicates we're starting the final response
                         if chunk == "πspecial reasoning blockπ: 📝 Generating final response...\n\n":
                             collecting_final_response = True
                             yield chunk
                             continue
-
-                        # Check if this chunk contains the final response signal from action executor
-                        if chunk.startswith("__FINAL_RESPONSE__"):
-                            # Extract the final response from the special signal
-                            final_response = chunk[len("__FINAL_RESPONSE__") :]
-                            continue
-
-                        # If we're collecting the final response (after the status message)
-                        if collecting_final_response:
-                            final_response_chunks.append(chunk)
-
-                        yield chunk
-
-                    # Update reasoning from the container
-                    reasoning = reasoning_container["content"]
-
-                    # If we didn't get a final response signal, combine the collected chunks
-                    if not final_response:
-                        final_response = "".join(final_response_chunks)
-
-                    # Save assistant message with reasoning blocks
-                    if final_response:
-                        assistant_message_result = await upsert_message(
-                            message_id=response_id,
-                            chat_id=chat_id,
-                            content=final_response,
-                            user_type=UserTypeChoices.ASSISTANT,
-                            parent_id=query_id,
-                            llm_model=switch_llm,
-                            reasoning=reasoning,
-                            db=db,
-                        )
-
-                        if assistant_message_result["message"] != "success":
-                            final_response = "An unexpected error occurred. Please try again"
-                            yield final_response
-
-                        # log.info(f"ChatID: {chat_id} - Final Response: {final_response}")
-
-            elif len(selected_agents) == 1 and (selected_agents[0].agent == "generic_agent" or preset_query_steps):
-                # Handle only generic agent or preset queries with single agent execution
-                # Get preset parameters if available
-                preset_tables = None
-                preset_sql_query = None
-                preset_placeholders = None
-                if preset_query_steps and selected_agents[0].agent == "plane_structured_database_agent":
-                    for step in preset_query_steps:
-                        agents = step.get("agents", [])
-                        for agent_config in agents:
-                            if agent_config.get("agent") == "plane_structured_database_agent":
-                                preset_tables = agent_config.get("tables", [])
-                                preset_sql_query = agent_config.get("sql_query")
-                                preset_placeholders = agent_config.get("placeholders_in_order", [])
-                                break
-                        if preset_sql_query:
-                            break
-                base_stream, error = await self._execute_single_agent(
-                    selected_agents[0].agent,
-                    selected_agents[0].query,
-                    user_meta,
-                    query_id,
-                    workspace_id,
-                    project_id,
-                    conversation_history,
-                    str(user_id),
-                    str(chat_id),
-                    query_flow_store,
-                    enhanced_query_for_processing,
-                    query_id,
-                    step_order,
-                    workspace_in_context,
-                    db,
-                    preset_tables,
-                    preset_sql_query,
-                    preset_placeholders,
-                )
-                if error:
-                    # Store error message
-                    await upsert_message(
-                        message_id=response_id,
-                        chat_id=chat_id,
-                        content=error,
-                        user_type=UserTypeChoices.ASSISTANT.value,
-                        parent_id=query_id,
-                        llm_model=switch_llm,
-                        reasoning=reasoning,
-                        db=db,
-                    )
-
-                    # Error message search index upserted via Celery background task
-
-                    final_response = error  # Set final_response for title generation
-                    yield error
-                    return
-
-                # Yield final response status
-                reasoning_chunk = "📝 Generating final response...\n\n"
-                reasoning += reasoning_chunk
-                yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-                # Process and stream response
-                final_response = ""
-                async for chunk in self._process_response(base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning):
-                    if chunk.startswith("__FINAL_RESPONSE__"):
-                        # Extract the final response from the special signal
-                        final_response = chunk[len("__FINAL_RESPONSE__") :]
-                    else:
-                        yield chunk
-
-            else:
-                # Stream selected agents
-                reasoning_chunk = "🎯 Planning to execute the below steps:\n\n"
-                reasoning += reasoning_chunk
-                yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-
-                for i, agent in enumerate(selected_agents, 1):
-                    tool_name = self._agent_to_tool_name(agent.agent)
-                    user_friendly_name = self._tool_name_shown_to_user(tool_name)
-                    masked_agent_query = mask_uuids_in_text(agent.query)
-                    reasoning_chunk = f"&nbsp;&nbsp;&nbsp;{i}. {user_friendly_name} to get details about: '{masked_agent_query}'\n\n"
-                    reasoning += reasoning_chunk
-                    yield f"πspecial reasoning blockπ: {reasoning_chunk}"
-
-                # Multi-agent execution - stream tool execution details and final response
-                final_response_chunks = []
-                collecting_final_response = False
-
-                # Create a container for reasoning to allow modification by reference
-                reasoning_container = {"content": reasoning}
-                clarification_saved_multi = False
-
-                async for chunk in self._execute_multi_agents(
-                    selected_agents,
-                    user_meta,
-                    workspace_id,
-                    workspace_slug,
-                    project_id,
-                    conversation_history,
-                    enhanced_conversation_history,
-                    str(user_id),
-                    str(chat_id),
-                    query_flow_store,
-                    enhanced_query_for_processing,
-                    query_id,
-                    step_order,
-                    db,
-                    parsed_query,
-                    reasoning_container=reasoning_container,
-                    workspace_in_context=workspace_in_context,
-                ):
-                    # Persist clarification as assistant message when encountered
-                    if not clarification_saved_multi and chunk.startswith("πspecial clarification blockπ: "):
-                        try:
-                            import json as _json
-
-                            from pi.services.chat.helpers.tool_utils import format_clarification_as_text as _fmt_clar
-
-                            clar_content = chunk.replace("πspecial clarification blockπ: ", "")
-                            try:
-                                clar_data = _json.loads(clar_content)
-                            except Exception:
-                                clar_data = {"raw": clar_content}
-                            clar_text = _fmt_clar(clar_data)
-                            await upsert_message(
-                                message_id=response_id,
-                                chat_id=chat_id,
-                                content=clar_text,
-                                user_type=UserTypeChoices.ASSISTANT,
-                                parent_id=query_id,
-                                llm_model=switch_llm,
-                                reasoning=reasoning_container.get("content", reasoning),
-                                db=db,
-                            )
-                        except Exception:
-                            pass
-                        finally:
-                            clarification_saved_multi = True
-
-                    # Handle explicit final response marker (defensive)
-                    if chunk.startswith("__FINAL_RESPONSE__"):
-                        final_response = chunk[len("__FINAL_RESPONSE__") :]
-                        # Do not yield marker chunks to the client
-                        continue
-
-                    # Check if this chunk indicates we're starting the final response
-                    if chunk == "πspecial reasoning blockπ: 📝 Generating final response...\n\n":
-                        collecting_final_response = True
-                        yield chunk
-                        continue
 
                     # If we're collecting the final response (after the status message)
                     if collecting_final_response:
@@ -1163,8 +704,11 @@ class PlaneChatBot(ChatKit):
                 # Update reasoning from the container
                 reasoning = reasoning_container["content"]
 
-                # Combine the final response chunks
-                final_response = "".join(final_response_chunks)
+                # Combine the final response chunks if present; otherwise, keep captured __FINAL_RESPONSE__
+                if final_response_chunks:
+                    # Filter out dict chunks (reasoning blocks) and join only string chunks
+                    string_chunks = [chunk for chunk in final_response_chunks if isinstance(chunk, str)]
+                    final_response = "".join(string_chunks)
 
                 # Save assistant message with reasoning blocks
                 if final_response:
@@ -1176,6 +720,7 @@ class PlaneChatBot(ChatKit):
                         parent_id=query_id,
                         llm_model=switch_llm,
                         reasoning=reasoning,
+                        source=getattr(data, "source", None) or None,
                         db=db,
                     )
 
@@ -1208,6 +753,7 @@ class PlaneChatBot(ChatKit):
                         parent_id=query_id,
                         llm_model=switch_llm,
                         reasoning=reasoning,
+                        source=getattr(data, "source", None) or None,
                         db=db,
                     )
                 )
@@ -1228,6 +774,7 @@ class PlaneChatBot(ChatKit):
                 parent_id=query_id,
                 llm_model=switch_llm,
                 reasoning=reasoning,
+                source=getattr(data, "source", None) or None,
                 db=db,
             )
 
@@ -1237,78 +784,24 @@ class PlaneChatBot(ChatKit):
 
         finally:
             # Generate chat title for new chats BEFORE clearing token tracking context
-            # Check if this is the first message by looking at sequence number
-            try:
-                # Import here to avoid circular dependency
-                from sqlalchemy import select
-
-                from pi.app.models import Message
-
-                # Get the message sequence number to determine if this is a new chat
-                stmt = select(Message).where(Message.id == query_id)  # type: ignore[arg-type]
-                result = await db.execute(stmt)
-                message = result.scalar_one_or_none()
-
-                if message:
-                    message_sequence = message.sequence
-                    is_first_message = message_sequence == 1
-                else:
-                    log.warning(f"ChatID: {chat_id} - Message {query_id} not found for sequence check")
-                    message_sequence = None
-                    is_first_message = False
-
-                if is_first_message:
-                    try:
-                        # For error scenarios, use the user's question directly as title
-                        is_error_response = (
-                            not final_response
-                            or final_response.startswith("An unexpected error occurred")
-                            or final_response == "TOOL_ORCHESTRATION_FAILURE"
-                            or final_response.startswith("Action execution is not available")
-                            or final_response.startswith("Chat ID is required")
-                            or final_response.startswith("Your request timed out")
-                        )
-
-                        if is_error_response:
-                            # Use the user's original question as title, with some cleanup
-                            title = (parsed_query if parsed_query is not None else query).strip()
-                            # Truncate if too long (keeping it under ~60 characters for readability)
-                            if len(title) > 60:
-                                title = title[:57] + "..."
-                            await self.set_chat_title_directly(chat_id, title, db)
-                        elif final_response:
-                            # For successful responses, generate title using LLM
-                            chat_history = [parsed_query if parsed_query is not None else query, final_response]
-                            # Ensure both elements are strings
-                            chat_history = [str(item) for item in chat_history if item is not None]
-                            if len(chat_history) >= 2:  # Make sure we have both query and response
-                                title = await self.generate_title(chat_id, chat_history, db)
-                                # Generated chat title search index upserted via Celery background task
-                            else:
-                                log.warning(f"ChatID: {chat_id} - Not enough valid content to generate title")
-                                title = (parsed_query if parsed_query is not None else query).strip()
-                                # Truncate if too long (keeping it under ~60 characters for readability)
-                                if len(title) > 60:
-                                    title = title[:57] + "..."
-                                await self.set_chat_title_directly(chat_id, title, db)
-                        else:
-                            log.warning(f"ChatID: {chat_id} - No final_response available for title generation")
-                        if title:
-                            log.info(f"ChatID: {chat_id} - Generated title: {title}")
-                    except Exception as e:
-                        log.error(f"Error generating title: {str(e)}")
-
-            except Exception as e:
-                log.error(f"Error checking message sequence for title generation: {str(e)}")
+            await ask_mode_helpers.generate_chat_title_if_needed(
+                chatbot_instance=self,
+                chat_id=chat_id,
+                query_id=query_id,
+                db=db,
+                final_response=final_response,
+                parsed_query=parsed_query,
+                query=query,
+            )
 
             # Clear token tracking context and attachment blocks
             self.clear_token_tracking_context()
             self._current_attachment_blocks = None  # type: ignore[assignment]
 
-    async def handle_agent_query(
+    async def handle_tool_query(
         self,
         db: AsyncSession,
-        agent: str,
+        tool: str,
         query: str,
         user_meta: dict,
         message_id: UUID4,
@@ -1320,7 +813,7 @@ class PlaneChatBot(ChatKit):
         query_flow_store: QueryFlowStore,
         vector_search_issue_ids: list[str] | None = None,
         vector_search_page_ids: list[str] | None = None,
-        is_multi_agent: bool | None = False,
+        is_multi_tool: bool | None = False,
         preset_tables: list[str] | None = None,
         preset_sql_query: str | None = None,
         preset_placeholders: list[str] | None = None,
@@ -1330,12 +823,7 @@ class PlaneChatBot(ChatKit):
         if vector_search_page_ids is None:
             vector_search_page_ids = []
 
-        if agent == Agents.GENERIC_AGENT:
-            # Get attachment blocks from the main processing context
-            attachment_blocks = self.get_current_attachment_blocks()
-            return await self.handle_generic_query(query, user_id, conv_hist, attachment_blocks=attachment_blocks)
-
-        if agent == Agents.PLANE_STRUCTURED_DATABASE_AGENT:
+        if tool == RetrievalTools.STRUCTURED_DB_TOOL:
             # Convert conversation history to list of strings for conv_history parameter
             conv_history_strings = []
             if conv_hist:
@@ -1359,7 +847,7 @@ class PlaneChatBot(ChatKit):
                 chat_id=str(chat_id),
                 vector_search_issue_ids=vector_search_issue_ids,
                 vector_search_page_ids=vector_search_page_ids,
-                is_multi_agent=is_multi_agent,
+                is_multi_tool=is_multi_tool,
                 user_meta=user_meta,
                 conv_history=conv_history_strings,
                 preset_tables=preset_tables,
@@ -1367,20 +855,14 @@ class PlaneChatBot(ChatKit):
                 preset_placeholders=preset_placeholders,
                 attachment_blocks=attachment_blocks,
             )
-        if agent == Agents.PLANE_VECTOR_SEARCH_AGENT:
+        if tool == RetrievalTools.VECTOR_SEARCH_TOOL:
             return await self.handle_vector_search_query(query, workspace_id, project_id, user_id, vector_search_issue_ids)
-        if agent == Agents.PLANE_PAGES_AGENT:
+        if tool == RetrievalTools.PAGES_SEARCH_TOOL:
             return await self.handle_pages_query(query, workspace_id, project_id, user_id, vector_search_page_ids)
-        if agent == Agents.PLANE_DOCS_AGENT:
+        if tool == RetrievalTools.DOCS_SEARCH_TOOL:
             return await self.handle_docs_query(query)
-        if agent == Agents.PLANE_ACTION_EXECUTOR_AGENT:
-            # Action execution is now handled through the hierarchical flow in process_query_stream
-            # This path should not be reached anymore
-            log.warning("handle_agent_query called for action executor - this should be handled in process_query_stream")
-            return StandardAgentResponse.create_response("Action execution should be handled through the main query processing flow.")
-        else:
-            log.error(f"Unknown agent type encountered: {agent}. Fallback to generic agent.")
-            return await self.handle_generic_query(query, user_id, conv_hist)  # fallback to generic agent
+
+        return StandardAgentResponse.create_response("Sorry, I couldn't retrieve the information you asked for at this time. Please try again later.")
 
     async def generate_title(self, chat_id: UUID4, chat_history: list[str], db: AsyncSession) -> str:
         """Generate a title for a chat using the first question-answer pair and update it in the database."""

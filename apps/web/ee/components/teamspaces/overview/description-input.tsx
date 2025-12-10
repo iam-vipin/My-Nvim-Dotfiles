@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash-es";
@@ -29,7 +27,9 @@ export type TeamspaceDescriptionInputProps = {
   containerClassName?: string;
 };
 
-export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = observer((props) => {
+export const TeamspaceDescriptionInput = observer(function TeamspaceDescriptionInput(
+  props: TeamspaceDescriptionInputProps
+) {
   const { workspaceSlug, teamspaceId, disabled, initialValue, placeholder, containerClassName } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -20,7 +18,7 @@ type EpicPropertiesProps = {
   getClassName?: (isOpen: boolean) => string;
 };
 
-export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
+export const EpicPropertiesRoot = observer(function EpicPropertiesRoot(props: EpicPropertiesProps) {
   // props
   const { epicId, propertiesLoader, containerClassName, getWorkItemTypeById, getClassName } = props;
   // hooks

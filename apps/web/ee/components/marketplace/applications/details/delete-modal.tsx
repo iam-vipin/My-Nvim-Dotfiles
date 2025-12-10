@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -16,7 +14,7 @@ interface IDeleteApplication {
   handleClose: () => void;
 }
 
-export const DeleteApplicationModal: React.FC<IDeleteApplication> = observer((props) => {
+export const DeleteApplicationModal = observer(function DeleteApplicationModal(props: IDeleteApplication) {
   const { app, isOpen, handleClose } = props;
   // states
   const [loader, setLoader] = useState(false);

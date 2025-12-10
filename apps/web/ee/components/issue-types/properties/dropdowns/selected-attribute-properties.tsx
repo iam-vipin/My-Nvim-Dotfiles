@@ -24,7 +24,9 @@ type TSelectedPropertyAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const SelectedAttributeProperties = observer((props: TSelectedPropertyAttributesProps) => {
+export const SelectedAttributeProperties = observer(function SelectedAttributeProperties(
+  props: TSelectedPropertyAttributesProps
+) {
   const { propertyDetail, currentOperationMode, onPropertyDetailChange, error, isUpdateAllowed } = props;
 
   const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {

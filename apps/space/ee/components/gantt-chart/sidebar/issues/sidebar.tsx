@@ -1,5 +1,3 @@
-"use client";
-
 import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -18,11 +16,11 @@ type Props = {
   loadMoreBlocks?: () => void;
   ganttContainerRef: RefObject<HTMLDivElement>;
   blockIds: string[];
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   showAllBlocks?: boolean;
 };
 
-export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
+export const IssueGanttSidebar = observer(function IssueGanttSidebar(props: Props) {
   const {
     blockIds,
     getBlockById,

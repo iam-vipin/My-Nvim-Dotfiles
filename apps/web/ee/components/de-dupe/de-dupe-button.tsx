@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -16,7 +15,7 @@ type TDeDupeButtonRoot = {
   label: string;
 };
 
-export const DeDupeButtonRoot: FC<TDeDupeButtonRoot> = observer((props) => {
+export const DeDupeButtonRoot = observer(function DeDupeButtonRoot(props: TDeDupeButtonRoot) {
   const { workspaceSlug, isDuplicateModalOpen, label, handleOnClick } = props;
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;

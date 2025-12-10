@@ -18,7 +18,7 @@ type TProps = {
   isEpic?: boolean;
 };
 
-export const WorkItemPreviewCard = observer((props: TProps) => {
+export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: TProps) {
   const { artifactId, isEpic = false } = props;
   const data = useWorkItemData(artifactId);
   const { workspaceSlug } = useParams();

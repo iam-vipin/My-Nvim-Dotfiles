@@ -12,7 +12,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const PieChartGroupingConfig: React.FC<Props> = (props) => {
+export function PieChartGroupingConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -22,7 +22,9 @@ export const PieChartGroupingConfig: React.FC<Props> = (props) => {
   const isGroupingEnabled = !!watch("config.group_thin_pieces");
 
   const debouncedConfigUpdate = useCallback(
+    // eslint-disable-next-line react-hooks/use-memo
     debounce((updateData: Partial<TDashboardWidgetConfig>) => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleConfigUpdate(updateData);
     }, 500),
     [handleConfigUpdate]
@@ -113,4 +115,4 @@ export const PieChartGroupingConfig: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

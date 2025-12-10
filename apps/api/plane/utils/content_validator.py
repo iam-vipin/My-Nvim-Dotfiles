@@ -135,6 +135,8 @@ EE_ATTRIBUTES = {
         "data-name",
         "data-file-size",
         "data-file-type",
+        "data-preview",
+        "data-accepted-file-type",
     },
     # math components (generic)
     "inline-math-component": {"latex", "id"},

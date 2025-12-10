@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { LayersIcon } from "@plane/propel/icons";
 import type { TBaseActivityVerbs } from "@plane/types";
@@ -16,7 +14,7 @@ type TEpicActivityItemProps = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const EpicActivityItem = observer((props: TEpicActivityItemProps) => {
+export const EpicActivityItem = observer(function EpicActivityItem(props: TEpicActivityItemProps) {
   const { id, ends } = props;
 
   const {

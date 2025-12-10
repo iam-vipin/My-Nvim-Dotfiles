@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Link2, Pencil, Trash2 } from "lucide-react";
@@ -25,7 +23,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const CustomerQuickActions: React.FC<Props> = observer((props) => {
+export const CustomerQuickActions = observer(function CustomerQuickActions(props: Props) {
   const { customerId, workspaceSlug, parentRef, customClassName } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

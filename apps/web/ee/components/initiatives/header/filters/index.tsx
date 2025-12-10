@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import type { TInitiativeDisplayFilters } from "@plane/types";
@@ -16,7 +14,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const HeaderFilters = observer(({ workspaceSlug }: Props) => {
+export const HeaderFilters = observer(function HeaderFilters({ workspaceSlug }: Props) {
   const {
     initiativeFilters: { currentInitiativeDisplayFilters, updateDisplayFilters },
   } = useInitiatives();

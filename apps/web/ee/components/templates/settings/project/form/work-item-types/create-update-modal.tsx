@@ -41,7 +41,7 @@ const defaultIssueTypeData: Partial<TIssueType> = {
   is_epic: false,
 };
 
-export const ProjectTemplateWorkItemTypeModal: FC<Props> = observer((props) => {
+export const ProjectTemplateWorkItemTypeModal = observer(function ProjectTemplateWorkItemTypeModal(props: Props) {
   const {
     workspaceSlug,
     projectTemplateId,

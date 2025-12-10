@@ -28,7 +28,7 @@ type TProps = {
   setIsSearching: (isSearching: boolean) => void;
 };
 
-export const SearchResults: React.FC<TProps> = observer((props) => {
+export const SearchResults = observer(function SearchResults(props: TProps) {
   const { query, flattenedSearchResults, handleResultClick, setFlattenedSearchResults, isSearching, setIsSearching } =
     props;
   // params

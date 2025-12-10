@@ -11,7 +11,7 @@ type TEstimateListItem = {
   onDeleteClick?: (estimateId: string) => void;
 };
 
-export const EstimateListItemButtons: FC<TEstimateListItem> = observer((props) => {
+export const EstimateListItemButtons = observer(function EstimateListItemButtons(props: TEstimateListItem) {
   const { estimateId, isAdmin, isEditable, onEditClick } = props;
 
   if (!isAdmin || !isEditable) return <></>;

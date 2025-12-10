@@ -37,6 +37,7 @@ export class GithubWebhookWorker extends TaskHandler {
           return handleIssueComment(this.store, data.action, data);
         }
       }
+      return true;
     } catch (error: any) {
       // Silently skip events where we don't have permission to process
       if (error?.detail && error?.detail.includes(CONSTANTS.NO_PERMISSION_ERROR)) {
@@ -44,9 +45,9 @@ export class GithubWebhookWorker extends TaskHandler {
         return false;
       }
       captureException(error);
+      return true;
     } finally {
       logger.info("[GITHUB] Event Processed Successfully");
-      return true;
     }
   }
 }

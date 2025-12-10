@@ -16,7 +16,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => {
+export const BulkDeleteConfirmationModal = observer(function BulkDeleteConfirmationModal(props: Props) {
   const { handleClose, isOpen, issueIds, onSubmit, projectId, workspaceSlug } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);

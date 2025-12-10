@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -21,7 +19,9 @@ type TWorkspaceWorklogDownloadList = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogDownloadList: FC<TWorkspaceWorklogDownloadList> = observer((props) => {
+export const WorkspaceWorklogDownloadList = observer(function WorkspaceWorklogDownloadList(
+  props: TWorkspaceWorklogDownloadList
+) {
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { loader, orderedWorklogDownloads } = useWorkspaceWorklogDownloads();

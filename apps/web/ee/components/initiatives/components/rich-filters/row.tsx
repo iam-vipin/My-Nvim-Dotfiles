@@ -3,7 +3,7 @@ import { Loader } from "@plane/ui";
 import { FiltersRow } from "@/components/rich-filters/filters-row";
 import { useInitiativesFilterContext } from "./context";
 
-const InitiativesFiltersRow = observer(() => {
+const InitiativesFiltersRow = observer(function InitiativesFiltersRow() {
   const { filterInstance, isReady } = useInitiativesFilterContext();
 
   if (!isReady || !filterInstance) {

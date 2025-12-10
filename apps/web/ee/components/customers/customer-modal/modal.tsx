@@ -13,7 +13,7 @@ type Props = {
   customerId?: string;
   onClose: () => void;
 };
-export const CreateUpdateCustomerModal: FC<Props> = observer((props) => {
+export const CreateUpdateCustomerModal = observer(function CreateUpdateCustomerModal(props: Props) {
   const { isOpen, customerId, onClose } = props;
   // hooks
   const { getCustomerById } = useCustomers();

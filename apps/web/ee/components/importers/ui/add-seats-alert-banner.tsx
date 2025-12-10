@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -15,7 +13,7 @@ type Props = {
   extraSeatRequired?: number;
 };
 
-export const AddSeatsAlertBanner: React.FC<Props> = observer((props: Props) => {
+export const AddSeatsAlertBanner = observer(function AddSeatsAlertBanner(props: Props) {
   const { additionalUserCount = 15, extraSeatRequired } = props;
   const [addWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
   const {

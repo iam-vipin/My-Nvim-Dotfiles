@@ -680,7 +680,7 @@ def extract_ids_from_sql_result(query_result: Any) -> Dict[str, List[str]]:
 async def get_refs_from_chat(db: AsyncSession, chat_id: str) -> List[str]:
     """Safely extract any available entity URLs from execution_data or content."""
 
-    tool_results = await get_tool_results_from_chat_history(db, uuid.UUID(chat_id), "PLANE_STRUCTURED_DATABASE_AGENT")
+    tool_results = await get_tool_results_from_chat_history(db, uuid.UUID(chat_id), "structured_db_tool")
 
     extracted_entities: List[str] = []
 
@@ -716,7 +716,7 @@ async def get_refs_from_chat(db: AsyncSession, chat_id: str) -> List[str]:
 async def construct_entity_urls_vectordb(entity_ids: Dict[str, List[str]], api_base_url: str) -> List[Dict[str, str]]:
     """Construct entity links using OpenSearch indices for better efficiency"""
     entity_links: List[Dict[str, str]] = []
-
+    log.info(f"construct_entity_urls_vectordb: Entity IDs: {entity_ids}")
     if not entity_ids or not any(entity_ids.values()):
         return entity_links
 
@@ -743,7 +743,7 @@ async def construct_entity_urls_vectordb(entity_ids: Dict[str, List[str]], api_b
             try:
                 # Build batch query to get all documents by IDs
                 query = {"query": {"terms": {"id": entity_list}}, "size": len(entity_list)}
-
+                log.info(f"construct_entity_urls_vectordb: Query: {query}")
                 # Execute search
                 response = await vectorstore.async_search(index=index_name, body=query)
 
@@ -751,11 +751,11 @@ async def construct_entity_urls_vectordb(entity_ids: Dict[str, List[str]], api_b
                 for hit in response["hits"]["hits"]:
                     source = hit["_source"]
                     entity_id = source.get("id", "")
-
+                    log.info(f"construct_entity_urls_vectordb: Source: {source}")
                     # Extract common fields
                     name = source.get("name", "")
                     workspace_slug = source.get("workspace_slug", "")
-
+                    log.info(f"construct_entity_urls_vectordb: Name: {name}, Workspace Slug: {workspace_slug}")
                     # Construct URLs based on entity type
                     if entity_type == "issues":
                         # For issues: /workspace_slug/browse/PROJECT_IDENTIFIER-SEQUENCE_ID/
@@ -766,7 +766,7 @@ async def construct_entity_urls_vectordb(entity_ids: Dict[str, List[str]], api_b
                             url = f"{api_base_url}/{workspace_slug}/browse/{issue_identifier}/"
                             entity_link = {"name": name, "id": entity_id, "issue_identifier": issue_identifier, "url": url, "type": "issue"}
                             entity_links.append(entity_link)
-
+                            log.info(f"construct_entity_urls_vectordb: Entity (workitem) Link: {entity_link}")
                     elif entity_type == "pages":
                         # For pages: global vs project pages
                         is_global = source.get("is_global", False)
@@ -784,13 +784,13 @@ async def construct_entity_urls_vectordb(entity_ids: Dict[str, List[str]], api_b
 
                         entity_link = {"name": name, "id": entity_id, "url": url, "type": "page"}
                         entity_links.append(entity_link)
-
+                        log.info(f"construct_entity_urls_vectordb: Entity (page) Link: {entity_link}")
                     elif entity_type == "projects":
                         # For projects: /workspace_slug/projects/project_id/overview/
                         url = f"{api_base_url}/{workspace_slug}/projects/{entity_id}/overview/"
                         entity_link = {"name": name, "id": entity_id, "url": url, "type": "project"}
                         entity_links.append(entity_link)
-
+                        log.info(f"construct_entity_urls_vectordb: Entity (project) Link: {entity_link}")
                     elif entity_type in ["modules", "cycles"]:
                         # For modules and cycles: /workspace_slug/projects/project_id/modules|cycles/entity_id/
                         project_id = source.get("project_id", "")
@@ -804,7 +804,7 @@ async def construct_entity_urls_vectordb(entity_ids: Dict[str, List[str]], api_b
                                 "type": entity_type[:-1],  # Remove 's' from end (modules -> module)
                             }
                             entity_links.append(entity_link)
-
+                            log.info(f"construct_entity_urls_vectordb: Entity (module or cycle) Link: {entity_link}")
             except Exception as e:
                 log.error(f"Error constructing URLs for {entity_type}: {e}")
                 continue

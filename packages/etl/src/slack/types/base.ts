@@ -507,14 +507,6 @@ export interface SlackConversationListResponse {
   };
 }
 
-export interface Authorization {
-  enterprise_id: string | null;
-  team_id: string;
-  user_id: string;
-  is_bot: boolean;
-  is_enterprise_install: boolean;
-}
-
 // Type guard for BotMessage
 export function isBotMessage(payload: SlackEventPayload): payload is SlackEventPayload & { event: { bot_id: string } } {
   return !!payload.event?.bot_id;

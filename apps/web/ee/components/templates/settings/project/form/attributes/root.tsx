@@ -30,7 +30,7 @@ type TProjectAttributesProps = {
   ) => void;
 };
 
-export const ProjectAttributes = observer((props: TProjectAttributesProps) => {
+export const ProjectAttributes = observer(function ProjectAttributes(props: TProjectAttributesProps) {
   const { workspaceSlug, templateInvalidIds, handleTemplateInvalidIdsChange } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -47,7 +47,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
     if (!state.config_key) {
       throw new Error(E_SILO_ERROR_CODES.INVALID_APP_CREDENTIALS.toString());
     }
-    const githubAuthService = await this.getGithubAuthService(state.config_key as string);
+    const githubAuthService = await this.getGithubAuthService(state.config_key);
     return githubAuthService.getAuthUrl(state);
   }
 
@@ -63,7 +63,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
     // add the config key to the state to be used in getUserAuthUrl and handleUserCallback
     state.config_key = configKey;
 
-    const githubAuthService = await this.getGithubAuthService(state.config_key as string);
+    const githubAuthService = await this.getGithubAuthService(state.config_key);
     return githubAuthService.getUserAuthUrl(state);
   }
 
@@ -71,7 +71,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
     code: string,
     state: string
   ): Promise<{ stateBuffer: string; redirectUri?: string }> {
-    const authState: GithubUserAuthState = JSON.parse(Buffer.from(state as string, "base64").toString());
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(state, "base64").toString());
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github-enterprise/`;
 
     if (authState.profile_redirect) {
@@ -79,8 +79,8 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
     }
 
     const githubState: GithubPlaneOAuthState = {
-      github_code: code as string,
-      encoded_github_state: state as string,
+      github_code: code,
+      encoded_github_state: state,
     };
 
     const stateBuffer = Buffer.from(JSON.stringify(githubState)).toString("base64");
@@ -101,11 +101,11 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
       throw new Error(E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT.toString());
     }
 
-    const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
+    const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state, "base64").toString());
     const redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github-enterprise/`;
 
     // Create github service from the installation id
-    const service = await this.getGithubService(installation_id as string, authState.config_key as string);
+    const service = await this.getGithubService(installation_id, authState.config_key as string);
 
     // Get the installation details
     const installation = await service.getInstallation(Number(installation_id));
@@ -120,9 +120,9 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
       response: {
         identifier: installation.data.account.id.toString(),
         authorization_type: ESourceAuthorizationType.TOKEN,
-        access_token: installation_id as string,
+        access_token: installation_id,
         connection_id: installation.data.account.id.toString(),
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for dynamic key assignment
         connection_slug: installation.data.account.login,
         refresh_token: "",
         expires_in: 0,
@@ -144,13 +144,11 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
   async handlePlaneOAuthCallback(
     encodedIntegrationState: string
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
-    const githubState: GithubPlaneOAuthState = JSON.parse(
-      Buffer.from(encodedIntegrationState as string, "base64").toString()
-    );
+    const githubState: GithubPlaneOAuthState = JSON.parse(Buffer.from(encodedIntegrationState, "base64").toString());
 
     const { github_code: code, encoded_github_state } = githubState;
 
-    const authState: GithubUserAuthState = JSON.parse(Buffer.from(encoded_github_state as string, "base64").toString());
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(encoded_github_state, "base64").toString());
 
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github-enterprise/`;
 
@@ -160,7 +158,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
 
     const githubAuthService = await this.getGithubAuthService(authState.config_key as string);
     const { response, state: githubUserState } = await githubAuthService.getUserAccessToken({
-      code: code as string,
+      code: code,
       state: authState,
     });
 
@@ -204,7 +202,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
     }
     const githubService = getGithubService(
       wsConnection as TGithubWorkspaceConnection,
-      wsCredential.source_access_token as string,
+      wsCredential.source_access_token,
       true
     );
     const installation = await githubService.getInstallation(Number(wsCredential.source_access_token));

@@ -44,7 +44,7 @@ API_METHODS: Dict[str, Dict[str, str]] = {
     "projects": {
         "create": "Create a new project",
         "list": "List projects in workspace",
-        # "retrieve": "Get a single project by ID",
+        "retrieve": "Get details of a single project",
         "update": "Update project details",
         "delete": "Delete a project",
         "archive": "Archive a project",
@@ -95,14 +95,6 @@ API_METHODS: Dict[str, Dict[str, str]] = {
     "pages": {
         "create_project_page": "Create a new page in a project",
         "create_workspace_page": "Create a new page in the workspace",
-    },
-    "assets": {
-        "create": "Create a new asset",
-        "create_user_upload": "Upload user-specific assets",
-        "get_generic": "Retrieve generic assets",
-        "update_generic": "Update generic assets",
-        "update_user": "Update user assets",
-        "delete_user": "Delete user assets",
     },
     "users": {
         "get_current": "Get current user information",
@@ -222,7 +214,7 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "add_work_items": "add_cycle_work_items",
         "list_work_items": "list_cycle_work_items",
         "retrieve_work_item": "retrieve_cycle_work_item",
-        "remove_work_item": "delete_cycle_work_item",
+        "remove_work_item": "remove_cycle_work_item",
         "transfer_work_items": "transfer_cycle_work_items",
         "delete": "delete_cycle",
     },
@@ -250,7 +242,7 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "list_archived": "list_archived_modules",
         "add_work_items": "add_module_work_items",
         "list_work_items": "list_module_work_items",
-        "remove_work_item": "delete_module_work_item",
+        "remove_work_item": "remove_module_work_item",
         "delete": "delete_module",
     },
     "pages": {
@@ -333,6 +325,18 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "delete": "delete_issue_worklog",
     },
 }
+
+
+# tool_name to category mapping
+def build_tool_name_to_category_map() -> Dict[str, str]:
+    tool_name_to_category_map = {}
+    for category, methods in METHOD_NAME_MAP.items():
+        for method_name in methods.values():
+            tool_name_to_category_map[method_name] = category
+    return tool_name_to_category_map
+
+
+TOOL_NAME_TO_CATEGORY_MAP = build_tool_name_to_category_map()
 
 
 def get_method_name_map(category: str) -> Dict[str, str]:

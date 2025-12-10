@@ -1,10 +1,8 @@
-"use client";
-
 import type { FC } from "react";
 // types
 import type { TSvgIcons } from "./types";
 
-export const DraftIcon: FC<TSvgIcons> = (props) => {
+export function DraftIcon(props: TSvgIcons) {
   const { width, height, className, color, ...rest } = props;
 
   return (
@@ -27,4 +25,4 @@ export const DraftIcon: FC<TSvgIcons> = (props) => {
       </svg>
     </>
   );
-};
+}

@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { WorkspaceActiveCyclesList, WorkspaceActiveCyclesUpgrade } from "@/plane-web/components/active-cycles";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
-export const WorkspaceActiveCyclesRoot = () => {
+export function WorkspaceActiveCyclesRoot() {
   // router
   const { workspaceSlug } = useParams();
 
@@ -16,4 +16,4 @@ export const WorkspaceActiveCyclesRoot = () => {
       <WorkspaceActiveCyclesList />
     </WithFeatureFlagHOC>
   );
-};
+}

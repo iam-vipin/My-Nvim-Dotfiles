@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -16,7 +14,9 @@ type TWorkspaceWorklogAppliedFilterRoot = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogAppliedFilterRoot: FC<TWorkspaceWorklogAppliedFilterRoot> = observer((props) => {
+export const WorkspaceWorklogAppliedFilterRoot = observer(function WorkspaceWorklogAppliedFilterRoot(
+  props: TWorkspaceWorklogAppliedFilterRoot
+) {
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { filters } = useWorkspaceWorklogs();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { TClickUpPriority } from "@plane/etl/clickup";
@@ -18,7 +16,7 @@ type TMapPrioritiesSelection = {
   planePriorities: TPlanePriorityData[];
 };
 
-export const MapPrioritiesSelection: FC<TMapPrioritiesSelection> = observer((props) => {
+export const MapPrioritiesSelection = observer(function MapPrioritiesSelection(props: TMapPrioritiesSelection) {
   const { value, handleValue, clickUpPriority, planePriorities } = props;
   const { t } = useTranslation();
 

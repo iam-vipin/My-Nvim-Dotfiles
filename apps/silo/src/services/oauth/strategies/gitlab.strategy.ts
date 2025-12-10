@@ -43,7 +43,7 @@ export class GitlabEnterpriseStrategy implements OAuthStrategy {
     if (!state.config_key) {
       throw new Error(E_SILO_ERROR_CODES.INVALID_APP_CREDENTIALS.toString());
     }
-    const gitlabAuthService = await this.getGitlabAuthService(state.config_key as string);
+    const gitlabAuthService = await this.getGitlabAuthService(state.config_key);
     return gitlabAuthService.getAuthUrl(state);
   }
 
@@ -56,15 +56,15 @@ export class GitlabEnterpriseStrategy implements OAuthStrategy {
       throw new Error(E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT.toString());
     }
 
-    const authState: GitLabAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
+    const authState: GitLabAuthorizeState = JSON.parse(Buffer.from(state, "base64").toString());
     const redirectUri = getIntegrationPageUrl(authState.workspace_slug, this.integrationKey);
 
     // Create gitlab auth service
     const gitlabAuthService = await this.getGitlabAuthService(authState.config_key as string);
 
     const { response: tokenResponse } = await gitlabAuthService.getAccessToken({
-      code: code as string,
-      state: state as string,
+      code: code,
+      state: state,
     });
 
     if (!tokenResponse || !tokenResponse.access_token) {
@@ -96,7 +96,7 @@ export class GitlabEnterpriseStrategy implements OAuthStrategy {
         access_token: tokenResponse.access_token,
         refresh_token: tokenResponse.refresh_token,
         connection_id: user.id.toString(),
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for dynamic key assignment
         connection_slug: user.login,
         expires_in: tokenResponse.expires_in,
         provider_user_data: null,

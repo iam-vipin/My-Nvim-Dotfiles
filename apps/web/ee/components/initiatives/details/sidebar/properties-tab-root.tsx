@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Tags } from "lucide-react";
@@ -38,7 +36,7 @@ type Props = {
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
-export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
+export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSidebarPropertiesRoot(props: Props) {
   const { workspaceSlug, initiativeId, disabled, handleInitiativeStateUpdate, handleInitiativeLabelUpdate } = props;
 
   const {

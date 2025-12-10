@@ -34,7 +34,7 @@ export const getTargetState = (stateMap: TClickUpStateConfig[], sourceState: TCl
   return {
     ...targetMapping.target_state,
     external_source: E_IMPORTER_KEYS.CLICKUP,
-    external_id: sourceState.id as string,
+    external_id: sourceState.id,
   } as ExState;
 };
 

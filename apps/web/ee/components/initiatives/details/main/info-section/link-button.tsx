@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -11,7 +10,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const InitiativeLinksActionButton: FC<Props> = observer((props) => {
+export const InitiativeLinksActionButton = observer(function InitiativeLinksActionButton(props: Props) {
   const { customButton, disabled = false } = props;
   // store hooks
   const {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
@@ -40,7 +38,7 @@ const defaultFormValues: TFormValues = {
   passwordConfirmation: "",
 };
 
-export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = (props) => {
+export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
   const { authMode, invitationId, email, handleEmail, handleAuthStep, generateEmailUniqueCode, isSMTPConfigured } =
     props;
   // ref
@@ -257,4 +255,4 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = (props) => {
       </div>
     </form>
   );
-};
+}

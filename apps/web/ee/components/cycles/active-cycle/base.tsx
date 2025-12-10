@@ -1,5 +1,3 @@
-"use client";
-
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -22,7 +20,7 @@ type IActiveCycleDetails = {
   showHeader?: boolean;
 };
 
-export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) => {
+export const ActiveCycleBase = observer(function ActiveCycleBase(props: IActiveCycleDetails) {
   const { workspaceSlug, projectId, cycleId } = props;
   // plane hooks
   const { t } = useTranslation();

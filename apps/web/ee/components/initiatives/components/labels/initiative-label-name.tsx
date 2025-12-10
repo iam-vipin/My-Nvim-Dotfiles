@@ -7,7 +7,7 @@ type InitiativeLabelNameProps = {
   className?: string;
 };
 
-export const InitiativeLabelName: React.FC<InitiativeLabelNameProps> = (props) => {
+export function InitiativeLabelName(props: InitiativeLabelNameProps) {
   const { name, color, className = "" } = props;
 
   return (
@@ -21,4 +21,4 @@ export const InitiativeLabelName: React.FC<InitiativeLabelNameProps> = (props) =
       <span className="text-sm font-medium text-custom-text-100">{name}</span>
     </div>
   );
-};
+}

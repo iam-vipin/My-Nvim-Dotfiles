@@ -21,7 +21,7 @@ type Props = {
   logo: React.ReactNode;
 };
 
-export const PageEmbedPreview: React.FC<Props> = observer((props) => {
+export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props) {
   const { page, storeType, logo } = props;
   // params
   const { workspaceSlug, projectId } = useParams();

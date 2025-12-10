@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -12,7 +11,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 // local imports
 import { WikiAppSidebar } from "./sidebar";
 
-export const PagesAppSidebar: FC = observer(() => {
+export const PagesAppSidebar = observer(function PagesAppSidebar() {
   // store hooks
   const { sidebarCollapsed, toggleSidebar, sidebarPeek, toggleSidebarPeek, isAnySidebarDropdownOpen } = useAppTheme();
   const { storedValue, setValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);

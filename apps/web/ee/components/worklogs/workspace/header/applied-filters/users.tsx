@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane ui
@@ -18,7 +16,9 @@ type TWorkspaceWorklogAppliedFilterUsers = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogAppliedFilterUsers: FC<TWorkspaceWorklogAppliedFilterUsers> = observer((props) => {
+export const WorkspaceWorklogAppliedFilterUsers = observer(function WorkspaceWorklogAppliedFilterUsers(
+  props: TWorkspaceWorklogAppliedFilterUsers
+) {
   const { workspaceSlug } = props;
   // hooks
   const {

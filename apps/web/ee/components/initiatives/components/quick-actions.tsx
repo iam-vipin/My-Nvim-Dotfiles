@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
@@ -27,7 +25,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
+export const InitiativeQuickActions = observer(function InitiativeQuickActions(props: Props) {
   const { parentRef, initiative, workspaceSlug, disabled = false, customClassName } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);

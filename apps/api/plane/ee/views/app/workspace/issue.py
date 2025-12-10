@@ -320,4 +320,7 @@ class WorkspaceIssueRetrieveEndpoint(BaseAPIView):
             .first()
         )
 
+        if not issue:
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
+
         return Response(issue, status=status.HTTP_200_OK)

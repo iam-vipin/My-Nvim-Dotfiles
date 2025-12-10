@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -28,7 +26,7 @@ type TProps = {
   workspaceSlug: string;
 };
 
-export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
+export const ProjectAutomationDetailsHeader = observer(function ProjectAutomationDetailsHeader(props: TProps) {
   const { automationId, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();

@@ -29,7 +29,7 @@ export type TFormData = {
   name: string;
 };
 
-const CreateIssueModal = ({ project, anchor }: TProps) => {
+function CreateIssueModal({ project, anchor }: TProps) {
   // state
   const [success, setSuccess] = useState(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
@@ -125,5 +125,6 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
       </div>
     </div>
   );
-};
+}
+
 export default CreateIssueModal;

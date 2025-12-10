@@ -4,7 +4,7 @@ import { cn } from "@plane/utils";
 type TProps = {
   isCollapsed: boolean;
 };
-export const Properties = (props: TProps) => {
+export function Properties(props: TProps) {
   const { isCollapsed } = props;
   return (
     <div
@@ -40,4 +40,4 @@ export const Properties = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

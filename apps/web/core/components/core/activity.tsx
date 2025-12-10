@@ -16,7 +16,6 @@ import {
   UsersIcon,
 } from "lucide-react";
 import {
-  BlockedIcon,
   BlockerIcon,
   CalendarLayoutIcon,
   CycleIcon,
@@ -634,7 +633,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <BlockedIcon height="12" width="12" className="text-custom-text-200" />,
+    icon: <BlockerIcon height="12" width="12" className="text-custom-text-200" />,
   },
   duplicate: {
     message: (activity, showIssue) => {

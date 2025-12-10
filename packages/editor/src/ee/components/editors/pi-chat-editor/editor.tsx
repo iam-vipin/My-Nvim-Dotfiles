@@ -40,7 +40,7 @@ type PiChatEditorProps = {
   onEditorReady?: () => void;
 };
 
-const PiChatEditor = (props: PiChatEditorProps) => {
+function PiChatEditor(props: PiChatEditorProps) {
   const {
     className,
     setEditorCommand,
@@ -147,11 +147,14 @@ const PiChatEditor = (props: PiChatEditorProps) => {
       </div>
     </div>
   );
-};
+}
 
-const PiChatEditorWithRef = forwardRef<TPiChatEditorRefApi, PiChatEditorProps>((props, ref) => (
-  <PiChatEditor {...props} forwardedRef={ref as MutableRefObject<TPiChatEditorRefApi | null>} />
-));
+const PiChatEditorWithRef = forwardRef(function PiChatEditorWithRef(
+  props: PiChatEditorProps,
+  ref: React.ForwardedRef<TPiChatEditorRefApi>
+) {
+  return <PiChatEditor {...props} forwardedRef={ref as MutableRefObject<TPiChatEditorRefApi | null>} />;
+});
 
 PiChatEditorWithRef.displayName = "PiChatEditorWithRef";
 

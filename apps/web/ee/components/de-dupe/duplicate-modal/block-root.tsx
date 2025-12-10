@@ -1,4 +1,3 @@
-"use-client";
 import type { FC } from "react";
 import React from "react";
 // plane imports
@@ -13,7 +12,7 @@ type TDuplicateIssueReadOnlyBlockRootProps = {
   issue: TDeDupeIssue;
 };
 
-export const DuplicateIssueReadOnlyBlockRoot: FC<TDuplicateIssueReadOnlyBlockRootProps> = (props) => {
+export function DuplicateIssueReadOnlyBlockRoot(props: TDuplicateIssueReadOnlyBlockRootProps) {
   const { workspaceSlug, issue } = props;
   return (
     <DeDupeIssueBlockWrapper workspaceSlug={workspaceSlug} issue={issue}>
@@ -21,4 +20,4 @@ export const DuplicateIssueReadOnlyBlockRoot: FC<TDuplicateIssueReadOnlyBlockRoo
       <DeDupeIssueBlockContent issue={issue} />
     </DeDupeIssueBlockWrapper>
   );
-};
+}

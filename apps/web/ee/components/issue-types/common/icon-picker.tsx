@@ -28,7 +28,7 @@ export type TIssueTypeIconPicker = {
   size?: TIssueTypeLogoSize;
 };
 
-export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = observer((props) => {
+export const IssueTypeIconPicker = observer(function IssueTypeIconPicker(props: TIssueTypeIconPicker) {
   const {
     isOpen,
     handleToggle,

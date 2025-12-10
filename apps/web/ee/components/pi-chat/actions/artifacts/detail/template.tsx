@@ -10,7 +10,7 @@ type TProps = {
   data: TArtifact;
 };
 
-export const TemplateDetail = (props: TProps) => {
+export function TemplateDetail(props: TProps) {
   const { data } = props;
   const properties = {
     ...data?.parameters?.properties,
@@ -63,4 +63,4 @@ export const TemplateDetail = (props: TProps) => {
       </div>
     </Card>
   );
-};
+}

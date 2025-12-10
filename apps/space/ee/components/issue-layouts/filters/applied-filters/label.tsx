@@ -9,7 +9,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
+export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props: Props) {
   const { handleRemove, values } = props;
 
   const { getLabelsByIds } = useLabel();

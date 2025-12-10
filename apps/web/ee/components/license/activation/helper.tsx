@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Copy } from "lucide-react";
@@ -17,7 +15,7 @@ type Props = {
   description?: string | React.ReactNode;
 };
 
-const CopyField: React.FC<Props> = (props) => {
+function CopyField(props: Props) {
   const { label, value, description } = props;
 
   const handleCopy = () => {
@@ -46,13 +44,15 @@ const CopyField: React.FC<Props> = (props) => {
       {description && <div className="text-xs text-custom-text-300">{description}</div>}
     </div>
   );
-};
+}
 
 type TInstanceDetailsForLicenseActivationProps = {
   workspaceSlug: string;
 };
 
-export const InstanceDetailsForLicenseActivation = observer((props: TInstanceDetailsForLicenseActivationProps) => {
+export const InstanceDetailsForLicenseActivation = observer(function InstanceDetailsForLicenseActivation(
+  props: TInstanceDetailsForLicenseActivationProps
+) {
   const { workspaceSlug } = props;
   // store hooks
   const { instance } = useInstance();

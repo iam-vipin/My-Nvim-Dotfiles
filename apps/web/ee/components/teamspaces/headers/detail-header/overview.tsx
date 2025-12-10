@@ -16,7 +16,9 @@ type TeamOverviewHeaderActionsProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamOverviewHeaderActions = observer((props: TeamOverviewHeaderActionsProps) => {
+export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderActions(
+  props: TeamOverviewHeaderActionsProps
+) {
   const { teamspaceId, isEditingAllowed } = props;
   // router
   const { workspaceSlug } = useParams();

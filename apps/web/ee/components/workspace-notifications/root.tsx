@@ -4,7 +4,7 @@ import { NotificationCardListRoot as NotificationCardListRootCe } from "ce/compo
 import type { TNotificationListRoot } from "ce/components/workspace-notifications/root";
 import { NotificationCardListRoot as NotificationCardListRootEe } from "./notification-card/root";
 
-export const NotificationListRoot = observer((props: TNotificationListRoot) => {
+export const NotificationListRoot = observer(function NotificationListRoot(props: TNotificationListRoot) {
   const { workspaceSlug, workspaceId } = props;
   return (
     <WithFeatureFlagHOC

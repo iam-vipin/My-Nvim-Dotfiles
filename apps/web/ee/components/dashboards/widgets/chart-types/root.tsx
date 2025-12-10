@@ -26,7 +26,7 @@ type Props = {
   widgetId: string;
 };
 
-export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
+export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: Props) {
   const { activeBreakpoint, dashboardId, widgetId } = props;
   // refs
   const widgetRef = useRef<HTMLDivElement>(null);

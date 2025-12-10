@@ -31,7 +31,7 @@ const sanitizeTypeFormData = (formData: Partial<TIntakeTypeForm>): Partial<TInta
   return sanitized;
 };
 
-export const TypeFormCreateUpdateRoot: React.FC<Props> = observer((props: Props) => {
+export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRoot(props: Props) {
   //router
   const { workspaceSlug, projectId } = useParams();
   // props

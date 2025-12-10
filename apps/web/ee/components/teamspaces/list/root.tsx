@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -10,7 +8,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { TeamspacesList } from "@/plane-web/components/teamspaces/list/teamspaces-list";
 
-const TeamspaceListItemRoot = observer(() => {
+const TeamspaceListItemRoot = observer(function TeamspaceListItemRoot() {
   // router
   const { workspaceSlug } = useParams();
   // plane web hooks

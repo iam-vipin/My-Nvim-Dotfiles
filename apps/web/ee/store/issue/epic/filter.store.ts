@@ -185,7 +185,7 @@ export class ProjectEpicsFilter extends IssueFilterHelperStore implements IProje
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId])) return;
 
       const _filters = {
-        filters: this.filters[projectId].richFilters as TWorkItemFilterExpression,
+        filters: this.filters[projectId].richFilters,
         displayFilters: this.filters[projectId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[projectId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[projectId].kanbanFilters as TIssueKanbanFilters,

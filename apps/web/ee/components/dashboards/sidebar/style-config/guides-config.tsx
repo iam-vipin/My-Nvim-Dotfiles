@@ -10,7 +10,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const WidgetConfigSidebarGuidesConfig: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarGuidesConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -62,4 +62,4 @@ export const WidgetConfigSidebarGuidesConfig: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

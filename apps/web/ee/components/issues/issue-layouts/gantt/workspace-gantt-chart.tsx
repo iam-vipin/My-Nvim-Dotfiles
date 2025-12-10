@@ -27,7 +27,7 @@ type Props = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceGanttChart: React.FC<Props> = observer((props: Props) => {
+export const WorkspaceGanttChart = observer(function WorkspaceGanttChart(props: Props) {
   const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
 
   // Hooks

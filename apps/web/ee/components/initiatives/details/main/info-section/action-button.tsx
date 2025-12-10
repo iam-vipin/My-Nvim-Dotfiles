@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -10,7 +9,7 @@ type Props = {
   onClick: () => void;
 };
 
-export const InitiativeActionButton: FC<Props> = observer((props) => {
+export const InitiativeActionButton = observer(function InitiativeActionButton(props: Props) {
   const { customButton, onClick, disabled = false } = props;
 
   // handlers

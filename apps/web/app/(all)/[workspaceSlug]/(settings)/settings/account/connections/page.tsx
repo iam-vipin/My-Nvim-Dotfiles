@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";

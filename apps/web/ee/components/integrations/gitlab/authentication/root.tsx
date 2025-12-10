@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane web components
 import { ConnectOrganization } from "@/plane-web/components/integrations/gitlab";
@@ -9,8 +7,10 @@ interface IUserAuthenticationProps {
   isEnterprise: boolean;
 }
 
-export const UserAuthentication: FC<IUserAuthenticationProps> = ({ isEnterprise }) => (
-  <div className="relative">
-    <ConnectOrganization isEnterprise={isEnterprise} />
-  </div>
-);
+export function UserAuthentication({ isEnterprise }: IUserAuthenticationProps) {
+  return (
+    <div className="relative">
+      <ConnectOrganization isEnterprise={isEnterprise} />
+    </div>
+  );
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -19,55 +17,55 @@ type TCustomerAdditionalPropertyValuesCreateProps = {
 
 const customerPropertyValueService = new CustomerPropertyValueService();
 
-export const CustomerAdditionalPropertyValuesCreate: React.FC<TCustomerAdditionalPropertyValuesCreateProps> = observer(
-  (props) => {
-    const { workspaceSlug, customerId } = props;
-    // states
-    const [customerPropertyValues, setCustomerPropertyValues] = React.useState({});
-    // store hooks
-    const {
-      customerPropertyValues: customerPropertyDefaultValues,
-      customerPropertyValueErrors,
-      setCustomerPropertyValues: handleCustomerPropertyValueUpdate,
-    } = useCustomerModal();
-    const { activeProperties } = useCustomerProperties();
-    // fetch customer property values
-    const { data, isLoading } = useSWR(
-      workspaceSlug && customerId ? `CUSTOMER_PROPERTY_VALUES_${workspaceSlug}` : null,
-      () => (workspaceSlug && customerId ? customerPropertyValueService.list(workspaceSlug, customerId) : null),
-      {}
-    );
+export const CustomerAdditionalPropertyValuesCreate = observer(function CustomerAdditionalPropertyValuesCreate(
+  props: TCustomerAdditionalPropertyValuesCreateProps
+) {
+  const { workspaceSlug, customerId } = props;
+  // states
+  const [customerPropertyValues, setCustomerPropertyValues] = React.useState({});
+  // store hooks
+  const {
+    customerPropertyValues: customerPropertyDefaultValues,
+    customerPropertyValueErrors,
+    setCustomerPropertyValues: handleCustomerPropertyValueUpdate,
+  } = useCustomerModal();
+  const { activeProperties } = useCustomerProperties();
+  // fetch customer property values
+  const { data, isLoading } = useSWR(
+    workspaceSlug && customerId ? `CUSTOMER_PROPERTY_VALUES_${workspaceSlug}` : null,
+    () => (workspaceSlug && customerId ? customerPropertyValueService.list(workspaceSlug, customerId) : null),
+    {}
+  );
 
-    useEffect(() => {
-      if (data) setCustomerPropertyValues(data);
-    }, [data]);
+  useEffect(() => {
+    if (data) setCustomerPropertyValues(data);
+  }, [data]);
 
-    useEffect(() => {
-      if (activeProperties?.length) {
-        handleCustomerPropertyValueUpdate({
-          ...getPropertiesDefaultValues(activeProperties),
-          ...customerPropertyValues,
-        });
-      }
-    }, [activeProperties, handleCustomerPropertyValueUpdate, customerPropertyValues]);
+  useEffect(() => {
+    if (activeProperties?.length) {
+      handleCustomerPropertyValueUpdate({
+        ...getPropertiesDefaultValues(activeProperties),
+        ...customerPropertyValues,
+      });
+    }
+  }, [activeProperties, handleCustomerPropertyValueUpdate, customerPropertyValues]);
 
-    const handlePropertyValueChange = (propertyId: string, value: string[]) => {
-      handleCustomerPropertyValueUpdate((prev) => ({
-        ...prev,
-        [propertyId]: value,
-      }));
-    };
+  const handlePropertyValueChange = (propertyId: string, value: string[]) => {
+    handleCustomerPropertyValueUpdate((prev) => ({
+      ...prev,
+      [propertyId]: value,
+    }));
+  };
 
-    if (!activeProperties?.length) return null;
+  if (!activeProperties?.length) return null;
 
-    return (
-      <CustomerAdditionalPropertyValues
-        customerPropertyValues={customerPropertyDefaultValues}
-        customerPropertyValueErrors={customerPropertyValueErrors}
-        variant="create"
-        isPropertyValuesLoading={isLoading}
-        handlePropertyValueChange={handlePropertyValueChange}
-      />
-    );
-  }
-);
+  return (
+    <CustomerAdditionalPropertyValues
+      customerPropertyValues={customerPropertyDefaultValues}
+      customerPropertyValueErrors={customerPropertyValueErrors}
+      variant="create"
+      isPropertyValuesLoading={isLoading}
+      handlePropertyValueChange={handlePropertyValueChange}
+    />
+  );
+});

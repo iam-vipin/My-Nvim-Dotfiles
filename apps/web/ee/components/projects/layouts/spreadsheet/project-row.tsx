@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -33,7 +31,7 @@ interface Props {
   selectionHelpers: TSelectionHelper;
 }
 
-export const SpreadsheetProjectRow = observer((props: Props) => {
+export const SpreadsheetProjectRow = observer(function SpreadsheetProjectRow(props: Props) {
   const {
     projectId,
     portalElement,
@@ -84,7 +82,7 @@ interface ProjectRowDetailsProps {
   selectionHelpers: TSelectionHelper;
 }
 
-const ProjectRowDetails = observer((props: ProjectRowDetailsProps) => {
+const ProjectRowDetails = observer(function ProjectRowDetails(props: ProjectRowDetailsProps) {
   const { projectId, updateProject, canEditProperties, isScrolled, spreadsheetColumnsList } = props;
   // refs
   const cellRef = useRef(null);

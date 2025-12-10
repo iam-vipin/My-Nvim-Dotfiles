@@ -44,7 +44,7 @@ const AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT: ICustomSearchSelectOption[
     ),
   }));
 
-export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((props) => {
+export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationDetailsSidebarTriggerRoot(props: Props) {
   const { automationId } = props;
   // plane hooks
   const { t } = useTranslation();

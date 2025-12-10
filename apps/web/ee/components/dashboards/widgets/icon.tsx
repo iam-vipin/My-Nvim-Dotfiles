@@ -22,7 +22,7 @@ type Props = {
   className?: string;
 };
 
-export const WidgetChartTypeIcon: React.FC<Props> = (props) => {
+export function WidgetChartTypeIcon(props: Props) {
   const { chartModel, chartType, className } = props;
 
   let Icon: React.FC<ISvgIcons> | null = null;
@@ -62,4 +62,4 @@ export const WidgetChartTypeIcon: React.FC<Props> = (props) => {
   }
 
   return Icon ? <Icon className={className} /> : null;
-};
+}

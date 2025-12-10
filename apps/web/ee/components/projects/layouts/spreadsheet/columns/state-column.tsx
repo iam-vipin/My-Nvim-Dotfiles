@@ -17,7 +17,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
+export const SpreadsheetStateColumn = observer(function SpreadsheetStateColumn(props: Props) {
   const { project, onChange, disabled } = props;
   const { workspaceSlug } = useParams();
   const { currentWorkspace } = useWorkspace();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
@@ -25,7 +23,7 @@ export type TInitiativeStateDropdownProps = {
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observer((props) => {
+export const InitiativeStateDropdown = observer(function InitiativeStateDropdown(props: TInitiativeStateDropdownProps) {
   const {
     value,
     onChange,

@@ -39,7 +39,7 @@ import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
 
-export const BillingRoot = observer(() => {
+export const BillingRoot = observer(function BillingRoot() {
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -106,7 +106,7 @@ export const BillingRoot = observer(() => {
         },
       });
     } catch (error) {
-      const currentError = error as unknown as { error: string; detail: string };
+      const currentError = error as { error: string; detail: string };
       console.error("Error in freeTrialSubscription", error);
       setToast({
         type: TOAST_TYPE.ERROR,

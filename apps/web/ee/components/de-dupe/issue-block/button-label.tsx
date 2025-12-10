@@ -1,8 +1,6 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
-import { ChevronRightIcon, PlaneAIIcon } from "@plane/propel/icons";
+import { PiIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type TDeDupeIssueButtonLabelProps = {
@@ -10,7 +8,7 @@ type TDeDupeIssueButtonLabelProps = {
   buttonLabel: string;
 };
 
-export const DeDupeIssueButtonLabel: FC<TDeDupeIssueButtonLabelProps> = (props) => {
+export function DeDupeIssueButtonLabel(props: TDeDupeIssueButtonLabelProps) {
   const { isOpen, buttonLabel } = props;
   return (
     <div
@@ -22,7 +20,7 @@ export const DeDupeIssueButtonLabel: FC<TDeDupeIssueButtonLabelProps> = (props) 
       )}
     >
       <div className="flex-shrink-0 mt-1">
-        <PlaneAIIcon className="size-4" />
+        <PiIcon className="size-4" />
       </div>
       <span className="flex items-baseline">
         <p className="text-sm text-custom-text-200">{buttonLabel}</p>
@@ -30,4 +28,4 @@ export const DeDupeIssueButtonLabel: FC<TDeDupeIssueButtonLabelProps> = (props) 
       <ChevronRightIcon className="size-4 text-custom-text-400" />
     </div>
   );
-};
+}

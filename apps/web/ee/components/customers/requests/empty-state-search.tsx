@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import RequestEmptyDark from "@/app/assets/empty-state/customers/request-search-dark.svg?url";
 import RequestEmptyLight from "@/app/assets/empty-state/customers/request-search-light.svg?url";
 
-export const CustomerRequestSearchEmptyState: FC = observer(() => {
+export const CustomerRequestSearchEmptyState = observer(function CustomerRequestSearchEmptyState() {
   // i18n
   const { t } = useTranslation();
   // hooks

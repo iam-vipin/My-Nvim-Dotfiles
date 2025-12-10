@@ -21,7 +21,7 @@ type TProps = {
   customerId: string;
 };
 
-export const CustomerRequestsRoot: FC<TProps> = observer((props) => {
+export const CustomerRequestsRoot = observer(function CustomerRequestsRoot(props: TProps) {
   const { workspaceSlug, customerId } = props;
 
   // i18n

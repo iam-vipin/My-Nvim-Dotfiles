@@ -25,9 +25,9 @@ export const getMilestoneMultiSelectConfig = (
   getMultiSelectConfig<IMilestoneInstance, string, IMilestoneInstance>(
     {
       items: params.milestones.filter(Boolean).filter((milestone) => milestone.id && milestone.title),
-      getId: (milestone) => milestone.id!,
-      getLabel: (milestone) => milestone.title!,
-      getValue: (milestone) => milestone.id!,
+      getId: (milestone) => milestone.id,
+      getLabel: (milestone) => milestone.title,
+      getValue: (milestone) => milestone.id,
       getIconData: (milestone) => milestone,
     },
     {

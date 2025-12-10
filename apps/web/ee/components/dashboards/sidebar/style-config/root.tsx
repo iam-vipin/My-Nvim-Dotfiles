@@ -16,7 +16,7 @@ type Props = {
   handleSubmit: (data: Partial<TDashboardWidget>) => Promise<void>;
 };
 
-export const WidgetConfigSidebarStyleConfig: React.FC<Props> = observer((props) => {
+export const WidgetConfigSidebarStyleConfig = observer(function WidgetConfigSidebarStyleConfig(props: Props) {
   const { handleSubmit } = props;
   // states
   const [isCollapsibleIcon, setIsCollapsibleIcon] = useState(true);

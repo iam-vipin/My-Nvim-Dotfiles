@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +13,7 @@ type TInitiativePeekOverviewError = {
   removeRoutePeekId: () => void;
 };
 
-export const InitiativePeekOverviewError: FC<TInitiativePeekOverviewError> = (props) => {
+export function InitiativePeekOverviewError(props: TInitiativePeekOverviewError) {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -40,4 +38,4 @@ export const InitiativePeekOverviewError: FC<TInitiativePeekOverviewError> = (pr
       </div>
     </div>
   );
-};
+}

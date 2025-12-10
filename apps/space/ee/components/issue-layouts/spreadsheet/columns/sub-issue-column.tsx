@@ -9,7 +9,7 @@ type Props = {
   issue: IIssue;
 };
 
-export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetSubIssueColumn = observer(function SpreadsheetSubIssueColumn(props: Props) {
   const { issue } = props;
 
   const subIssueCount = issue?.sub_issues_count ?? 0;

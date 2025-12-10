@@ -19,6 +19,7 @@ from pi.app.models import Message
 from pi.app.models import MessageFeedback
 from pi.app.models import MessageFlowStep
 from pi.app.models import MessageMeta
+from pi.app.models import UserChatPreference
 from pi.app.models.enums import ExecutionStatus
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageFeedbackTypeChoices
@@ -200,6 +201,7 @@ async def upsert_message(
     reasoning: Optional[str] = None,
     parsed_content: Optional[str] = None,
     workspace_slug: Optional[str] = None,
+    source: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Creates a new message or updates an existing one.
@@ -243,6 +245,8 @@ async def upsert_message(
                 existing_message.parsed_content = parsed_content
             if workspace_slug is not None:
                 existing_message.workspace_slug = workspace_slug
+            if source is not None:
+                existing_message.source = source
             # updated_at will be handled by SQLAlchemy
             db.add(existing_message)
             await db.commit()
@@ -273,6 +277,7 @@ async def upsert_message(
                 llm_model_id=None,  # Add the missing required parameter
                 reasoning=reasoning or "",
                 workspace_slug=workspace_slug,
+                source=source,
             )
             db.add(new_message)
             await db.commit()
@@ -494,13 +499,14 @@ async def upsert_message_meta(
                 workspace_slug = msg.workspace_slug
 
         if meta:
-            # --- UPDATE ---
-            meta.input_text_tokens = in_tokens
-            meta.input_text_price = input_cost_usd
-            meta.output_text_tokens = out_tokens
-            meta.output_text_price = output_cost_usd
-            meta.cached_input_text_tokens = cached_in_tokens
-            meta.cached_input_text_price = cached_input_cost_usd
+            # --- UPDATE --- Aggregate tokens and costs instead of overwriting
+            # This handles cases where multiple LLM calls occur for the same message_id + step_type
+            meta.input_text_tokens = (meta.input_text_tokens or 0) + in_tokens
+            meta.input_text_price = (meta.input_text_price or 0.0) + input_cost_usd
+            meta.output_text_tokens = (meta.output_text_tokens or 0) + out_tokens
+            meta.output_text_price = (meta.output_text_price or 0.0) + output_cost_usd
+            meta.cached_input_text_tokens = (meta.cached_input_text_tokens or 0) + cached_in_tokens
+            meta.cached_input_text_price = (meta.cached_input_text_price or 0.0) + cached_input_cost_usd
             meta.llm_model_id = llm_model_id
             meta.llm_model_pricing_id = pricing_id
             if workspace_slug is not None:
@@ -636,6 +642,20 @@ async def reconstruct_chat_request_from_message(db: AsyncSession, user_message: 
     attachments = attachments_result.scalars().all()
     attachment_ids = [att.attachment_id for att in attachments] if attachments else []
 
+    # Get user chat preferences to retrieve mode
+    preferences_stmt = (
+        select(UserChatPreference)
+        .where(UserChatPreference.chat_id == user_message.chat_id)  # type: ignore[arg-type]
+        .where(UserChatPreference.deleted_at.is_(None))  # type: ignore[union-attr]
+    )
+    preferences_result = await db.execute(preferences_stmt)
+    user_preferences = preferences_result.scalar_one_or_none()
+    mode = user_preferences.mode if user_preferences and user_preferences.mode else "ask"
+    project_id = user_preferences.focus_project_id if user_preferences and user_preferences.focus_project_id else None
+
+    # Get source from message, default to "web" if not set
+    source = user_message.source or "web"
+
     # Reconstruct ChatRequest
     return ChatRequest(
         query=user_message.content or "",
@@ -648,8 +668,9 @@ async def reconstruct_chat_request_from_message(db: AsyncSession, user_message: 
         workspace_slug=chat.workspace_slug if chat else None,
         workspace_in_context=chat.workspace_in_context if chat else False,
         is_project_chat=chat.is_project_chat if chat else False,
-        project_id=None,  # Will be resolved from context if needed
+        project_id=project_id,
         attachment_ids=attachment_ids,
         context={"token_id": str(user_message.id)},  # Reuse same message ID
-        source="web",
+        source=source,
+        mode=mode,
     )

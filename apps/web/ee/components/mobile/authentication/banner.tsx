@@ -10,7 +10,7 @@ type TMobileAuthBanner = {
   handleBannerData?: (bannerData: TMobileAuthErrorInfo | undefined) => void;
 };
 
-export const MobileAuthBanner: FC<TMobileAuthBanner> = (props) => {
+export function MobileAuthBanner(props: TMobileAuthBanner) {
   const { bannerData, handleBannerData } = props;
   // translation
   const { t } = useTranslation();
@@ -36,4 +36,4 @@ export const MobileAuthBanner: FC<TMobileAuthBanner> = (props) => {
       </button>
     </div>
   );
-};
+}

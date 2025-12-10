@@ -28,7 +28,7 @@ type TProps = {
   isLoading: boolean;
   setFocus: Dispatch<SetStateAction<TFocus>>;
 };
-export const FocusFilter = observer((props: TProps) => {
+export const FocusFilter = observer(function FocusFilter(props: TProps) {
   const { focus, setFocus, isLoading, workspaceId, projectId } = props;
   // router params
   const { workspaceSlug } = useParams();
@@ -37,7 +37,7 @@ export const FocusFilter = observer((props: TProps) => {
   const { workspaceProjectIds, getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const workspace = getWorkspaceBySlug(workspaceSlug as string);
+  const workspace = getWorkspaceBySlug(workspaceSlug);
   const selectedFocus = focus.entityType === "workspace_id" ? workspace : getProjectById(focus.entityIdentifier);
   // helper
   const updateFocus = <K extends keyof TFocus>(key: K, value: TFocus[K]) => {
@@ -81,7 +81,7 @@ export const FocusFilter = observer((props: TProps) => {
           className="ml-4 max-w-[200px] font-medium text-custom-text-300"
           disabled={focus.isInWorkspaceContext}
         >
-          <div className="flex rounded-full font-medium gap-2 w-full overflow-hidden">
+          <div className="flex font-medium gap-2 w-full overflow-hidden">
             {!isEmpty(focus) && !isEmpty(selectedFocus) && focus.isInWorkspaceContext ? (
               <div className=" flex items-center gap-2 text-sm my-auto capitalize truncate">
                 {focus.entityType === "workspace_id" ? (
@@ -96,8 +96,8 @@ export const FocusFilter = observer((props: TProps) => {
                 <span className="truncate">{selectedFocus?.name}</span>
               </div>
             ) : (
-              <div className="text-sm font-medium text-custom-text-300 my-auto flex items-center gap-2">
-                <AtSign className="size-4" /> <span>Add context </span>
+              <div className="text-sm font-medium my-auto flex items-center gap-2">
+                <AtSign className="size-4 text-custom-text-300" /> <span>Add context </span>
               </div>
             )}
           </div>
@@ -114,7 +114,7 @@ export const FocusFilter = observer((props: TProps) => {
       maxHeight="lg"
       className="flex flex-col-reverse"
       buttonClassName={cn(
-        "rounded-md h-full px-2 border-[0.5px] border-custom-border-200 max-h-[30px] overflow-hidden max-w-[200px] hover:bg-custom-background-100"
+        "rounded-lg h-full px-2 border-[0.5px] border-custom-border-200 max-h-[30px] overflow-hidden max-w-[200px] hover:bg-custom-background-100"
       )}
       optionsClassName="max-h-[70vh] overflow-y-auto"
     >

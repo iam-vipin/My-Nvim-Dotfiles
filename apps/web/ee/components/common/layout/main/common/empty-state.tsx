@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // plane imports
@@ -17,7 +15,7 @@ type TSectionEmptyStateProps = {
   contentClassName?: string;
 };
 
-export const SectionEmptyState: FC<TSectionEmptyStateProps> = (props) => {
+export function SectionEmptyState(props: TSectionEmptyStateProps) {
   const {
     heading,
     subHeading,
@@ -73,4 +71,4 @@ export const SectionEmptyState: FC<TSectionEmptyStateProps> = (props) => {
       {actionElement && <>{actionElement}</>}
     </div>
   );
-};
+}

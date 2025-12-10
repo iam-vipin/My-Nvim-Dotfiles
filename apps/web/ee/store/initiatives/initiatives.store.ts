@@ -438,7 +438,7 @@ export class InitiativeStore implements IInitiativeStore {
         response.forEach((stats) => {
           if (!stats) return;
 
-          this.rootStore.epicAnalytics.epicStatsMap![stats.epic_id] = stats;
+          this.rootStore.epicAnalytics.epicStatsMap[stats.epic_id] = stats;
         });
       });
 
@@ -596,7 +596,7 @@ export class InitiativeStore implements IInitiativeStore {
         if (!this.initiativesMap[initiativeId].reactions || !Array.isArray(this.initiativesMap[initiativeId].reactions))
           this.initiativesMap[initiativeId].reactions = [];
 
-        this.initiativesMap[initiativeId].reactions!.push(response);
+        this.initiativesMap[initiativeId].reactions.push(response);
       });
       return response;
     } catch (e) {
@@ -746,7 +746,7 @@ export class InitiativeStore implements IInitiativeStore {
     if (dropAtEndOfList) {
       targetIndex = filteredLabels.length - 1;
     } else if (droppedLabelId) {
-      const droppedLabelIndex = filteredLabels.findIndex((label) => (label as TInitiativeLabel).id === droppedLabelId);
+      const droppedLabelIndex = filteredLabels.findIndex((label) => label.id === droppedLabelId);
       targetIndex = droppedLabelIndex;
     } else {
       return;

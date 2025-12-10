@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
@@ -14,7 +12,7 @@ type TPlanCard = {
   button: React.ReactNode;
 };
 
-export const PlanCard = observer(({ planVariant, planDescription, button }: TPlanCard) => {
+export const PlanCard = observer(function PlanCard({ planVariant, planDescription, button }: TPlanCard) {
   const { getIsInTrialPeriod } = useWorkspaceSubscription();
   // derived values
   const planName = getSubscriptionName(planVariant);

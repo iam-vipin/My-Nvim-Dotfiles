@@ -7,11 +7,11 @@
     "lint-mobile": "eslint .",
     "preview": "vite preview",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint-mobile": "eslint . --max-warnings 28",
+    "check:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=28",
     "check:types-mobile": "tsc --noEmit",
-    "check:format-mobile": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint-mobile": "eslint . --fix",
-    "fix:format-mobile": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:format-mobile": "prettier . --cache --check",
+    "fix:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=28",
+    "fix:format-mobile": "prettier . --cache --write"
   },
   "dependencies": {
     "@plane/constants": "workspace:*",

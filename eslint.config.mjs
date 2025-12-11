@@ -101,7 +101,6 @@ export default defineConfig([
       "@typescript-eslint/restrict-plus-operands": "warn",
       "@typescript-eslint/restrict-template-expressions": "warn",
       "@typescript-eslint/unbound-method": "warn",
-      "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "jsdoc/require-jsdoc": "off",
       "jsx-a11y/alt-text": "warn",
       "jsx-a11y/anchor-is-valid": "warn",
@@ -137,7 +136,10 @@ export default defineConfig([
       "react-hooks/rules-of-hooks": "warn",
       "react-hooks/set-state-in-effect": "warn",
       "react-hooks/static-components": "warn",
-      "react-refresh/only-export-components": "warn",
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowExportNames: ["meta", "links", "headers", "loader", "action"] },
+      ],
       "react/display-name": "warn",
       "react/jsx-no-target-blank": "warn",
       "react/no-unknown-property": "warn",
@@ -159,6 +161,7 @@ export default defineConfig([
       "import/internal-regex": "^@plane/",
     },
     rules: {
+      "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "import/no-unresolved": ["error", { ignore: ["next/link", "next/navigation", "next/script"] }],
     },
   },

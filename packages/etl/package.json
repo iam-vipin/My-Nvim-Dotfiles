@@ -27,11 +27,11 @@
     "build": "tsdown --minify",
     "dev": "tsdown --watch",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings=614",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=614",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --max-warnings=614 --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=614 --fix",
+    "fix:format": "prettier . --cache --write"
   },
   "dependencies": {
     "@flatfile/api": "^1.12.0",

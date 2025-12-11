@@ -17,6 +17,8 @@
     "fix:format": "prettier . --cache --write"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "catalog:",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "catalog:",
     "@bprogress/core": "catalog:",
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "workspace:*",
@@ -41,6 +43,7 @@
     "mobx-react": "catalog:",
     "mobx-utils": "catalog:",
     "next-themes": "^0.2.1",
+    "raf-schd": "^4.0.3",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-dropzone": "^14.2.3",

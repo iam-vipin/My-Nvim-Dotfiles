@@ -66,6 +66,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
+    href: "/intake",
   },
 };
 

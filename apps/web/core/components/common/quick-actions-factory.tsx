@@ -1,4 +1,4 @@
-import { Pencil, ExternalLink, Link, Trash2, ArchiveRestoreIcon } from "lucide-react";
+import { Pencil, ExternalLink, Link, Trash2, ArchiveRestoreIcon, Globe2, Lock } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
@@ -77,6 +77,43 @@ export const useQuickActionsFactory = () => {
       title: "Copy link",
       icon: Link,
       action: handler,
+    }),
+
+    // Comment menu items
+    createCommentEditMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
+      key: "edit",
+      title: t("common.actions.edit"),
+      icon: Pencil,
+      action: handler,
+      shouldRender,
+    }),
+
+    createCommentCopyLinkMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
+      key: "copy_link",
+      title: t("common.actions.copy_link"),
+      icon: Link,
+      action: handler,
+      shouldRender,
+    }),
+
+    createCommentAccessSpecifierMenuItem: (
+      handler: () => void,
+      isInternal: boolean,
+      shouldRender: boolean = true
+    ): TContextMenuItem => ({
+      key: "access_specifier",
+      title: isInternal ? t("issue.comments.switch.public") : t("issue.comments.switch.private"),
+      icon: isInternal ? Globe2 : Lock,
+      action: handler,
+      shouldRender,
+    }),
+
+    createCommentDeleteMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
+      key: "delete",
+      title: t("common.actions.delete"),
+      icon: Trash2,
+      action: handler,
+      shouldRender,
     }),
   };
 };

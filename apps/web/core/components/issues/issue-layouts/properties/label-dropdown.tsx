@@ -159,6 +159,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
     e.stopPropagation();
     if (query !== "" && e.key === "Escape") {
       setQuery("");
+      e.preventDefault();
     }
 
     if (query !== "" && e.key === "Enter" && !e.nativeEvent.isComposing && canCreateLabel) {

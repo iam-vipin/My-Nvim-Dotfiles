@@ -18,6 +18,7 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
   const {
     getWorkspaceMembersActivitySidebarOpen,
     getWorkspaceMembersActivityLoader,
+    getWorkspaceMembersActivity,
     getWorkspaceMembersActivitySortOrder,
     toggleWorkspaceMembersActivitySortOrder,
     toggleWorkspaceMembersActivitySidebar,
@@ -26,6 +27,7 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
   const workspaceMembersActivityLoader = getWorkspaceMembersActivityLoader(workspaceSlug);
   const workspaceMembersActivitySortOrder = getWorkspaceMembersActivitySortOrder();
   const isSidebarOpen = getWorkspaceMembersActivitySidebarOpen(workspaceSlug);
+  const workspaceMembersActivities = getWorkspaceMembersActivity(workspaceSlug);
 
   return (
     <div
@@ -42,16 +44,18 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
         <h5 className="text-sm font-semibold">Activity</h5>
         <div className="flex relative gap-1 items-center">
           {workspaceMembersActivityLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
-          <button
-            className="flex overflow-hidden relative flex-shrink-0 justify-center items-center w-6 h-6 rounded transition-colors cursor-pointer hover:bg-custom-background-80 text-custom-text-300"
-            onClick={() => toggleWorkspaceMembersActivitySortOrder()}
-          >
-            {workspaceMembersActivitySortOrder === E_SORT_ORDER.ASC ? (
-              <ArrowUpWideNarrow className="size-4" />
-            ) : (
-              <ArrowDownWideNarrow className="size-4" />
-            )}
-          </button>
+          {workspaceMembersActivities && workspaceMembersActivities.length > 0 && (
+            <button
+              className="flex overflow-hidden relative flex-shrink-0 justify-center items-center w-6 h-6 rounded transition-colors cursor-pointer hover:bg-custom-background-80 text-custom-text-300"
+              onClick={() => toggleWorkspaceMembersActivitySortOrder()}
+            >
+              {workspaceMembersActivitySortOrder === E_SORT_ORDER.ASC ? (
+                <ArrowUpWideNarrow className="size-4" />
+              ) : (
+                <ArrowDownWideNarrow className="size-4" />
+              )}
+            </button>
+          )}
           <button
             className="flex overflow-hidden relative flex-shrink-0 justify-center items-center w-6 h-6 rounded transition-colors cursor-pointer hover:bg-custom-background-80 text-custom-text-300"
             onClick={() => toggleWorkspaceMembersActivitySidebar(workspaceSlug, false)}
@@ -60,13 +64,17 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
           </button>
         </div>
       </div>
-      <div className="px-7 overflow-y-scroll">
+      <div className="px-7 overflow-y-scroll h-full">
         {workspaceMembersActivityLoader === "init-loader" ? (
           <Loader className="space-y-3">
             <Loader.Item height="34px" width="100%" />
             <Loader.Item height="34px" width="100%" />
             <Loader.Item height="34px" width="100%" />
           </Loader>
+        ) : workspaceMembersActivities && workspaceMembersActivities.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-sm text-custom-text-300">No activity yet</p>
+          </div>
         ) : (
           <>{children}</>
         )}

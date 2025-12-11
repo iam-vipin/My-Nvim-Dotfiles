@@ -6,7 +6,7 @@ import type { TPage } from "@plane/types";
 // core
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext } from "@/types";
-import { findAllElementsRecursive } from "@/utils";
+import { findAllElementsRecursive } from "@/utils/xml-tree";
 // local imports
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { ActionRegistry } from "./registries/action-registry";

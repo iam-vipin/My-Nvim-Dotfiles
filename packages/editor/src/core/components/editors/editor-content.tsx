@@ -23,4 +23,4 @@ export function EditorContentWrapper(props: Props) {
       {children}
     </div>
   );
-};
+}

@@ -8,7 +8,7 @@ import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
 import { requireSecretKey } from "@/lib/auth-middleware";
 import { AppError } from "@/lib/errors";
-import { findAllElementsRecursive, insertNodeAfter, deleteNode } from "@/utils";
+import { findAllElementsRecursive, insertNodeAfter, deleteNode } from "@/utils/xml-tree";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 
 // (Optional) additional types used in your controller

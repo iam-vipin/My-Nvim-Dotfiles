@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import type { DocumentAction } from "@/types/document-action";
-import { deleteNode, findAllElementsRecursive } from "@/utils";
+import { deleteNode, findAllElementsRecursive } from "@/utils/xml-tree";
 import { ActionRegistry } from "../registries/action-registry";
 
 // Define standard actions

@@ -107,10 +107,5 @@ export default {
         "Zkraťte dobu nastavení vytvářením šablon pro projekty, pracovní položky a stránky — a začněte novou práci během několika sekund.",
       cta_primary: "Vytvořit šablonu",
     },
-    webhooks: {
-      title: "Zatím nebyl přidán žádný Webhook",
-      description: "Automatizujte oznámení externím službám při výskytu událostí projektu.",
-      cta_primary: "Přidat webhook",
-    },
   },
 } as const;

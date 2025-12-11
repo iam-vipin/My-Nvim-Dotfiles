@@ -109,10 +109,5 @@ export default {
         "Reduzieren Sie die Einrichtungszeit, indem Sie Vorlagen für Projekte, Arbeitselemente und Seiten erstellen — und starten Sie neue Arbeit in Sekunden.",
       cta_primary: "Vorlage erstellen",
     },
-    webhooks: {
-      title: "Noch kein Webhook hinzugefügt",
-      description: "Automatisieren Sie Benachrichtigungen an externe Dienste, wenn Projektereignisse auftreten.",
-      cta_primary: "Webhook hinzufügen",
-    },
   },
 } as const;

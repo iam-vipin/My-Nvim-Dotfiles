@@ -107,10 +107,5 @@ export default {
         "Kurangi waktu pengaturan dengan membuat templat untuk proyek, item kerja, dan halaman — dan mulai pekerjaan baru dalam hitungan detik.",
       cta_primary: "Buat templat",
     },
-    webhooks: {
-      title: "Belum ada Webhook yang ditambahkan",
-      description: "Otomatisasi notifikasi ke layanan eksternal ketika peristiwa proyek terjadi.",
-      cta_primary: "Tambahkan webhook",
-    },
   },
 } as const;

@@ -109,10 +109,5 @@ export default {
         "Projeler, iş öğeleri ve sayfalar için şablonlar oluşturarak kurulum süresini azaltın — ve saniyeler içinde yeni çalışmaya başlayın.",
       cta_primary: "Şablon oluştur",
     },
-    webhooks: {
-      title: "Henüz Webhook eklenmedi",
-      description: "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",
-      cta_primary: "Webhook ekle",
-    },
   },
 } as const;

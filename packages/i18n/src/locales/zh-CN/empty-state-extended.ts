@@ -97,10 +97,5 @@ export default {
       description: "通过为项目、工作项和页面创建模板来减少设置时间 — 并在几秒钟内开始新工作。",
       cta_primary: "创建模板",
     },
-    webhooks: {
-      title: "尚未添加 Webhook",
-      description: "在项目事件发生时自动向外部服务发送通知。",
-      cta_primary: "添加 webhook",
-    },
   },
 } as const;

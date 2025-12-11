@@ -107,10 +107,5 @@ export default {
         "Skráťte dobu nastavenia vytváraním šablón pre projekty, pracovné položky a stránky — a začnite novú prácu počas niekoľkých sekúnd.",
       cta_primary: "Vytvoriť šablónu",
     },
-    webhooks: {
-      title: "Zatiaľ nebol pridaný žiadny Webhook",
-      description: "Automatizujte oznámenia externým službám pri výskyte udalostí projektu.",
-      cta_primary: "Pridať webhook",
-    },
   },
 } as const;

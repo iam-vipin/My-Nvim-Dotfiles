@@ -108,10 +108,5 @@ export default {
         "Giảm thời gian thiết lập bằng cách tạo mẫu cho dự án, mục công việc và trang — và bắt đầu công việc mới trong vài giây.",
       cta_primary: "Tạo mẫu",
     },
-    webhooks: {
-      title: "Chưa thêm Webhook",
-      description: "Tự động hóa thông báo đến các dịch vụ bên ngoài khi sự kiện dự án xảy ra.",
-      cta_primary: "Thêm webhook",
-    },
   },
 } as const;

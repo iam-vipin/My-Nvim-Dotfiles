@@ -104,10 +104,5 @@ export default {
         "Reduce setup time by creating templates for projects, work items, and pages — and start new work in seconds.",
       cta_primary: "Create template",
     },
-    webhooks: {
-      title: "No Webhook added yet",
-      description: "Automate notifications to external services when project events occur.",
-      cta_primary: "Add webhook",
-    },
   },
 } as const;

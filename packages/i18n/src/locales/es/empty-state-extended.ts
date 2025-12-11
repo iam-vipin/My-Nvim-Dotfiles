@@ -109,10 +109,5 @@ export default {
         "Reduce el tiempo de configuración creando plantillas para proyectos, elementos de trabajo y páginas — y comienza un nuevo trabajo en segundos.",
       cta_primary: "Crear plantilla",
     },
-    webhooks: {
-      title: "Aún no se ha agregado ningún Webhook",
-      description: "Automatiza las notificaciones a servicios externos cuando ocurran eventos del proyecto.",
-      cta_primary: "Agregar webhook",
-    },
   },
 } as const;

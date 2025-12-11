@@ -109,10 +109,5 @@ export default {
         "Reduceți timpul de configurare prin crearea de șabloane pentru proiecte, elemente de lucru și pagini — și începeți munca nouă în câteva secunde.",
       cta_primary: "Creați șablon",
     },
-    webhooks: {
-      title: "Încă nu s-a adăugat niciun Webhook",
-      description: "Automatizați notificările către servicii externe când apar evenimente ale proiectului.",
-      cta_primary: "Adăugați webhook",
-    },
   },
 } as const;

@@ -107,10 +107,5 @@ export default {
         "Skróć czas konfiguracji, tworząc szablony dla projektów, elementów roboczych i stron — i rozpocznij nową pracę w ciągu kilku sekund.",
       cta_primary: "Utwórz szablon",
     },
-    webhooks: {
-      title: "Nie dodano jeszcze webhooka",
-      description: "Automatyzuj powiadomienia do usług zewnętrznych, gdy wystąpią zdarzenia projektowe.",
-      cta_primary: "Dodaj webhook",
-    },
   },
 } as const;

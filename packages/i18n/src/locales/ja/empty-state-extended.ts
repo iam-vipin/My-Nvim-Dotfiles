@@ -102,10 +102,5 @@ export default {
         "プロジェクト、作業項目、ページのテンプレートを作成してセットアップ時間を短縮し、数秒で新しい作業を開始します。",
       cta_primary: "テンプレートを作成",
     },
-    webhooks: {
-      title: "まだWebhookが追加されていません",
-      description: "プロジェクトイベントが発生したときに外部サービスへの通知を自動化します。",
-      cta_primary: "Webhookを追加",
-    },
   },
 } as const;

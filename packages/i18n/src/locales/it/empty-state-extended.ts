@@ -106,10 +106,5 @@ export default {
         "Riduci i tempi di configurazione creando modelli per progetti, elementi di lavoro e pagine — e inizia nuovi lavori in pochi secondi.",
       cta_primary: "Crea modello",
     },
-    webhooks: {
-      title: "Nessun Webhook aggiunto ancora",
-      description: "Automatizza le notifiche a servizi esterni quando si verificano eventi del progetto.",
-      cta_primary: "Aggiungi webhook",
-    },
   },
 } as const;

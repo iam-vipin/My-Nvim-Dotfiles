@@ -30,26 +30,24 @@ export const WorkspaceMembersActivitySidebar = observer(function WorkspaceMember
 
   return (
     <SidebarContentWrapper workspaceSlug={workspaceSlug}>
-      <div className="px-7 overflow-y-scroll">
-        <div role="list">
-          {workspaceMembersActivities &&
-            workspaceMembersActivities.map((activityItem, index) => {
-              const { icon, message } = getWorkspaceMemberActivityDetails(activityItem);
-              const isFirst = index === 0;
-              const isLast = index === workspaceMembersActivities.length - 1;
+      <div role="list">
+        {workspaceMembersActivities &&
+          workspaceMembersActivities.map((activityItem, index) => {
+            const { icon, message } = getWorkspaceMemberActivityDetails(activityItem);
+            const isFirst = index === 0;
+            const isLast = index === workspaceMembersActivities.length - 1;
 
-              return (
-                <ActivityBlockComponent
-                  key={activityItem.id}
-                  activity={activityItem}
-                  icon={icon}
-                  ends={isFirst ? "top" : isLast ? "bottom" : undefined}
-                >
-                  {message}
-                </ActivityBlockComponent>
-              );
-            })}
-        </div>
+            return (
+              <ActivityBlockComponent
+                key={activityItem.id}
+                activity={activityItem}
+                icon={icon}
+                ends={isFirst ? "top" : isLast ? "bottom" : undefined}
+              >
+                {message}
+              </ActivityBlockComponent>
+            );
+          })}
       </div>
     </SidebarContentWrapper>
   );

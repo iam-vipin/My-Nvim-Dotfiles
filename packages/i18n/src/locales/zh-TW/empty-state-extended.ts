@@ -97,10 +97,5 @@ export default {
       description: "透過為專案、工作項和頁面建立範本來減少設定時間 — 並在幾秒鐘內開始新工作。",
       cta_primary: "建立範本",
     },
-    webhooks: {
-      title: "尚未新增 Webhook",
-      description: "在專案事件發生時自動向外部服務傳送通知。",
-      cta_primary: "新增 webhook",
-    },
   },
 } as const;

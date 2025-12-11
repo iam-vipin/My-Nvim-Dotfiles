@@ -168,87 +168,87 @@ def sanitize_issue_data(issue_data):
 
 def process_single_issue(slug, project, user_id, issue_data):
     try:
-        with transaction.atomic():
-            with connection.cursor() as cur:
-                cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
-            # Process the main issue
-            issue_data = sanitize_issue_data(issue_data)
+        with connection.cursor() as cur:
+            cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
 
-            # Handle labels based on whether they are UUIDs or names
-            labels = []
-            if "labels" in issue_data:
-                label_values = issue_data.get("labels", [])
-                if label_values and not is_valid_uuid(label_values[0]):
-                    labels = issue_data.pop("labels")
+        # Process the main issue
+        issue_data = sanitize_issue_data(issue_data)
 
-            serializer = IssueSerializer(
-                data=issue_data,
-                context={
-                    "project_id": project.id,
-                    "workspace_id": project.workspace_id,
-                    "default_assignee_id": project.default_assignee_id,
-                },
+        # Handle labels based on whether they are UUIDs or names
+        labels = []
+        if "labels" in issue_data:
+            label_values = issue_data.get("labels", [])
+            if label_values and not is_valid_uuid(label_values[0]):
+                labels = issue_data.pop("labels")
+
+        serializer = IssueSerializer(
+            data=issue_data,
+            context={
+                "project_id": project.id,
+                "workspace_id": project.workspace_id,
+                "default_assignee_id": project.default_assignee_id,
+            },
+        )
+
+        if not serializer.is_valid():
+            logger.error(
+                "Error processing issue",
+                extra={"issueId": issue_data.get("id")},
             )
+            # Create an exception for serializer.errors
+            exception = Exception(serializer.errors)
+            log_exception(exception)
+            return None
 
-            if not serializer.is_valid():
-                logger.error(
-                    "Error processing issue",
-                    extra={"issueId": issue_data.get("id")},
-                )
-                # Create an exception for serializer.errors
-                exception = Exception(serializer.errors)
-                log_exception(exception)
-                return None
+        external_id = issue_data.get("external_id")
+        external_source = issue_data.get("external_source")
 
-            external_id = issue_data.get("external_id")
-            external_source = issue_data.get("external_source")
+        # Check if issue exists
+        issue = None
+        if external_id and external_source:
+            issue = Issue.objects.filter(
+                project_id=project.id,
+                workspace__slug=slug,
+                external_source=external_source,
+                external_id=external_id,
+            ).first()
 
-            # Check if issue exists
-            issue = None
-            if external_id and external_source:
-                issue = Issue.objects.filter(
-                    project_id=project.id,
-                    workspace__slug=slug,
-                    external_source=external_source,
-                    external_id=external_id,
-                ).first()
+        if issue:
+            serializer.instance = issue
 
-            if issue:
-                serializer.instance = issue
+        issue = serializer.save()
 
-            issue = serializer.save()
+        # Update the issue with the created_by_id
+        issue.created_by_id = issue_data.get("created_by")
+        issue.updated_by_id = issue_data.get("created_by")
+        issue.save(disable_auto_set_user=True)
 
-            # Update the issue with the created_by_id
-            issue.created_by_id = issue_data.get("created_by")
-            issue.updated_by_id = issue_data.get("created_by")
-            issue.save(disable_auto_set_user=True)
+        # Process links
+        process_issue_links(issue, issue_data.get("links", []))
 
-            # Process links
-            process_issue_links(issue, issue_data.get("links", []))
+        # Process comments
+        process_issue_comments(user_id=user_id, issue=issue, comments=issue_data.get("comments", []))
 
-            # Process comments
-            process_issue_comments(user_id=user_id, issue=issue, comments=issue_data.get("comments", []))
+        # Process cycles
+        process_issue_cycles(issue, issue_data.get("cycles", []))
 
-            # Process cycles
-            process_issue_cycles(issue, issue_data.get("cycles", []))
+        # Process modules
+        process_issue_modules(issue, issue_data.get("modules", []))
 
-            # Process modules
-            process_issue_modules(issue, issue_data.get("modules", []))
+        # Process file assets
+        process_issue_file_assets(issue, issue_data.get("file_assets", []))
 
-            # Process file assets
-            process_issue_file_assets(issue, issue_data.get("file_assets", []))
+        # Process issue property values
+        process_issue_property_values(issue, issue_data.get("issue_property_values", []))
 
-            # Process issue property values
-            process_issue_property_values(issue, issue_data.get("issue_property_values", []))
+        # Process labels
+        process_issue_labels(issue, labels, user_id)
 
-            # Process labels
-            process_issue_labels(issue, labels, user_id)
+        # Process worklogs
+        if issue_data.get("worklogs"):
+            process_issue_worklogs(issue, issue_data.get("worklogs"))
 
-            # Process worklogs
-            if issue_data.get("worklogs"):
-                process_issue_worklogs(issue, issue_data.get("worklogs"))
-
-            return issue
+        return issue
     except Exception as e:
         logger.error(
             "Error processing issue",

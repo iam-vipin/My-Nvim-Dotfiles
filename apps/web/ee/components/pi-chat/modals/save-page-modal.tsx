@@ -10,7 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import { EUserProjectRoles } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
-import { cn, getTabIndex } from "@plane/utils";
+import { cn, copyUrlToClipboard, getTabIndex } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -27,8 +27,39 @@ type Props = {
     | undefined
   >;
 };
-
-export const SavePageModal = observer(function SavePageModal(props: Props) {
+const ActionItems = ({ pageUrl }: { pageUrl: string }) => {
+  const [copied, setCopied] = useState(false);
+  const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await copyUrlToClipboard(pageUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return (
+    <div className="flex items-center gap-1 text-xs text-custom-text-200">
+      <a
+        href={pageUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+      >
+        View page
+      </a>
+      <button
+        onClick={copyToClipboard}
+        className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+      >
+        {copied ? "Copied!" : "Copy link"}
+      </button>
+    </div>
+  );
+};
+export const SavePageModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, isOpen, handleModalClose, handleConvertToPage } = props;
   // state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,18 +118,7 @@ export const SavePageModal = observer(function SavePageModal(props: Props) {
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page saved successfully.",
-          actionItems: (
-            <div className="flex items-center gap-1 text-xs text-custom-text-200">
-              <a
-                href={response?.page_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
-              >
-                View page
-              </a>
-            </div>
-          ),
+          actionItems: <ActionItems pageUrl={response?.page_url ?? ""} />,
         });
         handleModalClose();
       })

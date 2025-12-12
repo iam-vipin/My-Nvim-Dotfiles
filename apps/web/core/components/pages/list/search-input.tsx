@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { debounce } from "lodash-es";
 import { Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon } from "@plane/propel/icons";
@@ -15,26 +16,50 @@ export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
+
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+    if (isSearchOpen && localSearchQuery.trim() === "") setIsSearchOpen(false);
   });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedUpdateSearchQuery = useCallback(
+    debounce((value: string) => {
+      updateSearchQuery(value);
+    }, 300),
+    [updateSearchQuery]
+  );
+
+  // Update local state immediately and trigger debounced store update
+  const handleQueryChange = (value: string) => {
+    setLocalSearchQuery(value);
+    debouncedUpdateSearchQuery(value);
+
+    // Auto-open search when there's content
+    if (value.trim() !== "") setIsSearchOpen(true);
+  };
+
+  // Clean up the debounced function on unmount
+  useEffect(() => () => debouncedUpdateSearchQuery.cancel(), [debouncedUpdateSearchQuery]);
+
+  // Set initial local state from props
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else {
+      if (localSearchQuery && localSearchQuery.trim() !== "") {
+        handleQueryChange("");
+      } else {
         setIsSearchOpen(false);
         inputRef.current?.blur();
       }
     }
   };
-
-  useEffect(() => {
-    if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [searchQuery]);
 
   return (
     <div className="flex">
@@ -61,10 +86,10 @@ export function PageSearchInput(props: Props) {
         <Search className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
-          className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+          className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none ml-2"
           placeholder="Search pages"
-          value={searchQuery}
-          onChange={(e) => updateSearchQuery(e.target.value)}
+          value={localSearchQuery}
+          onChange={(e) => handleQueryChange(e.target.value)}
           onKeyDown={handleInputKeyDown}
         />
         {isSearchOpen && (
@@ -72,7 +97,7 @@ export function PageSearchInput(props: Props) {
             type="button"
             className="grid place-items-center"
             onClick={() => {
-              updateSearchQuery("");
+              handleQueryChange("");
               setIsSearchOpen(false);
             }}
           >

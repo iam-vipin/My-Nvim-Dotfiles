@@ -1,0 +1,29 @@
+import type { TMilestoneIconVariant } from "@plane/types";
+
+const MILESTONE_VARIANT_COLORS: Record<TMilestoneIconVariant, { base: string; hover?: string }> = {
+  default: { base: "#455068", hover: "#5a6b8a" },
+  done: { base: "#1FAD40", hover: "#26d451" },
+  in_progress: { base: "#004EFF", hover: "#3d7aff" },
+  not_started_yet: { base: "#FF0000", hover: "#ff3333" },
+  started_no_progress: { base: "#FF9500", hover: "#ffab33" },
+  custom: { base: "" },
+};
+
+const getMilestoneVariantFromProgress = (progress: number) => {
+  if (progress === 100) return "done";
+  if (progress === 0) return "not_started_yet";
+  if (progress > 0 && progress < 100) return "in_progress";
+  return "started_no_progress";
+};
+
+export const getMilestoneIconProps = (progress: number): { fill: string; isDone: boolean } => {
+  const variant = getMilestoneVariantFromProgress(progress);
+  const fill = MILESTONE_VARIANT_COLORS[variant].base;
+  return { fill, isDone: variant === "done" };
+};
+
+export const getMilestoneLineColors = (progress: number): { base: string; hover: string } => {
+  const variant = getMilestoneVariantFromProgress(progress);
+  const { base, hover } = MILESTONE_VARIANT_COLORS[variant];
+  return { base, hover: hover || base };
+};

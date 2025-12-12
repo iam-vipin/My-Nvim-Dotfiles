@@ -5,6 +5,9 @@
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
@@ -27,8 +30,5 @@
     "reflect-metadata": "^0.2.2",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts"
+  }
 }

@@ -226,8 +226,8 @@ export class PiChatStore implements IPiChatStore {
 
   setActiveModel = (chatId: string, model: TAiModels) => {
     this.activeModel = model;
+    if (!chatId) return;
     update(this.chatMap, chatId, (chat: TChatHistory) => {
-      if (!chat) return chat;
       chat.llm = model.id;
       return chat;
     });

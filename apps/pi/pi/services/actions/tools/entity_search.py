@@ -500,7 +500,6 @@ def get_entity_search_tools(method_executor, context):
 
             # Fallback broadening with smart splitting: if only display_name is provided
             # - If it looks like a full name (contains space or comma), split into first/last
-            # - Else (single token like 'sunder'), search in first_name and last_name as well
             if display_name and not first_name and not last_name:
                 dn = str(display_name).strip()
                 if "," in dn:

@@ -57,7 +57,7 @@ export const Header = observer(function Header(props: THeaderProps) {
                       <ModelsDropdown
                         models={models}
                         activeModel={activeModel}
-                        setActiveModel={(model) => activeChatId && setActiveModel(activeChatId, model)}
+                        setActiveModel={(model) => setActiveModel(activeChatId, model)}
                       />
                     ) : (
                       <span className="font-medium text-sm my-auto">Plane AI</span>

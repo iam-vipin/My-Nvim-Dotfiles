@@ -19,9 +19,8 @@ log = logging.getLogger(__name__)
 async def quick_test_key_actions():
     """Test the most important actions quickly"""
 
-    # Configuration - UPDATE THESE WITH YOUR REAL CREDENTIALS
-    API_KEY = "plane_api_6d6e3439f8344b96bb6e514444077eba"  # Get from Plane workspace settings
-    WORKSPACE_SLUG = "piworkspace"  # Your workspace slug
+    API_KEY = "your_api_key_here"
+    WORKSPACE_SLUG = "your_workspace_slug"
 
     # Demo mode check
     if API_KEY == "your_api_key_here":
@@ -30,7 +29,7 @@ async def quick_test_key_actions():
         print("🔗 Get API token from: https://your-workspace.plane.so/settings/api-tokens")
         return
 
-    executor = PlaneActionsExecutor(api_key=API_KEY, base_url="https://preview.plane.town")
+    executor = PlaneActionsExecutor(api_key=API_KEY, base_url="http://localhost:8000")
 
     print("🚀 Quick test of key Plane actions...\n")
 

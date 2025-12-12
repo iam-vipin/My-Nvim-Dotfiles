@@ -314,9 +314,9 @@ async def main():
     """Main test execution"""
 
     # Configuration - UPDATE THESE VALUES
-    API_KEY = "plane_api_6d6e3439f8344b96bb6e514444077eba"  # Replace with your API key
-    WORKSPACE_SLUG = "piworkspace"  # Replace with your workspace slug
-    BASE_URL = "https://preview.plane.town"  # Dev server URL
+    API_KEY = "your_api_key_here"
+    WORKSPACE_SLUG = "your_workspace_slug"
+    BASE_URL = "http://localhost:8000"
 
     if API_KEY == "your_api_key_here":
         print("❌ Please update API_KEY and WORKSPACE_SLUG in the script")

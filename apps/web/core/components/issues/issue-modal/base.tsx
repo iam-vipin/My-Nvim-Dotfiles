@@ -47,6 +47,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     isProjectSelectionDisabled = false,
     isConversionOperation = false,
     isTypeSelectDisabled = false,
+    showActionItemsOnUpdate = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -341,7 +342,15 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),
           message: t("issue_updated_successfully"),
-        });
+          actionItems:
+          showActionItemsOnUpdate && payload.project_id ? (
+            <CreateIssueToastActionItems
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={payload.project_id}
+              issueId={data.id}
+            />
+          ) : undefined,
+      });
       }
       captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,

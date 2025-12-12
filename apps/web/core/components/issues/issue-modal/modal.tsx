@@ -28,6 +28,7 @@ export interface IssuesModalProps {
   templateId?: string;
   isConversionOperation?: boolean;
   allowedProjectIds?: string[];
+  showActionItemsOnUpdate?: boolean;
 }
 
 export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal(props: IssuesModalProps) {

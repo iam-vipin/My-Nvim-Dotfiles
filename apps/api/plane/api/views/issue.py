@@ -254,6 +254,12 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             )
         # ee end
 
+        # Ensure labels and assignees are always expanded for issue details
+        # this is required until we find a better way to create issue detail serializer
+        expand = self.expand or []
+        required_expansions = {"labels", "assignees"}
+        expand = list(set(expand) | required_expansions)
+
         if issue_identifier and project_identifier:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
@@ -266,7 +272,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 sequence_id=issue_identifier,
             )
             return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                IssueDetailSerializer(issue, fields=self.fields, expand=expand).data,
                 status=status.HTTP_200_OK,
             )
 

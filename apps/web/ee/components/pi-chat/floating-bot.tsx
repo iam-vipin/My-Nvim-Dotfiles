@@ -53,7 +53,7 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
   const { workspaceSlug, projectId, workItem, chatId: routeChatId } = params;
   const searchParams = useSearchParams();
   // hooks
-  const { isPiChatDrawerOpen: isOpen, togglePiChatDrawer, initPiChat } = usePiChat();
+  const { isPiChatDrawerOpen: isOpen, togglePiChatDrawer, initPiChat, drawerChatId } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const entityData = getEntityData(params);
   const contextData = entityData ? useAIAssistant(entityData.entityType, entityData.entityIdentifier) : null;
@@ -64,15 +64,16 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
   const shouldRenderPiChat =
     isPiAllowed(pathName, workspaceSlug?.toString() ?? "") && isPiEnabled && (projectId || workItem);
   useEffect(() => {
-    if (!isPiEnabled || !isSidePanelOpen) return;
+    if (!isPiEnabled || (!isSidePanelOpen && !isOpen)) return;
     // initialize chat
-    if (chatId || routeChatId) initPiChat(chatId?.toString() || routeChatId?.toString());
+    if (chatId || routeChatId || drawerChatId)
+      initPiChat(chatId?.toString() || routeChatId?.toString() || drawerChatId?.toString());
     else initPiChat();
     // open side panel
     if (isSidePanelOpen) {
       togglePiChatDrawer(true);
     }
-  }, [isPiEnabled, isSidePanelOpen]);
+  }, [isPiEnabled, isSidePanelOpen, drawerChatId]);
 
   if (pathName.includes("pi-chat")) return null;
   if (!isPiEnabled || !shouldRenderPiChat) return <></>;

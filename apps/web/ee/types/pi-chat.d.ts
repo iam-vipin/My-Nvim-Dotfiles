@@ -282,6 +282,11 @@ export type TChatContextData = {
   subTitle?: string | undefined;
   icon: React.ReactNode;
 } | null;
+export type TPiChatDrawerOpen = {
+  is_open: boolean;
+  chatId?: string;
+};
 
 // constants
 export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "cycle", "module"];
+export const PI_CHAT_ASSISTANT_KEY = "pi_chat_assistant";

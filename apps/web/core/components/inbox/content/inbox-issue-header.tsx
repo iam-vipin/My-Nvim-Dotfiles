@@ -246,7 +246,6 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             default: t("add_to_project"),
             loading: t("adding"),
           }}
-          isTypeSelectDisabled
         />
         <DeclineIssueModal
           data={inboxIssue?.issue || {}}

@@ -262,11 +262,26 @@ class PlaneSDKAdapter:
         try:
             params = None
             if kwargs:
-                # Map common filters
+                # Map common filters and query parameters
                 per_page = kwargs.get("per_page")
                 order_by = kwargs.get("order_by")
                 page = kwargs.get("page")
-                params = WorkItemQueryParams(per_page=per_page, page=page, order_by=order_by)
+                cursor = kwargs.get("cursor")
+                expand = kwargs.get("expand")
+                external_id = kwargs.get("external_id")
+                external_source = kwargs.get("external_source")
+                fields = kwargs.get("fields")
+
+                params = WorkItemQueryParams(
+                    per_page=per_page,
+                    page=page,
+                    order_by=order_by,
+                    cursor=cursor,
+                    expand=expand,
+                    external_id=external_id,
+                    external_source=external_source,
+                    fields=fields,
+                )
 
             response = self.client.work_items.list(workspace_slug=workspace_slug, project_id=project_id, params=params)
             results = self._model_to_dict(getattr(response, "results", []))
@@ -1170,10 +1185,30 @@ class PlaneSDKAdapter:
             log.error(f"Failed to create cycle: {str(e)}")
             raise
 
-    def list_cycles(self, workspace_slug: str, project_id: str, per_page: Optional[int] = None, page: Optional[int] = None) -> Dict[str, Any]:
+    def list_cycles(
+        self,
+        workspace_slug: str,
+        project_id: str,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        cursor: Optional[str] = None,
+        cycle_view: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """List cycles with normalized pagination."""
         try:
-            response = self.client.cycles.list(workspace_slug, project_id)
+            # Build query parameters for SDK
+            params: Dict[str, Any] = {}
+            if per_page is not None:
+                params["per_page"] = per_page
+            if page is not None:
+                params["page"] = page
+            if cursor is not None:
+                params["cursor"] = cursor
+            if cycle_view is not None:
+                params["cycle_view"] = cycle_view
+
+            # Pass params to SDK
+            response = self.client.cycles.list(workspace_slug, project_id, params=params or None)
             results = self._model_to_dict(getattr(response, "results", []))
             if not isinstance(results, list):
                 results = [results] if results else []
@@ -1361,10 +1396,24 @@ class PlaneSDKAdapter:
             log.error(f"Failed to create intake work item: {str(e)}")
             raise
 
-    def get_intake_work_items_list(self, workspace_slug: str, project_id: str) -> Dict[str, Any]:
+    def get_intake_work_items_list(
+        self,
+        workspace_slug: str,
+        project_id: str,
+        per_page: Optional[int] = None,
+        cursor: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """List intake work items (v0.2)."""
         try:
-            response = self.client.intake.list(workspace_slug, project_id)
+            # Build query parameters for SDK
+            params: Dict[str, Any] = {}
+            if per_page is not None:
+                params["per_page"] = per_page
+            if cursor is not None:
+                params["cursor"] = cursor
+
+            # Pass params to SDK
+            response = self.client.intake.list(workspace_slug, project_id, params=params or None)
             results = self._model_to_dict(getattr(response, "results", []))
             if not isinstance(results, list):
                 results = [results] if results else []

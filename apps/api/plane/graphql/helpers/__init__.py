@@ -28,6 +28,13 @@ from .intake import (
     project_intakes_settings_async,
 )
 from .issues import get_issue_stats_count_async
+from .notification import (
+    get_unread_notification_count,
+    get_unread_notification_count_by_user_id,
+    get_unread_notification_count_by_user_id_async,
+    get_unread_workspace_notification_count_by_user_id,
+    get_unread_workspace_notification_count_by_user_id_async,
+)
 from .page import is_shared_page_feature_flagged, is_shared_page_feature_flagged_async
 from .project import _get_project, get_project, get_project_member
 from .state import (
@@ -38,6 +45,14 @@ from .state import (
     get_triage_state_async,
 )
 from .teamspace import (
+    # New v2 functions with descriptive names
+    build_teamspace_project_access_filter,
+    build_teamspace_project_access_filter_async,
+    check_teamspace_feature_flag,
+    check_teamspace_feature_flag_async,
+    check_workspace_teamspace_enabled,
+    check_workspace_teamspace_enabled_async,
+    # Legacy v1 functions
     is_teamspace_enabled,
     is_teamspace_enabled_async,
     is_teamspace_feature_flagged,
@@ -60,4 +75,4 @@ from .workflow import (
     is_workflow_feature_flagged,
     is_workflow_update_allowed,
 )
-from .workspace import get_workspace, get_workspace_async
+from .workspace import get_workspace, get_workspace_async, get_workspaces_by_user_id, get_workspaces_by_user_id_async

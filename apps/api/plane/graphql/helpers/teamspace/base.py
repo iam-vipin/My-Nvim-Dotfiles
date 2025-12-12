@@ -7,7 +7,7 @@ from asgiref.sync import sync_to_async
 # Django Imports
 from django.db.models import Q
 
-# Local Imports
+# Module Imports
 from plane.ee.models import TeamspaceMember, TeamspaceProject, WorkspaceFeature
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.types.teamspace import TeamspaceHelperObjectType, TeamspaceHelperType
@@ -23,8 +23,18 @@ def is_teamspace_feature_flagged(workspace_slug: str, user_id: str) -> bool:
     )
 
 
+@sync_to_async
+def is_teamspace_feature_flagged_async(workspace_slug: str, user_id: str) -> bool:
+    return is_teamspace_feature_flagged(workspace_slug, user_id)
+
+
 def is_teamspace_enabled(workspace_slug: str) -> bool:
     return WorkspaceFeature.objects.filter(workspace__slug=workspace_slug, is_teams_enabled=True).exists()
+
+
+@sync_to_async
+def is_teamspace_enabled_async(workspace_slug: str) -> bool:
+    return is_teamspace_enabled(workspace_slug)
 
 
 def project_member_filter_via_teamspaces(
@@ -100,16 +110,6 @@ def project_member_filter_via_teamspaces(
         teamspace_project_ids=None,
         teamspaces=None,
     )
-
-
-@sync_to_async
-def is_teamspace_feature_flagged_async(workspace_slug: str, user_id: str) -> bool:
-    return is_teamspace_feature_flagged(workspace_slug, user_id)
-
-
-@sync_to_async
-def is_teamspace_enabled_async(workspace_slug: str) -> bool:
-    return is_teamspace_enabled(workspace_slug)
 
 
 @sync_to_async

@@ -1,22 +1,40 @@
-# Python imports
-from typing import Optional
+"""Push notification helpers for mobile devices."""
 
-# Django imports
+# Python Imports
+from typing import Union
+
+# Third Party Imports
+import strawberry
 from django.conf import settings
 
-# Module imports
-from plane.db.models import Device, Notification, Workspace
+# Module Imports
+from plane.db.models import Device
 
 
 def is_mobile_push_notification_disabled() -> bool:
-    """Check if push notification is disabled."""
+    """
+    Check if mobile push notification is disabled.
+
+    Returns:
+        True if push notification is disabled, False otherwise.
+    """
+
     if hasattr(settings, "IS_MOBILE_PUSH_NOTIFICATION_ENABLED"):
         return False if settings.IS_MOBILE_PUSH_NOTIFICATION_ENABLED else True
     return True
 
 
-def fetch_device_tokens_by_user_id(user_id: str) -> list[str]:
-    """Fetch device tokens for the user."""
+def fetch_device_tokens_by_user_id(user_id: Union[str, strawberry.ID]) -> list[str]:
+    """
+    Fetch device tokens for a user.
+
+    Args:
+        user_id: User UUID or strawberry ID.
+
+    Returns:
+        List of push tokens for the user's active devices.
+    """
+
     device_tokens = []
 
     try:
@@ -32,42 +50,3 @@ def fetch_device_tokens_by_user_id(user_id: str) -> list[str]:
         print(f"Error fetching device tokens: {e}")
 
     return device_tokens
-
-
-def notification_count(
-    user_id: str,
-    workspace_slug: Optional[str] = None,
-    mentioned: bool = False,
-    combined: bool = False,
-) -> int:
-    """Fetch unread notification count for the user."""
-
-    try:
-        notification_query = Notification.objects.filter(
-            receiver_id=user_id,
-            read_at__isnull=True,
-            snoozed_till__isnull=True,
-            archived_at__isnull=True,
-        )
-
-        # filter by workspace
-        if workspace_slug:
-            workspace_id = Workspace.objects.filter(slug=workspace_slug).values_list("id", flat=True).first()
-            if workspace_id:
-                notification_query = notification_query.filter(workspace_id=workspace_id)
-            else:
-                return 0
-
-        # filter by mentioned
-        if combined:
-            if mentioned:
-                notification_query = notification_query.filter(sender__icontains="mentioned")
-            else:
-                notification_query = notification_query.exclude(sender__icontains="mentioned")
-
-        total_notification_count = notification_query.count()
-
-        return total_notification_count
-    except Exception as e:
-        print(f"Error fetching unread notification count: {e}")
-        return 0

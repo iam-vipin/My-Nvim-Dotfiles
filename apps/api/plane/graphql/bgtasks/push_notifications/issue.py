@@ -7,14 +7,11 @@ from celery import shared_task
 # Module imports
 from plane.db.models import IssueType, User, Workspace
 from plane.graphql.helpers.catch_up import push_notification_catch_up
+from plane.graphql.helpers.notification import get_unread_notification_count
 
 # Local module imports
 from .firebase import PushNotification
-from .helper import (
-    fetch_device_tokens_by_user_id,
-    is_mobile_push_notification_disabled,
-    notification_count,
-)
+from .helper import fetch_device_tokens_by_user_id, is_mobile_push_notification_disabled
 from .issue_builder import Actor, IssueNotificationBuilder
 
 
@@ -190,8 +187,8 @@ def issue_push_notifications(notification):
             is_epic = IssueType.objects.filter(id=issue_type_id, is_epic=True).exists()
 
         # unread notification count
-        unread_notification_count = notification_count(
-            user_id=receiver_id, workspace_slug=None, mentioned=False, combined=True
+        unread_notification_count = get_unread_notification_count(
+            user_id=receiver_id, exclude_filters={"sender__icontains": "mentioned"}
         )
 
         # push tokens

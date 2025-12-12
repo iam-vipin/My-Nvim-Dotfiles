@@ -308,9 +308,9 @@ class Adapter:
             Profile.objects.create(user=user)
 
         # Check if IDP sync is enabled
-        (ENABLE_IDP_SYNC,) = get_configuration_value([
-            {"key": "ENABLE_IDP_SYNC", "default": os.environ.get("ENABLE_IDP_SYNC", "0")}
-        ])
+        (ENABLE_IDP_SYNC,) = get_configuration_value(
+            [{"key": "ENABLE_IDP_SYNC", "default": os.environ.get("ENABLE_IDP_SYNC", "0")}]
+        )
         if ENABLE_IDP_SYNC == "1":
             user = self.sync_user_data(user=user)
 

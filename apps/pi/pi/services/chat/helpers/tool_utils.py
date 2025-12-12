@@ -16,6 +16,8 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
+from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
+
 log = logging.getLogger(__name__)
 
 # build a map of tool name to category
@@ -541,9 +543,12 @@ def build_method_prompt(
     workspace_id: Optional[str],
     enhanced_conversation_history: Optional[str],
     clarification_context: Optional[Dict[str, Any]] = None,
+    user_meta: Optional[Dict[str, Any]] = None,
 ) -> str:
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
     from pi.services.chat.prompts import plane_context
+
+    address_user_by_name = True
 
     method_prompt = f"""You are an AI assistant that helps users perform actions in Plane.
 
@@ -563,6 +568,14 @@ Context about Plane:
 - After user clicks "Confirm", actions execute in a separate phase
 
 Use retrieval tools to gather information, then plan the modifying actions based on that information.
+
+**DATA FRESHNESS RULE (CRITICAL — WORKSPACE DATA IS VOLATILE):**
+- Workspace, project, cycle, module, label, state, and work-item data is LIVE and can change at any moment.
+- Users or automations may create, update, or delete entities at any time during the conversation.
+- Therefore, you MUST NOT assume that prior retrieval results are still valid.
+- Whenever the user asks to "check again", "retry", "verify now", "refresh", or otherwise implies that data may have changed, you MUST perform fresh retrieval tool calls.
+- Only static, non-user-modifiable information (documentation, product descriptions, or system defaults) may be reused from memory.
+- For ALL modifying requests in PLANNING mode, retrieval should ALWAYS reflect the most recent state—never rely solely on earlier tool outputs.
 
 **CRITICAL: PLANNING DEPENDENT ACTIONS**
 - You must plan ALL actions including dependent ones that link created entities
@@ -759,7 +772,6 @@ After resolving project_id for cycles/modules/pages creation:
 **EFFICIENCY RULE**: Always try to set as many properties as possible during creation to minimize API calls.
 
 
-
 **IMPORTANT**: Analyze the user's request carefully to identify ALL required actions, not just the obvious ones.
 
 {RETRIEVAL_TOOL_DESCRIPTIONS}
@@ -767,7 +779,7 @@ After resolving project_id for cycles/modules/pages creation:
 **Execution Guidelines:**
 - Use search tools for entity resolution, NOT vector_search_tool
 - Do NOT provide workspace_slug - auto-provided from context
-- search_workitem_by_identifier requires format: PROJECT-123
+- search_workitem_by_identifier requires format: PROJECT-123 as input argument
 
 
 
@@ -775,24 +787,29 @@ After resolving project_id for cycles/modules/pages creation:
 
 **IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
 1. Use retrieval/search tools to gather the requested information
-2. Provide a detailed, elaborate, and neatly formatted answer based on the retrieved data. Do NOT be brief.
+2. Provide a detailed, elaborate, and neatly formatted answer in the content section based on the retrieved data. Do NOT be brief.
 3. Do NOT plan any modifying actions - just return tool_calls for retrieval, then answer in your content
 4. **Formatting Requirements**:
+    While formatting the answer in the final content section, use the following rules:
     - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
     - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
     - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
     - Never reveal sensitive info: passwords, API keys, table names, SQL queries
     - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
     - Use tables for multi-attribute data (suppress UUIDs, apply URL rules)
-5. This formatting doesn't apply to modification requests - those require action planning.
-
-Note: The system uses absence of tool_calls as the signal to stop and deliver your content as the final answer. For modification requests, include at least one write tool_call in your plan.
+5. The requirement for an elaborate answer doesn't apply to modification requests - those require action planning followed by a very brief summary.
 
 **IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
 1. Use retrieval/search tools to gather necessary information (IDs, etc.)
 2. **AND** plan at least one MODIFYING ACTION using tool_calls (create, update, delete, add, remove, move, etc.)
 3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions with tool_calls
 4. Provide a very brief summary of what you planned in your content
+5. **Formatting Requirements**:
+    While formatting the action plan in the final content section, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
 
 
 **IF the user's request cannot be fulfilled with available tools:**
@@ -801,6 +818,8 @@ Note: The system uses absence of tool_calls as the signal to stop and deliver yo
 - Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
 - Do NOT create workaround entities (like workitems) to satisfy these requests
 - Do NOT plan any actions - just provide the explanation in your content
+
+Note: The system uses absence of tool_calls as the signal to stop and deliver your content as the final answer. For modification requests, include at least one write tool_call in your plan.
 """  # noqa: E501
 
     if project_id:
@@ -809,11 +828,30 @@ Note: The system uses absence of tool_calls as the signal to stop and deliver yo
         # Workspace-level context (no specific project)
         method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use list_member_projects (with a high limit) to get ALL projects in the workspace\n- Iterate through projects ONLY for entities that are inherently project-scoped (cycles/modules/states/labels). For workspace-wide work-item queries, use a SINGLE structured_db_tool call WITHOUT project_id (it will scope via workspace_id)\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
 
+    if enhanced_conversation_history and enhanced_conversation_history.strip():
+        method_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n\nBased on this conversation history, you can reference previously mentioned entity IDs and use them as parameters in your tool calls. However, if the user asks for entity DATA/details, you still MUST call the appropriate retrieval tools - conversation history provides IDs for PARAMETERS, not complete entity data."  # noqa: E501
+        method_prompt += HISTORY_FRESHNESS_WARNING
+        address_user_by_name = False
+
     if user_id:
         method_prompt += f"\n\n**USER CONTEXT:**\nUser ID: {user_id}\nUse this when user refers to him/herself or 'I' or 'me' or 'my' or 'mine' or any other personal pronoun or any derivative of these words."  # noqa: E501
 
-    if enhanced_conversation_history and enhanced_conversation_history.strip():
-        method_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n\nBased on this conversation history, you can reference previously created entities, their IDs, and project context without needing to search for them again."  # noqa: E501
+    if address_user_by_name:
+        # Include user's first name if available from user_meta
+        if user_meta and isinstance(user_meta, dict):
+            first_name = user_meta.get("first_name") or user_meta.get("firstName")
+            if first_name:
+                method_prompt += f"\nUser's first name: {first_name}"
+            last_name = user_meta.get("last_name") or user_meta.get("lastName")
+            if last_name:
+                method_prompt += f", and last name: {last_name}"
+            email = user_meta.get("email")
+            if email:
+                method_prompt += f"\nUser's email: {email}"
+            method_prompt += "\nUse the user's name (primarily first name) to address them in your responses.\n"
+            method_prompt += "\nYou can reveal the user's name and email to them if requested. The name details here are primarily for greeting purposes. Use the user_id in tool calls if you need to get more user details.\n"  # noqa: E501
+    else:
+        method_prompt += "\nSkip greetings and get straight to the point."
 
     log.info(f"ENHANCED_CONVERSATION_HISTORY being sent to LLM:\n{enhanced_conversation_history}")
 

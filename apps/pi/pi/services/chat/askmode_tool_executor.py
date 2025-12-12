@@ -178,8 +178,12 @@ async def execute_tools_for_ask_mode(
         system_prompt_to_use = f"{pai_ask_system_prompt}\n\n{context_block}"
         messages.append(SystemMessage(content=system_prompt_to_use))
 
+        # log.info(f"ChatID: {chat_id} - Ask mode LLM input - System Prompt:\n{"=" * 80}\n{system_prompt_to_use}\n{"=" * 80}")
+
         query_to_use = f"{custom_prompt}\n\nUser Query: {enhanced_query_for_processing}"
         messages.append(HumanMessage(content=query_to_use))
+
+        # log.info(f"ChatID: {chat_id} - Ask mode LLM input - User Message:\n{"=" * 80}\n{query_to_use}\n{"=" * 80}")
 
         # Log what's sent to the tool selection LLM
         log.info(f"ChatID: {chat_id} - Ask mode LLM input - Query: {query_to_use}")
@@ -382,6 +386,20 @@ async def execute_tools_for_ask_mode(
 
             # Add tool messages to conversation
             messages.extend(tool_messages)
+
+            # # Log the messages being sent to the LLM (includes tool results)
+            # log.info(f"ChatID: {chat_id} - Ask mode LLM iteration - Messages count: {len(messages)}")
+            # try:
+            #     # Log last few messages for context (tool results + conversation)
+            #     last_messages_preview = []
+            #     for message_preview in messages[-3:]:  # Last 3 messages
+            #         if hasattr(message_preview, "content"):
+            #             content_preview = str(message_preview.content)[:200] + "..." if
+            #                   len(str(message_preview.content)) > 200 else str(message_preview.content)
+            #             last_messages_preview.append(f"{message_preview.__class__.__name__}: {content_preview}")
+            #     log.info(f"ChatID: {chat_id} - Ask mode LLM iteration - Recent messages:\n" + "\n".join(last_messages_preview))
+            # except Exception:
+            #     pass
 
             # Yield status before getting next LLM response
             stage = "ask_mode_analyzing_results"

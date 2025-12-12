@@ -1889,15 +1889,15 @@ class PlaneSDKAdapter:
         """List issue types (v0.2)."""
         try:
             response = self.client.work_item_types.list(workspace_slug, project_id)
-            results = self._model_to_dict(getattr(response, "results", []))
+            results = self._model_to_dict(response)  # response is already a list
             if not isinstance(results, list):
                 results = [results] if results else []
             return {
                 "results": results,
                 "count": len(results),
-                "total_results": getattr(response, "total_count", len(results)),
-                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
-                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+                "total_results": len(results),
+                "next_cursor": None,
+                "prev_cursor": None,
             }
         except HttpError as e:
             log.error(f"Failed to list issue types: {e} ({getattr(e, "status_code", None)})")

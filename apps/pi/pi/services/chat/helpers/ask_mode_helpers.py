@@ -19,6 +19,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
+from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 from pi.services.chat.utils import StandardAgentResponse
 from pi.services.chat.utils import get_current_timestamp_context
 from pi.services.chat.utils import mask_uuids_in_text
@@ -553,9 +554,12 @@ async def construct_enhanced_prompt_and_context(
     custom_prompt = ""
 
     # Inject enhanced conversation history if available to guide orchestration
+    address_user_by_name = True
     try:
         if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
             custom_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n"
+            custom_prompt += HISTORY_FRESHNESS_WARNING
+            address_user_by_name = False
     except Exception:
         pass
 
@@ -580,6 +584,26 @@ async def construct_enhanced_prompt_and_context(
                 f"User ID: {user_id} ⚠️ (FOR YOUR USE ONLY - DO NOT SHOW THIS UUID TO USER)\n"
                 "- Use this to resolve pronouns like 'me', 'my', 'assigned to me'.\n"
             )
+
+            if address_user_by_name:
+                # Include user's first name if available from user_meta
+                if user_meta and isinstance(user_meta, dict):
+                    first_name = user_meta.get("first_name") or user_meta.get("firstName")
+                    if first_name:
+                        context_block += f"- User's first name: {first_name}\n"
+
+                    last_name = user_meta.get("last_name") or user_meta.get("lastName")
+                    if last_name:
+                        context_block += f", and last name: {last_name}\n"
+
+                    email = user_meta.get("email")
+                    if email:
+                        context_block += f"- User's email: {email}\n"
+
+                    context_block += "\n use the user's name (primarily first name) to address them in your responses.\n"
+                    context_block += "- You can reveal the user's name and email to them if requested. The name details here are primarily for greeting purposes. Use the user_id in tool calls if you need to get more user details.\n"  # noqa: E501
+            else:
+                context_block += "\nSkip greetings and get straight to the point."
 
         # Date/time context
         dt_ctx = None

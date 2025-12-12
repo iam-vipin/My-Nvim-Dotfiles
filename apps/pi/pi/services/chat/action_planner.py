@@ -247,6 +247,7 @@ async def execute_tools_for_build_mode(
             workspace_id,
             enhanced_conversation_history,
             clarification_context=clar_ctx,
+            user_meta=user_meta,
         )
 
         date_time_context = await get_current_timestamp_context(user_id)
@@ -289,6 +290,9 @@ async def execute_tools_for_build_mode(
 
         # Initialize messages for Phase 2 tool orchestration
         messages = [SystemMessage(content=method_prompt), HumanMessage(content=combined_tool_query)]
+
+        # log.info(f"ChatID: {chat_id} - Build mode LLM input - System Prompt:\n{"=" * 80}\n{method_prompt}\n{"=" * 80}")
+        # log.info(f"ChatID: {chat_id} - Build mode LLM input - User Message:\n{"=" * 80}\n{combined_tool_query}\n{"=" * 80}")
 
         # Re-bind LLM with the full toolset (action methods + retrieval)
         # Some LangChain/OpenAI versions default to no tool calls if not specified.
@@ -623,6 +627,20 @@ async def execute_tools_for_build_mode(
 
             # Add tool results to conversation and continue
             messages.extend(tool_messages)
+
+            # # Log the messages being sent to the LLM (includes tool results)
+            # log.info(f"ChatID: {chat_id} - Build mode LLM iteration {iteration_count} - Messages count: {len(messages)}")
+            # try:
+            #     # Log last few messages for context (tool results + conversation)
+            #     last_messages_preview = []
+            #     for message_preview in messages[-3:]:  # Last 3 messages
+            #         if hasattr(message_preview, "content"):
+            #             content_preview = str(message_preview.content)[:200] + "..." if
+            #                   len(str(message_preview.content)) > 200 else str(message_preview.content)
+            #             last_messages_preview.append(f"{message_preview.__class__.__name__}: {content_preview}")
+            #     log.info(f"ChatID: {chat_id} - Build mode LLM iteration {iteration_count} - Recent messages:\n" + "\n".join(last_messages_preview))
+            # except Exception:
+            #     pass
 
             # Get next response from LLM
             response = await llm_with_method_tools.ainvoke(messages)

@@ -175,7 +175,8 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
         log.error(f"Error validating plane token: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
 
-    chatbot = PlaneChatBot(llm=data.llm, token=access_token)
+    slack_ai_llm = "claude-sonnet-4-5"
+    chatbot = PlaneChatBot(llm=slack_ai_llm, token=access_token)
 
     final_response = ""
     actions_data = {}
@@ -187,6 +188,7 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
     # as json object
     async with get_streaming_db_session() as stream_db:
         data.mode = "build"  # type: ignore
+        data.llm = slack_ai_llm  # type: ignore
         base_iter = chatbot.process_chat_stream(data, db=stream_db)
         async for chunk in base_iter:
             if isinstance(chunk, dict):
@@ -232,7 +234,7 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
             return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
 
         # Execute batch actions using the service
-        service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
+        service = BuildModeToolExecutor(chatbot=PlaneChatBot(slack_ai_llm), db=db)
         result = await service.execute(
             ActionBatchExecutionRequest(
                 workspace_id=workspace_id,

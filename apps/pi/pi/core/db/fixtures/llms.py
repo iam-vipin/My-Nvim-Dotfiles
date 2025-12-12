@@ -19,6 +19,7 @@ llm_id_map = {
     "gpt-5-standard": "c5d6e7f8-a9b0-1234-5678-90abcdef1234",
     "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
     "gpt-5.1": "e8f9a0b1-c2d3-4567-8901-abcdef123456",
+    "gpt-5.2": "f9a0b1c2-d3e4-5678-9012-bcdef2345678",
     "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
     "claude-sonnet-4-0": "60cf738d-3f6b-4fe4-b088-8c902528657f",
     "claude-sonnet-4-5": "6a14a494-dc87-42cc-9d7c-1f82faa3d018",
@@ -81,6 +82,14 @@ LLMS_DATA = [
         "provider": "OpenAI",
         "model_key": "gpt-5.1",
         "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["gpt-5.2"],
+        "name": "GPT-5.2",
+        "description": "OpenAI's GPT-5.2 model - enhanced reasoning with extended context.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5.2",
+        "max_tokens": 400000,
     },
     {
         "id": llm_id_map["claude-sonnet-4"],

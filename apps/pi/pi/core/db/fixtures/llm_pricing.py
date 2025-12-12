@@ -64,6 +64,13 @@ PRICING_DATA = [
         "cached_text_input_price": 0.125,
     },
     {
+        "id": "39bdcf93-feec-4fb6-813d-b8168abcf127",
+        "llm_model_id": llm_id_map["gpt-5.2"],
+        "text_input_price": 1.75,
+        "text_output_price": 14.00,
+        "cached_text_input_price": 0.175,
+    },
+    {
         "id": "7d9e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a",
         "llm_model_id": llm_id_map["claude-sonnet-4"],
         "text_input_price": 3.00,

@@ -301,6 +301,14 @@ _DEFAULT_CONFIGS = {
         model="gpt-5.1",
         streaming=True,
     ),
+    "gpt5_2_default": LLMConfig(
+        model="gpt-5.2",
+        streaming=False,
+    ),
+    "gpt5_2_stream": LLMConfig(
+        model="gpt-5.2",
+        streaming=True,
+    ),
 }
 
 
@@ -463,6 +471,11 @@ def get_chat_llm(llm_name: str) -> Any:
                 model="gpt-5.1",
                 streaming=True,
             )
+        elif llm_name.lower() == "gpt-5.2":
+            config = LLMConfig(
+                model="gpt-5.2",
+                streaming=True,
+            )
         elif llm_name.lower() in ["claude-sonnet-4"]:
             config = LLMConfig(
                 model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
@@ -562,6 +575,13 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
             # GPT-5.1 basic config for SQL generation
             config = LLMConfig(
                 model="gpt-5.1",
+                streaming=False,
+            )
+            return create_openai_llm(config, max_completion_tokens=4096)
+        elif model == "gpt-5.2":
+            # GPT-5.2 config for SQL generation with extended context
+            config = LLMConfig(
+                model="gpt-5.2",
                 streaming=False,
             )
             return create_openai_llm(config, max_completion_tokens=4096)

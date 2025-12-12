@@ -66,6 +66,7 @@ class Server:
     FASTAPI_APP_HOST: str = os.getenv("FASTAPI_APP_HOST", "")
     FASTAPI_APP_PORT: str = os.getenv("FASTAPI_APP_PORT", "")
     FASTAPI_APP_WORKERS: str = os.getenv("FASTAPI_APP_WORKERS", "")
+    FASTAPI_APP_WORKER_TIMEOUT: str = os.getenv("FASTAPI_APP_WORKER_TIMEOUT", "60")
     PI_SECRET_KEY: str = os.getenv("PI_SECRET_KEY", "")
     PLANE_PI_INTERNAL_API_SECRET: str = os.getenv("PLANE_PI_INTERNAL_API_SECRET", "")
 

@@ -149,6 +149,7 @@ def run_server():
     host = str(settings.server.FASTAPI_APP_HOST)
     port = int(settings.server.FASTAPI_APP_PORT)
     workers = int(settings.server.FASTAPI_APP_WORKERS)
+    worker_timeout = int(settings.server.FASTAPI_APP_WORKER_TIMEOUT)
 
     # Configure Uvicorn logging to use JSON format
     uvicorn_log_config = {
@@ -187,6 +188,7 @@ def run_server():
         workers=workers,
         reload=settings.DEBUG,
         log_config=uvicorn_log_config,
+        timeout_worker_healthcheck=worker_timeout,
     )
 
 

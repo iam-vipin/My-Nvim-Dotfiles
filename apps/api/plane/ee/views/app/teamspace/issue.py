@@ -71,6 +71,11 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
         )
 
     def get(self, request, slug, team_space_id):
+
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", None)
+        query_params.pop("sub_issue", None)
+
         # Get projects where user has access in the team space
         accessible_project_ids = TeamspaceProject.objects.filter(
             team_space_id=team_space_id, workspace__slug=slug
@@ -84,12 +89,16 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
         )
 
         order_by_param = request.GET.get("order_by", "created_at")
-        filters = issue_filters(request.query_params, "GET")
+        filters = issue_filters(query_params, "GET")
         issue_queryset = Issue.issue_objects.filter(
             workspace__slug=slug,
             id__in=issue_ids,
             project_id__in=accessible_project_ids,
         )
+
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            issue_queryset = issue_queryset.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
 
         # Apply filtering from filterset
         queryset = self.filter_queryset(issue_queryset)

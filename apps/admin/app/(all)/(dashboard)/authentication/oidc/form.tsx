@@ -1,13 +1,13 @@
-import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Monitor, Smartphone } from "lucide-react";
 // plane internal packages
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceOIDCAuthenticationConfigurationKeys } from "@plane/types";
 import { cn } from "@plane/utils";
+import { ToggleSwitch } from "@plane/ui";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -23,6 +23,11 @@ type Props = {
 };
 
 type OIDCConfigFormValues = Record<TInstanceOIDCAuthenticationConfigurationKeys, string>;
+
+type TEnableIDPSyncFormField = {
+  key: TInstanceOIDCAuthenticationConfigurationKeys;
+  description: string;
+};
 
 export function InstanceOIDCConfigForm(props: Props) {
   const { config } = props;
@@ -45,6 +50,7 @@ export function InstanceOIDCConfigForm(props: Props) {
       OIDC_AUTHORIZE_URL: config["OIDC_AUTHORIZE_URL"],
       OIDC_LOGOUT_URL: config["OIDC_LOGOUT_URL"],
       OIDC_PROVIDER_NAME: config["OIDC_PROVIDER_NAME"],
+      ENABLE_IDP_SYNC: config["ENABLE_IDP_SYNC"] || "0",
     },
   });
 
@@ -125,6 +131,11 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
   ];
 
+  const ENABLE_IDP_SYNC_FORM_FIELD: TEnableIDPSyncFormField = {
+    key: "ENABLE_IDP_SYNC",
+    description: "Refresh user attributes from IdP during sign in",
+  };
+
   const OIDC_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URI",
@@ -192,24 +203,26 @@ export function InstanceOIDCConfigForm(props: Props) {
   const onSubmit = async (formData: OIDCConfigFormValues) => {
     const payload: Partial<OIDCConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then((response = []) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Done!",
-          message: "Your OIDC-based authentication is configured. You should test it now.",
-        });
-        reset({
-          OIDC_CLIENT_ID: response.find((item) => item.key === "OIDC_CLIENT_ID")?.value,
-          OIDC_CLIENT_SECRET: response.find((item) => item.key === "OIDC_CLIENT_SECRET")?.value,
-          OIDC_AUTHORIZE_URL: response.find((item) => item.key === "OIDC_AUTHORIZE_URL")?.value,
-          OIDC_TOKEN_URL: response.find((item) => item.key === "OIDC_TOKEN_URL")?.value,
-          OIDC_USERINFO_URL: response.find((item) => item.key === "OIDC_USERINFO_URL")?.value,
-          OIDC_LOGOUT_URL: response.find((item) => item.key === "OIDC_LOGOUT_URL")?.value,
-          OIDC_PROVIDER_NAME: response.find((item) => item.key === "OIDC_PROVIDER_NAME")?.value,
-        });
-      })
-      .catch((err) => console.error(err));
+    try {
+      const response = await updateInstanceConfigurations(payload);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Done!",
+        message: "Your OIDC-based authentication is configured. You should test it now.",
+      });
+      reset({
+        OIDC_CLIENT_ID: response.find((item) => item.key === "OIDC_CLIENT_ID")?.value,
+        OIDC_CLIENT_SECRET: response.find((item) => item.key === "OIDC_CLIENT_SECRET")?.value,
+        OIDC_AUTHORIZE_URL: response.find((item) => item.key === "OIDC_AUTHORIZE_URL")?.value,
+        OIDC_TOKEN_URL: response.find((item) => item.key === "OIDC_TOKEN_URL")?.value,
+        OIDC_USERINFO_URL: response.find((item) => item.key === "OIDC_USERINFO_URL")?.value,
+        OIDC_LOGOUT_URL: response.find((item) => item.key === "OIDC_LOGOUT_URL")?.value,
+        OIDC_PROVIDER_NAME: response.find((item) => item.key === "OIDC_PROVIDER_NAME")?.value,
+        ENABLE_IDP_SYNC: response.find((item) => item.key === "ENABLE_IDP_SYNC")?.value,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -243,9 +256,32 @@ export function InstanceOIDCConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
+            <div className="flex items-center justify-between gap-1">
+              <h4 className="text-sm text-custom-text-300">{ENABLE_IDP_SYNC_FORM_FIELD.description}</h4>
+              <div className="relative">
+                <Controller
+                  control={control}
+                  name={ENABLE_IDP_SYNC_FORM_FIELD.key}
+                  render={({ field: { value, onChange } }) => (
+                    <ToggleSwitch
+                      value={Boolean(parseInt(value))}
+                      onChange={() => (Boolean(parseInt(value)) === true ? onChange("0") : onChange("1"))}
+                      size="sm"
+                    />
+                  )}
+                />
+              </div>
+            </div>
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
+                <Button
+                  variant="primary"
+                  onClick={(e) => {
+                    void handleSubmit(onSubmit)(e);
+                  }}
+                  loading={isSubmitting}
+                  disabled={!isDirty}
+                >
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
                 <Link

@@ -3,6 +3,8 @@ import os
 import uuid
 import requests
 from io import BytesIO
+import random
+import string
 
 # Django imports
 from django.utils import timezone
@@ -210,6 +212,38 @@ class Adapter:
         user.save()
         return user
 
+    def sync_user_data(self, user):
+        # Update user details
+        first_name = self.user_data.get("user", {}).get("first_name", "")
+        last_name = self.user_data.get("user", {}).get("last_name", "")
+        user.first_name = first_name if first_name else ""
+        user.last_name = last_name if last_name else ""
+
+        # Get email
+        email = self.user_data.get("email")
+
+        # Get display name
+        display_name = self.user_data.get("user", {}).get("display_name")
+        # If display name is not provided, generate a random display name
+        if not display_name:
+            display_name = User.get_display_name(email)
+
+        # Set display name
+        user.display_name = display_name
+
+        # Download and upload avatar
+        avatar = self.user_data.get("user", {}).get("avatar", "")
+        if avatar:
+            avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
+            if avatar_asset:
+                user.avatar_asset = avatar_asset
+            # If avatar upload fails, set the avatar to the original URL
+            else:
+                user.avatar = avatar
+
+        user.save()
+        return user
+
     def complete_login_or_signup(self):
         # Get email
         email = self.user_data.get("email")
@@ -251,6 +285,13 @@ class Adapter:
             user.first_name = first_name if first_name else ""
             user.last_name = last_name if last_name else ""
 
+            # Get display name
+            display_name = self.user_data.get("user", {}).get("display_name")
+            # If display name is not provided, generate a random display name
+            if not display_name:
+                display_name = User.get_display_name(email)
+
+            user.display_name = display_name
             user.save()
 
             # Download and upload avatar
@@ -265,6 +306,13 @@ class Adapter:
 
             # Create profile
             Profile.objects.create(user=user)
+
+        # Check if IDP sync is enabled
+        (ENABLE_IDP_SYNC,) = get_configuration_value([
+            {"key": "ENABLE_IDP_SYNC", "default": os.environ.get("ENABLE_IDP_SYNC", "0")}
+        ])
+        if ENABLE_IDP_SYNC == "1":
+            user = self.sync_user_data(user=user)
 
         # Save user data
         user = self.save_user_data(user=user)

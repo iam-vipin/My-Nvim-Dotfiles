@@ -48,6 +48,12 @@ oidc_config_variables = [
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },
+    {
+        "key": "ENABLE_IDP_SYNC",
+        "value": "0",
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
 ]
 
 # SAML

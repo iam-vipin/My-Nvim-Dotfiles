@@ -27,6 +27,7 @@ const FavoriteChats = observer(function FavoriteChats(props: TProps) {
             isProjectLevel={isProjectLevel}
             isFavorite={chat.is_favorite}
             optionToExclude={["rename", "delete"]}
+            onClickItem={() => {}}
           />
         ))}
       </div>

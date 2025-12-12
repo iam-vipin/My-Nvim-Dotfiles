@@ -39,7 +39,7 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
     if (isSidePanelOpen) {
       toggleSidePanel(false);
     }
-  });  
+  });
   return (
     <Card
       ref={ref}

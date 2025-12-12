@@ -5,7 +5,7 @@ import { MilestoneIcon } from "@plane/propel/icons";
 import type { MilestoneInstance } from "@plane/shared-state";
 import type { ChartDataType } from "@plane/types";
 import { getMilestoneIconProps, getMilestoneLineColors } from "@plane/utils";
-import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
+import { BLOCK_HEIGHT, DEFAULT_BLOCK_WIDTH } from "@/components/gantt-chart/constants";
 import { getPositionFromDate } from "@/components/gantt-chart/views";
 import { MilestoneTooltip } from "./milestone-tooltip";
 
@@ -27,7 +27,7 @@ export const MilestoneIndicator: FC<Props> = observer(function MilestoneIndicato
 
   if (!milestone.target_date) return null;
 
-  const position = getPositionFromDate(chartData, milestone.target_date, 0);
+  const position = getPositionFromDate(chartData, milestone.target_date, DEFAULT_BLOCK_WIDTH);
   const { base: baseColor, hover: hoverColor } = getMilestoneLineColors(milestone.progress_percentage);
   const milestoneIconProps = getMilestoneIconProps(milestone.progress_percentage);
 
@@ -50,7 +50,7 @@ export const MilestoneIndicator: FC<Props> = observer(function MilestoneIndicato
           left: `${containerLeft}px`,
           width: `${HOVER_WIDTH}px`,
           height: `${totalHeight}px`,
-          zIndex: isHovered ? 50 : 10,
+          zIndex: isHovered ? 10 : 5,
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

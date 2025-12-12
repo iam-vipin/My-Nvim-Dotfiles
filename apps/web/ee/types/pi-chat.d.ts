@@ -166,6 +166,7 @@ export type TChatHistory = {
   focus_project_id: string;
   workspace_id?: string;
   mode?: string;
+  llm?: string;
 };
 
 export type TAction = {
@@ -197,6 +198,7 @@ export type TUserThreads = {
   last_modified: string;
   is_favorite: boolean;
   workspace_id?: string;
+  llm?: string;
 };
 
 export type TAiModels = {

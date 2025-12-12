@@ -82,7 +82,7 @@ export interface IPiChatStore {
   executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<string[] | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
   abortStream: (chatId: string) => void;
-  setActiveModel: (model: TAiModels) => void;
+  setActiveModel: (chatId: string, model: TAiModels) => void;
   createNewChat: (
     focus: TFocus,
     mode: string,
@@ -224,8 +224,13 @@ export class PiChatStore implements IPiChatStore {
     return this.isLoadingMap[this.activeChatId] ?? false;
   }
 
-  setActiveModel = (model: TAiModels) => {
+  setActiveModel = (chatId: string, model: TAiModels) => {
     this.activeModel = model;
+    update(this.chatMap, chatId, (chat: TChatHistory) => {
+      if (!chat) return chat;
+      chat.llm = model.id;
+      return chat;
+    });
   };
 
   // computed
@@ -357,6 +362,7 @@ export class PiChatStore implements IPiChatStore {
       dialogue: [],
       dialogueMap: {},
       title: "New Chat",
+      llm: this.activeModel?.id,
       last_modified: new Date().toISOString(),
       is_favorite: false,
       is_focus_enabled: focus.isInWorkspaceContext,
@@ -679,7 +685,11 @@ export class PiChatStore implements IPiChatStore {
             },
             {} as Record<string, TDialogue>
           ),
+          llm: response.results.llm ?? chat?.llm,
         }));
+        if (chatId === this.activeChatId) {
+          this.activeModel = this.models.find((model) => model.id === response?.results?.llm) || this.models[0] || null;
+        }
         this.isLoadingMap[chatId] = false;
       });
     } catch (e: any) {
@@ -709,6 +719,7 @@ export class PiChatStore implements IPiChatStore {
             last_modified: chat.last_modified,
             is_favorite: chat.is_favorite,
             workspace_id: chat.workspace_id,
+            llm: chat.llm,
           }));
         });
         if (isProjectChat) {
@@ -740,6 +751,7 @@ export class PiChatStore implements IPiChatStore {
             chat_id: chat.chat_id,
             title: chat.title,
             last_modified: chat.last_modified,
+            llm: chat.llm,
           }));
         });
         threads.push(...response.results.map((chat) => chat.chat_id));

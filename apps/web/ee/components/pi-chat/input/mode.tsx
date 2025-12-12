@@ -1,6 +1,7 @@
 import { AiSearchIcon, AiWriteIcon } from "@plane/propel/icons";
 import { CustomSelect, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { ChevronDownIcon } from "lucide-react";
 
 const MODE_OPTIONS = [
   {
@@ -23,9 +24,10 @@ export function AiMode(props: { aiMode: string; setAiMode: (mode: string) => voi
       value={aiMode}
       label={
         <Tooltip tooltipContent="Select the mode of the AI to use for the conversation." position="top">
-          <div className="flex font-medium gap-2 w-full overflow-hidden">
+          <div className="flex font-medium gap-2 w-full overflow-hidden items-center">
             <span className="flex items-center gap-2 text-custom-text-300">{selectedMode?.icon}</span>
             <span className="text-sm truncate">{selectedMode?.label}</span>
+            <ChevronDownIcon className="size-4 text-custom-text-300" />
           </div>
         </Tooltip>
       }

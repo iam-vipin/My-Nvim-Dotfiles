@@ -28,7 +28,7 @@ export const Header = observer(function Header(props: THeaderProps) {
   const router = useRouter();
   const { workspaceSlug } = useParams();
   const { isProjectLevel = false, isFullScreen, toggleSidePanel, isSidePanelOpen } = props;
-  const { initPiChat, activeModel, models, setActiveModel } = usePiChat();
+  const { initPiChat, activeChatId, activeModel, models, setActiveModel } = usePiChat();
   const { t } = useTranslation();
   return (
     <AppHeader
@@ -54,7 +54,11 @@ export const Header = observer(function Header(props: THeaderProps) {
                       <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />
                     )}
                     {models?.length > 1 ? (
-                      <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
+                      <ModelsDropdown
+                        models={models}
+                        activeModel={activeModel}
+                        setActiveModel={(model) => activeChatId && setActiveModel(activeChatId, model)}
+                      />
                     ) : (
                       <span className="font-medium text-sm my-auto">Plane AI</span>
                     )}

@@ -32,6 +32,8 @@ type TChatHistoryResponse = {
     focus_workspace_id: string;
     focus_project_id: string;
     workspace_id?: string;
+    llm?: string;
+    mode?: string;
   };
 };
 export type TUserThreadsResponse = {

@@ -125,8 +125,10 @@ export const FocusFilter = observer(function FocusFilter(props: TProps) {
             value={`workspace_id%${workspace?.id}`}
             className="text-sm text-custom-text-200 font-medium flex justify-start"
           >
-            <WorkspaceLogo logo={workspace?.logo_url} name={workspace?.name} classNames={"w-4 h-4 text-[9px]"} />
-            <span className="truncate">{workspace?.name}</span>
+            <div className="flex items-center gap-2">
+              <WorkspaceLogo logo={workspace?.logo_url} name={workspace?.name} classNames={"w-4 h-4 text-[9px]"} />
+              <span className="truncate">{workspace?.name}</span>
+            </div>
           </CustomSelect.Option>
           {workspaceProjectIds && workspaceProjectIds.length > 0 && (
             <span className="text-custom-text-350 font-medium">Projects</span>

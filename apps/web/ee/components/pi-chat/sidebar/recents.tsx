@@ -14,9 +14,17 @@ type TProps = {
   isLoading?: boolean;
   isFullScreen: boolean;
   activeChatId: string;
+  onClickItem: () => void;
 };
 const RecentChats = observer(function RecentChats(props: TProps) {
-  const { userThreads, isProjectLevel = false, isLoading = false, isFullScreen = false, activeChatId } = props;
+  const {
+    userThreads,
+    isProjectLevel = false,
+    isLoading = false,
+    isFullScreen = false,
+    activeChatId,
+    onClickItem,
+  } = props;
   const { workspaceSlug, chatId } = useParams();
 
   return (
@@ -40,6 +48,7 @@ const RecentChats = observer(function RecentChats(props: TProps) {
               isProjectLevel={isProjectLevel}
               isFavorite={thread.is_favorite}
               isFullScreen={isFullScreen}
+              onClickItem={onClickItem}
             />
           ))
         ) : (

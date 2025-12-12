@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PanelRightClose } from "lucide-react";
@@ -8,6 +8,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import RecentChats from "./recents";
 import { Toolbar } from "./toolbar";
+import { useOutsideClickDetector } from "@plane/hooks";
 
 type TProps = {
   isSidePanelOpen: boolean;
@@ -17,6 +18,7 @@ type TProps = {
 };
 export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
   const { isSidePanelOpen, toggleSidePanel, isMobile = false, isFullScreen = false } = props;
+  const ref = useRef<HTMLDivElement>(null);
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // router
@@ -33,8 +35,14 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
   // update search query
   const updateSearchQuery = (value: string) => setSearchQuery(value);
 
+  useOutsideClickDetector(ref, () => {
+    if (isSidePanelOpen) {
+      toggleSidePanel(false);
+    }
+  });  
   return (
     <Card
+      ref={ref}
       className={cn(
         "h-full text-base rounded-none pb-0",
         "transform transition-all duration-300 ease-in-out",
@@ -65,6 +73,7 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
           isLoading={isLoadingThreads}
           isFullScreen={isFullScreen}
           activeChatId={activeChatId}
+          onClickItem={() => toggleSidePanel(false)}
         />
       </div>
     </Card>

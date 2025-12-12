@@ -22,6 +22,7 @@ type TProps = {
   isFavorite: boolean;
   optionToExclude?: string[];
   isFullScreen?: boolean;
+  onClickItem: () => void;
 };
 
 export const SidebarItem = observer(function SidebarItem(props: TProps) {
@@ -34,6 +35,7 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
     isFavorite,
     optionToExclude = [],
     isFullScreen = false,
+    onClickItem,
   } = props;
   // state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -113,7 +115,13 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
               <div className="text-sm leading-5 font-medium truncate capitalize"> {title || "No title"}</div>
             </Link>
           ) : (
-            <button className="w-full overflow-hidden" onClick={() => initPiChat(chatId)}>
+            <button
+              className="w-full overflow-hidden"
+              onClick={() => {
+                initPiChat(chatId);
+                onClickItem();
+              }}
+            >
               <div className="text-sm leading-5 font-medium truncate capitalize text-start">{title || "No title"}</div>
             </button>
           )}

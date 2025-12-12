@@ -17,6 +17,8 @@
     "fix:format": "prettier . --cache --write"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "catalog:",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "catalog:",
     "@bprogress/core": "catalog:",
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "workspace:*",

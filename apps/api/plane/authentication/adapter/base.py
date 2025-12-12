@@ -106,6 +106,8 @@ class Adapter:
         return True
 
     def get_avatar_download_headers(self):
+        if self.token_data and self.token_data.get("access_token") and self.provider in ["oidc", "saml"]:
+            return {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
         return {}
 
     def download_and_upload_avatar(self, avatar_url, user):
@@ -217,8 +219,10 @@ class Adapter:
 
         # Check if the user is present
         user = User.objects.filter(email=email).first()
+
         # Check if sign up case or login
-        is_signup = bool(user)
+        is_signup = not bool(user)
+
         # If user is not present, create a new user
         if not user:
             # New user

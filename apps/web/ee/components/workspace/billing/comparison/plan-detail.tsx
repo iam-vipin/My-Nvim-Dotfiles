@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { SUBSCRIPTION_WITH_BILLING_FREQUENCY, SUBSCRIPTION_WITH_TRIAL } from "@plane/constants";
@@ -116,10 +115,12 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
     <div className="flex flex-col justify-between col-span-1 p-3 space-y-0.5">
       {/* Plan name and pricing section */}
       <div className="flex flex-col items-start">
-        <div className="flex w-full gap-2 items-center text-xl font-medium">
-          <span className="transition-all duration-300">{subscriptionName}</span>
+        <div className="flex w-full gap-2 items-center text-h4-semibold">
+          <span>{subscriptionName}</span>
           {currentPlan === EProductSubscriptionEnum.FREE && subscriptionType === EProductSubscriptionEnum.PRO && (
-            <span className="px-2 rounded text-custom-primary-200 bg-custom-primary-100/20 text-xs">Popular</span>
+            <span className="px-2 py-0.5 rounded-sm text-on-color bg-accent-primary text-caption-sm-medium">
+              Popular
+            </span>
           )}
         </div>
         {isProductsAPILoading ? (
@@ -127,9 +128,9 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
             <Loader.Item height="45px" width="100%" />
           </Loader>
         ) : (
-          <div className="flex gap-x-2 items-start text-custom-text-300 pb-1 transition-all duration-300 animate-slide-up">
+          <div className="flex gap-x-2 items-start text-tertiary pb-1">
             {isSubscriptionActive && displayPrice !== undefined && (
-              <div className="flex items-center gap-1 text-2xl text-custom-text-100 font-semibold transition-all duration-300">
+              <div className="flex items-center gap-1 text-h3-semibold text-primary">
                 <DiscountInfo
                   currency={activePricingDetails.currency}
                   frequency={billingFrequency ?? "month"}
@@ -140,11 +141,9 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
               </div>
             )}
             <div className="pt-1">
-              {pricingDescription && <div className="transition-all duration-300">{pricingDescription}</div>}
+              {pricingDescription && <div>{pricingDescription}</div>}
               {pricingSecondaryDescription && (
-                <div className="text-xs text-custom-text-400 transition-all duration-300">
-                  {pricingSecondaryDescription}
-                </div>
+                <div className="text-caption-xs text-placeholder">{pricingSecondaryDescription}</div>
               )}
             </div>
           </div>
@@ -168,8 +167,8 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
 
       {/* Subscription and trial buttons */}
       <div
-        className={cn("flex flex-col gap-1 py-3 items-start transition-all duration-300", {
-          "h-[70px]": shouldShowTrialDetails,
+        className={cn("flex flex-col gap-1 py-3 items-start", {
+          "h-[80px]": shouldShowTrialDetails,
         })}
       >
         <SubscriptionButton

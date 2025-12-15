@@ -71,7 +71,7 @@ export const CommentList = observer(function CommentList(props: TProps) {
     <div
       className={cn(
         "overflow-hidden transition-all duration-500 ease-in-out ",
-        !isCollapsed ? "max-h-[800px] border-t border-custom-border-100" : "max-h-0"
+        !isCollapsed ? "max-h-[800px] border-t border-subtle" : "max-h-0"
       )}
     >
       <div className="mt-4">
@@ -96,7 +96,7 @@ export const CommentList = observer(function CommentList(props: TProps) {
         </div>
         <form
           onSubmit={handleCreateComment}
-          className="flex items-center gap-1 px-2 mb-4 w-full rounded-md shadow border border-custom-border-100"
+          className="flex items-center gap-1 px-2 mb-4 w-full rounded-md shadow border border-subtle"
         >
           <Input
             placeholder="Write your comment"
@@ -109,10 +109,10 @@ export const CommentList = observer(function CommentList(props: TProps) {
           <button
             type="submit"
             disabled={newComment.trim() === "" || isSubmitting}
-            className={`flex items-center justify-center size-6 text-sm rounded-full flex-shrink-0 ${
+            className={`flex items-center justify-center size-6 text-13 rounded-full flex-shrink-0 ${
               newComment.trim() === ""
-                ? "bg-custom-background-80 text-custom-text-300 cursor-not-allowed"
-                : "bg-custom-primary text-white hover:bg-custom-primary/90"
+                ? "bg-layer-1 text-tertiary cursor-not-allowed"
+                : "bg-accent-primary text-on-color hover:bg-custom-primary/90"
             }`}
           >
             <SendHorizonal className="size-3.5" />

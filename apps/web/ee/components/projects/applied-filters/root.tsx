@@ -47,7 +47,7 @@ export function ProjectAppliedFiltersList(props: Props) {
           if (filterKey !== "archived")
             return (
               <Tag key={filterKey}>
-                <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+                <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
                 {filterKey === "access" && (
                   <AppliedAccessFilters
                     editable={isEditingAllowed}
@@ -88,7 +88,7 @@ export function ProjectAppliedFiltersList(props: Props) {
                 {isEditingAllowed && (
                   <button
                     type="button"
-                    className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                    className="grid place-items-center text-tertiary hover:text-secondary"
                     onClick={() => handleRemoveFilter(filterKey, null)}
                   >
                     <CloseIcon height={12} width={12} strokeWidth={2} />
@@ -115,7 +115,7 @@ export function ProjectAppliedFiltersList(props: Props) {
             </p>
           }
         >
-          <span className="bg-custom-background-80 rounded-full text-sm font-medium py-1 px-2.5">
+          <span className="bg-layer-1 rounded-full text-13 font-medium py-1 px-2.5">
             {filteredProjects}/{totalProjects}
           </span>
         </Tooltip>

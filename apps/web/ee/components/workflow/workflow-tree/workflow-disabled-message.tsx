@@ -29,10 +29,10 @@ export const WorkFlowDisabledMessage = observer(function WorkFlowDisabledMessage
   if (!parentState || !isWorkflowEnabled) return <></>;
 
   return (
-    <div className={cn("relative w-72 flex flex-col p-3 gap-2 rounded bg-custom-background-100", className)}>
+    <div className={cn("relative w-72 flex flex-col p-3 gap-2 rounded-sm bg-surface-1", className)}>
       <div className="flex gap-1 items-center">
         <CircleStop className="size-3" color="#FA4D56" />
-        <span className="text-xs font-medium">{t("workflows.workflow_disabled.title")}</span>
+        <span className="text-11 font-medium">{t("workflows.workflow_disabled.title")}</span>
       </div>
       <div className="pl-4">
         <WorkflowTree parentStateId={parentStateId} />

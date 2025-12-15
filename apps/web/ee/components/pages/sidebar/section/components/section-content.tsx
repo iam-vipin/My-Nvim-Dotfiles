@@ -33,7 +33,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
   const renderPlaceholder = () => (
     <div className="flex items-center px-2 text-custom-text-200" style={{ height: "30px" }}>
       <Loader className="size-3 mr-2 animate-spin opacity-30" />
-      <div className="h-2 bg-custom-background-80 rounded w-3/4 opacity-20" />
+      <div className="h-2 bg-layer-1 rounded w-3/4 opacity-20" />
     </div>
   );
 
@@ -160,7 +160,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
           })}
         </div>
       ) : (
-        <p className="text-custom-text-400 text-xs text-center font-medium ml-1 mt-2">
+        <p className="text-custom-text-400 text-11 text-center font-medium ml-1 mt-2">
           No {sectionType === "public" ? "workspace" : sectionType} pages
         </p>
       )}

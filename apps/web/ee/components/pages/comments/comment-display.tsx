@@ -160,18 +160,18 @@ export const PageCommentDisplay = observer(function PageCommentDisplay({
               <Tooltip
                 tooltipContent={comment.is_resolved ? "Mark as unresolved" : "Mark as resolved"}
                 position="bottom"
-                className="text-xs"
+                className="text-11"
               >
                 <div
                   onClick={handleResolve}
-                  className="size-5 flex items-center justify-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors cursor-pointer"
+                  className="size-5 flex items-center justify-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors cursor-pointer"
                 >
                   <CircleCheck
                     className={cn(
                       "size-4 p-[1.5px]",
                       comment.is_resolved
                         ? "size-5 fill-custom-text-300 text-custom-background-100 hover:text-custom-background-90"
-                        : "text-custom-text-300"
+                        : "text-tertiary"
                     )}
                   />
                 </div>
@@ -179,7 +179,7 @@ export const PageCommentDisplay = observer(function PageCommentDisplay({
             )}
 
             {hasMenuItems && (
-              <div className="size-5 flex items-center justify-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors">
+              <div className="size-5 flex items-center justify-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors">
                 <CustomMenu
                   placement="bottom-end"
                   closeOnSelect

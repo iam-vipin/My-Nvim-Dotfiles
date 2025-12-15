@@ -47,24 +47,30 @@ export const ExternalEmbedBlock = memo(function ExternalEmbedBlock(externalEmbed
     }
   }, [shouldOpenInput, externalEmbedProps.editor]);
 
+  const borderColor =
+    externalEmbedProps.selected && externalEmbedProps.editor.isEditable
+      ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)"
+      : undefined;
+
   return (
     <>
       <div
         ref={embedButtonRef}
         className={cn(
-          "flex items-center justify-start gap-2 py-3 px-2 my-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+          "flex items-center justify-start gap-2 py-3 px-2 my-2 rounded-lg text-tertiary bg-layer-2 border border-dashed transition-all duration-200 ease-in-out cursor-default",
           {
-            "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer":
-              externalEmbedProps.editor.isEditable,
-            "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
+            "border-subtle": !(externalEmbedProps.selected && externalEmbedProps.editor.isEditable),
+            "hover:text-secondary hover:bg-layer-2-hover cursor-pointer": externalEmbedProps.editor.isEditable,
+            "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
               externalEmbedProps.selected && externalEmbedProps.editor.isEditable,
           }
         )}
+        style={borderColor ? { borderColor } : undefined}
         onClick={handleEmbedButtonClick}
       >
         <FileCode2 className="size-4 shrink-0" />
 
-        <div className="text-base font-medium">
+        <div className="text-14 font-medium">
           {"Insert your preferred embed link here, such as YouTube video, Figma design, etc."}
           {/* {t("externalEmbedComponent.placeholder.insert_embed")} */}
         </div>

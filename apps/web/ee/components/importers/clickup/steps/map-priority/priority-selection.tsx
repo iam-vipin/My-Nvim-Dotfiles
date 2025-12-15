@@ -21,8 +21,8 @@ export const MapPrioritiesSelection = observer(function MapPrioritiesSelection(p
   const { t } = useTranslation();
 
   return (
-    <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-      <div className="text-custom-text-200">{capitalizeFirstLetter(clickUpPriority?.priority)}</div>
+    <div className="relative grid grid-cols-2 items-center p-3 text-13">
+      <div className="text-secondary">{capitalizeFirstLetter(clickUpPriority?.priority)}</div>
       <div>
         <Dropdown
           dropdownOptions={(planePriorities || [])?.map((state) => ({

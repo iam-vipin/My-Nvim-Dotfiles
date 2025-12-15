@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { PlaneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { PlaneOneEditionBadge } from "@/plane-web/components/license";
@@ -24,7 +24,6 @@ export const SelfHostedEditionBadge = observer(function SelfHostedEditionBadge()
         <SubscriptionButton
           subscriptionType={subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE}
           handleClick={() => togglePaidPlanModal(true)}
-          className="min-w-24"
         >
           {t("sidebar.upgrade_plan")}
         </SubscriptionButton>

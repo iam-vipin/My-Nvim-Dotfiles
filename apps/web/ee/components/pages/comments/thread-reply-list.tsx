@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 
@@ -25,8 +24,6 @@ export const PageCommentThreadReplyList = observer(function PageCommentThreadRep
   // Get thread display state - single source of truth
   const threadState = page.comments.getThreadDisplayState(threadId, showReplies);
 
-  if (!threadState) return null;
-
   // Only fetch thread comments when showReplies is true (user clicked to expand)
   const { isLoading, data: dataFromServer } = useSWR(
     showReplies && threadId ? `THREAD-COMMENTS-${threadId}` : null,
@@ -40,6 +37,8 @@ export const PageCommentThreadReplyList = observer(function PageCommentThreadRep
       dedupingInterval: 5000,
     }
   );
+
+  if (!threadState) return null;
 
   return (
     <div className="overflow-hidden animate-expand relative">

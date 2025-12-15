@@ -57,7 +57,7 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
                   <BreadcrumbLink
                     href={`/${workspaceSlug}/customers`}
                     label="Customers"
-                    icon={<CustomersIcon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<CustomersIcon className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />
@@ -72,7 +72,7 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
                     title={customer?.name}
                     icon={
                       <Breadcrumbs.Icon>
-                        <CustomersIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                        <CustomersIcon className="size-4 flex-shrink-0 text-tertiary" />
                       </Breadcrumbs.Icon>
                     }
                     isLast
@@ -88,18 +88,18 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
             <div ref={parentRef} className="flex gap-2 items-center">
               <button
                 type="button"
-                className="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+                className="p-1 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
                 onClick={() => toggleCustomerDetailSidebar()}
               >
                 <PanelRight
-                  className={cn("h-4 w-4", !customerDetailSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")}
+                  className={cn("h-4 w-4", !customerDetailSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")}
                 />
               </button>
               <CustomerQuickActions
                 customerId={customerId.toString()}
                 workspaceSlug={workspaceSlug.toString()}
                 parentRef={parentRef}
-                customClassName="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+                customClassName="p-1 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
               />
             </div>
           )}

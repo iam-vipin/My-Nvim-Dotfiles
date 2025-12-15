@@ -32,9 +32,9 @@ export const DesktopSidebarToggle = observer(function DesktopSidebarToggle() {
             e.currentTarget.blur();
           }}
           className={cn(
-            "ml-2 mr-1 size-6 flex items-center justify-center rounded cursor-pointer text-custom-text-300 hover:text-custom-text-200",
+            "ml-2 mr-1 size-6 flex items-center justify-center rounded-sm cursor-pointer text-tertiary hover:text-secondary",
             {
-              "text-custom-text-200": !isSidebarCollapsed,
+              "text-secondary": !isSidebarCollapsed,
             }
           )}
         >

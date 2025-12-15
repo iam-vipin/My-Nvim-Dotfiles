@@ -9,13 +9,16 @@ export const InitiativeOverviewHeaderActions = observer(function InitiativeOverv
   return (
     <button
       type="button"
-      className="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+      className={cn("p-1 rounded outline-none hover:bg-layer-transparent-hover bg-layer-transparent", {
+        "bg-layer-transparent-selected": !initiativesSidebarCollapsed,
+      })}
       onClick={() => toggleInitiativesSidebar()}
     >
       <PanelRight
-        className={cn("size-4 cursor-pointer", {
-          "text-custom-primary-100": !initiativesSidebarCollapsed,
-        })}
+        className={cn(
+          "size-4 cursor-pointer",
+          !initiativesSidebarCollapsed ? "text-icon-primary" : "text-icon-secondary"
+        )}
       />
     </button>
   );

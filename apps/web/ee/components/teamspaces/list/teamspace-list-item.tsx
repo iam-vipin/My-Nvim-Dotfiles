@@ -41,11 +41,11 @@ export const TeamspaceListItem = observer(function TeamspaceListItem(props: Team
       title={teamspace.name}
       itemLink={`/${workspaceSlug?.toString()}/teamspaces/${teamspace.id}`}
       prependTitleElement={
-        <div className="flex flex-shrink-0 size-8 items-center justify-center rounded-md bg-custom-background-90">
+        <div className="flex flex-shrink-0 size-8 items-center justify-center rounded-md bg-layer-1">
           {teamspace.logo_props?.in_use ? (
             <Logo logo={teamspace.logo_props} size={16} />
           ) : (
-            <TeamsIcon className="size-4 text-custom-text-300" />
+            <TeamsIcon className="size-4 text-tertiary" />
           )}
         </div>
       }

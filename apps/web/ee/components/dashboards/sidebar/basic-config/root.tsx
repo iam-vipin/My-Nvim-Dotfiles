@@ -113,7 +113,7 @@ export function WidgetConfigSidebarBasicConfig(props: Props) {
   );
 
   return (
-    <div className="flex-shrink-0 space-y-3 text-sm">
+    <div className="flex-shrink-0 space-y-3 text-13">
       <Controller
         control={control}
         name="name"
@@ -136,11 +136,11 @@ export function WidgetConfigSidebarBasicConfig(props: Props) {
             buttonContent={
               <>
                 {selectedChartModel && selectedChartType && (
-                  <span className="flex-shrink-0 h-6 aspect-square bg-custom-background-80 rounded grid place-items-center">
+                  <span className="flex-shrink-0 h-6 aspect-square bg-layer-1 rounded-sm grid place-items-center">
                     <WidgetChartTypeIcon
                       chartModel={selectedChartModel}
                       chartType={selectedChartType}
-                      className="size-4 text-custom-text-300"
+                      className="size-4 text-tertiary"
                     />
                   </span>
                 )}

@@ -36,11 +36,9 @@ export const AutomationsUpgrade = observer(function AutomationsUpgrade(props: TA
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="flex flex-col w-full xl:max-w-[360px] gap-y-4">
-            <div className="text-xl font-semibold">{t("automations.empty_state.upgrade.title")}</div>
-            <div className="font-medium text-custom-text-300 text-sm">
-              {t("automations.empty_state.upgrade.description")}
-            </div>
-            <div className="font-medium text-custom-text-300 text-sm">
+            <div className="text-18 font-semibold">{t("automations.empty_state.upgrade.title")}</div>
+            <div className="font-medium text-tertiary text-13">{t("automations.empty_state.upgrade.description")}</div>
+            <div className="font-medium text-tertiary text-13">
               {t("automations.empty_state.upgrade.sub_description")}
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
@@ -48,7 +46,7 @@ export const AutomationsUpgrade = observer(function AutomationsUpgrade(props: TA
               <Link
                 target="_blank"
                 href="https://plane.so/contact"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+                className={"bg-transparent underline text-13 text-accent-secondary my-auto font-medium"}
               >
                 {t("common.upgrade_cta.talk_to_sales")}
               </Link>

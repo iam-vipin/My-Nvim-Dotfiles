@@ -20,7 +20,7 @@ export function CustomerRequestActivity(props: TCustomerRequestActivityProps) {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<CustomersIcon className="h-3 w-3 flex-shrink-0 text-custom-text-300" />}
+      icon={<CustomersIcon className="h-3 w-3 flex-shrink-0 text-tertiary" />}
       activityId={activityId}
       ends={ends}
     >
@@ -32,7 +32,7 @@ export function CustomerRequestActivity(props: TCustomerRequestActivityProps) {
               href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -44,7 +44,7 @@ export function CustomerRequestActivity(props: TCustomerRequestActivityProps) {
               href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate"> {activity.old_value}</span>
             </a>

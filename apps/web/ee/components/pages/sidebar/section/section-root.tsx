@@ -176,7 +176,7 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
     <div
       ref={listSectionRef}
       className={cn("flex flex-col rounded-md transition-colors", {
-        "[&:not(:has(.is-dragging))]:bg-custom-primary-100/20": isDropping,
+        "[&:not(:has(.is-dragging))]:bg-accent-primary/20": isDropping,
       })}
     >
       <Disclosure defaultOpen={defaultOpen}>
@@ -200,8 +200,8 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
             >
               {showLoader ? (
                 <div className="ml-2 mt-2 flex items-center justify-center py-3">
-                  <Loader className="size-4 animate-spin text-custom-text-300" />
-                  <span className="ml-2 text-sm text-custom-text-300">Loading pages...</span>
+                  <Loader className="size-4 animate-spin text-tertiary" />
+                  <span className="ml-2 text-13 text-tertiary">Loading pages...</span>
                 </div>
               ) : (
                 <SectionContent

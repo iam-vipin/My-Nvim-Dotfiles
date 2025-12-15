@@ -16,8 +16,7 @@ import {
 import { TemplateCategoriesDropdown } from "./template-categories-dropdown";
 import { TemplateCoverImageUpload } from "./template-cover-image-upload";
 
-const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
-  "bg-custom-background-100 border-[0.5px] border-custom-border-200 rounded-md px-2 py-1 h-8 w-full";
+const COMMON_DROPDOWN_CONTAINER_CLASSNAME = "bg-surface-1 border border-subtle rounded-md px-2 py-1 h-8 w-full";
 
 export const TemplateAdditionalDetails = observer(function TemplateAdditionalDetails() {
   // plane hooks
@@ -54,7 +53,7 @@ export const TemplateAdditionalDetails = observer(function TemplateAdditionalDet
                 value={value}
                 handleChange={onChange}
                 buttonContainerClassName={cn(COMMON_DROPDOWN_CONTAINER_CLASSNAME, {
-                  "border-red-500": Boolean(errors.categories),
+                  "border-danger-subtle": Boolean(errors.categories),
                 })}
               />
             )}

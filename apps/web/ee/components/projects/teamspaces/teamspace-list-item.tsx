@@ -61,7 +61,7 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
             {rowData.logo_props?.in_use ? (
               <Logo logo={rowData.logo_props} size={16} />
             ) : (
-              <TeamsIcon className="size-4 text-custom-text-300" />
+              <TeamsIcon className="size-4 text-tertiary" />
             )}
             <div>{rowData.name}</div>
             {hasWorkspaceAdminPermission && isCurrentUserMemberOfTeamspace(rowData.id) && (
@@ -73,7 +73,7 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
               >
                 <CustomMenu.MenuItem>
                   <div
-                    className="flex items-center gap-x-1 cursor-pointer text-red-600 font-medium"
+                    className="flex items-center gap-x-1 cursor-pointer text-danger-primary font-medium"
                     onClick={() => setSelectedTeamspaceIdToRemove(rowData.id)}
                   >
                     <CircleMinus className="flex-shrink-0 size-3.5" />
@@ -139,7 +139,7 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
 
   if (teamspaceIds.length === 0)
     return (
-      <div className="text-center text-sm text-custom-text-300 mt-6">
+      <div className="text-center text-body-xs-regular text-tertiary mt-6">
         {t("teamspace_projects.settings.table.empty_state.no_results.title")}
       </div>
     );
@@ -167,8 +167,8 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
         columns={teamspaceColumns}
         data={teamspaceDetails?.filter((teamspace): teamspace is TTeamspace => teamspace !== null) ?? []}
         keyExtractor={(rowData) => rowData.id}
-        tHeadClassName="mb-4 border-b border-custom-border-100"
-        thClassName="text-left text-custom-text-400 font-medium divide-x-0"
+        tHeadClassName="mb-4 border-b border-subtle"
+        thClassName="text-left text-placeholder font-medium divide-x-0"
         tBodyClassName="divide-y-0"
         tBodyTrClassName="divide-x-0"
         tHeadTrClassName="divide-x-0"

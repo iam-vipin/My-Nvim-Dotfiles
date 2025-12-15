@@ -54,17 +54,16 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
   return (
     <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">
       {/* header */}
-      <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90 p-4">
+      <div className="flex-shrink-0 relative flex items-center gap-4 rounded-sm bg-layer-1 p-4">
         <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
           <img src={logo} alt={`${serviceName} Logo`} className="w-full h-full object-cover" />
         </div>
         <div className="w-full h-full overflow-hidden">
-          <div className="text-lg font-medium">{serviceName}</div>
-          <div className="text-sm text-custom-text-200">{t("importers.import_message", { serviceName })}</div>
+          <div className="text-16 font-medium">{serviceName}</div>
+          <div className="text-13 text-secondary">{t("importers.import_message", { serviceName })}</div>
         </div>
         <div className="flex-shrink-0 relative flex items-center gap-4">
           <Button
-            size="sm"
             onClick={handleDashboardView}
             data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_IMPORT_BUTTON}
           >
@@ -79,16 +78,15 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
         ) : jobIds && jobIds.length > 0 ? (
           <div className="w-full h-full space-y-3 relative flex flex-col">
             <div className="relative flex items-center gap-2">
-              <div className="flex-shrink-0 text-base font-medium py-2">{t("importers.migrations")}</div>
+              <div className="flex-shrink-0 text-14 font-medium py-2">{t("importers.migrations")}</div>
               <Button
-                size="sm"
-                variant="neutral-primary"
+                variant="secondary"
                 className="whitespace-nowrap border-none !px-1"
                 onClick={handleJobsRefresh}
                 disabled={loader === "re-fetch"}
                 data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_REFRESH_BUTTON}
               >
-                <div className="relative flex items-center gap-1.5 text-xs">
+                <div className="relative flex items-center gap-1.5 text-11">
                   {loader === "re-fetch" ? <Loader size={12} className="animate-spin" /> : <RefreshCcw size={12} />}
                   {loader === "re-fetch" && <div>{t("importers.refreshing")}</div>}
                 </div>
@@ -97,7 +95,7 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
             <div className="w-full h-full overflow-auto">
               <table className="w-full table-auto">
                 <thead>
-                  <tr className="border-0 bg-custom-background-90 text-sm !font-medium text-left rounded-t">
+                  <tr className="border-0 bg-layer-1 text-13 !font-medium text-left rounded-t">
                     <td className="p-3 whitespace-nowrap">{t("importers.serial_number")}</td>
                     <td className="p-3 whitespace-nowrap">File Name</td>
                     <td className="p-3 whitespace-nowrap text-center">{t("importers.status")}</td>
@@ -117,7 +115,7 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
                       if (!job) return null;
 
                       return (
-                        <tr key={job.id} className="text-sm text-custom-text-200 even:bg-custom-background-90">
+                        <tr key={job.id} className="text-13 text-secondary even:bg-layer-1">
                           <td className="p-3 whitespace-nowrap">{index + 1}</td>
                           <td className="p-3 whitespace-nowrap">
                             {job?.config?.fileName
@@ -134,7 +132,7 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
-                                  <ExternalLink className="h-3 w-3 flex-shrink-0 text-custom-primary-100" />
+                                  <ExternalLink className="h-3 w-3 flex-shrink-0 text-accent-primary" />
                                 </Link>
                               )}
                             </div>
@@ -171,12 +169,12 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
         ) : (
           <div className="grid h-full place-items-center p-5">
             <div className="flex flex-col items-center gap-4">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
-                <ProjectIcon className="h-10 w-10 text-custom-text-200" />
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-layer-1">
+                <ProjectIcon className="h-10 w-10 text-secondary" />
               </div>
               <div className="flex flex-col items-center gap-1.5 text-center">
-                <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>
-                <p className="text-sm text-custom-text-200">{t("importers.no_project_imports", { serviceName })}</p>
+                <h4 className="text-18 font-medium">{t("importers.no_jobs_found")}</h4>
+                <p className="text-13 text-secondary">{t("importers.no_project_imports", { serviceName })}</p>
               </div>
             </div>
           </div>

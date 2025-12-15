@@ -120,7 +120,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         )}
       />
       {propertyValueError && typeof propertyValueError.message === "string" && (
-        <span className="text-xs font-medium text-red-500">{propertyValueError.message}</span>
+        <span className="text-11 font-medium text-red-500">{propertyValueError.message}</span>
       )}
     </div>
   );

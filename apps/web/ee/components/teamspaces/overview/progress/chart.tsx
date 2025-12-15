@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
@@ -21,7 +21,7 @@ const bars: TBarItem<EProgressDataKeys>[] = [
     key: EProgressDataKeys.COMPLETED,
     label: "Completed",
     fill: "#004EFF",
-    textClassName: "text-white",
+    textClassName: "text-on-color",
     showPercentage: true,
     stackId: "bar-one",
   },
@@ -29,14 +29,14 @@ const bars: TBarItem<EProgressDataKeys>[] = [
     key: EProgressDataKeys.PENDING,
     label: "Pending",
     fill: "rgba(var(--color-background-80), 0.8)",
-    textClassName: "text-custom-text-200",
+    textClassName: "text-secondary",
     stackId: "bar-one",
   },
 ];
 
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
-  "mx-1.5 px-1.5 bg-custom-background-80/60 rounded text-custom-text-100 font-medium";
-const COMMON_CHEVRON_CLASSNAME = "size-3 text-custom-text-400 transition-all";
+  "mx-1.5 px-1.5 bg-transparent hover:bg-layer-1 rounded-sm text-primary font-medium";
+const COMMON_CHEVRON_CLASSNAME = "size-3 text-placeholder transition-all";
 
 type TTeamspaceProgressChartProps = {
   teamspaceId: string;
@@ -76,7 +76,7 @@ export const TeamspaceProgressChart = observer(function TeamspaceProgressChart(p
 
   return (
     <div className="w-full h-full flex flex-col gap-6">
-      <div className="flex items-center text-sm text-custom-text-300">
+      <div className="flex items-center text-body-xs-medium text-secondary">
         Progress on <b className="px-1">{TEAM_WORKLOAD_Y_AXIS_LABEL_MAP[yAxisKey]}</b> view by
         <Dropdown
           value={xAxisKey}

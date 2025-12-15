@@ -4,7 +4,7 @@ import type { EditorRefApi } from "@plane/editor";
 type CommentMarkInteractionHook = {
   handleMouseEnter: () => void;
   handleMouseLeave: () => void;
-  handleThreadClick: (e: React.MouseEvent) => void;
+  handleThreadClick: (e: React.MouseEvent | React.KeyboardEvent) => void;
 };
 
 type UseCommentMarkInteractionParams = {
@@ -35,8 +35,8 @@ export function useCommentMarkInteraction({
   }, [clearHover]);
 
   const handleThreadClick = useCallback(
-    (e: React.MouseEvent) => {
-      const target = e.target as HTMLElement;
+    (e: React.MouseEvent | React.KeyboardEvent) => {
+      const target = e.currentTarget as HTMLElement;
       if (
         target.tagName === "BUTTON" ||
         target.closest("button") ||

@@ -23,7 +23,7 @@ export const WorkspaceDashboardsListHeader = observer(function WorkspaceDashboar
           <Breadcrumbs>
             <Breadcrumbs.Item
               component={
-                <BreadcrumbLink label="Dashboards" icon={<DashboardIcon className="size-4 text-custom-text-300" />} />
+                <BreadcrumbLink label="Dashboards" icon={<DashboardIcon className="size-4 text-tertiary" />} />
               }
             />
           </Breadcrumbs>
@@ -32,7 +32,7 @@ export const WorkspaceDashboardsListHeader = observer(function WorkspaceDashboar
       <Header.RightItem>
         <DashboardsListSearch value={searchQuery} onChange={updateSearchQuery} />
         {canCurrentUserCreateDashboard && (
-          <Button variant="primary" size="sm" onClick={() => toggleCreateUpdateModal(true)}>
+          <Button variant="primary" size="lg" onClick={() => toggleCreateUpdateModal(true)}>
             Add dashboard
           </Button>
         )}

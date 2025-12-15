@@ -24,14 +24,14 @@ export const EmptyState = memo(function EmptyState({
             <div key={index} className="rounded transition-colors p-1">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <Loader.Item height="24px" width="24px" className="rounded-full" />
+                  <Loader.Item height="24px" width="24px" className="rounded-full bg-layer-transparent-active" />
                   <div className="min-w-0 flex-1">
-                    <Loader.Item height="16px" width="120px" />
+                    <Loader.Item height="16px" width="120px" className="bg-layer-transparent-active" />
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Loader.Item height="24px" width="70px" className="rounded-md" />
+                  <Loader.Item height="24px" width="70px" className="rounded-md bg-layer-transparent-active" />
                 </div>
               </div>
             </div>
@@ -48,11 +48,11 @@ export const EmptyState = memo(function EmptyState({
   if (totalUsers === 0 && pendingUsersCount === 0) {
     return (
       <div className="text-center py-8 animate-in fade-in duration-500 transition-all ease-in-out">
-        <div className="w-16 h-16 bg-custom-background-80 rounded-xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-layer-1 rounded-xl flex items-center justify-center mx-auto mb-4">
           <MembersPropertyIcon className="w-8 h-8 text-custom-text-300" />
         </div>
-        <h4 className="text-sm font-medium text-custom-text-200 mb-1">No one has access yet</h4>
-        <p className="text-xs text-custom-text-400">Add people above to start collaborating on this page</p>
+        <h4 className="text-13 font-medium text-custom-text-200 mb-1">No one has access yet</h4>
+        <p className="text-11 text-custom-text-400">Add people above to start collaborating on this page</p>
       </div>
     );
   }

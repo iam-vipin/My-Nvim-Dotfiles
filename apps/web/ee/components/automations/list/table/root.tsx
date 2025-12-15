@@ -24,12 +24,11 @@ interface AutomationsTableProps {
 }
 
 const COMMON_TABLE_HEADER_CLASSNAME = "h-14 text-center";
-const COMMON_TABLE_TITLE_HEADER_CLASSNAME =
-  "h-14 sticky left-0 bg-custom-background-100 border-r border-custom-border-100 z-10 min-w-[200px]";
-const COMMON_TABLE_CELL_CLASSNAME = "text-custom-text-200 text-center";
-const COMMON_TABLE_DISABLED_CELL_CLASSNAME = "text-custom-text-400";
+const COMMON_TABLE_TITLE_HEADER_CLASSNAME = "h-14 sticky left-0 border-r border-subtle z-10 min-w-[200px]";
+const COMMON_TABLE_CELL_CLASSNAME = "text-secondary text-center";
+const COMMON_TABLE_DISABLED_CELL_CLASSNAME = "text-placeholder";
 const COMMON_TABLE_TITLE_CELL_CLASSNAME =
-  "font-medium text-custom-text-100 max-w-72 truncate sticky left-0 bg-custom-background-100 group-hover:bg-custom-background-90 border-r border-custom-border-100 z-10 min-w-[200px] transition-colors duration-75 py-3";
+  "font-medium text-primary max-w-72 truncate sticky left-0 border-r border-subtle z-10 min-w-[200px] transition-colors duration-75 py-3";
 
 export const AutomationsTable = observer(function AutomationsTable(props: AutomationsTableProps) {
   const { automations, onAutomationClick } = props;
@@ -43,7 +42,7 @@ export const AutomationsTable = observer(function AutomationsTable(props: Automa
       {/* Table */}
       <div className="overflow-x-auto">
         <Table className="min-w-[1000px]">
-          <TableHeader className="bg-custom-background-100 border-t-0 border-custom-border-100 py-4">
+          <TableHeader className="border-t-0 border-subtle py-4">
             <TableRow>
               <TableHead className={COMMON_TABLE_TITLE_HEADER_CLASSNAME}>{t("automations.table.title")}</TableHead>
               <TableHead className={cn(COMMON_TABLE_HEADER_CLASSNAME, "text-center")}>
@@ -76,7 +75,7 @@ export const AutomationsTable = observer(function AutomationsTable(props: Automa
                 return (
                   <TableRow
                     key={automation.id}
-                    className="group hover:bg-custom-background-90 cursor-pointer border-b border-custom-border-100 transition-colors duration-75"
+                    className="group hover:bg-layer-transparent-hover cursor-pointer border-b border-subtle transition-colors duration-75"
                     onClick={() => {
                       captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.LIST_ITEM_ROW });
                       onAutomationClick?.(automation);

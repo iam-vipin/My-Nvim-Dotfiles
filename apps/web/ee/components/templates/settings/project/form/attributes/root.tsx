@@ -50,7 +50,7 @@ export const ProjectAttributes = observer(function ProjectAttributes(props: TPro
 
   if (!currentWorkspace) return null;
   return (
-    <div className="flex flex-wrap items-center gap-2 pb-6 border-b border-custom-border-200">
+    <div className="flex flex-wrap items-center gap-2 pb-6 border-b border-subtle">
       {isProjectGroupingEnabled && (
         <Controller
           name="project.state_id"
@@ -114,7 +114,7 @@ export const ProjectAttributes = observer(function ProjectAttributes(props: TPro
                         {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
-                      <span className="text-custom-text-400">Select network</span>
+                      <span className="text-placeholder">Select network</span>
                     )}
                   </div>
                 }
@@ -131,7 +131,7 @@ export const ProjectAttributes = observer(function ProjectAttributes(props: TPro
                       <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
                         <p>{t(network.i18n_label)}</p>
-                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
+                        <p className="text-caption-sm-regular text-placeholder">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>

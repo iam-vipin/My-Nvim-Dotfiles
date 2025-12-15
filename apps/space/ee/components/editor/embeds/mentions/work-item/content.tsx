@@ -15,16 +15,16 @@ export const EditorWorkItemMentionContent = observer(function EditorWorkItemMent
     workItemDetails.name.length > 64 ? workItemDetails.name.slice(0, 64) + "..." : workItemDetails.name;
 
   return (
-    <span className="not-prose inline-flex items-center gap-1 w-fit text-sm font-medium">
+    <span className="not-prose inline-flex items-center gap-1 w-fit text-13 font-medium">
       <EditorWorkItemMentionLogo
         className="shrink-0 size-3"
         stateColor={workItemDetails.state__color}
         stateGroup={workItemDetails.state__group}
       />
-      <span className="text-custom-text-300">
+      <span className="text-tertiary">
         {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
       </span>
-      <span className="text-custom-text-200">{trimmedName}</span>
+      <span className="text-secondary">{trimmedName}</span>
     </span>
   );
 });

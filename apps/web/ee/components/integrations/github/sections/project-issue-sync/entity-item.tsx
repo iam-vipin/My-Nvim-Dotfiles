@@ -84,24 +84,18 @@ export const ProjectIssueSyncEntityItem = observer(function ProjectIssueSyncEnti
       <ModalCore isOpen={deleteModal} handleClose={handleDeleteClose}>
         <div className="space-y-5 p-5">
           <div className="space-y-2">
-            <div className="text-xl font-medium text-custom-text-200">
+            <div className="text-heading-sm-medium text-secondary">
               {t("github_integration.remove_project_issue_sync")}
             </div>
-            <div className="text-sm text-custom-text-300">
+            <div className="text-body-xs-regular text-tertiary">
               {t("github_integration.remove_project_issue_sync_confirmation")}
             </div>
           </div>
           <div className="relative flex justify-end items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleDeleteClose} disabled={deleteLoader}>
+            <Button variant="secondary" onClick={handleDeleteClose} disabled={deleteLoader}>
               {t("common.cancel")}
             </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleDeleteModalSubmit}
-              loading={deleteLoader}
-              disabled={deleteLoader}
-            >
+            <Button variant="primary" onClick={handleDeleteModalSubmit} loading={deleteLoader} disabled={deleteLoader}>
               {deleteLoader ? t("common.processing") : t("common.remove")}
             </Button>
           </div>

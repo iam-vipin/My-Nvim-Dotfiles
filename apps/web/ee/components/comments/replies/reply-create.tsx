@@ -131,7 +131,7 @@ export const ReplyCreate = observer(function ReplyCreate(props: Props) {
                   return asset_id;
                 }}
                 showToolbarInitially={false}
-                parentClassName="p-2 bg-custom-background-100"
+                parentClassName="p-2 bg-surface-1"
                 placeholder={t("issue.comments.replies.create.placeholder")}
                 displayConfig={{
                   fontSize: "small-font",

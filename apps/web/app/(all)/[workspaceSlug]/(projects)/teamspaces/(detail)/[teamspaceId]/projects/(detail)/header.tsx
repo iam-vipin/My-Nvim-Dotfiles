@@ -62,7 +62,7 @@ export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDe
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label="Teamspaces"
-                  icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<TeamsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -86,7 +86,7 @@ export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDe
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/projects`}
                   label="Projects"
-                  icon={<ProjectIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ProjectIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />

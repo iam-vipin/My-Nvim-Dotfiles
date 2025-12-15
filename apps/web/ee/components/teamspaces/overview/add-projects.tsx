@@ -17,16 +17,16 @@ export const AddProjectsToTeam = observer(function AddProjectsToTeam(props: TAdd
   if (!teamspaceId) return <></>;
   return (
     <div className="flex flex-col gap-2 mx-4">
-      <span className="text-sm font-semibold text-custom-text-300">Get started</span>
-      <div className="flex flex-col items-center justify-center text-center gap-2 px-4 py-10 border border-custom-border-200 rounded-lg">
-        <span className="flex flex-shrink-0 items-center justify-center size-10 rounded bg-custom-background-80/70 my-1">
-          <BriefcaseIcon className="size-6 text-custom-text-300" />
+      <span className="text-body-xs-semibold text-tertiary">Get started</span>
+      <div className="flex flex-col items-center justify-center text-center gap-2 px-4 py-10 border border-subtle-1 rounded-lg">
+        <span className="flex flex-shrink-0 items-center justify-center size-10 rounded-sm bg-layer-1 my-1">
+          <BriefcaseIcon className="size-6 text-tertiary" />
         </span>
         <p className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium text-custom-text-200">
-            You haven’t linked any projects to this teamspace yet.
+          <span className="text-body-xs-medium text-secondary">
+            You haven&apos;t linked any projects to this teamspace yet.
           </span>
-          <span className="text-xs text-custom-text-300">
+          <span className="text-caption-sm-regular text-tertiary">
             Click the button below to pick from a list of projects you can link.
           </span>
         </p>

@@ -71,10 +71,10 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: Props) {
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
       <div
-        className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${subGroupBy ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
+        className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full ${subGroupBy ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
         ref={scrollableContainerRef}
       >
-        <div className="relative h-full w-max min-w-full bg-custom-background-90">
+        <div className="relative h-full w-max min-w-full">
           <div className="h-full w-max">
             <KanBanView
               groupedIssueIds={groupedIssueIds ?? {}}

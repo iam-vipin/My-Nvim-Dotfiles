@@ -31,11 +31,11 @@ export function IssueCreatorDisplay(props: TIssueUser) {
   return (
     <>
       {customUserName || ["FORMS", "EMAIL"].includes(activity?.source_data?.source) ? (
-        <span className="text-custom-text-100 font-medium">{getUserName()}</span>
+        <span className="text-primary font-medium">{getUserName()}</span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
-          className="hover:underline text-custom-text-100 font-medium"
+          className="hover:underline text-primary font-medium"
         >
           {activity.actor_detail?.display_name}
         </Link>

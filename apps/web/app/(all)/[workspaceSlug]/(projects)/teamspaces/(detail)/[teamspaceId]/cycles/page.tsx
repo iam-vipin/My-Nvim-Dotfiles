@@ -69,7 +69,7 @@ function TeamspaceCyclesPage({ params }: Route.ComponentProps) {
         storageKey={`teamspace-cycles-${teamspaceId}`}
         defaultTab="current"
         size="sm"
-        tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 divide-x divide-custom-border-200"
+        tabListContainerClassName="px-6 py-2 border-b border-subtle-1 divide-x divide-subtle-1"
         tabListClassName="my-2 max-w-64"
         tabPanelClassName="h-full w-full overflow-hidden overflow-y-auto"
       />

@@ -52,19 +52,19 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
         <div className="p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4">
           <span
             className={cn(
-              "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-custom-primary-100/20 text-custom-primary-100"
+              "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-accent-primary/20 text-accent-primary"
             )}
           >
             <CircleAlert className="size-5" aria-hidden="true" />
           </span>
           <div className="text-center sm:text-left">
-            <h3 className="text-lg font-medium">Cancel your subscription first.</h3>
-            <p className="mt-1 text-sm text-custom-text-200">
+            <h3 className="text-16 font-medium">Cancel your subscription first.</h3>
+            <p className="mt-1 text-13 text-secondary">
               {" "}
               You have an active subscription to one of our paid plans. Please go{" "}
               <Link
                 href={`/${workspaceSlug}/settings/billing`}
-                className="text-custom-primary-200 underline font-semibold"
+                className="text-accent-secondary underline font-semibold"
               >
                 here
               </Link>{" "}
@@ -73,7 +73,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
           </div>
         </div>
         <div className="px-5 pb-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={() => setActiveSubscriptionModal(false)}>
+          <Button variant="secondary" onClick={() => setActiveSubscriptionModal(false)}>
             Close
           </Button>
         </div>
@@ -83,7 +83,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
       />
-      <div className="border-t border-custom-border-100">
+      <div className="border-t border-subtle">
         <div className="w-full">
           <Collapsible
             isOpen={isOpen}
@@ -92,19 +92,19 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
             buttonClassName="flex w-full items-center justify-between py-4"
             title={
               <>
-                <span className="text-lg tracking-tight">Delete this workspace</span>
+                <span className="text-16 tracking-tight">Delete this workspace</span>
                 {isOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
               </>
             }
           >
             <div className="flex flex-col gap-4">
-              <span className="text-base tracking-tight">
+              <span className="text-14 tracking-tight">
                 Tread carefully here. You delete your workspace, you lose all your data, your members can{"’"}t access
                 projects and pages, and we can{"’"}t retrieve any of it for you. Proceed only if you are sure you want
                 your workspace deleted.
               </span>
               <div>
-                <Button variant="danger" onClick={handleDeleteWorkspace}>
+                <Button variant="error-fill" onClick={handleDeleteWorkspace}>
                   Delete this workspace
                 </Button>
               </div>

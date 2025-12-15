@@ -120,7 +120,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
         <CustomMenu
           placement="bottom-end"
           menuItemsClassName="z-20"
-          buttonClassName="!p-0.5 text-2xl"
+          buttonClassName="p-0.5 text-20"
           closeOnSelect
           ellipsis
           className="ml-2"
@@ -143,9 +143,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
                   disabled={item.disabled}
                 >
                   {item.icon && <item.icon className={cn("h-3 w-3")} />}
-                  <div>
-                    <h5>{item.title}</h5>
-                  </div>
+                  <div className="text-caption-xs-regular">{item.title}</div>
                 </CustomMenu.MenuItem>
               </span>
             </Tooltip>

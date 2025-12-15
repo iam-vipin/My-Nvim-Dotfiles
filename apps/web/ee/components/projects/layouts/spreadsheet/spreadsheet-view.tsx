@@ -31,7 +31,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
 
   if (!projectIds || projectIds.length === 0) return <></>;
   return (
-    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-layer-1 text-secondary">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <MultipleSelectGroup
         containerRef={containerRef}

@@ -41,7 +41,7 @@ export const TeamProperties = observer(function TeamProperties(props: TTeamPrope
               name={teamLead.display_name}
               src={getFileURL(teamLead.avatar_url)}
               size={26}
-              className="text-xs"
+              className="text-caption-xs-medium"
               showTooltip={false}
             />
             <LeadIcon className="flex-shrink-0 absolute top-0 -left-2.5 size-4 rounded-full" />

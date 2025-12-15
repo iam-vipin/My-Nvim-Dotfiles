@@ -27,7 +27,7 @@ export function StageDropDown(props: TProps) {
       CUSTOMER_STAGES.map((stage) => ({
         value: stage.value,
         query: t(stage.i18n_name),
-        content: <p className="text-sm">{t(stage.i18n_name)}</p>,
+        content: <p className="text-13">{t(stage.i18n_name)}</p>,
       })),
     [t]
   );
@@ -43,11 +43,11 @@ export function StageDropDown(props: TProps) {
       value={value}
       label={
         <div className="truncate">
-          <span className="text-sm text-custom-text-200">
+          <span className="text-13 text-secondary">
             {labelContent ? (
               labelContent.content
             ) : (
-              <span className="text-custom-text-400">{t("customers.properties.default.stage.placeholder")}</span>
+              <span className="text-placeholder">{t("customers.properties.default.stage.placeholder")}</span>
             )}
           </span>
         </div>

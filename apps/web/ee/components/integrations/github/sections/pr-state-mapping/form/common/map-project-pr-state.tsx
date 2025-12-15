@@ -59,7 +59,7 @@ export const MapProjectPRState = observer(function MapProjectPRState(props: TMap
     .filter((state) => state != undefined && state != null);
 
   return (
-    <div className="w-full min-h-44 max-h-full overflow-y-auto">
+    <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-2">
       {planeProjectStates &&
         GIT_PR_DATA.map((gitState) => (
           <SelectProjectState

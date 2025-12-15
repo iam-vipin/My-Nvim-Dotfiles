@@ -54,11 +54,10 @@ export const LicenseSeatsBanner = observer(function LicenseSeatsBanner() {
           currentVariant === "primary" ? "bg-yellow-300/15 text-yellow-500" : "bg-red-500/10 text-red-500"
         )}
       >
-        <div className="text-sm font-medium text-center">{planMessages[currentPlanKey]}</div>
+        <div className="text-13 font-medium text-center">{planMessages[currentPlanKey]}</div>
         <div className="flex-shrink-0">
           <Button
-            variant={currentVariant === "primary" ? "primary" : "outline-danger"}
-            size="sm"
+            variant={currentVariant === "primary" ? "primary" : "error-outline"}
             onClick={() => togglePaidPlanModal(true)}
           >
             Upgrade to Pro

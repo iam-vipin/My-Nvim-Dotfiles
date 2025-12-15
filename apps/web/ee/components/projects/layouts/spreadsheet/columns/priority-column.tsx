@@ -15,13 +15,13 @@ export const SpreadsheetPriorityColumn = observer(function SpreadsheetPriorityCo
   const { project, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <PriorityDropdown
         value={project.priority}
         onChange={(data) => onChange(project, { priority: data })}
         disabled={disabled}
         buttonVariant="transparent-with-text"
-        buttonClassName="px-4 text-left rounded-none group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
+        buttonClassName="px-4 text-left rounded-none group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />

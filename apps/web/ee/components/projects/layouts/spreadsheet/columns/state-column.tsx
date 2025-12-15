@@ -28,7 +28,7 @@ export const SpreadsheetStateColumn = observer(function SpreadsheetStateColumn(p
   const projectDetails = getProjectById(project.id);
   const selectedId = projectDetails?.state_id || defaultState;
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       {currentWorkspace?.id && (
         <StateDropdown
           workspaceSlug={workspaceSlug.toString()}

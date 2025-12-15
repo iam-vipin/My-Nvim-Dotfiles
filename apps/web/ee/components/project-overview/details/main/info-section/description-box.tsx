@@ -45,7 +45,7 @@ export const DescriptionBox = observer(function DescriptionBox(props: TProps) {
           workspaceSlug={workspaceSlug}
         />
       )}
-      <div className="flex items-center justify-between w-full gap-2 pb-6 border-b border-custom-border-200">
+      <div className="flex items-center justify-between w-full gap-2 pb-6 border-b border-subtle-1">
         <ProjectReaction workspaceSlug={workspaceSlug} projectId={project.id} currentUser={currentUser} />
         <Actions toggleLinkModalOpen={toggleLinkModalOpen} workspaceSlug={workspaceSlug} projectId={project.id} />
       </div>

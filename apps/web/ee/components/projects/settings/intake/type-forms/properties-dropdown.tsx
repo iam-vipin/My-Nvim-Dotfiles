@@ -42,12 +42,12 @@ export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(p
   return (
     <Combobox multiSelect value={selectedFields} onValueChange={handleSelect}>
       <Combobox.Button>
-        <Button variant="neutral-primary" className="bg-custom-background-80 rounded-lg px-1.5 py-1" size="sm">
+        <Button variant="secondary" className="bg-layer-1 rounded-lg px-1.5 py-1">
           <AddIcon className="size-3" />
-          <span className="truncate text-xs text-custom-text-300 font-semibold">Select properties</span>
+          <span className="truncate text-11 text-tertiary font-semibold">Select properties</span>
         </Button>
       </Combobox.Button>
-      <Combobox.Options showSearch searchPlaceholder="Search for properties" className="w-72 text-sm">
+      <Combobox.Options showSearch searchPlaceholder="Search for properties" className="w-72 text-13">
         {properties.map((property) => {
           if (!property.id) return null;
           return (
@@ -65,12 +65,12 @@ export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(p
                 <IssuePropertyLogo
                   size={12}
                   icon_props={property?.logo_props?.icon}
-                  colorClassName={property.is_active ? "text-custom-text-200" : "text-custom-text-300"}
+                  colorClassName={property.is_active ? "text-secondary" : "text-tertiary"}
                 />
-                <span className="text-custom-text-200 text-sm">{property.name}</span>
+                <span className="text-secondary text-13">{property.name}</span>
               </div>
               {property.is_required && (
-                <Pill size={EPillSize.XS} className="text-custom-text-300 border-none text-xs">
+                <Pill size={EPillSize.XS} className="text-tertiary border-none text-11">
                   Mandatory
                 </Pill>
               )}

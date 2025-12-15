@@ -102,12 +102,10 @@ export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
       <input type="hidden" value={formData.email} name="email" />
       <input type="hidden" value={invitationId} name="invitation_id" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div
-          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
-        >
+        <div className={`relative flex items-center rounded-md bg-surface-1 border border-subtle`}>
           <Input
             id="email"
             name="email"
@@ -115,7 +113,7 @@ export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
             value={formData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
             disabled
           />
           {formData.email.length > 0 && (
@@ -128,22 +126,22 @@ export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm text-custom-text-300 font-medium" htmlFor="code">
+        <label className="text-13 text-tertiary font-medium" htmlFor="code">
           Unique code
         </label>
-        <div className="relative flex items-center rounded-md bg-custom-background-100">
+        <div className="relative flex items-center rounded-md bg-surface-1">
           <Input
             type={"text"}
             name="code"
             value={formData.code}
             onChange={(e) => handleFormChange("code", e.target.value)}
             placeholder="gets-sets-flys"
-            className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+            className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
             autoComplete="on"
             autoFocus
           />
         </div>
-        <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
+        <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
           <p className="flex items-center gap-1 font-medium text-green-700">
             <CircleCheck height={12} width={12} />
             Paste the code sent to your email
@@ -153,8 +151,8 @@ export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
             onClick={() => generateNewEmailUniqueCode(email)}
             className={`${
               isRequestNewCodeDisabled
-                ? "text-custom-text-400"
-                : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
+                ? "text-placeholder"
+                : "font-medium text-accent-secondary hover:text-accent-secondary"
             }`}
             disabled={isRequestNewCodeDisabled}
           >
@@ -168,7 +166,7 @@ export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
       </div>

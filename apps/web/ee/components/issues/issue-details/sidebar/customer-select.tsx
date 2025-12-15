@@ -14,15 +14,15 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { CustomerDropDown } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+import { IconButton } from "@plane/propel/icon-button";
 type TProps = {
   workItemId: string;
   value: string[] | null;
   workspaceSlug: string;
-  compact?: boolean;
 };
 
 export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
-  const { workItemId, value, workspaceSlug, compact = false } = props;
+  const { workItemId, value, workspaceSlug } = props;
   // hooks
   const {
     workItems: { addWorkItemsToCustomer, removeWorkItemFromCustomer },
@@ -42,6 +42,7 @@ export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
               work_item_ids: [workItemId],
             },
           });
+          return;
         })
         .catch((error) => {
           captureError({
@@ -69,6 +70,7 @@ export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
               work_item_ids: [workItemId],
             },
           });
+          return;
         })
         .catch((error) => {
           captureError({
@@ -85,25 +87,20 @@ export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
             message: t("customers.toasts.work_item.remove.error.message"),
           });
         });
-      mutate(`WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}`);
+      await mutate(`WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}`);
     }
   };
 
   return (
     <CustomerDropDown
       customButton={
-        <Button variant="neutral-primary" size="sm" className="rounded-full p-0 border-custom-border-100">
-          {compact ? (
-            <div className="p-1">
-              <PlusIcon className="text-custom-text-300 size-2.5" />
-            </div>
-          ) : (
-            <div className="flex gap-2 px-2 py-0.5 items-center">
-              <CustomersIcon className="text-custom-text-300 size-2" />
-              <span className="text-xs text-custom-text-300">{t("customers.dropdown.placeholder")}</span>
-            </div>
-          )}
-        </Button>
+        <button
+          type="button"
+          className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary"
+        >
+          <PlusIcon className="size-4" />
+          <span className="flex-shrink-0 text-body-xs-regular">{t("customers.dropdown.placeholder")}</span>
+        </button>
       }
       customButtonClassName="hover:bg-transparent"
       value={value || []}

@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
+// plane imports
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
-// constants
 import { getPageName } from "@plane/utils";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-// plane web hooks
+// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
 // store
@@ -99,9 +99,9 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       title="Delete page"
       content={
         <>
-          Are you sure you want to delete page -{" "}
-          <span className="break-words font-medium text-custom-text-100 break-all">{getPageName(name)}</span> ? The Page
-          will be deleted permanently. This action cannot be undone.
+          Are you sure you want to delete page-{" "}
+          <span className="break-words font-medium text-primary break-all">{getPageName(name)}</span> ? The Page will be
+          deleted permanently. This action cannot be undone.
         </>
       }
     />

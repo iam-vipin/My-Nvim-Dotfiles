@@ -45,7 +45,7 @@ export const ChangeWorkItemStateList = observer(function ChangeWorkItemStateList
                 key={state.id}
                 tooltipContent={<WorkFlowDisabledMessage parentStateId={currentStateId ?? ""} />}
                 position="right-start"
-                className="border-[0.5px] border-custom-border-300 mx-0.5 shadow-lg"
+                className="border-[0.5px] border-subtle-1 mx-0.5 shadow-lg"
                 disabled={!isDisabled}
               >
                 <Command.Item

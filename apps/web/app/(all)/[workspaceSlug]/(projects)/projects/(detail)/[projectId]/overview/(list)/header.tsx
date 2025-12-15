@@ -32,7 +32,7 @@ export const ProjectOverviewHeader = observer(function ProjectOverviewHeader() {
               <BreadcrumbLink
                 label="Overview"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/overview/`}
-                icon={<OverviewIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<OverviewIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -42,7 +42,7 @@ export const ProjectOverviewHeader = observer(function ProjectOverviewHeader() {
         <div className="flex items-center gap-2">
           <Sidebar
             className={cn("size-4 cursor-pointer", {
-              "text-custom-primary-100": !projectOverviewSidebarCollapsed,
+              "text-accent-primary": !projectOverviewSidebarCollapsed,
             })}
             onClick={() => toggleProjectOverviewSidebar()}
           />

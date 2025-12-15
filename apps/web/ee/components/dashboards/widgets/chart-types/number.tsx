@@ -17,7 +17,7 @@ export const DashboardNumberWidget = observer(function DashboardNumberWidget(pro
   return (
     <div className="size-full flex items-center px-4">
       <p
-        className="w-full font-semibold text-custom-text-100 truncate transition-all"
+        className="w-full font-semibold text-primary truncate transition-all"
         style={{
           fontSize: (height ?? 1) * 1.7 + "rem",
           textAlign: selectedAlignment,

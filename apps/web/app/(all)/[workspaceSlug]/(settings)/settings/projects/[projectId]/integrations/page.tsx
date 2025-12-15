@@ -47,8 +47,8 @@ function ProjectIntegrationsPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={pageTitle} />
       <div className={`w-full gap-10 overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex items-center border-b border-custom-border-100 py-3.5">
-          <h3 className="text-xl font-medium">Integrations</h3>
+        <div className="flex items-center border-b border-subtle py-3.5">
+          <h3 className="text-heading-sm-medium">Integrations</h3>
         </div>
         {workspaceIntegrations ? (
           workspaceIntegrations.length > 0 ? (

@@ -23,7 +23,7 @@ export const RecurringWorkItemsEmptyState = observer(function RecurringWorkItems
           customButton={
             <CreateRecurringWorkItemsButton
               {...props}
-              buttonSize="md"
+              buttonSize="base"
               buttonI18nLabel="recurring_work_items.empty_state.no_templates.button"
             />
           }

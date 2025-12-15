@@ -98,12 +98,12 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
         >
           <div className=" py-6 flex items-center justify-between gap-2 w-full">
             <div className="flex items-center gap-4">
-              <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-                <InitiativeIcon className="size-5 text-custom-text-300" />
+              <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
+                <InitiativeIcon className="size-5 text-tertiary" />
               </div>
               <div className="leading-tight">
                 <h5 className="font-medium">{t("project_settings.initiatives.title")}</h5>
-                <span className="text-custom-sidebar-text-400 text-sm">
+                <span className="text-custom-sidebar-text-400 text-13">
                   {t("project_settings.initiatives.description")}
                 </span>
               </div>

@@ -1,10 +1,8 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel, SUBSCRIPTION_WEBPAGE_URLS } from "@plane/constants";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { getSubscriptionBackgroundColor, getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
@@ -12,9 +10,6 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-
-const COMMON_BUTTON_STYLE =
-  "flex flex-shrink-0 items-center justify-center py-1 px-2 w-fit text-xs font-medium rounded focus:outline-none transition-all duration-300 animate-slide-up";
 
 export const TrialBanner = observer(function TrialBanner() {
   // hooks
@@ -38,10 +33,10 @@ export const TrialBanner = observer(function TrialBanner() {
   if (!subscriptionDetail.show_trial_banner) return <></>;
 
   return (
-    <div className="flex-shrink-0 w-full z-[20] bg-custom-background-100">
-      <div className={cn("text-custom-text-200 py-3 px-5", getSubscriptionBackgroundColor(currentPlan, "50"))}>
+    <div className="flex-shrink-0 w-full z-[20] bg-surface-1">
+      <div className={cn("bg-plans-brand-subtle text-plans-brand-primary py-3 px-5")}>
         <div className="relative container mx-auto flex justify-center items-center gap-4">
-          <div className="text-sm font-medium">
+          <div className="text-13 font-medium">
             {subscriptionName} trial ends{" "}
             {subscriptionDetail.remaining_trial_days === 0
               ? "today"
@@ -49,17 +44,13 @@ export const TrialBanner = observer(function TrialBanner() {
             .
           </div>
           <div className="flex gap-3 flex-shrink-0">
-            <button
-              className={cn(getUpgradeButtonStyle(currentPlan, false), COMMON_BUTTON_STYLE, "bg-transparent")}
-              onClick={() => togglePaidPlanModal(true)}
-            >
+            <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
               Upgrade to {subscriptionName}
-            </button>
-
+            </Button>
             <a
               href={SUBSCRIPTION_WEBPAGE_URLS[currentPlan]}
               target="_blank"
-              className={cn(getButtonStyling("neutral-primary", "sm"), COMMON_BUTTON_STYLE, "border-custom-border-400")}
+              className={getButtonStyling("secondary", "base")}
               rel="noreferrer"
             >
               Learn more

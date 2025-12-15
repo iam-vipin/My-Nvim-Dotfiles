@@ -117,9 +117,9 @@ export const InitiativeLabelList = observer(function InitiativeLabelList() {
         className="border-b-0"
       />
 
-      <div className="w-full bg-custom-background-900 rounded-lg border  border-custom-border-100 p-2">
+      <div className="w-full bg-layer-3 rounded-lg border  border-subtle p-2">
         {showLabelForm && (
-          <div className="w-full rounded border border-custom-border-200">
+          <div className="w-full rounded border border-subtle">
             <CreateUpdateInitiativeLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}

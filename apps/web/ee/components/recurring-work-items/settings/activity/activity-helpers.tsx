@@ -29,11 +29,10 @@ import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties
 import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
 import { useIssueType } from "@/plane-web/hooks/store";
 
-const commonIconClassName = "size-4 flex-shrink-0 text-custom-text-300";
-const commonTextClassName = "text-custom-text-100 font-medium";
+const commonTextClassName = "text-primary font-medium";
 
 export type TRecurringWorkItemActivityDetails = {
-  icon: React.ReactNode;
+  icon: FC<{ className?: string }>;
   message: React.ReactNode;
   customUserName?: string;
 };
@@ -54,7 +53,7 @@ const WorkItemTypeDetail = observer(function WorkItemTypeDetail(props: TWorkItem
   const workItemTypeDetail = useIssueType(id);
 
   return (
-    <span className={cn("inline-flex gap-1 items-center font-medium text-custom-text-100", className)}>
+    <span className={cn("inline-flex gap-1 items-center font-medium text-primary", className)}>
       {workItemTypeDetail?.logo_props?.in_use && (
         <IssueTypeLogo
           icon_props={workItemTypeDetail?.logo_props?.icon}
@@ -137,7 +136,7 @@ const getCustomPropertyActivityDetails = (activity: TRecurringWorkItemActivity):
 
   if (!propertyDetail)
     return {
-      icon: <RecurringWorkItemIcon className={commonIconClassName} />,
+      icon: RecurringWorkItemIcon,
       message: <>updated a deleted custom property</>,
     };
 
@@ -156,12 +155,18 @@ const getCustomPropertyActivityDetails = (activity: TRecurringWorkItemActivity):
     }
   };
 
+  // Create a wrapper component for IssuePropertyLogo since it needs special props
+  const IconWrapper: FC<{ className?: string }> = ({ className }) => {
+    if (propertyDetail?.logo_props?.in_use) {
+      return (
+        <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} size={14} colorClassName="text-secondary" />
+      );
+    }
+    return <RecurringWorkItemIcon className={className} />;
+  };
+
   return {
-    icon: propertyDetail?.logo_props?.in_use ? (
-      <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} size={14} colorClassName="text-custom-text-200" />
-    ) : (
-      <RecurringWorkItemIcon className={commonIconClassName} />
-    ),
+    icon: IconWrapper,
     message: getWorkItemCustomPropertyActivityMessage({
       action: getActivityAction(activity.verb),
       newValue: activity.new_value,
@@ -203,11 +208,11 @@ const getTaskExecutionActivityMessage = (activity: TRecurringWorkItemActivity) =
 
 export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItemActivityDetailsHelperMap> = {
   recurring_workitem_created: () => ({
-    icon: <RecurringWorkItemIcon className={commonIconClassName} />,
+    icon: RecurringWorkItemIcon,
     message: <>created the recurring work item.</>,
   }),
   name_updated: (activity) => ({
-    icon: <MessageSquare className={commonIconClassName} />,
+    icon: MessageSquare,
     message: activity.new_value ? (
       createValueMessage("set the name to", activity.new_value, ".")
     ) : (
@@ -215,23 +220,23 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     ),
   }),
   description_updated: () => ({
-    icon: <MessageSquare className={commonIconClassName} />,
+    icon: MessageSquare,
     message: <>updated the description</>,
   }),
   state_updated: (activity) => ({
-    icon: <StatePropertyIcon className={commonIconClassName} />,
+    icon: StatePropertyIcon,
     message: activity.new_value ? createValueMessage("set the state to", activity.new_value) : <>updated the state</>,
   }),
   assignees_added: (activity) => ({
-    icon: <MembersPropertyIcon className={commonIconClassName} />,
+    icon: MembersPropertyIcon,
     message: getAssigneeActivityMessage(activity, "added"),
   }),
   assignees_removed: (activity) => ({
-    icon: <MembersPropertyIcon className={commonIconClassName} />,
+    icon: MembersPropertyIcon,
     message: getAssigneeActivityMessage(activity, "removed"),
   }),
   priority_updated: (activity) => ({
-    icon: <PriorityPropertyIcon className={commonIconClassName} />,
+    icon: PriorityPropertyIcon,
     message: activity.new_value ? (
       createValueMessage("set the priority to", activity.new_value)
     ) : (
@@ -239,23 +244,23 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     ),
   }),
   modules_added: (activity) => ({
-    icon: <DiceIcon className={commonIconClassName} />,
+    icon: DiceIcon,
     message: getModuleActivityMessage(activity, "added"),
   }),
   modules_removed: (activity) => ({
-    icon: <DiceIcon className={commonIconClassName} />,
+    icon: DiceIcon,
     message: getModuleActivityMessage(activity, "removed"),
   }),
   labels_added: (activity) => ({
-    icon: <LabelPropertyIcon className={commonIconClassName} />,
+    icon: LabelPropertyIcon,
     message: activity.new_value ? createValueMessage("added a new label", activity.new_value) : <>added a new label</>,
   }),
   labels_removed: (activity) => ({
-    icon: <LabelPropertyIcon className={commonIconClassName} />,
+    icon: LabelPropertyIcon,
     message: activity.old_value ? createValueMessage("removed the label", activity.old_value) : <>removed a label</>,
   }),
   type_updated: (activity) => ({
-    icon: <ArrowRightLeft className={commonIconClassName} />,
+    icon: ArrowRightLeft,
     message: (
       <>
         {activity.new_value && activity.old_value ? (
@@ -273,7 +278,7 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
   custom_property_created: (activity) => getCustomPropertyActivityDetails(activity),
   custom_property_updated: (activity) => getCustomPropertyActivityDetails(activity),
   start_at_updated: (activity) => ({
-    icon: <CalendarIcon className={commonIconClassName} />,
+    icon: CalendarIcon,
     message: activity.new_value ? (
       createValueMessage("set the start date to", renderFormattedDate(activity.new_value) || "")
     ) : (
@@ -281,7 +286,7 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     ),
   }),
   end_at_updated: (activity) => ({
-    icon: <CalendarIcon className={commonIconClassName} />,
+    icon: CalendarIcon,
     message: activity.new_value ? (
       createValueMessage("set the end date to", renderFormattedDate(activity.new_value) || "")
     ) : (
@@ -289,7 +294,7 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     ),
   }),
   interval_type_updated: (activity) => ({
-    icon: <ClockIcon className={commonIconClassName} />,
+    icon: ClockIcon,
     message: activity.new_value ? (
       createValueMessage("set the interval type to", activity.new_value)
     ) : (
@@ -297,11 +302,11 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     ),
   }),
   task_execution_completed: (activity) => ({
-    icon: <RecurringWorkItemSuccessIcon className={commonIconClassName} />,
+    icon: RecurringWorkItemSuccessIcon,
     message: getTaskExecutionActivityMessage(activity),
   }),
   task_execution_failed: (activity) => ({
-    icon: <RecurringWorkItemFailureIcon className={commonIconClassName} />,
+    icon: RecurringWorkItemFailureIcon,
     message: getTaskExecutionActivityMessage(activity),
   }),
 };

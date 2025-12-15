@@ -24,12 +24,12 @@ export function PaginationBar(props: TPaginationBar) {
 
   return (
     <div className="w-full flex justify-between items-center gap-2">
-      <div className="text-sm font-medium text-custom-text-300 whitespace-nowrap">{renderCurrentPageStatus}</div>
+      <div className="text-13 font-medium text-tertiary whitespace-nowrap">{renderCurrentPageStatus}</div>
       <div className="flex items-center gap-2">
-        <Button size="sm" variant="neutral-primary" onClick={onPrevClick} disabled={!paginationInfo?.prev_page_results}>
+        <Button variant="secondary" onClick={onPrevClick} disabled={!paginationInfo?.prev_page_results}>
           Prev
         </Button>
-        <Button size="sm" variant="neutral-primary" onClick={onNextClick} disabled={!paginationInfo?.next_page_results}>
+        <Button variant="secondary" onClick={onNextClick} disabled={!paginationInfo?.next_page_results}>
           Next
         </Button>
       </div>

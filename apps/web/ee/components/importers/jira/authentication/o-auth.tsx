@@ -37,8 +37,8 @@ export const OAuth = observer(function OAuth() {
     <section className="w-full overflow-y-auto">
       <div className="relative flex items-center justify-between gap-3 pb-3.5">
         <div>
-          <h3 className="text-xl font-medium">Jira to Plane {t("importers.migration_assistant")}</h3>
-          <p className="text-custom-text-300 text-sm">
+          <h3 className="text-18 font-medium">Jira to Plane {t("importers.migration_assistant")}</h3>
+          <p className="text-tertiary text-13">
             {t("importers.migration_assistant_description", { serviceName: "Jira" })}
           </p>
         </div>

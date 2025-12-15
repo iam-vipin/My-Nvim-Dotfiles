@@ -59,7 +59,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   const getCTA = () => {
     if (!isAdvancedIntakeEnabled) {
       return (
-        <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
+        <Button variant="primary" onClick={() => setCreateIssueModal(true)}>
           Add work item
         </Button>
       );
@@ -69,7 +69,6 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
         <Button
           disabled={!intakeForms[projectId.toString()].is_in_app_enabled}
           variant="primary"
-          size="sm"
           onClick={() => setCreateIssueModal(true)}
         >
           Add work item
@@ -94,7 +93,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
                 <BreadcrumbLink
                   label="Intake"
                   href={`/${workspaceSlug}/projects/${projectId}/intake/`}
-                  icon={<IntakeIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<IntakeIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -103,9 +102,9 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
           </Breadcrumbs>
 
           {loader === "pagination-loading" && (
-            <div className="flex items-center gap-1.5 text-custom-text-300">
+            <div className="flex items-center gap-1.5 text-tertiary">
               <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
-              <p className="text-sm">Syncing...</p>
+              <p className="text-13">Syncing...</p>
             </div>
           )}
         </div>
@@ -115,18 +114,14 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
           buttonRefClassName="flex"
           popoverClassName="w-auto items-center flex"
           popoverButtonRef={popoverButtonRef}
-          buttonClassName="my-auto outline-none text-custom-text-300"
+          buttonClassName="my-auto outline-none text-tertiary"
           button={
-            <Button
-              variant="neutral-primary"
-              size="sm"
-              className="my-auto outline-none text-custom-text-200 font-medium"
-            >
+            <Button variant="secondary" className="my-auto outline-none text-secondary font-medium">
               Intake source
             </Button>
           }
           popperPosition="bottom-end"
-          panelClassName="rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 p-3 text-xs shadow-custom-shadow-rg focus:outline-none max-w-sm"
+          panelClassName="rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-custom-shadow-rg focus:outline-none max-w-sm"
         >
           <IntakeTooltip projectId={projectId.toString()} />
         </Popover>

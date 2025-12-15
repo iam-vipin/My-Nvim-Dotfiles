@@ -23,7 +23,7 @@ export function CustomerRequestEmptyState(props: TProps) {
       actionElement={
         <span
           onClick={addRequest}
-          className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1 cursor-pointer")}
+          className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1 cursor-pointer")}
         >
           {t("customers.requests.empty_state.list.button")}
         </span>

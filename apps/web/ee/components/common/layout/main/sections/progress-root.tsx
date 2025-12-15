@@ -45,7 +45,7 @@ export function ProgressSection(props: TProgressSectionProps) {
   return (
     <SectionWrapper>
       <div className="flex items-center gap-2">
-        <h3 className="text-base text-custom-text-300 font-semibold">{t("common.progress")}</h3>
+        <h3 className="text-14 text-tertiary font-semibold">{t("common.progress")}</h3>
         {indicatorElement && <>{indicatorElement}</>}
       </div>
 
@@ -53,8 +53,8 @@ export function ProgressSection(props: TProgressSectionProps) {
         <LinearProgressIndicator
           size="xl"
           data={progressIndicatorData}
-          barClassName="first:rounded last:rounded rounded"
-          className="bg-transparent gap-0.5 rounded p-0"
+          barClassName="first:rounded-sm last:rounded-sm rounded"
+          className="bg-transparent gap-0.5 rounded-sm p-0"
         />
 
         <div className="flex gap-4 justify-stretch flex-wrap w-full">
@@ -67,11 +67,11 @@ export function ProgressSection(props: TProgressSectionProps) {
                     backgroundColor: item.color,
                   }}
                 />
-                <span className="text-sm font-medium leading-4">{item.name}</span>
+                <span className="text-6 font-medium leading-4 text-tertiary">{item.name}</span>
               </div>
               <div className="flex gap-3">
-                <span className="text-md font-bold">{item.value}</span>
-                <span className="text-sm font-medium text-custom-text-350 my-auto">{Math.round(item.percentage)}%</span>
+                <span className="text-13 font-medium text-tertiary">{item.value}</span>
+                <span className="text-13 font-medium text-tertiary my-auto">{Math.round(item.percentage)}%</span>
               </div>
             </div>
           ))}

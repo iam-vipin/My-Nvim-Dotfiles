@@ -122,7 +122,7 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
             {shouldShowSubPagesButton ? (
               <button
                 type="button"
-                className="flex-shrink-0 size-5 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                className="flex-shrink-0 size-5 grid place-items-center rounded-sm text-placeholder hover:text-tertiary"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -150,10 +150,10 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
                 logo_props?.in_use ? (
                   <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
-                  <PageIcon className="size-4 text-custom-text-300" />
+                  <PageIcon className="size-4 text-tertiary" />
                 )
               ) : (
-                <RestrictedPageIcon className="size-4 text-custom-text-300 mb-1" />
+                <RestrictedPageIcon className="size-4 text-tertiary mb-1" />
               )}
             </div>
           </div>

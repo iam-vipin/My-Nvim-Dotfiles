@@ -26,7 +26,7 @@ export const WorkspaceWorklogAppliedFilterRoot = observer(function WorkspaceWork
 
   if (!isAppliedFilters) return <></>;
   return (
-    <div className="relative flex items-center flex-wrap gap-2 rounded p-2 bg-custom-background-90">
+    <div className="relative flex items-center flex-wrap gap-2 rounded-sm p-2 bg-layer-1">
       <WorkspaceWorklogAppliedFilterUsers workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
       <WorkspaceWorklogAppliedFilterProjects workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
       <WorkspaceWorklogAppliedFilterDateRange workspaceSlug={workspaceSlug} workspaceId={workspaceId} />

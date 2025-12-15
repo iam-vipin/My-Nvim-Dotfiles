@@ -45,7 +45,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
 
       {isPaginating && (
         <div className="p-1 px-2">
-          <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
+          <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded-sm md:px-1 px-4 py-1.5 bg-layer-1 animate-pulse" />
         </div>
       )}
 
@@ -53,7 +53,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
         <div className="flex items-center px-2.5 py-1">
           <button
             type="button"
-            className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
+            className="w-min whitespace-nowrap rounded-sm text-11 px-1.5 py-1 text-placeholder font-medium  hover:bg-layer-1 hover:text-tertiary"
             onClick={() => loadMoreIssues(formattedDatePayload)}
           >
             Load More

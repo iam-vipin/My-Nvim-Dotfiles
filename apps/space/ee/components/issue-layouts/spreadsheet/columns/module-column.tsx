@@ -13,7 +13,7 @@ export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn
   const { issue } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <IssueBlockModules moduleIds={issue.module_ids ?? undefined} shouldShowBorder={false} />
     </div>
   );

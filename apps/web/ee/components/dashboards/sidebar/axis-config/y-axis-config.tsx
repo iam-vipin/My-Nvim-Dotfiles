@@ -18,7 +18,7 @@ export function WidgetConfigSidebarYAxisConfig(props: Props) {
   const { control } = useFormContext<TDashboardWidget>();
 
   return (
-    <div className="flex-shrink-0 space-y-1 text-sm">
+    <div className="flex-shrink-0 space-y-1 text-13">
       <Controller
         control={control}
         name="y_axis_metric"

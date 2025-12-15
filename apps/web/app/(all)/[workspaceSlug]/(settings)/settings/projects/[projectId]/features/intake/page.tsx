@@ -54,11 +54,11 @@ const IntakeFeatureSettingsPage = observer(function IntakeFeatureSettingsPage(pr
       <div className="mb-4">
         <Link
           href={`/${workspaceSlug}/settings/projects/${projectId}/features`}
-          className="text-sm text-custom-text-300 hover:text-custom-text-200"
+          className="text-13 text-tertiary hover:text-secondary"
         >
           <div className="flex items-center gap-2">
-            <ChevronLeft className="h-4 w-4 text-custom-text-300" />
-            <span className="text-sm text-custom-text-300 font-bold">Back to features</span>
+            <ChevronLeft className="h-4 w-4 text-tertiary" />
+            <span className="text-13 text-tertiary font-bold">Back to features</span>
           </div>
         </Link>
       </div>
@@ -68,13 +68,13 @@ const IntakeFeatureSettingsPage = observer(function IntakeFeatureSettingsPage(pr
         description="Approve or discard suggested work items from your customers, users, or other stakeholders."
       />
 
-      <div className="gap-x-8 gap-y-2 bg-custom-background-100 py-4">
+      <div className="gap-x-8 gap-y-2 bg-surface-1 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">{featureIcon}</div>
+            <div className="flex items-center justify-center rounded-sm bg-layer-1 p-3">{featureIcon}</div>
             <div>
-              <h4 className="text-sm font-medium leading-5">Enable Intake for this project</h4>
-              <p className="text-sm leading-5 tracking-tight text-custom-text-300">
+              <h4 className="text-13 font-medium leading-5">Enable Intake for this project</h4>
+              <p className="text-13 leading-5 tracking-tight text-tertiary">
                 Consider and discuss issues before you add them to your project.
               </p>
             </div>

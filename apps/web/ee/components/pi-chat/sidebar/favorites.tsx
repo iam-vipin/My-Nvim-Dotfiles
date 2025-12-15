@@ -15,7 +15,7 @@ const FavoriteChats = observer(function FavoriteChats(props: TProps) {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="text-sm font-semibold text-custom-text-300">Favorites</div>
+      <div className="text-13 font-semibold text-tertiary">Favorites</div>
       <div className="flex flex-col gap-0.5">
         {uniqBy(favoriteChats, "chat_id").map((chat) => (
           <SidebarItem

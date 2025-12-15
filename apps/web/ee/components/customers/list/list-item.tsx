@@ -38,9 +38,9 @@ export const CustomerListItem = observer(function CustomerListItem(props: TCusto
       itemClassName="py-3"
       prependTitleElement={
         <div className="flex gap-2 items-center">
-          <div className="rounded-md border-custom-border-300">
+          <div className="rounded-md border-subtle-1">
             {customer?.logo_url && customer.logo_url !== "" ? (
-              <div className="bg-custom-background-100 rounded-md h-9 w-9 overflow-hidden border-[0.5px] border-custom-border-300">
+              <div className="bg-surface-1 rounded-md h-9 w-9 overflow-hidden border-[0.5px] border-subtle-1">
                 <img
                   src={getFileURL(customer.logo_url)}
                   alt="customer logo"
@@ -48,18 +48,18 @@ export const CustomerListItem = observer(function CustomerListItem(props: TCusto
                 />
               </div>
             ) : (
-              <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-9 w-9">
+              <div className="bg-layer-1 rounded-md flex items-center justify-center h-9 w-9">
                 <CustomersIcon className="size-5 opacity-50" />
               </div>
             )}
           </div>
           <div className="w-4/5">
             <Tooltip tooltipContent={customer.name}>
-              <h3 className="text-base truncate">{customer.name}</h3>
+              <h3 className="text-14 truncate">{customer.name}</h3>
             </Tooltip>
             {customer.website_url && (
               <Link
-                className="text-sm text-custom-text-300 cursor-pointer hover:underline"
+                className="text-13 text-tertiary cursor-pointer hover:underline"
                 data-prevent-progress
                 href={customer.website_url}
                 onClick={(e) => {
@@ -76,9 +76,9 @@ export const CustomerListItem = observer(function CustomerListItem(props: TCusto
       }
       quickActionElement={
         <>
-          <button className="border-[0.5px] border-custom-border-400 rounded gap-1 flex items-center px-2 py-1 flex-shrink-0 cursor-default">
+          <button className="border-[0.5px] border-strong-1 rounded-sm gap-1 flex items-center px-2 py-1 flex-shrink-0 cursor-default">
             <CustomerRequestIcon className="size-3" />
-            <p className="text-xs text-custom-text-100">{`${requestCount} ${t("customers.requests.label", { count: requestCount }).toLowerCase()}`}</p>
+            <p className="text-11 text-primary">{`${requestCount} ${t("customers.requests.label", { count: requestCount }).toLowerCase()}`}</p>
           </button>
           <CustomerQuickActions customerId={customerId} workspaceSlug={workspaceSlug} parentRef={parentRef} />
         </>

@@ -49,7 +49,7 @@ export const BulkDeleteIssues = observer(function BulkDeleteIssues(props: Props)
         <button
           type="button"
           className={cn("outline-none grid place-items-center", {
-            "cursor-not-allowed text-custom-text-400": !canPerformProjectAdminActions,
+            "cursor-not-allowed text-placeholder": !canPerformProjectAdminActions,
           })}
           onClick={() =>
             canPerformProjectAdminActions

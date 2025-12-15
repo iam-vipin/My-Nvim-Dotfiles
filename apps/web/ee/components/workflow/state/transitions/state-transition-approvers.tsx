@@ -29,17 +29,17 @@ export const StateTransitionApprovers = observer(function StateTransitionApprove
 
   return (
     <>
-      <hr className="border-t-[1px] border-custom-border-200 border-dashed h-[1] w-full pb-2 mt-1.5" />
+      <hr className="border-t-[1px] border-subtle-1 border-dashed h-[1] w-full pb-2 mt-1.5" />
       <div className="flex flex-col pt-1 pb-2 gap-1">
-        <span className="flex items-center gap-1 text-xs text-custom-text-300 font-medium">
+        <span className="flex items-center gap-1 text-11 text-tertiary font-medium">
           {t("workflows.workflow_states.state_changes.movers.label")}
           <Tooltip tooltipContent={t("workflows.workflow_states.state_changes.movers.tooltip")} position="right">
             <span className="cursor-help">
-              <InfoIcon className="size-3 text-custom-text-400 hover:text-custom-text-300" />
+              <InfoIcon className="size-3 text-placeholder hover:text-tertiary" />
             </span>
           </Tooltip>
         </span>
-        <div className="flex p-3 my-1 rounded-md border border-custom-border-100 w-full gap-2 items-center">
+        <div className="flex p-3 my-1 rounded-md border border-subtle w-full gap-2 items-center">
           <AppliedMembersFilters
             editable
             handleRemove={(value) =>

@@ -36,13 +36,18 @@ export const useMilestonesWorkItemOperations = (
     () => ({
       copyText: (text: string) => {
         const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-        copyTextToClipboard(`${originURL}${text}`).then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("common.link_copied"),
-            message: t("entity.link_copied_to_clipboard", { entity: entityName }),
+        copyTextToClipboard(`${originURL}${text}`)
+          .then(() => {
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: t("common.link_copied"),
+              message: t("entity.link_copied_to_clipboard", { entity: entityName }),
+            });
+            return;
+          })
+          .catch(() => {
+            console.error("Failed to copy text");
           });
-        });
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
@@ -72,6 +77,7 @@ export const useMilestonesWorkItemOperations = (
               title: "Success!",
               message: "Work item removed from milestone successfully",
             });
+            return;
           });
         } catch (error) {
           captureError({
@@ -140,7 +146,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
       },
       title: t("common.actions.delete"),
       icon: Trash2,
-      iconClassName: "text-red-500",
+      iconClassName: "text-danger",
     },
   ];
 

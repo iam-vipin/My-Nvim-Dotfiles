@@ -48,13 +48,13 @@ export function TypeFormsRoot() {
   return (
     <>
       <div className="pb-3 space-y-2">
-        <div className="px-3 border-t border-custom-border-100">
+        <div className="px-3 border-t border-subtle">
           <div className="flex gap-2 items-center justify-between">
             <div className="flex items-center gap-2">
               <LayersIcon className="size-4" />{" "}
-              <span className="text-xs font-medium text-custom-text-200">Create Forms using work item types</span>
+              <span className="text-11 font-medium text-secondary">Create Forms using work item types</span>
             </div>
-            <Button variant="link-neutral" size="sm" className="px-0" onClick={() => setIsSelectTypesModalOpen(true)}>
+            <Button variant="ghost" className="px-0" onClick={() => setIsSelectTypesModalOpen(true)}>
               <PlusIcon className="size-4" />
             </Button>
           </div>

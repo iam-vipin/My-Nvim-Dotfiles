@@ -94,7 +94,7 @@ export const TeamNameInput = observer(function TeamNameInput(props: TeamNameInpu
     [updateTeamspaceNameDescriptionLoader, teamspaceId]
   );
 
-  if (disabled) return <div className="text-xl font-semibold whitespace-pre-line">{name}</div>;
+  if (disabled) return <div className="text-h5-semibold whitespace-pre-line">{name}</div>;
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -102,9 +102,9 @@ export const TeamNameInput = observer(function TeamNameInput(props: TeamNameInpu
         <TextArea
           id={`teamspace-${teamspaceId}-input`}
           className={cn(
-            "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-0 py-0 text-xl font-semibold outline-none ring-0",
+            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-0 py-0 text-h5-semibold outline-none ring-0",
             {
-              "ring-1 ring-red-400 mx-2.5": name?.length === 0,
+              "ring-1 ring-danger-strong mx-2.5": name?.length === 0,
             },
             className
           )}
@@ -118,17 +118,23 @@ export const TeamNameInput = observer(function TeamNameInput(props: TeamNameInpu
         />
         <div
           className={cn(
-            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-caption-xs-medium text-secondary opacity-0 transition-opacity",
             {
               "opacity-100": isLengthVisible,
             }
           )}
         >
-          <span className={`${name.length === 0 || name.length > 255 ? "text-red-500" : ""}`}>{name.length}</span>
+          <span
+            className={cn({
+              "text-danger": name.length === 0 || name.length > 255,
+            })}
+          >
+            {name.length}
+          </span>
           /255
         </div>
       </div>
-      {name?.length === 0 && <span className="text-sm font-medium text-red-500">Name is required</span>}
+      {name?.length === 0 && <span className="text-body-xs-medium text-danger">Name is required</span>}
     </div>
   );
 });

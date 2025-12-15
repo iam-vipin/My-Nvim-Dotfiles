@@ -55,14 +55,12 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
     <InitiativeLabelDndHOC label={label} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging: boolean, dragHandleRef: React.RefObject<HTMLButtonElement>) => (
         <div
-          className={`rounded ${isDragging ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+          className={`rounded-sm ${isDragging ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
           <div
-            className={`rounded text-custom-text-100 ${
-              !isDragging ? "border-[0.5px] border-custom-border-200" : ""
-            } ${isDragging ? "bg-custom-background-80" : "bg-custom-background-100"} ${
-              isParentDragging ? "opacity-60" : ""
-            }`}
+            className={`rounded-sm text-primary ${
+              !isDragging ? "border-[0.5px] border-subtle-1" : ""
+            } ${isDragging ? "bg-layer-1" : "bg-surface-1"} ${isParentDragging ? "opacity-60" : ""}`}
           >
             <div className="py-2 px-3">
               {isEditLabelForm ? (

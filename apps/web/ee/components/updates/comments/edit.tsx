@@ -30,14 +30,14 @@ export function EditComment(props: TProps) {
         onChange={(e) => {
           setNewComment(e.target.value);
         }}
-        className="w-full shadow border-custom-border-100 mb-2"
+        className="w-full shadow border-subtle mb-2"
       />
       {/* actions */}
-      <div className="flex text-sm gap-2 w-fit capitalize">
-        <Button type="submit" size="sm" disabled={newComment === ""}>
+      <div className="flex text-13 gap-2 w-fit capitalize">
+        <Button type="submit" disabled={newComment === ""}>
           {t("update")}
         </Button>
-        <Button onClick={() => setIsEditing(false)} variant="neutral-primary" size="sm">
+        <Button onClick={() => setIsEditing(false)} variant="secondary">
           {t("cancel")}
         </Button>
       </div>

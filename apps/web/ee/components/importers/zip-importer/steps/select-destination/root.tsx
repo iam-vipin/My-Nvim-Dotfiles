@@ -176,7 +176,7 @@ export const SelectDestination = observer(function SelectDestination({ driverTyp
         <div className="space-y-3">
           {/* Destination Type Dropdown */}
           <div className="space-y-2">
-            <div className="text-sm text-custom-text-200">
+            <div className="text-13 text-secondary">
               {t(`${driverType}_importer.select_destination.destination_type`)}
             </div>
             <Dropdown
@@ -198,7 +198,7 @@ export const SelectDestination = observer(function SelectDestination({ driverTyp
             }`}
           >
             <div className="space-y-2 pb-1">
-              <div className="text-sm text-custom-text-200">
+              <div className="text-13 text-secondary">
                 {t(`${driverType}_importer.select_destination.select_project`)}
               </div>
               <Dropdown
@@ -233,7 +233,7 @@ export const SelectDestination = observer(function SelectDestination({ driverTyp
             }`}
           >
             <div className="space-y-2 pb-1">
-              <div className="text-sm text-custom-text-200">
+              <div className="text-13 text-secondary">
                 {t(`${driverType}_importer.select_destination.select_teamspace`)}
               </div>
               <Dropdown
@@ -264,7 +264,7 @@ export const SelectDestination = observer(function SelectDestination({ driverTyp
       {/* stepper button */}
       <div className="flex-shrink-0 flex justify-end items-center gap-2 mt-8">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
+          <Button variant="primary" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
             {t(`common.next`)}
           </Button>
         </StepperNavigation>

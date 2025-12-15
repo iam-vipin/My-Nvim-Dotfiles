@@ -39,8 +39,8 @@ export const TemplateCategoriesDropdown = observer(function TemplateCategoriesDr
       buttonContainerClassName={buttonContainerClassName}
       buttonContent={(isOpen) => (
         <span
-          className={cn("flex items-center justify-between gap-1 text-sm w-full truncate", {
-            "text-custom-text-400": selectedCategoriesNames.length === 0,
+          className={cn("flex items-center justify-between gap-1 text-caption-md-regular w-full truncate", {
+            "text-placeholder": selectedCategoriesNames.length === 0,
           })}
         >
           <span className="truncate">

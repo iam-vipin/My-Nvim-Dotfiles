@@ -44,7 +44,7 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
     <Card
       ref={ref}
       className={cn(
-        "h-full text-base rounded-none pb-0",
+        "h-full text-14 rounded-none pb-0",
         "transform transition-all duration-300 ease-in-out",
         "shadow-lg z-20",
         isFullScreen ? "md:relative" : "absolute right-0",
@@ -54,11 +54,8 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
     >
       {/* Header */}
       <div className="flex justify-between">
-        <div className="text-sm text-custom-text-400 font-semibold">Chat history</div>
-        <button
-          className="text-custom-text-400 hover:text-custom-text-200 cursor-pointer"
-          onClick={() => toggleSidePanel(false)}
-        >
+        <div className="text-13 text-placeholder font-semibold">Chat history</div>
+        <button className="text-placeholder hover:text-secondary cursor-pointer" onClick={() => toggleSidePanel(false)}>
           <PanelRightClose className="size-4 " />
         </button>
       </div>

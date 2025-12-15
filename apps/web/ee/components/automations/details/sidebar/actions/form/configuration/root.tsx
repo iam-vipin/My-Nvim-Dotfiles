@@ -23,7 +23,7 @@ export function AutomationActionConfigurationRoot(props: TProps) {
 
   return (
     <div className="space-y-2.5">
-      <p className="text-custom-text-200 text-xs font-medium">{t("automations.action.configuration.label")}</p>
+      <p className="text-tertiary text-11 font-medium">{t("automations.action.configuration.label")}</p>
       {selectedHandlerName === EActionNodeHandlerName.ADD_COMMENT && (
         <AutomationActionAddCommentConfiguration
           automationId={automationId}

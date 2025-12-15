@@ -17,10 +17,7 @@ export const ActiveCycleInfoCard = observer(function ActiveCycleInfoCard(props: 
   const { cycle, workspaceSlug, projectId } = props;
   const cycleDetails = useCycleDetails({ workspaceSlug, projectId, cycleId: cycle.id, defaultCycle: cycle });
   return (
-    <div
-      key={cycle.id}
-      className="flex flex-col gap-4 p-4 rounded-xl border border-custom-border-200 bg-custom-background-100"
-    >
+    <div key={cycle.id} className="flex flex-col gap-4 p-4 rounded-xl border border-subtle-1 bg-surface-1">
       <ActiveCyclesProjectTitle project={cycle.project_detail} />
       <ActiveCycleHeader cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
       <ActiveCycleDetail {...cycleDetails} />

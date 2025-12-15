@@ -13,6 +13,7 @@ import { getFileURL } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { CustomerPreview } from "./preview";
+import { Button } from "@plane/propel/button";
 
 type TCustomerListItem = {
   customerId: string;
@@ -23,7 +24,7 @@ type TCustomerListItem = {
 export const CustomerSidebarListitem = observer(function CustomerSidebarListitem(props: TCustomerListItem) {
   const { customerId, isPeekView, workspaceSlug } = props;
   // refs
-  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [showPreview, setShowPreview] = useState<boolean>(false);
   // hooks
@@ -40,25 +41,20 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
   if (!customer) return null;
   return (
     <Popover as="div" className="truncate max-w-[200px]">
-      <div
-        className="flex gap-2 items-center py-0.5 px-1.5 border rounded-full border-custom-border-100 cursor-default truncate"
+      <button
+        type="button"
+        className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary"
         onMouseEnter={() => setShowPreview(true)}
         onMouseLeave={() => setShowPreview(false)}
         ref={setReferenceElement}
       >
-        <div className="border border-custom-border-200 rounded-md flex items-center gap-2">
-          {customer.logo_url ? (
-            <img src={getFileURL(customer.logo_url)} alt="customer-logo" className="rounded-md w-3 h-3 object-cover" />
-          ) : (
-            <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-3 w-3 p-0.5">
-              <CustomersIcon className="size-5 opacity-50" />
-            </div>
-          )}
-        </div>
-        <div className="text-custom-text-200 flex flex-col truncate">
-          <span className="text-xs font-medium truncate">{customer.name}</span>
-        </div>
-      </div>
+        {customer.logo_url ? (
+          <img src={getFileURL(customer.logo_url)} alt="customer-logo" className="rounded-md w-3 h-3 object-cover" />
+        ) : (
+          <CustomersIcon className="size-4 opacity-50" />
+        )}
+        <span className="flex-shrink-0 text-body-xs-regular truncate">{customer.name}</span>
+      </button>
       <Transition as={Fragment} show={showPreview}>
         <Popover.Panel
           {...attributes.popper}

@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { MilestoneIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { cn } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { MilestonesDropdown } from "./milestones-dropdown";
 
 type TWorkItemSideBarMilestoneItemProps = {
@@ -43,18 +43,13 @@ export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMil
   };
 
   return (
-    <>
-      <div className="flex min-h-8 gap-2">
-        <div
-          className={cn("flex flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300", isPeekView ? "w-1/4" : "w-2/5")}
-        >
-          <MilestoneIcon className="h-4 w-4 flex-shrink-0" />
-          <span>Milestone</span>
-        </div>
-        <div className="h-full min-h-8 w-3/5 flex flex-wrap gap-2 items-center px-1">
-          <MilestonesDropdown projectId={projectId} value={workItem.milestone_id} onChange={handleChange} />
-        </div>
-      </div>
-    </>
+    <SidebarPropertyListItem icon={MilestoneIcon} label="Milestone" childrenClassName="px-2">
+      <MilestonesDropdown
+        projectId={projectId}
+        value={workItem.milestone_id}
+        onChange={handleChange}
+        buttonClassName="h-7.5"
+      />
+    </SidebarPropertyListItem>
   );
 });

@@ -1,9 +1,8 @@
-import type { FC } from "react";
 // plane imports
 import { observer } from "mobx-react";
 import type { TBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Loader, getDiscountPillStyle, getSubscriptionBackgroundColor } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import type { TSubscriptionPriceDetail } from "@plane/utils";
 import { calculateYearlyDiscount, cn } from "@plane/utils";
 // plane web imports
@@ -18,8 +17,7 @@ type TPlanFrequencyToggleProps = {
 };
 
 export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: TPlanFrequencyToggleProps) {
-  const { subscriptionType, isProductsAPILoading, selectedFrequency, subscriptionPriceDetails, setSelectedFrequency } =
-    props;
+  const { isProductsAPILoading, selectedFrequency, subscriptionPriceDetails, setSelectedFrequency } = props;
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
@@ -42,42 +40,39 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
   }
 
   return (
-    <div className="flex w-full items-center cursor-pointer py-1 animate-slide-up">
-      <div
-        className={cn(
-          "flex space-x-1 rounded-md bg-custom-primary-200/10 p-0.5 w-full",
-          getSubscriptionBackgroundColor(subscriptionType, "50")
-        )}
-      >
-        <div
+    <div className="flex w-full items-center cursor-pointer py-1">
+      <div className="flex space-x-1 rounded-md bg-layer-3 p-0.5 w-full">
+        <button
+          type="button"
           key="month"
           onClick={() => setSelectedFrequency("month")}
           className={cn(
-            "w-full rounded px-1 py-0.5 text-xs font-medium leading-5 text-center",
+            "w-full rounded-sm px-1 py-0.5 text-caption-sm-medium leading-5 text-center",
             selectedFrequency === "month"
-              ? "bg-custom-background-100 text-custom-text-100 shadow"
-              : "text-custom-text-300 hover:text-custom-text-200"
+              ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
+              : "text-tertiary hover:text-secondary"
           )}
         >
           Monthly
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
           key="year"
           onClick={() => setSelectedFrequency("year")}
           className={cn(
-            "w-full rounded px-1 py-0.5 text-xs font-medium leading-5 text-center",
+            "w-full rounded-sm px-1 py-0.5 text-caption-sm-medium leading-5 text-center",
             selectedFrequency === "year"
-              ? "bg-custom-background-100 text-custom-text-100 shadow"
-              : "text-custom-text-300 hover:text-custom-text-200"
+              ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
+              : "text-tertiary hover:text-secondary"
           )}
         >
           Yearly
           {yearlyDiscount > 0 && (
-            <span className={cn(getDiscountPillStyle(subscriptionType), "rounded-full px-1 py-0.5 ml-1 text-[9px]")}>
+            <span className="bg-accent-primary text-on-color rounded-full px-1 py-0.5 ml-1.5 text-caption-xs-regular">
               -{yearlyDiscount}%
             </span>
           )}
-        </div>
+        </button>
       </div>
     </div>
   );

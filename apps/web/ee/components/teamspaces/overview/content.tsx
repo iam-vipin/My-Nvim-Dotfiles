@@ -40,7 +40,7 @@ export const TeamsOverviewContent = observer(function TeamsOverviewContent(props
       <div className="flex flex-col gap-y-2">
         <TeamsOverviewProperties teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />
         {areProjectsLinked ? (
-          <div className="flex flex-col divide-y divide-custom-border-100 px-3">
+          <div className="flex flex-col divide-y divide-subtle px-3">
             <TeamsOverviewQuickLinks />
             <TeamspaceProgressRoot teamspaceId={teamspaceId} />
             <TeamspaceRelationsRoot teamspaceId={teamspaceId} />

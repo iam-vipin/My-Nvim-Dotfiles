@@ -42,9 +42,9 @@ export const GanttChartBlock = observer(function GanttChartBlock(props: Props) {
     >
       <div
         className={cn("relative h-full", {
-          "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
-          "bg-custom-background-90": isBlockHoveredOn,
-          "bg-custom-primary-100/10": isBlockHoveredOn,
+          "rounded-l border border-r-0 border-accent-strong": getIsIssuePeeked(block.data.id),
+          "bg-layer-1": isBlockHoveredOn,
+          "bg-accent-primary/10": isBlockHoveredOn,
         })}
         onMouseEnter={() => updateActiveBlockId(blockId)}
         onMouseLeave={() => updateActiveBlockId(null)}

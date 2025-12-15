@@ -107,14 +107,14 @@ const Summary = observer(function Summary(props: Props) {
   return (
     <div
       className={cn("py-4 pr-6 w-full md:min-w-[250px]", {
-        "md:w-[300px] md:border-r border-custom-border-200": parentWidth && parentWidth > 890,
+        "md:w-[300px] md:border-r border-subtle-1": parentWidth && parentWidth > 890,
       })}
     >
-      <div className="text-xs text-custom-text-350 font-medium">
+      <div className="text-11 text-tertiary font-medium">
         Breakdown of this cycle&rsquo;s {ESTIMATE_TYPE[estimateType]}
       </div>
       <div
-        className={cn("border-b border-custom-border-200 w-full flex text-red-500 py-2", {
+        className={cn("border-b border-subtle-1 w-full flex text-red-500 py-2", {
           "text-green-500": !isBehind,
         })}
       >
@@ -131,12 +131,12 @@ const Summary = observer(function Summary(props: Props) {
             <div className="text-[20px] self-end">🏃</div>
           </>
         ) : (
-          <div className={cn("text-md font-medium  text-custom-text-300")}>No Data</div>
+          <div className={cn("text-md font-medium  text-tertiary")}>No Data</div>
         )}
       </div>
 
-      <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
-        <div className="flex text-xs text-custom-text-350 font-medium">
+      <div className="space-y-1 mt-2 pb-4 border-b border-subtle-1">
+        <div className="flex text-11 text-tertiary font-medium">
           <span className="capitalize">
             {ESTIMATE_TYPE[estimateType]} <span className="lowercase">by stategroups on chart</span>
           </span>
@@ -144,7 +144,7 @@ const Summary = observer(function Summary(props: Props) {
         {stateGroups.primaryStates.map((group, index) => (
           <div
             key={index}
-            className={cn("flex text-sm w-full justify-between p-2 rounded hover:bg-custom-background-90", {
+            className={cn("flex text-13 w-full justify-between p-2 rounded-sm hover:bg-layer-1", {
               "cursor-default": group.stateGroups,
             })}
             onMouseEnter={() => setAreaToHighlight(group.key)}
@@ -164,12 +164,12 @@ const Summary = observer(function Summary(props: Props) {
             </div>
             <div className="flex gap-2">
               {group.key === "scope" && <ScopeDelta data={data} dataToday={dataToday} />}
-              <span className="text-end font-bold text-custom-text-300">
+              <span className="text-end font-bold text-tertiary">
                 {!data ? (
                   <Loader.Item width="20px" height="20px" />
                 ) : (
                   <span
-                    className={`py-0.5 rounded  ${group.showBg ? (resolvedTheme?.includes("dark") ? `px-1 text-black` : `px-1 text-white`) : `text-custom-text-350`}`}
+                    className={`py-0.5 rounded-sm  ${group.showBg ? (resolvedTheme?.includes("dark") ? `px-1 text-black` : `px-1 text-on-color`) : `text-tertiary`}`}
                     style={{ backgroundColor: group.showBg ? group.color : "" }}
                   >
                     {dataToday && estimateTypeFormatter(dataToday[group.key as keyof TCycleProgress] as number)}
@@ -180,13 +180,13 @@ const Summary = observer(function Summary(props: Props) {
           </div>
         ))}
       </div>
-      <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
-        <div className="flex text-xs text-custom-text-350 font-medium">
+      <div className="space-y-1 mt-2 pb-4 border-b border-subtle-1">
+        <div className="flex text-11 text-tertiary font-medium">
           <span>Other stategroups</span>
         </div>
         {stateGroups.secondaryStates.map((group, index) => (
           <div
-            className={cn("flex text-sm p-2 rounded hover:bg-custom-background-90 justify-between", {
+            className={cn("flex text-13 p-2 rounded-sm hover:bg-layer-1 justify-between", {
               "cursor-default": group.stateGroups,
             })}
             key={index}
@@ -197,7 +197,7 @@ const Summary = observer(function Summary(props: Props) {
             }}
           >
             <span>{group.groupLabel}</span>
-            <span className="text-end font-bold text-custom-text-350 flex justify-end flex-shrink-0">
+            <span className="text-end font-bold text-tertiary flex justify-end flex-shrink-0">
               {!data ? (
                 <Loader.Item width="20px" height="20px" />
               ) : (
@@ -208,8 +208,8 @@ const Summary = observer(function Summary(props: Props) {
         ))}
       </div>
 
-      <div className="text-xs text-custom-text-350 font-medium flex pt-2 gap-2">
-        <Info className="text-xs mt-[2px]" size={12} />
+      <div className="text-11 text-tertiary font-medium flex pt-2 gap-2">
+        <Info className="text-11 mt-[2px]" size={12} />
         <div className="flex flex-col space-y-2">
           {!data ? (
             <Loader.Item width="200px" height="20px" />

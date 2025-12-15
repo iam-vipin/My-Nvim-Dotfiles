@@ -71,7 +71,7 @@ export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHead
                 <BreadcrumbLink
                   label="Epics"
                   href={`/${workspaceSlug}/projects/${projectId}/epics/`}
-                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<EpicIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -104,7 +104,7 @@ export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHead
             />
             <Sidebar
               className={cn("size-4 cursor-pointer", {
-                "text-custom-primary-100": !epicDetailSidebarCollapsed,
+                "text-accent-primary": !epicDetailSidebarCollapsed,
               })}
               onClick={() => toggleEpicDetailSidebar(!epicDetailSidebarCollapsed)}
             />

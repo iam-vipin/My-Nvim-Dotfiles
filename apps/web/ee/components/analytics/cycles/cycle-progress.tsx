@@ -98,7 +98,7 @@ const CycleProgress = observer(function CycleProgress() {
                 key: "count",
                 label: t("common.completion"),
                 fill: (payload: any) => CYCLE_GROUP_COLORS[payload.status.toLowerCase() as TCycleGroups],
-                textClassName: "text-xs",
+                textClassName: "text-11",
                 stackId: "a",
                 shapeVariant: "lollipop",
               },
@@ -139,7 +139,7 @@ const CycleProgress = observer(function CycleProgress() {
             {Object.entries(CYCLE_GROUP_COLORS).map(([key, value]) => (
               <div key={key} className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: value }} />
-                <span className="text-sm opacity-50">{t(CYCLE_GROUP_I18N_LABELS[key as TCycleGroups])}</span>
+                <span className="text-13 opacity-50">{t(CYCLE_GROUP_I18N_LABELS[key as TCycleGroups])}</span>
               </div>
             ))}
           </div>
@@ -148,7 +148,7 @@ const CycleProgress = observer(function CycleProgress() {
         <EmptyStateCompact
           assetKey="unknown"
           assetClassName="size-20"
-          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
           title={t("workspace_empty_state.analytics_no_cycle.title")}
         />
       )}

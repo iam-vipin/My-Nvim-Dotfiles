@@ -31,7 +31,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
     );
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg text-secondary">
       <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
         <SpreadsheetTable
           displayProperties={displayProperties}

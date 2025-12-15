@@ -76,7 +76,7 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
 
   return (
     <div className="relative flex flex-col w-full h-full gap-y-2 pt-2 px-6">
-      <div className="flex items-center gap-1.5 text-sm font-semibold">Members</div>
+      <div className="flex items-center gap-1.5 text-body-xs-semibold">Members</div>
       <div className="flex-1 flex flex-col py-2 px-0.5 gap-x-2 gap-y-5 overflow-y-auto">
         <AddTeamspaceMembersButton teamspaceId={teamspace.id} variant="sidebar" isEditingAllowed={isEditingAllowed} />
         {members &&
@@ -93,14 +93,14 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                       name={member.display_name}
                       src={getFileURL(member.avatar_url)}
                       size={32}
-                      className="text-sm"
+                      className="text-body-xs-regular"
                       showTooltip={false}
                     />
                     {isTeamspaceLead && (
                       <LeadIcon className="flex-shrink-0 absolute top-0 -left-0.5 size-4 rounded-full" />
                     )}
                   </span>
-                  <span className="text-sm font-medium text-custom-text-200">
+                  <span className="text-body-xs-medium text-secondary">
                     {member.first_name} {member.last_name}
                   </span>
                 </div>
@@ -114,7 +114,7 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                           });
                           handleMemberLeaveOrRemove(member.id);
                         }}
-                        className={cn("flex items-center gap-2 text-red-500")}
+                        className={cn("flex items-center gap-2 text-danger")}
                         disabled={!isEditingAllowed}
                       >
                         <Trash2 className="h-3 w-3" />

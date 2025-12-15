@@ -48,7 +48,7 @@ export const ViewAppliedFilters = observer(function ViewAppliedFilters(props: Pr
   if (Object.keys(appliedFilters).length === 0) return <></>;
 
   return (
-    <div className="border-b border-custom-border-200 bg-custom-background-100 p-4">
+    <div className="border-b border-subtle-1 bg-surface-1 p-4">
       <AppliedFiltersList
         appliedFilters={appliedFilters || {}}
         handleRemoveFilter={handleFilters}

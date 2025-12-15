@@ -61,25 +61,20 @@ export const DashboardWidgetNotConfiguredState = observer(function DashboardWidg
         />
         {canCurrentUserEditWidget ? (
           isViewModeEnabled ? (
-            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+            <p className="text-13 text-placeholder text-center whitespace-pre-line">
               Switch to{" "}
-              <Button
-                onClick={handleConfigureWidget}
-                variant="link-primary"
-                size="sm"
-                className="w-fit inline-flex p-0"
-              >
+              <Button onClick={handleConfigureWidget} variant="link" className="w-fit inline-flex p-0">
                 Edit mode
               </Button>{" "}
               to configure your widget.
             </p>
           ) : (
-            <Button onClick={handleConfigureWidget} variant="link-primary" size="sm" className="w-fit">
+            <Button onClick={handleConfigureWidget} variant="link" className="w-fit">
               {t("dashboards.widget.common.configure_widget")}
             </Button>
           )
         ) : (
-          <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+          <p className="text-13 text-placeholder text-center whitespace-pre-line">
             {t("dashboards.widget.not_configured_state.ask_admin")}
           </p>
         )}

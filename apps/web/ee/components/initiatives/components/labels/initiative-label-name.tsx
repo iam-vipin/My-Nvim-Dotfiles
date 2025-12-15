@@ -18,7 +18,7 @@ export function InitiativeLabelName(props: InitiativeLabelNameProps) {
           backgroundColor: color,
         }}
       />
-      <span className="text-sm font-medium text-custom-text-100">{name}</span>
+      <span className="text-13 font-medium text-primary">{name}</span>
     </div>
   );
 }

@@ -48,12 +48,12 @@ export const WorkItemLayoutAdditionalProperties = observer(function WorkItemLayo
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <CustomerRequestIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.customer_request_ids?.length ?? 0}</div>
+            <div className="text-11">{issue.customer_request_ids?.length ?? 0}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -72,12 +72,12 @@ export const WorkItemLayoutAdditionalProperties = observer(function WorkItemLayo
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <CustomersIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{customerCount}</div>
+            <div className="text-11">{customerCount}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

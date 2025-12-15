@@ -24,7 +24,6 @@ export function CreateAutomationButton(props: TProps) {
   return (
     <Button
       variant={variant}
-      size="sm"
       onClick={() => {
         captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.HEADER_CREATE_BUTTON });
         setCreateUpdateModalConfig({ isOpen: true, payload: null });

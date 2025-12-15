@@ -42,7 +42,7 @@ function TeamspaceViewsPage({ params }: Route.ComponentProps) {
   return (
     <div className="flex flex-col w-full h-full">
       {isFiltersApplied && (
-        <div className="w-full px-6 py-3 border-b border-custom-border-200">
+        <div className="w-full px-6 py-3 border-b border-subtle-1">
           <ViewAppliedFiltersList
             appliedFilters={teamspaceViewsFilters?.filters ?? {}}
             handleClearAllFilters={() => clearAllFilters(teamspaceId)}

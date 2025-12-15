@@ -1,5 +1,7 @@
 import { Plus } from "lucide-react";
-import { cn, getButtonStyling } from "@plane/ui";
+// plane imports
+import { getButtonStyling } from "@plane/propel/button";
+import { cn } from "@plane/utils";
 
 type Props = {
   toggleModal: () => void;
@@ -19,7 +21,7 @@ export function AddMilestoneButton(props: Props) {
       {variant === "default" ? (
         <div
           onClick={handleClick}
-          className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1 cursor-pointer")}
+          className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1 cursor-pointer")}
         >
           Create
         </div>

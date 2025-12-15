@@ -12,7 +12,7 @@ export function PropertyBlockWrapper(props: Props) {
   const { className = "", children } = props;
   return (
     <div className="h-6">
-      <div className={cn("h-full text-xs flex items-center gap-2", className)}>{children}</div>
+      <div className={cn("h-full text-11 flex items-center gap-2", className)}>{children}</div>
     </div>
   );
 }

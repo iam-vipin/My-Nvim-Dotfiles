@@ -14,7 +14,7 @@ function PropertyDetail({ property }: { property: Partial<TIssueProperty<EIssueP
     <>
       <div className="flex-shrink-0 flex">
         {property.logo_props?.in_use && property.logo_props.icon && (
-          <IssuePropertyLogo icon_props={property.logo_props.icon} colorClassName="text-custom-text-300" size={14} />
+          <IssuePropertyLogo icon_props={property.logo_props.icon} colorClassName="text-tertiary" size={14} />
         )}
       </div>
       <span className="w-full cursor-default truncate">
@@ -45,10 +45,10 @@ export const IntakePropertyValues = observer(function IntakePropertyValues(props
         const isUrlType = propertyTypeKey === "URL";
         return (
           <div key={propertyId} className="flex gap-2 h-8">
-            <div className={cn("flex w-2/5 flex-shrink-0 gap-1.5 text-sm text-custom-text-300", "items-center")}>
+            <div className={cn("flex w-2/5 flex-shrink-0 gap-1.5 text-13 text-tertiary", "items-center")}>
               <PropertyDetail property={property} />
             </div>
-            <div className="w-3/5 space-y-1 text-sm text-custom-text-400">
+            <div className="w-3/5 space-y-1 text-13 text-placeholder">
               {displayValues.length ? (
                 displayValues.map((value, index) =>
                   isUrlType ? (
@@ -68,7 +68,7 @@ export const IntakePropertyValues = observer(function IntakePropertyValues(props
                   )
                 )
               ) : (
-                <span className="text-custom-text-300">No value</span>
+                <span className="text-tertiary">No value</span>
               )}
             </div>
           </div>

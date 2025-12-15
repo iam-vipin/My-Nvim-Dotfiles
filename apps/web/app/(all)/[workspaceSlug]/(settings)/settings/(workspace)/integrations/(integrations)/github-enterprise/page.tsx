@@ -81,20 +81,18 @@ function GitHubEnterpriseIntegration() {
   if (!isFeatureEnabled) return null;
 
   if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
-    return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">{t("integrations.loading")}</div>
-    );
+    return <div className="text-secondary relative flex justify-center items-center">{t("integrations.loading")}</div>;
 
   if (!externalApiToken)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.external_api_unreachable")}
       </div>
     );
 
   if (supportedIntegrationsError)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.error_fetching_supported_integrations")}
       </div>
     );
@@ -103,7 +101,7 @@ function GitHubEnterpriseIntegration() {
     return (
       <div className={"flex h-full flex-col items-center justify-center"}>
         <Cloud size={96} />
-        <div className="text-custom-text-200 text-center text-md relative flex justify-center items-center">
+        <div className="text-secondary text-center text-body-sm-regular relative flex justify-center items-center">
           {isSelfManaged
             ? t("integrations.not_configured_message_admin", { name: "GitHub Enterprise Server" })
             : t("integrations.not_configured_message_support", { name: "GitHub Enterprise Server" })}
@@ -114,13 +112,13 @@ function GitHubEnterpriseIntegration() {
   return (
     <div className="relative space-y-10">
       {/* header */}
-      <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90/50 p-4">
+      <div className="flex-shrink-0 relative flex items-center gap-4 rounded-sm bg-layer-1 p-4">
         <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
           <img src={githubLogo} alt="GitHub Logo" />
         </div>
         <div>
-          <div className="text-lg font-medium">GitHub Enterprise Server</div>
-          <div className="text-sm text-custom-text-200">{t("github_enterprise_integration.description")}</div>
+          <div className="text-body-sm-medium">GitHub Enterprise Server</div>
+          <div className="text-body-xs-regular text-secondary">{t("github_enterprise_integration.description")}</div>
         </div>
       </div>
 

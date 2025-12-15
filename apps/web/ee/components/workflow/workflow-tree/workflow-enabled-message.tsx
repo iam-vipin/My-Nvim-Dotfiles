@@ -25,8 +25,8 @@ export const WorkFlowEnabledMessage = observer(function WorkFlowEnabledMessage(p
   return (
     <div className="relative w-72 flex flex-col gap-2">
       <div className="flex gap-1 items-center">
-        <StatePropertyIcon className="size-3 text-custom-text-200" />
-        <span className="text-xs font-medium">{t("workflows.workflow_enabled.label")}</span>
+        <StatePropertyIcon className="size-3 text-secondary" />
+        <span className="text-11 font-medium">{t("workflows.workflow_enabled.label")}</span>
       </div>
       <div className="pl-4">
         <WorkflowTree parentStateId={parentStateId} />

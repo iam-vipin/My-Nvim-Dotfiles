@@ -19,10 +19,10 @@ export function PageCommentsEmptyState({ hasComments, commentFilter }: CommentsE
 
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-3 animate-fade-in-up">
-      <MessageCircle className="size-8 text-custom-text-300" />
+      <MessageCircle className="size-8 text-tertiary" />
       <div className="text-center">
-        <h4 className="text-sm font-medium text-custom-text-200">{title}</h4>
-        <p className="text-xs text-custom-text-300 mt-1">{message}</p>
+        <h4 className="text-13 font-medium text-secondary">{title}</h4>
+        <p className="text-11 text-tertiary mt-1">{message}</p>
       </div>
     </div>
   );

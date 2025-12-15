@@ -13,8 +13,8 @@ export function MovePageModalListSection(props: Props) {
 
   return (
     <section className="px-2 space-y-2">
-      <p className="text-xs text-custom-text-300 font-semibold px-1 py-0.5 tracking-wide">{title}</p>
-      <ul className="text-custom-text-100 space-y-2">
+      <p className="text-11 text-tertiary font-semibold px-1 py-0.5 tracking-wide">{title}</p>
+      <ul className="text-primary space-y-2">
         {items.map((itemValue) => {
           const item = getItemDetails(itemValue);
           if (!item) return null;

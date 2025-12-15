@@ -64,12 +64,12 @@ export const SourceCreateUpdateModal = observer(function SourceCreateUpdateModal
     <ModalCore isOpen={requestSourceModalId === id}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {preloadedData?.url ? t("customers.requests.form.source.update") : t("customers.requests.form.source.add")}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200 text-base font-medium">
+              <label htmlFor="url" className="mb-2 text-secondary text-14 font-medium">
                 {t("customers.requests.form.source.url.label")}
               </label>
               <Controller
@@ -95,15 +95,15 @@ export const SourceCreateUpdateModal = observer(function SourceCreateUpdateModal
                   />
                 )}
               />
-              {errors.url && <span className="text-xs text-red-500">{errors.url.message}</span>}
+              {errors.url && <span className="text-11 text-red-500">{errors.url.message}</span>}
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+          <Button variant="secondary" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit">
+          <Button variant="primary" type="submit">
             {t("submit")}
           </Button>
         </div>

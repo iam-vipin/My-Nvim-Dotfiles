@@ -29,7 +29,7 @@ function ImporterLayout({ params }: Route.ComponentProps) {
     <SettingsContentWrapper size="lg">
       <Link
         href={`/${workspaceSlug}/settings/imports`}
-        className="flex items-center gap-2 text-sm text-custom-text-300 font-semibold pb-4"
+        className="flex items-center gap-2 text-13 text-tertiary font-semibold pb-4"
       >
         <ChevronLeftIcon className="size-4" />
         <span>Back to Imports</span>

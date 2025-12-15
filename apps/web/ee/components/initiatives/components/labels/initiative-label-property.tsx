@@ -99,7 +99,7 @@ export const InitiativeLabelProperty = observer(function InitiativeLabelProperty
         >
           <div
             className={cn(
-              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
               noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
               fullWidth && "w-full"
             )}
@@ -118,7 +118,7 @@ export const InitiativeLabelProperty = observer(function InitiativeLabelProperty
       return (
         <div
           className={cn(
-            "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+            "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
             noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
             fullWidth && "w-full"
           )}
@@ -137,7 +137,7 @@ export const InitiativeLabelProperty = observer(function InitiativeLabelProperty
         return (
           <div
             className={cn(
-              "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+              "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
               noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
               fullWidth && "w-full"
             )}

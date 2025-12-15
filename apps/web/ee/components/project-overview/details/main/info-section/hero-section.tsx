@@ -120,7 +120,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
       <div className="relative px-10 pt-page-y mt-2">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="absolute -top-[27px] h-10 w-10 flex-shrink-0 grid place-items-center rounded bg-custom-background-80"
+          className="absolute -top-[27px] h-10 w-10 flex-shrink-0 grid place-items-center rounded-sm bg-layer-1"
         >
           <Controller
             control={control}
@@ -159,7 +159,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
             )}
           />
         </form>
-        <div className="font-bold text-xl">{project.name}</div>
+        <div className="font-bold text-18">{project.name}</div>
       </div>
     </div>
   );

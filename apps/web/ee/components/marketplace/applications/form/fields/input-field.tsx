@@ -18,7 +18,7 @@ export function InputField<T extends FieldValues>(props: Props<T>) {
         id={id}
         type={type}
         placeholder={placeholder}
-        className={cn(`w-full resize-none text-sm bg-custom-background-100`, className)}
+        className={cn(`w-full resize-none text-13 bg-surface-1`, className)}
         hasError={Boolean(error)}
         disabled={disabled}
         tabIndex={tabIndex}

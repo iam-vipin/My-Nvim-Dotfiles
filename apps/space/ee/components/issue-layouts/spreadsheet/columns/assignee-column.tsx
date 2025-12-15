@@ -13,7 +13,7 @@ export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeCo
   const { issue } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200 pl-2">
+    <div className="h-11 border-b-[0.5px] border-subtle-1 pl-2">
       <IssueBlockMembers memberIds={issue.assignee_ids} shouldShowBorder={false} />
     </div>
   );

@@ -64,7 +64,7 @@ function LinearImporter() {
 
   if (!externalApiToken || !currentAuth)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         Not able to access the external api token. Please try again later.
       </div>
     );

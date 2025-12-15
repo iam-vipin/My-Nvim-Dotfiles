@@ -64,21 +64,21 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
       <div className={cn("relative", isReply && "pt-2")}>
         {shouldShowIndicator && (
           <div
-            className="absolute left-[7px] top-1 -bottom-1 w-px transition-border duration-1000 bg-custom-background-80"
+            className="absolute left-[8px] top-1 -bottom-1 w-px transition-border duration-1000 bg-layer-1-active"
             aria-hidden
           />
         )}
         <div className="flex relative w-full gap-2 items-center">
           <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
           <div className="flex-1 flex flex-wrap items-center gap-1">
-            <div className="text-xs font-medium">{displayName}</div>
-            <div className="text-xs text-custom-text-300">
+            <div className="text-caption-sm-medium">{displayName}</div>
+            <div className="text-caption-sm-regular text-tertiary">
               {isReply ? "replied " : "commented "}
               <Tooltip
                 tooltipContent={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
                 position="bottom"
               >
-                <span className="text-custom-text-350">
+                <span className="text-tertiary">
                   {calculateTimeAgo(comment.created_at)}
                   {comment.edited_at && " (edited)"}
                 </span>
@@ -101,15 +101,10 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
               <div className="flex items-center gap-1">
                 {shouldShowReplyButton && (
                   <>
-                    <Button
-                      variant="link-neutral"
-                      size="sm"
-                      onClick={handleReply}
-                      className="hover:bg-custom-background-80 px-2.5"
-                    >
+                    <Button variant="ghost" size="sm" onClick={handleReply} className="px-2.5 text-caption-sm-medium">
                       {t("common.actions.reply")}
                     </Button>
-                    <Separator orientation="vertical" className="h-4" />
+                    <Separator orientation="vertical" className="h-4 bg-layer-1-active" />
                   </>
                 )}
                 <div className="px-2">{ReactionsComponent}</div>

@@ -34,10 +34,10 @@ export function Waveform({ data, barCount = 100 }: TProps) {
   const sampled = resampleData(data, barCount);
 
   return (
-    <div className="w-full h-full bg-transparent text-custom-text-300" style={{ width: "100%", height: 30 }}>
+    <div className="w-full h-full bg-transparent text-tertiary" style={{ width: "100%", height: 30 }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={sampled} barCategoryGap={0}>
-          <ReferenceLine y={0} stroke="text-custom-text-400" strokeDasharray="3 3" />
+          <ReferenceLine y={0} stroke="text-placeholder" strokeDasharray="3 3" />
           <XAxis dataKey="index" hide />
           <YAxis domain={[-128, 128]} hide />
           <Bar dataKey="amplitude" fill="currentColor" radius={[12, 12, 12, 12]} barSize={2} />

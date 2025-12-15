@@ -74,7 +74,7 @@ export function AreaChartAppearanceConfig(props: Props) {
                   onChange(e.target.value);
                   debouncedConfigUpdate({ opacity: Number(e.target.value) });
                 }}
-                className="hide-arrows w-full px-2 py-1 rounded border-custom-border-300 text-xs"
+                className="hide-arrows w-full px-2 py-1 rounded-sm border-subtle-1 text-11"
                 placeholder={t("dashboards.widget.common.opacity.placeholder")}
                 min={0.1}
                 max={1}

@@ -54,7 +54,7 @@ export const ConfigureClickUpSelectTeam = observer(function ConfigureClickUpSele
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">Select ClickUp team</div>
+      <div className="text-13 text-secondary">Select ClickUp team</div>
       {isClickUpTeamLoading && (!clickUpTeams || clickUpTeams.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />

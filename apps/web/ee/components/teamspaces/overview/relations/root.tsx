@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -92,7 +91,7 @@ export const TeamspaceRelationsRoot = observer(function TeamspaceRelationsRoot(p
           title="Relations"
           className="border-none px-0"
           titleClassName={cn(
-            isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200",
+            isOpen ? "text-primary" : "text-tertiary hover:text-secondary",
             teamspaceRelationsLoader === "init-loader" && "cursor-not-allowed"
           )}
         />

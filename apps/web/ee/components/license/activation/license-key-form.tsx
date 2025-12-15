@@ -1,4 +1,4 @@
-import type { FC, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -71,21 +71,21 @@ export const LicenseKeyForm = observer(function LicenseKeyForm(props: TLicenseKe
           disabled={!hasPermission}
           autoFocus
         />
-        {errors && <div className="text-sm text-red-500">{errors}</div>}
+        {errors && <div className="text-caption-sm-medium text-danger-secondary">{errors}</div>}
       </div>
-      <div className="flex justify-between gap-2 border-t border-custom-border-200 pt-4 px-4">
+      <div className="flex justify-between gap-2 border-t border-subtle-1 pt-4 px-4">
         <div className="flex items-center gap-2">
           {!hasPermission && (
-            <div className="text-xs text-red-500 cursor-help">
+            <div className="text-caption-sm-medium text-danger-secondary cursor-help">
               You don&apos;t have permission to perform this action. Please contact the workspace admin.
             </div>
           )}
         </div>
         <div className="flex justify-end items-center gap-2">
-          <Button onClick={handleClose} variant="neutral-primary" size="sm" type="button">
+          <Button onClick={handleClose} variant="secondary" type="button" size="lg">
             Close
           </Button>
-          <Button type="submit" size="sm" disabled={loader || !hasPermission}>
+          <Button type="submit" disabled={loader || !hasPermission} size="lg">
             {loader ? "Activating" : "Activate"}
           </Button>
         </div>

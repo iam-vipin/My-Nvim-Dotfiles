@@ -61,7 +61,7 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
   // If publish is not enabled, show upgrade button
   if (!isPagePublishEnabled) {
     return (
-      <Button variant="accent-primary" size="sm" onClick={() => togglePaidPlanModal(true)}>
+      <Button variant="secondary" size="lg" onClick={() => togglePaidPlanModal(true)}>
         Upgrade to publish
       </Button>
     );
@@ -86,7 +86,7 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
       {isDeployed && (
         <a
           href={publishLink}
-          className="h-6 px-2 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+          className="h-6 px-2 bg-green-500/20 text-green-500 rounded-sm text-11 font-medium flex items-center gap-1.5"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -94,7 +94,7 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
           Live
         </a>
       )}
-      <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)} className="h-6">
+      <Button variant="secondary" onClick={() => setIsPublishModalOpen(true)} className="h-6">
         {isDeployed ? "Unpublish" : "Publish"}
       </Button>
     </>

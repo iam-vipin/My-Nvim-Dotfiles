@@ -12,8 +12,12 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { IssueTypesRoot } from "@/plane-web/components/issue-types";
+// types
+import type { Route } from "./+types/page";
 
-function WorkItemTypesSettingsPage() {
+function WorkItemTypesSettingsPage({ params }: Route.ComponentProps) {
+  // router params
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -33,7 +37,7 @@ function WorkItemTypesSettingsPage() {
     <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full`}>
-        <IssueTypesRoot />
+        <IssueTypesRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
     </SettingsContentWrapper>
   );

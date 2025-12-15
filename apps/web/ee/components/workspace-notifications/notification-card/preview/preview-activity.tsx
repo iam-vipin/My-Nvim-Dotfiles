@@ -31,7 +31,7 @@ export function NotificationPreviewActivity(props: TNotificationPreviewActivity)
         createdAt={notification?.created_at}
         triggeredBy={triggeredBy}
       >
-        <div className="w-full whitespace-normal truncate text-sm">
+        <div className="w-full whitespace-normal truncate text-body-xs-medium">
           <NotificationContent
             notification={notification}
             workspaceId={workspaceId}

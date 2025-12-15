@@ -51,7 +51,7 @@ export const UpgradeEmptyStateButton = observer(function UpgradeEmptyStateButton
         href="https://prime.plane.so/"
         target="_blank"
         rel="noopener noreferrer"
-        className={getButtonStyling("primary", "md")}
+        className={getButtonStyling("primary", "base")}
       >
         {t("common.upgrade_cta.higher_subscription")}
       </a>
@@ -76,7 +76,7 @@ export const UpgradeEmptyStateButton = observer(function UpgradeEmptyStateButton
         href="mailto:support@plane.so"
         target="_blank"
         rel="noopener noreferrer"
-        className={getButtonStyling("primary", "md")}
+        className={getButtonStyling("primary", "base")}
       >
         Contact support
       </a>

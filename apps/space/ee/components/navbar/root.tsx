@@ -27,11 +27,11 @@ export const ViewNavbarRoot = observer(function ViewNavbarRoot(props: Props) {
             <Logo logo={viewData?.logo_props} size={16} type="lucide" />
           </span>
         ) : (
-          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded-sm uppercase">
             <PhotoFilterIcon className="h-4 w-4" />
           </span>
         )}
-        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-lg font-medium">{viewData?.name || `...`}</div>
+        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-16 font-medium">{viewData?.name || `...`}</div>
       </div>
 
       <div className="flex flex-shrink-0 items-center gap-2">

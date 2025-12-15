@@ -167,9 +167,9 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-xl font-medium text-custom-text-200">Publish views</h5>
+          <h5 className="text-h5-medium text-secondary">Publish views</h5>
           {view.anchor && (
-            <Button variant="danger" onClick={() => handleUnPublishView()} loading={isUnPublishing}>
+            <Button variant="error-fill" onClick={() => handleUnPublishView()} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
             </Button>
           )}
@@ -186,10 +186,10 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
           <div className="px-5 space-y-4">
             {view.anchor && publishedViewSettings && (
               <>
-                <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="bg-layer-1 border border-subtle-1 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
                     href={publishLink}
-                    className="text-sm text-custom-text-200 truncate"
+                    className="text-body-xs-regular text-secondary truncate"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -198,7 +198,7 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
                   <div className="flex-shrink-0 flex items-center gap-1">
                     <a
                       href={publishLink}
-                      className="size-8 grid place-items-center bg-custom-background-90 hover:bg-custom-background-100 rounded"
+                      className="size-8 grid place-items-center bg-layer-1 hover:bg-surface-1 rounded"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -206,17 +206,17 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
                     </a>
                     <button
                       type="button"
-                      className="h-8 bg-custom-background-90 hover:bg-custom-background-100 rounded text-xs font-medium py-2 px-3"
+                      className="h-8 bg-layer-1 hover:bg-layer-1-hover rounded-sm text-caption-sm-medium py-2 px-3"
                       onClick={handleCopyLink}
                     >
                       Copy link
                     </button>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-custom-primary-100 flex items-center gap-1 mt-3">
+                <p className="text-body-xs-medium text-accent-primary flex items-center gap-1 mt-3">
                   <span className="relative grid place-items-center size-2.5">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-custom-primary-100 opacity-75" />
-                    <span className="relative inline-flex rounded-full size-1.5 bg-custom-primary-100" />
+                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-accent-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full size-1.5 bg-accent-primary" />
                   </span>
                   This View is now live on web
                 </p>
@@ -224,7 +224,7 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
             )}
             <div className="space-y-4">
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow comments</div>
+                <div className="text-body-xs-regular">Allow comments</div>
                 <Controller
                   control={control}
                   name="is_comments_enabled"
@@ -234,7 +234,7 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow reactions</div>
+                <div className="text-body-xs-regular">Allow reactions</div>
                 <Controller
                   control={control}
                   name="is_reactions_enabled"
@@ -244,7 +244,7 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow voting</div>
+                <div className="text-body-xs-regular">Allow voting</div>
                 <Controller
                   control={control}
                   name="is_votes_enabled"
@@ -257,24 +257,24 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
           </div>
         )}
         {/* modal handlers */}
-        <div className="relative flex items-center justify-between border-t border-custom-border-200 px-5 py-4 mt-4">
-          <div className="flex items-center gap-1 text-sm text-custom-text-400">
+        <div className="relative flex items-center justify-between border-t border-subtle-1 px-5 py-4 mt-4">
+          <div className="flex items-center gap-1 text-body-xs-regular text-placeholder">
             <Globe2 className="size-3.5" />
-            <div className="text-sm">Anyone with the link can access</div>
+            <div className="text-body-xs-regular">Anyone with the link can access</div>
           </div>
           {!isLoading && (
             <div className="relative flex items-center gap-2">
-              <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+              <Button variant="secondary" onClick={handleClose}>
                 Cancel
               </Button>
               {view.anchor ? (
                 isDirty && (
-                  <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                  <Button variant="primary" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating" : "Update settings"}
                   </Button>
                 )
               ) : (
-                <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                <Button variant="primary" type="submit" loading={isSubmitting}>
                   {isSubmitting ? "Publishing" : "Publish"}
                 </Button>
               )}

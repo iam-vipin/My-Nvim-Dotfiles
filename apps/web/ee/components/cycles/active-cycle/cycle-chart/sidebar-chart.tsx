@@ -60,7 +60,7 @@ const SidebarChartPro = observer(function SidebarChartPro(props: TProps) {
                 backgroundColor: legend.color,
               }}
             />
-            <span className="text-xs text-custom-text-300">{legend.label}</span>
+            <span className="text-11 text-tertiary">{legend.label}</span>
           </div>
         ))}
       </div>

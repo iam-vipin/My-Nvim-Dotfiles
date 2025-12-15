@@ -20,12 +20,12 @@ type ProjectOptionProps = {
 function ProjectOption({ project, isEpicsEnabled, isEpic }: ProjectOptionProps) {
   return (
     <div className="flex items-center gap-2 w-full">
-      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+      <span className="grid place-items-center shrink-0 h-4 w-4">
         <Logo logo={project.logo_props} size={12} />
       </span>
-      <p className="flex-grow truncate flex items-center justify-between gap-3">
+      <p className="grow truncate flex items-center justify-between gap-3">
         <span>{project.name}</span>
-        {!isEpicsEnabled && isEpic && <span className="text-custom-text-400 text-xs">Epics not enabled</span>}
+        {!isEpicsEnabled && isEpic && <span className="text-placeholder text-11">Epics not enabled</span>}
       </p>
     </div>
   );
@@ -102,7 +102,7 @@ export const ProjectDropdown = observer(function ProjectDropdown(props: Props) {
               <span className="truncate">{selectedProject.name}</span>
             </div>
           ) : (
-            <span className="text-custom-text-400">{placeholder}</span>
+            <span className="text-placeholder">{placeholder}</span>
           )}
         </div>
       }

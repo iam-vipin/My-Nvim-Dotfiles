@@ -88,11 +88,11 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
     <>
       <CustomMenu
         customButton={
-          <span className="grid place-items-center p-0.5  rounded my-auto">
+          <span className="grid place-items-center p-0.5  rounded-sm my-auto">
             <MoreHorizontal className="size-4" />
           </span>
         }
-        className={cn("flex justify-center items-center pointer-events-auto flex-shrink-0 my-auto rounded  ")}
+        className={cn("flex justify-center items-center pointer-events-auto flex-shrink-0 my-auto rounded-sm  ")}
         customButtonClassName="grid place-items-center"
         placement="bottom-start"
       >

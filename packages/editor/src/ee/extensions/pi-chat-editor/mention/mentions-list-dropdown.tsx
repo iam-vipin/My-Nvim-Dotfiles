@@ -184,15 +184,15 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
       />
       <div
         ref={dropdownContainer}
-        className="relative max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
         style={{
           zIndex: 100,
         }}
       >
         {!query ? (
-          <div className="text-center text-sm text-custom-text-400">Start typing to see suggestions</div>
+          <div className="text-center text-body-xs-regular text-tertiary">Start typing to see suggestions</div>
         ) : isLoading ? (
-          <div className="text-center text-sm text-custom-text-400">Loading...</div>
+          <div className="text-center text-body-xs-regular text-tertiary">Loading...</div>
         ) : sectionKeys.length > 0 ? (
           sectionKeys.map((type, index) => (
             <MentionsDropdownSection
@@ -205,7 +205,7 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
             />
           ))
         ) : (
-          <div className="text-center text-sm text-custom-text-400">{"No results"}</div>
+          <div className="text-center text-body-xs-regular text-tertiary">{"No results"}</div>
         )}
       </div>
     </>

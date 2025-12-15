@@ -27,13 +27,13 @@ export const PropertyActiveCheckbox = observer(function PropertyActiveCheckbox(p
       position="bottom"
     >
       <span
-        className="flex items-center gap-1.5 text-custom-text-300 text-xs font-medium cursor-pointer select-none"
+        className="flex items-center gap-1.5 text-tertiary text-caption-md-medium cursor-pointer select-none"
         onClick={() => onEnableDisable(!value)}
       >
         <Checkbox
           checked={value}
           className={cn("size-3.5", {
-            "bg-custom-background-100": !value,
+            "bg-surface-1": !value,
           })}
           iconClassName="size-3.5"
         />

@@ -12,19 +12,19 @@ export function TeamsPropertiesListItem(props: Omit<TPropertyListItem, "key">) {
   return (
     <div className="grid grid-cols-2 items-center py-1">
       <div className="flex items-center gap-x-2">
-        <Icon className="size-4 text-custom-text-300" />
-        <span className="text-sm text-custom-text-200">{label}</span>
+        <Icon className="size-4 text-tertiary" />
+        <span className="text-body-xs-regular text-secondary">{label}</span>
       </div>
       {href ? (
         <Link
           href={href}
-          className="group flex py-1 px-1 gap-2 items-center justify-between hover:bg-custom-background-90 rounded cursor-pointer transition-all"
+          className="group flex py-1 px-1 gap-2 items-center justify-between hover:bg-layer-1-hover rounded-sm cursor-pointer transition-all"
         >
-          <span className="text-sm text-custom-text-200">{value}</span>
-          <ChevronRightIcon className="size-3 text-custom-text-400 group-hover:text-custom-text-200" />
+          <span className="text-body-xs-regular text-secondary">{value}</span>
+          <ChevronRightIcon className="size-3 text-placeholder group-hover:text-secondary" />
         </Link>
       ) : (
-        <span className="py-1 px-1 text-sm text-custom-text-200">{value}</span>
+        <span className="py-1 px-1 text-body-xs-regular text-secondary">{value}</span>
       )}
     </div>
   );

@@ -60,24 +60,24 @@ export const ApplicationPublishModal = observer(function ApplicationPublishModal
     <ModalCore isOpen={isOpen} handleClose={handleClose}>
       <form onSubmit={handleAppPublish}>
         <div className="space-y-3 p-5 pb-4">
-          <h3 className="text-xl font-medium text-custom-text-200">Publish your integration to Marketplace</h3>
+          <h3 className="text-18 font-medium text-secondary">Publish your integration to Marketplace</h3>
           <div>
             <Input
               id="name"
               type="text"
               placeholder="What will you call this app"
-              className="w-full resize-none text-sm"
+              className="w-full resize-none text-13"
               hasError={Boolean(errors.contact_email)}
               tabIndex={1}
               {...register("contact_email", { required: "Contact email is required" })}
               onChange={(e) => handleTextChange("contact_email", e.target.value)}
             />
-            {errors.contact_email && <p className="text-red-500 text-xs">{errors.contact_email.message}</p>}
+            {errors.contact_email && <p className="text-red-500 text-11">{errors.contact_email.message}</p>}
           </div>
         </div>
         <div className="flex justify-end space-x-2">
           <div className="flex items-center space-x-2">
-            <Button variant="neutral-primary" className="bg-custom-background-100">
+            <Button variant="secondary" className="bg-surface-1">
               Cancel
             </Button>
             <Button variant="primary">Next</Button>

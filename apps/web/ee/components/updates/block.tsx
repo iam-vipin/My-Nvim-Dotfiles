@@ -88,7 +88,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
     updateData && (
       <div
         key={updateData.id}
-        className="relative flex updateDatas-center gap-2 border border-custom-border-100 rounded-md p-4 pb-0"
+        className="relative flex updateDatas-center gap-2 border border-subtle rounded-md p-4 pb-0"
       >
         <div className="flex-1 w-full">
           <div className="flex flex-1 items-center">
@@ -100,12 +100,12 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
             <div className="flex-1">
               {customTitle?.(updateData) || (
                 <div
-                  className={cn(`text-[${StatusOptions[updateData.status].color}] font-semibold text-sm capitalize`)}
+                  className={cn(`text-[${StatusOptions[updateData.status].color}] font-semibold text-13 capitalize`)}
                 >
                   {updateData.status?.toLowerCase().replaceAll("-", " ")}
                 </div>
               )}
-              <div className="text-custom-text-350 font-regular text-xs">
+              <div className="text-tertiary font-regular text-11">
                 {renderFormattedDate(updateData.updated_at)} • {getUserDetails(updateData?.created_by)?.display_name}
               </div>
             </div>
@@ -126,7 +126,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
           </div>
 
           {/* Update */}
-          <div className="text-base my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
+          <div className="text-14 my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
 
           {/* Progress */}
           <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />
@@ -143,7 +143,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
                 handleUpdateOperations={handleUpdateOperations}
               />
               <button
-                className="text-custom-text-350 bg-custom-background-80 rounded h-7 flex px-2 gap-2 text-xs font-medium items-center"
+                className="text-tertiary bg-layer-1 rounded-sm h-7 flex px-2 gap-2 text-11 font-medium items-center"
                 onClick={() => setShowComment(!showComment)}
               >
                 <MessageCircle className="h-3.5 w-3.5 m-auto" />

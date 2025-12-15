@@ -13,7 +13,7 @@ function AppSearchPage({ params }: Route.ComponentProps) {
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="ADVANCED_SEARCH" fallback={<></>}>
       {isSidebarToggleVisible() && (
-        <div className="block bg-custom-sidebar-background-100 p-4 md:hidden">
+        <div className="block bg-surface-1 p-4 md:hidden">
           <SidebarHamburgerToggle />
         </div>
       )}

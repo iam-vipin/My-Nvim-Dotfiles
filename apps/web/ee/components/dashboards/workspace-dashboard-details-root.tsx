@@ -37,7 +37,7 @@ export const WorkspaceDashboardDetailsRoot = observer(function WorkspaceDashboar
         dashboardId={dashboardId.toString()}
       />
       <DashboardsWidgetConfigSidebarRoot
-        className="flex-shrink-0 h-full border-l border-custom-border-200 overflow-y-scroll vertical-scrollbar scrollbar-sm"
+        className="flex-shrink-0 h-full border-l border-subtle-1 overflow-y-scroll vertical-scrollbar scrollbar-sm"
         dashboardId={dashboardId.toString()}
       />
     </div>

@@ -4,20 +4,19 @@ import { observer } from "mobx-react";
 import { CornerDownLeft } from "lucide-react";
 // plane imports
 import { Popover } from "@plane/propel/popover";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // components
 import { COMMON_FILTER_ITEM_BORDER_CLASSNAME, EMPTY_FILTER_PLACEHOLDER_TEXT } from "@/components/rich-filters/shared";
 
 // Common class names
 const FILTER_BUTTON_CLASSNAMES =
-  "h-full w-full px-2 text-sm font-normal transition-all duration-300 ease-in-out text-left hover:bg-custom-background-80";
-const FILTER_PANEL_CLASSNAMES =
-  "w-[306px] p-2 bg-custom-background-100 border border-custom-border-200 rounded-lg shadow-lg";
-const FILTER_HELPER_TEXT_CLASSNAMES = "flex items-center gap-1 text-[10px] text-custom-text-300";
+  "h-full w-full px-2 text-13 font-normal transition-all duration-300 ease-in-out text-left hover:bg-layer-1";
+const FILTER_PANEL_CLASSNAMES = "w-[306px] p-2 bg-surface-1 border border-subtle-1 rounded-lg shadow-lg";
+const FILTER_HELPER_TEXT_CLASSNAMES = "flex items-center gap-1 text-10 text-tertiary";
 const FILTER_ACTIONS_CLASSNAMES = "flex items-center gap-2";
 const FILTER_ACTIONS_BUTTON_CLASSNAMES = "py-1";
-export const FILTER_VALIDATION_MESSAGE_CLASSNAMES = "text-custom-text-400 text-[9px] px-0.5";
+export const FILTER_VALIDATION_MESSAGE_CLASSNAMES = "text-placeholder text-9 px-0.5";
 
 type TPopoverFilterInputProps = {
   buttonClassName?: string;
@@ -60,10 +59,10 @@ export const PopoverFilterInput = observer(function PopoverFilterInput(props: TP
         <button
           className={cn(
             FILTER_BUTTON_CLASSNAMES,
-            isOpen && "bg-custom-background-80",
+            isOpen && "bg-layer-1",
             !isDisabled && COMMON_FILTER_ITEM_BORDER_CLASSNAME,
-            isDisabled && "hover:bg-custom-background-100",
-            isEmpty && "text-custom-text-400",
+            isDisabled && "hover:bg-surface-1",
+            isEmpty && "text-placeholder",
             buttonClassName
           )}
           disabled={isDisabled}
@@ -85,7 +84,7 @@ export const PopoverFilterInput = observer(function PopoverFilterInput(props: TP
               ) : (
                 <>
                   Type and press
-                  <span className="flex items-center gap-1 bg-custom-background-90 px-1.5 rounded-md">
+                  <span className="flex items-center gap-1 bg-layer-1 px-1.5 rounded-md">
                     Enter
                     <CornerDownLeft className="size-2.5" />
                   </span>
@@ -93,20 +92,10 @@ export const PopoverFilterInput = observer(function PopoverFilterInput(props: TP
               )}
             </span>
             <div className={FILTER_ACTIONS_CLASSNAMES}>
-              <Button
-                variant="neutral-primary"
-                size="sm"
-                onClick={onCancel}
-                className={FILTER_ACTIONS_BUTTON_CLASSNAMES}
-              >
+              <Button variant="secondary" onClick={onCancel} className={FILTER_ACTIONS_BUTTON_CLASSNAMES}>
                 Cancel
               </Button>
-              <Button
-                size="sm"
-                onClick={onApply}
-                className={FILTER_ACTIONS_BUTTON_CLASSNAMES}
-                disabled={isApplyDisabled}
-              >
+              <Button onClick={onApply} className={FILTER_ACTIONS_BUTTON_CLASSNAMES} disabled={isApplyDisabled}>
                 Apply
               </Button>
             </div>

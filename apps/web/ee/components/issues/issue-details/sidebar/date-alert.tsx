@@ -1,6 +1,6 @@
 import { TriangleAlertIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { TDateAlertProps } from "@/ce/components/issues/issue-details/sidebar.tsx/date-alert";
+import type { TDateAlertProps } from "@/ce/components/issues/issue-details/sidebar/date-alert";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 export function DateAlert(props: TDateAlertProps) {

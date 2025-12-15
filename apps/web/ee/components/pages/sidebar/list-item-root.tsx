@@ -261,7 +261,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="w-[225px] flex items-center gap-1 py-1.5 truncate rounded-md text-custom-sidebar-text-200 bg-custom-sidebar-background-80 opacity-40">
+                <div className="w-[225px] flex items-center gap-1 py-1.5 truncate rounded-md text-secondary bg-layer-1 opacity-40">
                   <div className="size-4 flex-shrink-0 grid place-items-center">
                     <span className="grid place-items-center">
                       {page.logo_props?.in_use ? (
@@ -271,7 +271,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
                       )}
                     </span>
                   </div>
-                  <p className="truncate text-sm flex-grow min-w-0">{getPageName(page.name)}</p>
+                  <p className="truncate text-13 flex-grow min-w-0">{getPageName(page.name)}</p>
                 </div>
               );
               return () => root.unmount();
@@ -402,7 +402,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         {isHovered && canShowAddButton && (
           <button
             type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-100 transition-all duration-200 ease-in-out z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-layer-1 text-tertiary hover:text-primary transition-all duration-200 ease-in-out z-10"
             onClick={handleCreatePage}
             data-prevent-progress
             disabled={isCreatingPage}

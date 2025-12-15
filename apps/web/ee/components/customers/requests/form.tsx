@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Database, Paperclip } from "lucide-react";
@@ -183,6 +182,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                 work_item_ids: workItemIds,
               },
             });
+            return;
           })
           .catch((error: any) => {
             captureError({
@@ -239,7 +239,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
         />
         <SourceCreateUpdateModal id={customerId} setLinkData={setLink} preloadedData={{ url: link }} />
         <div className="p-4">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {data?.id ? t("customers.requests.update") : t("customers.requests.add")}
           </h3>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -266,11 +266,11 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                         onChange={onChange}
                         hasError={Boolean(errors.name)}
                         placeholder={t("customers.requests.form.name.placeholder")}
-                        className={"w-full text-base"}
+                        className={"w-full text-14"}
                       />
                     )}
                   />
-                  <span className="text-xs text-red-500">{errors?.name?.message}</span>
+                  <span className="text-11 text-red-500">{errors?.name?.message}</span>
                 </div>
                 <Controller
                   name="description_html"
@@ -293,7 +293,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                           ...payload,
                         })
                       }
-                      containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-custom-border-100"
+                      containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-subtle"
                       uploadFile={async (blockId, file) => {
                         try {
                           const { asset_id } = await uploadEditorAsset({
@@ -337,9 +337,8 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
               </div>
               <div className="flex gap-2 flex-wrap items-center">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
-                  className="text-custom-text-200 bg-custom-background-100 text-sm"
+                  variant="secondary"
+                  className="text-secondary bg-surface-1 text-13"
                   onClick={() => toggleRequestSourceModal(customerId)}
                 >
                   {link ? (
@@ -350,22 +349,17 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                     </>
                   )}
                 </Button>
-                <Button
-                  variant="neutral-primary"
-                  size="sm"
-                  className="text-custom-text-200 text-sm"
-                  onClick={() => setWorkItemsModal(true)}
-                >
+                <Button variant="secondary" className="text-secondary text-13" onClick={() => setWorkItemsModal(true)}>
                   <LayersIcon className="size-3" />
                   {workItemsCount > 0 ? (
-                    <span className="text-sm">{workItemsCount}</span>
+                    <span className="text-13">{workItemsCount}</span>
                   ) : (
                     t("customers.linked_work_items.link")
                   )}
                 </Button>
               </div>
             </div>
-            <div className="border-t border-custom-border-200 flex justify-between items-center p-3">
+            <div className="border-t border-subtle-1 flex justify-between items-center px-3 pt-3">
               <div>
                 {data?.id && (
                   <AddAttachmentButton
@@ -380,16 +374,16 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
               </div>
               <div className="flex gap-2">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   onClick={() => {
                     resetData();
                     handleClose();
                   }}
+                  size="lg"
                 >
                   {t("customers.create.cancel")}
                 </Button>
-                <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+                <Button onClick={() => handleSubmit(onSubmit)} disabled={isSubmitting} size="lg">
                   {isSubmitting
                     ? data?.id
                       ? t("customers.update.loading")

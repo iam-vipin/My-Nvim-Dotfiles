@@ -32,7 +32,7 @@ export const NoTemplatesEmptyState = observer(function NoTemplatesEmptyState(pro
             customButton={
               <CreateTemplatesButton
                 {...props}
-                buttonSize="md"
+                buttonSize="base"
                 buttonI18nLabel="templates.empty_state.no_templates.button"
                 variant="empty_state"
               />

@@ -19,7 +19,7 @@ import type {
   TUpgradeParams,
 } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Loader, getBillingAndPlansCardVariantStyle } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers
 import { SettingsHeading } from "@/components/settings/heading";
@@ -69,10 +69,6 @@ export const BillingRoot = observer(function BillingRoot() {
   // derived values
   const isSelfManaged = subscriptionDetail?.is_self_managed;
   const isOfflinePayment = !!subscriptionDetail?.is_offline_payment;
-  const planCardVariantStyle =
-    subscriptionDetail?.product && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE
-      ? getBillingAndPlansCardVariantStyle(subscriptionDetail?.product)
-      : null;
 
   /**
    * Initiates a free trial for a selected subscription plan
@@ -253,7 +249,7 @@ export const BillingRoot = observer(function BillingRoot() {
       />
       <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
         <div className="py-6">
-          <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg", planCardVariantStyle)}>
+          <div className="p-5 bg-layer-1 rounded-xl">
             {!subscriptionDetail && (
               <Loader className="flex w-full justify-between">
                 <Loader.Item height="30px" width="40%" />
@@ -289,7 +285,7 @@ export const BillingRoot = observer(function BillingRoot() {
             )}
           </div>
         </div>
-        <div className="text-xl font-semibold mt-3">All plans</div>
+        <div className="text-18 font-semibold mt-3">All plans</div>
       </div>
       <PlansComparison
         products={data}

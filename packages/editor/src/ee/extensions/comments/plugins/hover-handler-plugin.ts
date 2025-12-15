@@ -22,7 +22,7 @@ export const createHoverHandlerPlugin = () =>
               // Add hover effect to the corresponding sidebar comment item
               const sidebarCommentItem = document.querySelector(`[data-thread-id="${commentId}"]`);
               if (sidebarCommentItem) {
-                sidebarCommentItem.classList.add("bg-custom-background-90", "transition-all", "duration-200");
+                sidebarCommentItem.classList.add("bg-layer-1", "transition-all", "duration-200");
               }
               return true;
             }
@@ -45,7 +45,7 @@ export const createHoverHandlerPlugin = () =>
               // Remove hover effect from the corresponding sidebar comment item
               const sidebarCommentItem = document.querySelector(`[data-thread-id="${commentId}"]`);
               if (sidebarCommentItem) {
-                sidebarCommentItem.classList.remove("bg-custom-background-90", "transition-all", "duration-200");
+                sidebarCommentItem.classList.remove("bg-layer-1", "transition-all", "duration-200");
               }
               return true;
             }

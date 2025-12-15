@@ -38,8 +38,7 @@ export const AddScopeButton = observer(function AddScopeButton(props: Props) {
   const customButtonElement = customButton ? (
     <>{customButton}</>
   ) : (
-    <Button variant="neutral-primary" size="sm">
-      <PlusIcon className="size-4" />
+    <Button variant="secondary" size="lg" prependIcon={<PlusIcon />}>
       {t("initiatives.scope.add_scope")}
     </Button>
   );

@@ -27,7 +27,7 @@ export function OptionSelect({ property, options, isPreview = false, required = 
 
   return (
     <div className="w-full space-y-1">
-      <label htmlFor={fieldName} className="text-sm font-medium text-custom-text-300">
+      <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
         {property.display_name}
         {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
       </label>
@@ -90,21 +90,21 @@ export function OptionSelect({ property, options, isPreview = false, required = 
             >
               <Combobox.Button
                 disabled={isPreview}
-                className={cn("flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-base", {
-                  "border-custom-border-300 focus:ring-custom-primary-100": !error,
+                className={cn("flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-14", {
+                  "border-subtle-1 focus:ring-custom-primary-100": !error,
                   "border-red-500 focus:ring-red-500": error,
                   "cursor-not-allowed opacity-60": isPreview,
                 })}
               >
                 <span
                   className={cn("truncate", {
-                    "text-custom-text-400": !selectedOptions.length,
-                    "text-custom-text-200": selectedOptions.length,
+                    "text-placeholder": !selectedOptions.length,
+                    "text-secondary": selectedOptions.length,
                   })}
                 >
                   {buttonLabel}
                 </span>
-                <ChevronDownIcon className="h-3.5 w-3.5 text-custom-text-400" aria-hidden="true" />
+                <ChevronDownIcon className="h-3.5 w-3.5 text-placeholder" aria-hidden="true" />
               </Combobox.Button>
               <Combobox.Options
                 showSearch={showSearch}
@@ -116,20 +116,20 @@ export function OptionSelect({ property, options, isPreview = false, required = 
                   const isSelected = selectedOptionIds.includes(option.id);
                   return (
                     <Combobox.Option key={option.id} value={option.id} className="w-full flex items-center gap-2">
-                      {isSelected && <Check className="h-4 w-4 text-custom-text-200" aria-hidden="true" />}
+                      {isSelected && <Check className="h-4 w-4 text-secondary" aria-hidden="true" />}
                       <span className="truncate">{option.name}</span>
                     </Combobox.Option>
                   );
                 })}
                 {!selectableOptions.length && (
-                  <div className="px-2 py-1.5 text-sm text-custom-text-400">No options available</div>
+                  <div className="px-2 py-1.5 text-13 text-placeholder">No options available</div>
                 )}
               </Combobox.Options>
             </Combobox>
           );
         }}
       />
-      {error && <span className="text-xs text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-red-500">{error.message as string}</span>}
     </div>
   );
 }

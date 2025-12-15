@@ -10,7 +10,7 @@ import { ChevronUpIcon } from "@plane/propel/icons";
 
 type Props = {
   children: React.ReactNode;
-  icon?: React.ReactNode;
+  icon?: React.ReactElement;
   title?: string;
   placement?: Placement;
   disabled?: boolean;
@@ -54,8 +54,7 @@ export function FiltersDropdown(props: Props) {
                 <Button
                   disabled={disabled}
                   ref={setReferenceElement}
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   prependIcon={icon}
                   appendIcon={
                     <ChevronUpIcon
@@ -69,11 +68,11 @@ export function FiltersDropdown(props: Props) {
                   className="relative"
                 >
                   <>
-                    <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+                    <div className={`${open ? "text-primary" : "text-secondary"}`}>
                       <span>{title}</span>
                     </div>
                     {isFiltersApplied && (
-                      <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+                      <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-accent-primary rounded-full" />
                     )}
                   </>
                 </Button>
@@ -90,7 +89,7 @@ export function FiltersDropdown(props: Props) {
             >
               <Popover.Panel className="fixed z-10">
                 <div
-                  className="overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg my-1"
+                  className="overflow-hidden rounded-sm border border-subtle-1 bg-surface-1 shadow-custom-shadow-rg my-1"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}

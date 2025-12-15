@@ -61,7 +61,7 @@ export const EpicsHeader = observer(function EpicsHeader() {
                 <BreadcrumbLink
                   label="Epics"
                   href={`/${workspaceSlug}/projects/${projectId}/epics/`}
-                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<EpicIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -79,7 +79,7 @@ export const EpicsHeader = observer(function EpicsHeader() {
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <div className="hidden gap-3 md:flex">
+          <div className="hidden gap-3 md:flex items-center">
             <HeaderFilters
               storeType={EIssuesStoreType.EPIC}
               projectId={projectId?.toString()}
@@ -93,7 +93,6 @@ export const EpicsHeader = observer(function EpicsHeader() {
               onClick={() => {
                 setIsCreateIssueModalOpen(true);
               }}
-              size="sm"
             >
               <div className="hidden sm:block">New</div> Epic
             </Button>

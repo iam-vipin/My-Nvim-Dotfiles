@@ -65,7 +65,7 @@ export const TeamsOverviewSidebarActivity = observer(function TeamsOverviewSideb
     <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
       <div className="py-2 flex flex-col px-6">
         <div className="flex gap-2 items-center justify-between">
-          <span className="text-sm font-semibold">Activity</span>
+          <span className="text-body-xs-semibold">Activity</span>
           <span className="flex items-center gap-2">
             {teamActivitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
             <ActivitySortRoot
@@ -76,8 +76,6 @@ export const TeamsOverviewSidebarActivity = observer(function TeamsOverviewSideb
                 });
                 toggleTeamspaceActivitySortOrder();
               }}
-              className="py-1"
-              iconClassName="size-3"
             />
           </span>
         </div>

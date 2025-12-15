@@ -50,13 +50,13 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
       width={EModalWidth.XXXXL}
       className="p-5"
     >
-      <div className="flex items-center justify-between text-custom-text-400 sticky">
-        <span className="text-sm font-medium">Preview</span>
+      <div className="flex items-center justify-between text-placeholder sticky">
+        <span className="text-13 font-medium">Preview</span>
         <CloseIcon className="size-4 cursor-pointer" onClick={onClose} />
       </div>
       <div className="">
         <div className="max-w-xl mx-auto">
-          <div className="p-6 pt-4 shadow-md rounded-md border border-custom-border-100">
+          <div className="p-6 pt-4 shadow-md rounded-md border border-subtle">
             <IntakePublishForm
               projectName={currentProjectDetails.name || ""}
               projectLogo={currentProjectDetails.logo_props}

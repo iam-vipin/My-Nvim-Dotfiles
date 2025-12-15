@@ -29,15 +29,14 @@ export function AutomationDetailsSidebarActionButtons(props: TProps) {
   return (
     <div
       className={cn("space-y-2 px-4", {
-        "pt-4 border-t border-custom-border-200": borderPosition === "top",
-        "pb-4 border-b border-custom-border-200": borderPosition === "bottom",
+        "pt-4 border-t border-subtle-1": borderPosition === "top",
+        "pb-4 border-b border-subtle-1": borderPosition === "bottom",
       })}
     >
       <div className="flex items-center justify-end gap-3">
         {previousButton && (
           <Button
-            variant="neutral-primary"
-            size="sm"
+            variant="secondary"
             prependIcon={previousButton.renderIcon === false ? undefined : <ChevronLeftIcon className="size-5" />}
             disabled={previousButton.isDisabled}
             onClick={() => {
@@ -52,7 +51,6 @@ export function AutomationDetailsSidebarActionButtons(props: TProps) {
           <Button
             type={nextButton.type ?? "button"}
             variant="primary"
-            size="sm"
             appendIcon={nextButton.renderIcon === false ? undefined : <ChevronRightIcon className="size-5" />}
             disabled={nextButton.isDisabled}
             onClick={() => {

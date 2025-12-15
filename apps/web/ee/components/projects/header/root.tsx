@@ -41,9 +41,7 @@ export const ProjectsListHeader = observer(function ProjectsListHeader() {
           {/* bread crumps */}
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink label="Projects" icon={<ProjectIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              component={<BreadcrumbLink label="Projects" icon={<ProjectIcon className="h-4 w-4 text-tertiary" />} />}
             />
             {isArchived && <Breadcrumbs.Item component={<BreadcrumbLink label="Archived" />} />}
           </Breadcrumbs>

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -59,6 +58,7 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
             project_id: projectId,
           },
         });
+        return true;
       })
       .catch((error) => {
         setToast({
@@ -107,7 +107,7 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
     if (isSelfManagedUpgradeDisabled) {
       return (
         <DetailedEmptyState
-          className="!p-0 w-full"
+          className="p-0 w-full"
           title=""
           description=""
           assetPath={resolvedPath}
@@ -115,14 +115,14 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
             text: t("work_item_types.empty_state.get_pro.primary_button.text"),
             onClick: () => window.open("https://prime.plane.so/", "_blank"),
           }}
-          size="md"
+          size="base"
         />
       );
     }
 
     return (
       <DetailedEmptyState
-        className="!p-0 w-full"
+        className="p-0 w-full"
         title=""
         description=""
         assetPath={resolvedPath}
@@ -130,7 +130,7 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
           text: t("work_item_types.empty_state.upgrade.primary_button.text"),
           onClick: () => togglePaidPlanModal(true),
         }}
-        size="md"
+        size="base"
       />
     );
   };

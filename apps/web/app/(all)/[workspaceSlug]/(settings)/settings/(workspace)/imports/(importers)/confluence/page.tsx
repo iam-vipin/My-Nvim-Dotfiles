@@ -60,9 +60,9 @@ function ConfluenceImporter() {
 
   if (!isFeatureEnabled)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         <div className="flex flex-col items-center justify-center">
-          <div className="text-custom-text-200 text-2xl font-medium">Confluence Importer is not enabled</div>
+          <div className="text-secondary text-20 font-medium">Confluence Importer is not enabled</div>
         </div>
       </div>
     );
@@ -73,15 +73,13 @@ function ConfluenceImporter() {
 
   if (externalApiTokenError) {
     return (
-      <div className="text-custom-text-300 flex h-full justify-center items-center">
-        {externalApiTokenError?.message}
-      </div>
+      <div className="text-tertiary flex h-full justify-center items-center">{externalApiTokenError?.message}</div>
     );
   }
 
   if (!externalApiToken)
     return (
-      <div className="text-custom-text-200 flex h-full justify-center items-center">
+      <div className="text-secondary flex h-full justify-center items-center">
         Not able to access the external api token. Please try again later.
       </div>
     );

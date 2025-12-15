@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -37,15 +36,13 @@ export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader
           {/* bread crumps */}
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink label="Teamspaces" icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              component={<BreadcrumbLink label="Teamspaces" icon={<TeamsIcon className="h-4 w-4 text-tertiary" />} />}
             />
           </Breadcrumbs>
           {/* Only workspace admins can see and join teamspaces created by other admins. */}
           {/* {hasAdminLevelPermissions && <TeamspaceScopeDropdown />} */}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {/* search */}
           <TeamspacesListSearch />
           {/* filters dropdown */}
@@ -55,7 +52,6 @@ export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader
           {/* create teamspace button */}
           {hasAdminLevelPermissions && (
             <Button
-              size="sm"
               onClick={() => {
                 captureClick({
                   elementName: TEAMSPACE_TRACKER_ELEMENTS.LIST_HEADER_ADD_BUTTON,
@@ -63,9 +59,9 @@ export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader
                 toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
               }}
               className="items-center gap-1"
+              size="lg"
             >
-              <Plus className="h-3 w-3 sm:mr-1" aria-hidden="true" />
-              <span className="hidden sm:inline-block">New</span> Teamspace
+              <span className="hidden sm:inline-block">Add</span> Teamspace
             </Button>
           )}
         </div>

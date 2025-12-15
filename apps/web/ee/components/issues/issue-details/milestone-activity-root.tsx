@@ -19,7 +19,7 @@ export function MilestoneActivity(props: TMilestoneActivityProps) {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<MilestoneIcon className="h-3 w-3 flex-shrink-0 text-custom-text-300" />}
+      icon={<MilestoneIcon className="size-3 shrink-0 text-tertiary" />}
       activityId={activityId}
       ends={ends}
     >
@@ -31,7 +31,7 @@ export function MilestoneActivity(props: TMilestoneActivityProps) {
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/overview`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -44,7 +44,7 @@ export function MilestoneActivity(props: TMilestoneActivityProps) {
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/overview`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate"> {activity.new_value}</span>
             </a>
@@ -53,7 +53,7 @@ export function MilestoneActivity(props: TMilestoneActivityProps) {
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/overview`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate"> {activity.old_value}</span>
             </a>
@@ -66,7 +66,7 @@ export function MilestoneActivity(props: TMilestoneActivityProps) {
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/overview`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate"> {activity.old_value}</span>
             </a>

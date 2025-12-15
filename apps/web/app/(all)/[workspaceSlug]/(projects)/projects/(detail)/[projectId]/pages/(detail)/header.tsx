@@ -93,7 +93,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                 <BreadcrumbLink
                   label="Pages"
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
-                  icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -102,7 +102,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                 {isParentPagesLoading ? (
                   <div className="flex items-center">
                     <div className="flex items-center animate-pulse">
-                      <div className="h-4 w-24 bg-custom-background-80 rounded" />
+                      <div className="h-4 w-24 bg-layer-1 rounded" />
                     </div>
                   </div>
                 ) : (

@@ -115,10 +115,10 @@ export const TemplateCoverImageUpload = observer(function TemplateCoverImageUplo
     <div className="flex flex-col gap-4">
       <div
         className={cn(
-          "group border border-dashed border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80/70 rounded-lg relative w-full",
+          "group border border-dashed border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-lg relative w-full",
           coverImage ? "h-40" : "h-20",
           {
-            "border-red-500": hasError,
+            "border-danger-subtle": hasError,
           }
         )}
         {...getRootProps()}
@@ -132,8 +132,7 @@ export const TemplateCoverImageUpload = observer(function TemplateCoverImageUplo
             />
             <div className="absolute bottom-2 right-2">
               <Button
-                variant="neutral-primary"
-                size="sm"
+                variant="secondary"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleImageRemove();
@@ -146,8 +145,8 @@ export const TemplateCoverImageUpload = observer(function TemplateCoverImageUplo
           </>
         ) : (
           <div className="absolute left-0 top-0 h-full w-full flex items-center justify-center gap-1.5 p-4">
-            <ImageUp className="size-5 text-custom-text-400" />
-            <p className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-200">
+            <ImageUp className="size-5 text-placeholder" />
+            <p className="text-body-xs-medium text-tertiary group-hover:text-secondary">
               {t("templates.settings.form.publish.cover_image.upload_placeholder")}
             </p>
           </div>
@@ -170,16 +169,15 @@ export const TemplateCoverImageUpload = observer(function TemplateCoverImageUplo
           </Transition.Child>
           <div className="fixed inset-0 z-30 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center px-4 text-center">
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-4 py-4 text-left shadow-custom-shadow-md transition-all sm:max-w-xl">
-                <Dialog.Title as="h3" className="text-lg font-medium text-custom-text-100">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-4 py-4 text-left shadow-custom-shadow-md transition-all sm:max-w-xl">
+                <Dialog.Title as="h3" className="text-h6-medium text-primary">
                   {t("templates.settings.form.publish.cover_image.upload_title")}
                 </Dialog.Title>
                 <div className="mt-4">
                   <div
                     className={cn("group relative w-full min-w-80 flex items-center cursor-pointer p-2", {
-                      "border border-dashed border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80/70 rounded-lg":
-                        !newImage,
-                      "border-red-500": hasError,
+                      "border border-dashed border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-lg": !newImage,
+                      "border-danger-subtle": hasError,
                     })}
                   >
                     {newImage ? (
@@ -190,16 +188,16 @@ export const TemplateCoverImageUpload = observer(function TemplateCoverImageUplo
                           className="h-full w-full object-cover rounded-lg"
                         />
                         <button
-                          className="absolute -top-1.5 -right-1.5 border-[0.5px] border-custom-border-200 bg-custom-background-90 opacity-80 hover:opacity-100 transition-opacity duration-200 rounded-full p-[1px] shadow-sm"
+                          className="absolute -top-1.5 -right-1.5 border border-subtle bg-layer-1 opacity-80 hover:opacity-100 transition-opacity duration-200 rounded-full p-[1px] shadow-sm"
                           onClick={() => setNewImage(null)}
                         >
-                          <CloseIcon className="flex-shrink-0 size-3 text-custom-text-100" />
+                          <CloseIcon className="flex-shrink-0 size-3 text-primary" />
                         </button>
                       </div>
                     ) : (
                       <div className="flex w-full items-center justify-center gap-2 text-center" {...getRootProps()}>
-                        <Upload className="size-5 text-custom-text-400" />
-                        <p className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-200">
+                        <Upload className="size-5 text-placeholder" />
+                        <p className="text-body-xs-medium text-tertiary group-hover:text-secondary">
                           {isDragActive
                             ? t("templates.settings.form.publish.cover_image.drop_here")
                             : t("templates.settings.form.publish.cover_image.click_to_upload")}
@@ -208,7 +206,7 @@ export const TemplateCoverImageUpload = observer(function TemplateCoverImageUplo
                     )}
                   </div>
                   {fileRejections.length > 0 && (
-                    <p className="text-red-500 text-sm mt-2">
+                    <p className="text-danger text-body-xs-regular mt-2">
                       {t("templates.settings.form.publish.cover_image.invalid_file_or_exceeds_size_limit", {
                         size: maxFileSize,
                       })}
@@ -217,16 +215,10 @@ export const TemplateCoverImageUpload = observer(function TemplateCoverImageUplo
                 </div>
                 <div className="mt-6 flex justify-end">
                   <div className="flex gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={handleSubmit}
-                      disabled={!newImage}
-                      loading={isUploading}
-                    >
+                    <Button variant="primary" onClick={handleSubmit} disabled={!newImage} loading={isUploading}>
                       {isUploading
                         ? t("templates.settings.form.publish.cover_image.uploading")
                         : t("templates.settings.form.publish.cover_image.upload_and_save")}

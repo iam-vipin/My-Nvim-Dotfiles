@@ -31,9 +31,9 @@ export const useScrollManager = <T = string>(containerRef: React.RefObject<HTMLE
 
       // Add highlight effect if requested
       if (highlight) {
-        targetElement.classList.add("bg-custom-background-90", "transition-all", "duration-300");
+        targetElement.classList.add("bg-layer-1", "transition-all", "duration-300");
         setTimeout(() => {
-          targetElement.classList.remove("bg-custom-background-90", "transition-all", "duration-300");
+          targetElement.classList.remove("bg-layer-1", "transition-all", "duration-300");
         }, 2000);
       }
 

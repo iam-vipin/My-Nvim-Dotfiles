@@ -31,7 +31,7 @@ export function TruncatedUrl({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "inline-flex items-center decoration-[0.5px] underline underline-offset-2 text-custom-text-500",
+        "inline-flex items-center decoration-[0.5px] underline underline-offset-2 text-tertiary",
         className
       )}
       onClick={(e) => {
@@ -39,9 +39,9 @@ export function TruncatedUrl({
         onClick?.(e);
       }}
     >
-      <span className="text-sm">{displayDomain}</span>
+      <span className="text-body-xs-regular">{displayDomain}</span>
       {fullURL.pathname && fullURL.pathname.length > 0 && (
-        <span className="text-sm">
+        <span className="text-body-xs-regular">
           {truncatedDisplayUrl}
           {shouldTruncate && "..."}
         </span>

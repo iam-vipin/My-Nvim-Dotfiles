@@ -1,9 +1,6 @@
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
-// helpers
-import { cn } from "@plane/utils";
 // plane web components
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
 // plane web hooks
@@ -19,10 +16,10 @@ export const SelfHostedFreePlanCard = observer(function SelfHostedFreePlanCard()
       planVariant={EProductSubscriptionEnum.FREE}
       planDescription={
         <>
-          <div className="text-sm font-medium text-custom-text-200">
+          <div className="text-body-xs-medium text-secondary">
             Your Plane license can only be used to unlock features for one workspace.
           </div>
-          <div className="text-sm font-medium text-custom-text-300">
+          <div className="text-body-xs-medium text-tertiary">
             Billable seats when you upgrade: {subscriptionDetail?.billable_members}
           </div>
           <SelfManagedLicenseActions showDeactivateButton={false} />
@@ -30,12 +27,7 @@ export const SelfHostedFreePlanCard = observer(function SelfHostedFreePlanCard()
       }
       button={
         <>
-          <Button
-            variant="primary"
-            size="md"
-            className={cn("cursor-pointer outline-none text-xs px-4 py-1.5 rounded-lg focus:outline-none")}
-            onClick={() => toggleLicenseActivationModal(true)}
-          >
+          <Button variant="primary" size="lg" onClick={() => toggleLicenseActivationModal(true)}>
             Activate this workspace
           </Button>
         </>

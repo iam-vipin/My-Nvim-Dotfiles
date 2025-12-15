@@ -189,7 +189,7 @@ export const ConfigureFlatfileChild = observer(function ConfigureFlatfileChild()
       </div>
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={openPortal}>
+          <Button variant="primary" onClick={openPortal}>
             {isSubmitting ? "Submitting..." : "Upload CSV"}
           </Button>
         </StepperNavigation>

@@ -178,7 +178,7 @@ export const RecurringWorkItemFormRoot = observer(function RecurringWorkItemForm
       />
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} ref={ref}>
-          <div className="border-t border-custom-border-100 size-full">
+          <div className="border-t border-subtle size-full">
             <div className="w-full max-w-4xl py-page-y">
               {/* Work Item Properties Section */}
               <div className="space-y-2">
@@ -209,8 +209,8 @@ export const RecurringWorkItemFormRoot = observer(function RecurringWorkItemForm
                 />
               </div>
               {/* Recurring Interval */}
-              <div className="flex flex-col gap-3 py-6 border-t border-custom-border-100">
-                <div className="text-sm font-medium text-custom-text-400">
+              <div className="flex flex-col gap-3 py-6 border-t border-subtle">
+                <div className="text-body-xs-medium text-tertiary">
                   {t("recurring_work_items.settings.form.interval.title")}
                 </div>
                 <div className="flex items-center gap-2">
@@ -276,17 +276,16 @@ export const RecurringWorkItemFormRoot = observer(function RecurringWorkItemForm
                 </div>
               </div>
               {/* Form Actions */}
-              <div className="flex items-center justify-end gap-2 pt-6 border-t border-custom-border-200">
+              <div className="flex items-center justify-end gap-2 pt-6 border-t border-subtle">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                   disabled={isSubmitting}
                 >
                   {t("common.cancel")}
                 </Button>
-                <Button variant="primary" type="submit" size="sm" className={cn("shadow-sm")} loading={isSubmitting}>
+                <Button variant="primary" type="submit" className={cn("shadow-sm")} loading={isSubmitting}>
                   {isSubmitting
                     ? t("common.confirming")
                     : operation === ERecurringWorkItemFormOperation.CREATE

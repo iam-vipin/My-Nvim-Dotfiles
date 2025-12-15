@@ -56,7 +56,7 @@ export function EditForm(props: Props) {
   return (
     <form onSubmit={handleEditFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-base font-semibold text-custom-text-300">Rename chat</h3>
+        <h3 className="text-14 font-semibold text-tertiary">Rename chat</h3>
         <div className="flex items-start gap-2 h-9 w-full">
           <div className="space-y-1 flew-grow w-full">
             <Input
@@ -65,24 +65,23 @@ export function EditForm(props: Props) {
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               placeholder="Title"
-              className="w-full resize-none text-base font-medium text-custom-text-200"
+              className="w-full resize-none text-14 font-medium text-secondary"
               tabIndex={getIndex("title")}
               required
               autoFocus
             />
             {isTitleLengthMoreThan255Character && (
-              <span className="text-xs text-red-500">Max length of the name should be less than 255 characters</span>
+              <span className="text-11 text-red-500">Max length of the name should be less than 255 characters</span>
             )}
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+        <Button variant="secondary" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
           Cancel
         </Button>
         <Button
           variant="primary"
-          size="sm"
           type="submit"
           loading={isSubmitting}
           disabled={isTitleLengthMoreThan255Character}

@@ -45,10 +45,7 @@ export const ProjectStateGroupListItem = observer(function ProjectStateGroupList
   const dropElementRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div
-      className="space-y-1 border border-custom-border-200 rounded bg-custom-background-90 transition-all p-2"
-      ref={dropElementRef}
-    >
+    <div className="space-y-1 border border-subtle-1 rounded-sm bg-layer-1 transition-all p-2" ref={dropElementRef}>
       <div className="flex justify-between items-center gap-2">
         <div
           className="w-full flex items-center cursor-pointer py-1"
@@ -56,7 +53,7 @@ export const ProjectStateGroupListItem = observer(function ProjectStateGroupList
         >
           <div
             className={cn(
-              "flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-all",
+              "flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-all",
               {
                 "rotate-0": currentStateExpanded,
                 "-rotate-90": !currentStateExpanded,
@@ -65,13 +62,13 @@ export const ProjectStateGroupListItem = observer(function ProjectStateGroupList
           >
             <ChevronDownIcon className="w-4 h-4" />
           </div>
-          <div className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden">
+          <div className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden">
             <ProjectStateIcon projectStateGroup={groupKey} width="14" height="14" />
           </div>
-          <div className="text-base font-medium text-custom-text-200 capitalize px-1">{groupKey}</div>
+          <div className="text-14 font-medium text-secondary capitalize px-1">{groupKey}</div>
         </div>
         <div
-          className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100"
+          className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-accent-primary/80 hover:text-accent-primary"
           onClick={() => !createState && setCreateState(true)}
           data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
         >
@@ -92,7 +89,7 @@ export const ProjectStateGroupListItem = observer(function ProjectStateGroupList
       )}
 
       {createState && (
-        <div className="p-3.5 bg-custom-background-100 rounded">
+        <div className="p-3.5 bg-surface-1 rounded">
           <ProjectStateCreate
             workspaceSlug={workspaceSlug}
             groupKey={groupKey}

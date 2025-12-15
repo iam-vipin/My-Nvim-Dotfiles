@@ -110,7 +110,7 @@ export function CycleForm(props: Props) {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {status ? t("project_cycles.update_cycle") : t("project_cycles.create_cycle")}
           </h3>
         </div>
@@ -131,7 +131,7 @@ export function CycleForm(props: Props) {
                   name="name"
                   type="text"
                   placeholder={t("title")}
-                  className="w-full text-base"
+                  className="w-full text-14"
                   value={value}
                   inputSize="md"
                   onChange={(e) => {
@@ -144,7 +144,7 @@ export function CycleForm(props: Props) {
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -154,7 +154,7 @@ export function CycleForm(props: Props) {
                 <TextArea
                   name="description"
                   placeholder={t("description")}
-                  className="w-full text-base resize-none min-h-24"
+                  className="w-full text-14 resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={(e) => {
@@ -205,11 +205,11 @@ export function CycleForm(props: Props) {
         </div>
       </div>
       {showActionButtons && (
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
             {data
               ? isSubmitting
                 ? t("common.updating")

@@ -34,7 +34,7 @@ export function ProjectCreateLoader() {
         <Spinner className="size-5 animate-spin" />
         <div className="relative min-w-[200px] flex items-center">
           <p
-            className={`text-lg font-medium text-custom-text-300 transition-all duration-500 ease-in-out ${
+            className={`text-16 font-medium text-tertiary transition-all duration-500 ease-in-out ${
               isTransitioning ? "opacity-0 -translate-x-4" : "opacity-100 translate-x-0"
             }`}
           >

@@ -60,10 +60,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <div id="editor-portal" />
         <AppProvider>
           <div
-            className={cn(
-              "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",
-              "desktop-app-container"
-            )}
+            className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}
           >
             {/* free trial banner */}
             <TrialBanner />

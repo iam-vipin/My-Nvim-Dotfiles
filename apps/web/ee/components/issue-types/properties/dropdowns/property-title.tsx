@@ -31,14 +31,14 @@ export const PropertyTitleDescriptionInput = observer(function PropertyTitleDesc
         placeholder={t("work_item_types.settings.properties.create_update.form.display_name.placeholder")}
         value={propertyDetail.display_name}
         onChange={(e) => onPropertyDetailChange("display_name", e.target.value)}
-        className={cn("w-full resize-none text-lg font-medium bg-custom-background-100 rounded")}
+        className={cn("w-full resize-none text-body-md-medium bg-surface-1 rounded")}
         tabIndex={1}
         hasError={Boolean(error)}
         inputSize="xs"
         required
         autoFocus
       />
-      {Boolean(error) && <span className="text-xs text-red-500">{error}</span>}
+      {Boolean(error) && <span className="text-caption-xs-medium text-danger">{error}</span>}
       <TextArea
         id="description"
         mode="true-transparent"
@@ -46,7 +46,7 @@ export const PropertyTitleDescriptionInput = observer(function PropertyTitleDesc
         value={propertyDetail.description}
         onChange={(e) => onPropertyDetailChange("description", e.target.value)}
         className={cn(
-          "w-full sm:min-h-20 max-h-48 overflow-auto horizontal-scrollbar scrollbar-xs resize-none text-sm bg-custom-background-100"
+          "w-full sm:min-h-20 max-h-48 overflow-auto horizontal-scrollbar scrollbar-xs resize-none text-body-xs-regular bg-surface-1"
         )}
         textAreaSize="xs"
         tabIndex={2}

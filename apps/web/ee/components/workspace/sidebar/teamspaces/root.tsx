@@ -53,13 +53,13 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
   return (
     <>
       <Disclosure as="div" defaultOpen>
-        <div className="group flex px-2 mb-0.5 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded">
+        <div className="group flex px-2 mb-0.5 bg-surface-1 group/workspace-button hover:bg-surface-2 rounded">
           <Disclosure.Button
             as="button"
-            className="flex-1 sticky top-0 w-full flex items-center gap-1 text-custom-sidebar-text-400 text-xs font-semibold outline-none justify-between"
+            className="flex-1 sticky top-0 w-full flex items-center gap-1 text-tertiary text-caption-sm-semibold outline-none justify-between"
             onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
           >
-            <span className="text-sm font-semibold">{t("teamspaces.label")}</span>{" "}
+            <span className="text-body-xs-semibold">{t("teamspaces.label")}</span>{" "}
           </Disclosure.Button>
           <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
             {isAdmin && (
@@ -67,7 +67,7 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
                 <button
                   type="button"
                   data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.APP_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 text-custom-text-300 flex-shrink-0 outline-none"
+                  className="p-0.5 rounded-sm hover:bg-layer-1 text-tertiary flex-shrink-0 outline-none"
                   onClick={() => {
                     toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
                   }}
@@ -78,12 +78,12 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
             )}
             <Disclosure.Button
               as="button"
-              className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
+              className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-tertiary hover:bg-surface-2 rounded-sm text-caption-sm-semibold"
               onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
             >
-              <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
+              <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded-sm hover:bg-layer-1">
                 <ChevronRightIcon
-                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                  className={cn("size-4 flex-shrink-0 text-tertiary transition-transform", {
                     "rotate-90": isTeamspaceListItemOpen,
                   })}
                 />

@@ -59,7 +59,7 @@ export function CustomAttachmentBlock(props: Props) {
     <div
       key={node.attrs.id}
       id={getAttachmentBlockId(node.attrs.id ?? "")}
-      className="py-3 px-2 rounded-lg bg-custom-background-90 hover:bg-custom-background-80 border border-custom-border-300 flex items-start gap-2 transition-colors"
+      className="py-3 px-2 rounded-lg bg-layer-2 hover:bg-layer-2-hover border border-subtle-1 flex items-start gap-2 transition-colors"
       contentEditable={false}
     >
       <a
@@ -72,11 +72,11 @@ export function CustomAttachmentBlock(props: Props) {
         }}
       >
         <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
-          <File className="flex-shrink-0 size-8 text-custom-text-300" />
+          <File className="flex-shrink-0 size-8 text-tertiary" />
         </div>
         <div className="truncate">
-          <p className="not-prose text-sm truncate">{node.attrs[EAttachmentBlockAttributeNames.FILE_NAME]}</p>
-          <p className="not-prose text-xs text-custom-text-300">
+          <p className="not-prose text-13 truncate">{node.attrs[EAttachmentBlockAttributeNames.FILE_NAME]}</p>
+          <p className="not-prose text-11 text-tertiary">
             {convertBytesToSize(Number(node.attrs[EAttachmentBlockAttributeNames.FILE_SIZE] || 0))}
           </p>
         </div>
@@ -84,7 +84,7 @@ export function CustomAttachmentBlock(props: Props) {
       <a
         href={resolvedDownloadSource}
         download={node.attrs[EAttachmentBlockAttributeNames.FILE_NAME]}
-        className="flex-shrink-0 mt-1 p-1.5 rounded hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 transition-colors"
+        className="flex-shrink-0 mt-1 p-1.5 rounded hover:bg-layer-2-hover text-tertiary hover:text-secondary transition-colors"
         title="Download"
         onMouseDown={(e) => e.stopPropagation()}
       >

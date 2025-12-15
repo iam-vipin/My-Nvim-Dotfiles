@@ -22,7 +22,7 @@ export const StatePill = observer(function StatePill(props: Props) {
 
   return (
     <DropdownButton
-      className="h-4 w-fit pointer-events-none bg-custom-background-100"
+      className="h-4 w-fit pointer-events-none bg-surface-1"
       tooltipContent={state?.name ?? t("common.state")}
       variant={"border-with-text"}
       isActive={false}
@@ -34,9 +34,7 @@ export const StatePill = observer(function StatePill(props: Props) {
         color={state?.color ?? "rgba(var(--color-text-300))"}
         className="size-2 flex-shrink-0"
       />
-      <span className="flex-grow truncate text-left text-xs text-custom-text-200">
-        {state?.name ?? t("common.state")}
-      </span>
+      <span className="flex-grow truncate text-left text-11 text-secondary">{state?.name ?? t("common.state")}</span>
     </DropdownButton>
   );
 });

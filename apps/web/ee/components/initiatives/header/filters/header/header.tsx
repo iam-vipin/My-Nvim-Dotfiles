@@ -99,7 +99,7 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
                 title={initiativesDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <InitiativeIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                    <InitiativeIcon className="size-4 flex-shrink-0 text-tertiary" />
                   </Breadcrumbs.Icon>
                 }
                 isLast
@@ -121,12 +121,12 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
           <div ref={parentRef} className="flex items-center gap-2">
             <button
               type="button"
-              className="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+              className="p-1 rounded-sm outline-none hover:bg-layer-1-hover bg-layer-1-hover/70"
               onClick={() => toggleInitiativesSidebar()}
             >
               <PanelRight
                 className={cn("size-4 cursor-pointer", {
-                  "text-custom-primary-100": !initiativesSidebarCollapsed,
+                  "text-accent-primary": !initiativesSidebarCollapsed,
                 })}
               />
             </button>
@@ -134,7 +134,7 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
               workspaceSlug={workspaceSlug.toString()}
               parentRef={parentRef}
               initiative={initiativesDetails}
-              customClassName="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+              customClassName="p-1 rounded-sm outline-none hover:bg-layer-1-hover bg-layer-1-hover/70"
             />
           </div>
         )}

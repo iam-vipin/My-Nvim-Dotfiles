@@ -24,9 +24,9 @@ export function Stepper<T>(props: TStepper<T>) {
           logo,
         }}
       />
-      <div className="border border-custom-border-100 rounded-lg flex divide-x divide-custom-border-100 overflow-hidden h-full">
+      <div className="border border-subtle rounded-lg flex divide-x divide-subtle overflow-hidden h-full">
         {/* stepper header */}
-        <div className="relative flex gap-2 md:w-1/4 p-2 md:p-6 flex-shrink-0 h-fit">
+        <div className="relative flex gap-2 md:w-1/4 p-2 md:p-6 shrink-0 h-fit">
           <div className="w-full relative flex items-center gap-6">
             <div className="w-full h-full relative overflow-hidden flex flex-col justify-between">
               {steps.map((step, index) => (
@@ -35,26 +35,26 @@ export function Stepper<T>(props: TStepper<T>) {
                     {/* indicator */}
                     <div
                       className={cn(
-                        "relative flex-shrink-0 w-5 h-5  flex justify-center items-center bg-transparent text-custom-text-200 rounded-full transition-all",
+                        "relative shrink-0 w-5 h-5  flex justify-center items-center bg-transparent text-secondary rounded-full transition-all",
                         {
-                          "bg-custom-primary-90/10  text-white": index === currentStepIndex,
+                          "bg-custom-primary-90/10  text-on-color": index === currentStepIndex,
                         }
                       )}
                     >
                       <div
-                        className={cn("text-sm font-medium w-2 h-2 rounded-full bg-custom-border-200", {
-                          "bg-custom-primary-100": index <= currentStepIndex,
+                        className={cn("text-13 font-medium w-2 h-2 rounded-full bg-layer-1", {
+                          "bg-accent-primary": index <= currentStepIndex,
                         })}
                       />
                     </div>
                     {/* title */}
-                    <div className="text-sm font-medium ml-4 hidden md:flex">{t(step?.i18n_title)}</div>
+                    <div className="text-13 font-medium ml-4 hidden md:flex">{t(step?.i18n_title)}</div>
                   </div>
                   {/* right bar */}
                   {step?.nextStep && index < steps.length - 1 && (
                     <div
-                      className={cn(" ml-[10px] h-[40px] w-[1px] bg-custom-border-100 transition-all", {
-                        "bg-custom-primary-100": index < currentStepIndex,
+                      className={cn(" ml-[10px] h-[40px] w-[1px] bg-layer-2 transition-all", {
+                        "bg-accent-primary": index < currentStepIndex,
                       })}
                     />
                   )}
@@ -66,9 +66,9 @@ export function Stepper<T>(props: TStepper<T>) {
         {/* content */}
         <div className="md:w-3/4 h-full flex flex-col overflow-auto">
           {/* title and description */}
-          <div className="flex-shrink-0 space-y-1 p-6">
+          <div className="shrink-0 space-y-1 p-6">
             <div className="font-medium">{t(currentStepDetails?.i18n_title)}</div>
-            <div className="text-custom-text-200 text-base">{t(currentStepDetails?.i18n_description)}</div>
+            <div className="text-secondary text-14">{t(currentStepDetails?.i18n_description)}</div>
           </div>
           {/* component */}
           {currentStepDetails?.component && (
@@ -89,10 +89,9 @@ export function StepperNavigation<T>(props: TStepperNavigation<T>) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex-shrink-0 relative flex items-center gap-2 w-full py-4 justify-between border-t border-custom-border-100">
+    <div className="shrink-0 relative flex items-center gap-2 w-full py-4 justify-between border-t border-subtle">
       <Button
-        variant="neutral-primary"
-        size="sm"
+        variant="secondary"
         onClick={() => handleStep("previous")}
         disabled={currentStep?.prevStep === undefined}
         data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_CONFIRGURE_BACK_BUTTON}
@@ -103,8 +102,7 @@ export function StepperNavigation<T>(props: TStepperNavigation<T>) {
         children
       ) : (
         <Button
-          variant="neutral-primary"
-          size="sm"
+          variant="secondary"
           onClick={() => handleStep("next")}
           disabled={currentStep?.nextStep === undefined}
           data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_CONFIRGURE_NEXT_BUTTON}

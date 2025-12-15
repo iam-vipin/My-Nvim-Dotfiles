@@ -25,22 +25,29 @@ export function BlockMathContainer({
 }: TBlockMathContainerProps) {
   const baseClasses = "rounded-lg  px-4 my-2 min-h-[48px] transition-all duration-300 ease-in-out";
 
+  const borderColor =
+    selected && editor?.isEditable && variant === "empty"
+      ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)"
+      : undefined;
+
   const variantClasses = {
     empty: cn(
-      "flex items-center justify-start gap-2 py-3 text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 cursor-default",
+      "flex items-center justify-start gap-2 py-3 text-tertiary bg-layer-2 border border-dashed transition-all duration-200 ease-in-out cursor-default",
       {
-        "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": isEditable,
-        "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
+        "border-subtle-1": !(selected && editor?.isEditable),
+        "hover:text-secondary hover:bg-layer-2-hover cursor-pointer": isEditable,
+        "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
           selected && isEditable,
       }
     ),
-    error: `flex bg-custom-background-90 py-3 text-custom-text-100 ${isEditable ? "hover:bg-custom-background-80 hover:shadow-md cursor-pointer" : "cursor-default"}`,
-    content: `text-center bg-custom-background-90 text-custom-text-100 overflow-hidden ${isEditable ? "cursor-pointer hover:bg-custom-background-80 hover:shadow-md" : "cursor-default"}`,
+    error: `flex bg-layer-2 py-3 text-primary ${isEditable ? "hover:bg-layer-2-hover hover:shadow-md cursor-pointer" : "cursor-default"}`,
+    content: `text-center bg-layer-2 text-primary overflow-hidden ${isEditable ? "cursor-pointer hover:bg-layer-2-hover hover:shadow-md" : "cursor-default"}`,
   };
 
   return (
     <div
       className={cn(baseClasses, variantClasses[variant], className)}
+      style={borderColor ? { borderColor } : undefined}
       onMouseDown={onClick}
       {...(isEditable && { role: "button" })}
     >

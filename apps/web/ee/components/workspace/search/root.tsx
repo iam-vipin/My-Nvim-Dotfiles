@@ -42,24 +42,20 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
               if (e.target.value) setIsSearching(true);
             }}
             className={cn(
-              "shadow-sm px-10 w-full rounded-lg border-custom-border-200 bg-custom-background-100 ring-0 transition-all duration-200 focus:ring-2 focus:ring-custom-primary/30 focus:border-custom-primary placeholder:text-custom-text-400 h-10"
+              "shadow-sm px-10 w-full rounded-lg border-subtle-1 bg-surface-1 ring-0 transition-all duration-200 focus:ring-2 focus:ring-custom-primary/30 focus:border-accent-strong placeholder:text-placeholder h-10"
             )}
             placeholder="Search everything in your workspace"
             autoFocus
           />
           <div className="absolute left-2.5">
             <Search
-              className={cn(
-                "transition-colors duration-200",
-                "text-custom-text-400 group-hover:text-custom-text-300",
-                "w-4 h-4"
-              )}
+              className={cn("transition-colors duration-200", "text-placeholder group-hover:text-tertiary", "w-4 h-4")}
             />
           </div>
           {searchQuery && (
             <div className="absolute right-2.5">
               <CloseIcon
-                className="w-4 h-4 text-custom-text-400 hover:text-custom-text-100 cursor-pointer transition-colors duration-200"
+                className="w-4 h-4 text-placeholder hover:text-primary cursor-pointer transition-colors duration-200"
                 onClick={() => {
                   setSearchQuery("");
                   setFlattenedSearchResults([]);

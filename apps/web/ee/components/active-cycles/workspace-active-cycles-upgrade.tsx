@@ -66,14 +66,13 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-            userProfile?.theme.theme === "light",
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": userProfile?.theme.theme === "light",
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">
           <div className="flex max-w-64 flex-col gap-2">
-            <h2 className="text-2xl font-semibold">On-demand snapshots of all your cycles</h2>
-            <p className="text-base font-medium text-custom-text-300">
+            <h2 className="text-20 font-semibold">On-demand snapshots of all your cycles</h2>
+            <p className="text-14 font-medium text-tertiary">
               Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.
             </p>
           </div>
@@ -114,12 +113,12 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
       </div>
       <div className="grid h-full grid-cols-1 gap-5 pb-8 lg:grid-cols-2 xl:grid-cols-3">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
-          <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-custom-background-80 p-4">
+          <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-layer-1 p-4">
             <div className="flex items-center gap-2">
               <h3 className="font-medium">{item.title}</h3>
               <item.icon className="h-4 w-4 text-blue-500" />
             </div>
-            <span className="text-sm text-custom-text-300">{item.description}</span>
+            <span className="text-13 text-tertiary">{item.description}</span>
           </div>
         ))}
       </div>

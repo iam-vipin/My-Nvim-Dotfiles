@@ -61,7 +61,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           <div className="flex items-center gap-2">
             <span>{t("customers.requests.label", { count: 2 })}</span>
             {requestCount > 0 ? (
-              <span className="rounded-full text-xs bg-custom-background-90 h-5 w-5 flex items-center justify-center">
+              <span className="rounded-full text-11 bg-layer-1 h-5 w-5 flex items-center justify-center">
                 {requestCount}
               </span>
             ) : null}
@@ -75,7 +75,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           <div className="flex items-center gap-2">
             <span>{t("customers.linked_work_items.label")}</span>
             {workItemCount > 0 ? (
-              <span className="rounded-full text-xs bg-custom-background-90 h-5 w-5 flex items-center justify-center">
+              <span className="rounded-full text-11 bg-layer-1 h-5 w-5 flex items-center justify-center">
                 {workItemCount}
               </span>
             ) : null}
@@ -167,7 +167,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           />
           {customer.website_url && (
             <Link
-              className="text-sm text-custom-text-300 cursor-pointer hover:underline flex gap-1 items-center w-fit"
+              className="text-13 text-tertiary cursor-pointer hover:underline flex gap-1 items-center w-fit"
               data-prevent-progress
               href={customer.website_url}
               onClick={(e) => {
@@ -176,14 +176,14 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
               target="_blank"
               rel="noopener noreferrer"
             >
-              <ExternalLink className="text-custom-text-300 size-3" />
+              <ExternalLink className="text-tertiary size-3" />
               {formatURLForDisplay(customer.website_url)}
             </Link>
           )}
         </div>
       </div>
       {/* Description Editor */}
-      <div className="border-custom-border-200 border-b-[0.5px] pb-3">
+      <div className="border-subtle-1 border-b-[0.5px] pb-3">
         <DescriptionInput
           containerClassName="border-none min-h-[88px]"
           disabled={!isEditable}

@@ -41,7 +41,7 @@ export const TeamspaceProjectDetailHeaderActions = observer(function TeamspacePr
           onClick={() => {
             toggleCreateIssueModal(true, EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, [projectId]);
           }}
-          size="sm"
+          size="lg"
         >
           <div className="hidden sm:block">Add</div> work item
         </Button>

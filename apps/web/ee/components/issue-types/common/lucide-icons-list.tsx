@@ -6,6 +6,7 @@ import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
 import type { TLogoProps } from "@plane/types";
 import { ColorPicker, Input } from "@plane/ui";
 import { generateIconColors } from "@plane/utils";
+import { cn } from "@plane/propel/utils";
 
 export type TIconsListProps = {
   defaultBackgroundColor?: string;
@@ -34,15 +35,16 @@ export function LucideIconsList(props: TIconsListProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-3 sticky top-0 p-2.5 bg-custom-background-100">
+      <div className="flex flex-col gap-3 sticky top-0 p-2.5 bg-surface-1">
         <div
-          className={`relative flex items-center gap-2 bg-custom-background-90 h-8 rounded-lg w-full px-[30px] border ${
-            isInputFocused ? "border-custom-primary-100" : "border-transparent"
-          }`}
+          className={cn("relative flex items-center gap-2 bg-layer-1 h-8 rounded-lg w-full px-[30px] border", {
+            "border-accent-strong": isInputFocused,
+            "border-transparent": !isInputFocused,
+          })}
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
         >
-          <Search className="absolute left-2.5 bottom-2 h-3.5 w-3.5 text-custom-text-400" />
+          <Search className="absolute left-2.5 bottom-2 h-3.5 w-3.5 text-placeholder" />
           <Input
             placeholder="Search"
             value={query}
@@ -52,7 +54,7 @@ export function LucideIconsList(props: TIconsListProps) {
         </div>
 
         <div>
-          <div className="w-full text-sm text-custom-text-200">Choose background color</div>
+          <div className="w-full text-13 text-secondary">Choose background color</div>
           <div className="grid grid-cols-10 gap-1 items-center justify-items-center py-1 h-9">
             <div
               className="relative grid place-items-center cursor-pointer rounded-full transition-all duration-200 ease-linear size-6"
@@ -94,7 +96,7 @@ export function LucideIconsList(props: TIconsListProps) {
                   }}
                 >
                   {curCol === selectedColor && (
-                    <Check className="absolute inset-0 m-auto text-white size-3" strokeWidth={3} />
+                    <Check className="absolute inset-0 m-auto text-on-color size-3" strokeWidth={3} />
                   )}
                 </span>
               </button>
@@ -103,13 +105,13 @@ export function LucideIconsList(props: TIconsListProps) {
         </div>
 
         <div>
-          <div className="w-full text-sm text-custom-text-200">Pick icon</div>
+          <div className="w-full text-13 text-secondary">Pick icon</div>
           <div className="grid grid-cols-8 gap-1 justify-items-center mt-2">
             {filteredArray.map((icon) => (
               <button
                 key={icon.name}
                 type="button"
-                className="h-9 w-9 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
+                className="h-9 w-9 select-none text-lg grid place-items-center rounded-sm hover:bg-layer-1-hover"
                 onClick={() => {
                   onChange(
                     {
@@ -119,7 +121,7 @@ export function LucideIconsList(props: TIconsListProps) {
                   );
                 }}
               >
-                <icon.element className="size-4 text-custom-text-300" />
+                <icon.element className="size-4 text-tertiary" />
               </button>
             ))}
           </div>

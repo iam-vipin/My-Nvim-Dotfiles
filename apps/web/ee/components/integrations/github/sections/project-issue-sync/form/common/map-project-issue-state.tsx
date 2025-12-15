@@ -43,7 +43,7 @@ export const MapProjectIssueState = observer(function MapProjectIssueState(props
     .filter((state) => state != undefined && state != null);
 
   return (
-    <div className="w-full max-h-full overflow-y-auto">
+    <div className="w-full max-h-full overflow-y-auto space-y-2">
       {planeProjectStates &&
         GIT_ISSUE_DATA.map((gitState) => (
           <SelectProjectState

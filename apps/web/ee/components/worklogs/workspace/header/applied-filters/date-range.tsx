@@ -32,7 +32,7 @@ export const WorkspaceWorklogAppliedFilterDateRange = observer(function Workspac
   return (
     <AppliedFilterGroup groupTitle="Date" onClear={handleSelectedOptions}>
       <AppliedFilterGroupItem>
-        <div className="truncate text-xs flex items-center gap-2">
+        <div className="truncate text-11 flex items-center gap-2">
           <div>{renderFormattedDate(selectedIds[0].split(";")[0])}</div>
           <ArrowRight size={10} />
           <div>{renderFormattedDate(selectedIds[1].split(";")[0])}</div>

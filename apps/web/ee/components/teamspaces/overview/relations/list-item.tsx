@@ -98,16 +98,15 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
                 issueTypeId={issue.type_id}
                 projectId={issue.project_id}
                 projectIdentifier={projectIdentifier}
-                textContainerClassName="text-xs"
               />
             )}
           </div>
         }
         quickActionElement={
-          <div className="flex flex-shrink-0 items-center justify-center gap-2 text-custom-text-400 font-medium text-sm">
+          <div className="flex flex-shrink-0 items-center justify-center gap-2 text-placeholder text-caption-md-medium">
             {relationText}{" "}
             {issue.related_issues.length > 1 ? (
-              <span className="text-custom-text-100">{issue.related_issues.length} work items</span>
+              <span className="text-primary">{issue.related_issues.length} work items</span>
             ) : (
               issue.related_issues[0] && (
                 <div className="flex flex-shrink-0 items-center justify-center gap-2">
@@ -118,7 +117,7 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
                       issueTypeId={issue.related_issues[0].type_id}
                       projectId={issue.related_issues[0].project_id}
                       projectIdentifier={projectIdentifier}
-                      textContainerClassName="text-xs text-custom-text-100"
+                      variant="primary"
                     />
                   )}
                 </div>
@@ -138,10 +137,7 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
           </div>
         }
         parentRef={parentRef}
-        className={cn(
-          "min-h-9 rounded",
-          getIsIssuePeeked(issue.id) ? "border border-custom-primary-70" : "border-none"
-        )}
+        className={cn("min-h-9 rounded", getIsIssuePeeked(issue.id) ? "border border-accent-strong" : "border-none")}
         disableLink
       />
     </div>

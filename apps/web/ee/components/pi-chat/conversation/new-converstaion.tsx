@@ -23,7 +23,7 @@ export const NewConversation = observer(function NewConversation(props: TProps) 
   const { workspaceSlug } = useParams();
   const { getInstance } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id;
   // SWR
   const { data: instance, isLoading } = useSWR(
     workspaceId ? `PI_STARTER_${workspaceId}` : null,
@@ -41,11 +41,13 @@ export const NewConversation = observer(function NewConversation(props: TProps) 
   if (!isLoading && !instance?.is_authorized) return <UnauthorizedView />;
   return (
     <div className={cn("mt-[10%] md:mt-[20%]")}>
-      <div className={cn("text-center text-3xl font-bold text-custom-text-200", { "text-2xl": !isFullScreen })}>
-        Hey, {currentUser?.display_name}!
-      </div>
-      <div className={cn("text-center text-2xl font-semibold text-custom-text-400 pb-2", { "text-lg": !isFullScreen })}>
-        How can I help you today?
+      <div className="flex flex-col gap-2.5">
+        <div className={cn("text-center text-h1-semibold text-disabled", { "text-h3-semibold": !isFullScreen })}>
+          Hey, {currentUser?.display_name}!
+        </div>
+        <div className={cn("text-center text-h3-semibold text-secondary pb-2", { "text-h4-medium": !isFullScreen })}>
+          How can I help you today?
+        </div>
       </div>
       {/* Templates */}
       {isLoading ? (

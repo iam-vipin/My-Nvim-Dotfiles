@@ -16,6 +16,7 @@ import {
   Heading6,
   Image,
   Italic,
+  List,
   ListOrdered,
   ListTodo,
   Paperclip,
@@ -27,7 +28,7 @@ import {
 // plane imports
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { ListLayoutIcon, MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
+import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 import { convertRemToPixel } from "@plane/utils";
 
 type TEditorTypes = "lite" | "document" | "sticky";
@@ -141,7 +142,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
     name: "Bulleted list",
-    icon: ListLayoutIcon,
+    icon: List,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },

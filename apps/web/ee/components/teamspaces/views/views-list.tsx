@@ -71,7 +71,7 @@ export const TeamspaceViewsList = observer(function TeamspaceViewsList(props: Pr
                 <TeamspaceViewListItem key={view.id} teamspaceId={teamspaceId} view={view} />
               ))
             ) : (
-              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+              <p className="mt-10 text-center text-body-xs-regular text-tertiary">No results found</p>
             )}
           </ListLayout>
         </div>

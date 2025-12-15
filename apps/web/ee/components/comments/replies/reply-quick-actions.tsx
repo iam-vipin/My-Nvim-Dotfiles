@@ -44,7 +44,7 @@ export const ReplyQuickActions = observer(function ReplyQuickActions(props: TRep
             className={cn(
               "flex items-center gap-2",
               {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               },
               item.className
             )}
@@ -55,8 +55,8 @@ export const ReplyQuickActions = observer(function ReplyQuickActions(props: TRep
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}

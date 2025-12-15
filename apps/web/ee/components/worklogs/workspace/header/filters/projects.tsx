@@ -38,7 +38,7 @@ export const WorkspaceWorklogFilterProjects = observer(function WorkspaceWorklog
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2 truncate max-w-[300px]">
-          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="text-[0.65rem] text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
       ),

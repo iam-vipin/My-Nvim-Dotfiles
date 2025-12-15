@@ -36,7 +36,7 @@ export function NotificationContent({
   const verb = data?.issue_activity.verb;
 
   const renderTriggerName = () => (
-    <span className="text-custom-text-100 font-medium">
+    <span className="text-primary font-medium">
       {triggeredBy?.is_bot ? triggeredBy.first_name : triggeredBy?.display_name}{" "}
     </span>
   );
@@ -92,11 +92,11 @@ export function NotificationContent({
   return (
     <>
       {renderTriggerName()}
-      <span className="text-custom-text-300">{renderAction()} </span>
+      <span className="text-tertiary">{renderAction()} </span>
       {shouldRender(notificationField, verb) && (
         <>
-          {shouldShowConnector(notificationField) && <span className="text-custom-text-300">to </span>}
-          <span className="text-custom-text-100 font-medium">{renderValue()}</span>
+          {shouldShowConnector(notificationField) && <span className="text-tertiary">to </span>}
+          <span className="text-primary font-medium">{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
             <div className="scale-75 origin-left">
               <LiteTextEditor

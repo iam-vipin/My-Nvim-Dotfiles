@@ -19,7 +19,7 @@ export function ConfirmPriceStep(props: TConfirmPriceStepProps) {
   return (
     <>
       <div className="space-y-4 p-5">
-        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+        <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
           Get more Admins, Members, and Guests in this workspace.
         </Dialog.Title>
         <div className="flex flex-col gap-4">
@@ -38,7 +38,7 @@ export function ConfirmPriceStep(props: TConfirmPriceStepProps) {
               amount={prorationPreview.current_price_amount * prorationPreview.quantity_difference}
               interval={prorationPreview.current_price_interval}
             />
-            <hr className="border-custom-border-200" />
+            <hr className="border-subtle-1" />
             <PriceRow
               label={prorationPreview.current_price_interval === "MONTHLY" ? "Monthly total" : "Yearly total"}
               amount={
@@ -55,7 +55,7 @@ export function ConfirmPriceStep(props: TConfirmPriceStepProps) {
               pricePerUnit={prorationPreview.per_seat_prorated_amount}
               amount={prorationPreview.total_prorated_amount}
               interval={prorationPreview.current_price_interval}
-              rightElement={<span className="text-xs text-custom-text-300">You will now be charged</span>}
+              rightElement={<span className="text-11 text-tertiary">You will now be charged</span>}
             />
           </FormCard>
         </div>

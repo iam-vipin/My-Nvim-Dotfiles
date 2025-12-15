@@ -84,15 +84,15 @@ export const IssuePropertyOptionItem = observer(function IssuePropertyOptionItem
         }}
         onBlur={() => handleCreateUpdate()}
         placeholder={t("work_item_types.settings.properties.attributes.option.create_update.form.placeholder")}
-        className={cn("w-full text-sm bg-custom-background-100 border-[0.5px] rounded", {
+        className={cn("w-full text-13 bg-surface-1 border-[0.5px] rounded", {
           "border-custom-border-300": !error,
         })}
         inputSize="xs"
         hasError={Boolean(error)}
       />
       {Boolean(error) && typeof error === "string" && (
-        <Tooltip tooltipContent={t(error)} className="text-xs" position="left">
-          <Info className="absolute right-1.5 h-3 w-3 stroke-red-600 hover:cursor-pointer" />
+        <Tooltip tooltipContent={t(error)} className="text-caption-md-regular" position="left">
+          <Info className="absolute right-1.5 h-3 w-3 stroke-danger hover:cursor-pointer" />
         </Tooltip>
       )}
     </div>

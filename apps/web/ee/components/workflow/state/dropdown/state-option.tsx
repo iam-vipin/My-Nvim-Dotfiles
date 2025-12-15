@@ -52,7 +52,7 @@ export const StateOption = observer(function StateOption(props: TStateOptionProp
           <WorkFlowDisabledMessage parentStateId={selectedValue ?? ""} />
         )
       }
-      className="border-[0.5px] border-custom-border-300 mx-0.5 shadow-lg"
+      className="border-[0.5px] border-subtle-1 mx-0.5 shadow-lg"
       position={isForWorkItemCreation ? "right" : "right-start"}
       disabled={!isDisabled}
     >
@@ -61,12 +61,9 @@ export const StateOption = observer(function StateOption(props: TStateOptionProp
           key={option.value}
           value={option.value}
           className={({ active, selected }) =>
-            cn(
-              className,
-              active ? "bg-custom-background-80" : "",
-              selected ? "text-custom-text-100" : "text-custom-text-200",
-              { "cursor-not-allowed text-custom-text-400 hover:bg-custom-background-90": isDisabled }
-            )
+            cn(className, active ? "bg-layer-1" : "", selected ? "text-primary" : "text-secondary", {
+              "cursor-not-allowed text-placeholder hover:bg-layer-1": isDisabled,
+            })
           }
           disabled={isDisabled}
         >

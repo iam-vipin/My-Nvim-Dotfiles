@@ -20,8 +20,8 @@ export const MapStatesSelection = observer(function MapStatesSelection(props: TM
   const { t } = useTranslation();
 
   return (
-    <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-      <div className="text-custom-text-200">{capitalizeFirstLetter(clickUpStatus.status)}</div>
+    <div className="relative grid grid-cols-2 items-center p-3 text-13">
+      <div className="text-secondary">{capitalizeFirstLetter(clickUpStatus.status)}</div>
       <div>
         <Dropdown
           dropdownOptions={(planeStates || [])?.map((state) => ({

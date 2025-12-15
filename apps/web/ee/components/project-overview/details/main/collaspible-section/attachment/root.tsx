@@ -109,11 +109,11 @@ export const ProjectAttachmentRoot = observer(function ProjectAttachmentRoot(pro
           >
             <input {...getInputProps()} />
             {isDragActive && (
-              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-custom-background-90/75 z-30 ">
-                <div className="flex items-center justify-center p-1 rounded-md bg-custom-background-100">
-                  <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-custom-border-300">
+              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-layer-1/75 z-30 ">
+                <div className="flex items-center justify-center p-1 rounded-md bg-surface-1">
+                  <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-subtle-1">
                     <UploadCloud className="size-7" />
-                    <span className="text-sm text-custom-text-300">Drag and drop anywhere to upload</span>
+                    <span className="text-13 text-tertiary">Drag and drop anywhere to upload</span>
                   </div>
                 </div>
               </div>

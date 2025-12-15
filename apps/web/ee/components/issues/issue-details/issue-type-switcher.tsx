@@ -68,10 +68,10 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
         <button
           type="button"
           className={cn(
-            "flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center gap-1 text-xs font-medium text-custom-text-300 hover:text-custom-text-200",
+            "flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center gap-1 text-11 font-medium text-tertiary hover:text-secondary",
             disabled ? "cursor-not-allowed" : "cursor-pointer",
             {
-              "text-custom-text-400 hover:text-custom-text-400": disabled,
+              "text-placeholder hover:text-placeholder": disabled,
             }
           )}
           disabled={disabled}

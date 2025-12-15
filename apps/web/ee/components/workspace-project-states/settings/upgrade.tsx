@@ -26,14 +26,13 @@ const Upgrade = observer(function Upgrade() {
     <div
       className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
         "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-        "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-          !resolvedTheme?.includes("dark"),
+        "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": !resolvedTheme?.includes("dark"),
       })}
     >
       <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
         <div className="w-full xl:max-w-[300px]">
-          <div className="text-2xl font-semibold">Track all your projects from one screen.</div>
-          <div className="text-sm">
+          <div className="text-20 font-semibold">Track all your projects from one screen.</div>
+          <div className="text-13">
             Group Projects like you group work items by state, priority, or any other—and track their progress in one
             click.
           </div>
@@ -42,7 +41,7 @@ const Upgrade = observer(function Upgrade() {
               <a
                 href="https://prime.plane.so/"
                 target="_blank"
-                className={getButtonStyling("primary", "md")}
+                className={getButtonStyling("primary", "base")}
                 rel="noreferrer"
               >
                 <Crown className="h-3.5 w-3.5" />
@@ -57,7 +56,7 @@ const Upgrade = observer(function Upgrade() {
             <Link
               target="_blank"
               href="https://plane.so/contact"
-              className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+              className={"bg-transparent underline text-13 text-accent-secondary my-auto font-medium"}
               onClick={() => {}}
             >
               Get custom quote

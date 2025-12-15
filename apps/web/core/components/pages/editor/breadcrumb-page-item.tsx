@@ -41,9 +41,9 @@ export const PageBreadcrumbItem = observer(function PageBreadcrumbItem({
 
     if (href) {
       return (
-        <div className="flex items-center gap-1 font-medium text-sm text-custom-text-200">
-          {showLogo && <div className="h-4 w-4 bg-custom-background-80 rounded animate-pulse" />}
-          <div className="h-4 w-24 bg-custom-background-80 rounded animate-pulse" />
+        <div className="flex items-center gap-1 font-medium text-13 text-custom-text-200">
+          {showLogo && <div className="h-4 w-4 bg-layer-1 rounded animate-pulse" />}
+          <div className="h-4 w-24 bg-layer-1 rounded animate-pulse" />
         </div>
       );
     }
@@ -51,9 +51,9 @@ export const PageBreadcrumbItem = observer(function PageBreadcrumbItem({
     return (
       <li className={loadingItemClasses} tabIndex={-1}>
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
-            {showLogo && <div className="h-5 w-5 bg-custom-background-80 rounded animate-pulse" />}
-            <div className="h-4 w-24 bg-custom-background-80 rounded animate-pulse" />
+          <div className="flex cursor-default items-center gap-1 text-13 font-medium text-custom-text-100">
+            {showLogo && <div className="h-5 w-5 bg-layer-1 rounded animate-pulse" />}
+            <div className="h-4 w-24 bg-layer-1 rounded animate-pulse" />
           </div>
         </div>
       </li>
@@ -83,7 +83,7 @@ export const PageBreadcrumbItem = observer(function PageBreadcrumbItem({
   return (
     <li className="flex items-center space-x-2" tabIndex={-1}>
       <div className="flex flex-wrap items-center gap-2.5">
-        <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
+        <div className="flex cursor-default items-center gap-1 text-13 font-medium text-custom-text-100">
           {showLogo && (
             <>
               {logo_props?.in_use ? (

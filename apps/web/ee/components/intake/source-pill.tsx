@@ -33,9 +33,9 @@ export const InboxSourcePill = observer(function InboxSourcePill(props: TInboxSo
   const sourceDetails = sourcePillMap[source];
   if (!sourceDetails) return null;
   return isEmailEnabled || isFormEnabled ? (
-    <div className="relative flex gap-1 p-1.5 py-0.5 rounded bg-custom-background-80 items-center">
-      <sourceDetails.icon className="h-3 w-3 flex-shrink-0 text-custom-text-300" />
-      <span className="text-xs text-custom-text-300 font-medium">{sourceDetails.label}</span>
+    <div className="relative flex gap-1 p-1.5 py-0.5 rounded-sm bg-layer-1 items-center">
+      <sourceDetails.icon className="h-3 w-3 flex-shrink-0 text-tertiary" />
+      <span className="text-11 text-tertiary font-medium">{sourceDetails.label}</span>
     </div>
   ) : (
     <></>

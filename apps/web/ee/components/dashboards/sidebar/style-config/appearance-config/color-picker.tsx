@@ -37,7 +37,7 @@ export function WidgetColorPicker(props: Props) {
       input={
         <label
           htmlFor={id}
-          className="flex items-center gap-1 px-2 py-1 rounded hover:bg-custom-background-80 cursor-pointer transition-colors"
+          className="flex items-center gap-1 px-2 py-1 rounded-sm hover:bg-layer-1 cursor-pointer transition-colors"
         >
           <Input
             id={id}
@@ -46,7 +46,7 @@ export function WidgetColorPicker(props: Props) {
             onChange={(e) => debouncedColorUpdate(e.target.value)}
             className="custom-color-picker flex-shrink-0 size-4 rounded-sm p-0"
           />
-          <p className="flex-shrink-0 text-sm">{value?.toUpperCase()}</p>
+          <p className="flex-shrink-0 text-13">{value?.toUpperCase()}</p>
         </label>
       }
     />

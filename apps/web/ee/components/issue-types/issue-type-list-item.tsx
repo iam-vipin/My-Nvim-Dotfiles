@@ -47,12 +47,12 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
   if (!issueTypeDetail) return null;
 
   return (
-    <div className={cn("py-2 border-b border-custom-border-100 last:border-b-0", containerClassName)}>
+    <div className={cn("py-2 border-b border-subtle last:border-b-0", containerClassName)}>
       <div
         className={cn(
-          "group/issue-type bg-custom-background-100 hover:bg-custom-background-90/60 rounded-md",
+          "group/issue-type bg-surface-1 hover:bg-layer-1-hover rounded-md",
           {
-            "bg-custom-background-90/60": isOpen,
+            "bg-layer-1": isOpen,
           },
           getClassName?.(isOpen)
         )}
@@ -70,10 +70,10 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
               <div className={cn("flex w-full gap-2 items-center truncate")}>
                 <div className="flex-shrink-0">
                   <ChevronRightIcon
-                    className={cn("flex-shrink-0 size-4 transition-all", {
-                      "rotate-90 text-custom-text-100": isOpen,
-                      "text-custom-text-300": !isOpen,
-                      "text-custom-text-400 opacity-70": isCollapseDisabled,
+                    className={cn("flex-shrink-0 size-4", {
+                      "rotate-90 text-primary": isOpen,
+                      "text-tertiary": !isOpen,
+                      "text-placeholder opacity-70": isCollapseDisabled,
                     })}
                   />
                 </div>
@@ -85,24 +85,20 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
                 />
                 <div className="flex flex-col items-start justify-start whitespace-normal">
                   <div className="flex gap-4 text-left items-center">
-                    <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
+                    <div className="text-body-xs-medium text-primary line-clamp-1">{issueTypeDetail?.name}</div>
                     {!issueTypeDetail?.is_active && (
-                      <div className="py-0.5 px-3 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
+                      <div className="py-0.5 px-3 text-caption-sm-medium rounded-sm text-tertiary bg-layer-2">
                         {t("common.disabled")}
                       </div>
                     )}
                   </div>
-                  <div className="text-sm text-custom-text-300 text-left line-clamp-1">
+                  <div className="text-caption-sm-medium text-tertiary text-left line-clamp-1">
                     {issueTypeDetail?.description}
                   </div>
                 </div>
               </div>
               {issueTypeDetail?.is_default && (
-                <div
-                  className={cn(
-                    "flex-shrink-0 py-0.5 px-2 text-xs rounded text-custom-primary-100 bg-transparent border border-custom-primary-100 cursor-default font-medium"
-                  )}
-                >
+                <div className="flex-shrink-0 py-0.5 px-2 text-caption-sm-medium rounded-sm text-accent-primary bg-transparent border border-accent-strong cursor-default">
                   {t("common.default")}
                 </div>
               )}

@@ -58,7 +58,7 @@ export const StateForm = observer(function StateForm(props: TStateForm) {
     .filter((state) => state != undefined && state != null);
 
   return (
-    <div className="w-full min-h-44 max-h-full overflow-y-auto">
+    <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-2">
       {planeProjectStates &&
         projectId &&
         GIT_PR_DATA.map((gitState) => (

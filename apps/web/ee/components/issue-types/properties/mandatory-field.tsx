@@ -63,7 +63,7 @@ export const PropertyMandatoryFieldCheckbox = observer(function PropertyMandator
         >
           <span
             className={cn(
-              "flex items-center gap-1.5 text-custom-text-300 text-xs font-medium select-none",
+              "flex items-center gap-1.5 text-tertiary text-caption-sm-medium select-none",
               isDisabled ? "cursor-not-allowed" : "cursor-pointer"
             )}
             onClick={() => {
@@ -75,7 +75,7 @@ export const PropertyMandatoryFieldCheckbox = observer(function PropertyMandator
               checked={value}
               disabled={isDisabled}
               className={cn("size-3.5", {
-                "bg-custom-background-100": !value,
+                "bg-surface-1": !value,
               })}
               iconClassName="size-3.5"
             />

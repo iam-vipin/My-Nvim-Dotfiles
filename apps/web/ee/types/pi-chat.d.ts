@@ -106,10 +106,7 @@ export type TArtifact = {
     description?: string;
     description_html?: string;
     properties: {
-      [key: string]: {
-        name: string;
-        [key: string]: any;
-      };
+      [key: string]: any;
     };
     project?: {
       id: string;
@@ -209,26 +206,6 @@ export type TAiModels = {
   is_default: boolean;
 };
 
-interface IItem {
-  id: string;
-  label: string;
-  entity_name: string;
-  entity_identifier: string;
-  target: string;
-  redirect_uri: string;
-  name?: string;
-  project__identifier?: string | null;
-  sequence_id?: string | null;
-  title: string;
-  subTitle: string | undefined;
-  type_id: string | null;
-  project_id: string;
-}
-
-export interface IFormattedValue {
-  [key: string]: Partial<IItem>[] | undefined;
-}
-
 export type TPiLoaders = "recording" | "transcribing" | "submitting" | "";
 
 export type TFollowUp = {
@@ -287,6 +264,22 @@ export type TChatContextData = {
 export type TPiChatDrawerOpen = {
   is_open: boolean;
   chatId?: string;
+};
+
+// SSE Event Types
+export type TSSEDeltaEvent = {
+  chunk: string;
+};
+
+export type TSSEReasoningEvent = {
+  header?: string;
+  content?: string;
+};
+
+export type TSSEActionsEvent = TArtifact;
+
+export type TSSETitleResponse = {
+  title: string;
 };
 
 // constants

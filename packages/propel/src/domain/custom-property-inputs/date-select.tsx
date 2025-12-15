@@ -29,7 +29,7 @@ export function DateSelect({ property, isPreview = false, required = false }: TD
 
   return (
     <div className="w-full space-y-1">
-      <label htmlFor={fieldName} className="text-sm font-medium text-custom-text-300">
+      <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
         {property.display_name}
         {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
       </label>
@@ -43,9 +43,9 @@ export function DateSelect({ property, isPreview = false, required = false }: TD
           <Popover open={isOpen && !isPreview} onOpenChange={setIsOpen}>
             <Popover.Button
               className={cn(
-                "flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus:outline-none",
+                "flex w-full items-center justify-between rounded-md border px-3 py-2 text-13 focus:outline-none",
                 {
-                  "border-custom-border-300": !error,
+                  "border-subtle-1": !error,
                   "border-red-500": error,
                   "cursor-not-allowed opacity-60": isPreview,
                 }
@@ -53,15 +53,15 @@ export function DateSelect({ property, isPreview = false, required = false }: TD
               disabled={isPreview}
             >
               <span
-                className={cn("text-custom-text-200", {
-                  "text-custom-text-400": !value,
+                className={cn("text-secondary", {
+                  "text-placeholder": !value,
                 })}
               >
                 {value ? formatDate(value) : `Select ${property.display_name?.toLowerCase() || "date"}`}
               </span>
             </Popover.Button>
             <Popover.Panel
-              className="rounded-md border border-custom-border-200 bg-custom-background-100 shadow-lg"
+              className="rounded-md border border-subtle-1 bg-surface-1 shadow-lg"
               side="bottom"
               align="start"
               sideOffset={8}
@@ -82,7 +82,7 @@ export function DateSelect({ property, isPreview = false, required = false }: TD
           </Popover>
         )}
       />
-      {error && <span className="text-xs text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-red-500">{error.message as string}</span>}
     </div>
   );
 }

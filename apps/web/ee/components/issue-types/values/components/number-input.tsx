@@ -60,7 +60,7 @@ export const NumberValueInput = observer(function NumberValueInput(props: TNumbe
         value={data?.[0] ?? ""}
         onChange={handleChange}
         className={cn(
-          "w-full px-2 resize-none text-sm bg-custom-background-100 rounded border-0",
+          "w-full px-2 resize-none text-body-xs-regular bg-surface-1 rounded-sm border-0",
           {
             "border-[0.5px]": variant === "create" || Boolean(error),
             "cursor-not-allowed": isDisabled,
@@ -82,7 +82,7 @@ export const NumberValueInput = observer(function NumberValueInput(props: TNumbe
         hasError={Boolean(error)}
       />
       {Boolean(error) && (
-        <span className="text-xs font-medium text-red-500">
+        <span className="text-caption-md-medium text-danger">
           {error === "REQUIRED" ? t("common.errors.entity_required", { entity: propertyDetail.display_name }) : error}
         </span>
       )}

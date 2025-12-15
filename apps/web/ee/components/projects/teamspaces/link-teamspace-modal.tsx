@@ -34,10 +34,10 @@ type EmptyStateProps = {
 function EmptyState(props: EmptyStateProps) {
   const { assetPath, title, description } = props;
   return (
-    <div className="text-center flex flex-col items-center text-custom-text-300">
+    <div className="text-center flex flex-col items-center text-tertiary">
       <img src={assetPath} alt={title} width={320} height={180} />
-      <h3 className={cn("text-base font-semibold")}>{title}</h3>
-      <p className="text-sm whitespace-pre-line">{description}</p>
+      <h3 className={cn("text-body-sm-semibold")}>{title}</h3>
+      <p className="text-body-xs-regular whitespace-pre-line">{description}</p>
     </div>
   );
 }
@@ -95,22 +95,22 @@ export const LinkTeamspaceToProjectModal = observer(function LinkTeamspaceToProj
   return (
     <ModalCore isOpen={isOpen} width={EModalWidth.XL} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedTeamspaceIds} onChange={handleSelectedProjectChange}>
-        <div className="flex items-center gap-2 px-4 border-b border-custom-border-100">
-          <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
+        <div className="flex items-center gap-2 px-4 border-b border-subtle">
+          <Search className="flex-shrink-0 size-4 text-placeholder" aria-hidden="true" />
           <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+            className="h-12 w-full border-0 bg-transparent text-body-xs-regular text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder={t("teamspace_projects.settings.link_teamspace.placeholder")}
             displayValue={() => ""}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="text-xs font-medium text-custom-text-300 bg-custom-primary-100/10 py-2 px-4 flex items-center gap-1">
+        <div className="text-caption-sm-medium text-tertiary bg-accent-subtle py-2 px-4 flex items-center gap-1">
           <Info className="flex-shrink-0 size-4" aria-hidden="true" />
           {t("teamspace_projects.settings.link_teamspace.info.title")}{" "}
           <a
             href="https://docs.plane.so/core-concepts/workspaces/teamspaces"
-            className="text-custom-primary-200 underline"
+            className="text-accent-secondary underline"
             target="_blank"
             rel="noreferrer"
           >
@@ -139,7 +139,7 @@ export const LinkTeamspaceToProjectModal = observer(function LinkTeamspaceToProj
             </div>
           ) : (
             <ul
-              className={cn("text-custom-text-100", {
+              className={cn("text-primary", {
                 "px-2": filteredTeamspaceIds.length > 0,
               })}
             >
@@ -153,10 +153,10 @@ export const LinkTeamspaceToProjectModal = observer(function LinkTeamspaceToProj
                     value={teamspaceDetails.id}
                     className={({ active }) =>
                       cn(
-                        "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-custom-text-200 transition-colors",
+                        "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-secondary transition-colors",
                         {
-                          "bg-custom-background-80": active,
-                          "text-custom-text-100": isTeamspaceSelected,
+                          "bg-layer-1": active,
+                          "text-primary": isTeamspaceSelected,
                         }
                       )
                     }
@@ -166,7 +166,7 @@ export const LinkTeamspaceToProjectModal = observer(function LinkTeamspaceToProj
                         <Checkbox checked={isTeamspaceSelected} />
                         <Logo logo={teamspaceDetails.logo_props} size={14.4} />
                       </span>
-                      <p className="text-sm truncate">{teamspaceDetails.name}</p>
+                      <p className="text-body-xs-regular truncate">{teamspaceDetails.name}</p>
                     </div>
                   </Combobox.Option>
                 );
@@ -175,14 +175,14 @@ export const LinkTeamspaceToProjectModal = observer(function LinkTeamspaceToProj
           )}
         </Combobox.Options>
       </Combobox>
-      <div className="flex items-center justify-end gap-2 p-3 border-t border-custom-border-100">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="flex items-center justify-end gap-2 p-3 border-t border-subtle">
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {t("cancel")}
         </Button>
         <Button
           ref={moveButtonRef}
           variant="primary"
-          size="sm"
+          size="lg"
           onClick={handleSubmit}
           loading={isSubmitting}
           disabled={!selectedTeamspaceIds.length}

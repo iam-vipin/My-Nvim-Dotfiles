@@ -57,20 +57,18 @@ function SentryIntegration({ params }: Route.ComponentProps) {
   }, [errorCode]);
 
   if (!supportedIntegrations && supportedIntegrationsLoading)
-    return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">{t("integrations.loading")}</div>
-    );
+    return <div className="text-secondary relative flex justify-center items-center">{t("integrations.loading")}</div>;
 
   if (!isFeatureEnabled)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.not_enabled", { name: "Sentry" })}
       </div>
     );
 
   if (supportedIntegrationsError)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.error_fetching_supported_integrations")}
       </div>
     );
@@ -79,7 +77,7 @@ function SentryIntegration({ params }: Route.ComponentProps) {
     return (
       <div className={"flex h-full flex-col items-center justify-center"}>
         <Cloud size={96} />
-        <div className="text-custom-text-200 text-center text-sm relative flex justify-center items-center">
+        <div className="text-secondary text-center text-body-xs-regular relative flex justify-center items-center">
           {isSelfManaged
             ? t("integrations.not_configured_message_admin", { name: "Sentry" })
             : t("integrations.not_configured_message_support", { name: "Sentry" })}

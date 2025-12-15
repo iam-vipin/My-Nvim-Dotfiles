@@ -27,7 +27,7 @@ export const IssueEstimateTimeActivity = observer(function IssueEstimateTimeActi
 
   return (
     <IssueActivityBlockComponent
-      icon={<EstimatePropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<EstimatePropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

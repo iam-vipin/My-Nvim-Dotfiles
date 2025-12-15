@@ -70,10 +70,10 @@ export const TeamspacePagesListHeaderActions = observer(function TeamspacePagesL
       {isEditingAllowed && (
         <Button
           variant="primary"
-          size="sm"
           onClick={handleCreatePage}
           loading={isCreatingPage}
           data-ph-element={TEAMSPACE_PAGE_TRACKER_ELEMENTS.HEADER_CREATE_PAGE_BUTTON}
+          size="lg"
         >
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>

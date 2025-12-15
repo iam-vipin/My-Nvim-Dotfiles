@@ -11,9 +11,11 @@ type TProps = {
 export function ConfirmBlock(props: TProps) {
   const { summary, isExecutingAction, handleExecuteAction, workspaceId, query_id } = props;
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-custom-background-90 p-3">
-      <div className="font-semibold text-base">Awaiting response</div>
-      <div className="text-custom-text-350 text-sm font-medium">{summary}</div>
+    <div className="flex flex-col gap-3 rounded-xl bg-layer-1 p-3 mb-4">
+      <div className="flex flex-col gap-1">
+        <div className="text-body-sm-semibold text-primary">Awaiting response</div>
+        <div className="text-body-xs-regular text-tertiary">{summary}</div>
+      </div>{" "}
       <Button
         disabled={isExecutingAction}
         onClick={() => handleExecuteAction(workspaceId?.toString() || "", query_id)}

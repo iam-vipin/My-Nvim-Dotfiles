@@ -44,7 +44,7 @@ export const EpicRelationsOverviewRoot = observer(function EpicRelationsOverview
                 issueServiceType={EIssueServiceType.EPICS}
                 disabled={disabled}
                 customButton={
-                  <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>
+                  <span className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1")}>
                     Add relation
                   </span>
                 }

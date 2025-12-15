@@ -23,7 +23,7 @@ function CustomTooltip({ active, payload, label, plotType, endDate, estimateType
     if (payload.date > endDate) return null;
     return (
       <Card className="flex flex-col" spacing={ECardSpacing.SM}>
-        <p className="text-xs text-custom-text-300 border-b pb-2 flex gap-2">
+        <p className="text-11 text-tertiary border-b pb-2 flex gap-2">
           <span>{`${day} ${monthName}'${parseInt(year) % 100}`}</span>
           {isToday && (
             <svg x={-17} width="38" height="16px" xmlns="http://www.w3.org/2000/svg">
@@ -35,17 +35,17 @@ function CustomTooltip({ active, payload, label, plotType, endDate, estimateType
           )}
         </p>
         <div className="flex flex-col space-y-2 pb-2 border-b">
-          <span className="flex text-xs text-custom-text-300 gap-1">
+          <span className="flex text-11 text-tertiary gap-1">
             <PlannedState className="my-auto" width="14" height="14" />
             <span className="font-semibold">{estimateTypeFormatter(payload.scope)}</span>
             <span>scope</span>
           </span>
-          <span className="flex text-xs text-custom-text-300 gap-1 items-center">
+          <span className="flex text-11 text-tertiary gap-1 items-center">
             <InProgressState className="my-auto items-center" width="14" height="14" />
             <span className="font-semibold">{estimateTypeFormatter(payload.started)}</span>
             <span> in-progress</span>
           </span>
-          <span className="flex text-xs text-custom-text-300 gap-1 items-center ml-0.5">
+          <span className="flex text-11 text-tertiary gap-1 items-center ml-0.5">
             {plotType === "burndown" ? (
               <PendingState className="my-auto" width="12" height="12" />
             ) : (
@@ -60,7 +60,7 @@ function CustomTooltip({ active, payload, label, plotType, endDate, estimateType
           </span>
         </div>
         <div className="flex flex-col space-y-2">
-          <span className="flex text-xs text-custom-text-300 gap-1 items-center ml-0.5">
+          <span className="flex text-11 text-tertiary gap-1 items-center ml-0.5">
             {plotType !== "burndown" ? (
               <PendingState className="my-auto" width="12" height="12" />
             ) : (

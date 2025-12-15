@@ -27,7 +27,7 @@ export const PiChatUpgrade = observer(function PiChatUpgrade() {
           data-ph-element={PLANE_INTELLIGENCE_TRACKER_ELEMENTS.HIGHER_SUBSCRIPTION_BUTTON}
           href="https://prime.plane.so/"
           target="_blank"
-          className={getButtonStyling("primary", "md")}
+          className={getButtonStyling("primary", "base")}
           rel="noreferrer"
         >
           Upgrade to higher subscription
@@ -51,14 +51,13 @@ export const PiChatUpgrade = observer(function PiChatUpgrade() {
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-            !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="w-full xl:max-w-[300px]">
-            <div className="text-2xl font-semibold">Experience an AI-powered teammate </div>
-            <div className="text-sm">
+            <div className="text-20 font-semibold text-primary">Experience an AI-powered teammate </div>
+            <div className="text-13 text-tertiary">
               Get answers faster, plan better, and ship sooner with AI that understands and lives inside your work.
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
@@ -66,7 +65,7 @@ export const PiChatUpgrade = observer(function PiChatUpgrade() {
               <Link
                 target="_blank"
                 href="https://plane.so/talk-to-sales"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+                className={"bg-transparent underline text-13 text-primary my-auto font-medium"}
                 onClick={() => {}}
               >
                 Talk to sales

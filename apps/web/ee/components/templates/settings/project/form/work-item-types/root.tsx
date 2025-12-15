@@ -121,7 +121,7 @@ export const ProjectWorkItemTypes = observer(function ProjectWorkItemTypes(props
         actionElement={({ setIsOpen }) => (
           <div className="flex items-center">
             <Button
-              variant="link-neutral"
+              variant="ghost"
               onClick={(e) => {
                 e.preventDefault();
                 setIsOpen(true);
@@ -156,11 +156,7 @@ export const ProjectWorkItemTypes = observer(function ProjectWorkItemTypes(props
                 onToggle={handleIssueTypeListToggle}
                 onEditIssueTypeIdChange={handleEditIssueTypeIdChange}
                 getWorkItemTypeById={getWorkItemTypeById}
-                getClassName={() =>
-                  cn(
-                    "bg-custom-background-100 hover:bg-custom-background-100 border border-custom-border-100 rounded-lg"
-                  )
-                }
+                getClassName={() => cn("bg-surface-1 hover:bg-surface-1 border border-subtle rounded-lg")}
                 onEnableDisableIssueType={handleEnableDisableWorkItemType}
                 onDeleteIssueTypeIdChange={handleDeleteIssueTypeIdChange}
               />

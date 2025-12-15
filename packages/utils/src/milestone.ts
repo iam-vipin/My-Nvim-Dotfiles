@@ -1,5 +1,6 @@
 import type { TMilestoneIconVariant } from "@plane/types";
 
+// TODO-design-system -> update color tokens here
 const MILESTONE_VARIANT_COLORS: Record<TMilestoneIconVariant, { base: string; hover?: string }> = {
   default: { base: "#455068", hover: "#5a6b8a" },
   done: { base: "#1FAD40", hover: "#26d451" },

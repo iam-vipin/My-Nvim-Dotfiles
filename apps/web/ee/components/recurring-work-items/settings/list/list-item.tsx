@@ -33,7 +33,7 @@ export const RecurringWorkItemListItem = observer(function RecurringWorkItemList
 
   if (!recurringWorkItem) return null;
   return (
-    <div className="flex items-center justify-between gap-2.5 p-3 border border-custom-border-200 rounded-lg bg-custom-background-90/60">
+    <div className="flex items-center justify-between gap-2.5 p-3 border border-subtle rounded-lg bg-layer-1">
       <div className="flex items-center gap-2.5 w-full truncate">
         <IssueTypeLogo
           icon_props={recurringWorkItemType?.logo_props?.icon}
@@ -41,11 +41,9 @@ export const RecurringWorkItemListItem = observer(function RecurringWorkItemList
           isEpic={recurringWorkItemType?.is_epic}
           size="lg"
         />
-        <div className="text-sm font-medium text-custom-text-100 truncate">
-          {recurringWorkItem.workitem_blueprint.name}
-        </div>
+        <div className="text-body-xs-medium text-primary truncate">{recurringWorkItem.workitem_blueprint.name}</div>
       </div>
-      <div className="w-full text-right text-xs font-medium text-custom-text-300">
+      <div className="w-full text-right text-caption-sm-medium text-tertiary">
         repeats every {getRecurringWorkItemIntervalTypeLabel(recurringWorkItem.interval_type)}
       </div>
       <div className="flex flex-shrink-0 items-center gap-3">

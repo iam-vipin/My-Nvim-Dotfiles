@@ -15,7 +15,7 @@ export function DisplayState(props: {
 }) {
   const { state, className, iconSize } = props;
   return (
-    <div className={cn("flex items-center gap-1 text-sm text-custom-text-300", className)}>
+    <div className={cn("flex items-center gap-1 text-13 text-tertiary", className)}>
       {state.group && (
         <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} size={iconSize ?? EIconSize.LG} />
       )}

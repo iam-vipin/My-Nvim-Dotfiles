@@ -4,10 +4,9 @@ import { useTheme } from "next-themes";
 // plane imports
 import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { Tabs } from "@plane/propel/tabs";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
 import externalEmbedDarkImage from "@/app/assets/wiki-upgrade-flow/external-embeds-dark.png?url";
@@ -118,20 +117,14 @@ export const WikiUpgradeScreen = observer(function WikiUpgradeScreen(props: Prop
       <div className="size-full grid place-items-center px-page-x">
         <div className="w-full md:w-3/4 xl:w-1/2 2xl:w-1/3">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold">{t("wiki.upgrade_flow.title")}</h2>
-            <p className="mt-3 text-custom-text-200 text-sm md:text-base">{t("wiki.upgrade_flow.description")}</p>
+            <h2 className="text-20 font-semibold">{t("wiki.upgrade_flow.title")}</h2>
+            <p className="mt-3 text-secondary text-13 md:text-14">{t("wiki.upgrade_flow.description")}</p>
             <div className="mt-4 flex items-center justify-center gap-3">
-              <Button variant="primary" size="sm" onClick={handlePaidPlanPurchaseModalOpen} className="shrink-0">
+              <Button variant="primary" onClick={handlePaidPlanPurchaseModalOpen} className="shrink-0">
                 {t("wiki.upgrade_flow.upgrade_button.text")}
               </Button>
               {totalPagesCount > 0 ? (
-                <Button
-                  variant="neutral-primary"
-                  size="sm"
-                  onClick={handleDownloadData}
-                  loading={isDownloading}
-                  className="shrink-0"
-                >
+                <Button variant="secondary" onClick={handleDownloadData} loading={isDownloading} className="shrink-0">
                   {isDownloading
                     ? t("wiki.upgrade_flow.download_button.loading")
                     : t("wiki.upgrade_flow.download_button.text")}
@@ -139,7 +132,7 @@ export const WikiUpgradeScreen = observer(function WikiUpgradeScreen(props: Prop
               ) : (
                 <a
                   href="https://docs.plane.so/core-concepts/pages/wiki"
-                  className={cn(getButtonStyling("neutral-primary", "sm"), "shrink-0")}
+                  className={cn(getButtonStyling("secondary", "base"), "shrink-0")}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -156,7 +149,7 @@ export const WikiUpgradeScreen = observer(function WikiUpgradeScreen(props: Prop
                     <Tabs.Trigger
                       key={tab.key}
                       value={tab.key}
-                      className="border-b border-custom-border-300 rounded-none data-[selected]:text-custom-primary-100 data-[selected]:border-custom-primary-100 !bg-transparent"
+                      className="border-b border-subtle-1 rounded-none data-[selected]:text-accent-primary data-[selected]:border-accent-strong !bg-transparent"
                     >
                       {t(tab.i18n_label)}
                     </Tabs.Trigger>

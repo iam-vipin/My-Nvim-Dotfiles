@@ -33,12 +33,12 @@ export const IssueActivityWorklogCreateButton = observer(function IssueActivityW
       disabled={disabled}
       buttonClassName={cn("w-full outline-none", { "cursor-not-allowed": disabled })}
       button={
-        <Button size="sm" variant="outline-primary" prependIcon={<Plus />} className="border-0">
+        <Button variant="tertiary" prependIcon={<Plus />} className="border-0">
           Log work
         </Button>
       }
       popperPosition="bottom-end"
-      panelClassName="w-72 my-1 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 p-3 text-xs shadow-custom-shadow-rg focus:outline-none"
+      panelClassName="w-72 my-1 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-custom-shadow-rg focus:outline-none"
     >
       <WorklogCreate
         workspaceSlug={workspaceSlug}

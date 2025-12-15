@@ -20,7 +20,7 @@ export function InitiativePeekOverviewLoader(props: TInitiativePeekOverviewLoade
         <div className="flex items-center gap-3.5">
           <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
             <button onClick={removeRoutePeekId}>
-              <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
             </button>
           </Tooltip>
           <Loader.Item width="24px" height="24px" />

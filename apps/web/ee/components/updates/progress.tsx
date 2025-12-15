@@ -10,7 +10,7 @@ function Progress(props: IProgressProps) {
   const { completedIssues, totalIssues } = props;
   const { t } = useTranslation();
   return (
-    <div className="flex text-custom-text-300 text-xs gap-3 mb-3 items-center">
+    <div className="flex text-tertiary text-11 gap-3 mb-3 items-center">
       <div className="flex font-medium mr-2 items-center">
         <Rocket size={16} className="my-auto mr-1" />
         <span>

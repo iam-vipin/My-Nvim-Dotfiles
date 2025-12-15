@@ -73,7 +73,7 @@ export const InitiativeEpicsCollapsibleContent = observer(function InitiativeEpi
             subHeading={t("initiatives.empty_state.epics.subHeading")}
             icon={<ListFilter />}
             actionElement={
-              <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(initiativeId)}>
+              <Button variant="secondary" onClick={() => resetFilters(initiativeId)}>
                 {t("initiatives.empty_state.epics.action")}
               </Button>
             }
@@ -94,7 +94,7 @@ export const InitiativeEpicsCollapsibleContent = observer(function InitiativeEpi
               }}
               disabled={disabled}
             >
-              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>
+              <span className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1")}>
                 {t("epics.empty_state.section.primary_button.text")}
               </span>
             </button>

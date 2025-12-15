@@ -99,7 +99,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             return asset_id;
           }}
           projectId={projectId}
-          parentClassName="p-2 bg-custom-background-100"
+          parentClassName="p-2 bg-surface-1"
           displayConfig={{
             fontSize: "small-font",
           }}
@@ -112,7 +112,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
             className={cn(
-              "group rounded border p-2 shadow-md duration-300",
+              "group rounded-sm border p-2 shadow-md duration-300",
               isDisabled
                 ? "cursor-not-allowed border-green-500/50 bg-green-500/10"
                 : "border-green-500 bg-green-500/20 hover:bg-green-500"
@@ -121,7 +121,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             <Check
               className={cn(
                 "h-3 w-3 duration-300",
-                isDisabled ? "text-green-500/50" : "text-green-500 group-hover:text-white"
+                isDisabled ? "text-green-500/50" : "text-green-500 group-hover:text-on-color"
               )}
             />
           </button>
@@ -130,7 +130,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           type="button"
           disabled={isSubmitting}
           className={cn(
-            "group rounded border p-2 shadow-md duration-300",
+            "group rounded-sm border p-2 shadow-md duration-300",
             isSubmitting
               ? "cursor-not-allowed border-red-500/50 bg-red-500/10"
               : "border-red-500 bg-red-500/20 hover:bg-red-500"
@@ -143,7 +143,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           <CloseIcon
             className={cn(
               "size-3 duration-300",
-              isSubmitting ? "text-red-500/50" : "text-red-500 group-hover:text-white"
+              isSubmitting ? "text-red-500/50" : "text-red-500 group-hover:text-on-color"
             )}
           />
         </button>

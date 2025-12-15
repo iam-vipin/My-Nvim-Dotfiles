@@ -63,7 +63,7 @@ function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
               <CreateTemplatesButton
                 workspaceSlug={workspaceSlug}
                 currentLevel={ETemplateLevel.WORKSPACE}
-                buttonSize="sm"
+                buttonSize="lg"
                 variant="settings"
               />
             )}

@@ -62,7 +62,7 @@ export const NotificationItemReadOption = observer(function NotificationItemRead
       tooltipContent={unreadCount === 0 ? "Mark as unread" : "Mark as read"}
       callBack={handleNotificationUpdate}
     >
-      <MessageSquare className="h-3 w-3 text-custom-text-300" />
+      <MessageSquare className="h-3 w-3 text-tertiary" />
     </NotificationItemOptionButton>
   );
 });

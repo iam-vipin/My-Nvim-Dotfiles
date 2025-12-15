@@ -120,15 +120,17 @@ export const FormEdit = observer(function FormEdit(props: TFormEdit) {
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
       <div className="space-y-5 p-5">
-        <div className="text-xl font-medium text-custom-text-200">{t("gitlab_integration.link_plane_project")}</div>
+        <div className="text-heading-sm-medium text-secondary">{t("gitlab_integration.link_plane_project")}</div>
 
         <div className="space-y-4">
           <ProjectForm value={projectMap} handleChange={handleProjectMapChange} isEnterprise={isEnterprise} />
 
-          <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
+          <div className="border border-subtle divide-y divide-subtle rounded">
             <div className="relative space-y-1 p-3">
-              <div className="text-base">{t("gitlab_integration.pull_request_automation")}</div>
-              <div className="text-xs text-custom-text-200">{t("gitlab_integration.integration_enabled_text")}</div>
+              <div className="text-body-sm-medium">{t("gitlab_integration.pull_request_automation")}</div>
+              <div className="text-caption-sm-regular text-secondary">
+                {t("gitlab_integration.integration_enabled_text")}
+              </div>
             </div>
             <div className="p-3">
               <StateForm
@@ -141,10 +143,10 @@ export const FormEdit = observer(function FormEdit(props: TFormEdit) {
           </div>
 
           <div className="relative flex justify-end items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={() => handleModal(false)}>
+            <Button variant="secondary" onClick={() => handleModal(false)}>
               {t("common.cancel")}
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
+            <Button variant="primary" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
               {isSubmitting ? t("common.processing") : t("common.continue")}
             </Button>
           </div>

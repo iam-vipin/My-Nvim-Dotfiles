@@ -11,7 +11,7 @@ export const SpreadsheetLinkColumn = observer(function SpreadsheetLinkColumn(pro
   const { issue } = props;
 
   return (
-    <div className="flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-2.5 py-1 text-xs group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10">
+    <div className="flex h-11 w-full items-center border-b-[0.5px] border-subtle-1 px-2.5 py-1 text-11 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10">
       {issue?.link_count} {issue?.link_count === 1 ? "link" : "links"}
     </div>
   );

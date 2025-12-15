@@ -60,9 +60,9 @@ export const TeamspaceRelationIssueList = observer(function TeamspaceRelationIss
         }
         icon={
           type === ERelationType.BLOCKING ? (
-            <XCircle className="size-8 text-custom-text-400" />
+            <XCircle className="size-8 text-placeholder" />
           ) : (
-            <CircleDot className="size-8 text-custom-text-400" />
+            <CircleDot className="size-8 text-placeholder" />
           )
         }
         variant="solid"

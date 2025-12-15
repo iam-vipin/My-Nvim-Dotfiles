@@ -1,4 +1,4 @@
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import React, { useCallback, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
@@ -71,12 +71,15 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
               if (!res) return;
               setAttachments((prev) => [...prev, res]);
               successCount++;
+              return;
             })
-            .catch((e: any) => {
+            .catch((e: unknown) => {
+              const error = e as { detail?: string };
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: `Failed to upload ${currentFile.name?.slice(0, 20)}...`,
-                message: typeof e?.detail === "string" ? e?.detail : "File could not be attached. Try uploading again.",
+                message:
+                  typeof error?.detail === "string" ? error.detail : "File could not be attached. Try uploading again.",
               });
             });
         }
@@ -103,12 +106,12 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
       }
       return;
     },
-    [chatId, isProjectLevel, workspaceId, focus]
+    [chatId, isProjectLevel, workspaceId, focus, createAttachment, createNewChat, mode, setAttachments]
   );
 
   // useDropzone: noClick true so root div won't open file dialog (button will)
   const { getRootProps, getInputProps, open } = useDropzone({
-    onDrop,
+    onDrop: (acceptedFiles, rejectedFiles) => void onDrop(acceptedFiles, rejectedFiles),
     maxSize: maxFileSize,
     multiple: true,
     disabled: isUploading || disabled || !isFileUploadsEnabled,
@@ -165,25 +168,25 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
           tabIndex: 0,
           "aria-label": "Drop files here to upload",
           className: cn(
-            "relative w-full rounded-t-xl border border-transparent text-sm transition-colors focus:outline-none bg-custom-background-100",
+            "relative w-full rounded-t-xl border border-transparent text-sm transition-colors focus:outline-none bg-surface-1",
             {
-              "border-dashed border-custom-primary-100 bg-custom-primary-100/10": isDragging,
+              "border-dashed border-accent-strong bg-accent-primary/10": isDragging,
             }
           ),
         })}
       >
         <input {...getInputProps()} />
         {isDragging && (
-          <div className="w-full h-full bg-custom-background-100 z-30 absolute top-0 left-0 rounded-xl overflow-hidden">
-            <div className="flex items-center justify-center gap-4 h-full bg-custom-primary-100/10">
+          <div className="w-full h-full bg-layer-1 z-30 absolute top-0 left-0 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-center gap-4 h-full bg-accent-primary/10">
               {fileIcon}
-              <span className="text-base text-custom-primary-100">Drop any files here to add to chat</span>
+              <span className="text-14 text-accent-primary">Drop any files here to add to chat</span>
             </div>
           </div>
         )}
         {children(isUploading, open)}
       </div>
-      <div className="text-xs text-custom-text-350 pt-2 text-center bg-custom-background-100">
+      <div className="text-caption-sm-regular text-disabled pt-2 text-center bg-surface-1">
         Plane AI can make mistakes, please double-check responses.
       </div>
     </>

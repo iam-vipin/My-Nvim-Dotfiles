@@ -33,8 +33,8 @@ export function WidgetConfigSidebarAppearanceConfig(props: Props) {
   return (
     <>
       {isPieChart && <PieChartGroupingConfig handleConfigUpdate={handleConfigUpdate} />}
-      <div className="flex-shrink-0 space-y-1 text-sm">
-        <h6 className="font-medium text-custom-text-200">
+      <div className="flex-shrink-0 space-y-1 text-13">
+        <h6 className="font-medium text-secondary">
           {t(isComparisonAreaChart ? "dashboards.widget.common.area_appearance" : "appearance")}
         </h6>
         {selectedChartType === EWidgetChartTypes.BAR_CHART && (

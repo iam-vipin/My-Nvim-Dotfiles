@@ -39,22 +39,21 @@ export const WorkFlowGroupTree = observer(function WorkFlowGroupTree(props: Prop
   return (
     <Tooltip
       tooltipContent={<WorkFlowEnabledMessage parentStateId={groupId} />}
-      className="p-3 border-[0.5px] border-custom-border-300 shadow-lg"
+      className="p-3 border-[0.5px] border-subtle-1 shadow-lg"
       position="bottom-start"
     >
       <div
         className={cn(
-          "flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded transition-all",
+          "flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all bg-layer-transparent hover:bg-layer-transparent-hover text-icon-primary",
           {
             "bg-[#00A0CC]/15": isTransitionEnabledForUser,
-            "bg-custom-background-80 hover:bg-custom-background-80": !isTransitionEnabledForUser,
           }
         )}
       >
         {isTransitionEnabledForUser ? (
           <ApproverIcon width={14} strokeWidth={2} className="text-[#00A0CC]" />
         ) : (
-          <WorkflowIcon width={14} strokeWidth={2} className="text-custom-text-200" />
+          <WorkflowIcon width={14} strokeWidth={2} className="text-secondary" />
         )}
       </div>
     </Tooltip>

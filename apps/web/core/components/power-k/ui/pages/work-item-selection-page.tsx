@@ -89,7 +89,8 @@ export function WorkItemSelectionPage(props: Props) {
                     projectId={issue.project_id}
                     projectIdentifier={issue.project_identifier}
                     issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-sm text-custom-text-200"
+                    size="sm"
+                    variant="secondary"
                   />
                 )}
                 <span className="truncate">{issue.name}</span>
@@ -112,7 +113,7 @@ export function WorkItemSelectionPage(props: Props) {
             emptyText="Search for issue id or issue title"
           />
         ) : (
-          <div className="px-3 py-8 text-center text-sm text-custom-text-300">Search for issue id or issue title</div>
+          <div className="px-3 py-8 text-center text-13 text-tertiary">Search for issue id or issue title</div>
         )
       ) : issueResults.length > 0 ? (
         <CommandPaletteEntityList
@@ -127,7 +128,8 @@ export function WorkItemSelectionPage(props: Props) {
                   projectId={issue.project_id}
                   projectIdentifier={issue.project__identifier}
                   issueSequenceId={issue.sequence_id}
-                  textContainerClassName="text-sm text-custom-text-200"
+                  size="sm"
+                  variant="secondary"
                 />
               )}
               <span className="truncate">{issue.name}</span>

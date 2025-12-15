@@ -164,7 +164,7 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
         onStartNewComment,
         onCreateCommentMark,
       } satisfies TCommentsNavigationExtensionData,
-    },
+    } satisfies INavigationPaneExtension<"comments">,
   ];
 
   return {

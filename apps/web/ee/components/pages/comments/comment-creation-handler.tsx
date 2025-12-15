@@ -128,14 +128,14 @@ export const PageCommentCreationHandler = observer(function PageCommentCreationH
     <div ref={newCommentBoxRef} className="my-4 animate-expand-down space-y-3 group px-3.5">
       {/* Reference Text Quote with Overlay Cancel Button */}
       {referenceText && (
-        <div className="relative flex gap-1 p-[4px] rounded bg-custom-background-90">
+        <div className="relative flex gap-1 p-[4px] rounded bg-surface-2">
           <div className="w-0.5 self-stretch rounded-sm bg-[#FFBF66]" />
-          <p className="flex-1 text-sm text-custom-text-300 leading-4 pr-6">{referenceText}</p>
+          <p className="flex-1 text-13 text-custom-text-300 leading-4 pr-6">{referenceText}</p>
           <button
             type="button"
             onClick={handleCancel}
             disabled={isSubmittingComment}
-            className="absolute top-0.75 right-1 p-1 rounded transition-all duration-200 ease hover:bg-custom-background-80 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed z-10"
+            className="absolute top-0.75 right-1 p-1 rounded transition-all duration-200 ease hover:bg-layer-1 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed z-10"
             aria-label="Cancel new comment"
           >
             <CloseIcon className="size-3 text-custom-text-300" />
@@ -150,7 +150,7 @@ export const PageCommentCreationHandler = observer(function PageCommentCreationH
             type="button"
             onClick={handleCancel}
             disabled={isSubmittingComment}
-            className="p-1 rounded transition-all duration-200 ease hover:bg-custom-background-90 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="p-1 rounded transition-all duration-200 ease hover:bg-surface-2 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             aria-label="Cancel new comment"
           >
             <CloseIcon className="size-3.5 text-custom-text-300" />

@@ -187,7 +187,7 @@ export function CustomerForm(props: TCustomerForms) {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg">
         <div className="space-y-2 pl-5 pt-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {data?.id ? t("customers.update.label") : t("customers.create.label")}
           </h3>
           {/* Default Properties */}
@@ -206,24 +206,17 @@ export function CustomerForm(props: TCustomerForms) {
         </div>
         <div
           className={cn(
-            "px-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100",
+            "px-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle",
             isFormOverFlowing && "shadow-custom-shadow-xs"
           )}
         >
           <div className="flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="neutral-primary"
-              size="sm"
-              onClick={handleModalClose}
-              tabIndex={getIndex("cancel")}
-            >
+            <Button type="button" variant="secondary" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
               {t("customers.create.cancel")}
             </Button>
             <Button
               variant="primary"
               ref={submitBtnRef}
-              size="sm"
               type="submit"
               tabIndex={getIndex("submit")}
               disabled={isSubmitting}

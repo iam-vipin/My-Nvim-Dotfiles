@@ -71,21 +71,21 @@ export const DuplicateWorkItemModal = observer(function DuplicateWorkItemModal(p
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.MD} position={EModalPosition.TOP}>
       <div className="p-3">
-        <div className="space-y-3 border-b border-custom-border-200 pb-2">
-          <h3 className="text-base text-custom-text-100">{t("issue.duplicate.modal.title")}</h3>
+        <div className="space-y-3 border-b border-subtle-1 pb-2">
+          <h3 className="text-14 text-primary">{t("issue.duplicate.modal.title")}</h3>
           {/* Call out */}
-          <div className="flex  gap-2 rounded-md bg-custom-background-80 p-2">
-            <Info className="size-5 text-custom-text-300" />
-            <p className="text-custom-text-300 text-xs">
+          <div className="flex  gap-2 rounded-md bg-layer-1 p-2">
+            <Info className="size-5 text-tertiary" />
+            <p className="text-tertiary text-11">
               {serviceType === EIssueServiceType.EPICS ? (
                 <>
                   {t("issue.duplicate.modal.description1")}
-                  <span className="font-semibold text-custom-text-200">{t("issue.duplicate.modal.description2")}</span>
+                  <span className="font-semibold text-secondary">{t("issue.duplicate.modal.description2")}</span>
                 </>
               ) : (
                 <>
                   {t("issue.duplicate.modal.description1")}
-                  <span className="font-semibold text-custom-text-200">{t("issue.duplicate.modal.description2")}</span>
+                  <span className="font-semibold text-secondary">{t("issue.duplicate.modal.description2")}</span>
                 </>
               )}
             </p>
@@ -98,10 +98,10 @@ export const DuplicateWorkItemModal = observer(function DuplicateWorkItemModal(p
           />
         </div>
         <div className="flex gap-2 justify-end mt-2">
-          <Button variant="neutral-primary" onClick={handleClose} size="sm">
+          <Button variant="secondary" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" onClick={handleSubmit} size="sm" disabled={!selectedProject}>
+          <Button variant="primary" onClick={handleSubmit} disabled={!selectedProject}>
             {t("common.done")}
           </Button>
         </div>

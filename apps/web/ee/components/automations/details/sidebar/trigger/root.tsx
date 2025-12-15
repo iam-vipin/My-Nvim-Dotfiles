@@ -181,11 +181,11 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   return (
     <section className="flex-grow space-y-4 pt-2">
       <div className="space-y-2 px-4">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 text-tertiary">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <Zap className="size-3" />
           </span>
-          <p className="text-xs font-medium">{t("automations.trigger.input_label")}</p>
+          <p className="text-11 font-medium">{t("automations.trigger.input_label")}</p>
         </div>
         <CustomSearchSelect
           options={AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT}
@@ -198,9 +198,9 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
           customButton={
             <span
               className={cn(
-                "w-full px-4 py-1.5 rounded-md border-[0.5px] border-custom-border-200 hover:bg-custom-background-80 text-left flex items-center gap-2 cursor-pointer transition-colors",
+                "w-full px-4 py-1.5 rounded-md border-[0.5px] border-subtle-1 hover:bg-layer-transparent-hover text-left flex items-center gap-2 cursor-pointer transition-colors",
                 {
-                  "text-custom-text-400 border border-custom-primary-200": !selectedTriggerNodeHandlerName,
+                  "text-placeholder border-accent-strong": !selectedTriggerNodeHandlerName,
                 }
               )}
             >

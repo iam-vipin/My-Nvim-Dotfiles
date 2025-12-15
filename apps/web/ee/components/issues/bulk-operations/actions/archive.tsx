@@ -57,7 +57,7 @@ export const BulkArchiveIssues = observer(function BulkArchiveIssues(props: Prop
         <button
           type="button"
           className={cn("outline-none grid place-items-center", {
-            "cursor-not-allowed text-custom-text-400": !canAllIssuesBeArchived,
+            "cursor-not-allowed text-placeholder": !canAllIssuesBeArchived,
           })}
           onClick={() => {
             canAllIssuesBeArchived

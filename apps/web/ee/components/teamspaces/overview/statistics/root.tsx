@@ -25,10 +25,10 @@ import { StatisticsDueByFilter } from "./filters/due-by";
 import { StatisticsLegend } from "./filters/legend";
 import { StatisticsStateGroupFilter } from "./filters/state-group";
 
-const COMMON_FILTER_LIST_CLASSNAME = "flex flex-wrap items-center gap-2.5 text-sm pb-3 px-1.5";
+const COMMON_FILTER_LIST_CLASSNAME = "flex flex-wrap items-center gap-2.5 text-body-xs-regular pb-3 px-1.5";
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
-  "px-2.5 py-0.5 bg-custom-background-80/60 rounded text-custom-text-100 font-medium";
-const COMMON_CHEVRON_CLASSNAME = "size-3 text-custom-text-400 transition-all";
+  "px-2.5 py-0.5 bg-transparent hover:bg-layer-1 rounded-sm text-primary font-medium";
+const COMMON_CHEVRON_CLASSNAME = "size-3 text-placeholder transition-all";
 
 type Props = {
   teamspaceId: string;
@@ -136,7 +136,7 @@ export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot
           isOpen={isOpen}
           title="Team's stats"
           className="border-none px-0"
-          titleClassName={cn(isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200")}
+          titleClassName={cn(isOpen ? "text-primary" : "text-tertiary hover:text-secondary")}
         />
       }
       className="py-2"
@@ -194,7 +194,7 @@ export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot
           <SectionEmptyState
             heading={t("teamspace_analytics.empty_state.stats.general.title")}
             subHeading={t("teamspace_analytics.empty_state.stats.general.description")}
-            icon={<TreeMapIcon className="size-6 text-custom-text-400" />}
+            icon={<TreeMapIcon className="size-6 text-placeholder" />}
             variant="solid"
             iconVariant="round"
             size="md"

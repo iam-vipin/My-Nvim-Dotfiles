@@ -99,8 +99,8 @@ export const PublishTemplate = observer(function PublishTemplate<T extends TBase
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="flex items-center justify-between border-b border-custom-border-200 pb-3 tracking-tight w-full">
-        <h3 className="text-lg font-semibold">{t("templates.settings.form.publish.title")}</h3>
+      <div className="flex items-center justify-between border-b border-subtle pb-3 tracking-tight w-full">
+        <h5 className="text-h5-semibold">{t("templates.settings.form.publish.title")}</h5>
       </div>
       {isInitializing && <PublishTemplateLoader />}
       {!isInitializing && templateInstance && (

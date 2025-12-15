@@ -40,7 +40,7 @@ export const TextAttributes = observer(function TextAttributes(props: TTextAttri
 
   return (
     <div>
-      <span className="text-xs text-custom-text-300 font-medium">
+      <span className="text-caption-sm-regular text-tertiary">
         {t("work_item_types.settings.properties.attributes.label")}
       </span>
       {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.TEXT?.map((configurations, index) => (
@@ -61,7 +61,7 @@ export const TextAttributes = observer(function TextAttributes(props: TTextAttri
       ))}
       {textPropertyDetail.settings?.display_format === "readonly" && (
         <div className="pt-2">
-          <div className="text-xs font-medium text-custom-text-300">
+          <div className="text-caption-md-medium text-tertiary">
             {t("work_item_types.settings.properties.attributes.text.readonly.label")}
           </div>
           <TextArea
@@ -70,7 +70,7 @@ export const TextAttributes = observer(function TextAttributes(props: TTextAttri
             onChange={(e) => setData([e.target.value])}
             onKeyDown={(e) => e.key === "Enter" && !!data[0] && e.currentTarget.blur()}
             onBlur={() => handleReadOnlyFieldChange()}
-            className="w-full max-h-28 resize-none text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300 rounded"
+            className="w-full max-h-28 resize-none text-body-xs-regular bg-surface-1 border-[0.5px] border-subtle-1 rounded"
             tabIndex={1}
             textAreaSize="xs"
             autoFocus

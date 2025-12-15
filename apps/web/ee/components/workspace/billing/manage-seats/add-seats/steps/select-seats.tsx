@@ -41,19 +41,19 @@ export function SelectSeatsStep(props: TSelectSeatsStepProps) {
   return (
     <>
       <div className="space-y-4 p-5">
-        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+        <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
           Get more Admins, Members, and Guests in this workspace.
         </Dialog.Title>
-        <div className="flex items-center gap-1.5 text-sm font-medium bg-custom-primary-100/10 text-custom-primary-200 rounded-md px-3 py-2">
+        <div className="flex items-center gap-1.5 text-13 font-medium bg-accent-primary/10 text-accent-secondary rounded-md px-3 py-2">
           <Info className="size-4" />
           Your current plan, {planeName}
           {isOnTrial && " trial"}, has {purchasedSeats} seats for {purchasedSeats} Admins + Members and{" "}
           {purchasedSeats * 5} Guests.
         </div>
-        <div className="flex w-full items-center justify-between gap-1.5 border border-custom-border-200 rounded-md bg-custom-background-90/70 px-4 py-2">
+        <div className="flex w-full items-center justify-between gap-1.5 border border-subtle-1 rounded-md bg-layer-1/70 px-4 py-2">
           <div>
-            <div className="text-sm font-medium text-custom-text-100">Add seats to your workspace.</div>
-            <div className="text-xs text-custom-text-200">
+            <div className="text-13 font-medium text-primary">Add seats to your workspace.</div>
+            <div className="text-11 text-secondary">
               Each seat will be charged immediately per your plan.
               {!isOnTrial && (
                 <>
@@ -73,7 +73,7 @@ export function SelectSeatsStep(props: TSelectSeatsStepProps) {
           />
         </div>
         {isSelfHosted && (
-          <div className="flex gap-1 items-center text-xs text-custom-text-300">
+          <div className="flex gap-1 items-center text-11 text-tertiary">
             <Info className="size-3" />
             Ensure you are online and connected until you see a confirmation on this screen.
           </div>

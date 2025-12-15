@@ -81,20 +81,20 @@ export const DeleteCustomerModal = observer(function DeleteCustomerModal(props: 
             <AlertTriangle className="size-6 text-red-600" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-lg font-medium xl:text-xl">
+            <h3 className="text-16 font-medium xl:text-18">
               {t("customers.delete.title", { customer_name: customer?.name })}
             </h3>
           </span>
         </div>
         <span>
-          <p className="text-sm leading-5 text-custom-text-200">{t("customers.delete.description")}</p>
+          <p className="text-13 leading-5 text-secondary">{t("customers.delete.description")}</p>
         </span>
 
         <div className="flex justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="danger" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="error-fill" type="submit" loading={isSubmitting}>
             {isSubmitting ? "Deleting..." : "Delete"}
           </Button>
         </div>

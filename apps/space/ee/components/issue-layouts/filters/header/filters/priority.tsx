@@ -48,7 +48,7 @@ export const FilterPriority = observer(function FilterPriority(props: Props) {
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
+            <p className="text-11 italic text-placeholder">{t("no_matches_found")}</p>
           )}
         </div>
       )}

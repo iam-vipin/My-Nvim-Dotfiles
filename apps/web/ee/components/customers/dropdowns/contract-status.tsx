@@ -28,7 +28,7 @@ export function ContractStatusDropDown(props: TProps) {
     content: (
       <div className="flex items-center gap-2">
         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: status.color }} />
-        <p className="text-sm">{t(status.i18n_name)}</p>
+        <p className="text-13">{t(status.i18n_name)}</p>
       </div>
     ),
   }));
@@ -41,13 +41,11 @@ export function ContractStatusDropDown(props: TProps) {
       value={value}
       label={
         <div className="truncate">
-          <span className="text-sm text-custom-text-200">
+          <span className="text-13 text-secondary">
             {labelContent ? (
               labelContent.content
             ) : (
-              <span className="text-custom-text-400">
-                {t("customers.properties.default.contract_status.placeholder")}
-              </span>
+              <span className="text-placeholder">{t("customers.properties.default.contract_status.placeholder")}</span>
             )}
           </span>
         </div>

@@ -100,18 +100,17 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
 
   return (
     <div className="space-y-4">
-      <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
+      <div className="relative border border-subtle rounded-sm p-4 space-y-4">
         {/* heading */}
         <div className="relative flex justify-between items-start gap-4">
           <div className="space-y-1">
-            <div className="text-base font-medium">{t("gitlab_integration.project_connections")}</div>
-            <div className="text-sm text-custom-text-200">
+            <div className="text-body-sm-medium">{t("gitlab_integration.project_connections")}</div>
+            <div className="text-body-xs-regular text-secondary">
               {t("gitlab_integration.project_connections_description")}
             </div>
           </div>
           <Button
-            variant="neutral-primary"
-            size="sm"
+            variant="secondary"
             onClick={() => setModalCreateOpen(true)}
             data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.GITLAB_ADD_PROJECT_BUTTON}
           >
@@ -147,18 +146,17 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
       </div>
 
       {/* Add project state mapping blocks */}
-      <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
+      <div className="relative border border-subtle rounded-sm p-4 space-y-4">
         {/* heading */}
         <div className="relative flex justify-between items-center gap-4">
           <div className="space-y-1">
-            <div className="text-base font-medium">{t("gitlab_integration.plane_project_connection")}</div>
-            <div className="text-sm text-custom-text-200">
+            <div className="text-body-sm-medium">{t("gitlab_integration.plane_project_connection")}</div>
+            <div className="text-body-xs-regular text-secondary">
               {t("gitlab_integration.plane_project_connection_description")}
             </div>
           </div>
           <Button
-            variant="neutral-primary"
-            size="sm"
+            variant="secondary"
             onClick={() => setModalProjectCreateOpen(true)}
             data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.PLANE_ADD_PROJECT_BUTTON}
           >

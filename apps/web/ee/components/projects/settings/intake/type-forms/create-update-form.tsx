@@ -143,21 +143,19 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
 
   return (
     <>
-      <div className="bg-custom-background-100 rounded-md border border-custom-border-100">
+      <div className="bg-surface-1 rounded-md border border-subtle">
         <div className="p-3">
           {/* Form Header */}
           <div className="flex justify-between">
-            <span className="text-custom-text-200 text-base font-medium">
-              {data?.id ? "Edit form details" : "Create form"}
-            </span>
+            <span className="text-secondary text-14 font-medium">{data?.id ? "Edit form details" : "Create form"}</span>
             <div className="flex gap-2 items-center">
               <Button
-                variant="link-neutral"
+                variant="ghost"
                 className="flex gap-1 items-center px-0"
                 onClick={() => setIsPreviewModalOpen(true)}
               >
                 <EyeOpenIcon className="size-4" />
-                <span className=" text-xs font-medium">Preview</span>
+                <span className=" text-11 font-medium">Preview</span>
               </Button>
               {/* Quick actions */}
               <Menu ellipsis>
@@ -165,10 +163,10 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
                   <Menu.MenuItem
                     key={item.key}
                     onClick={item.action}
-                    className={cn("flex items-center gap-2 text-custom-text-200", item.className)}
+                    className={cn("flex items-center gap-2 text-secondary", item.className)}
                   >
                     {item.icon && <item.icon className="size-4" />}
-                    <span className=" text-xs">{item.title}</span>
+                    <span className=" text-11">{item.title}</span>
                   </Menu.MenuItem>
                 ))}
               </Menu>
@@ -176,7 +174,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
           </div>
           <div className="flex justify-between mt-3">
             <div className="spacey-1 w-[65%]">
-              <label className="text-custom-text-300 text-sm font-medium">Form title</label>
+              <label className="text-tertiary text-13 font-medium">Form title</label>
               <Controller
                 control={control}
                 name="name"
@@ -190,19 +188,19 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
                   <Input {...field} placeholder="Form title" className="w-full" hasError={Boolean(errors.name)} />
                 )}
               />
-              {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+              {errors.name && <p className="text-red-500 text-11">{errors.name.message}</p>}
             </div>
             <div className="spacey-1 w-[30%]">
-              <label className="text-custom-text-300 text-sm font-medium">Work item type</label>
-              <div className="p-2  border border-custom-border-200 rounded-md flex items-center gap-2">
+              <label className="text-tertiary text-13 font-medium">Work item type</label>
+              <div className="p-2  border border-subtle-1 rounded-md flex items-center gap-2">
                 <IssueTypeIdentifier issueTypeId={typeId} size={"xs"} />
-                <span className="text-custom-text-200 text-xs">{workItemType?.name}</span>
+                <span className="text-secondary text-11">{workItemType?.name}</span>
               </div>
             </div>
           </div>
           {/* Properties  List */}
           <div className="mt-2 space-y-2">
-            <span className="text-custom-text-400 text-xs uppercase font-medium">Properties</span>
+            <span className="text-placeholder text-11 uppercase font-medium">Properties</span>
             <div className="flex flex-col gap-2">
               {selectedFields.map((field) => (
                 <TypeFormPropertiesListItem
@@ -223,11 +221,11 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
           </div>
         </div>
         {/* Form footer */}
-        <div className="border-t border-custom-border-100 flex justify-end gap-2 p-3">
-          <Button size="sm" variant="neutral-primary" onClick={handleDiscard}>
+        <div className="border-t border-subtle flex justify-end gap-2 p-3">
+          <Button variant="secondary" onClick={handleDiscard}>
             Discard
           </Button>
-          <Button size="sm" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={isSubmitting}>
+          <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={isSubmitting}>
             {data?.id ? "Update" : "Save"}
           </Button>
         </div>

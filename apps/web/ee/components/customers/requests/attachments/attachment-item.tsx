@@ -45,21 +45,21 @@ export const RequestAttachmentsListItem = observer(function RequestAttachmentsLi
 
   return (
     <button
-      className="w-full bg-custom-background-90 rounded-md"
+      className="w-full bg-layer-1 rounded-md"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
         window.open(fileURL, "_blank");
       }}
     >
-      <div className="group flex items-center justify-between gap-3 h-11 hover:bg-custom-background-90 px-2">
-        <div className="flex items-center gap-3 text-sm truncate">
+      <div className="group flex items-center justify-between gap-3 h-11 hover:bg-layer-1 px-2">
+        <div className="flex items-center gap-3 text-13 truncate">
           <div className="flex items-center gap-3">{fileIcon}</div>
           <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
-            <p className="text-custom-text-200 font-medium truncate">{`${fileName}.${fileExtension}`}</p>
+            <p className="text-secondary font-medium truncate">{`${fileName}.${fileExtension}`}</p>
           </Tooltip>
-          <span className="flex size-1.5 bg-custom-background-80 rounded-full" />
-          <span className="flex-shrink-0 text-custom-text-400">{convertBytesToSize(attachment.attributes.size)}</span>
+          <span className="flex size-1.5 bg-layer-1 rounded-full" />
+          <span className="flex-shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
         </div>
 
         <div className="flex items-center gap-3">

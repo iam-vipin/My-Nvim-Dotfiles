@@ -26,7 +26,7 @@ export function ExternalEmbedNodeView(props: ExternalEmbedNodeViewProps) {
         <div className="relative" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
           <ExternalEmbedComponent {...props} />
           {selected && (
-            <div className="absolute inset-0 size-full bg-custom-primary-500/30 pointer-events-none rounded-md" />
+            <div className="absolute inset-0 size-full bg-accent-primary/30 pointer-events-none rounded-md" />
           )}
         </div>
       )}

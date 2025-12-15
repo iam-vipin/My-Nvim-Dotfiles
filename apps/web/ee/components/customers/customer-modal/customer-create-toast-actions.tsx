@@ -34,24 +34,24 @@ export const CreateCustomerCreateToastActions = observer(function CreateCustomer
   };
 
   return (
-    <div className="flex items-center gap-1 text-xs text-custom-text-200">
+    <div className="flex items-center gap-1 text-11 text-secondary">
       <a
         href={customerLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+        className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
       >
         {t("common.view")}
       </a>
 
       {copied ? (
         <>
-          <span className="cursor-default px-2 py-1 text-custom-text-200">{t("common.copied")}</span>
+          <span className="cursor-default px-2 py-1 text-secondary">{t("common.copied")}</span>
         </>
       ) : (
         <>
           <button
-            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-custom-text-300 hover:text-custom-text-200 hover:bg-custom-background-90 rounded"
+            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-layer-1 rounded"
             onClick={copyToClipboard}
           >
             {t("common.actions.copy_link")}

@@ -53,8 +53,8 @@ export const UserAvatarName = observer(function UserAvatarName({
     <Tooltip tooltipContent={user?.display_name ?? t(`Unassigned`)}>
       <div className="flex items-center gap-2 min-w-0">
         {isSuspended ? (
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-custom-background-80">
-            <SuspendedUserIcon className="h-4 w-4 text-custom-text-400" />
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-1">
+            <SuspendedUserIcon className="h-4 w-4 text-placeholder" />
           </div>
         ) : user?.avatar_url && user?.avatar_url !== "" ? (
           <Avatar
@@ -65,13 +65,13 @@ export const UserAvatarName = observer(function UserAvatarName({
             shape="circle"
           />
         ) : (
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-custom-background-80 capitalize overflow-hidden">
-            {user?.display_name ? user?.display_name?.[0] : <UserRound className="text-custom-text-200" size={12} />}
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-1 capitalize overflow-hidden">
+            {user?.display_name ? user?.display_name?.[0] : <UserRound className="text-secondary" size={12} />}
           </div>
         )}
         {showName && (
           <div className="flex items-center gap-2 min-w-0">
-            <span className={`flex-1 truncate ${isSuspended ? "text-custom-text-400" : "text-custom-text-200"}`}>
+            <span className={`flex-1 truncate ${isSuspended ? "text-placeholder" : "text-secondary"}`}>
               {user?.display_name ?? t(`Unassigned`)}
             </span>
             <div className="flex items-center gap-1 shrink-0">

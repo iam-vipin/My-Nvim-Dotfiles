@@ -115,7 +115,7 @@ function IntakeLayout(props: Route.ComponentProps) {
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
-      <div className="relative h-full w-full overflow-hidden bg-custom-primary-100/5 flex">
+      <div className="relative h-full w-full overflow-hidden bg-accent-primary/5 flex">
         <Outlet />
       </div>
     </div>

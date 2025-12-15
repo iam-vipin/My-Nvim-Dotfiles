@@ -37,7 +37,7 @@ export const SelectProject = observer(function SelectProject(props: TSelectProje
 
   return (
     <>
-      <div className="text-sm text-custom-text-200">Plane Project</div>
+      <div className="text-body-xs-regular text-secondary">Plane Project</div>
       <Dropdown
         dropdownOptions={(planeProjects || [])?.map((project) => ({
           key: project?.id || "",

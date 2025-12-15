@@ -41,7 +41,7 @@ export const BooleanAttributes = observer(function BooleanAttributes(props: TBoo
         </div>
       )}
       <div className="flex flex-col gap-3">
-        <div className="text-xs font-medium text-custom-text-300">
+        <div className="text-caption-md-medium text-tertiary">
           {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ export const BooleanAttributes = observer(function BooleanAttributes(props: TBoo
             onBooleanValueChange={async (value) => onBooleanDetailChange("default_value", value)}
             isDisabled={!!booleanPropertyDetail.is_required}
           />
-          <div className="text-xs font-medium text-custom-text-200">
+          <div className="text-caption-md-medium text-secondary">
             {booleanPropertyDetail.default_value?.[0] !== undefined
               ? `${booleanPropertyDetail.default_value?.[0] === "true" ? t("common.true") : t("common.false")}`
               : t("work_item_types.settings.properties.attributes.boolean.no_default")}

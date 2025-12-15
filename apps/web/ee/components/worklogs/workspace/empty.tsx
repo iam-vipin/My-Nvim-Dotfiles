@@ -10,8 +10,8 @@ export function WorklogEmptyScreen() {
   return (
     <div className="w-[600px] m-auto mt-12">
       <div className="flex flex-col gap-1.5 flex-shrink">
-        <h3 className="text-xl font-semibold">See timesheets for any member in any project.</h3>
-        <p className="text-sm">
+        <h3 className="text-18 font-semibold">See timesheets for any member in any project.</h3>
+        <p className="text-13">
           When you log time via Tracked time in work item properties, you will see detailed timesheets here. Any member
           can log time in any work item in any project in your workspace.
         </p>

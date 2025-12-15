@@ -52,9 +52,7 @@ export const ConfigureAsanaSelectWorkspace = observer(function ConfigureAsanaSel
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">
-        {t("importers.select_service_workspace", { serviceName: "Asana" })}
-      </div>
+      <div className="text-13 text-secondary">{t("importers.select_service_workspace", { serviceName: "Asana" })}</div>
       {isLoading && (!asanaWorkspaces || asanaWorkspaces.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />

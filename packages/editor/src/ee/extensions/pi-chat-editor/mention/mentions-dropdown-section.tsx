@@ -19,11 +19,11 @@ export function MentionsDropdownSection(props: Props) {
     <Disclosure as="div" className="flex flex-col">
       <div
         className={cn(
-          "shrink-0 group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+          "shrink-0 group w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-custom-sidebar-text-400"
         )}
       >
         <>
-          <span className="text-xs font-medium capitalize text-custom-text-300 my-1">
+          <span className="text-body-xs-regular text-tertiary capitalize my-1">
             {type === "issue" ? "Work item" : type?.replaceAll("_", " ")}
           </span>
         </>
@@ -37,16 +37,16 @@ export function MentionsDropdownSection(props: Props) {
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-95 opacity-0"
       >
-        <Disclosure.Panel as="div" className="text-xs space-y-0 ml-0" static>
+        <Disclosure.Panel as="div" className="text-11 space-y-0 ml-0" static>
           {items.map((item, index) => (
             <div
               key={`${type}-${index}`}
               id={`${type}-${index}`}
               onClick={() => onClick(index)}
               className={cn(
-                "gap-1 rounded p-1 my-1 cursor-pointer hover:bg-custom-sidebar-background-80/50 text-xs font-medium text-custom-text-200 space-x-1 flex",
+                "gap-1 rounded-sm p-1 my-1 cursor-pointer hover:bg-layer-1/50 text-body-sm-regular text-primary space-x-1 flex",
                 {
-                  "bg-custom-sidebar-background-80/50": selectedItemIndex === index && isSectionSelected,
+                  "bg-layer-1/50": selectedItemIndex === index && isSectionSelected,
                 }
               )}
             >

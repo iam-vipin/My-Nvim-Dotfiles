@@ -56,7 +56,7 @@ export const CycleAdditionalActions = observer(function CycleAdditionalActions(p
         loading={startingCycle}
       />
       <button
-        className="rounded-md px-2 h-6 bg-custom-primary-100/20 text-custom-primary-100 hover:bg-custom-primary-100/10 hover:text-custom-primary-200 focus:bg-custom-primary-100/10"
+        className="rounded-md px-2 h-6 bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/10 hover:text-accent-secondary focus:bg-accent-primary/10"
         onClick={() => setStartCycleModal(true)}
       >
         Start cycle

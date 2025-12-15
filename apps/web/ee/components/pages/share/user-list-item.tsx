@@ -5,7 +5,7 @@ import { AccessMenu } from "./access-menu";
 
 type TUserListItemProps = {
   userId: string;
-  displayName: string;
+  displayName?: string;
   avatarUrl?: string;
   access: number;
   isModified?: boolean;
@@ -35,7 +35,7 @@ export function UserListItem({
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <Avatar name={displayName || "Unknown User"} src={getFileURL(avatarUrl || "")} size="base" />
         <div className="min-w-0 flex-1">
-          <p className="text-base font-normal text-custom-text-100 truncate">{displayName || "Unknown User"}</p>
+          <p className="text-14 font-normal text-primary truncate">{displayName || "Unknown User"}</p>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ export function UserListItem({
         {isModified && (
           <span
             className={cn(
-              "px-[4px] py-[2px] text-xs font-medium rounded-[4px]",
+              "px-1 py-0.5 text-11 font-medium rounded-sm",
               { "text-[#FF9500] bg-[#804A00]": resolvedTheme === "dark" },
               { "text-[#FF9500] bg-[#FFEACC]": resolvedTheme === "light" }
             )}

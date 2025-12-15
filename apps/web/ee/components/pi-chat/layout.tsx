@@ -90,7 +90,7 @@ export const PiChatLayout = observer(function PiChatLayout(props: TProps) {
 
   if (!isOpen) return <></>;
   return (
-    <div className={cn("md:flex h-full rounded-lg bg-custom-background-100")}>
+    <div className={cn("md:flex h-full rounded-lg bg-surface-1")}>
       <div className="flex flex-col flex-1 h-full w-full">
         {/* Header */}
         <Header

@@ -13,7 +13,7 @@ export const SpreadSheetCustomerRequestColumn = observer(function SpreadSheetCus
   const { t } = useTranslation();
 
   return (
-    <Row className="flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 py-1 text-xs hover:bg-custom-background-80 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10">
+    <Row className="flex h-11 w-full items-center border-b-[0.5px] border-subtle-1 py-1 text-11 hover:bg-layer-1 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10">
       {issue?.customer_request_ids?.length}{" "}
       {t("customers.requests.label", { count: issue?.customer_request_ids?.length }).toLowerCase()}
     </Row>

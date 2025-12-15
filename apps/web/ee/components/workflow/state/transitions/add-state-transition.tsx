@@ -70,9 +70,8 @@ export const AddStateTransition = observer(function AddStateTransition(props: Pr
       <StateDropdown
         button={
           <Button
-            variant="accent-primary"
-            size="sm"
-            className={cn("text-xs px-2 py-1", {
+            variant="secondary"
+            className={cn("text-11 px-2 py-1", {
               "cursor-pointer": !isAdding,
             })}
             data-ph-element={WORKFLOW_TRACKER_ELEMENTS.CREATE_TRANSITION_BUTTON}

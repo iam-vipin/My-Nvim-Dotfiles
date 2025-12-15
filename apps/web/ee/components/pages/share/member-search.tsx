@@ -41,7 +41,7 @@ export function MemberSearch({ memberOptions, onSelectMember, canCurrentUserChan
     <CustomSearchSelect
       value=""
       customButton={
-        <span className="w-full flex items-center gap-1 text-custom-text-400 p-2 rounded border-[0.5px] border-custom-border-300">
+        <span className="w-full flex items-center gap-1 text-placeholder p-2 rounded-sm border-[0.5px] border-subtle-1">
           <span className="shrink-0 size-4 grid place-items-center">
             <Search className="size-3.5" />
           </span>

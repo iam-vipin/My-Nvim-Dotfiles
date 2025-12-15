@@ -59,7 +59,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   if (!calendarPayload || !formattedDatePayload)
     return (
-      <div className="grid h-full w-full place-items-center">
+      <div className="size-full grid place-items-center">
         <Spinner />
       </div>
     );
@@ -69,7 +69,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   return (
     <>
-      <div className="flex h-full w-full flex-col overflow-hidden">
+      <div className="size-full flex flex-col overflow-hidden">
         <CalendarHeader calendarLayout={calendarLayout} setSelectedDate={setSelectedDate} />
 
         <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
@@ -82,7 +82,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             <CalendarWeekHeader isLoading={loader === "init-loader"} showWeekends={showWeekends} />
             <div className="h-full w-full">
               {calendarLayout === "month" && (
-                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
                   {allWeeksOfActiveMonth &&
                     Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                       <CalendarWeekDays
@@ -119,7 +119,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
             {/* mobile view */}
             <div className="md:hidden">
-              <p className="p-4 text-xl font-semibold">
+              <p className="p-4 text-18 font-semibold">
                 {`${selectedDate.getDate()} ${
                   MONTHS_LIST[selectedDate.getMonth() + 1].title
                 }, ${selectedDate.getFullYear()}`}
@@ -138,7 +138,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
         {/* mobile view */}
         <div className="md:hidden">
-          <p className="p-4 text-xl font-semibold">
+          <p className="p-4 text-18 font-semibold">
             {`${selectedDate.getDate()} ${
               MONTHS_LIST[selectedDate.getMonth() + 1].title
             }, ${selectedDate.getFullYear()}`}

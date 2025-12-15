@@ -23,8 +23,8 @@ export const IntakeFeatureChildren = observer(function IntakeFeatureChildren({
 
   return (
     <>
-      <h4 className="mt-4 mb-2 text-sm font-medium text-custom-text-300">Intake sources</h4>
-      <div className="px-4 rounded border transition-all border-custom-border-200 bg-custom-background-90">
+      <h4 className="mt-4 mb-2 text-13 font-medium text-tertiary">Intake sources</h4>
+      <div className="px-4 rounded-sm border transition-all border-subtle-1 bg-layer-1">
         {isEmailEnabled || isFormEnabled ? (
           <IntakeSubFeatures projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />
         ) : (

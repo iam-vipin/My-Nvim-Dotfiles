@@ -41,7 +41,7 @@ export const PageTypeFiltersHeader = observer(function PageTypeFiltersHeader() {
   if (!isFiltersApplied) return null;
 
   return (
-    <div className="border-b border-custom-border-200 px-5 py-3">
+    <div className="border-b border-subtle-1 px-5 py-3">
       <PageAppliedFiltersList
         appliedFilters={filters.filters ?? {}}
         handleClearAllFilters={clearAllFilters}

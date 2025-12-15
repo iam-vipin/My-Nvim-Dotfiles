@@ -74,15 +74,15 @@ export const TopNavSearch = observer(function TopNavSearch() {
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 px-2 py-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 border border-transparent transition-colors duration-200",
+            "flex items-center w-full h-7 p-2 rounded-lg bg-layer-2 border border-subtle-1 transition-colors duration-200",
             {
-              "border-custom-border-200": isOpen,
+              "bg-layer-1": isOpen,
             }
           )}
           onClick={() => inputRef.current?.focus()}
           role="button"
         >
-          <SearchIcon className="shrink-0 size-3.5 text-custom-text-350 mr-2" />
+          <SearchIcon className="shrink-0 size-3.5 text-tertiary mr-2" />
           <input
             ref={inputRef}
             type="text"
@@ -96,18 +96,18 @@ export const TopNavSearch = observer(function TopNavSearch() {
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search"
-            className="flex-1 bg-transparent text-sm text-custom-text-100 placeholder-custom-text-350 outline-none min-w-0"
+            className="flex-1 bg-transparent text-13 text-primary placeholder-custom-text-350 outline-none min-w-0"
           />
           {searchQuery && (
             <button onClick={handleClear} className="shrink-0 ml-2">
-              <CloseIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-100" />
+              <CloseIcon className="size-3.5 text-placeholder hover:text-primary" />
             </button>
           )}
         </div>
       </div>
       <div
         className={cn(
-          "absolute -top-[6px] left-1/2 -translate-x-1/2 bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg flex flex-col overflow-hidden z-20 transition-all duration-300 ease-in-out pt-10",
+          "absolute -top-[6px] left-1/2 -translate-x-1/2 bg-surface-1 border border-subtle-1 rounded-md shadow-lg flex flex-col overflow-hidden z-20 transition-all duration-300 ease-in-out pt-10",
           {
             "opacity-100 w-[574px] max-h-[80vh]": isOpen,
             "opacity-0 w-0 h-0": !isOpen,
@@ -116,12 +116,12 @@ export const TopNavSearch = observer(function TopNavSearch() {
       >
         {!searchQuery ? (
           <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
-            <div className="w-24 h-24 bg-custom-background-90 rounded-full flex items-center justify-center">
-              <Search className="w-14 h-14 text-custom-text-400/40" />
+            <div className="w-24 h-24 bg-layer-1 rounded-full flex items-center justify-center">
+              <Search className="w-14 h-14 text-placeholder/40" />
             </div>
             <div className="text-center space-y-2">
-              <div className="text-xl font-bold text-custom-text-300">Search your workspace</div>
-              <div className="text-sm text-custom-text-300 max-w-[300px]">
+              <div className="text-18 font-bold text-tertiary">Search your workspace</div>
+              <div className="text-13 text-tertiary max-w-[300px]">
                 Start typing to search across work items, projects, cycles, modules and more
               </div>
             </div>

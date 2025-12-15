@@ -36,10 +36,10 @@ export const TeamspaceProgressBanner = observer(function TeamspaceProgressBanner
       ) : (
         <div
           className={cn(
-            "flex w-full h-8 py-0.5 px-4 items-center justify-between gap-2 text-sm font-medium rounded-lg",
+            "flex w-full h-8 py-0.5 px-4 items-center justify-between gap-2 text-body-xs-medium rounded-lg",
             {
-              "text-red-500 bg-red-500/15": areIssuesOverdue,
-              "text-green-600 bg-green-500/15": !areIssuesOverdue,
+              "text-danger bg-danger-subtle": areIssuesOverdue,
+              "text-success-primary bg-success-subtle": !areIssuesOverdue,
             }
           )}
         >

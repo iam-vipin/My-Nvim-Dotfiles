@@ -41,7 +41,7 @@ export const InitiativeProgressSection = observer(function InitiativeProgressSec
             tooltipContent="The progress metrics aggregate all child work items from both Epics and Projects."
             position="top-start"
           >
-            <span className="flex items-center justify-center size-4 text-custom-text-300 hover:text-custom-text-200 cursor-pointer">
+            <span className="flex items-center justify-center size-4 text-tertiary hover:text-secondary cursor-pointer">
               <InfoIcon className="size-3.5" />
             </span>
           </Tooltip>

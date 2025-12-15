@@ -142,18 +142,18 @@ export const DashboardsWidgetConfigSidebarRoot = observer(function DashboardsWid
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className={cn(className, "w-[408px] -mr-[408px] flex flex-col gap-y-4 p-4 transition-all", {
+      className={cn(className, "w-[408px] -mr-[408px] flex flex-col gap-y-4 p-4 transition-all bg-surface-1", {
         "mr-0": shouldShowSidebar,
       })}
     >
       <FormProvider {...methods}>
         <WidgetConfigSidebarHeader handleClose={handleCloseSidebar} handleDelete={handleDelete} />
         <WidgetConfigSidebarBasicConfig handleSubmit={handleFormSubmit} />
-        <div className="flex-shrink-0 h-px bg-custom-background-80" />
+        <div className="flex-shrink-0 h-px border-t border-subtle" />
         <WidgetConfigSidebarAxisConfig handleSubmit={handleFormSubmit} />
-        <div className="flex-shrink-0 h-px bg-custom-background-80" />
+        <div className="flex-shrink-0 h-px border-t border-subtle" />
         <WidgetConfigSidebarStyleConfig handleSubmit={handleFormSubmit} />
-        <div className="flex-shrink-0 h-px bg-custom-background-80" />
+        <div className="flex-shrink-0 h-px border-t border-subtle" />
         <WidgetConfigSidebarFilters
           key={widget?.id}
           handleSubmit={handleFormSubmit}

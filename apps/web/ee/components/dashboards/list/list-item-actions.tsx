@@ -61,7 +61,7 @@ export const DashboardListItemActions = observer(function DashboardListItemActio
           <Avatar src={getFileURL(creatorDetails?.avatar_url ?? "")} name={creatorDetails?.display_name} />
         </Tooltip>
       </div>
-      {/* <div className="cursor-default text-custom-text-300">
+      {/* <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
           {access === 0 ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
         </Tooltip>
@@ -69,11 +69,11 @@ export const DashboardListItemActions = observer(function DashboardListItemActio
       {/* dashboard info */}
       <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
         <span className="size-4 grid place-items-center cursor-default">
-          <Info className="size-4 text-custom-text-300" />
+          <Info className="size-4 text-tertiary" />
         </span>
       </Tooltip>
       {/* vertical divider */}
-      <Minus className="size-5 text-custom-text-400 rotate-90 -mx-3" strokeWidth={1} />
+      <Minus className="size-5 text-placeholder rotate-90 -mx-3" strokeWidth={1} />
 
       {/* favorite/unfavorite */}
       {canCurrentUserFavoriteDashboard && (

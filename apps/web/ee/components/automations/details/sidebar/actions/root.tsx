@@ -219,8 +219,7 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
         ) : (
           <section className="flex-grow px-4 pt-2">
             <Button
-              size="sm"
-              variant="neutral-primary"
+              variant="secondary"
               onClick={() => {
                 captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.ADD_ACTION_BUTTON });
                 openActionForm(actionFormRef.current);

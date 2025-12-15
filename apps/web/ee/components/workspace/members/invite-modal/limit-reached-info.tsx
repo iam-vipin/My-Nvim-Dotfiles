@@ -21,7 +21,7 @@ export const InvitationLimitReactInfo = observer(function InvitationLimitReactIn
   const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
 
   return (
-    <div className="flex gap-1.5 py-2 px-3 rounded bg-custom-background-90 text-xs text-custom-text-200">
+    <div className="flex gap-1.5 py-2 px-3 rounded-sm bg-layer-1 text-11 text-secondary">
       <div className="flex-shirk-0">
         <Info className="size-3 mt-0.5" />
       </div>
@@ -38,12 +38,12 @@ export const InvitationLimitReactInfo = observer(function InvitationLimitReactIn
             tooltipContent="You have an offline subscription. Please contact support to add more seats."
             position="right"
           >
-            <a href="mailto:support@plane.so" className={cn(getButtonStyling("primary", "sm"), "py-1 px-2")}>
+            <a href="mailto:support@plane.so" className={cn(getButtonStyling("primary", "base"), "py-1 px-2")}>
               Contact support
             </a>
           </Tooltip>
         ) : (
-          <Button variant="primary" size="sm" className="py-1 px-2" onClick={handleAddMoreSeats}>
+          <Button variant="primary" className="py-1 px-2" onClick={handleAddMoreSeats}>
             Add more seats
           </Button>
         )}

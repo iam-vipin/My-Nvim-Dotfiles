@@ -54,7 +54,7 @@ export function IssueTypeLogo(props: Props) {
           backgroundColor: isEpic ? "transparent" : background,
         }}
         className={cn(
-          "flex-shrink-0 grid place-items-center rounded bg-custom-background-80",
+          "flex-shrink-0 grid place-items-center rounded-sm bg-layer-1",
           {
             "bg-transparent": isEpic,
           },
@@ -65,7 +65,7 @@ export function IssueTypeLogo(props: Props) {
           <EpicIcon
             width={containerSizeMap[size]}
             height={containerSizeMap[size]}
-            className="text-custom-text-300 group-hover/kanban-block:text-custom-text-200"
+            className="text-tertiary group-hover/kanban-block:text-secondary"
             color={foreground}
           />
         ) : renderDefaultIcon ? (

@@ -32,18 +32,18 @@ export function RichCard({ iframelyData, src, theme, showLoading = true }: RichC
   return (
     <div
       className={cn(
-        "flex bg-custom-background-800 rounded-lg overflow-hidden my-4 border border-custom-border-200",
-        "hover:bg-custom-background-700 hover:border-custom-border-300 transition-all duration-500",
+        "flex bg-layer-2 rounded-lg overflow-hidden my-4 border border-subtle-1",
+        "hover:bg-layer-2 hover:border-strong transition-all duration-500",
         isVisible ? "animate-fade-in opacity-100" : showLoading ? "opacity-0 translate-y-2.5" : "opacity-100"
       )}
     >
       {/* Thumbnail */}
       {thumbnail ? (
-        <div className="w-[200px] h-[130px] bg-custom-background-700 flex-shrink-0 border-r border-custom-border-200">
+        <div className="w-[200px] h-[130px] bg-layer-2 flex-shrink-0 border-r border-subtle-1">
           <img src={thumbnail} alt={title || "Thumbnail"} className="w-full h-full object-cover" loading="lazy" />
         </div>
       ) : (
-        <div className="w-[200px] h-[130px] bg-custom-background-700 flex-shrink-0 border-r border-custom-border-200 flex items-center justify-center">
+        <div className="w-[200px] h-[130px] bg-layer-2 flex-shrink-0 border-r border-subtle-1 flex items-center justify-center">
           {isDarkTheme ? (
             <ThumbnailNotFoundDark width={120} height={100} />
           ) : (
@@ -54,17 +54,17 @@ export function RichCard({ iframelyData, src, theme, showLoading = true }: RichC
 
       {/* Link Meta */}
       <div className="flex-1 min-w-[180px] p-4">
-        <div className="text-sm leading-5 text-custom-text-100 font-medium whitespace-nowrap overflow-hidden text-ellipsis mb-2.5">
+        <div className="text-13 leading-5 text-primary font-medium whitespace-nowrap overflow-hidden text-ellipsis mb-2.5">
           {title || domain}
         </div>
-        {description && <div className="mt-2.5 text-sm text-custom-text-200 line-clamp-2 mb-2.5">{description}</div>}
+        {description && <div className="mt-2.5 text-13 text-secondary line-clamp-2 mb-2.5">{description}</div>}
         <div className="flex items-center gap-1.5">
           {icon && <img src={icon} alt="Site icon" className="w-4 h-4 flex-shrink-0" />}
           <a
             href={src}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm leading-4 text-custom-text-200 hover:text-custom-text-100 whitespace-nowrap overflow-hidden text-ellipsis transition-colors duration-200"
+            className="text-13 leading-4 text-secondary hover:text-primary whitespace-nowrap overflow-hidden text-ellipsis transition-colors duration-200"
           >
             {src}
           </a>

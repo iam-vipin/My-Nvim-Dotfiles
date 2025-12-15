@@ -78,7 +78,7 @@ export const TeamEmptyState = observer(function TeamEmptyState() {
                 handleClearAllFilters();
               },
               disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceWorkItemFilter,
-              variant: "outline-primary",
+              variant: "secondary",
             },
           ]}
         />

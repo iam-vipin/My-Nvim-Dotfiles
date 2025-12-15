@@ -89,14 +89,14 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
         {!isViewModeEnabled && (
           <DragHandle className="absolute top-6 -translate-y-1/2 left-0.5 bg-transparent p-0 opacity-0 pointer-events-none group-hover/widget:opacity-100 group-hover/widget:pointer-events-auto transition-opacity" />
         )}
-        <h5 className="text-sm font-medium text-custom-text-200 truncate">{widget.name}</h5>
+        <h5 className="text-13 font-medium text-secondary truncate">{widget.name}</h5>
       </div>
       <div className="flex-shrink-0 hidden group-hover/widget:flex items-center">
         {!isViewModeEnabled && canCurrentUserEditWidget && (
           <Tooltip tooltipContent="Edit">
             <button
               type="button"
-              className="grid place-items-center p-1 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
+              className="grid place-items-center p-1 rounded-sm text-secondary hover:text-primary hover:bg-layer-1"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -111,7 +111,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
         <Tooltip tooltipContent="Refresh">
           <button
             type="button"
-            className="grid place-items-center p-1 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
+            className="grid place-items-center p-1 rounded-sm text-secondary hover:text-primary hover:bg-layer-1"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();

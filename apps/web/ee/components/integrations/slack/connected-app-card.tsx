@@ -29,10 +29,10 @@ export const ConnectedAppCard = observer(function ConnectedAppCard(props: TConne
   };
 
   return (
-    <div className="flex-shrink-0 relative flex items-center gap-4 p-4 border border-custom-border-100 rounded-lg">
+    <div className="flex-shrink-0 relative flex items-center gap-4 p-4 border border-subtle rounded-lg">
       <div className="w-full h-full overflow-hidden">
-        <div className="text-sm font-medium">{data.connection_data.name}</div>
-        <div className="text-sm text-custom-text-200">
+        <div className="text-body-xs-medium">{data.connection_data.name}</div>
+        <div className="text-body-xs-regular text-secondary">
           {" "}
           {t("slack_integration.connected_on", { date: renderFormattedDate(data.created_at) })}
         </div>
@@ -43,8 +43,7 @@ export const ConnectedAppCard = observer(function ConnectedAppCard(props: TConne
           closeOnSelect
           customButton={
             <Button
-              size="sm"
-              variant="link-neutral"
+              variant="ghost"
               loading={isLoading}
               data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_WORKSPACE_CONTEXT_MENU}
             >

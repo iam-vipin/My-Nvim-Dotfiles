@@ -30,16 +30,13 @@ export const AppliedIssueTypeFilters = observer(function AppliedIssueTypeFilters
         const issueType = getIssueTypeById(issueTypeId);
         if (!issueType) return null;
         return (
-          <div
-            key={issueTypeId}
-            className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs truncate"
-          >
+          <div key={issueTypeId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11 truncate">
             <IssueTypeLogo icon_props={issueType?.logo_props?.icon} isDefault={issueType?.is_default} />
             <span className="normal-case truncate">{issueType.name}</span>
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(issueTypeId)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />

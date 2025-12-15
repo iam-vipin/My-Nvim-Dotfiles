@@ -65,7 +65,7 @@ export function SharePageModal({ isOpen, onClose, data, onAction }: TSharePageMo
     >
       <ModalHeader pageTitle={data.pageTitle} copied={data.copied} onCopyLink={onAction.copyLink} />
 
-      <div className="mt-2 px-4 min-h-[240px] transition-all duration-300 ease-in-out">
+      <div className="mt-2 px-4 min-h-60 transition-all duration-300 ease-in-out">
         <MemberSearch
           memberOptions={data.memberOptions}
           onSelectMember={onAction.selectMember}
@@ -82,7 +82,7 @@ export function SharePageModal({ isOpen, onClose, data, onAction }: TSharePageMo
           />
 
           {data.pendingSharedUsers.length > 0 && data.existingUsers.length > 0 && (
-            <div className="flex-shrink-0 mt-3 h-[0.5px] bg-custom-background-80 transition-all duration-300 ease-in-out" />
+            <div className="shrink-0 mt-3 h-[0.5px] bg-layer-1 transition-all duration-300 ease-in-out" />
           )}
 
           <ExistingUsersSection
@@ -94,6 +94,7 @@ export function SharePageModal({ isOpen, onClose, data, onAction }: TSharePageMo
             isAccordionOpen={data.isSharedUsersAccordionOpen}
             onToggleAccordion={onAction.toggleSharedUsersAccordion}
             canCurrentUserChangeAccess={data.canCurrentUserChangeAccess}
+            isLoading={data.isLoadingSharedUsers}
           />
 
           <EmptyState

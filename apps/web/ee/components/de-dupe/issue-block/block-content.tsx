@@ -24,7 +24,7 @@ export const DeDupeIssueBlockContent = observer(function DeDupeIssueBlockContent
 
   return (
     <>
-      <p className="w-full truncate cursor-pointer text-sm text-custom-text-100 pb-3 border-b border-custom-border-300 border-dashed">
+      <p className="w-full truncate cursor-pointer text-13 text-primary pb-3 border-b border-subtle-1 border-dashed">
         {issue.name}
       </p>
       <div className="flex items-center justify-between">
@@ -37,7 +37,7 @@ export const DeDupeIssueBlockContent = observer(function DeDupeIssueBlockContent
               className="size-4 flex-shrink-0"
             />
             <span className="flex items-baseline">
-              <p className="text-sm leading-3 text-custom-text-200 ">{stateDetails?.name ?? "State"}</p>
+              <p className="text-13 leading-3 text-secondary ">{stateDetails?.name ?? "State"}</p>
             </span>
           </div>
         </div>

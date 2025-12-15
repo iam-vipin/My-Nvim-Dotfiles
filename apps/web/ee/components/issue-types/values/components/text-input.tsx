@@ -56,10 +56,10 @@ export const TextValueInput = observer(function TextValueInput(props: TTextValue
   };
 
   const commonClassNames = cn(
-    "w-full px-2 resize-none text-sm bg-custom-background-100 rounded border-0",
+    "w-full px-2 resize-none text-body-xs-regular bg-surface-1 rounded-sm border-0",
     {
       "border-[0.5px]": variant === "create",
-      "border-[1px] bg-custom-background-90": variant === "update",
+      "border-[1px] bg-layer-1": variant === "update",
       "cursor-not-allowed": isDisabled,
     },
     className
@@ -97,7 +97,7 @@ export const TextValueInput = observer(function TextValueInput(props: TTextValue
             disabled={isDisabled}
           />
           {Boolean(error) && (
-            <span className="text-xs font-medium text-red-500">
+            <span className="text-caption-md-medium text-danger">
               {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
             </span>
           )}
@@ -128,7 +128,7 @@ export const TextValueInput = observer(function TextValueInput(props: TTextValue
             disabled={isDisabled}
           />
           {Boolean(error) && (
-            <span className="text-xs font-medium text-red-500">
+            <span className="text-caption-md-medium text-danger">
               {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
             </span>
           )}
@@ -139,10 +139,7 @@ export const TextValueInput = observer(function TextValueInput(props: TTextValue
         <TextArea
           id={`readonly_text_${propertyDetail.id}`}
           value={readOnlyData ?? "No data"}
-          className={cn(
-            commonClassNames,
-            "bg-custom-background-80 text-custom-text-100 border-custom-border-400 cursor-default"
-          )}
+          className={cn(commonClassNames, "bg-layer-1 text-primary border-strong-1 cursor-default")}
           readOnly
           disabled={isDisabled}
         />

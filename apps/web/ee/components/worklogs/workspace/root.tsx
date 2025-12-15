@@ -42,8 +42,8 @@ export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props
 
   return (
     <main className="container mx-auto pr-5 space-y-2 w-full">
-      <h3 className="text-xl font-medium">Worklogs</h3>
-      <div className="text-sm text-custom-text-300">Download worklogs AKA timesheets for anyone in any project.</div>
+      <h3 className="text-18 font-medium">Worklogs</h3>
+      <div className="text-13 text-tertiary">Download worklogs AKA timesheets for anyone in any project.</div>
 
       <div>
         {loader === EWorklogLoader.WORKSPACE_INIT_LOADER ? (

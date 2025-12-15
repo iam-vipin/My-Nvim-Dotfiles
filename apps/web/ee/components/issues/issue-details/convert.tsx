@@ -24,13 +24,13 @@ export const WorkItemConvertActivity = observer(function WorkItemConvertActivity
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<ArrowRightLeft className="h-3 w-3 flex-shrink-0 text-custom-text-300" />}
+      icon={<ArrowRightLeft className="h-3 w-3 flex-shrink-0 text-tertiary" />}
       activityId={activityId}
       ends={ends}
     >
       <>
         converted{" "}
-        <span className="text-custom-text-100 font-medium">{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+        <span className="text-primary font-medium">{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
         to epic.
       </>
     </IssueActivityBlockComponent>

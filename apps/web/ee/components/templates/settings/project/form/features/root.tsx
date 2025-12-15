@@ -21,20 +21,15 @@ export const ProjectFeatures = observer(function ProjectFeatures() {
     <TemplateCollapsibleWrapper title={t("common.features")}>
       <div className="flex flex-col gap-y-4 pt-2 pb-4">
         {Object.entries(PROJECT_FEATURES_LIST_FOR_TEMPLATE).map(([featureKey, feature]) => (
-          <div
-            key={featureKey}
-            className="gap-x-8 gap-y-2 border border-custom-border-100 bg-custom-background-100 px-4 py-3 rounded-lg"
-          >
+          <div key={featureKey} className="gap-x-8 gap-y-2 border border-subtle bg-surface-1 px-4 py-3 rounded-lg">
             <div key={featureKey} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center bg-custom-background-80/70 p-2 rounded-lg">
-                  {feature.icon}
-                </div>
+                <div className="flex items-center justify-center bg-layer-1 p-2 rounded-lg">{feature.icon}</div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-medium leading-5">{t(feature.key)}</h4>
+                    <h4 className="text-body-xs-medium leading-5">{t(feature.key)}</h4>
                   </div>
-                  <p className="text-xs leading-4 text-custom-text-300">{t(`${feature.key}_description`)}</p>
+                  <p className="text-caption-sm-regular leading-4 text-tertiary">{t(`${feature.key}_description`)}</p>
                 </div>
               </div>
               <Controller

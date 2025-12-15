@@ -71,7 +71,7 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
         className="w-full"
         buttonClassName="w-full"
         title={
-          <div className="flex w-full items-center gap-2 py-2.5 px-3 bg-custom-background-90">
+          <div className="flex w-full items-center gap-2 py-2.5 px-3 bg-layer-1">
             <div className="w-fit flex-shrink-0">
               <StateItemTitle
                 setUpdateStateModal={() => {}}
@@ -85,10 +85,10 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
               <StateTransitionCount currentTransitionMap={currentTransitionMap} />
               <div className="flex w-full items-center justify-end gap-3">
                 <div className="flex gap-1.5">
-                  <span className="text-xs text-custom-text-400 font-medium">
+                  <span className="text-11 text-placeholder font-medium">
                     {isDefaultState ? (
                       <Tooltip position="left" tooltipContent={t("workflows.workflow_states.default_state")}>
-                        <Info className="flex-shrink-0 size-4 text-custom-text-400 hover:text-custom-text-300 cursor-help" />
+                        <Info className="flex-shrink-0 size-4 text-placeholder hover:text-tertiary cursor-help" />
                       </Tooltip>
                     ) : (
                       <>{t("workflows.workflow_states.work_item_creation")}</>
@@ -107,8 +107,8 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
                 </div>
                 <ChevronDownIcon
                   strokeWidth={2}
-                  className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
-                    "rotate-180 text-custom-text-200": isOpen,
+                  className={cn("transition-all size-4 text-placeholder hover:text-tertiary", {
+                    "rotate-180 text-secondary": isOpen,
                   })}
                 />
               </div>

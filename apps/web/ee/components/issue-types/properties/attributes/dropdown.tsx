@@ -54,7 +54,7 @@ export const DropdownAttributes = observer(function DropdownAttributes(props: TD
   return (
     <>
       <div>
-        <span className="text-xs text-custom-text-300 font-medium">
+        <span className="text-caption-sm-regular text-tertiary">
           {t("work_item_types.settings.properties.attributes.label")}
         </span>
         <PropertyMultiSelect
@@ -86,7 +86,7 @@ export const DropdownAttributes = observer(function DropdownAttributes(props: TD
       )}
       <IssuePropertyOptionsRoot customPropertyId={dropdownPropertyDetail.id} error={error?.options} />
       <div>
-        <div className="text-xs font-medium text-custom-text-300">
+        <div className="text-caption-sm-medium text-tertiary">
           {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <DefaultOptionSelect isMultiSelect={dropdownPropertyDetail.is_multi} isDisabled={isOptionDefaultDisabled} />

@@ -20,7 +20,7 @@ export const useWorkItemData = (artifactId: string): Partial<TIssue> => {
         name: originalData?.parameters?.name,
         description_html: originalData?.parameters?.description || "",
         project_id: projectId?.toString() || "",
-        state_id: properties?.state?.id,
+        state_id: properties?.state?.id || null,
         priority: properties?.priority?.name as TIssuePriorities,
         start_date: properties?.start_date?.name || null,
         target_date: properties?.target_date?.name || null,

@@ -48,9 +48,9 @@ export const EntityForm = observer(function EntityForm(props: TEntityForm) {
     .filter((entity) => entity !== undefined && entity !== null && !connectedEntities.includes(entity.id?.toString()));
 
   return (
-    <div className="relative space-y-4 text-sm">
+    <div className="relative space-y-4 text-body-xs-regular">
       <div className="space-y-1">
-        <div className="text-custom-text-200">Gitlab {t("common.project")}</div>
+        <div className="text-secondary">Gitlab {t("common.project")}</div>
         <Dropdown
           dropdownOptions={(entities || [])?.map((entity) => ({
             key: entity?.id.toString() || "",

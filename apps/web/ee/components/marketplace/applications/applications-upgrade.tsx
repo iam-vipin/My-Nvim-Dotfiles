@@ -27,14 +27,13 @@ export const ApplicationsUpgrade = observer(function ApplicationsUpgrade() {
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-            !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="flex flex-col w-full xl:max-w-[360px] gap-y-4">
-            <div className="text-xl font-semibold">{t("workspace_settings.settings.applications.title")}</div>
-            <div className="font-medium text-custom-text-300 text-sm">
+            <div className="text-18 font-semibold">{t("workspace_settings.settings.applications.title")}</div>
+            <div className="font-medium text-tertiary text-13">
               Easily connect with tools like GitHub and Slack to sync your data, automate project updates, and keep your
               team in sync. Streamline your workflow and enhance collaboration with seamless third-party
               integrations.{" "}
@@ -44,7 +43,7 @@ export const ApplicationsUpgrade = observer(function ApplicationsUpgrade() {
               <Link
                 target="_blank"
                 href="https://plane.so/contact"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+                className={"bg-transparent underline text-13 text-accent-secondary my-auto font-medium"}
                 onClick={() => {}}
               >
                 {t("common.upgrade_cta.talk_to_sales")}

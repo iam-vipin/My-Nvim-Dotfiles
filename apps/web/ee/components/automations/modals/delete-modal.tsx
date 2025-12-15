@@ -76,7 +76,7 @@ export const DeleteAutomationModal = observer(function DeleteAutomationModal(pro
       content={
         <>
           Are you sure you want to delete automation{' "'}
-          <span className="break-words font-medium text-custom-text-100">{automationDetails?.name}</span>
+          <span className="break-words font-medium text-primary">{automationDetails?.name}</span>
           {'"'}? All of the data related to the automation will be permanently removed. This action cannot be undone.
         </>
       }

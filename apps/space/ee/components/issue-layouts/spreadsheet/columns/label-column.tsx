@@ -13,7 +13,7 @@ export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(p
   const { issue } = props;
 
   return (
-    <div className="flex items-center h-11 border-b-[0.5px] border-custom-border-200 pl-2">
+    <div className="flex items-center h-11 border-b-[0.5px] border-subtle-1 pl-2">
       <div className="flex items-center h-5">
         <IssueBlockLabels labelIds={issue.label_ids} shouldShowLabel />
       </div>

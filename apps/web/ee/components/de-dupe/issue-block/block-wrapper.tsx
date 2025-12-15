@@ -38,9 +38,9 @@ export const DeDupeIssueBlockWrapper = observer(function DeDupeIssueBlockWrapper
     <ControlLink
       href={workItemLink}
       className={cn(
-        "group relative flex flex-col gap-3.5 w-80  rounded-lg px-3 py-2 bg-custom-background-100 border border-custom-primary-100/10",
+        "group relative flex flex-col gap-3.5 w-80  rounded-lg px-3 py-2 bg-surface-1 border border-accent-strong/10",
         {
-          "border-custom-primary-100/50 ": isSelected,
+          "border-accent-strong/50 ": isSelected,
         }
       )}
       onClick={handleRedirection}

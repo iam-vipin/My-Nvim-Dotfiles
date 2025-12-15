@@ -134,7 +134,7 @@ export const LeftDependencyDraggable = observer(function LeftDependencyDraggable
         <div
           ref={leftDraggingRef}
           className={cn(
-            "absolute z-[5] left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded bg-custom-primary-100 transition-all duration-300 opacity-0",
+            "absolute z-[5] left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-sm bg-accent-primary transition-all duration-300 opacity-0",
             {
               "group-hover:-left-3.5 group-hover:opacity-100": !isDragging,
               "-left-3.5 opacity-100": isCurrentDependencyDragging,

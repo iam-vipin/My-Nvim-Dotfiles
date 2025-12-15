@@ -77,7 +77,7 @@ export const ConfigureLinearSelectTeam = observer(function ConfigureLinearSelect
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">Select Linear team</div>
+      <div className="text-13 text-secondary">Select Linear team</div>
       {(isLinearTeamLoading && (!linearTeams || linearTeams.length === 0)) ||
       (isLinearOrganizationLoading && !linearOrganization) ? (
         <Loader>

@@ -20,8 +20,8 @@ export const MembersActivityButton = observer(function MembersActivityButton(pro
     <>
       {isMembersActivityEnabled && (
         <Button
-          variant="neutral-primary"
-          size="sm"
+          variant="secondary"
+          size="base"
           onClick={() => toggleWorkspaceMembersActivitySidebar(workspaceSlug, true)}
         >
           {t("activity")}

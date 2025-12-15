@@ -50,7 +50,7 @@ export function SlackConfigView(props: TPersonalAccountConnectProps) {
         className="h-4 w-4"
         disabled={isUpdating}
       />
-      <span className="text-sm text-custom-text-200">{t("slack_integration.alerts.dm_alerts.title")}</span>
+      <span className="text-13 text-secondary">{t("slack_integration.alerts.dm_alerts.title")}</span>
     </div>
   );
 }

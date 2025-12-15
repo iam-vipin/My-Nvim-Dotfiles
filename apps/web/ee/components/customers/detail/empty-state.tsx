@@ -35,7 +35,7 @@ export function CustomerEmptyState(props: TProps) {
         onClick: () => router.push(`/${workspaceSlug}/customers`),
       }}
       secondaryButton={
-        <Button variant="neutral-primary" onClick={() => toggleCreateCustomerModal()}>
+        <Button variant="secondary" onClick={() => toggleCreateCustomerModal()}>
           {t("customers.empty_state.detail.secondary_button")}
         </Button>
       }

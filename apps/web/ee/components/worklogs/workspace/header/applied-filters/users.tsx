@@ -54,7 +54,7 @@ export const WorkspaceWorklogAppliedFilterUsers = observer(function WorkspaceWor
             size="sm"
             showTooltip={false}
           />
-          <div className="flex-grow truncate text-xs">{userDetails?.member?.display_name}</div>
+          <div className="flex-grow truncate text-11">{userDetails?.member?.display_name}</div>
         </div>
       ),
     };

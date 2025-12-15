@@ -89,7 +89,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
             tabIndex={-1}
             href="https://id.atlassian.com/manage-profile/security/api-tokens"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             {t("jira_importer.atlassian_security_settings")}
@@ -157,7 +157,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
             {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Jira" })}
           </Button>
-          <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
+          <Button variant="ghost" className="font-medium" onClick={clearFromData} disabled={isLoading}>
             {t("common.clear")}
           </Button>
         </div>

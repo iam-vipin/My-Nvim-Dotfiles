@@ -81,13 +81,13 @@ export function IntakeFormsRoot(props: Props) {
           handleSubmit={regenerateIntakeForms}
         />
       )}
-      <div className={cn("gap-x-8 gap-y-3 py-3", isToolTip ? "bg-custom-background-100" : "bg-custom-background-90")}>
+      <div className={cn("gap-x-8 gap-y-3 py-3", isToolTip ? "bg-surface-1" : "bg-layer-1")}>
         <div className="flex justify-between gap-2">
           <div className="w-full">
             <div className="flex justify-between gap-4">
               <div className="flex-1 w-full">
-                <div className="text-sm font-medium leading-5 align-top ">Forms</div>
-                <p className="text-sm text-custom-text-300 text-wrap mt-1">
+                <div className="text-13 font-medium leading-5 align-top ">Forms</div>
+                <p className="text-13 text-tertiary text-wrap mt-1">
                   Let folks outside your workspace create potential new work items for you via a dedicated and secure
                   form.{" "}
                 </p>
@@ -119,24 +119,19 @@ export function IntakeFormsRoot(props: Props) {
             </div>
 
             {isEnabled && isFormEnabled && (
-              <div
-                className={cn(
-                  "rounded-md space-y-2 mt-2",
-                  isToolTip ? "bg-custom-background-90" : "bg-custom-background-100"
-                )}
-              >
+              <div className={cn("rounded-md space-y-2 mt-2", isToolTip ? "bg-layer-1" : "bg-surface-1")}>
                 <div className="space-y-2">
                   <div className="p-3 space-y-2">
                     <div className="flex gap-2 rounded">
-                      <ListTodo className="h-4 w-4 flex-shrink-0 text-custom-text-300" />
-                      <span className="text-xs font-medium">Default form URL</span>
+                      <ListTodo className="h-4 w-4 flex-shrink-0 text-tertiary" />
+                      <span className="text-11 font-medium">Default form URL</span>
                     </div>
                     <div className="flex gap-2 h-[30px] truncate">
                       {anchor ? (
-                        <div className="flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 flex-1 py-1 px-2 gap-2 h-full truncate">
+                        <div className="flex items-center text-13 rounded-md border-[0.5px] border-subtle-1 flex-1 py-1 px-2 gap-2 h-full truncate">
                           <span className="truncate flex-1 mr-4">{publishLink}</span>
                           <Copy
-                            className="text-custom-text-400 w-[16px] cursor-pointer"
+                            className="text-placeholder w-[16px] cursor-pointer"
                             onClick={() => copyToClipboard()}
                           />
                           <a href={publishLink} target="_blank" rel="noreferrer">
@@ -151,9 +146,8 @@ export function IntakeFormsRoot(props: Props) {
                       {allowEdit && anchor && (
                         <Button
                           tabIndex={-1}
-                          size="sm"
-                          variant="neutral-primary"
-                          className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
+                          variant="secondary"
+                          className="w-fit cursor-pointer px-2 py-1 text-center text-13 font-medium outline-none my-auto h-full"
                           onClick={() => setIsRenewModalOpen(true)}
                         >
                           <RefreshCcw className="w-[16px]" /> Renew
@@ -165,14 +159,11 @@ export function IntakeFormsRoot(props: Props) {
                     <div className="flex gap-2 items-center justify-between px-3 pb-3">
                       <div className="flex items-center gap-2">
                         <LayersIcon className="size-3" />{" "}
-                        <span className="text-xs font-medium text-custom-text-200">
-                          Create Forms using work item types
-                        </span>
+                        <span className="text-11 font-medium text-secondary">Create Forms using work item types</span>
                       </div>
                       {isAdmin ? (
                         <Button
-                          variant="link-neutral"
-                          size="sm"
+                          variant="ghost"
                           className="px-0 flex items-center gap-1"
                           onClick={() => {
                             window.open(`/${workspaceSlug}/projects/${projectId}/settings/features/intake`, "_blank");

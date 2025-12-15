@@ -26,20 +26,20 @@ export function AutomationDetailsMainContentChangePropertyBlock(props: Props) {
   const description: React.ReactNode = useMemo(() => {
     if (config.change_type === EAutomationChangeType.ADD) {
       return (
-        <p className="flex items-center gap-1 flex-wrap text-custom-text-100">
-          <span className="shrink-0 text-custom-text-300">add</span> {propertyValue}
+        <p className="flex items-center gap-1 flex-wrap text-primary">
+          <span className="shrink-0 text-tertiary">add</span> {propertyValue}
         </p>
       );
     } else if (config.change_type === EAutomationChangeType.REMOVE) {
       return (
-        <p className="flex items-center gap-1 flex-wrap text-custom-text-100">
-          <span className="shrink-0 text-custom-text-300">remove</span> {propertyValue}
+        <p className="flex items-center gap-1 flex-wrap text-primary">
+          <span className="shrink-0 text-tertiary">remove</span> {propertyValue}
         </p>
       );
     } else if (config.change_type === EAutomationChangeType.UPDATE) {
       return (
-        <p className="flex items-center gap-1 flex-wrap text-custom-text-100">
-          <span className="shrink-0 text-custom-text-300">set to</span> {propertyValue}
+        <p className="flex items-center gap-1 flex-wrap text-primary">
+          <span className="shrink-0 text-tertiary">set to</span> {propertyValue}
         </p>
       );
     }
@@ -48,13 +48,13 @@ export function AutomationDetailsMainContentChangePropertyBlock(props: Props) {
 
   return (
     <div className="flex gap-2">
-      <span className="flex-shrink-0 size-12 rounded-full bg-custom-background-80 grid place-items-center">
-        <PencilLine className="size-5 text-custom-text-300" />
+      <span className="flex-shrink-0 size-12 rounded-full bg-layer-1 grid place-items-center">
+        <PencilLine className="size-5 text-tertiary" />
       </span>
-      <div className="text-sm text-custom-text-300 font-medium">
+      <div className="text-13 text-tertiary font-medium">
         <p>
           Update the work item{" "}
-          <span className="text-custom-text-100">{getAutomationChangePropertyTypeLabel(config.property_name)}</span>
+          <span className="text-primary">{getAutomationChangePropertyTypeLabel(config.property_name)}</span>
         </p>
         {description}
       </div>

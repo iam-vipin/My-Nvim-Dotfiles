@@ -1,5 +1,3 @@
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
@@ -42,7 +40,7 @@ export const TeamsOverviewSidebarComments = observer(function TeamsOverviewSideb
     <div className="relative flex flex-col gap-y-2 h-full overflow-hidden px-6">
       <div className="py-2 flex flex-col gap-4">
         <div className="flex gap-2 items-center justify-between">
-          <span className="text-sm font-semibold">Comments</span>
+          <span className="text-body-xs-semibold">Comments</span>
           <span className="flex items-center gap-2">
             {teamspaceCommentsLoader && ["init-loader", "mutation"].includes(teamspaceCommentsLoader) ? (
               <Spinner size={12} className="animate-spin" />
@@ -55,8 +53,6 @@ export const TeamsOverviewSidebarComments = observer(function TeamsOverviewSideb
                 });
                 toggleTeamspaceCommentsSortOrder();
               }}
-              className="py-1"
-              iconClassName="size-3"
             />
           </span>
         </div>

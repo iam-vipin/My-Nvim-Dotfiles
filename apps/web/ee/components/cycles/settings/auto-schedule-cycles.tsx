@@ -10,7 +10,8 @@ import { InfoIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TCycleConfig } from "@plane/types";
-import { Input, ToggleSwitch, CustomSelect, Button, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, ToggleSwitch, CustomSelect, Loader } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -165,24 +166,24 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
   return (
     <div className="space-y-2">
       {/* Main toggle */}
-      <div className="gap-x-8 gap-y-2 bg-custom-background-100 py-4">
+      <div className="gap-x-8 gap-y-2 bg-surface-1 py-4">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h4 className="text-sm font-medium leading-5 flex items-center gap-1">
+            <h4 className="text-13 font-medium leading-5 flex items-center gap-1">
               {t("project_settings.cycles.auto_schedule.heading")}
               <Tooltip tooltipContent={t("project_settings.cycles.auto_schedule.tooltip")} position="right">
                 <div>
-                  <InfoIcon className="size-3 text-custom-text-400" />
+                  <InfoIcon className="size-3 text-placeholder" />
                 </div>
               </Tooltip>
             </h4>
-            <p className="text-sm leading-5 tracking-tight text-custom-text-300">
+            <p className="text-13 leading-5 tracking-tight text-tertiary">
               {t("project_settings.cycles.auto_schedule.description")}
             </p>
           </div>
           <div className="flex items-center gap-2">
             {isAutoScheduleEnabled && !isEdit && !isLoading && (
-              <Button type="button" variant="neutral-primary" size="sm" onClick={() => setIsEdit(true)}>
+              <Button type="button" variant="secondary" onClick={() => setIsEdit(true)}>
                 {t("project_settings.cycles.auto_schedule.edit_button")}
               </Button>
             )}
@@ -193,7 +194,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
 
       {/* Configuration form - only show when enabled */}
       {isAutoScheduleEnabled && (
-        <div className="border border-custom-border-200 bg-custom-background-90/80 p-4 rounded-lg">
+        <div className="border border-subtle-1 bg-layer-1/80 p-4 rounded-lg">
           {isLoading ? (
             <Loader className="space-y-5">
               <div className="flex justify-between items-center">
@@ -227,7 +228,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
               <div className="flex justify-between items-center">
                 <div className="w-2/3">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium">
+                    <span className="text-13 font-medium">
                       {t("project_settings.cycles.auto_schedule.form.cycle_title.label")}
                     </span>
                     <Tooltip
@@ -235,7 +236,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                       position="right"
                     >
                       <div>
-                        <InfoIcon className="size-3 text-custom-text-400" />
+                        <InfoIcon className="size-3 text-placeholder" />
                       </div>
                     </Tooltip>
                   </div>
@@ -254,20 +255,20 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                     render={({ field }) => (
                       <Input
                         {...field}
-                        className="bg-custom-background-100 w-full px-3 py-2 rounded-md border-[0.5px] border-custom-border-200 text-sm"
+                        className="bg-surface-1 w-full px-3 py-2 rounded-md border-[0.5px] border-subtle-1 text-13"
                         placeholder={t("project_settings.cycles.auto_schedule.form.cycle_title.placeholder")}
                         disabled={!isEdit}
                       />
                     )}
                   />
-                  {errors.title && <span className="text-xs text-red-500">{errors.title.message}</span>}
+                  {errors.title && <span className="text-11 text-red-500">{errors.title.message}</span>}
                 </div>
               </div>
               {/* Cycle Duration */}
               <div className="flex justify-between items-center">
                 <div className="w-2/3">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium">
+                    <span className="text-13 font-medium">
                       {t("project_settings.cycles.auto_schedule.form.cycle_duration.label")}
                     </span>
                   </div>
@@ -284,7 +285,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                         render={({ field }) => (
                           <Input
                             {...field}
-                            className="bg-custom-background-100 w-1/2 px-3 py-2 rounded-md border-[0.5px] border-custom-border-200 text-sm"
+                            className="bg-surface-1 w-1/2 px-3 py-2 rounded-md border-[0.5px] border-subtle-1 text-13"
                             placeholder="1"
                             type="number"
                             min={1}
@@ -293,12 +294,12 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                           />
                         )}
                       />
-                      <span className="text-sm text-custom-text-200">
+                      <span className="text-13 text-secondary">
                         {t("project_settings.cycles.auto_schedule.form.cycle_duration.unit")}
                       </span>
                     </div>
                     {errors.cycle_duration && (
-                      <span className="text-xs text-red-500">{errors.cycle_duration.message}</span>
+                      <span className="text-11 text-red-500">{errors.cycle_duration.message}</span>
                     )}
                   </div>
                 </div>
@@ -307,7 +308,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
               <div className="flex justify-between items-center">
                 <div className="w-2/3">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium">
+                    <span className="text-13 font-medium">
                       {t("project_settings.cycles.auto_schedule.form.cooldown_period.label")}
                     </span>
                     <Tooltip
@@ -315,7 +316,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                       position="right"
                     >
                       <div>
-                        <InfoIcon className="size-3 text-custom-text-400" />
+                        <InfoIcon className="size-3 text-placeholder" />
                       </div>
                     </Tooltip>
                   </div>
@@ -329,7 +330,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                         render={({ field }) => (
                           <Input
                             {...field}
-                            className="bg-custom-background-100 w-1/2 px-3 py-2 rounded-md border-[0.5px] border-custom-border-200 text-sm"
+                            className="bg-surface-1 w-1/2 px-3 py-2 rounded-md border-[0.5px] border-subtle-1 text-13"
                             placeholder="1"
                             type="number"
                             min={0}
@@ -337,7 +338,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                           />
                         )}
                       />
-                      <span className="text-sm text-custom-text-200">
+                      <span className="text-13 text-secondary">
                         {t("project_settings.cycles.auto_schedule.form.cooldown_period.unit")}
                       </span>
                     </div>
@@ -348,7 +349,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
               <div className="flex justify-between items-center">
                 <div className="w-2/3">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium">
+                    <span className="text-13 font-medium">
                       {t("project_settings.cycles.auto_schedule.form.start_date.label")}
                     </span>
                   </div>
@@ -380,14 +381,14 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                             minDate={new Date()}
                             buttonVariant="border-with-text"
                             className="w-full"
-                            buttonClassName="bg-custom-background-100 px-3 py-2 rounded-md border-[0.5px] border-custom-border-200 text-left justify-start w-full text-sm"
+                            buttonClassName="bg-surface-1 px-3 py-2 rounded-md border-[0.5px] border-subtle-1 text-left justify-start w-full text-13"
                             showTooltip
                             disabled={!isEdit}
                           />
                         )}
                       />
                     </div>
-                    {errors.start_date && <span className="text-xs text-red-500">{errors.start_date.message}</span>}
+                    {errors.start_date && <span className="text-11 text-red-500">{errors.start_date.message}</span>}
                   </div>
                 </div>
               </div>
@@ -396,7 +397,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
               <div className="flex justify-between items-center">
                 <div className="w-2/3">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium">
+                    <span className="text-13 font-medium">
                       {t("project_settings.cycles.auto_schedule.form.number_of_cycles.label")}
                     </span>
                   </div>
@@ -415,7 +416,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                           value={field.value}
                           onChange={field.onChange}
                           className="w-full"
-                          buttonClassName="bg-custom-background-100 px-3 py-2 rounded-md border-[0.5px] border-custom-border-200 text-left w-full text-sm"
+                          buttonClassName="bg-surface-1 px-3 py-2 rounded-md border-[0.5px] border-subtle-1 text-left w-full text-13"
                           label={cycleCountOptions.find((option) => option.value === field.value)?.label || "1 cycle"}
                         >
                           {cycleCountOptions.map((option) => (
@@ -427,7 +428,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                       )}
                     />
                     {errors.number_of_cycles && (
-                      <span className="text-xs text-red-500">{errors.number_of_cycles.message}</span>
+                      <span className="text-11 text-red-500">{errors.number_of_cycles.message}</span>
                     )}
                   </div>
                 </div>
@@ -437,7 +438,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
               <div className="flex justify-between items-center">
                 <div className="w-2/3">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium">
+                    <span className="text-13 font-medium">
                       {t("project_settings.cycles.auto_schedule.form.auto_rollover.label")}
                     </span>
                     <Tooltip
@@ -445,7 +446,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                       position="right"
                     >
                       <div>
-                        <InfoIcon className="size-3 text-custom-text-400" />
+                        <InfoIcon className="size-3 text-placeholder" />
                       </div>
                     </Tooltip>
                   </div>
@@ -463,11 +464,11 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
 
               {/* Action buttons */}
               {isEdit && (
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-custom-border-200">
-                  <Button type="button" variant="neutral-primary" size="sm" onClick={handleReset}>
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-subtle-1">
+                  <Button type="button" variant="secondary" onClick={handleReset}>
                     {t("common.discard")}
                   </Button>
-                  <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+                  <Button type="submit" variant="primary" disabled={isSubmitting}>
                     {t("save")}
                   </Button>
                 </div>

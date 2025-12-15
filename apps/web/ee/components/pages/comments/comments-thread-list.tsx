@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import type { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
 import type { TPageInstance } from "@/store/pages/base-page";

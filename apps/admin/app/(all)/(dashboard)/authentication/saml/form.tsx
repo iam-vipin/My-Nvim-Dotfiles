@@ -204,7 +204,7 @@ export function InstanceSAMLConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">IdP-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">IdP-provided details for Plane</div>
             {SAML_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -219,7 +219,7 @@ export function InstanceSAMLConfigForm(props: Props) {
               />
             ))}
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">SAML certificate</h4>
+              <h4 className="text-13">SAML certificate</h4>
               <Controller
                 control={control}
                 name="SAML_CERTIFICATE"
@@ -232,11 +232,11 @@ export function InstanceSAMLConfigForm(props: Props) {
                     onChange={onChange}
                     hasError={Boolean(errors.SAML_CERTIFICATE)}
                     placeholder="---BEGIN CERTIFICATE---\n2yWn1gc7DhOFB9\nr0gbE+\n---END CERTIFICATE---"
-                    className="min-h-[102px] w-full rounded-md font-medium text-sm"
+                    className="min-h-[102px] w-full rounded-md font-medium text-13"
                   />
                 )}
               />
-              <p className="pt-0.5 text-xs text-custom-text-300">
+              <p className="pt-0.5 text-11 text-tertiary">
                 IdP-generated certificate for signing this Plane app as an authorized service provider for your IdP
               </p>
             </div>
@@ -247,7 +247,7 @@ export function InstanceSAMLConfigForm(props: Props) {
                 </Button>
                 <Link
                   href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
+                  className={cn(getButtonStyling("secondary", "base"), "font-medium")}
                   onClick={handleGoBack}
                 >
                   Go back
@@ -256,16 +256,16 @@ export function InstanceSAMLConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
-            <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
+            <div className="pt-2 text-18 font-medium">Plane-provided details for your IdP</div>
 
             <div className="flex flex-col gap-y-4">
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {SAML_WEB_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
@@ -274,11 +274,11 @@ export function InstanceSAMLConfigForm(props: Props) {
 
               {/* mobile service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Smartphone className="w-3 h-3" />
                   Mobile
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {SAML_MOBILE_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
@@ -287,11 +287,11 @@ export function InstanceSAMLConfigForm(props: Props) {
 
               {/* mapping details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Cable className="w-3 h-3" />
                   Mapping
                 </div>
-                <div className="px-6 py-4 bg-custom-background-80">
+                <div className="px-6 py-4 bg-layer-1">
                   <SAMLAttributeMappingTable />
                 </div>
               </div>

@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MessageSquareText } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
-import { cn } from "@plane/ui";
+import { IconButton } from "@plane/propel/icon-button";
 // plane web hooks
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
@@ -26,17 +26,13 @@ export const PageCommentControl = observer(function PageCommentControl(props: TP
 
   return (
     <Tooltip tooltipContent={isActive ? "Close comments" : "Open comments"} position="bottom">
-      <button
-        type="button"
+      <IconButton
+        variant={isActive ? "tertiary" : "ghost"}
+        size="lg"
+        icon={MessageSquareText}
         onClick={toggle}
-        className={cn(
-          "flex items-center justify-center h-6 w-6 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors duration-200",
-          { "bg-custom-background-80 text-custom-text-100": isActive }
-        )}
         aria-label={isActive ? "Close comments" : "Open comments"}
-      >
-        <MessageSquareText className="h-3.5 w-3.5" />
-      </button>
+      />
     </Tooltip>
   );
 });

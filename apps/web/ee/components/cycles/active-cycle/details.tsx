@@ -95,7 +95,7 @@ const ActiveCycleDetail = observer(function ActiveCycleDetail(props: ActiveCycle
   return (
     <div ref={ref} className="flex flex-col">
       <Row
-        className={cn(`flex bg-custom-background-100 justify-between !pr-0 flex-col space-y-10`, {
+        className={cn(`flex bg-surface-1 justify-between !pr-0 flex-col space-y-10`, {
           "md:flex-row-reverse space-y-0": containerWidth > 890,
         })}
       >

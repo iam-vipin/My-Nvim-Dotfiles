@@ -243,7 +243,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
         }
       },
       shouldRender: template.canCurrentUserUnpublishTemplate,
-      className: "text-red-500",
+      className: "text-danger",
     },
     {
       key: "delete",
@@ -259,7 +259,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       title: t("common.actions.delete"),
       icon: Trash2,
       shouldRender: template.canCurrentUserDeleteTemplate,
-      className: "text-red-500",
+      className: "text-danger",
     },
   ];
 
@@ -274,7 +274,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
         content={
           <>
             {t("templates.delete_confirmation.description.prefix")}
-            <span className="font-medium text-custom-text-100">{template.name}</span>
+            <span className="font-medium text-primary">{template.name}</span>
             {t("templates.delete_confirmation.description.suffix")}
           </>
         }
@@ -288,7 +288,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
         content={
           <>
             {t("templates.unpublish_confirmation.description.prefix")}
-            <span className="font-medium text-custom-text-100">{template.name}</span>
+            <span className="font-medium text-primary">{template.name}</span>
             {t("templates.unpublish_confirmation.description.suffix")}
           </>
         }
@@ -310,7 +310,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -321,8 +321,8 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

@@ -35,7 +35,7 @@ export const PowerKProjectStatesMenuItems = observer(function PowerKProjectState
             key={state.id}
             tooltipContent={<WorkFlowDisabledMessage parentStateId={selectedStateId ?? ""} />}
             position="right-start"
-            className="border-[0.5px] border-custom-border-300 mx-0.5 shadow-lg"
+            className="border-[0.5px] border-subtle-1 mx-0.5 shadow-lg"
             disabled={!isDisabled}
           >
             <div>

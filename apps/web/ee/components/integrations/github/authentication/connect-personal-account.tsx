@@ -102,31 +102,30 @@ export const ConnectPersonalAccount = observer(function ConnectPersonalAccount({
 
   if (error)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("github_integration.connection_fetch_error")}
       </div>
     );
 
   return (
-    <div className="relative flex justify-between items-center gap-4 p-4 border border-custom-border-100 rounded">
+    <div className="relative flex justify-between items-center gap-4 p-4 border border-subtle rounded-md">
       {githubUserCredential?.isConnected ? (
         <div className="space-y-1">
-          <div className="text-base font-medium">{t("github_integration.personal_account_connected")}</div>
-          <div className="text-sm text-custom-text-200">
+          <div className="text-body-sm-medium">{t("github_integration.personal_account_connected")}</div>
+          <div className="text-body-xs-regular text-secondary">
             {t("github_integration.personal_account_connected_description")}
           </div>
         </div>
       ) : (
         <div className="space-y-1">
-          <div className="text-base font-medium">{t("github_integration.connect_personal_account")}</div>
-          <div className="text-sm text-custom-text-200">
+          <div className="text-body-sm-medium">{t("github_integration.connect_personal_account")}</div>
+          <div className="text-body-xs-regular text-secondary">
             {t("github_integration.connect_personal_account_description")}
           </div>
         </div>
       )}
       <Button
-        variant="neutral-primary"
-        size="sm"
+        variant="secondary"
         className="flex-shrink-0"
         onClick={handleGithubUserAuth}
         disabled={(isLoading && githubUserCredential) || isConnectionSetup || error}

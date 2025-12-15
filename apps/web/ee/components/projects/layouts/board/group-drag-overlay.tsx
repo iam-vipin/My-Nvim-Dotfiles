@@ -31,18 +31,18 @@ export function GroupDragOverlay(props: Props) {
   return (
     <div
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-overlay ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded-sm bg-custom-background-overlay ${dragColumnOrientation}`,
         {
-          "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
+          "flex flex-col border-[1px] border-subtle-1 z-[2]": shouldOverlayBeVisible,
         },
         { hidden: !shouldOverlayBeVisible }
       )}
     >
       <div
         className={cn(
-          "p-3 my-8 flex flex-col rounded items-center",
+          "p-3 my-8 flex flex-col rounded-sm items-center",
           {
-            "text-custom-text-200": shouldOverlayBeVisible,
+            "text-secondary": shouldOverlayBeVisible,
           },
           {
             "text-custom-text-error": isDropDisabled,

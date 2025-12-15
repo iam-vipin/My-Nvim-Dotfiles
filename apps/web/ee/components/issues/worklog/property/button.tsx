@@ -9,20 +9,20 @@ export function IssueWorklogPropertyButton(props: TIssueWorklogPropertyButton) {
   const { content, isLoading } = props;
 
   return (
-    <div className="flex justify-between items-center text-sm p-2 rounded transition-all cursor-not-allowed w-full">
+    <div className="flex justify-between items-center text-13 p-2 rounded-sm transition-all cursor-not-allowed w-full">
       <div
         className={cn({
-          "text-custom-text-300": !content,
+          "text-tertiary": !content,
         })}
       >
         {(content || "").length > 0 ? content : "0h 0m"}
       </div>
       {isLoading ? (
-        <div className="transition-all flex-shrink-0 w-4 h-4 flex justify-center items-center text-custom-text-400 animate-spin">
+        <div className="transition-all flex-shrink-0 w-4 h-4 flex justify-center items-center text-placeholder animate-spin">
           <Loader size={14} />
         </div>
       ) : (
-        <div className="transition-all flex-shrink-0 w-4 h-4 hidden group-hover:flex justify-center items-center text-custom-text-400">
+        <div className="transition-all flex-shrink-0 w-4 h-4 hidden group-hover:flex justify-center items-center text-placeholder">
           <Plus size={14} />
         </div>
       )}

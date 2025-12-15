@@ -220,8 +220,8 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching pages"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="text-18 font-medium mt-7 mb-1">No matching pages</h5>
+          <p className="text-placeholder text-14">
             {debouncedSearchQuery.length > 0
               ? "Remove the search criteria to see all pages"
               : "Remove the filters to see all pages"}

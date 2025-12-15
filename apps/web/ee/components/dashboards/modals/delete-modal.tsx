@@ -56,7 +56,7 @@ export const DashboardDeleteModal = observer(function DashboardDeleteModal(props
       content={
         <>
           Are you sure you want to delete dashboard{' "'}
-          <span className="break-words font-medium text-custom-text-100">{dashboardDetails?.name}</span>
+          <span className="break-words font-medium text-primary">{dashboardDetails?.name}</span>
           {'"'}? All of the data related to the dashboard will be permanently removed. This action cannot be undone.
         </>
       }

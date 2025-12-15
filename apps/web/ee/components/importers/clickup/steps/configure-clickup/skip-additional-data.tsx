@@ -30,17 +30,17 @@ export function SkipAdditionalDataToggle({
       <div className="inline-flex items-center gap-2 cursor-pointer" onClick={() => handleClick(!skipAdditionalData)}>
         <div
           className={cn(
-            "flex-shrink-0 w-4 h-4 p-1 relative flex justify-center items-center border border-custom-border-300 overflow-hidden rounded-sm transition-all",
-            { "border-custom-primary-100": pullAdditionalData }
+            "flex-shrink-0 w-4 h-4 p-1 relative flex justify-center items-center border border-subtle-1 overflow-hidden rounded-sm transition-all",
+            { "border-accent-strong": pullAdditionalData }
           )}
         >
           <div
-            className={cn("w-full h-full bg-custom-background-80 transition-all", {
-              "bg-custom-primary-100": pullAdditionalData,
+            className={cn("w-full h-full bg-layer-1 transition-all", {
+              "bg-accent-primary": pullAdditionalData,
             })}
           />
         </div>
-        <div className="text-sm text-custom-text-100">{t("clickup_importer.steps.pull_additional_data_title")}</div>
+        <div className="text-13 text-primary">{t("clickup_importer.steps.pull_additional_data_title")}</div>
       </div>
     </div>
   );

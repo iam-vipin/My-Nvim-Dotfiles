@@ -25,12 +25,12 @@ export const ReadonlyCycle = observer(function ReadonlyCycle(props: TReadonlyCyc
 
   useEffect(() => {
     if (projectId) {
-      fetchAllCycles(workspaceSlug, projectId);
+      void fetchAllCycles(workspaceSlug, projectId);
     }
-  }, [projectId, workspaceSlug]);
+  }, [projectId, workspaceSlug, fetchAllCycles]);
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-13", className)}>
       {!hideIcon && <CycleIcon className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{cycleName ?? placeholder ?? t("common.none")}</span>
     </div>

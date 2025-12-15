@@ -61,7 +61,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: Props) {
 
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
-      <div className={`relative size-full bg-custom-background-90`}>
+      <div className={`relative size-full bg-surface-1`}>
         <List
           displayProperties={displayProperties}
           groupBy={groupBy}

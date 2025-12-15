@@ -40,7 +40,7 @@ export function JoinButton(props: Props) {
           href={`/${workspaceSlug}/projects/${project.id}/issues`}
           tabIndex={-1}
           className={cn(
-            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none my-0 flex-end bg-green-500/20 text-green-500 hover:bg-green-500/10 hover:text-green-500 focus:bg-green-500/20",
+            "w-auto cursor-pointer rounded-sm px-3 py-1.5 text-center text-13 font-medium outline-none my-0 flex-end bg-green-500/20 text-green-500 hover:bg-green-500/10 hover:text-green-500 focus:bg-green-500/20",
             className
           )}
           onClick={(e) => {
@@ -58,9 +58,9 @@ export function JoinButton(props: Props) {
       ) : (
         <Button
           tabIndex={-1}
-          variant="accent-primary"
+          variant="secondary"
           className={cn(
-            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none my-0 flex-end",
+            "w-auto cursor-pointer rounded-sm px-3 py-1.5 text-center text-13 font-medium outline-none my-0 flex-end",
             className
           )}
           onClick={(e) => {

@@ -49,16 +49,14 @@ export const RecurringWorkItemActivityRoot = observer(function RecurringWorkItem
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden border-t border-custom-border-200 pt-4">
+    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden border-t border-subtle pt-4">
       <div className="flex gap-2 items-center justify-between pb-2">
-        <span className="text-lg font-medium">{t("common.activity")}</span>
+        <span className="text-h6-medium">{t("common.activity")}</span>
         <span className="flex items-center gap-2">
           {isMutating ? <Spinner size={12} className="animate-spin" /> : null}
           <ActivitySortRoot
             sortOrder={recurringWorkItemActivitySortOrder}
             toggleSort={toggleRecurringWorkItemActivitySortOrder}
-            className="py-1"
-            iconClassName="size-3"
           />
         </span>
       </div>

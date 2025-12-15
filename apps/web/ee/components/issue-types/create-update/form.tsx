@@ -53,9 +53,9 @@ export const CreateOrUpdateIssueTypeForm = observer(function CreateOrUpdateIssue
   return (
     <form onSubmit={handleIssueTypeFormSubmit}>
       <div className="space-y-3 p-5 pb-2">
-        <h3 className="text-xl font-medium text-custom-text-200">
+        <h4 className="text-h4-medium text-secondary">
           {formData.id ? t("work_item_types.update.title") : t("work_item_types.create.title")}
-        </h3>
+        </h4>
         <div className={"flex items-center gap-2 w-full"}>
           <IssueTypeIconPicker
             isOpen={isEmojiPickerOpen}
@@ -80,17 +80,16 @@ export const CreateOrUpdateIssueTypeForm = observer(function CreateOrUpdateIssue
                 value={formData.name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder={t("work_item_types.create_update.form.name.placeholder")}
-                className={cn(
-                  "w-full resize-none text-base",
-                  errors?.name ? `border-red-500` : `border-custom-border-200`
-                )}
+                className={cn("w-full resize-none text-body-sm-regular border-subtle-1", {
+                  "border-danger-strong": errors?.name,
+                })}
                 hasError={Boolean(errors.name)}
                 tabIndex={1}
                 autoFocus
               />
               {errors?.name && (
                 <Tooltip tooltipContent={errors?.name} position="bottom">
-                  <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 flex justify-center items-center text-red-500 absolute top-1/2 -translate-y-1/2 right-0">
+                  <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 flex justify-center items-center text-danger absolute top-1/2 -translate-y-1/2 right-0">
                     <Info size={14} />
                   </div>
                 </Tooltip>
@@ -105,20 +104,19 @@ export const CreateOrUpdateIssueTypeForm = observer(function CreateOrUpdateIssue
             value={formData.description}
             onChange={(e) => handleFormDataChange("description", e.target.value)}
             placeholder={t("work_item_types.create_update.form.description.placeholder")}
-            className="resize-none min-h-24 text-sm"
+            className="resize-none min-h-24 text-body-xs-regular"
             tabIndex={2}
           />
         </div>
       </div>
-      <div className="mx-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100">
+      <div className="mx-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={3}>
+          <Button variant="secondary" onClick={handleModalClose} tabIndex={3}>
             {t("common.cancel")}
           </Button>
           <Button
             variant="primary"
             type="submit"
-            size="sm"
             onClick={handleIssueTypeFormSubmit}
             loading={isSubmitting}
             tabIndex={4}

@@ -149,14 +149,14 @@ export const ProjectStateListItem = observer(function ProjectStateListItem(props
       <div
         ref={draggableElementRef}
         className={cn(
-          "relative border border-custom-border-100 bg-custom-background-100 rounded p-3 px-3.5 flex items-center gap-2 group",
+          "relative border border-subtle bg-surface-1 rounded-sm p-3 px-3.5 flex items-center gap-2 group",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`
         )}
       >
         {/* draggable indicator */}
         {totalStates != 1 && (
-          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-layer-1 cursor-pointer text-secondary hover:text-primary">
             <GripVertical className="w-3 h-3" />
           </div>
         )}
@@ -167,14 +167,14 @@ export const ProjectStateListItem = observer(function ProjectStateListItem(props
         </div>
 
         {/* state title and description */}
-        <div className="w-full text-sm px-2 min-h-5">
-          <h6 className="text-sm font-medium">{state.name}</h6>
-          <p className="text-xs text-custom-text-200">{state.description}</p>
+        <div className="w-full text-13 px-2 min-h-5">
+          <h6 className="text-13 font-medium">{state.name}</h6>
+          <p className="text-11 text-secondary">{state.description}</p>
         </div>
 
         <div className="hidden group-hover:flex items-center gap-2">
           {/* state mark as default option */}
-          <div className="flex-shrink-0 text-xs transition-all">
+          <div className="flex-shrink-0 text-11 transition-all">
             {state.id && (
               <ProjectStateMarksAsDefault
                 workspaceSlug={workspaceSlug}
@@ -187,7 +187,7 @@ export const ProjectStateListItem = observer(function ProjectStateListItem(props
           {/* state edit options */}
           <div className="flex items-center gap-1 transition-all">
             <button
-              className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-text-200 hover:text-custom-text-100"
+              className="flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-secondary hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
               data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >

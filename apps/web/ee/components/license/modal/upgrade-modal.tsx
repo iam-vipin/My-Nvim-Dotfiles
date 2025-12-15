@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -16,7 +15,7 @@ import {
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IPaymentProduct } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { EModalWidth, ModalCore, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
+import { EModalWidth, ModalCore } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
@@ -34,6 +33,10 @@ export type PaidPlanUpgradeModalProps = {
   isOpen: boolean;
   handleClose: () => void;
 };
+
+// common card classname
+const COMMON_CARD_CLASSNAME = "flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3";
+const COMMON_EXTRA_FEATURES_CLASSNAME = "pt-2 text-center text-caption-md-medium text-accent-primary hover:underline";
 
 export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props: PaidPlanUpgradeModalProps) {
   const { isOpen, handleClose } = props;
@@ -67,11 +70,6 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
   );
   const enterpriseProduct = (data || [])?.find(
     (product: IPaymentProduct) => product?.type === EProductSubscriptionEnum.ENTERPRISE
-  );
-  // common card classname
-  const COMMON_CARD_CLASSNAME = cn("flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3");
-  const COMMON_EXTRA_FEATURES_CLASSNAME = cn(
-    "pt-2 text-center text-xs text-custom-primary-200 font-medium hover:underline"
   );
 
   const handleStripeCheckout = ({ planVariant, productId, priceId }: TCheckoutParams) => {
@@ -136,34 +134,29 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
           <div className={cn(COMMON_CARD_CLASSNAME)}>
             {isOnTrial && currentPlan && (
               <div className="relative flex justify-start items-center pb-4">
-                <div
-                  className={cn(
-                    "px-1 py-0.5 text-xs font-semibold rounded",
-                    getSubscriptionTextAndBackgroundColor(currentPlan)
-                  )}
-                >
+                <div className="px-1 py-0.5 text-11 font-semibold rounded text-accent-primary">
                   {`${getSubscriptionName(currentPlan)} trial`}
                 </div>
               </div>
             )}
             {isTrialEnded && (
               <div className="relative flex justify-start items-center pb-4">
-                <div className="p-1 px-2 bg-red-500/20 text-red-600 text-xs rounded-full font-medium">Trial ended</div>
+                <div className="p-1 px-2 bg-red-500/20 text-red-600 text-11 rounded-full font-medium">Trial ended</div>
               </div>
             )}
-            <div className="text-3xl font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
+            <div className="text-28 font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
             <div className="mt-4 mb-2">
-              <p className="text-sm mb-4 pr-8 text-custom-text-100">
+              <p className="text-13 mb-4 pr-8 text-primary">
                 Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away. Upgrade
                 today to unlock features your teams need yesterday.
               </p>
             </div>
             {/* Workspace activation */}
             {isSelfHosted && (
-              <div className="flex gap-1 px-1 pb-3 text-sm text-custom-text-200 font-medium">
+              <div className="flex gap-1 px-1 pb-3 text-secondary text-caption-md-medium">
                 Got a license?
                 <button
-                  className="text-custom-primary-200 hover:underline outline-none"
+                  className="text-accent-primary hover:underline outline-none"
                   onClick={() => {
                     handleClose();
                     toggleLicenseActivationModal(true);

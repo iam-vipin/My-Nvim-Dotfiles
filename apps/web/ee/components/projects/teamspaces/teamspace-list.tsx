@@ -74,16 +74,16 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
   const renderHeader = () => (
     <div
       className={cn("flex items-center justify-between gap-4 py-2 overflow-x-hidden", {
-        "border-b border-custom-border-100": isAnyTeamspaceLinked,
+        "border-b border-subtle": isAnyTeamspaceLinked,
       })}
     >
-      <div className="text-base font-semibold">{t("teamspaces.label")}</div>
+      <div className="text-body-sm-semibold">{t("teamspaces.label")}</div>
       {isAnyTeamspaceLinked && (
         <>
-          <div className="ml-auto flex items-center justify-start gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1">
+          <div className="ml-auto flex items-center justify-start gap-1.5 rounded-md border border-subtle-1 bg-surface-1 px-2 py-1">
             <Search className="h-3.5 w-3.5" />
             <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular focus:outline-none placeholder:text-placeholder"
               placeholder={`${t("common.search.label")}`}
               value={searchQuery}
               autoFocus
@@ -91,7 +91,7 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
             />
           </div>
           {hasPermissionToAddTeamspace && (
-            <Button variant="primary" size="sm" onClick={() => setIsAddTeamspaceModalOpen(true)}>
+            <Button variant="primary" onClick={() => setIsAddTeamspaceModalOpen(true)}>
               {t("teamspace_projects.settings.primary_button.text")}
             </Button>
           )}
@@ -101,16 +101,16 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
   );
 
   const renderEmptyState = () => (
-    <div className="px-2 py-8 my-1 border border-custom-border-200 rounded-lg">
+    <div className="px-2 py-8 my-1 border border-subtle-1 rounded-lg">
       <div className="flex flex-col items-center justify-center text-center gap-1">
-        <span className="text-base font-semibold">
+        <span className="text-body-sm-semibold">
           {t("teamspace_projects.settings.empty_state.no_teamspaces.title")}
         </span>
-        <span className="text-sm text-custom-text-300">
+        <span className="text-body-xs-regular text-tertiary">
           {t("teamspace_projects.settings.empty_state.no_teamspaces.description")}{" "}
           <a
             href="https://docs.plane.so/core-concepts/workspaces/teamspaces"
-            className="text-custom-primary-200 underline"
+            className="text-accent-secondary underline"
             target="_blank"
             rel="noreferrer"
           >
@@ -119,9 +119,8 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
         </span>
         {hasPermissionToAddTeamspace && (
           <Button
-            variant="accent-primary"
-            size="sm"
-            className="text-xs mt-2.5"
+            variant="secondary"
+            className="text-caption-sm-medium mt-2.5"
             onClick={() => setIsAddTeamspaceModalOpen(true)}
           >
             {t("teamspace_projects.settings.primary_button.text")}
@@ -137,7 +136,7 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
     }
 
     return (
-      <div className="divide-y divide-custom-border-100 overflow-scroll">
+      <div className="divide-y divide-subtle overflow-scroll">
         {isAnyTeamspaceLinked ? (
           <ProjectTeamspaceListItem
             workspaceSlug={workspaceSlug}

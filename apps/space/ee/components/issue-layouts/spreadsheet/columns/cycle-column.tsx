@@ -13,7 +13,7 @@ export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(p
   const { issue } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <IssueBlockCycle cycleId={issue.cycle_id ?? undefined} shouldShowBorder={false} />
     </div>
   );

@@ -64,7 +64,11 @@ export const InitiativesListHeader = observer(function InitiativesListHeader() {
             <HeaderFilters workspaceSlug={workspaceSlug.toString()} />
           </div>
           {canUserCreateInitiative ? (
-            <Button onClick={() => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined })} size="sm">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined })}
+            >
               <div className="hidden sm:block">{t("add")}</div> {t("initiatives.label")}
             </Button>
           ) : (

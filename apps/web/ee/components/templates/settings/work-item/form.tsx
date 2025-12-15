@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -205,7 +205,7 @@ export const WorkItemTemplateFormRoot = observer(function WorkItemTemplateFormRo
               }}
             />
           </div>
-          <div className="border-t border-custom-border-100 size-full">
+          <div className="border-t border-subtle size-full">
             <div className="w-full max-w-4xl py-page-y">
               {/* Work Item Properties Section */}
               <div className="space-y-2">
@@ -254,10 +254,9 @@ export const WorkItemTemplateFormRoot = observer(function WorkItemTemplateFormRo
                 />
               </div>
               {/* Form Actions */}
-              <div className="flex items-center justify-end gap-2 pt-8 border-t border-custom-border-200">
+              <div className="flex items-center justify-end gap-2 pt-8 border-t border-subtle">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                   data-ph-element={
@@ -271,7 +270,6 @@ export const WorkItemTemplateFormRoot = observer(function WorkItemTemplateFormRo
                 <Button
                   variant="primary"
                   type="submit"
-                  size="sm"
                   className={cn("shadow-sm")}
                   loading={isSubmitting}
                   data-ph-element={

@@ -142,13 +142,13 @@ function ProjectUpdatesForm({
     return (
       <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
         <div className="p-7 space-y-4">
-          <div className="text-base font-medium">Project Updates Notifications</div>
+          <div className="text-body-sm-medium">Project Updates Notifications</div>
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="text-custom-text-200 mb-2">{t("common.error")}</div>
-            <div className="text-sm text-custom-text-400">
+            <div className="text-secondary mb-2">{t("common.error")}</div>
+            <div className="text-body-xs-regular text-placeholder">
               {t("slack_integration.project_updates.project_updates_form.failed_to_load_channels")}
             </div>
-            <Button variant="primary" size="sm" onClick={() => handleModal(false)} className="mt-4">
+            <Button variant="primary" onClick={() => handleModal(false)} className="mt-4">
               Close
             </Button>
           </div>
@@ -170,7 +170,7 @@ function ProjectUpdatesForm({
             </div>
 
             {/* Form container */}
-            <div className="border border-custom-border-200 rounded-lg p-4 space-y-4">
+            <div className="border border-subtle rounded-lg p-4 space-y-4">
               {/* Project and channel dropdowns row */}
               <div className="flex items-center gap-4">
                 {/* Project dropdown */}
@@ -208,10 +208,8 @@ function ProjectUpdatesForm({
       <div className="space-y-5 p-7">
         {/* Header */}
         <div className="space-y-1">
-          <div className="text-base font-medium">
-            {t("slack_integration.project_updates.project_updates_form.title")}
-          </div>
-          <div className="text-sm text-custom-text-200">
+          <div className="text-body-sm-medium">{t("slack_integration.project_updates.project_updates_form.title")}</div>
+          <div className="text-body-xs-regular text-secondary">
             {t("slack_integration.project_updates.project_updates_form.description")}
           </div>
         </div>
@@ -228,15 +226,10 @@ function ProjectUpdatesForm({
 
           {/* Action Buttons */}
           <div className="relative flex justify-end items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleCancel}>
+            <Button variant="secondary" onClick={handleCancel}>
               {t("cancel")}
             </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleSubmit}
-              disabled={!formData?.projectId || !formData?.channelId}
-            >
+            <Button variant="primary" onClick={handleSubmit} disabled={!formData?.projectId || !formData?.channelId}>
               {t("save")}
             </Button>
           </div>

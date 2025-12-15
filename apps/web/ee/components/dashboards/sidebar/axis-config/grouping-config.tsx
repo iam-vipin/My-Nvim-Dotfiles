@@ -30,7 +30,7 @@ export function WidgetConfigSidebarGroupingConfig(props: Props) {
   if (!isGroupingEnabled && !isStackingEnabled) return null;
 
   return (
-    <div className="flex-shrink-0 space-y-1 text-sm">
+    <div className="flex-shrink-0 space-y-1 text-13">
       <Controller
         control={control}
         name="group_by"

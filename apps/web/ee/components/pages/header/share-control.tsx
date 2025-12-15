@@ -47,7 +47,7 @@ export const PageShareControl = observer(function PageShareControl(props: TPageS
 
   return (
     <>
-      <Button variant="neutral-primary" size="sm" onClick={() => setIsShareModalOpen(true)} className="h-6">
+      <Button variant="secondary" onClick={() => setIsShareModalOpen(true)} className="h-6">
         Share
       </Button>
       <SharePageRoolModal

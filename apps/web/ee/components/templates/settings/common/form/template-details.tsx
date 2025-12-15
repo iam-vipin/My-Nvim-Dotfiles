@@ -72,7 +72,7 @@ export const TemplateDetails = observer(function TemplateDetails<T extends Field
               onChange={onChange}
               ref={ref}
               placeholder={placeholders?.name}
-              className="w-full text-lg font-bold p-0"
+              className="w-full text-h5-bold p-0"
               mode="true-transparent"
               inputSize="md"
               hasError={Boolean(nameError)}
@@ -81,7 +81,7 @@ export const TemplateDetails = observer(function TemplateDetails<T extends Field
           )}
         />
         {nameError && typeof nameError.message === "string" && (
-          <span className="text-xs font-medium text-red-500">{nameError.message}</span>
+          <span className="text-caption-sm-medium text-danger">{nameError.message}</span>
         )}
       </div>
       {/* Template Description */}
@@ -97,7 +97,7 @@ export const TemplateDetails = observer(function TemplateDetails<T extends Field
               onChange={onChange}
               ref={ref}
               placeholder={placeholders?.shortDescription}
-              className="w-full text-base min-h-[80px] p-0 resize-none"
+              className="w-full text-body-sm-regular min-h-[80px] p-0 resize-none"
               mode="true-transparent"
               textAreaSize="md"
             />

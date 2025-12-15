@@ -16,11 +16,11 @@ export const SpreadsheetUpdatedOnColumn = observer(function SpreadsheetUpdatedOn
   const { project, onChange, disabled } = props;
 
   return (
-    <div className="flex h-11 w-full items-center justify-start border-b-[0.5px] border-custom-border-200 text-xs hover:bg-custom-background-80 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10">
+    <div className="flex h-11 w-full items-center justify-start border-b-[0.5px] border-subtle-1 text-11 hover:bg-layer-1 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10">
       <DateRangeDropdown
         buttonVariant="transparent-with-text"
         className="h-7"
-        buttonClassName="px-4 text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
+        buttonClassName="px-4 text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10"
         minDate={new Date()}
         value={{
           from: getDate(project.start_date),

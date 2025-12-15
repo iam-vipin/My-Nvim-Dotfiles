@@ -55,29 +55,29 @@ function SystemPrompts(props: TSystemPrompt) {
     setIsInitializing("");
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
-    getAnswer(
+    void getAnswer(
       newChatId,
       prompt.text,
       focus,
       isProjectLevel,
-      workspaceSlug?.toString(),
-      workspaceId?.toString(),
+      workspaceSlug?.toString() || "",
+      workspaceId?.toString() || "",
       pathname,
       [],
       "ask"
     );
   };
-  const promptIcon = getIcon(prompt.type);
+  const promptIcon = getIcon(prompt.type as string);
 
   return (
     <button
       className={cn(
-        "bg-custom-background-90 rounded-lg flex flex-col w-[250px] p-4 gap-2 border border-transparent hover:border-custom-border-100 hover:shadow-sm",
+        "bg-layer-1 rounded-lg flex flex-col w-[250px] p-4 gap-2 border border-transparent hover:border-subtle hover:shadow-sm",
         {
-          "border-custom-border-100 shadow-sm": isPiTyping || isInitializing,
+          "border-subtle shadow-sm": isPiTyping || isInitializing,
         }
       )}
-      onClick={handleClick}
+      onClick={() => void handleClick()}
       disabled={isPiTyping || isInitializing}
     >
       <div className="items-center gap-2 hidden md:flex">
@@ -88,13 +88,13 @@ function SystemPrompts(props: TSystemPrompt) {
             {React.createElement(promptIcon, {
               className:
                 prompt.type === "threads"
-                  ? "size-[20px] text-pi-400 fill-current"
-                  : `flex-shrink-0 size-[20px] stroke-[2] text-pi-400 stroke-current`,
+                  ? "size-[20px] text-icon-tertiary fill-current"
+                  : `shrink-0 size-[20px] stroke-[2] text-icon-tertiary stroke-current`,
             })}
           </span>
         )}
       </div>
-      <span className="text-left text-sm break-words line-clamp-2">{prompt.text}</span>
+      <span className="text-left text-body-sm-regular text-secondary break-words line-clamp-2">{prompt.text}</span>
     </button>
   );
 }

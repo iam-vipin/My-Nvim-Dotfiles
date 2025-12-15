@@ -125,7 +125,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label={t("teamspaces.label")}
-                  icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<TeamsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -149,7 +149,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/views`}
                   label={t("views")}
-                  icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -175,7 +175,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
         </div>
         {/* View access detail */}
         {view?.access === EViewAccess.PRIVATE ? (
-          <div className="cursor-default text-custom-text-300">
+          <div className="cursor-default text-tertiary">
             <Tooltip tooltipContent={"Private"}>
               <Lock className="h-4 w-4" />
             </Tooltip>
@@ -187,11 +187,11 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
         {view?.anchor && publishLink ? (
           <a
             href={publishLink}
-            className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-success-subtle text-success-primary rounded-sm text-caption-sm-medium flex items-center gap-1.5"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+            <span className="flex-shrink-0 rounded-full size-1.5 bg-success-primary" />
             {t("common.live")}
           </a>
         ) : (
@@ -228,7 +228,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
         {canUserCreateIssue ? (
           <Button
             onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds)}
-            size="sm"
+            size="lg"
           >
             <div className="hidden sm:block">Add</div> work item
           </Button>

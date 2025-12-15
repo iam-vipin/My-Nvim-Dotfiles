@@ -75,7 +75,7 @@ export const TeamspaceStatisticsMap = observer(function TeamspaceStatisticsMap(p
                 name={user.display_name}
                 src={getFileURL(user.avatar_url)}
                 size={16}
-                className="text-xs"
+                className="text-caption-xs-medium"
                 showTooltip={false}
               />
             </span>
@@ -195,11 +195,11 @@ export const TeamspaceStatisticsMap = observer(function TeamspaceStatisticsMap(p
         <SectionEmptyState
           heading={t("teamspace_analytics.empty_state.stats.filter.title")}
           subHeading={t("teamspace_analytics.empty_state.stats.filter.description")}
-          icon={<TreeMapIcon className="size-6 text-custom-text-400" />}
+          icon={<TreeMapIcon className="size-6 text-placeholder" />}
           actionElement={
             <Button
-              variant="link-primary"
-              size="md"
+              variant="link"
+              size="lg"
               className="bg-transparent"
               disabled={isUpdating}
               onClick={handleClearStatisticsFilter}

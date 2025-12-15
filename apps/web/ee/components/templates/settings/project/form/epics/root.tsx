@@ -40,9 +40,7 @@ export const ProjectEpicWorkItemType = observer(function ProjectEpicWorkItemType
           propertiesLoader={"loaded"}
           containerClassName="border-none"
           getWorkItemTypeById={() => projectEpic}
-          getClassName={() =>
-            cn("bg-custom-background-100 hover:bg-custom-background-100 border border-custom-border-100 rounded-lg")
-          }
+          getClassName={() => cn("bg-surface-1 hover:bg-surface-1 border border-subtle rounded-lg")}
         />
       </TemplateCollapsibleWrapper>
     </>

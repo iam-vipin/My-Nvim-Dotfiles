@@ -77,7 +77,7 @@ export function WikiAppPowerKModalSearchMenu(props: Props) {
       {searchTerm.trim() !== "" && (
         <div className="flex items-center justify-between gap-2 mt-4 px-4">
           <h5
-            className={cn("text-xs text-custom-text-100", {
+            className={cn("text-11 text-primary", {
               "animate-pulse": isSearching,
             })}
           >

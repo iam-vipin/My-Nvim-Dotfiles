@@ -5,13 +5,13 @@ export function IssueEmbedUpgradeCard() {
   return (
     <div
       className={
-        "w-full h-min cursor-pointer space-y-2.5 rounded-lg bg-custom-background-100 border-[0.5px] border-custom-border-200 shadow-custom-shadow-2xs"
+        "w-full h-min cursor-pointer space-y-2.5 rounded-lg bg-surface-1 border-[0.5px] border-custom-border-200 shadow-custom-shadow-2xs"
       }
     >
       <div className="relative h-[71%]">
         <div className="h-full backdrop-filter backdrop-blur-[30px] bg-opacity-30 flex items-center w-full justify-between gap-5  pl-4 pr-5 py-3 max-md:max-w-full max-md:flex-wrap relative">
           <div className="flex-col items-center">
-            <div className="rounded p-2 bg-custom-background-90 w-min mb-3">
+            <div className="rounded p-2 bg-surface-2 w-min mb-3">
               <Crown size={16} color="#FFBA18" />
             </div>
             <div className="text-custom-text text-base">

@@ -53,7 +53,7 @@ export function CustomerDefaultProperties() {
   // hooks
   const { t } = useTranslation();
   return (
-    <div className="group/issue-type bg-custom-background-90/60 rounded-md px-4">
+    <div className="group/issue-type bg-layer-1/60 rounded-md px-4">
       <Collapsible
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
@@ -61,13 +61,13 @@ export function CustomerDefaultProperties() {
           <div className="flex w-full gap-2 cursor-pointer items-center">
             <div className="flex-shrink-0">
               <ChevronRightIcon
-                className={cn("flex-shrink-0 size-4 transition-all text-custom-text-300", {
+                className={cn("flex-shrink-0 size-4 transition-all text-tertiary", {
                   "rotate-90": isOpen,
                 })}
               />
             </div>
             <div className="text-left">
-              <h3 className="text-base font-medium">{t("customers.properties.default.title")}</h3>
+              <h3 className="text-14 font-medium">{t("customers.properties.default.title")}</h3>
             </div>
           </div>
         }
@@ -77,10 +77,10 @@ export function CustomerDefaultProperties() {
           {DEFAULT_PROPERTIES_LIST.map((property) => (
             <div
               key={property.i18n_title}
-              className="flex items-center gap-2 bg-custom-background-100 border border-custom-border-200 rounded-md p-2 cursor-default"
+              className="flex items-center gap-2 bg-surface-1 border border-subtle-1 rounded-md p-2 cursor-default"
             >
               <property.icon className="size-4" />
-              <p className="text-sm text-custom-text-300">{t(property.i18n_title)}</p>
+              <p className="text-13 text-tertiary">{t(property.i18n_title)}</p>
             </div>
           ))}
         </div>

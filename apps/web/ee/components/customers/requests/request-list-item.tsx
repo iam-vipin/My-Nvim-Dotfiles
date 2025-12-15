@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Database, PlusIcon } from "lucide-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
@@ -78,6 +77,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
           title: t("customers.requests.toasts.source.update.success.title"),
           message: t("customers.requests.toasts.source.update.success.message"),
         });
+        return;
       })
       .catch((error) => {
         captureError({
@@ -115,6 +115,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
           title: t("customers.requests.toasts.work_item.add.success.title"),
           message: t("customers.requests.toasts.work_item.add.success.message"),
         });
+        return;
       })
       .catch((error) => {
         captureError({
@@ -170,9 +171,9 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
           data={request}
         />
       )}
-      <div className="border-[0.5px] border-custom-border-200 rounded-md shadow-sm p-4 bg-custom-background-90/80">
+      <div className="border-[0.5px] border-subtle-1 rounded-md shadow-sm p-4 bg-layer-1">
         <div className="flex justify-between" ref={parentRef}>
-          <p className="text-base font-medium">{request.name}</p>
+          <p className="text-14 font-medium">{request.name}</p>
           <CustomerRequestQuickActions
             customerId={customerId}
             requestId={requestId}
@@ -189,7 +190,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
               initialValue={request.description_html ?? ""}
               workspaceId={workspaceDetails?.id ?? ""}
               workspaceSlug={workspaceSlug}
-              containerClassName="border-none ring-none outline-non text-sm !px-0 py-2"
+              containerClassName="border-none ring-none outline-non text-13 !px-0 py-2"
               editorClassName="px-0"
               displayConfig={{
                 fontSize: "small-font",
@@ -203,8 +204,8 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
         {isEditable && (
           <div className="flex gap-2">
             <Button
-              variant="neutral-primary"
-              className="text-custom-text-200 bg-custom-background-100 text-sm px-2 hover:bg-custom-background-100 hover:shadow-custom-shadow"
+              variant="secondary"
+              className="text-secondary bg-layer-2 text-13 px-2 hover:bg-layer-2-hover hover:shadow-custom-shadow"
               onClick={() => {
                 if (!link) toggleRequestSourceModal(request.id);
                 else handleOpenUrl(link);
@@ -220,9 +221,9 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
             </Button>
             {!request.link && requestWorkItemsCount === 0 && (
               <Button
-                variant="neutral-primary"
+                variant="secondary"
                 onClick={() => setWorkItemsModal(true)}
-                className="text-custom-text-200 bg-custom-background-100 hover:bg-custom-background-100 text-sm"
+                className="text-secondary bg-layer-2 hover:bg-layer-2-hover text-13"
               >
                 <WorkItemsIcon className="size-3" />
                 {t("customers.linked_work_items.link")}
@@ -232,7 +233,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
         )}
         <div className="mt-3">
           {requestWorkItemsCount > 0 && (
-            <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+            <div className="pt-2 mt-2 border-t-[0.5px] border-subtle-1 w-full">
               <RequestWorkItemsListCollapsible
                 workspaceSlug={workspaceSlug}
                 openWorkItemModal={() => setWorkItemsModal(true)}
@@ -243,7 +244,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
               />
             </div>
           )}
-          <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+          <div className="pt-2 mt-2 border-t-[0.5px] border-subtle-1 w-full">
             <RequestAttachmentsCollapsible
               workspaceSlug={workspaceSlug}
               customerId={customerId}
@@ -252,9 +253,9 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
             />
           </div>
           {request.link && requestWorkItemsCount === 0 && isEditable && (
-            <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+            <div className="pt-2 mt-2 border-t-[0.5px] border-subtle-1 w-full">
               <div
-                className="flex gap-2 items-center text-sm cursor-pointer text-custom-text-200 font-medium"
+                className="flex gap-2 items-center text-13 cursor-pointer text-secondary font-medium"
                 onClick={() => setWorkItemsModal(true)}
               >
                 <PlusIcon className="size-4" /> {t("customers.linked_work_items.link")}

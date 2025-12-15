@@ -61,7 +61,7 @@ export const ConfigureLinearRoot = observer(function ConfigureLinearRoot() {
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
+          <Button variant="primary" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
             {t("common.next")}
           </Button>
         </StepperNavigation>

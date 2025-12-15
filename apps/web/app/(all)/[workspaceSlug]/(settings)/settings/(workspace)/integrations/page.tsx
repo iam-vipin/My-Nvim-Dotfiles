@@ -5,7 +5,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { getButtonStyling } from "@plane/propel/button";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 // hooks
@@ -64,12 +64,12 @@ function WorkspaceIntegrationsPage() {
           title={t("workspace_settings.settings.integrations.page_title")}
           description={t("workspace_settings.settings.integrations.page_description")}
           appendToRight={
-            <Link href={`/${workspaceSlug}/settings/integrations/create`}>
-              <Button variant="primary">Build your own</Button>
+            <Link href={`/${workspaceSlug}/settings/integrations/create`} className={getButtonStyling("primary", "lg")}>
+              Build your own
             </Link>
           }
         />
-        <div className="w-full border-t border-custom-border-100 pb-6" />
+        <div className="w-full border-t border-subtle pb-6" />
         {workspaceSlug && <AppListRoot apps={applications} supportedIntegrations={supportedIntegrations} />}
       </section>
     </>

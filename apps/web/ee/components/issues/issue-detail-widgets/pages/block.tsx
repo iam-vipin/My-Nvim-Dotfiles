@@ -82,10 +82,7 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
   if (!page) return null;
 
   return (
-    <div
-      key={page.id}
-      className="flex flex-col gap-2 rounded-xl border border-custom-border-100 p-4 pb-2 min-h-[166px]"
-    >
+    <div key={page.id} className="flex flex-col gap-2 rounded-xl border border-subtle p-4 pb-2 min-h-[166px]">
       <Link
         href={
           page.is_global
@@ -93,17 +90,17 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
             : `/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
         }
         target="_blank"
-        className="border-b border-custom-border-100 pb-2 flex flex-col gap-2 flex-1"
+        className="border-b border-subtle pb-2 flex flex-col gap-2 flex-1"
       >
-        <div className="flex gap-2 items-center max-w-full w-fit overflow-hidden bg-custom-background-90 p-1 rounded">
+        <div className="flex gap-2 items-center max-w-full w-fit overflow-hidden bg-layer-1 p-1 rounded">
           <div className="my-auto">
             {page.is_global ? (
-              <Files className="size-[14px] text-custom-text-400" />
+              <Files className="size-[14px] text-placeholder" />
             ) : (
               <Logo logo={project?.logo_props as TLogoProps} size={14} />
             )}
           </div>
-          <span className="text-sm font-medium text-custom-text-350 my-auto truncate">
+          <span className="text-13 font-medium text-tertiary my-auto truncate">
             {page.is_global ? "Wiki" : project?.name}
           </span>
         </div>
@@ -113,14 +110,14 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
               {page.logo_props && page.logo_props?.in_use ? (
                 <Logo logo={page.logo_props} size={16} type="lucide" />
               ) : (
-                <PageIcon className="size-4 text-custom-text-300" />
+                <PageIcon className="size-4 text-tertiary" />
               )}
             </div>
-            <div className="text-base font-medium text-custom-text-200 line-clamp-2 overflow-hidden break-words min-w-0 flex-1">
+            <div className="text-14 font-medium text-secondary line-clamp-2 overflow-hidden break-words min-w-0 flex-1">
               {page.name}
             </div>
           </div>
-          <div className="text-sm text-custom-text-350 line-clamp-3 overflow-hidden">
+          <div className="text-13 text-tertiary line-clamp-3 overflow-hidden">
             {page.description_stripped === "" ? t("issue.pages.no_description") : page.description_stripped}
           </div>
         </div>
@@ -129,12 +126,12 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
         <div>{page.created_by && <ButtonAvatars showTooltip userIds={[page.created_by]} />}</div>
         <div className="flex gap-2">
           {page.updated_at && (
-            <div className="text-xs text-custom-text-350">Last updated {calculateTimeAgo(page.updated_at)}</div>
+            <div className="text-11 text-tertiary">Last updated {calculateTimeAgo(page.updated_at)}</div>
           )}
           <CustomMenu
             placement="bottom-end"
             menuItemsClassName="z-20"
-            buttonClassName="!p-0.5 text-custom-text-300"
+            buttonClassName="!p-0.5 text-tertiary"
             closeOnSelect
             verticalEllipsis
           >

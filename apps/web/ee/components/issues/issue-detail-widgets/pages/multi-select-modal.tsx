@@ -11,7 +11,8 @@ import { CloseIcon, PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssuePage, TIssueServiceType } from "@plane/types";
 import { EPageAccess } from "@plane/types";
-import { ToggleSwitch, Button, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { ToggleSwitch, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
 // types
 // components
 import { getPageName, getTabIndex } from "@plane/utils";
@@ -140,7 +141,7 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
               projectId={projectId ?? ""}
               size="md"
               enableClickToCopyIdentifier
-              textContainerClassName="text-lg font-semibold text-custom-text-200"
+              variant="secondary"
             />
           </div>
           <div className="flex items-center gap-2 rounded border border-custom-border-200 px-2 py-1.5">
@@ -154,8 +155,8 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
               tabIndex={baseTabIndex}
             />
           </div>
-          <div className="w-full flex items-center gap-2 text-sm text-custom-text-200 justify-end">
-            <span className="text-xs font-medium text-custom-text-200">{t("issue.pages.show_wiki_pages")}</span>
+          <div className="w-full flex items-center gap-2 text-13 text-custom-text-200 justify-end">
+            <span className="text-11 font-medium text-custom-text-200">{t("issue.pages.show_wiki_pages")}</span>
             <ToggleSwitch value={showWikiPages} onChange={() => setShowWikiPages(!showWikiPages)} />
           </div>
         </div>
@@ -165,7 +166,7 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
             {selectedPages.map((page) => (
               <div
                 key={page.id}
-                className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer max-w-[150px] overflow-hidden"
+                className="group flex items-center gap-1.5 bg-surface-2 px-2 py-1 rounded cursor-pointer max-w-[150px] overflow-hidden"
                 onClick={() => setSelectedPages((prev) => prev.filter((p) => p.id !== page.id))}
               >
                 <div className="shrink-0">
@@ -175,7 +176,7 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
                     <PageIcon className="size-4 text-custom-text-300" />
                   )}
                 </div>
-                <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
+                <p className="text-11 truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
                   {getPageName(page?.name ?? "")}
                 </p>
                 <CloseIcon className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
@@ -206,7 +207,7 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
                   value={page}
                   className={({ active }) =>
                     `group flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                      active ? "bg-custom-background-80 text-custom-text-100" : ""
+                      active ? "bg-layer-1 text-custom-text-100" : ""
                     } ${selected ? "text-custom-text-100" : ""}`
                   }
                 >
@@ -219,7 +220,7 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
                         <PageIcon className="size-4 text-custom-text-300" />
                       )}
                     </div>
-                    <span className="truncate text-sm">{getPageName(page.name)}</span>
+                    <span className="truncate text-13">{getPageName(page.name)}</span>
                   </div>
                   {page.access != null && (
                     <div className="hidden flex-shrink-0 text-custom-text-350 group-hover:flex">
@@ -231,18 +232,17 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
             })
           ) : (
             <div className="flex items-center h-full w-full px-3 ">
-              <p className="text-sm text-custom-text-200">No pages found</p>
+              <p className="text-13 text-custom-text-200">No pages found</p>
             </div>
           )}
         </Combobox.Options>
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3 border-t-[0.5px] border-custom-border-200 ">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {t("common.cancel")}
         </Button>
         <Button
           variant="primary"
-          size="sm"
           onClick={onSubmit}
           loading={isSubmitting}
           disabled={isSubmitting || selectedPages.length === 0}

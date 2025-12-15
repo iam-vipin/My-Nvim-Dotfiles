@@ -73,7 +73,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const routerWithProgress = useAppRouter();
   const pathname = usePathname();
   // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const [projectIdentifier] = workItem?.split("-") ?? [];
   const projectDetails = getProjectByIdentifier(projectIdentifier);
   const projectIdToUse = projectDetails?.id || projectId || "";
@@ -160,8 +160,8 @@ export const InputBox = observer(function InputBox(props: TProps) {
     abortStream(activeChatId || "");
   };
 
-  const getMentionSuggestions = useEvent(async (query) => {
-    const response = await searchCallback(workspaceSlug.toString(), query, focus);
+  const getMentionSuggestions = useEvent(async (query: string) => {
+    const response = await searchCallback(workspaceSlug?.toString() || "", query, focus);
     return formatSearchQuery(response);
   });
 
@@ -177,7 +177,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     if (chatMode) {
       setAiMode(chatMode);
     }
-  }, [isChatLoading, chatFocus]);
+  }, [isChatLoading, chatFocus, chatMode]);
 
   // Adding context for the sidecar
   useEffect(() => {
@@ -190,16 +190,16 @@ export const InputBox = observer(function InputBox(props: TProps) {
   return (
     <form
       className={cn(
-        "bg-custom-background-100 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-xl w-full",
+        "bg-surface-1 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-xl w-full",
         className
       )}
     >
-      <div className={cn("bg-custom-background-90 rounded-xl transition-[max-height] duration-100")}>
+      <div className={cn("bg-layer-1 rounded-xl transition-[max-height] duration-100")}>
         {/* Audio Recorder Loader */}
         {SPEECH_LOADERS.includes(loader) && (
           <div className="flex gap-2 p-2 items-center">
             <Disc className="size-3 text-red-500" strokeWidth={3} />
-            <span className="text-sm text-custom-text-300 font-medium">Recording...</span>
+            <span className="text-caption-md-medium text-secondary">Recording...</span>
           </div>
         )}
         {/* Input Box */}
@@ -216,7 +216,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
           {(isUploading: boolean, open: () => void) => (
             <div
               className={cn(
-                "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 justify-between h-fit",
+                "bg-surface-1 rounded-xl p-3 flex flex-col gap-1 shadow-raised-100 border-[0.5px] border-subtle-1 justify-between h-fit",
                 {
                   "min-h-[120px]": !SPEECH_LOADERS.includes(loader),
                 }
@@ -246,10 +246,10 @@ export const InputBox = observer(function InputBox(props: TProps) {
               )}
               {/* editor view */}
               <PiChatEditorWithRef
-                setEditorCommand={(command) => {
+                setEditorCommand={(command: TEditCommands) => {
                   setEditorCommands({ ...command });
                 }}
-                handleSubmit={handleSubmit}
+                handleSubmit={() => void handleSubmit()}
                 searchCallback={getMentionSuggestions}
                 className={cn("flex-1  max-h-[250px] min-h-[50px]", {
                   "absolute w-0": SPEECH_LOADERS.includes(loader),
@@ -294,9 +294,9 @@ export const InputBox = observer(function InputBox(props: TProps) {
                   {!SPEECH_LOADERS.includes(loader) && (
                     <button
                       className={cn(
-                        "rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 transition-all duration-300",
+                        "rounded-full bg-accent-primary text-on-color size-8 flex items-center justify-center flex-shrink-0 transition-all duration-300 disabled:bg-layer-1 disabled:text-icon-secondary",
                         {
-                          "bg-custom-background-80": isPiTyping || loader === "submitting",
+                          "bg-layer-1 text-icon-secondary": isPiTyping || loader === "submitting",
                         }
                       )}
                       type="submit"
@@ -306,7 +306,12 @@ export const InputBox = observer(function InputBox(props: TProps) {
                       {!isPiTyping || loader === "submitting" ? (
                         <ArrowUp size={16} />
                       ) : (
-                        <Square size={16} className={cn("fill-custom-text-200 transition-all")} stroke={"0"} />
+                        <Square
+                          size={16}
+                          className={cn("text-icon-secondary transition-all")}
+                          fill="currentColor"
+                          strokeWidth={0}
+                        />
                       )}
                     </button>
                   )}

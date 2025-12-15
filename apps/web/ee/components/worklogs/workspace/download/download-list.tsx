@@ -30,7 +30,7 @@ export const WorkspaceWorklogDownloadList = observer(function WorkspaceWorklogDo
   const worklogDownloads = orderedWorklogDownloads(workspaceId) || [];
 
   return (
-    <div className="divide-y divide-custom-border-100 mt-2">
+    <div className="divide-y divide-subtle mt-2">
       {loader === EWorklogDownloadLoader.PAGINATION_LOADER ? (
         <WorklogDownloadLoader loader={loader} />
       ) : (
@@ -42,10 +42,10 @@ export const WorkspaceWorklogDownloadList = observer(function WorkspaceWorklogDo
               columns={columns ?? []}
               data={worklogDownloads ?? []}
               keyExtractor={(rowData: IWorklogDownload) => rowData?.id ?? ""}
-              tHeadClassName="border-y border-custom-border-100"
-              thClassName="text-left font-medium divide-x-0 text-custom-text-400"
+              tHeadClassName="border-y border-subtle"
+              thClassName="text-left font-medium divide-x-0 text-placeholder"
               tBodyClassName="divide-y-0"
-              tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
+              tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
               tHeadTrClassName="divide-x-0"
             />
           )}

@@ -23,7 +23,7 @@ export function IssueUser(props: TIssueUser) {
     <>
       <Link
         href={`/${workspaceDetail?.slug}/profile/${activityDetail.actor_detail?.id}`}
-        className="hover:underline text-custom-text-100 font-medium"
+        className="hover:underline text-primary font-medium"
       >
         {activityDetail.actor_detail?.display_name}
       </Link>

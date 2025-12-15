@@ -10,7 +10,7 @@ import {
   WORKITEM_TEMPLATE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { TButtonSizes } from "@plane/propel/button";
+import type { ButtonProps } from "@plane/propel/button";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { ETemplateType, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
@@ -28,7 +28,7 @@ import { useFlag } from "@/plane-web/hooks/store";
 type TCreateTemplatesButtonProps = {
   workspaceSlug: string;
   buttonI18nLabel?: string;
-  buttonSize?: TButtonSizes;
+  buttonSize?: NonNullable<ButtonProps["size"]>;
   variant: "settings" | "empty_state";
 } & (
   | {

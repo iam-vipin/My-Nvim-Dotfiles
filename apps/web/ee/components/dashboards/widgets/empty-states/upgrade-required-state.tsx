@@ -4,8 +4,7 @@ import { useTheme } from "next-themes";
 import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { getSubscriptionName } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // plane web hooks
@@ -40,15 +39,12 @@ export const DashboardWidgetUpgradeRequiredState = observer(function DashboardWi
           title={t("dashboards.widget.upgrade_required.title")}
           assetPath={shouldShowIcon ? resolvedPath : undefined}
         />
-        <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+        <p className="text-13 text-placeholder text-center whitespace-pre-line">
           Upgrade to{" "}
           <button
             type="button"
             onClick={() => togglePaidPlanModal(true)}
-            className={cn(
-              "px-0.5 py-px rounded outline-none",
-              getSubscriptionTextAndBackgroundColor(EProductSubscriptionEnum.BUSINESS)
-            )}
+            className="px-0.5 py-px rounded-sm outline-none bg-accent-primary text-accent-primary"
           >
             {getSubscriptionName(EProductSubscriptionEnum.BUSINESS)}
           </button>{" "}

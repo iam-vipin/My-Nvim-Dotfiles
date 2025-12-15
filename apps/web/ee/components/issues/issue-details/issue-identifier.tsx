@@ -1,16 +1,15 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import type { IIssueType } from "@plane/types";
 import { EWorkItemTypeEntity } from "@plane/types";
+import type { TIssueTypeIdentifierExtended, TIssueIdentifierPropsExtended } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce components
-import type { TIssueIdentifierProps } from "@/ce/components/issues/issue-details/issue-identifier";
 import { IssueIdentifier as BaseIssueIdentifier } from "@/ce/components/issues/issue-details/issue-identifier";
+import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -19,51 +18,7 @@ import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-t
 // plane web hooks
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
-type TIdentifierTextProps = {
-  identifier: string;
-  enableClickToCopyIdentifier?: boolean;
-  textContainerClassName?: string;
-};
-
-export function IdentifierText(props: TIdentifierTextProps) {
-  const { identifier, enableClickToCopyIdentifier = false, textContainerClassName } = props;
-  // handlers
-  const handleCopyIssueIdentifier = () => {
-    if (enableClickToCopyIdentifier) {
-      navigator.clipboard.writeText(identifier).then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Work item ID copied to clipboard",
-        });
-      });
-    }
-  };
-
-  return (
-    <Tooltip tooltipContent="Click to copy" disabled={!enableClickToCopyIdentifier} position="top">
-      <span
-        className={cn(
-          "text-base font-medium text-custom-text-300",
-          {
-            "cursor-pointer": enableClickToCopyIdentifier,
-          },
-          textContainerClassName
-        )}
-        onClick={handleCopyIssueIdentifier}
-      >
-        {identifier}
-      </span>
-    </Tooltip>
-  );
-}
-
-type TIssueTypeIdentifier = {
-  getWorkItemTypeById?: (workItemTypeId: string) => IIssueType | undefined;
-  issueTypeId: string;
-  size?: "xs" | "sm" | "md" | "lg";
-};
-
-export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(props: TIssueTypeIdentifier) {
+export const IssueTypeIdentifier: FC<TIssueTypeIdentifierExtended> = observer((props) => {
   const { getWorkItemTypeById, issueTypeId, size = "sm" } = props;
   // derived values
   const workItemTypeFromStore = useIssueType(issueTypeId);
@@ -83,19 +38,14 @@ export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(props: 
   );
 });
 
-type TIssueIdentifierPropsExtended = TIssueIdentifierProps & {
-  getWorkItemTypeById?: (workItemTypeId: string) => IIssueType | undefined;
-  isWorkItemTypeEntityEnabled?: (workspaceSlug: string, projectId: string, entityType: EWorkItemTypeEntity) => boolean;
-};
-
-export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueIdentifierPropsExtended) {
+export const IssueIdentifier: React.FC<TIssueIdentifierPropsExtended> = observer((props) => {
   const {
     displayProperties,
     enableClickToCopyIdentifier = false,
     getWorkItemTypeById,
     projectId,
     size = "sm",
-    textContainerClassName = "",
+    variant = "default",
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -126,7 +76,6 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
     const baseProps = {
       projectId,
       size,
-      textContainerClassName,
       displayProperties,
       enableClickToCopyIdentifier,
     };
@@ -137,7 +86,7 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
           projectIdentifier: props.projectIdentifier,
           issueSequenceId: props.issueSequenceId,
         };
-    return <BaseIssueIdentifier {...baseProps} {...identifierProps} />;
+    return <BaseIssueIdentifier {...baseProps} {...identifierProps} size={size} />;
   }
 
   if (!shouldRenderIssueTypeIcon && !shouldRenderIssueID) return null;
@@ -159,7 +108,8 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
         <IdentifierText
           identifier={`${projectIdentifier}-${issueSequenceId}`}
           enableClickToCopyIdentifier={enableClickToCopyIdentifier}
-          textContainerClassName={textContainerClassName}
+          size={size}
+          variant={variant}
         />
       )}
     </div>

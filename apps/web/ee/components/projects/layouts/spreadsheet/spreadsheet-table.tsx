@@ -75,7 +75,7 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
   return (
-    <table className="overflow-y-auto bg-custom-background-100" onKeyDown={handleKeyBoardNavigation}>
+    <table className="overflow-y-auto bg-surface-1" onKeyDown={handleKeyBoardNavigation}>
       <SpreadsheetHeader
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}

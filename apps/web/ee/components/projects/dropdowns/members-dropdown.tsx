@@ -19,7 +19,7 @@ export function MembersDropdown(props: Props) {
     return (
       <div
         className={cn(
-          "px-2 text-xs h-full flex cursor-pointer items-center gap-2 text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded",
+          "px-2 text-11 h-full flex cursor-pointer items-center gap-2 text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-layer-1 rounded",
           buttonClassName
         )}
       >

@@ -131,7 +131,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {isEditing ? t("automations.create_modal.heading.update") : t("automations.create_modal.heading.create")}
           </h3>
           <div className="space-y-3">
@@ -146,7 +146,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
                   <Input
                     type="text"
                     placeholder={t("automations.create_modal.title.placeholder")}
-                    className="w-full px-2 py-1.5 text-base"
+                    className="w-full px-2 py-1.5 text-14"
                     value={value}
                     onChange={onChange}
                     hasError={Boolean(errors?.name)}
@@ -155,7 +155,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
                   />
                 )}
               />
-              <span className="text-xs text-red-500">{errors?.name?.message}</span>
+              <span className="text-11 text-red-500">{errors?.name?.message}</span>
             </div>
             <div>
               <Controller
@@ -166,7 +166,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
                     id="description"
                     name="description"
                     placeholder={t("automations.create_modal.description.placeholder")}
-                    className="w-full text-base resize-none min-h-24"
+                    className="w-full text-14 resize-none min-h-24"
                     hasError={Boolean(errors?.description)}
                     value={value ?? ""}
                     onChange={onChange}
@@ -176,13 +176,13 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+          <Button variant="secondary" size="lg" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             type="submit"
             loading={isSubmitting}
             onClick={() => captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.CREATE_UPDATE_MODAL_SUBMIT_BUTTON })}

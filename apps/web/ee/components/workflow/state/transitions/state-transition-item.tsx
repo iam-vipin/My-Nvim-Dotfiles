@@ -134,7 +134,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
   };
 
   return (
-    <div className="border border-custom-border-100 py-1 px-3 rounded-md">
+    <div className="border border-subtle py-1 px-3 rounded-md">
       {/* Delete Transition Modal */}
       <AlertModalCore
         handleClose={() => setIsDeleteModalOpen(false)}
@@ -154,10 +154,10 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
         title={
           <div className="flex w-full items-center">
             <div className="flex w-full items-center justify-start gap-1 py-1">
-              <span className="text-xs font-medium text-custom-text-300">
+              <span className="text-11 font-medium text-tertiary">
                 {t("workflows.workflow_states.state_changes.move_to")}
               </span>
-              <MoveRight className="size-3.5 pl-1 text-custom-text-300" strokeWidth={2} />
+              <MoveRight className="size-3.5 pl-1 text-tertiary" strokeWidth={2} />
               <div onClick={(e) => e.stopPropagation()}>
                 <StateDropdown
                   buttonVariant={"transparent-with-text"}
@@ -174,9 +174,9 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                 />
               </div>
               {areApproversAvailable && (
-                <div className="flex gap-1 text-custom-text-400 items-center">
-                  <ApproverIcon strokeWidth={2} className="flex-shrink-0 size-3.5 text-custom-text-300" />
-                  <span className="text-xs font-medium">
+                <div className="flex gap-1 text-placeholder items-center">
+                  <ApproverIcon strokeWidth={2} className="flex-shrink-0 size-3.5 text-tertiary" />
+                  <span className="text-11 font-medium">
                     <span className="hidden lg:block">
                       {t("workflows.workflow_states.movers_count", { count: stateTransition.approvers.length })}
                     </span>
@@ -193,7 +193,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                     value={stateTransition?.approvers ?? []}
                     onChange={handleApproversUpdate}
                     button={
-                      <Button variant="accent-primary" size="sm" className="text-xs px-2 py-0.5">
+                      <Button variant="secondary" className="text-11 px-2 py-0.5">
                         {t("workflows.workflow_states.state_changes.movers.add")}
                       </Button>
                     }
@@ -205,7 +205,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Trash2
-                    className="size-3 text-custom-text-400 hover:text-red-500 cursor-pointer"
+                    className="size-3 text-placeholder hover:text-red-500 cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsDeleteModalOpen(true);
@@ -214,9 +214,9 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                   />
                   <ChevronDownIcon
                     strokeWidth={2}
-                    className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
-                      "rotate-180 text-custom-text-200": isOpen && areApproversAvailable,
-                      "text-custom-text-400 hover:text-custom-text-400": !areApproversAvailable,
+                    className={cn("transition-all size-4 text-placeholder hover:text-tertiary", {
+                      "rotate-180 text-secondary": isOpen && areApproversAvailable,
+                      "text-placeholder hover:text-placeholder": !areApproversAvailable,
                     })}
                   />
                 </div>

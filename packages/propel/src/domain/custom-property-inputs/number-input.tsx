@@ -21,7 +21,7 @@ export function NumberInput({ property, isPreview = false, required = false }: T
 
   return (
     <div className="w-full space-y-1">
-      <label htmlFor={fieldName} className="text-sm font-medium text-custom-text-300">
+      <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
         {property.display_name}
         {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
       </label>
@@ -50,13 +50,13 @@ export function NumberInput({ property, isPreview = false, required = false }: T
             disabled={isPreview}
             placeholder={property.description || `Enter ${property.display_name?.toLowerCase()}`}
             hasError={Boolean(error)}
-            className={cn("w-full text-base border-custom-border-300", {
+            className={cn("w-full text-14 border-subtle-1", {
               "cursor-not-allowed opacity-60": isPreview,
             })}
           />
         )}
       />
-      {error && <span className="text-xs text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-red-500">{error.message as string}</span>}
     </div>
   );
 }

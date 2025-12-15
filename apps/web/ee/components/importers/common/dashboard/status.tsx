@@ -32,7 +32,7 @@ export const SyncJobStatus = observer(function SyncJobStatus(props: TSyncJobStat
   return (
     <div
       className={cn(
-        "inline-flex text-xs px-2 py-[1px] rounded-full overflow-hidden whitespace-nowrap font-medium",
+        "inline-flex text-11 px-2 py-[1px] rounded-full overflow-hidden whitespace-nowrap font-medium",
         STATUS_CLASSNAMES[status]
       )}
     >

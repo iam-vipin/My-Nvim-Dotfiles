@@ -13,9 +13,9 @@ export function AutomationDetailsMainContentBlockWrapper(props: TProps) {
 
   return (
     <div
-      className={cn("flex-grow p-4 space-y-2 bg-custom-background-100 rounded-lg shadow-custom-shadow-2xs border", {
-        "border-custom-primary-100": isSelected,
-        "border-transparent": !isSelected,
+      className={cn("flex-grow p-4 space-y-2 bg-layer-2 rounded-lg shadow-custom-shadow-2xs border shadow-raised-100", {
+        "border-accent-strong": isSelected,
+        "border-subtle": !isSelected,
       })}
       onClick={onClick}
     >

@@ -109,7 +109,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
     let parsedDescription = await parser.toPlaneHtml(richText ?? "<p></p>");
 
     // Add a simple line in the bottom of the comment, mentioneding `Commented from Slack
-    parsedDescription = `<div>${parsedDescription}<div class="py-4 border-custom-border-400" data-type="horizontalRule"></div><span data-text-color="gray">Synced from Slack</span></div>`;
+    parsedDescription = `<div>${parsedDescription}<div class="py-4 border-strong-1" data-type="horizontalRule"></div><span data-text-color="gray">Synced from Slack</span></div>`;
 
     await planeClient.issueComment.create(
       workspaceConnection.workspace_slug,

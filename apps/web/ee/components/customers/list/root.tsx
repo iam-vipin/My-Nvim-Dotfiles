@@ -74,8 +74,8 @@ export const CustomersListRoot = observer(function CustomersListRoot() {
       <div className="grid h-full w-full place-items-center">
         <div className="text-center place-items-center">
           <img src={resolvedPathSearch} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching customers" />
-          <h5 className="mb-1 mt-7 text-xl font-medium">{t("customers.empty_state.search.title")}</h5>
-          <p className="whitespace-pre-line text-base text-custom-text-400 flex flex-col items-center">
+          <h5 className="mb-1 mt-7 text-18 font-medium">{t("customers.empty_state.search.title")}</h5>
+          <p className="whitespace-pre-line text-14 text-placeholder flex flex-col items-center">
             {/* TODO: Translate here */}
             <span>
               Try with another search term or{" "}
@@ -119,7 +119,7 @@ export const CustomersListRoot = observer(function CustomersListRoot() {
         ) : (
           <div
             className={
-              "h-11 relative flex items-center gap-3 bg-custom-background-100 border border-transparent border-t-custom-border-200 pl-8 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+              "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-custom-border-200 pl-8 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
             }
             onClick={handleLoadMore}
           >

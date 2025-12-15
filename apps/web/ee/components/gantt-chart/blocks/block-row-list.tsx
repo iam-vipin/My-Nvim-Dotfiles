@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // components
 import { observer } from "mobx-react";
 import type { GanttChartBlocksProps } from "@/ce/components/gantt-chart/blocks/block-row-list";

@@ -64,7 +64,7 @@ export function ExternalEmbedInputView({ style: _style, setIsOpen, externalEmbed
 
   return (
     <div
-      className="bg-custom-background-90 border border-custom-border-300 rounded-md p-3 pt-1 shadow-lg z-[9999]"
+      className="bg-layer-1 border border-subtle-1 rounded-md p-3 pt-1 shadow-lg z-[9999]"
       style={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? "translateY(0)" : "translateY(10px)",
@@ -84,12 +84,12 @@ export function ExternalEmbedInputView({ style: _style, setIsOpen, externalEmbed
     >
       <div className="flex flex-col items-start">
         {error ? (
-          <p className="text-red-500 text-xs my-1">
+          <p className="text-red-500 text-11 my-1">
             Please enter a valid URL.
             {/* {t("externalEmbedComponent.error.not_valid_link")} */}
           </p>
         ) : (
-          <p className="text-xs text-custom-text-300 my-1">
+          <p className="text-11 text-tertiary my-1">
             Works with YouTube, Figma, Google Docs and more
             {/* {t("externalEmbedComponent.input_modal.works_with_links")} */}
           </p>
@@ -98,9 +98,9 @@ export function ExternalEmbedInputView({ style: _style, setIsOpen, externalEmbed
         <div className="flex gap-2 w-full h-7 ">
           <Input
             ref={inputRef}
-            className={cn("w-full min-w-[250px] focus:outline-none focus:ring-1 focus:ring-custom-primary-200", {
+            className={cn("w-full min-w-[250px] focus:outline-none focus:ring-1", {
               "border-red-500 focus:ring-red-500": error,
-              "border-custom-border-300 focus:ring-custom-primary-200": !error,
+              "border-subtle-1 focus:ring-accent-strong": !error,
             })}
             placeholder="Enter or paste a link"
             // placeholder={t("externalEmbedComponent.placeholder.link")}
@@ -131,7 +131,6 @@ export function ExternalEmbedInputView({ style: _style, setIsOpen, externalEmbed
           />
 
           <Button
-            size="sm"
             onClick={(e) => {
               e.stopPropagation();
               handleEmbedClick();

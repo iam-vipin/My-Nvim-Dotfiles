@@ -76,8 +76,8 @@ export const TeamspacesList = observer(function TeamspacesList(props: TTeamspace
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching teamspace"
           />
-          <h5 className="mb-1 mt-7 text-xl font-medium">No matching teamspace</h5>
-          <p className="whitespace-pre-line text-base text-custom-text-400">
+          <h5 className="mb-1 mt-7 text-h5-medium">No matching teamspace</h5>
+          <p className="whitespace-pre-line text-body-sm-regular text-placeholder">
             {searchQuery.trim() === ""
               ? "Remove the filters to see all teamspaces"
               : "No teamspace detected with the matching criteria.\nCreate a new teamspace instead"}

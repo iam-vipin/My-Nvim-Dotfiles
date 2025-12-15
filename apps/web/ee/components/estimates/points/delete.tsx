@@ -98,14 +98,14 @@ export const EstimatePointDelete = observer(function EstimatePointDelete(props: 
     .filter((estimatePoint) => estimatePoint != undefined) as TEstimatePointsObject[];
 
   return (
-    <div className="relative flex items-center gap-2 text-base pr-2.5">
+    <div className="relative flex items-center gap-2 text-14 pr-2.5">
       <div className="flex-grow relative flex items-center gap-3">
-        <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+        <div className="w-full border border-subtle-1 rounded-sm px-3 py-2 bg-layer-1 text-13">
           {estimateSystem === EEstimateSystem.TIME
             ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value))
             : estimatePoint?.value}
         </div>
-        <div className="text-sm first-letter:relative flex justify-center items-center gap-2 whitespace-nowrap">
+        <div className="text-13 first-letter:relative flex justify-center items-center gap-2 whitespace-nowrap">
           Mark as <MoveRight size={14} />
         </div>
         <EstimatePointDropdown
@@ -124,17 +124,17 @@ export const EstimatePointDelete = observer(function EstimatePointDelete(props: 
         </div>
       ) : (
         <div
-          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-red-500"
+          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-red-500"
           onClick={handleDelete}
         >
           <Trash2 size={14} />
         </div>
       )}
       <div
-        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
         onClick={handleClose}
       >
-        <CloseIcon height={14} width={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-secondary" />
       </div>
     </div>
   );

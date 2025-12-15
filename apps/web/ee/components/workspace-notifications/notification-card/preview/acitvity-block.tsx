@@ -23,6 +23,7 @@ import {
   getValidKeysFromObject,
   renderFormattedDate,
   renderFormattedTime,
+  cn,
 } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -39,25 +40,25 @@ type TIssueActivityBlock = {
 };
 
 export const activityIconMap: Record<string, ReactElement> = {
-  state: <StatePropertyIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
-  name: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
-  description: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
-  assignees: <MembersPropertyIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
-  priority: <PriorityPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
-  estimate_point: <EstimatePropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
-  parent: <ParentPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
-  start_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
-  target_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
-  cycles: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  modules: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  labels: <LabelPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
-  link: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
-  attachment: <Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />,
-  archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />,
-  inbox: <Intake className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  type: <ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
-  customer: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
-  customer_request: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  state: <StatePropertyIcon width={14} height={14} className="text-secondary" aria-hidden="true" />,
+  name: <MessageSquare size={14} className="text-secondary" aria-hidden="true" />,
+  description: <MessageSquare size={14} className="text-secondary" aria-hidden="true" />,
+  assignees: <MembersPropertyIcon className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
+  priority: <PriorityPropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
+  estimate_point: <EstimatePropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
+  parent: <ParentPropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
+  start_date: <CalendarDays size={14} className="text-secondary" aria-hidden="true" />,
+  target_date: <CalendarDays size={14} className="text-secondary" aria-hidden="true" />,
+  cycles: <CycleIcon className="h-4 w-4 flex-shrink-0 text-secondary" />,
+  modules: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-secondary" />,
+  labels: <LabelPropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
+  link: <MessageSquare size={14} className="text-secondary" aria-hidden="true" />,
+  attachment: <Paperclip size={14} className="text-secondary" aria-hidden="true" />,
+  archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />,
+  inbox: <Intake className="h-4 w-4 flex-shrink-0 text-secondary" />,
+  type: <ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
+  customer: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
+  customer_request: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
 };
 
 export function IssueActivityBlock(props: TIssueActivityBlock) {
@@ -68,21 +69,23 @@ export function IssueActivityBlock(props: TIssueActivityBlock) {
   const { isMobile } = usePlatformOS();
   return (
     <div
-      className={`relative flex w-full gap-3 text-xs ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}
+      className={cn("relative flex w-full gap-3 text-caption-sm-regular", {
+        "pb-2": ends === "top",
+        "pt-2": ends === "bottom",
+        "py-2": ends !== "top" && ends !== "bottom",
+      })}
     >
-      {ends !== "single" && (
-        <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
-      )}
-      <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200">
+      {ends !== "single" && <div className="absolute left-[13px] top-0 bottom-0 w-px bg-layer-3" aria-hidden />}
+      <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-layer-3 text-secondary">
         {notificationField === "comment"
           ? triggeredBy && <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
           : activityRelations.find((field) => field === notificationField)
             ? ISSUE_RELATION_OPTIONS[notificationField as TIssueRelationTypes]?.icon(14)
             : activityIconMap[notificationField]}
       </div>
-      <div className="w-full text-custom-text-200 flex gap-2">
+      <div className="w-full text-secondary flex gap-2">
         <span className="truncate"> {children} </span>
-        <span className="text-custom-text-300">
+        <span className="text-tertiary">
           {createdAt && (
             <Tooltip
               isMobile={isMobile}

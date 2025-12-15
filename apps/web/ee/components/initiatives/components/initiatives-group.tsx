@@ -31,8 +31,8 @@ export const InitiativeGroup = observer(function InitiativeGroup(props: Props) {
   const shouldExpand = isExpanded || !groupBy;
 
   return (
-    <div className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`)}>
-      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 py-1">
+    <div className={cn(`relative flex flex-shrink-0 flex-col border-transparent`)}>
+      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 py-1">
         <GroupHeader
           groupID={group.id}
           icon={group.icon}

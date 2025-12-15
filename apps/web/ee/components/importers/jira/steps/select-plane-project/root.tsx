@@ -89,9 +89,7 @@ export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot()
     <>
       {/* content */}
       <div className="w-full overflow-y-auto space-y-2">
-        <div className="text-sm text-custom-text-200">
-          {t("importers.select_service_project", { serviceName: "Plane" })}
-        </div>
+        <div className="text-13 text-secondary">{t("importers.select_service_project", { serviceName: "Plane" })}</div>
         {isLoading && (!projects || projects.length === 0) ? (
           <Loader>
             <Loader.Item height="28px" width="100%" />
@@ -124,7 +122,7 @@ export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot()
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2 justify-between">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
+          <Button variant="primary" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
             {t("common.next")}
           </Button>
         </StepperNavigation>

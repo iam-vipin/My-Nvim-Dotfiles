@@ -13,8 +13,8 @@ export function WidgetPropertyWrapper(props: Props) {
 
   return (
     <div className={cn("h-8 grid grid-cols-9 items-center gap-2", className)}>
-      <p className={cn("col-span-4 font-medium text-[12px] text-custom-text-300", titleClassName)}>{title}</p>
-      <div className={cn("col-span-5 text-custom-text-200", inputClassName)}>{input}</div>
+      <p className={cn("col-span-4 font-medium text-12 text-tertiary", titleClassName)}>{title}</p>
+      <div className={cn("col-span-5 text-secondary", inputClassName)}>{input}</div>
     </div>
   );
 }

@@ -48,9 +48,9 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col justify-between group/project-card rounded border border-custom-border-200 bg-custom-background-100 w-full",
+        "flex flex-col justify-between group/project-card border border-subtle bg-layer-1 hover:bg-layer-1-hover w-full rounded-lg overflow-hidden",
         {
-          "bg-custom-background-80": isArchived,
+          "bg-layer-1": isArchived,
         }
       )}
     >
@@ -93,11 +93,11 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
         className={cn("group/project-card flex flex-col justify-between w-full", {
-          "bg-custom-background-80": isArchived,
+          "bg-layer-1": isArchived,
         })}
       >
         <>
-          <div className="bg-custom-background-100">
+          <div>
             <Details
               project={project}
               workspaceSlug={workspaceSlug.toString()}

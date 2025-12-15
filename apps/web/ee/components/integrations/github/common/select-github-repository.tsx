@@ -43,7 +43,7 @@ export const SelectGithubRepository = observer(function SelectGithubRepository(p
 
   return (
     <>
-      <div className="text-sm text-custom-text-200">Github Repository</div>
+      <div className="text-body-xs-regular text-secondary">Github Repository</div>
       <Dropdown
         dropdownOptions={(repositories || [])?.map((repo) => ({
           key: repo?.id.toString() || "",

@@ -29,10 +29,10 @@ const RecentChats = observer(function RecentChats(props: TProps) {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="text-sm font-semibold text-custom-text-400">Recents</div>
+      <div className="text-body-xs-semibold text-placeholder">Recents</div>
       <div className="flex flex-col gap-0.5">
         {isLoading ? (
-          <Loader className="mx-auto w-full flex flex-col gap-2">
+          <Loader className="mx-auto w-full flex flex-col gap-1">
             <Loader.Item width="100%" height="32px" />
             <Loader.Item width="100%" height="32px" />
             <Loader.Item width="100%" height="32px" />
@@ -52,7 +52,7 @@ const RecentChats = observer(function RecentChats(props: TProps) {
             />
           ))
         ) : (
-          <div className="text-custom-text-400 text-sm">No threads available</div>
+          <div className="text-placeholder text-13">No threads available</div>
         )}
       </div>
     </div>

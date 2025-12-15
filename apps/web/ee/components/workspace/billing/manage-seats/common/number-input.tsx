@@ -44,16 +44,16 @@ export function NumberInputWithControls({
           type="button"
           onClick={() => handleSeatChange("decrease")}
           disabled={isDecreaseDisabled}
-          className="flex items-center justify-center size-8 bg-custom-background-80 rounded-l disabled:text-custom-text-400 cursor-pointer select-none"
+          className="flex items-center justify-center size-8 bg-layer-1 rounded-l disabled:text-placeholder cursor-pointer select-none"
         >
-          <Minus className="size-4 text-custom-text-100" />
+          <Minus className="size-4 text-primary" />
         </button>
         <Input
           type="text"
           value={value}
           onChange={handleChange}
           onWheel={(e) => e.currentTarget.blur()}
-          className="w-12 h-8 text-center rounded-none border border-custom-background-80 bg-custom-background-100"
+          className="w-12 h-8 text-center rounded-none border border-layer-1 bg-surface-1"
           hasError={Boolean(error)}
           inputSize="xs"
           tabIndex={-1}
@@ -62,12 +62,12 @@ export function NumberInputWithControls({
           type="button"
           onClick={() => handleSeatChange("increase")}
           disabled={isIncreaseDisabled}
-          className="flex items-center justify-center size-8 bg-custom-background-80 rounded-r disabled:text-custom-text-400 cursor-pointer select-none"
+          className="flex items-center justify-center size-8 bg-layer-1 rounded-r disabled:text-placeholder cursor-pointer select-none"
         >
-          <Plus className="size-4 text-custom-text-100" />
+          <Plus className="size-4 text-primary" />
         </button>
       </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-11 text-red-500">{error}</p>}
     </div>
   );
 }

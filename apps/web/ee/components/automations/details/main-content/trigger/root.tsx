@@ -54,7 +54,7 @@ export const AutomationDetailsMainContentTriggerRoot = observer(function Automat
           >
             <>
               <ConjunctionLabel text={t("automations.conjunctions.if")} />
-              <span className="flex items-center gap-1.5 text-sm font-medium text-custom-text-200">
+              <span className="flex items-center gap-1.5 text-13 font-medium text-tertiary">
                 <AutomationTriggerIcon iconKey={selectedTriggerNodeHandlerOption.iconKey} />
                 {selectedTriggerNodeHandlerOption.readableLabel}
               </span>

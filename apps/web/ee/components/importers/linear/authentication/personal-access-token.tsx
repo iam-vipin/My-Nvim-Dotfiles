@@ -81,7 +81,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
             tabIndex={-1}
             href="https://linear.app/docs/security-and-access#personal-api-keys"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Linear Security Settings.
@@ -127,7 +127,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
             {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Linear" })}
           </Button>
-          <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
+          <Button variant="ghost" className="font-medium" onClick={clearFromData} disabled={isLoading}>
             {t("common.clear")}
           </Button>
         </div>

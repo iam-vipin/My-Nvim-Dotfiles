@@ -82,7 +82,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
   useKeypress("Escape", handleKeyDown);
 
   const peekOverviewInitiativeClassName = cn(
-    "absolute z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300",
+    "absolute z-[25] flex flex-col overflow-hidden rounded border border-subtle bg-surface-1 transition-all duration-300",
     {
       "top-0 bottom-0 right-0 w-full md:w-[80%] lg:w-[75%] border-0 border-l": peekMode === "side-peek",
       "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
@@ -93,7 +93,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
   const content = (
-    <div className="w-full !text-base">
+    <div className="w-full !text-14">
       {initiativeId && (
         <div
           ref={initiativePeekOverviewRef}

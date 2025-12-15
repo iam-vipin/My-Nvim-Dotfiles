@@ -48,8 +48,8 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
 
   return (
     <div className={cn("sticky bottom-0 left-0 z-10 h-14", className)}>
-      <div className="size-full bg-custom-background-100 border-t border-custom-border-200 py-4 px-3.5 flex items-center divide-x-[0.5px] divide-custom-border-200 text-custom-text-300">
-        <div className="h-7 pr-3 text-sm flex items-center gap-2 flex-shrink-0">
+      <div className="size-full bg-surface-1 border-t border-subtle-1 py-4 px-3.5 flex items-center divide-x-[0.5px] divide-subtle-1 text-tertiary">
+        <div className="h-7 pr-3 text-13 flex items-center gap-2 flex-shrink-0">
           <Checkbox
             className="!outline-none size-3.5"
             iconClassName="size-3"
@@ -91,7 +91,7 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
             </div>
             {!isBulkOpsEnabled && (
               <div className="flex-shrink-0">
-                <Button variant="accent-primary" size="sm" onClick={() => togglePaidPlanModal(true)}>
+                <Button variant="secondary" onClick={() => togglePaidPlanModal(true)}>
                   Upgrade
                 </Button>
               </div>

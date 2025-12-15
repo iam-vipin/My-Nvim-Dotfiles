@@ -120,12 +120,12 @@ export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
         {/* uploading the users from jira */}
         {!formData.userSkipToggle && isResourceFiledRequired && (
           <div className="space-y-4">
-            <div className="text-sm">
+            <div className="text-13">
               {t("importers.upload_csv_file")}
               <a
                 target="_blank"
                 href="https://support.atlassian.com/organization-administration/docs/export-users-from-a-site/"
-                className="text-custom-primary-100 underline font-medium"
+                className="text-accent-primary underline font-medium"
                 rel="noreferrer"
               >
                 {t("common.from", { name: "Jira" })}
@@ -139,9 +139,9 @@ export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
       </div>
 
       {/* stepper button */}
-      <div className="flex-shrink-0 relative flex items-center gap-2">
+      <div className="shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
+          <Button variant="primary" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
             {t("common.next")}
           </Button>
         </StepperNavigation>

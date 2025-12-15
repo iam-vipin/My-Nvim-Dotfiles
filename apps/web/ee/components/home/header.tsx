@@ -20,7 +20,8 @@ export const HomePageHeader = observer(function HomePageHeader() {
   if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
 
   useEffect(() => {
-    initPiChat();
+    void initPiChat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -28,12 +29,12 @@ export const HomePageHeader = observer(function HomePageHeader() {
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-full gap-2">
           <div className="flex items-center gap-2">
-            <div className="text-base font-semibold text-custom-text-350">Ask AI</div>
+            <div className="text-14 font-semibold text-tertiary">Ask AI</div>
             <BetaBadge />
           </div>
           <Tooltip tooltipContent="Maximize" position="top">
             <Link href={`/${workspaceSlug}/projects/pi-chat/${activeChatId}`}>
-              <Maximize className="size-4 text-custom-text-350" />
+              <Maximize className="size-4 text-tertiary" />
             </Link>
           </Tooltip>
         </div>
@@ -47,7 +48,7 @@ export const HomePageHeader = observer(function HomePageHeader() {
           />
         ) : (
           <UnauthorizedView
-            className="border border-custom-border-100 rounded-lg p-4 mt-3 max-h-[164px] justify-start"
+            className="border border-subtle/40 rounded-lg p-4 mt-3 max-h-[164px] justify-start"
             imgClassName="h-[117px]"
           />
         )}

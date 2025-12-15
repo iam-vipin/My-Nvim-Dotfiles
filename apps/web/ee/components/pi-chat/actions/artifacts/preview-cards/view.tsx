@@ -16,9 +16,9 @@ export const ViewPreviewCard = observer(function ViewPreviewCard(props: TProps) 
   return (
     <WithPreviewHOC artifactId={data.artifact_id}>
       <div className="flex gap-2 items-start">
-        <ViewsIcon className="size-4 text-custom-text-100 my-0.5" />
+        <ViewsIcon className="size-4 text-primary my-0.5" />
         <div className="flex flex-col">
-          <div className="truncate text-sm font-medium text-start capitalize">{data.parameters?.name || "Unknown"}</div>
+          <div className="truncate text-body-sm-medium text-start capitalize">{data.parameters?.name || "Unknown"}</div>
           {properties && <Properties {...properties} />}
         </div>
       </div>

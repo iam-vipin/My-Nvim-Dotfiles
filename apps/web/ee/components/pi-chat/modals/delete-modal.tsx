@@ -56,7 +56,7 @@ export const ChatDeleteModal = observer(function ChatDeleteModal(props: IChatDel
       content={
         <>
           Are you sure you want to delete the chat{' "'}
-          <span className="break-words font-medium text-custom-text-100">{chatTitle}</span>
+          <span className="break-words font-medium text-primary">{chatTitle}</span>
           {'"'}? All of the data related to the chat will be permanently removed. This action cannot be undone.
         </>
       }

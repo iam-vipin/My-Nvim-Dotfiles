@@ -87,7 +87,7 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
         query: `${projectDetails?.name} ${projectDetails?.identifier}`,
         content: (
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-custom-background-80">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-layer-1">
               <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                 {projectDetails?.logo_props ? (
                   <Logo logo={projectDetails?.logo_props} size={16} />
@@ -98,7 +98,7 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
                 )}
               </span>
             </div>
-            <p className="text-sm font-medium">{projectDetails?.name}</p>
+            <p className="text-13 font-medium">{projectDetails?.name}</p>
           </div>
         ),
       };
@@ -121,6 +121,7 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
           actionItems: <ActionItems pageUrl={response?.page_url ?? ""} />,
         });
         handleModalClose();
+        return;
       })
       .catch(() => {
         setIsSubmitting(false);
@@ -134,9 +135,9 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleModalClose} position={EModalPosition.TOP} width={EModalWidth.SM}>
-      <form onSubmit={handleEditFormSubmit}>
+      <form onSubmit={(e) => void handleEditFormSubmit(e)}>
         <div className="space-y-2 p-5">
-          <h3 className="text-base font-semibold text-custom-text-300">Save this page in</h3>
+          <h3 className="text-h5-medium text-primary">Save this page in</h3>
           {/* search project */}
           <div className="space-y-1 flex-grow w-full">
             <Input
@@ -145,38 +146,38 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for projects"
-              className="w-full resize-none text-base font-medium text-custom-text-200"
+              className="w-full border border-subtle-1 text-body-sm-regular text-secondary py-1"
               tabIndex={getIndex("search")}
             />
           </div>
-          <div className="divide-y divide-custom-border-100">
+          <div className="divide-y divide-subtle">
             {/* wiki */}
             <div className="py-2">
               <button
-                className={cn("flex items-center gap-2 hover:bg-custom-background-90 rounded-md p-2 w-full", {
-                  "bg-custom-background-90": selectedEntity === "wiki",
+                className={cn("flex items-center gap-2 hover:bg-layer-1 rounded-md p-2 w-full", {
+                  "bg-layer-1": selectedEntity === "wiki",
                 })}
                 onClick={() => setSelectedEntity("wiki")}
                 type="button"
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-custom-background-80">
+                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-layer-1">
                   <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                     <WikiIcon className="h-4 w-4" />
                   </span>
                 </div>
-                <p className="text-sm font-medium">Wiki</p>
+                <p className="text-body-sm-medium text-primary">Wiki</p>
               </button>
             </div>
             {/* projects */}
             <div className="py-4">
-              <h4 className="text-xs font-semibold text-custom-text-400 uppercase mb-4">Projects</h4>
+              <h4 className="text-caption-md-semibold text-placeholder mb-4">Projects</h4>
               <div className="flex flex-col max-h-[308px] overflow-y-scroll">
                 {filteredOptions?.map((option) => (
                   <button
                     type="button"
                     key={option.value}
-                    className={cn("hover:bg-custom-background-90 rounded-md p-2", {
-                      "bg-custom-background-90": selectedEntity === option.value,
+                    className={cn("hover:bg-layer-1 text-start rounded-md p-2 text-body-sm-medium text-primary", {
+                      "bg-layer-1": selectedEntity === option.value,
                     })}
                     onClick={() => setSelectedEntity(option.value)}
                   >
@@ -187,13 +188,13 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
             Cancel
           </Button>
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             type="submit"
             loading={isSubmitting}
             disabled={isSubmitting}

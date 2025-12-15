@@ -63,7 +63,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
                 <BreadcrumbLink
                   label="Work items"
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                  icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -83,7 +83,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         {currentProjectDetails?.anchor ? (
           <a
             href={publishedURL}
-            className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+            className="group flex items-center gap-1.5 rounded-sm bg-accent-primary/10 px-2.5 py-1 text-11 font-medium text-accent-primary"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -96,7 +96,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <div className="hidden gap-3 md:flex">
+        <div className="hidden gap-3 md:flex md:items-center">
           <HeaderFilters
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}
@@ -110,7 +110,6 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
-            size="sm"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>

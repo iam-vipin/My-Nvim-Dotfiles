@@ -24,7 +24,7 @@ export const BaseListRoot = observer(function BaseListRoot() {
   );
   return (
     <ProjectLayoutHOC layout={EProjectLayouts.TABLE}>
-      <div className={`relative size-full bg-custom-background-90`}>
+      <div className={`relative size-full bg-surface-1`}>
         <List
           displayProperties={displayProperties}
           groupBy={"state"}

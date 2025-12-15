@@ -15,7 +15,7 @@ export function PageTemplateLoader() {
               <Loader.Item height="120px" />
             </Loader>
           </div>
-          <div className="flex items-center justify-end gap-2 pt-8 mt-8 border-t border-custom-border-200">
+          <div className="flex items-center justify-end gap-2 pt-8 mt-8 border-t border-subtle">
             <Loader className="flex items-center justify-end gap-x-2">
               <Loader.Item height="30px" width="100px" />
               <Loader.Item height="30px" width="100px" />

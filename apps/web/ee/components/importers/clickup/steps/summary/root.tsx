@@ -149,11 +149,11 @@ export const SummaryRoot = observer(function SummaryRoot() {
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
+        <div className="relative grid grid-cols-2 items-center bg-layer-1 p-3 text-13 font-medium">
           <div>ClickUp {t("common.entities")}</div>
           <div>{t("importers.migrating")}</div>
         </div>
-        <div className="divide-y divide-custom-border-200">
+        <div className="divide-y divide-subtle-1">
           <StatsTile label={t("projects")} value={importingFolders.length} />
           <StatsTile label={t("work_items")} value={importingTasksCount} />
           {!userSkipToggle && (
@@ -181,12 +181,7 @@ export const SummaryRoot = observer(function SummaryRoot() {
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleOnClickNext}
-            disabled={createConfigLoader || isNextBtnDisabled}
-          >
+          <Button variant="primary" onClick={handleOnClickNext} disabled={createConfigLoader || isNextBtnDisabled}>
             {createConfigLoader ? t("common.configuring") : t("common.confirm")}
           </Button>
         </StepperNavigation>
@@ -197,8 +192,8 @@ export const SummaryRoot = observer(function SummaryRoot() {
 
 function StatsTile({ label, value }: { label: string; value: number }): React.ReactNode {
   return (
-    <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-      <div className="text-custom-text-200">{label}</div>
+    <div className="relative grid grid-cols-2 items-center p-3 text-13">
+      <div className="text-secondary">{label}</div>
       <div>{value}</div>
     </div>
   );

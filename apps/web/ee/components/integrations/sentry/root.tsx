@@ -78,7 +78,7 @@ export const SentryIntegrationRoot = observer(function SentryIntegrationRoot() {
       />
       {/* List of connected workspaces */}
       {appConnectionIds && appConnectionIds.length > 0 && (
-        <div className="flex-shrink-0 relative flex flex-col border-t border-custom-border-100 py-4 px-2">
+        <div className="flex-shrink-0 relative flex flex-col border-t border-subtle py-4 px-2">
           <div className="font-medium">{t("sentry_integration.connected_sentry_workspaces")}</div>
           <div className="w-full h-full flex flex-col gap-4 py-4">
             {appConnectionIds?.map((appId) => {

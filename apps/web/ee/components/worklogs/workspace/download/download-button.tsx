@@ -67,7 +67,7 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
   return (
     <button
       className={cn(
-        "relative flex items-center rounded transition-all bg-custom-primary-100 hover:bg-custom-primary-200 focus:text-custom-brand-40 focus:bg-custom-primary-200 font-semibold text-white",
+        "relative flex items-center rounded-sm transition-all bg-accent-primary hover:bg-accent-primary/80 focus:text-custom-brand-40 focus:bg-accent-primary/80 font-semibold text-on-color",
         {
           "cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60": buttonLoader,
         }
@@ -75,10 +75,10 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
       disabled={buttonLoader}
     >
       <div
-        className="flex w-full h-full px-2 py-0.5 text-sm font-medium border-r border-white"
+        className="flex w-full h-full px-2 py-0.5 text-13 font-medium border-r border-white"
         onClick={() => downloadWorklogs("csv")}
       >
-        {buttonLoader ? "Downloading..." : "Download"}
+        {buttonLoader ? "Downloading" : "Download"}
       </div>
       <PopoverMenu
         buttonClassName="outline-none focus:outline-none flex"
@@ -92,7 +92,7 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
         panelClassName="space-y-0.5 w-32 flex flex-col"
         render={(option: TDownloadFormatOptions) => (
           <button
-            className="px-1.5 py-1 text-left rounded text-xs font-medium cursor-pointer hover:bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100 transition-all"
+            className="px-1.5 py-1 text-left rounded-sm text-11 font-medium cursor-pointer bg-layer-1 hover:bg-layer-1-hover transition-all"
             onClick={() => downloadWorklogs(option.value)}
             disabled={buttonLoader}
             data-ph-element={WORKSPACE_WORKLOG_TRACKER_ELEMENTS.HEADER_DOWNLOAD_CONTEXT_MENU}

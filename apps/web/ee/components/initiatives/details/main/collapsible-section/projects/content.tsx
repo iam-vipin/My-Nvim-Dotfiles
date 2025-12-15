@@ -42,9 +42,7 @@ export function InitiativeProjectsCollapsibleContent(props: Props) {
                 }}
                 disabled={disabled}
               >
-                <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>
-                  Add projects
-                </span>
+                <span className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1")}>Add projects</span>
               </button>
             }
           />

@@ -30,7 +30,7 @@ function RecurringWorkItemsDetailsLayout({ params }: Route.ComponentProps) {
       <div className="w-full h-full">
         <Link
           href={getRecurringWorkItemSettingsPath({ workspaceSlug, projectId })}
-          className="flex items-center gap-2 text-sm font-semibold text-custom-text-300 mb-6"
+          className="flex items-center gap-2 text-13 font-semibold text-tertiary mb-6"
         >
           <ChevronLeftIcon className="w-4 h-4" />
           <div>Back to recurring work items</div>

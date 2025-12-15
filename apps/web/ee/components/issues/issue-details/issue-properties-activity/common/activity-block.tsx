@@ -42,27 +42,23 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
   if (!activityDetail) return <></>;
   return (
     <div
-      className={`relative flex items-center gap-3 text-xs ${
+      className={`relative flex items-center gap-3 text-11 ${
         ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
       }`}
       ref={activityBlockRef}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-custom-background-80" aria-hidden />
+      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-layer-1" aria-hidden />
       <div
         className={cn(
-          "flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden border-2 border-transparent flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200",
-          higlightedActivityIds.includes(activityId) ? "border-custom-primary-100" : ""
+          "flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden border-2 border-transparent flex justify-center items-center z-[4] bg-layer-1 text-secondary",
+          higlightedActivityIds.includes(activityId) ? "border-accent-strong" : ""
         )}
       >
         {propertyDetail?.logo_props?.in_use && (
-          <IssuePropertyLogo
-            icon_props={propertyDetail.logo_props.icon}
-            size={14}
-            colorClassName="text-custom-text-200"
-          />
+          <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} size={14} colorClassName="text-secondary" />
         )}
       </div>
-      <div className="w-full truncate text-custom-text-200">
+      <div className="w-full truncate text-secondary">
         <IssueUser activityId={activityId} />
         <span> {children} </span>
         {activityDetail.created_at && (

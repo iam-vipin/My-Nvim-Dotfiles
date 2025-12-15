@@ -44,7 +44,7 @@ export function MobileAuthInvitationWrapper(props: TMobileAuthInvitationWrapper)
   if (isLoading) {
     return (
       <div className="relative flex justify-center items-center animate-pulse">
-        <PlaneLogo className="h-10 w-auto text-custom-primary-100" />
+        <PlaneLogo className="h-10 w-auto text-accent-primary" />
       </div>
     );
   }

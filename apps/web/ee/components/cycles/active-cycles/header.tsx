@@ -28,11 +28,11 @@ export function ActiveCycleHeader(props: ActiveCycleHeaderProps) {
   const daysLeft = findHowManyDaysLeft(cycle.end_date) ?? 0;
   const currentCycleStatus = cycle?.status?.toLocaleLowerCase() as TCycleGroups;
   return (
-    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg border-[0.5px] border-custom-border-100 bg-custom-background-90">
+    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg border-[0.5px] border-subtle bg-layer-1">
       <div className="flex items-center gap-2 cursor-default">
         <CycleGroupIcon cycleGroup={currentCycleStatus} className="h-4 w-4" />
         <Tooltip tooltipContent={cycle.name} position="top-start">
-          <h3 className="break-words text-lg font-medium">{truncateText(cycle.name, 70)}</h3>
+          <h3 className="break-words text-16 font-medium">{truncateText(cycle.name, 70)}</h3>
         </Tooltip>
         <Tooltip
           tooltipContent={`Start date: ${renderFormattedDate(cycle.start_date ?? "")} Due Date: ${renderFormattedDate(
@@ -40,17 +40,17 @@ export function ActiveCycleHeader(props: ActiveCycleHeaderProps) {
           )}`}
           position="top-start"
         >
-          <span className="flex gap-1 whitespace-nowrap rounded-sm text-custom-text-400 font-semibold text-sm leading-5">
+          <span className="flex gap-1 whitespace-nowrap rounded-sm text-placeholder font-semibold text-13 leading-5">
             {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}
           </span>
         </Tooltip>
       </div>
       <div className="flex items-center gap-4">
-        <div className="rounded-sm text-sm">
-          <div className="flex gap-2 text-sm whitespace-nowrap text-custom-text-300 font-medium">
+        <div className="rounded-sm text-13">
+          <div className="flex gap-2 text-13 whitespace-nowrap text-tertiary font-medium">
             <span className="flex items-center gap-1.5">
               <UserCirclePropertyIcon className="h-4 w-4" />
-              <span className="text-base leading-5">Lead</span>
+              <span className="text-14 leading-5">Lead</span>
             </span>
             <div className="flex items-center gap-1.5">
               {cycleOwnerDetails?.avatar_url && cycleOwnerDetails?.avatar_url !== "" ? (
@@ -60,17 +60,17 @@ export function ActiveCycleHeader(props: ActiveCycleHeaderProps) {
                   alt={cycleOwnerDetails?.display_name}
                 />
               ) : (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface-1 capitalize">
                   {cycleOwnerDetails?.display_name.charAt(0)}
                 </span>
               )}
-              <span className="text-base leading-5">{cycleOwnerDetails?.display_name}</span>
+              <span className="text-14 leading-5">{cycleOwnerDetails?.display_name}</span>
             </div>
           </div>
         </div>
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
-          className={`${getButtonStyling("primary", "sm")} cursor-pointer`}
+          className={`${getButtonStyling("primary", "base")} cursor-pointer`}
         >
           View cycle
         </Link>

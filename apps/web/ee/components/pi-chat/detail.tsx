@@ -34,13 +34,13 @@ export const PiChatDetail = observer(function PiChatDetail(props: TProps) {
       {isChatAuthorized && isWorkspaceAuthorized ? (
         <div
           className={cn(
-            "px-page-x relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[400px] md:m-auto w-full",
+            "px-4 relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[400px] md:m-auto w-full",
             {
-              "max-w-[780px]": isFullScreen,
+              "max-w-[780px] md:px-10": isFullScreen,
             }
           )}
         >
-          <div className={cn("flex-1 my-auto flex flex-co h-full relative")}>
+          <div className={cn("flex-1 my-auto flex h-full relative")}>
             {isLoading ? (
               <Loading isLoading={isLoading} isFullScreen={isFullScreen} /> // loading
             ) : (
@@ -57,9 +57,9 @@ export const PiChatDetail = observer(function PiChatDetail(props: TProps) {
             {/* Scroll to bottom button */}
             {activeChatId && (
               <button
-                onClick={() => scrollIntoViewHelper("observer-element")}
+                onClick={() => void scrollIntoViewHelper("observer-element")}
                 className={cn(
-                  "absolute bottom-[164px] left-1/2 -translate-x-1/2 bg-custom-background-100 p-1 rounded-full shadow z-10 transition-all duration-300 opacity-0 text-custom-text-200 border border-custom-border-100",
+                  "absolute bottom-[164px] left-1/2 -translate-x-1/2 bg-surface-1 p-1 rounded-full shadow z-10 transition-all duration-300 opacity-0 text-secondary border border-subtle",
                   {
                     "opacity-100": hasMoreMessages,
                   }

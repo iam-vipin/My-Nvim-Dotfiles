@@ -50,7 +50,7 @@ export function BubbleMenuSelectionConversion(props: Props) {
       <Tooltip tooltipContent={`Create work item${selectedListItems.totalCount > 1 ? "s" : ""} from selection`}>
         <button
           type="button"
-          className="size-7 grid place-items-center text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors"
+          className="size-7 grid place-items-center text-tertiary hover:bg-layer-1-hover active:bg-layer-1-active rounded-sm transition-colors"
           onClick={(e) => {
             e.stopPropagation();
             if (shouldOpenModal) {

@@ -43,24 +43,23 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
       });
     });
 
-  const commonButtonClassName =
-    "flex-shrink-0 flex items-center justify-center size-6 bg-custom-background-80/70 rounded";
+  const commonButtonClassName = "flex-shrink-0 flex items-center justify-center size-6 bg-layer-1 rounded";
 
   if (!workspaceSlug || !isTeamspaceMember) return;
   return (
     <div className="flex items-center gap-4">
       {isSubmitting && <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />}
-      <div className={cn(commonButtonClassName, "hover:bg-custom-background-80")}>
+      <div className={cn(commonButtonClassName, "hover:bg-layer-1-hover")}>
         <Sidebar
-          className={cn("size-4 cursor-pointer select-none text-custom-primary-100", {
-            "text-custom-text-300 hover:text-custom-text-200": isTeamSidebarCollapsed,
+          className={cn("size-4 cursor-pointer select-none text-accent-primary", {
+            "text-tertiary hover:text-secondary": isTeamSidebarCollapsed,
           })}
           onClick={() => toggleTeamsSidebar(!isTeamSidebarCollapsed)}
         />
       </div>
-      <div className={cn(commonButtonClassName, "hover:bg-custom-background-80")}>
+      <div className={cn(commonButtonClassName, "hover:bg-layer-1-hover")}>
         <Link2
-          className={cn("-rotate-45 size-4 cursor-pointer select-none text-custom-text-300 hover:text-custom-text-200")}
+          className={cn("-rotate-45 size-4 cursor-pointer select-none text-tertiary hover:text-secondary")}
           onClick={handleCopyText}
         />
       </div>

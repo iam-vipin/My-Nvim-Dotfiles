@@ -61,7 +61,7 @@ export const DashboardWidgetDeleteModal = observer(function DashboardWidgetDelet
       content={
         <>
           Are you sure you want to delete widget{' "'}
-          <span className="break-words font-medium text-custom-text-100">{widgetDetails?.name}</span>
+          <span className="break-words font-medium text-primary">{widgetDetails?.name}</span>
           {'"'}? This action cannot be undone.
         </>
       }

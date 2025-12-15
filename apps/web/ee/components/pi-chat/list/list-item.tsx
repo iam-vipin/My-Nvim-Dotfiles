@@ -94,11 +94,11 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
           key={`${thread.chat_id}-${thread.last_modified}`}
           href={`/${workspaceSlug}/pi-chat/${thread.chat_id}`}
           className={cn(
-            "w-full overflow-hidden py-4 flex-1 flex flex-col items-start gap-1 text-custom-text-200 truncate hover:text-custom-text-200 hover:bg-custom-background-90 pointer"
+            "w-full overflow-hidden py-4 flex-1 flex flex-col items-start gap-1 text-secondary truncate hover:text-secondary hover:bg-layer-1 pointer"
           )}
         >
-          <div className="truncate text-base overflow-hidden"> {thread.title || "No title"}</div>
-          <div className="text-sm text-custom-text-350 font-medium"> {calculateTimeAgo(thread.last_modified)}</div>
+          <div className="truncate text-14 overflow-hidden"> {thread.title || "No title"}</div>
+          <div className="text-13 text-tertiary font-medium"> {calculateTimeAgo(thread.last_modified)}</div>
         </Link>
         <div className="py-4">
           <CustomMenu ellipsis placement="bottom-end" closeOnSelect maxHeight="lg">
@@ -113,7 +113,7 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
                   className={cn(
                     "flex items-center gap-2",
                     {
-                      "text-custom-text-400": item.disabled,
+                      "text-placeholder": item.disabled,
                     },
                     item.className
                   )}
@@ -124,8 +124,8 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}

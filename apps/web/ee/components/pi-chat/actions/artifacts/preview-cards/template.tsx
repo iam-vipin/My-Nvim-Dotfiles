@@ -22,10 +22,10 @@ export const TemplatePreviewCard = observer(function TemplatePreviewCard(props: 
           </div>
           <div className="flex flex-col w-full">
             <div className="flex gap-2 items-center justify-between">
-              <div className="truncate text-sm font-medium text-start capitalize">
+              <div className="truncate text-body-sm-medium text-start capitalize">
                 {data.parameters?.name || "Unknown"}
               </div>
-              <div className="bg-custom-background-90 rounded-full py-0.5 px-2 capitalize text-xs text-custom-text-200 font-medium">
+              <div className="bg-layer-1 rounded-full py-0.5 px-2 capitalize text-caption-sm-regular text-secondary font-medium">
                 {data.artifact_type}
               </div>
             </div>

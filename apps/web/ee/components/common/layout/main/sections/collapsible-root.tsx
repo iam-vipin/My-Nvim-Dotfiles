@@ -22,10 +22,11 @@ export function CollapsibleDetailSection(props: TCollapsibleDetailSectionProps) 
       <CollapsibleButton
         isOpen={isOpen}
         title={title}
+        titleClassName="font-medium text-tertiary text-14"
         indicatorElement={
           count > 0 && (
             <span className="flex items-center justify-center ">
-              <p className="text-base text-custom-text-300 !leading-3">{count}</p>
+              <p className="text-14 text-tertiary !leading-3">{count}</p>
             </span>
           )
         }

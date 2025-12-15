@@ -59,7 +59,7 @@ export const ConfigureClickUpSelectSpace = observer(function ConfigureClickUpSel
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">
+      <div className="text-13 text-secondary">
         {t("clickup_importer.select_service_space", { serviceName: "ClickUp" })}
       </div>
       {isClickUpSpaceLoading && (!clickUpSpaces || clickUpSpaces.length === 0) ? (

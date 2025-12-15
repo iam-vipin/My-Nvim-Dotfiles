@@ -23,7 +23,7 @@ export function TextInput({ property, isPreview = false, required = false }: TTe
 
   return (
     <div className="w-full space-y-1">
-      <label htmlFor={fieldName} className="text-sm font-medium text-custom-text-300">
+      <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
         {property.display_name}
         {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
       </label>
@@ -42,9 +42,9 @@ export function TextInput({ property, isPreview = false, required = false }: TTe
               disabled={isPreview}
               placeholder={property.description || `Enter ${property.display_name?.toLowerCase()}`}
               className={cn(
-                "w-full px-3 py-2 rounded-md border bg-custom-background-100 text-sm placeholder-custom-text-400 focus:outline-none min-h-[100px] resize-none",
+                "w-full px-3 py-2 rounded-md border bg-surface-1 text-13 placeholder-custom-text-400 focus:outline-none min-h-[100px] resize-none",
                 {
-                  "border-custom-border-300": !error,
+                  "border-subtle-1": !error,
                   "border-red-500": error,
                   "cursor-not-allowed opacity-60": isPreview,
                 }
@@ -59,14 +59,14 @@ export function TextInput({ property, isPreview = false, required = false }: TTe
               disabled={isPreview}
               placeholder={property.description || `Enter ${property.display_name?.toLowerCase()}`}
               hasError={Boolean(error)}
-              className={cn("w-full text-base border-custom-border-300", {
+              className={cn("w-full text-14 border-subtle-1", {
                 "cursor-not-allowed opacity-60": isPreview,
               })}
             />
           )
         }
       />
-      {error && <span className="text-xs text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-red-500">{error.message as string}</span>}
     </div>
   );
 }

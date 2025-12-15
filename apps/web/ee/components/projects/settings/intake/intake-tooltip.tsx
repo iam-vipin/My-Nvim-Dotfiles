@@ -20,7 +20,7 @@ const IntakeTooltip = observer(function IntakeTooltip({ projectId }: { projectId
   return (
     <div className="p-2">
       <div className="flex justify-between">
-        <span className="text-sm font-semibold"> Intake info</span>
+        <span className="text-13 font-semibold"> Intake info</span>
 
         <Popover.Button>
           <CloseIcon height={16} width={16} />

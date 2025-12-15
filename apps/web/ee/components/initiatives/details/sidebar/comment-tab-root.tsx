@@ -65,14 +65,7 @@ export const InitiativeSidebarCommentsRoot = observer(function InitiativeSidebar
   return (
     <SidebarContentWrapper
       title={t("common.comments")}
-      actionElement={
-        <ActivitySortRoot
-          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-          toggleSort={toggleSortOrder}
-          className="flex-shrink-0"
-          iconClassName="size-3"
-        />
-      }
+      actionElement={<ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />}
     >
       <CommentsWrapper
         entityId={initiativeId}

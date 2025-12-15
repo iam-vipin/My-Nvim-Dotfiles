@@ -94,30 +94,30 @@ export const ApplicationInstallationDetails = observer(function ApplicationInsta
         {app?.logo_url ? (
           <img src={getFileURL(app?.logo_url)} alt={app.name} className="w-8 h-8 rounded-full" />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-custom-background-80 flex items-center justify-center">
-            <div className="text-lg font-medium">{app.name?.charAt(0)}</div>
+          <div className="w-8 h-8 rounded-full bg-layer-1 flex items-center justify-center">
+            <div className="text-16 font-medium">{app.name?.charAt(0)}</div>
           </div>
         )}{" "}
-        <div className="text-lg font-medium">{app.name}</div>
+        <div className="text-16 font-medium">{app.name}</div>
       </div>
-      <div className="text-sm text-custom-text-100">{app.short_description}</div>
-      <div className="flex flex-col space-y-2 bg-custom-background-90 p-4 rounded-xl mt-6">
+      <div className="text-13 text-primary">{app.short_description}</div>
+      <div className="flex flex-col space-y-2 bg-layer-1 p-4 rounded-xl mt-6">
         <div>
           {t("workspace_settings.settings.applications.connect_app_to_workspace", {
             app: app.name,
             workspace: currentWorkspace?.name,
           })}
         </div>
-        <div className="text-sm text-custom-text-200 border-b border-custom-border-200">
+        <div className="text-13 text-secondary border-b border-subtle-1">
           {t("workspace_settings.settings.applications.with_the_permissions")}
         </div>
-        <div className="flex flex-col space-y-2 py-2 border-b border-custom-border-200">
+        <div className="flex flex-col space-y-2 py-2 border-b border-subtle-1">
           {workspaceLevelPermissions.map((permission) => (
             <ApplicationPermissionText key={permission.key} permission={permission} />
           ))}
         </div>
         <div>{t("workspace_settings.settings.applications.user_permissions")}</div>
-        <div className="text-sm text-custom-text-200">
+        <div className="text-13 text-secondary">
           {t("workspace_settings.settings.applications.user_permissions_description")}
         </div>
         <div className="flex flex-col space-y-2">
@@ -129,7 +129,7 @@ export const ApplicationInstallationDetails = observer(function ApplicationInsta
 
       <div className="flex items-center space-x-2">
         <Link href={`/${currentWorkspace?.slug}/settings/integrations`}>
-          <Button variant="neutral-primary" className="bg-custom-background-100">
+          <Button variant="secondary" className="bg-surface-1">
             {t("common.cancel")}
           </Button>
         </Link>
@@ -147,7 +147,7 @@ export function ApplicationPermissionText(props: { permission: ApplicationPermis
   return (
     <div className="flex items-center space-x-2">
       <CheckCircle className="h-3 w-3" />
-      <div className="text-sm text-custom-text-100">{t(permission.i18n_description)}</div>
+      <div className="text-13 text-primary">{t(permission.i18n_description)}</div>
     </div>
   );
 }

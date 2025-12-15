@@ -159,7 +159,7 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
   return (
     <div
       className={cn("pt-1", {
-        "bg-custom-background-100 rounded-lg h-60 flex flex-col justify-center items-center":
+        "bg-surface-1 rounded-lg h-60 flex flex-col justify-center items-center":
           propertiesLoader !== "init-loader" && !isAnyPropertiesAvailable,
       })}
     >
@@ -174,9 +174,9 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
       ) : isAnyPropertiesAvailable ? (
         <>
           <div className="w-full flex gap-2 items-center px-6">
-            <div className="text-base font-medium">{t("work_item_types.settings.properties.title")}</div>
+            <div className="text-body-sm-medium">{t("work_item_types.settings.properties.title")}</div>
             <Tooltip position="right" tooltipContent={t("work_item_types.settings.properties.tooltip")}>
-              <InfoIcon className="size-3.5 text-custom-text-200 cursor-help outline-none" />
+              <InfoIcon className="size-3.5 text-secondary cursor-help outline-none" />
             </Tooltip>
           </div>
           <IssuePropertyList
@@ -194,8 +194,7 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
       {propertiesLoader !== "init-loader" && (
         <div className={cn("flex items-center py-2 px-6", !isAnyPropertiesAvailable && "justify-center")}>
           <Button
-            variant="accent-primary"
-            size="sm"
+            variant="secondary"
             className="rounded-md"
             onClick={() => {
               handleIssuePropertyCreateList("add", {

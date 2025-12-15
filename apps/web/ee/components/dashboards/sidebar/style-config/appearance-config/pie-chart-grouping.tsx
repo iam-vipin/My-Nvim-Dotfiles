@@ -38,8 +38,8 @@ export function PieChartGroupingConfig(props: Props) {
   );
 
   return (
-    <div className="flex-shrink-0 space-y-1 text-sm">
-      <h6 className="font-medium text-custom-text-200">{t("dashboards.widget.chart_types.pie_chart.group.label")}</h6>
+    <div className="flex-shrink-0 space-y-1 text-13">
+      <h6 className="font-medium text-secondary">{t("dashboards.widget.chart_types.pie_chart.group.label")}</h6>
       <WidgetPropertyWrapper
         title={t("dashboards.widget.chart_types.pie_chart.group.group_thin_pieces")}
         input={
@@ -78,7 +78,7 @@ export function PieChartGroupingConfig(props: Props) {
                       if (val === undefined || val === null || val.trim() === "") return;
                       debouncedConfigUpdate({ minimum_threshold: Number(val) });
                     }}
-                    className="hide-arrows w-full px-2 py-1 rounded border-custom-border-300 text-xs"
+                    className="hide-arrows w-full px-2 py-1 rounded-sm border-subtle-1 text-11"
                     placeholder={t("dashboards.widget.chart_types.pie_chart.group.minimum_threshold.placeholder")}
                     min={1}
                     max={100}
@@ -104,7 +104,7 @@ export function PieChartGroupingConfig(props: Props) {
                       if (!val || val.trim() === "") return;
                       debouncedConfigUpdate({ group_name: val });
                     }}
-                    className="w-full px-2 py-1 rounded border-custom-border-300 text-xs"
+                    className="w-full px-2 py-1 rounded-sm border-subtle-1 text-11"
                     placeholder={t("dashboards.widget.chart_types.pie_chart.group.name_group.placeholder")}
                   />
                 )}

@@ -27,7 +27,7 @@ export const PageCommentReplyController = observer(function PageCommentReplyCont
         <div className="relative flex justify-center">
           <button
             onClick={handleShowRepliesToggle}
-            className="bg-custom-background-100 group-hover:bg-custom-background-90 px-3 py-1 text-custom-text-300 hover:text-custom-text-200 transition-colors animate-button-fade-up rounded text-xs font-medium"
+            className="bg-surface-1 group-hover:bg-surface-2 px-3 py-1 text-custom-text-300 hover:text-custom-text-200 transition-colors animate-button-fade-up rounded text-11 font-medium"
           >
             {showReplies
               ? "Hide replies"

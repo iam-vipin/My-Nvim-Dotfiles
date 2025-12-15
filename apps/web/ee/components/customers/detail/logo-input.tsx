@@ -18,16 +18,13 @@ type TProps = {
 export const CustomerLogoInput = observer(function CustomerLogoInput(props: TProps) {
   const { handleOpenLogoInput, onLogoUpload, logo_url, logo, logoInputRef } = props;
   return (
-    <div
-      className="rounded-md border-custom-border-300 p-1 relative group cursor-pointer"
-      onClick={() => handleOpenLogoInput()}
-    >
+    <div className="rounded-md border-subtle-1 p-1 relative group cursor-pointer" onClick={() => handleOpenLogoInput()}>
       <Input className="hidden" type="file" onChange={onLogoUpload} maxLength={1} ref={logoInputRef} />
-      <div className="absolute -right-1 -top-1 p-1.5 rounded-full bg-custom-background-100 border border-custom-border-300 hidden group-hover:inline">
+      <div className="absolute -right-1 -top-1 p-1.5 rounded-full bg-surface-1 border border-subtle-1 hidden group-hover:inline">
         <PencilIcon className="size-2.5" />
       </div>
       {logo_url || logo ? (
-        <div className="bg-custom-background-100 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-custom-border-300">
+        <div className="bg-surface-1 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-subtle-1">
           <img
             src={logo ? URL.createObjectURL(logo) : logo_url && logo_url !== "" ? (getFileURL(logo_url) ?? "") : ""}
             alt="customer logo"
@@ -35,7 +32,7 @@ export const CustomerLogoInput = observer(function CustomerLogoInput(props: TPro
           />
         </div>
       ) : (
-        <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-11 w-11 p-1.5">
+        <div className="bg-layer-1 rounded-md flex items-center justify-center h-11 w-11 p-1.5">
           <CustomersIcon className="size-5 opacity-50" />
         </div>
       )}

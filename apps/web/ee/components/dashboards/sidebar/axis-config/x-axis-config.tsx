@@ -24,7 +24,7 @@ export function WidgetConfigSidebarXAxisConfig(props: Props) {
     !!selectedXAxisProperty && WIDGET_X_AXIS_DATE_PROPERTIES.includes(selectedXAxisProperty);
 
   return (
-    <div className="flex-shrink-0 space-y-1 text-sm">
+    <div className="flex-shrink-0 space-y-1 text-13">
       <Controller
         control={control}
         name="x_axis_property"

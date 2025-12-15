@@ -139,25 +139,23 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                     );
                   }
                 }}
-                className={cn("gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4", {
+                className={cn("gap-x-8 gap-y-2 border-b border-subtle bg-surface-1 py-4", {
                   "cursor-pointer": featureItem.href,
                 })}
               >
                 <div key={featureItemKey} className="flex items-center justify-between">
                   <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
-                      {featureItem.icon}
-                    </div>
+                    <div className="flex items-center justify-center rounded-sm bg-layer-1 p-3">{featureItem.icon}</div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
+                        <h4 className="text-13 font-medium leading-5">{t(featureItem.key)}</h4>
                         {featureItem.isPro && (
                           <Tooltip tooltipContent="Pro feature" position="top">
                             <UpgradeBadge flag={flagKey} className="rounded" />
                           </Tooltip>
                         )}
                       </div>
-                      <p className="text-sm leading-5 tracking-tight text-custom-text-300">
+                      <p className="text-13 leading-5 tracking-tight text-tertiary">
                         {t(`${featureItem.key}_description`)}
                       </p>
                     </div>

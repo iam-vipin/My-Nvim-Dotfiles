@@ -41,8 +41,8 @@ export const WorkspaceWorklogAppliedFilterProjects = observer(function Workspace
       onClick: selectedIds.length === 1 ? undefined : () => handleSelectedOptions(projectDetails?.id),
       content: (
         <div className="flex items-center gap-1">
-          <div className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</div>
-          <div className="flex-grow truncate text-xs">{projectDetails?.name}</div>
+          <div className="text-[0.65rem] text-secondary flex-shrink-0">{projectDetails?.identifier}</div>
+          <div className="flex-grow truncate text-11">{projectDetails?.name}</div>
         </div>
       ),
     };

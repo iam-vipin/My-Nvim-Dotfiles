@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,9 +13,13 @@ import { IssueTypeEmptyState } from "./empty-state";
 import { IssueTypeDeleteConfirmationModal } from "./issue-type-delete-confirmation-modal";
 import { IssueTypesList } from "./issue-types-list";
 
-export const IssueTypesRoot = observer(function IssueTypesRoot() {
-  // router
-  const { workspaceSlug, projectId } = useParams();
+type TIssueTypesRoot = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueTypesRoot = observer(function IssueTypesRoot(props: TIssueTypesRoot) {
+  const { workspaceSlug, projectId } = props;
   // states
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -27,7 +30,7 @@ export const IssueTypesRoot = observer(function IssueTypesRoot() {
   // plane web store hooks
   const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   // derived values
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
 
   const handleEditIssueTypeIdChange = (issueTypeId: string) => {
     setEditIssueTypeId(issueTypeId);
@@ -81,7 +84,7 @@ export const IssueTypesRoot = observer(function IssueTypesRoot() {
             onEnableDisableIssueType={handleEnableDisableIssueType}
           />
         ) : (
-          <IssueTypeEmptyState workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <IssueTypeEmptyState workspaceSlug={workspaceSlug} projectId={projectId} />
         )}
       </div>
       {/* Modal */}

@@ -68,7 +68,7 @@ export const PropertyNameSelect = observer(function PropertyNameSelect(props: TP
         )}
       />
       {propertyError && typeof propertyError.message === "string" && (
-        <span className="text-xs font-medium text-red-500">{propertyError.message}</span>
+        <span className="text-11 font-medium text-red-500">{propertyError.message}</span>
       )}
     </div>
   );

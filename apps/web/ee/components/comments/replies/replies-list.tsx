@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TCommentsOperations } from "@plane/types";
@@ -8,6 +7,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import type { IIssueCommentStoreExtended } from "@/plane-web/store/issue/issue-details/comments/comment.store";
 // local imports
 import { ReplyCard } from "./reply-card";
+import { Button } from "@plane/propel/button";
 
 type TRepliesList = {
   workspaceSlug: string;
@@ -47,13 +47,10 @@ export const RepliesList = observer(function RepliesList(props: TRepliesList) {
         />
       ))}
       <div className="relative ml-2 pl-4 pt-1">
-        <div className="absolute left-0 top-0 h-4 w-3 border-l border-b rounded-bl-full border-custom-background-80" />
-        <span
-          className="text-xs text-custom-text-300 hover:text-custom-text-200 w-fit px-0 cursor-pointer"
-          onClick={() => setIsExpanded(false)}
-        >
+        <div className="absolute left-0 top-0 h-4 w-3 border-l border-b rounded-bl-full border-subtle-1" />
+        <Button variant="ghost" size="sm" onClick={() => setIsExpanded(false)}>
           Show less
-        </span>
+        </Button>
       </div>
     </div>
   );

@@ -181,7 +181,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
   return (
     <div
       ref={containerRef}
-      className={cn("relative group bg-custom-background-100 rounded-md overflow-hidden", className)}
+      className={cn("relative group bg-surface-1 rounded-md overflow-hidden", className)}
       onMouseMove={resetControlsTimeout}
       onMouseLeave={() => isPlaying && setShowControls(false)}
       onClick={() => {
@@ -233,7 +233,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
                 transform: "translateX(-50%)",
               }}
             >
-              <div className="bg-black/90 text-white text-xs px-2 py-1 rounded font-medium tabular-nums">
+              <div className="bg-black/90 text-white text-11 px-2 py-1 rounded font-medium tabular-nums">
                 {formatTime(hoverTime)}
               </div>
             </div>
@@ -305,7 +305,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
               />
             </div>
             {/* Time display */}
-            <span className="text-xs text-white ml-1 tabular-nums">
+            <span className="text-11 text-white ml-1 tabular-nums">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
@@ -316,21 +316,21 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
               <button
                 type="button"
                 onClick={() => setShowSpeedMenu(!showSpeedMenu)}
-                className="px-2 py-1 rounded hover:bg-white/20 text-white text-xs font-medium transition-colors"
+                className="px-2 py-1 rounded hover:bg-white/20 text-white text-11 font-medium transition-colors"
                 title="Playback speed"
               >
                 {playbackSpeed}x
               </button>
               {showSpeedMenu && (
-                <div className="absolute bottom-full right-0 mb-1 bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg py-1 min-w-16">
+                <div className="absolute bottom-full right-0 mb-1 bg-surface-1 border border-custom-border-200 rounded-md shadow-lg py-1 min-w-16">
                   {PLAYBACK_SPEEDS.map((speed) => (
                     <button
                       key={speed}
                       type="button"
                       onClick={() => handleSpeedChangeWithMenu(speed)}
                       className={cn(
-                        "w-full px-3 py-1 text-xs text-left hover:bg-custom-background-80 transition-colors",
-                        playbackSpeed === speed ? "text-custom-primary-100 font-medium" : "text-custom-text-200"
+                        "w-full px-3 py-1 text-11 text-left hover:bg-layer-1 transition-colors",
+                        playbackSpeed === speed ? "text-accent-primary font-medium" : "text-secondary"
                       )}
                     >
                       {speed}x

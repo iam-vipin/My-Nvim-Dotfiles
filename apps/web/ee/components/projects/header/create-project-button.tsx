@@ -21,7 +21,6 @@ export const ProjectCreateButton = observer(function ProjectCreateButton() {
   if (!isAuthorizedUser) return <></>;
   return (
     <Button
-      size="sm"
       data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
       onClick={() => {
         toggleCreateProjectModal(true);

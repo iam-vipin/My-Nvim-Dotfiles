@@ -29,9 +29,9 @@ const TransferHistoryItem = observer(function TransferHistoryItem({
           "pb-0": isLast,
         })}
       >
-        <p className="text-sm font-medium text-custom-text-100 truncate">{cycleDetails.name}</p>
+        <p className="text-13 font-medium text-custom-text-100 truncate">{cycleDetails.name}</p>
         {cycleDetails.start_date && cycleDetails.end_date && (
-          <p className="text-xs text-custom-text-300 mt-0.5">
+          <p className="text-11 text-custom-text-300 mt-0.5">
             {renderFormattedDate(cycleDetails.start_date)} - {renderFormattedDate(cycleDetails.end_date)}
           </p>
         )}
@@ -73,9 +73,9 @@ export function TransferHopInfo({ workItem }: { workItem: TIssue }) {
 
   return (
     <Tooltip tooltipContent={toolTipContent}>
-      <div className="flex items-center gap-1 bg-custom-background-80 rounded-full px-2 py-1">
+      <div className="flex items-center gap-1 bg-layer-1 rounded-full px-2 py-1">
         <TransferHopIcon className="size-4" />
-        <span className="text-sm">{workItem.transferred_cycle_ids.length}</span>
+        <span className="text-13">{workItem.transferred_cycle_ids.length}</span>
       </div>
     </Tooltip>
   );

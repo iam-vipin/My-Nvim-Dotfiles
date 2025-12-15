@@ -48,7 +48,7 @@ export const StateDropdown = observer(function StateDropdown(props: TStateDropdo
         {selectedState ? (
           <span className="flex-grow truncate">{selectedState?.name}</span>
         ) : (
-          <span className="flex-grow text-custom-text-350">None</span>
+          <span className="flex-grow text-tertiary">None</span>
         )}
       </div>
     </Tooltip>

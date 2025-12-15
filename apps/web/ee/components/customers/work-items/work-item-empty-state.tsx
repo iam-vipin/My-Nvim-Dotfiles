@@ -22,7 +22,7 @@ export function WorkItemEmptyState(props: TProps) {
       actionElement={
         <span
           onClick={linkWorkItem}
-          className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1 cursor-pointer")}
+          className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1 cursor-pointer")}
         >
           {t("customers.linked_work_items.empty_state.list.button")}
         </span>

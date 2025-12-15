@@ -39,7 +39,14 @@ export const InitiativeScopeHeaderActions = observer(function InitiativeScopeHea
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <AddScopeButton disabled={disabled} customButton={<Button>{t("initiatives.scope.add_scope")}</Button>} />
+      <AddScopeButton
+        disabled={disabled}
+        customButton={
+          <Button variant="primary" size="lg">
+            {t("initiatives.scope.add_scope")}
+          </Button>
+        }
+      />
     </div>
   );
 });

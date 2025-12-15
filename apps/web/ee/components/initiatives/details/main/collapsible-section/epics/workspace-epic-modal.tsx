@@ -17,8 +17,11 @@ import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { getSelectedEpicDetails } from "@/plane-web/components/initiatives/utils";
-import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { WorkspaceService } from "@/plane-web/services";
+// core imports
+import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
+// local imports
 import { EpicSearchModalEmptyState } from "./issue-search-modal-empty-state";
 
 type Props = {
@@ -120,7 +123,7 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
                 <Combobox
                   as="div"
                   onChange={(val: ISearchIssueResponse) => {
@@ -131,11 +134,11 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
                 >
                   <div className="relative m-1">
                     <Search
-                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
                       placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -143,33 +146,34 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
                     />
                   </div>
 
-                  <div className="flex flex-col-reverse gap-4 p-2 text-[0.825rem] text-custom-text-200 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col-reverse gap-4 p-2 text-[0.825rem] text-secondary sm:flex-row sm:items-center sm:justify-between">
                     {selectedEpics.length > 0 ? (
                       <div className="mt-1 flex flex-wrap items-center gap-2">
                         {selectedEpics.map((epic) => (
                           <div
                             key={epic.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle bg-layer-1-hover py-1 pl-2 text-11 text-primary"
                           >
                             <IssueIdentifier
                               projectId={epic.project_id}
                               issueTypeId={epic.type_id}
                               projectIdentifier={epic.project__identifier}
                               issueSequenceId={epic.sequence_id}
-                              textContainerClassName="text-xs text-custom-text-200"
+                              size="xs"
+                              variant="secondary"
                             />
                             <button
                               type="button"
                               className="group p-1"
                               onClick={() => setSelectedEpics((prevData) => prevData.filter((i) => i.id !== epic.id))}
                             >
-                              <CloseIcon className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <CloseIcon className="h-3 w-3 text-secondary group-hover:text-primary" />
                             </button>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
+                      <div className="w-min whitespace-nowrap rounded-md border border-subtle bg-layer-1-hover p-2 text-11">
                         {t("epics.no_epics_selected")}
                       </div>
                     )}
@@ -196,7 +200,7 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
                             searchTerm={searchTerm}
                           />
                         ) : (
-                          <ul className={`text-sm text-custom-text-100 ${filteredEpics.length > 0 ? "p-2" : ""}`}>
+                          <ul className={`text-13 text-primary ${filteredEpics.length > 0 ? "p-2" : ""}`}>
                             {filteredEpics.map((epic) => {
                               const selected = selectedEpics.some((i) => i.id === epic.id);
 
@@ -207,9 +211,9 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
                                   htmlFor={`epic-${epic.id}`}
                                   value={epic}
                                   className={({ active }) =>
-                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                                      active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                    } ${selected ? "text-custom-text-100" : ""}`
+                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                                      active ? "bg-layer-1-hover text-primary" : ""
+                                    } ${selected ? "text-primary" : ""}`
                                   }
                                 >
                                   <div className="flex items-center gap-2 truncate">
@@ -221,11 +225,12 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
                                       }}
                                     />
                                     <div className="flex flex-shrink-0 items-center space-x-2">
-                                      <EpicIcon className="h-4 w-4 text-custom-text-300" />
+                                      <EpicIcon className="h-4 w-4 text-tertiary" />
                                       <IdentifierText
                                         identifier={`${epic.project__identifier}-${epic.sequence_id}`}
                                         enableClickToCopyIdentifier
-                                        textContainerClassName="text-xs text-custom-text-200"
+                                        size="xs"
+                                        variant="secondary"
                                       />
                                     </div>
                                     <span className="truncate">{epic.name}</span>
@@ -239,7 +244,7 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
                                       sequenceId: epic?.sequence_id,
                                     })}
                                     target="_blank"
-                                    className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                    className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
                                   >
@@ -255,12 +260,11 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
                   </Combobox.Options>
                 </Combobox>
                 <div className="flex items-center justify-end gap-2 p-3">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <Button variant="secondary" onClick={handleClose}>
                     {t("cancel")}
                   </Button>
                   <Button
                     variant="primary"
-                    size="sm"
                     onClick={onSubmit}
                     loading={isSubmitting}
                     disabled={!showSubmitButton || isSubmitting}

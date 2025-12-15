@@ -49,7 +49,7 @@ function ModulesCyclesTooltip({
         </div>
         <div className="flex items-center gap-2  opacity-50 ">
           <StartDatePropertyIcon className="w-3 h-3" />
-          <div className="flex gap-1  text-xs">
+          <div className="flex gap-1  text-11">
             {renderFormattedDate(startDate) ?? "-"}
             <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
             {renderFormattedDate(endDate) ?? "-"}
@@ -58,7 +58,7 @@ function ModulesCyclesTooltip({
       </div>
       <div className="flex flex-col gap-2">
         {rows.map((row) => (
-          <div key={row.label} className="flex justify-between text-xs text-text-300">
+          <div key={row.label} className="flex justify-between text-11 text-text-300">
             <div>{row.label}</div>
             <div>{row.value}</div>
           </div>

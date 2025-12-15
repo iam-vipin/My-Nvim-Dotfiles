@@ -48,17 +48,17 @@ export function CustomAttachmentVideoPreview(props: Props) {
     <div
       key={node.attrs.id}
       id={getAttachmentBlockId(node.attrs.id ?? "")}
-      className="rounded-lg overflow-hidden border border-custom-border-300"
+      className="rounded-lg overflow-hidden border border-subtle"
       contentEditable={false}
     >
-      <div className="py-2 px-3 bg-custom-background-90 flex items-center gap-2">
-        <File className="flex-shrink-0 size-4 text-custom-text-300" />
+      <div className="py-2 px-3 bg-layer-2 flex items-center gap-2">
+        <File className="flex-shrink-0 size-4 text-tertiary" />
         <div className="truncate flex-1">
-          <p className="not-prose text-sm truncate">{fileName}</p>
+          <p className="not-prose text-13 truncate">{fileName}</p>
         </div>
-        <p className="not-prose text-xs text-custom-text-300 flex-shrink-0">{fileSize}</p>
+        <p className="not-prose text-11 text-tertiary flex-shrink-0">{fileSize}</p>
       </div>
-      <div className="w-full h-56 bg-custom-background-90 animate-pulse" />
+      <div className="w-full h-56 bg-layer-2 animate-pulse" />
     </div>
   );
 
@@ -67,22 +67,19 @@ export function CustomAttachmentVideoPreview(props: Props) {
       <div
         key={node.attrs.id}
         id={getAttachmentBlockId(node.attrs.id ?? "")}
-        className="rounded-lg overflow-hidden border border-custom-border-300"
+        className="rounded-lg overflow-hidden border border-subtle"
         contentEditable={false}
       >
-        <div
-          className="py-2 px-3 bg-custom-background-90 flex items-center gap-2"
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          <File className="flex-shrink-0 size-4 text-custom-text-300" />
+        <div className="py-2 px-3 bg-layer-2 flex items-center gap-2" onMouseDown={(e) => e.stopPropagation()}>
+          <File className="flex-shrink-0 size-4 text-tertiary" />
           <div className="truncate flex-1">
-            <p className="not-prose text-sm truncate">{fileName}</p>
+            <p className="not-prose text-13 truncate">{fileName}</p>
           </div>
-          <p className="not-prose text-xs text-custom-text-300 flex-shrink-0">{fileSize}</p>
+          <p className="not-prose text-11 text-tertiary flex-shrink-0">{fileSize}</p>
           <a
             href={isTouchDevice ? undefined : resolvedDownloadSource}
             download={fileName}
-            className="flex-shrink-0 p-1 rounded hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 transition-colors"
+            className="flex-shrink-0 p-1 rounded hover:bg-layer-2-hover text-tertiary hover:text-secondary transition-colors"
             title="Download"
             onClick={() => {
               if (isTouchDevice) onDownloadClick?.(resolvedDownloadSource);
@@ -92,7 +89,7 @@ export function CustomAttachmentVideoPreview(props: Props) {
           </a>
         </div>
         <div className="relative aspect-video">
-          {!isVideoLoaded && <div className="absolute inset-0 animate-pulse bg-custom-background-80 rounded-md" />}
+          {!isVideoLoaded && <div className="absolute inset-0 animate-pulse bg-layer-2 rounded-md" />}
           <VideoPlayer
             src={resolvedSource}
             className={`w-full h-full ${isVideoLoaded ? "block" : "hidden"}`}

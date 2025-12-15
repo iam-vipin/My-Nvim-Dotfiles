@@ -21,13 +21,13 @@ export const PageCommentFilterControls = observer(function PageCommentFilterCont
   return (
     <CustomMenu
       customButton={
-        <div className="relative flex h-6 items-center border border-custom-border-200 rounded hover:border-custom-border-300 transition-colors">
+        <div className="relative flex h-6 items-center border border-subtle-1 rounded-sm hover:border-subtle-1 transition-colors">
           <div className="flex h-6 px-2 items-center gap-1">
-            <ListFilter className="size-3 text-custom-text-300" />
-            <span className="text-custom-text-300 text-[11px] font-medium leading-[14px]">Filters</span>
+            <ListFilter className="size-3 text-tertiary" />
+            <span className="text-tertiary text-11 font-medium leading-[14px]">Filters</span>
           </div>
           {isFiltersApplied && (
-            <span className="absolute h-1.5 w-1.5 right-0 top-0 translate-x-1/2 -translate-y-1/2 bg-custom-primary-100 rounded-full" />
+            <span className="absolute h-1.5 w-1.5 right-0 top-0 translate-x-1/2 -translate-y-1/2 bg-accent-primary rounded-full" />
           )}
         </div>
       }
@@ -35,26 +35,21 @@ export const PageCommentFilterControls = observer(function PageCommentFilterCont
       closeOnSelect={false}
     >
       <CustomMenu.MenuItem onClick={() => onFilterChange("showActive")} className="flex items-center gap-2">
-        <Checkbox
-          id="show-active-main"
-          checked={filters.showActive}
-          className="size-3.5 border-custom-border-400"
-          readOnly
-        />
-        <span className="text-sm">Show active</span>
+        <Checkbox id="show-active-main" checked={filters.showActive} className="size-3.5 border-strong-1" readOnly />
+        <span className="text-13">Show active</span>
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem onClick={() => onFilterChange("showResolved")} className="flex items-center gap-2">
         <Checkbox
           id="show-resolved-main"
           checked={filters.showResolved}
-          className="size-3.5 border-custom-border-400"
+          className="size-3.5 border-strong-1"
           readOnly
         />
-        <span className="text-sm">Show resolved</span>
+        <span className="text-13">Show resolved</span>
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem onClick={() => onFilterChange("showAll")} className="flex items-center gap-2">
-        <Checkbox id="show-all-main" checked={filters.showAll} className="size-3.5 border-custom-border-400" readOnly />
-        <span className="text-sm">Show all</span>
+        <Checkbox id="show-all-main" checked={filters.showAll} className="size-3.5 border-strong-1" readOnly />
+        <span className="text-13">Show all</span>
       </CustomMenu.MenuItem>
     </CustomMenu>
   );

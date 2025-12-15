@@ -67,7 +67,7 @@ export const DashboardsWidgetsListEmptyState = observer(function DashboardsWidge
         />
         {!isViewModeEnabled && canCurrentUserCreateWidget && (
           <DashboardWidgetChartTypesDropdown
-            buttonClassName={getButtonStyling("neutral-primary", "sm")}
+            buttonClassName={getButtonStyling("secondary", "base")}
             buttonContent={
               <>
                 {!isAddingWidget && <Plus className="flex-shrink-0 size-3.5" />}

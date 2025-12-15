@@ -70,7 +70,7 @@ function HTMLContentComponent({ html, showLoading = true }: HTMLContentProps) {
       <div
         ref={containerRef}
         className={cn(
-          "transition-all duration-300 bg-custom-background-50 border border-custom-border-200 rounded-lg overflow-hidden",
+          "transition-all duration-300 bg-layer-1 border border-subtle-1 rounded-lg overflow-hidden",
           contentReady ? "animate-fade-in opacity-100" : "opacity-0 translate-y-5"
         )}
       />

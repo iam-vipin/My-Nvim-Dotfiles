@@ -56,7 +56,7 @@ export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
 export function AdditionalHeaderItems({ isLocked }: { isLocked: boolean }) {
   if (!isLocked) return null;
   return (
-    <div className="h-6 min-w-[76px] flex items-center justify-center gap-1.5 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 text-xs font-medium">
+    <div className="h-6 min-w-[76px] flex items-center justify-center gap-1.5 px-2 rounded-sm text-accent-primary bg-accent-primary/20 text-11 font-medium">
       <LockIcon className="size-3.5 flex-shrink-0" /> Locked
     </div>
   );

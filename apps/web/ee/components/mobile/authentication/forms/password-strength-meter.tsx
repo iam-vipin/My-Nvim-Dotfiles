@@ -17,21 +17,21 @@ export function MobilePasswordStrengthMeter(props: TMobilePasswordStrengthMeter)
     switch (strength) {
       case E_PASSWORD_STRENGTH.EMPTY: {
         return {
-          bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-layer-1`, `bg-layer-1`, `bg-layer-1`],
           text: `Please enter your password`,
-          textColor: `text-custom-text-100`,
+          textColor: `text-primary`,
         };
       }
       case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID: {
         return {
-          bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-red-500`, `bg-layer-1`, `bg-layer-1`],
           text: `Password length should me more than 8 characters`,
           textColor: `text-red-500`,
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID: {
         return {
-          bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-red-500`, `bg-layer-1`, `bg-layer-1`],
           text: `Password is weak`,
           textColor: `text-red-500`,
         };
@@ -45,9 +45,9 @@ export function MobilePasswordStrengthMeter(props: TMobilePasswordStrengthMeter)
       }
       default: {
         return {
-          bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-layer-1`, `bg-layer-1`, `bg-layer-1`],
           text: `Please enter your password`,
-          textColor: `text-custom-text-100`,
+          textColor: `text-primary`,
         };
       }
     }
@@ -64,9 +64,7 @@ export function MobilePasswordStrengthMeter(props: TMobilePasswordStrengthMeter)
             <div key={`${color}-${index}`} className={cn("w-full h-1 rounded-full", color)} />
           ))}
         </div>
-        <div className={cn(`text-xs font-medium text-custom-text-100`, strengthBars?.textColor)}>
-          {strengthBars?.text}
-        </div>
+        <div className={cn(`text-11 font-medium text-primary`, strengthBars?.textColor)}>{strengthBars?.text}</div>
       </div>
     </div>
   );

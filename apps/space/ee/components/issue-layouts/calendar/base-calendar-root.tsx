@@ -62,7 +62,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
 
   return (
     <>
-      <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
+      <div className="h-full w-full overflow-hidden pt-4">
         <CalendarChart
           getIssueById={getIssueById}
           groupedIssueIds={groupedIssueIds}

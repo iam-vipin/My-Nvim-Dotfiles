@@ -52,9 +52,9 @@ export function MobileAuthHeader(props: TMobileAuthHeader) {
   const isInvitation = invitationDetails?.id || undefined;
   const workspaceName = invitationDetails?.workspace?.name || "";
   const title = isInvitation ? (
-    <div className="relative flex items-center gap-2 text-3xl font-semibold text-custom-text-100">
+    <div className="relative flex items-center gap-2 text-28 font-semibold text-primary">
       Join
-      <div className="relative flex justify-center items-center !text-2xl !w-8 !h-8 border border-custom-primary-500 bg-custom-primary-500 text-white uppercase rounded">
+      <div className="relative flex justify-center items-center !text-20 !w-8 !h-8 border border-accent-strong-500 bg-accent-primary text-on-color uppercase rounded">
         {workspaceName[0]}
       </div>
       {workspaceName}
@@ -66,10 +66,10 @@ export function MobileAuthHeader(props: TMobileAuthHeader) {
 
   return (
     <div className="relative space-y-6">
-      <PlaneLogo height={51} width={84} className="text-custom-text-100" />
+      <PlaneLogo height={51} width={84} className="text-primary" />
       <div className="flex flex-col gap-1">
-        <h3 className="text-2xl font-semibold text-custom-text-100 leading-7">{title}</h3>
-        {description && <p className="font-medium text-custom-text-400 leading-7">{description}</p>}
+        <h3 className="text-20 font-semibold text-primary leading-7">{title}</h3>
+        {description && <p className="font-medium text-placeholder leading-7">{description}</p>}
       </div>
     </div>
   );

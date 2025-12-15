@@ -1,8 +1,7 @@
 // plane imports
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
-import { cn } from "@plane/utils";
 
 type TProps = {
   subscriptionType: EProductSubscriptionEnum;
@@ -14,26 +13,13 @@ type TProps = {
 };
 
 export function SubscriptionButton(props: TProps) {
-  const { subscriptionType, handleClick, children, className, tooltipContent, showTooltip = false } = props;
-  // derived values
-  const subscriptionColor =
-    subscriptionType === EProductSubscriptionEnum.FREE
-      ? "bg-custom-primary-200/15 text-custom-primary-300"
-      : getSubscriptionTextAndBackgroundColor(subscriptionType);
+  const { handleClick, children, className, tooltipContent, showTooltip = false } = props;
 
   return (
     <Tooltip disabled={!showTooltip} tooltipContent={tooltipContent}>
-      <button
-        tabIndex={-1}
-        className={cn(
-          "relative flex items-center gap-x-1.5 w-fit cursor-pointer rounded-2xl px-2.5 py-1 text-center text-sm font-medium outline-none hover:opacity-90 truncate",
-          subscriptionColor,
-          className
-        )}
-        onClick={handleClick}
-      >
+      <Button variant="tertiary" size="lg" className={className} onClick={handleClick}>
         {children}
-      </button>
+      </Button>
     </Tooltip>
   );
 }

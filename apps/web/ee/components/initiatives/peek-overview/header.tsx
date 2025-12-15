@@ -80,20 +80,20 @@ export const InitiativePeekOverviewHeader = observer(function InitiativePeekOver
   return (
     <div
       ref={parentRef}
-      className="relative flex h-12 w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 p-4 transition-all"
+      className="relative flex h-12 w-full items-center justify-between gap-x-2 gap-y-4 border-b border-subtle p-4 transition-all bg-surface-1 px-6 py-3"
     >
       <div className="flex flex-wrap items-center gap-3.5">
         <div className="flex items-center gap-x-2">
           <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
             <button onClick={removeRoutePeekId}>
-              <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
             </button>
           </Tooltip>
         </div>
         {isInitiativePeeked && (
           <Link href={`/${workspaceSlug}/initiatives/${initiativeId}`} onClick={redirectToInitiative}>
             <Tooltip tooltipContent={t("common.open_in_full_screen", { page: "Initiative" })} isMobile={isMobile}>
-              <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
             </Tooltip>
           </Link>
         )}
@@ -103,7 +103,7 @@ export const InitiativePeekOverviewHeader = observer(function InitiativePeekOver
           customButton={
             <button type="button" className="">
               {PEEK_OPTIONS.find((option) => option.key === peekMode)?.icon({
-                className: "h-4 w-4 text-custom-text-300 hover:text-custom-text-200 flex-shrink-0",
+                className: "h-4 w-4 text-tertiary hover:text-secondary flex-shrink-0",
               })}
             </button>
           }
@@ -124,7 +124,7 @@ export const InitiativePeekOverviewHeader = observer(function InitiativePeekOver
         <InitiativeOverviewHeaderActions />
         <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
           <button type="button" onClick={handleCopyText}>
-            <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+            <Link2 className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
       </div>

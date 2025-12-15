@@ -256,8 +256,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
             <div className="flex-shrink-0 relative flex items-center gap-4">
               {!config.hideDeactivate && (
                 <Button
-                  variant="link-danger"
-                  size="sm"
+                  variant="error-outline"
                   onClick={handleDeactivateAuth}
                   className="bg-transparent"
                   disabled={deactivateLoader}
@@ -268,7 +267,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
               )}
               {!currentAuth?.sourceTokenInvalid ? (
                 <Button
-                  size="sm"
                   onClick={handleDashboardView}
                   data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_IMPORT_BUTTON}
                 >
@@ -276,9 +274,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                 </Button>
               ) : (
                 <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
-                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
+                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
                     <Info size={12} />
-                    <div className="text-xs">{t("importers.source_token_expired")}</div>
+                    <div className="text-11">{t("importers.source_token_expired")}</div>
                   </div>
                 </Tooltip>
               )}
@@ -292,16 +290,15 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
           ) : jobIds && jobIds.length > 0 ? (
             <div className="w-full h-full space-y-3 relative flex flex-col">
               <div className="relative flex items-center gap-2">
-                <div className="flex-shrink-0 text-base font-medium py-2">{t("importers.migrations")}</div>
+                <div className="flex-shrink-0 text-14 font-medium py-2">{t("importers.migrations")}</div>
                 <Button
-                  size="sm"
-                  variant="neutral-primary"
+                  variant="secondary"
                   className="whitespace-nowrap border-none !px-1"
                   onClick={handleJobsRefresh}
                   disabled={loader === "re-fetch"}
                   data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_REFRESH_BUTTON}
                 >
-                  <div className="relative flex items-center gap-1.5 text-xs">
+                  <div className="relative flex items-center gap-1.5 text-11">
                     {loader === "re-fetch" ? <Loader size={12} className="animate-spin" /> : <RefreshCcw size={12} />}
                     {loader === "re-fetch" && <div>{t("importers.refreshing")}</div>}
                   </div>
@@ -310,7 +307,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
               <div className="w-full h-full overflow-auto">
                 <table className="w-full table-auto">
                   <thead>
-                    <tr className="border-0 bg-custom-background-90 text-sm !font-medium text-left rounded-t">
+                    <tr className="border-0 bg-layer-1 text-13 !font-medium text-left rounded-t">
                       <td className="p-3 whitespace-nowrap">{t("importers.serial_number")}</td>
                       <td className="p-3 whitespace-nowrap">Plane {t("importers.project")}</td>
                       {!config.hideWorkspace && (
@@ -339,7 +336,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                         if (!job) return null;
 
                         return (
-                          <tr key={job.id} className="text-sm text-custom-text-200 even:bg-custom-background-90">
+                          <tr key={job.id} className="text-13 text-secondary even:bg-layer-1">
                             <td className="p-3 whitespace-nowrap">{index + 1}</td>
                             <td className="p-3 whitespace-nowrap">
                               <IconFieldRender
@@ -375,8 +372,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                             </td>
                             <td className="p-3 whitespace-nowrap text-center flex justify-center">
                               <Button
-                                variant="link-primary"
-                                size="sm"
+                                variant="link"
                                 prependIcon={<RefreshCcw className="w-3 h-3" />}
                                 onClick={() => handleRerunOpen(job.id)}
                                 disabled={isReRunDisabled(job)}
@@ -387,8 +383,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                             </td>
                             <td className="p-3 whitespace-nowrap text-center">
                               <Button
-                                variant="link-danger"
-                                size="sm"
+                                variant="error-outline"
                                 prependIcon={<CircleX className="w-3 h-3" />}
                                 onClick={() => handleCancelOpen(job.id)}
                                 disabled={isCancelDisabled(job)}
@@ -412,12 +407,12 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
           ) : (
             <div className="grid h-full place-items-center p-5">
               <div className="flex flex-col items-center gap-4">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
-                  <ProjectIcon className="h-10 w-10 text-custom-text-200" />
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-layer-1">
+                  <ProjectIcon className="h-10 w-10 text-secondary" />
                 </div>
                 <div className="flex flex-col items-center gap-1.5 text-center">
-                  <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>
-                  <p className="text-sm text-custom-text-200">{t("importers.no_project_imports", { serviceName })}</p>
+                  <h4 className="text-18 font-medium">{t("importers.no_jobs_found")}</h4>
+                  <p className="text-13 text-secondary">{t("importers.no_project_imports", { serviceName })}</p>
                 </div>
               </div>
             </div>

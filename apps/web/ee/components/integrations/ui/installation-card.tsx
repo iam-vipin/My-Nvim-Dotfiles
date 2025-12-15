@@ -29,17 +29,19 @@ export const InstallationCard = observer(function InstallationCard(props: TInsta
   };
 
   return (
-    <div className="flex-shrink-0 relative flex items-center gap-4 p-4 bg-custom-background-90 rounded-lg">
+    <div className="flex-shrink-0 relative flex items-center gap-4 p-4 bg-layer-1 rounded-lg">
       <div className="flex-shrink-0 size-10 relative flex justify-center items-center overflow-hidden">
         <img src={providerLogo} alt={`${providerName} Logo`} className="w-full h-full object-cover" />
       </div>
       <div className="w-full h-full overflow-hidden">
-        <div className="text-lg font-medium">{providerName}</div>
-        <div className="text-sm text-custom-text-200">{providerDescription}</div>
+        <div className="text-body-sm-medium">{providerName}</div>
+        <div className="text-body-xs-regular text-secondary">{providerDescription}</div>
       </div>
       <div className="flex-shrink-0 relative flex items-center gap-4">
         {isAppConnected ? (
-          <div className="text-sm bg-green-500/20 text-green-600 px-3 py-1 rounded-md">{t("common.connected")}</div>
+          <div className="text-body-xs-regular bg-green-500/20 text-green-600 px-3 py-1 rounded-md">
+            {t("common.connected")}
+          </div>
         ) : isConnectionLoading ? (
           <Loader className="flex items-center justify-center">
             <Loader.Item width="70px" height="30px" />

@@ -21,8 +21,8 @@ export const StatisticsLegend = observer(function StatisticsLegend(props: TStati
   }));
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-6 text-sm pt-4 pb-2 px-1.5">
-      <div className="flex items-center gap-2 text-custom-text-300">
+    <div className="flex flex-wrap items-center justify-between gap-6 text-body-xs-regular pt-4 pb-2 px-1.5">
+      <div className="flex items-center gap-2 text-tertiary">
         <span className="flex-shrink-0">Legend as</span>
         <Dropdown
           value={value}
@@ -42,7 +42,7 @@ export const StatisticsLegend = observer(function StatisticsLegend(props: TStati
           disabled={isLoading}
         />
       </div>
-      <div className="flex flex-wrap items-center gap-4 text-custom-text-200 font-medium">
+      <div className="flex flex-wrap items-center gap-4 text-secondary font-medium">
         {value === "state" && (
           <>
             {Object.values(WORKSPACE_PROJECT_STATE_GROUPS).map((group) => (

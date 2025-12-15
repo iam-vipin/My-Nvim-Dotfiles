@@ -70,7 +70,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/pages`}
                 label="Pages"
-                icon={<PageIcon className="size-4 text-custom-text-300" />}
+                icon={<PageIcon className="size-4 text-tertiary" />}
               />
             </div>
 
@@ -78,7 +78,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
               <div className="flex items-center">
                 <BreadcrumbSeparator />
                 <div className="flex items-center animate-pulse">
-                  <div className="h-4 w-24 bg-custom-background-80 rounded" />
+                  <div className="h-4 w-24 bg-layer-1 rounded" />
                 </div>
               </div>
             ) : (

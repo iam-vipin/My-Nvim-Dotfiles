@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
@@ -41,7 +40,7 @@ export function MilestoneWorkItemActionButton(props: Props) {
       {customButton ? (
         <div onClick={handleClick}>{customButton}</div>
       ) : (
-        <Plus className="h-4 w-4 text-custom-text-200 cursor-pointer" onClick={handleClick} />
+        <Plus className="size-4 text-secondary cursor-pointer" onClick={handleClick} />
       )}
     </>
   );

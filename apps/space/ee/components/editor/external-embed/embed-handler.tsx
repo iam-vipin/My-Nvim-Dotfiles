@@ -57,7 +57,7 @@ const EmbedHandlerRender = observer(function EmbedHandlerRender(props: ExternalE
   // Handle direct iframe embed
   if (!embedData?.html && [EExternalEmbedEntityType.EMBED] && !isEmbedFailed && !isRichCardView && src) {
     return (
-      <div className="w-full h-[400px] rounded overflow-hidden my-4">
+      <div className="w-full h-[400px] rounded-sm overflow-hidden my-4">
         <iframe src={src} width="100%" height="100%" frameBorder="0" allowFullScreen />
       </div>
     );

@@ -57,9 +57,9 @@ export const ProjectForm = observer(function ProjectForm(props: TProjectForm) {
     .filter((project) => project !== undefined && project !== null);
 
   return (
-    <div className="relative space-y-4 text-sm">
+    <div className="relative space-y-4 text-body-xs-regular">
       <div className="space-y-1">
-        <div className="text-custom-text-200">Plane {t("common.project")}</div>
+        <div className="text-secondary">Plane {t("common.project")}</div>
         <Dropdown
           dropdownOptions={(planeProjects || [])?.map((project) => ({
             key: project?.id || "",

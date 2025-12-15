@@ -48,12 +48,12 @@ export const DashboardWidgetEmptyState = observer(function DashboardWidgetEmptyS
         />
         {canCurrentUserEditWidget &&
           (isViewModeEnabled ? (
-            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+            <p className="text-13 text-placeholder text-center whitespace-pre-line">
               {t("dashboards.empty_state.widget_data.description")}
             </p>
           ) : (
-            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
-              <Button onClick={handleRefresh} variant="link-primary" size="sm" className="w-fit inline-flex p-0">
+            <p className="text-13 text-placeholder text-center whitespace-pre-line">
+              <Button onClick={handleRefresh} variant="link" className="w-fit inline-flex p-0">
                 Refresh
               </Button>{" "}
               or add data to see it here.

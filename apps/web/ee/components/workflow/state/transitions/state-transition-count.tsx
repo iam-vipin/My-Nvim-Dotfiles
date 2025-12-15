@@ -34,8 +34,8 @@ export const StateTransitionCount = observer(function StateTransitionCount(props
       {transitionsCount > 0 && (
         <>
           <div className="flex px-1 py-0.5 items-center">
-            <WorkflowIcon className="flex-shrink-0 size-3.5 text-custom-text-300" strokeWidth={2} />
-            <span className="text-xs font-medium text-custom-text-400 line-clamp-1 pl-1">
+            <WorkflowIcon className="flex-shrink-0 size-3.5 text-tertiary" strokeWidth={2} />
+            <span className="text-11 font-medium text-placeholder line-clamp-1 pl-1">
               <span className="hidden lg:block">
                 {t("workflows.workflow_states.state_change_count", { count: transitionsCount })}
               </span>
@@ -46,12 +46,12 @@ export const StateTransitionCount = observer(function StateTransitionCount(props
       )}
       {uniqueApproversCount > 0 && (
         <>
-          <svg viewBox="0 0 2 2" className="flex-shrink-0 h-1 w-1 text-custom-text-300">
+          <svg viewBox="0 0 2 2" className="flex-shrink-0 h-1 w-1 text-tertiary">
             <circle cx={1} cy={1} r={1} className="fill-current" />
           </svg>
           <div className="flex px-1 py-0.5 items-center">
-            <ApproverIcon className="flex-shrink-0 size-3.5 text-custom-text-300" strokeWidth={2} />
-            <span className="text-xs font-medium text-custom-text-400 line-clamp-1 pl-1">
+            <ApproverIcon className="flex-shrink-0 size-3.5 text-tertiary" strokeWidth={2} />
+            <span className="text-11 font-medium text-placeholder line-clamp-1 pl-1">
               <span className="hidden lg:block">
                 {t("workflows.workflow_states.movers_count", { count: uniqueApproversCount })}
               </span>

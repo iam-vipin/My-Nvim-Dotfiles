@@ -13,7 +13,7 @@ export const SpreadsheetPriorityColumn = observer(function SpreadsheetPriorityCo
   const { issue } = props;
 
   return (
-    <div className="h-11 flex items-center pl-2 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 flex items-center pl-2 border-b-[0.5px] border-subtle-1">
       <IssueBlockPriority priority={issue.priority} shouldShowName />
     </div>
   );

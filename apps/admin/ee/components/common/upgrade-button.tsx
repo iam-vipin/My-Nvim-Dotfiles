@@ -29,7 +29,7 @@ export function UpgradeButton() {
         }}
         secondaryButtonText="Close"
       />
-      <Button variant="primary" size="sm" onClick={() => setIsActivationModalOpen(true)}>
+      <Button variant="primary" onClick={() => setIsActivationModalOpen(true)}>
         Activate workspace
       </Button>
     </>

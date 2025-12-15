@@ -85,7 +85,7 @@ export const InitiativeDeleteModal = observer(function InitiativeDeleteModal(pro
         <>
           {/* TODO: Add translation here */}
           Are you sure you want to delete Initiative{' "'}
-          <span className="break-words font-medium text-custom-text-100">{initiative?.name}</span>
+          <span className="break-words font-medium text-primary">{initiative?.name}</span>
           {'"'}? All of the data related to the initiative will be permanently removed. This action cannot be undone.
         </>
       }

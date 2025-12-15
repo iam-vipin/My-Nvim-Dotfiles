@@ -59,7 +59,7 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
         <>
           {renderChevron && (
             <div className="flex items-center gap-2">
-              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
+              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-tertiary" aria-hidden="true" />
             </div>
           )}
           <Controller<T>

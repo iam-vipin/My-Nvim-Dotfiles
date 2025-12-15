@@ -57,7 +57,7 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
   if (!estimatePoint) return <></>;
   return (
     <div className="relative flex items-center gap-2">
-      <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+      <div className="w-full border border-subtle-1 rounded-sm px-3 py-2 bg-layer-1 text-13">
         {estimateType === EEstimateSystem.TIME
           ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value))
           : estimatePoint?.value}
@@ -67,8 +67,8 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
       </div>
       <div
         className={cn(
-          "relative w-full border rounded flex items-center",
-          estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
+          "relative w-full border rounded-sm flex items-center",
+          estimatePointError?.message ? `border-red-500` : `border-subtle-1`
         )}
       >
         <EstimateInputRoot

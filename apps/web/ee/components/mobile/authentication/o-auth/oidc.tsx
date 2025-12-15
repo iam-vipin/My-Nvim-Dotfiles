@@ -23,7 +23,7 @@ export function OIDCAuthButton(props: TOIDCAuthButton) {
 
   return (
     <button
-      className={`flex h-[42px] w-full items-center justify-center gap-2 rounded border px-2 text-sm font-medium text-custom-text-100 duration-300 bg-custom-background-100 hover:bg-onboarding-background-300 ${
+      className={`flex h-[42px] w-full items-center justify-center gap-2 rounded-sm border px-2 text-13 font-medium text-primary duration-300 bg-surface-1 hover:bg-onboarding-background-300 ${
         resolvedTheme === "dark" ? "border-[#43484F]" : "border-[#D9E4FF]"
       }`}
       onClick={handleSignIn}

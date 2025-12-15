@@ -20,7 +20,7 @@ export function Stepper<T>(props: TStepper<T>) {
         {/* stepper header */}
         <div className="flex-shrink-0 relative flex items-center gap-6">
           {logo && (
-            <div className="flex-shrink-0 w-12 h-12 bg-custom-background-90 relative flex justify-center items-center rounded overflow-hidden">
+            <div className="flex-shrink-0 w-12 h-12 bg-layer-1 relative flex justify-center items-center rounded-sm overflow-hidden">
               <img src={logo} alt={`Importer Logo`} className="w-8 h-8 object-contain" />
             </div>
           )}
@@ -32,7 +32,7 @@ export function Stepper<T>(props: TStepper<T>) {
                 {step?.prevStep && (
                   <div
                     className={cn("h-[1.5px] w-full bg-custom-border-200 transition-all", {
-                      "bg-custom-primary-100": index <= currentStepIndex,
+                      "bg-accent-primary": index <= currentStepIndex,
                     })}
                   />
                 )}
@@ -40,9 +40,9 @@ export function Stepper<T>(props: TStepper<T>) {
                 {/* content */}
                 <div
                   className={cn(
-                    "flex-shrink-0 w-8 h-8 relative flex justify-center items-center border bg-custom-border-200 border-custom-border-200 text-custom-text-200 rounded-full transition-all",
+                    "flex-shrink-0 w-8 h-8 relative flex justify-center items-center border bg-custom-border-200 border-subtle-1 text-secondary rounded-full transition-all",
                     {
-                      "bg-custom-primary-100 border-custom-primary-100 text-white": index <= currentStepIndex,
+                      "bg-accent-primary border-accent-strong text-on-color": index <= currentStepIndex,
                     }
                   )}
                 >
@@ -53,7 +53,7 @@ export function Stepper<T>(props: TStepper<T>) {
                 {step?.nextStep && index < steps.length - 1 && (
                   <div
                     className={cn("h-[1.5px] w-full bg-custom-border-200 transition-all", {
-                      "bg-custom-primary-100": index < currentStepIndex,
+                      "bg-accent-primary": index < currentStepIndex,
                     })}
                   />
                 )}
@@ -64,8 +64,8 @@ export function Stepper<T>(props: TStepper<T>) {
 
         {/* title and description */}
         <div className="flex-shrink-0 space-y-1">
-          <div className="text-xl font-bold">{t(currentStepDetails?.i18n_title)}</div>
-          <div className="text-custom-text-200 text-sm">{t(currentStepDetails?.i18n_description)}</div>
+          <div className="text-18 font-bold">{t(currentStepDetails?.i18n_title)}</div>
+          <div className="text-secondary text-13">{t(currentStepDetails?.i18n_description)}</div>
         </div>
       </div>
 
@@ -80,23 +80,13 @@ export function StepperNavigation<T>(props: TStepperNavigation<T>) {
   const { t } = useTranslation();
   return (
     <div className="flex-shrink-0 relative flex items-center gap-2">
-      <Button
-        variant="neutral-primary"
-        size="sm"
-        onClick={() => handleStep("previous")}
-        disabled={currentStep?.prevStep === undefined}
-      >
+      <Button variant="secondary" onClick={() => handleStep("previous")} disabled={currentStep?.prevStep === undefined}>
         {t("common.back")}
       </Button>
       {children ? (
         children
       ) : (
-        <Button
-          variant="neutral-primary"
-          size="sm"
-          onClick={() => handleStep("next")}
-          disabled={currentStep?.nextStep === undefined}
-        >
+        <Button variant="secondary" onClick={() => handleStep("next")} disabled={currentStep?.nextStep === undefined}>
           {t("common.next")}
         </Button>
       )}

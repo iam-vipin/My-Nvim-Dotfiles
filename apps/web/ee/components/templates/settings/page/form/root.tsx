@@ -96,11 +96,10 @@ export const PageTemplateFormRoot = observer(function PageTemplateFormRoot(props
           <div className="w-full max-w-4xl">
             <PageTemplatePageDetails workspaceSlug={workspaceSlug} templateId={preloadedData?.template?.id} />
             {/* Form Actions */}
-            <div className="flex items-center justify-end gap-2 pt-8 mt-8 border-t border-custom-border-200">
+            <div className="flex items-center justify-end gap-2 pt-8 mt-8 border-t border-subtle">
               <div className="flex items-center justify-end gap-2">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                   data-ph-element={
@@ -114,7 +113,6 @@ export const PageTemplateFormRoot = observer(function PageTemplateFormRoot(props
                 <Button
                   variant="primary"
                   type="submit"
-                  size="sm"
                   className={cn("shadow-sm")}
                   loading={isSubmitting}
                   data-ph-element={

@@ -20,8 +20,8 @@ export const MapPrioritiesSelection = observer(function MapPrioritiesSelection(p
   const { t } = useTranslation();
 
   return (
-    <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-      <div className="text-custom-text-200">{asanaPriorityOption?.name}</div>
+    <div className="relative grid grid-cols-2 items-center p-3 text-13">
+      <div className="text-secondary">{asanaPriorityOption?.name}</div>
       <div>
         <Dropdown
           dropdownOptions={(planePriorities || [])?.map((state) => ({

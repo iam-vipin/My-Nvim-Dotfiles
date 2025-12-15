@@ -94,14 +94,14 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
         fallback={<PiChatUpgrade />}
         workspaceSlug={workspaceSlug}
       >
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100 w-full">
+        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle w-full">
           <div className="flex items-center gap-4">
-            <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-              <PiIcon className="size-5 text-custom-text-300" />
+            <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
+              <PiIcon className="size-5 text-tertiary" />
             </div>
             <div className="leading-tight">
               <h5 className="font-medium">Turn on AI for this workspace.</h5>
-              <span className="text-custom-sidebar-text-400 text-sm">
+              <span className="text-custom-sidebar-text-400 text-13">
                 Your new smart teammate, ready when you are.{" "}
               </span>
             </div>

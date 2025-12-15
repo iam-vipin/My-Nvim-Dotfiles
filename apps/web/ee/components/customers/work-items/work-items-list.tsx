@@ -88,13 +88,9 @@ export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
         workItemSearchServiceCallback={workItemSearchCallBack}
       />
       <div className="flex w-full items-center justify-between mb-4">
-        <h3 className="text-xl font-medium">{t("common.work_items")}</h3>
+        <h3 className="text-18 font-medium">{t("common.work_items")}</h3>
         <div className="flex gap-2 items-center">
-          {isAdmin && (
-            <Button onClick={() => setWorkItemsModal(true)} size="sm">
-              {t("customers.linked_work_items.link")}
-            </Button>
-          )}
+          {isAdmin && <Button onClick={() => setWorkItemsModal(true)}>{t("customers.linked_work_items.link")}</Button>}
         </div>
       </div>
       {workItemsCount === 0 ? (

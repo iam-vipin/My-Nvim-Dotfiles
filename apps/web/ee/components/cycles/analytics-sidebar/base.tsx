@@ -74,9 +74,9 @@ export const SidebarChart = observer(function SidebarChart(props: TProps) {
           cycleId={cycle.id}
         />
         <div className="flex items-center justify-center gap-2">
-          <div className="flex items-center gap-1 text-xs">
-            <span className="text-custom-text-300">Done</span>
-            <span className="font-semibold text-custom-text-400">{progressHeaderPercentage}%</span>
+          <div className="flex items-center gap-1 text-11">
+            <span className="text-tertiary">Done</span>
+            <span className="font-semibold text-placeholder">{progressHeaderPercentage}%</span>
           </div>
         </div>
       </div>
@@ -105,7 +105,7 @@ export const SidebarChart = observer(function SidebarChart(props: TProps) {
                   backgroundColor: legend.color,
                 }}
               />
-              <span className="text-xs text-custom-text-300">{legend.label}</span>
+              <span className="text-11 text-tertiary">{legend.label}</span>
             </div>
           ))}
         </div>

@@ -8,7 +8,7 @@ const InitiativesFiltersRow = observer(function InitiativesFiltersRow() {
 
   if (!isReady || !filterInstance) {
     return (
-      <div className="px-page-x @container flex flex-wrap justify-between py-2 border-b border-custom-border-200 gap-2 bg-custom-background-100 z-[12]">
+      <div className="px-page-x @container flex flex-wrap justify-between py-2 border-b border-subtle-1 gap-2 bg-surface-1 z-[12]">
         <Loader.Item height="24px" width="100%" />
       </div>
     );
@@ -18,10 +18,10 @@ const InitiativesFiltersRow = observer(function InitiativesFiltersRow() {
     <FiltersRow
       filter={filterInstance}
       buttonConfig={{
-        variant: "neutral-primary",
+        variant: "secondary",
         label: "Filters",
         defaultOpen: false,
-        className: "bg-custom-background-100",
+        className: "bg-surface-1",
       }}
     />
   );

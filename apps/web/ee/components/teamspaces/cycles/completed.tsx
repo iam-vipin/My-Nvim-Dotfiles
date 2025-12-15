@@ -48,7 +48,7 @@ export const TeamCompletedCyclesRoot = observer(function TeamCompletedCyclesRoot
         <Disclosure as="div" key={projectId} className="flex flex-shrink-0 flex-col" defaultOpen>
           {({ open }) => (
             <>
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle-1 bg-layer-1 cursor-pointer">
                 <CycleListProjectGroupHeader
                   projectId={projectId}
                   count={cycleIds.length}

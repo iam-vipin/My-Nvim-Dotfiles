@@ -49,31 +49,31 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
     <>
       <div
         key={link.id}
-        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-custom-background-90 hover:bg-custom-background-80 border-[0.5px] border-custom-border-200 rounded"
+        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-layer-1 hover:bg-layer-1-hover border-[0.5px] border-subtle rounded-md text-13"
       >
         <div className="flex items-center gap-2.5 truncate flex-grow">
           {faviconUrl ? (
-            <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
+            <img src={faviconUrl} alt="favicon" className="size-3 flex-shrink-0" />
           ) : (
-            <LinkIcon className="size-4 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200" />
+            <LinkIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary" />
           )}
           <Tooltip tooltipContent={link.url} isMobile={isMobile}>
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-sm cursor-pointer flex-grow flex items-center gap-3"
+              className="truncate text-13 cursor-pointer flex-grow flex items-center gap-3"
             >
               {link.title && link.title !== "" ? link.title : link.url}
-              {linkTitle && linkTitle !== "" && <span className="text-custom-text-400 text-xs">{linkTitle}</span>}
+              {linkTitle && linkTitle !== "" && <span className="text-placeholder text-11">{linkTitle}</span>}
             </a>
           </Tooltip>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
-          <p className="p-1 text-xs align-bottom leading-5 text-custom-text-400 group-hover-text-custom-text-200">
+          <p className="p-1 text-11 align-bottom leading-5 text-placeholder group-hover-text-secondary">
             {calculateTimeAgoShort(link?.created_at)}
           </p>
-          <span
+          <button
             onClick={() => {
               copyTextToClipboard(link.url);
               setToast({
@@ -82,13 +82,13 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
                 message: "Link copied to clipboard",
               });
             }}
-            className="relative grid place-items-center rounded p-1 text-custom-text-400 outline-none group-hover:text-custom-text-200 cursor-pointer hover:bg-custom-background-80"
+            className="relative grid place-items-center rounded-sm p-1 text-placeholder outline-none group-hover:text-secondary cursor-pointer hover:bg-layer-1"
           >
             <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
-          </span>
+          </button>
           <CustomMenu
             ellipsis
-            buttonClassName="text-custom-text-400 group-hover:text-custom-text-200"
+            buttonClassName="text-placeholder group-hover:text-secondary"
             placement="bottom-end"
             closeOnSelect
             disabled={isNotAllowed}
@@ -99,7 +99,7 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
                 toggleInitiativeLinkModal(true);
               }}
             >
-              <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
               {t("edit")}
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem

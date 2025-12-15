@@ -190,7 +190,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             placeholder={t("common.order_by.due_date")}
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={epic.target_date ? "border-with-text" : "border-without-text"}
-            clearIconClassName="text-custom-text-100"
+            clearIconClassName="text-primary"
             optionsClassName="z-10"
             disabled={disabled}
             showTooltip

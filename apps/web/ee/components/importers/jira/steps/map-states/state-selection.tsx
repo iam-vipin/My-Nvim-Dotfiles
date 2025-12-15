@@ -26,7 +26,7 @@ export const MapStatesSelection = observer(function MapStatesSelection(props: TM
       placeHolder="Select state"
       onChange={(value: string | undefined) => handleValue(value)}
       iconExtractor={(option) => (
-        <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
+        <div className="w-4.5 h-4.5 shrink-0 overflow-hidden relative flex justify-center items-center">
           <StateGroupIcon stateGroup={option?.group || "backlog"} />
         </div>
       )}

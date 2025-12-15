@@ -122,7 +122,7 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
             buttonVariant="transparent-with-text"
             buttonContainerClassName={cn(
               "flex-shrink-0 w-full text-left",
-              teamspace.lead_id ? "text-custom-text-200" : "text-custom-text-400"
+              teamspace.lead_id ? "text-secondary" : "text-placeholder"
             )}
             placeholder="Select team lead"
             showUserDetails
@@ -182,10 +182,10 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 px-6 divide-y divide-custom-border-100">
+    <div className="relative flex flex-col gap-y-2 px-6 divide-y divide-subtle">
       <div className="py-2 flex flex-col">
         <div className="flex gap-2 justify-between">
-          <span className="text-sm font-semibold">Properties</span>
+          <span className="text-body-xs-semibold">Properties</span>
           {teamspaceEntitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
         </div>
         <TeamsPropertiesList>
@@ -201,9 +201,9 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
       </div>
       {/* Linked entities */}
       <div className="pt-3">
-        <div className="flex gap-4 text-sm">
+        <div className="flex gap-4 text-body-xs-regular">
           <span className="font-semibold">Linked entities</span>
-          {linkedEntitiesCount === 0 ? <span className="text-custom-text-300">{linkedEntitiesCount}</span> : null}
+          {linkedEntitiesCount === 0 ? <span className="text-tertiary">{linkedEntitiesCount}</span> : null}
         </div>
         {teamspaceEntitiesLoader === "init-loader" ? (
           <TeamspaceEntitiesLoader count={4} />
@@ -223,9 +223,9 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
       </div>
       {/* Teamspace's entities */}
       <div className="pt-3">
-        <div className="flex gap-4 text-sm">
+        <div className="flex gap-4 text-body-xs-regular">
           <span className="font-semibold">Entities in the teamspace</span>
-          {teamspaceEntitiesCount === 0 ? <span className="text-custom-text-300">{teamspaceEntitiesCount}</span> : null}
+          {teamspaceEntitiesCount === 0 ? <span className="text-tertiary">{teamspaceEntitiesCount}</span> : null}
         </div>
         {teamspaceEntitiesLoader === "init-loader" ? (
           <TeamspaceEntitiesLoader count={2} />

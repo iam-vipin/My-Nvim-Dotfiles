@@ -65,7 +65,7 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
 
   return (
     <div className={cn("flex items-center gap-2 h-full", className)}>
-      <span className="text-custom-text-300 text-sm whitespace-nowrap">repeats</span>
+      <span className="text-tertiary text-body-xs-regular whitespace-nowrap">repeats</span>
       <Combobox
         as="div"
         ref={dropdownRef}
@@ -80,14 +80,14 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
             ref={setReferenceElement}
             type="button"
             className={cn("clickable block h-full outline-none", {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             })}
             onClick={handleOnClick}
           >
             <div
               className={cn(
-                "h-full flex items-center justify-between gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5 hover:bg-custom-background-80 border-custom-border-300 w-fit",
+                "h-full flex items-center justify-between gap-1.5 border rounded-sm text-caption-sm-medium px-2 py-0.5 hover:bg-layer-1-hover border-subtle w-fit",
                 {
                   [COMMON_ERROR_CLASS_NAME]: hasError,
                 }
@@ -101,7 +101,7 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
         {isOpen && (
           <Combobox.Options className="fixed z-10" static>
             <div
-              className="my-1 w-24 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+              className="my-1 w-24 rounded-sm border border-subtle bg-surface-1 px-2 py-2.5 text-caption-sm-medium shadow-raised-200 focus:outline-none"
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
@@ -112,9 +112,9 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
-                      `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                        active ? "bg-custom-background-80" : ""
-                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
+                        active ? "bg-layer-1" : ""
+                      } ${selected ? "text-primary" : "text-secondary"}`
                     }
                   >
                     {({ selected }) => (

@@ -87,15 +87,15 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
         description={t("workspace_settings.settings.teamspaces.description")}
       />
       <WithFeatureFlagHOC flag="TEAMSPACES" fallback={<TeamspaceUpgrade />} workspaceSlug={workspaceSlug}>
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100 w-full">
+        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle w-full">
           <div className="flex items-center gap-4">
-            <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-              <TeamsIcon className="size-5 text-custom-text-300" />
+            <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
+              <TeamsIcon className="size-5 text-tertiary" />
             </div>
             <div className="leading-tight">
               <h5 className="font-medium">Turn on Teamspaces for this workspace.</h5>
-              <span className="text-custom-sidebar-text-400 text-sm">
-                Once turned on, you can’t turn this feature off.
+              <span className="text-tertiary text-body-xs-regular">
+                Once turned on, you can&apos;t turn this feature off.
               </span>
             </div>
           </div>

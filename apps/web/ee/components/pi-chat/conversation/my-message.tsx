@@ -22,11 +22,7 @@ export const MyMessage = observer(function MyMessage(props: TProps) {
         </div>
       )}
       {!isLoading && !isCommentEmpty(message) && (
-        <div
-          className={cn(
-            "px-3 py-2 pr-10 text-base rounded-xl bg-custom-background-90 w-fit max-w-[75%] rounded-tr-none"
-          )}
-        >
+        <div className={cn("px-3 py-2 pr-10 text-14 rounded-xl bg-layer-1 w-fit max-w-[75%] rounded-tr-none")}>
           {/* Message */}
           <PiChatEditorWithRef editable={false} content={message} />
         </div>

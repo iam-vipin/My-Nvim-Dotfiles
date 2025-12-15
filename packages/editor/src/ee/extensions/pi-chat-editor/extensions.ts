@@ -37,18 +37,18 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       italic: false,
       paragraph: {
         HTMLAttributes: {
-          class: `text-[14px] font-normal`,
+          class: `text-14 font-normal`,
         },
       },
       strike: false,
       bulletList: {
         HTMLAttributes: {
-          class: "list-disc pl-7 space-y-[--list-spacing-y]",
+          class: "list-disc pl-7 space-y-(--list-spacing-y)",
         },
       },
       orderedList: {
         HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-[--list-spacing-y]",
+          class: "list-decimal pl-7 space-y-(--list-spacing-y)",
         },
       },
       listItem: {

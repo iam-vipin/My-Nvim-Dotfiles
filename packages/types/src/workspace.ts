@@ -341,3 +341,22 @@ export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
 export type TWorkspaceEpicsSearchParams = {
   initiative_id?: string;
 };
+
+export type TWorkspaceSearchResultItem = {
+  id: string;
+  label: string;
+  entity_name: string;
+  entity_identifier: string;
+  target: string;
+  redirect_uri: string;
+  name?: string;
+  project__identifier?: string | null;
+  sequence_id?: string | null;
+  title: string;
+  subTitle: string | undefined;
+  type_id: string | null;
+  project_id: string;
+};
+export type TSearchResults = {
+  [key: string]: Partial<TWorkspaceSearchResultItem>[] | undefined;
+};

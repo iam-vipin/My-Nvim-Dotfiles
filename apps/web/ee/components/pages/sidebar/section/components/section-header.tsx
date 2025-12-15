@@ -28,12 +28,12 @@ export const SectionHeader = React.memo(function SectionHeader({
   return (
     <div
       className={cn(
-        "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90"
+        "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-surface-2"
       )}
     >
       <Link
         href={`/${workspaceSlug}/wiki/${sectionType}`}
-        className={cn("flex-grow text-sm font-semibold text-custom-sidebar-text-400")}
+        className={cn("flex-grow text-13 font-semibold text-custom-sidebar-text-400")}
       >
         {sectionDetails.label === SECTION_DETAILS.public.label ? "Workspace" : sectionDetails.label}
       </Link>
@@ -41,7 +41,7 @@ export const SectionHeader = React.memo(function SectionHeader({
       <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
         {sectionType !== "archived" && sectionType !== "shared" && (
           <button
-            className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+            className="grid place-items-center hover:bg-layer-1 p-0.5 rounded"
             data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.SIDEBAR}
             onClick={() => {
               handleCreatePage(sectionType);
@@ -58,7 +58,7 @@ export const SectionHeader = React.memo(function SectionHeader({
           ref={buttonRef}
           as="button"
           type="button"
-          className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+          className="grid place-items-center hover:bg-layer-1 p-0.5 rounded"
           onClick={(e) => {
             e.stopPropagation();
             if (onButtonClick) onButtonClick();

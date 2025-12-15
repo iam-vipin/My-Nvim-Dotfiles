@@ -25,7 +25,7 @@ export const commandGroups: TCommandGroups = {
           issueTypeId={epic.type_id}
           projectIdentifier={epic.project__identifier}
           issueSequenceId={epic.sequence_id}
-          textContainerClassName="text-xs"
+          size="xs"
         />{" "}
         {epic.name}
       </div>

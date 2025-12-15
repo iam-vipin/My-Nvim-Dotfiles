@@ -16,7 +16,7 @@ export function PriceRow(props: PriceRowProps) {
 
   return (
     <div className={cn("w-full flex gap-1.5 justify-between", className)}>
-      <div className="text-sm font-medium text-custom-text-100">
+      <div className="text-13 font-medium text-primary">
         {quantity && pricePerUnit ? (
           <>{`${quantity} ${label} x $${(pricePerUnit / 100).toFixed(2)} / ${interval === "MONTHLY" ? "month" : "year"}`}</>
         ) : (
@@ -25,7 +25,7 @@ export function PriceRow(props: PriceRowProps) {
       </div>
       <div className="flex items-center gap-2">
         {rightElement}
-        <div className="text-sm font-medium text-custom-text-100">
+        <div className="text-13 font-medium text-primary">
           ${amount ? (amount / 100).toFixed(2) : "0.00"} / {interval === "MONTHLY" ? "month" : "year"}
         </div>
       </div>

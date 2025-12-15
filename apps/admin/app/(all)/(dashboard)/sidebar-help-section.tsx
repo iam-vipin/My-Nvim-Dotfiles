@@ -46,7 +46,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
   return (
     <div
       className={cn(
-        "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 h-14 flex-shrink-0",
+        "flex w-full items-center justify-between gap-1 self-baseline border-t border-subtle bg-surface-1 px-4 h-14 flex-shrink-0",
         {
           "flex-col h-auto py-1.5": isSidebarCollapsed,
         }
@@ -56,7 +56,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Redirect to Plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
           <a
             href={redirectionLink}
-            className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded border border-custom-primary-100/20 bg-custom-primary-100/10 text-xs text-custom-primary-200 whitespace-nowrap`}
+            className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded-sm border border-accent-strong/20 bg-accent-primary/10 text-11 text-accent-secondary whitespace-nowrap`}
           >
             <ExternalLink size={14} />
             {!isSidebarCollapsed && "Redirect to Plane"}
@@ -65,7 +65,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`ml-auto grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+            className={`ml-auto grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
@@ -76,7 +76,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+            className={`grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => toggleSidebar(!isSidebarCollapsed)}
@@ -99,7 +99,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
           <div
             className={`absolute bottom-2 min-w-[10rem] z-[15] ${
               isSidebarCollapsed ? "left-full" : "-left-[75px]"
-            } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
+            } divide-y divide-subtle-1 whitespace-nowrap rounded-sm bg-surface-1 p-1 shadow-custom-shadow-xs`}
             ref={helpOptionsRef}
           >
             <div className="space-y-1 pb-2">
@@ -107,11 +107,11 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                 if (href)
                   return (
                     <Link href={href} key={name} target="_blank">
-                      <div className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
+                      <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1-hover">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-custom-text-200" width={14} height={14} />
+                          <Icon className="h-3.5 w-3.5 text-secondary" />
                         </div>
-                        <span className="text-xs">{name}</span>
+                        <span className="text-11">{name}</span>
                       </div>
                     </Link>
                   );
@@ -120,12 +120,12 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                     <button
                       key={name}
                       type="button"
-                      className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
+                      className="flex w-full items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1"
                     >
                       <div className="grid flex-shrink-0 place-items-center">
-                        <Icon className="h-3.5 w-3.5 text-custom-text-200" />
+                        <Icon className="h-3.5 w-3.5 text-secondary" />
                       </div>
-                      <span className="text-xs">{name}</span>
+                      <span className="text-11">{name}</span>
                     </button>
                   );
               })}
@@ -133,16 +133,16 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                 <a
                   href="https://docs.plane.so/docs/changelog"
                   target="_blank"
-                  className="flex items-center gap-2 px-2 py-1 text-xs font-medium cursor-pointer transition-all border rounded border-custom-primary-100/30 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 text-custom-text-100"
+                  className="flex items-center gap-2 px-2 py-1 text-11 font-medium cursor-pointer transition-all border rounded-sm border-accent-strong/30 bg-accent-primary/20 hover:bg-accent-primary/30 text-primary"
                   referrerPolicy="no-referrer"
                 >
-                  <RefreshCcw className="flex-shrink-0 h-3 w-3 text-custom-text-100" />
+                  <RefreshCcw className="flex-shrink-0 h-3 w-3 text-primary" />
                   <div>Updates available</div>
-                  <div className="flex-shrink-0 ml-auto animate-pulse bg-custom-primary-100 !w-2 !h-2 rounded-full" />
+                  <div className="flex-shrink-0 ml-auto animate-pulse bg-accent-primary !w-2 !h-2 rounded-full" />
                 </a>
               )} */}
             </div>
-            <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{instance?.current_version}</div>
+            <div className="px-2 pb-1 pt-2 text-10">Version: v{instance?.current_version}</div>
           </div>
         </Transition>
       </div>

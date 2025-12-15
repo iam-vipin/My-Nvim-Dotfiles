@@ -3,7 +3,7 @@ import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
 import { SPACE_BASE_URL, SPACE_BASE_PATH } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/propel/utils";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { copyTextToClipboard } from "@plane/utils";
 
 type Props = {
@@ -30,7 +30,7 @@ export const IntakeFormLink = observer(function IntakeFormLink(props: Props) {
     <div className="flex gap-2 h-[30px] w-full">
       <div
         className={cn(
-          "flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 flex-1 py-1 px-2 gap-2 h-full"
+          "flex items-center text-13 rounded-md border-[0.5px] border-subtle-1 flex-1 py-1 px-2 gap-2 h-full"
         )}
       >
         <span className="truncate flex-1 mr-4">{publishLink}</span>
@@ -41,9 +41,8 @@ export const IntakeFormLink = observer(function IntakeFormLink(props: Props) {
       </div>
       <Button
         tabIndex={-1}
-        size="sm"
-        variant="neutral-primary"
-        className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
+        variant="secondary"
+        className="w-fit cursor-pointer px-2 py-1 text-center text-13 font-medium outline-none my-auto h-full"
         onClick={handleRenew}
       >
         <RefreshCcw className="w-[16px]" /> Renew

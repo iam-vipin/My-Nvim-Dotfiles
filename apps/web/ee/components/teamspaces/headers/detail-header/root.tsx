@@ -78,7 +78,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
               {teamspaceItem.logo_props ? (
                 <Logo logo={teamspaceItem.logo_props} />
               ) : (
-                <TeamsIcon className="h-4 w-4 text-custom-text-300" />
+                <TeamsIcon className="h-4 w-4 text-tertiary" />
               )}
               <span>{teamspaceItem.name}</span>
             </div>
@@ -194,7 +194,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label="Teamspaces"
-                  icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<TeamsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -210,7 +210,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
                         teamspace.logo_props ? (
                           <Logo logo={teamspace.logo_props} />
                         ) : (
-                          <TeamsIcon className="h-4 w-4 text-custom-text-300" />
+                          <TeamsIcon className="h-4 w-4 text-tertiary" />
                         )
                       }
                       selectedItem={teamspaceId?.toString() || ""}

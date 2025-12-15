@@ -94,7 +94,7 @@ export const IssueEmbedCard = observer(function IssueEmbedCard(props: Props) {
 
   if (error)
     return (
-      <div className="flex items-center gap-3 rounded-md border-2 border-orange-500 bg-orange-500/10 text-orange-500 px-4 py-3 my-2 text-base">
+      <div className="flex items-center gap-3 rounded-md border-2 border-orange-500 bg-orange-500/10 text-orange-500 px-4 py-3 my-2 text-14">
         <AlertTriangle className="text-orange-500 size-8" />
         This work item embed is not found in any project. It can no longer be updated or accessed from here.
       </div>
@@ -102,19 +102,15 @@ export const IssueEmbedCard = observer(function IssueEmbedCard(props: Props) {
 
   return (
     <div
-      className="issue-embed cursor-pointer space-y-2 rounded-md bg-custom-background-90 p-3 my-2"
+      className="issue-embed cursor-pointer space-y-2 rounded-md bg-layer-1 p-3 my-2"
       role="button"
       onClick={handleClick}
     >
-      <IssueIdentifier
-        issueId={issueId}
-        projectId={projectId}
-        textContainerClassName="text-xs font-medium text-custom-text-300"
-      />
-      <h4 className="!text-sm !font-medium !mt-2 line-clamp-2 break-words">{issueDetails?.name}</h4>
+      <IssueIdentifier issueId={issueId} projectId={projectId} size="xs" variant="tertiary" />
+      <h4 className="!text-13 !font-medium !mt-2 line-clamp-2 break-words">{issueDetails?.name}</h4>
       {issueDetails && (
         <IssueProperties
-          className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
+          className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary pt-1.5"
           issue={issueDetails}
           displayProperties={displayProperties}
           activeLayout="Page work item embed"

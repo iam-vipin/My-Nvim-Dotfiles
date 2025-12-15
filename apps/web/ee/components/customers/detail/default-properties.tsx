@@ -33,10 +33,10 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-medium mb-2">{t("customers.sidebar.properties")}</p>
+      <p className="text-13 font-medium mb-2">{t("customers.sidebar.properties")}</p>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">
+          <span className="text-13 text-secondary">
             {t("customers.properties.default.email.name")} <span className="text-red-500">*</span>
           </span>
         </div>
@@ -61,7 +61,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.website_url.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.website_url.name")}</span>
         </div>
         <div className="w-3/5 flex-grow">
           <PropertyField
@@ -81,7 +81,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.size.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.size.name")}</span>
         </div>
         <div className="w-3/5 flex-grow">
           <PropertyField
@@ -103,7 +103,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.domain.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.domain.name")}</span>
         </div>
         <div className="w-3/5 flex-grow">
           <PropertyField
@@ -118,7 +118,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.contract_status.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.contract_status.name")}</span>
         </div>
         <ContractStatusDropDown
           value={customer.contract_status}
@@ -133,7 +133,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.stage.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.stage.name")}</span>
         </div>
         <StageDropDown
           value={customer.stage}
@@ -148,7 +148,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.revenue.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.revenue.name")}</span>
         </div>
         <PropertyField
           value={customer.revenue}
@@ -169,11 +169,11 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       {createdByDetails && (
         <div className="flex h-8 gap-2 items-center">
           <div className="w-2/5 flex-shrink-0">
-            <span className="text-sm text-custom-text-200">{t("common.created_by")}</span>
+            <span className="text-13 text-secondary">{t("common.created_by")}</span>
           </div>
-          <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
+          <div className="w-full h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-13 justify-between cursor-not-allowed">
             <ButtonAvatars showTooltip userIds={createdByDetails.id} />
-            <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+            <span className="flex-grow truncate text-11 leading-5">{createdByDetails?.display_name}</span>
           </div>
         </div>
       )}
@@ -234,7 +234,7 @@ function PropertyField(props: TPropertyFiledProps) {
           disabled={disabled}
           placeholder={placeholder}
           className={cn(
-            "w-full border-none truncate hover:bg-custom-background-80 focus:bg-custom-background-80 rounded-md",
+            "w-full border-none truncate hover:bg-layer-1 focus:bg-layer-1 rounded-md",
             disabled && "cursor-not-allowed"
           )}
         />

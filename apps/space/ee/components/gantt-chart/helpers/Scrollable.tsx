@@ -76,7 +76,7 @@ export const ChartScrollable = observer(function ChartScrollable(props: Props) {
       {isHidden && block?.start_date && block?.target_date && (
         <button
           type="button"
-          className="sticky z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          className="sticky z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded-sm border border-subtle-1 bg-layer-1 text-secondary hover:text-primary"
           style={{
             left: `${SIDEBAR_WIDTH + 4}px`,
           }}

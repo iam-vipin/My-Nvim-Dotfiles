@@ -46,7 +46,7 @@ export const StatusDropdown = observer(function StatusDropdown(props: TStatusDro
             "text-[#CC7700]": status.key === EUpdateStatus.AT_RISK,
           })}
         />
-        <div className="truncate font-medium text-sm capitalize">{status.key.replaceAll("-", " ").toLowerCase()}</div>
+        <div className="truncate font-medium text-13 capitalize">{status.key.replaceAll("-", " ").toLowerCase()}</div>
       </CustomMenu.MenuItem>
     ));
   }
@@ -56,7 +56,7 @@ export const StatusDropdown = observer(function StatusDropdown(props: TStatusDro
   return (
     <CustomMenu
       maxHeight={"md"}
-      className={cn("flex justify-center text-xs text-custom-text-200 w-fit ", className)}
+      className={cn("flex justify-center text-11 text-secondary w-fit ", className)}
       placement="bottom-start"
       customButton={
         <button
@@ -67,7 +67,7 @@ export const StatusDropdown = observer(function StatusDropdown(props: TStatusDro
           })}
         >
           {selectedStatusObj && <selectedStatusObj.icon size={16} className="my-auto" />}
-          <span className="font-medium text-sm my-auto capitalize">
+          <span className="font-medium text-13 my-auto capitalize">
             {" "}
             {selectedStatusObj?.key.replaceAll("-", " ").toLowerCase()}
           </span>

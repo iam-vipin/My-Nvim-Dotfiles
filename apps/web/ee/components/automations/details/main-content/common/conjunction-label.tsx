@@ -5,5 +5,5 @@ type TProps = {
 export function ConjunctionLabel(props: TProps) {
   const { text } = props;
 
-  return <p className="leading-4 text-sm text-custom-primary-100 font-medium font-mono uppercase">{text}</p>;
+  return <p className="leading-4 text-13 text-accent-primary font-medium font-mono uppercase">{text}</p>;
 }

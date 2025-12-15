@@ -463,26 +463,21 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     return (
       <div
         className={cn(
-          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-200 cursor-default overflow-hidden"
+          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-surface-1 border border-subtle-1 cursor-default overflow-hidden"
         )}
         onDoubleClick={() => setIssuePropertyOperationMode("update")}
       >
-        <div className="flex items-center gap-1 text-sm font-medium">
+        <div className="flex items-center gap-1 text-body-xs-medium">
           {issuePropertyData?.logo_props && (
             <div className="flex-shrink-0 size-5 grid place-items-center">
               <IssuePropertyLogo
                 icon_props={issuePropertyData.logo_props.icon}
-                colorClassName={issuePropertyData.is_active ? "text-custom-text-200" : "text-custom-text-300"}
+                colorClassName={issuePropertyData.is_active ? "text-secondary" : "text-tertiary"}
               />
             </div>
           )}
           <div className="flex gap-1 w-full max-w-48 sm:max-w-[30vw] items-center">
-            <span
-              className={cn(
-                "px-1 truncate",
-                issuePropertyData.is_active ? "text-custom-text-200" : "text-custom-text-300"
-              )}
-            >
+            <span className={cn("px-1 truncate", issuePropertyData.is_active ? "text-secondary" : "text-tertiary")}>
               {issuePropertyData.display_name ?? ""}
             </span>
             {issuePropertyData.description && (
@@ -502,16 +497,13 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
               <AttributePill data={t("common.default")} />
             )}
             {issuePropertyData.is_active && (
-              <AttributePill data={t("common.active")} className="bg-green-500/15 text-green-600" />
+              <AttributePill data={t("common.active")} className="bg-success-subtle text-success" />
             )}
             {!issuePropertyData.is_active && (
-              <AttributePill data={t("common.disabled")} className="bg-red-500/15 text-red-600" />
+              <AttributePill data={t("common.disabled")} className="bg-danger-subtle text-danger" />
             )}
           </div>
-          <div
-            className="flex-shrink-0 border-l border-custom-border-200 pl-2"
-            onDoubleClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex-shrink-0 border-l border-subtle-1 pl-2" onDoubleClick={(e) => e.stopPropagation()}>
             <IssuePropertyQuickActions
               isPropertyDisabled={!issuePropertyData.is_active}
               onDisable={async () => handlePropertyDataChange("is_active", false, true)}
@@ -528,10 +520,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
   return (
     <div
       className={cn(
-        "w-full flex flex-col items-center justify-center my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-200 divide-y divide-custom-border-200 cursor-default"
+        "w-full flex flex-col items-center justify-center my-2.5 rounded-lg bg-surface-1 border border-subtle-1 divide-y divide-subtle cursor-default"
       )}
     >
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-x sm:divide-y-0 divide-custom-border-200 ease-out transition-all duration-500">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-x sm:divide-y-0 divide-subtle ease-out transition-all duration-500">
         <div className="p-3">
           <PropertyTitleDescriptionInput
             propertyDetail={issuePropertyData}
@@ -570,10 +562,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
           <PropertyActiveCheckbox value={!!issuePropertyData.is_active} onEnableDisable={handleEnableDisable} />
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleDiscard} disabled={isSubmitting} className="py-1">
+          <Button variant="secondary" onClick={handleDiscard} disabled={isSubmitting} className="py-1">
             {issuePropertyOperationMode === "create" ? t("common.cancel") : t("common.discard")}
           </Button>
-          <Button variant="primary" size="sm" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
+          <Button variant="primary" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
             {isSubmitting
               ? t("common.confirming")
               : issuePropertyOperationMode === "create"

@@ -28,16 +28,16 @@ export function AutomationActionHandlerDropdown(props: TProps) {
         <span className="flex-shrink-0 size-4 grid place-items-center">
           <Zap className="size-3" />
         </span>
-        <p className="text-custom-text-200 text-xs font-medium">{t("automations.action.input_label")}</p>
+        <p className="text-tertiary text-11 font-medium">{t("automations.action.input_label")}</p>
       </div>
       <CustomSelect
         customButton={
           <span
             className={cn(
-              "w-full px-4 py-1.5 rounded-md border-[0.5px] border-custom-border-200 hover:bg-custom-background-80 text-left flex items-center gap-2 cursor-pointer transition-colors",
+              "w-full px-4 py-1.5 rounded-md border-[0.5px] border-subtle-1 hover:bg-layer-transparent-hover text-left flex items-center gap-2 cursor-pointer transition-colors",
               {
-                "text-custom-text-400 border border-custom-primary-200": !value,
-                "cursor-not-allowed text-custom-text-300 bg-custom-background-80": isDisabled,
+                "text-placeholder border-accent-strong": !value,
+                "cursor-not-allowed text-tertiary bg-layer-disabled": isDisabled,
               }
             )}
           >

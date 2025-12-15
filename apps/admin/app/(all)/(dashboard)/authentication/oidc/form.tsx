@@ -242,7 +242,7 @@ export function InstanceOIDCConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">IdP-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">IdP-provided details for Plane</div>
             {OIDC_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -286,7 +286,7 @@ export function InstanceOIDCConfigForm(props: Props) {
                 </Button>
                 <Link
                   href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
+                  className={cn(getButtonStyling("secondary", "base"), "font-medium")}
                   onClick={handleGoBack}
                 >
                   Go back
@@ -295,16 +295,16 @@ export function InstanceOIDCConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
-            <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
+            <div className="pt-2 text-18 font-medium">Plane-provided details for your IdP</div>
 
             <div className="flex flex-col gap-y-4">
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {OIDC_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
@@ -313,11 +313,11 @@ export function InstanceOIDCConfigForm(props: Props) {
 
               {/* mobile service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Smartphone className="w-3 h-3" />
                   Mobile
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {OIDC_MOBILE_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}

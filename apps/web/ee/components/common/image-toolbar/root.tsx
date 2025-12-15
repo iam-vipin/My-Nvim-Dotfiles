@@ -36,7 +36,7 @@ export function ImageToolbarRoot(props: Props) {
     <>
       <div
         className={cn(
-          "absolute top-1 right-1 h-7 z-20 bg-black/80 rounded flex items-center gap-2 px-2 opacity-0 pointer-events-none group-hover/upload-component:opacity-100 group-hover/upload-component:pointer-events-auto transition-opacity",
+          "absolute top-1 right-1 h-7 z-20 bg-layer-2 shadow-overlay-100 rounded-sm flex items-center gap-2 px-2 opacity-0 pointer-events-none group-hover/upload-component:opacity-100 group-hover/upload-component:pointer-events-auto transition-opacity",
           {
             "opacity-100 pointer-events-auto": shouldShowToolbar,
           }
@@ -48,7 +48,7 @@ export function ImageToolbarRoot(props: Props) {
           <button
             type="button"
             onClick={onRemove}
-            className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+            className="flex-shrink-0 h-full grid place-items-center text-icon-tertiary hover:text-icon-secondary transition-colors"
             aria-label="Remove image"
           >
             <CloseIcon className="size-3" />

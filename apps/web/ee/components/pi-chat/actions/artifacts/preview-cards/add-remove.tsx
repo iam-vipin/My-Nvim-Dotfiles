@@ -19,13 +19,13 @@ export const AddRemovePreviewCard = observer(function AddRemovePreviewCard(props
       <div className="flex gap-2 items-start justify-between">
         <div className="flex gap-2 items-start">
           <div className="flex items-center justify-center my-1">
-            <Hash className="size-4 text-custom-text-100" />
+            <Hash className="size-4 text-primary" />
           </div>
-          <div className="flex flex-wrap gap-1 truncate text-sm text-start my-auto">
-            <span className="font-medium">{data.action === "add" ? "Adding " : "Removing "}</span> {data.artifact_type}{" "}
-            <span className="text-custom-text-100 font-medium">{data.parameters?.name}</span>{" "}
+          <div className="flex flex-wrap gap-1 truncate text-body-sm-medium text-start my-auto">
+            <span className="text-body-sm-medium">{data.action === "add" ? "Adding " : "Removing "}</span>{" "}
+            {data.artifact_type} <span className="text-primary text-body-sm-medium">{data.parameters?.name}</span>{" "}
             {data.action === "add" ? "to" : "from"} {artifactSubType}
-            {properties && properties.length > 0 ? "s" : ""}
+            {properties && Array.isArray(properties) && properties.length > 0 ? "s" : ""}
             {properties &&
               Array.isArray(properties) &&
               properties.map(
@@ -35,7 +35,7 @@ export const AddRemovePreviewCard = observer(function AddRemovePreviewCard(props
                   },
                   index: number
                 ) => (
-                  <span key={property.name} className="text-custom-text-100 font-medium">
+                  <span key={property.name} className="text-primary text-body-sm-medium">
                     {property.name}
                     {index < properties.length - 1 ? ", " : ""}
                   </span>

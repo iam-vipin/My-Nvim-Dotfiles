@@ -70,20 +70,20 @@ export function IssueEmbedCard(props: Props) {
 
   if (!issueDetails && !isLoading)
     return (
-      <div className="flex items-center gap-3 rounded-md border-2 border-orange-500 bg-orange-500/10 text-orange-500 py-3 my-2 text-base">
+      <div className="flex items-center gap-3 rounded-md border-2 border-orange-500 bg-orange-500/10 text-orange-500 py-3 my-2 text-14">
         <AlertTriangle className="text-orange-500 size-8" />
         This work item embed is not found in any project. It can no longer be updated or accessed from here.
       </div>
     );
 
   return (
-    <div className="issue-embed cursor-pointer space-y-2 rounded-lg border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-2xs p-3 px-4 my-2">
+    <div className="issue-embed cursor-pointer space-y-2 rounded-lg border border-strong bg-surface-1 shadow-custom-shadow-2xs p-3 px-4 my-2">
       <IssueIdentifier
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueIdentifier={issueDetails?.sequenceId?.toString() ?? ""}
       />
-      <h4 className="!text-lg !font-medium !mt-2 line-clamp-2 break-words">{issueDetails?.name}</h4>
+      <h4 className="!text-16 !font-medium !mt-2 line-clamp-2 break-words">{issueDetails?.name}</h4>
     </div>
   );
 }

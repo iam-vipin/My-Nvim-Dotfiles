@@ -2,7 +2,6 @@
 import { observer } from "mobx-react";
 import type { IWorkspace } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -18,17 +17,15 @@ export const SubscriptionPill = observer(function SubscriptionPill(props: TProps
   const subscriptionName = getSubscriptionName(
     workspace?.current_plan ?? subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE
   );
-  const subscriptionColor = getSubscriptionTextAndBackgroundColor(
-    workspace?.current_plan ?? subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE
-  );
+  const isOnFreePlan = workspace?.current_plan === EProductSubscriptionEnum.FREE;
   const isOnTrial = workspace ? workspace?.is_on_trial : getIsInTrialPeriod(false);
 
   return (
     <div
-      className={cn(
-        "rounded bg-custom-background-80 px-2 py-[1px] text-xs font-medium text-custom-text-300",
-        subscriptionColor
-      )}
+      className={cn("rounded-sm px-1.5 py-1 text-caption-sm-medium", {
+        "bg-plans-brand-subtle text-plans-brand-primary": !isOnFreePlan,
+        "bg-plans-neutral-subtle text-plans-neutral-primary": isOnFreePlan,
+      })}
     >
       <h1>
         {subscriptionName}

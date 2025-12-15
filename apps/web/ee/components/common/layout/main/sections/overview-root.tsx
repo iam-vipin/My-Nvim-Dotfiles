@@ -13,7 +13,7 @@ export function OverviewSection(props: TOverviewSectionProps) {
   return (
     <SectionWrapper>
       <div className="flex items-center">
-        <span className="text-base text-custom-text-300 font-medium">{title}</span>
+        <span className="text-14 text-tertiary font-medium">{title}</span>
       </div>
       <>{children}</>
     </SectionWrapper>

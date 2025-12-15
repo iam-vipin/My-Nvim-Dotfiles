@@ -30,18 +30,18 @@ export const RequestWorkItemsListCollapsible = observer(function RequestWorkItem
         <>
           <div className="flex items-center gap-2">
             <DropdownIcon
-              className={cn("size-2 text-custom-text-200 hover:text-custom-text-200 duration-300", {
+              className={cn("size-2 text-secondary hover:text-secondary duration-300", {
                 "-rotate-90": !isOpen,
               })}
             />
-            <div className="text-sm text-custom-text-300 font-medium">
+            <div className="text-12 text-tertiary font-medium">
               {t("customers.linked_work_items.label")}{" "}
-              <span className="text-custom-text-400 text-sm">{workItemIds.length}</span>
+              <span className="text-placeholder text-12">{workItemIds.length}</span>
             </div>
           </div>
           {isEditable && (
             <div
-              className="text-custom-text-100"
+              className="text-primary"
               onClick={(e) => {
                 e.stopPropagation();
                 openWorkItemModal();

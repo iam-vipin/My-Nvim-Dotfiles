@@ -56,9 +56,7 @@ export const ConfigureJiraSelectProject = observer(function ConfigureJiraSelectP
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">
-        {t("importers.select_service_project", { serviceName: "Jira" })}
-      </div>
+      <div className="text-13 text-secondary">{t("importers.select_service_project", { serviceName: "Jira" })}</div>
       {isLoading && (!jiraProjects || jiraProjects.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />

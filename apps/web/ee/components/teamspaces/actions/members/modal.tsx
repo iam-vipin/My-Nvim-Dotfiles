@@ -9,7 +9,8 @@ import { ChevronDownIcon, CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
-import { Avatar, Button, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Avatar, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -154,17 +155,20 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
       className="p-4"
     >
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">Add coworkers, clients, and consultants</h3>
+        <h3 className="text-h6-medium leading-6 text-primary">Add coworkers, clients, and consultants</h3>
         <div className="mb-3 space-y-4">
           {memberIdsToInvite.map((memberId, index) => {
             const selectedMember = getWorkspaceMemberDetails(memberId);
             return (
-              <div key={memberId} className="group mb-1 flex items-center justify-between gap-x-4 text-sm w-full">
+              <div
+                key={memberId}
+                className="group mb-1 flex items-center justify-between gap-x-4 text-body-xs-regular w-full"
+              >
                 <div className="flex flex-col gap-1 flex-grow w-full">
                   <CustomSearchSelect
                     value={memberId}
                     customButton={
-                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 px-3 py-1.5 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
+                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-1.5 text-left text-body-xs-regular text-secondary shadow-sm duration-300 hover:bg-layer-1-hover hover:text-primary focus:outline-none">
                         {memberId && memberId !== "" ? (
                           <div className="flex items-center gap-2">
                             <Avatar
@@ -203,7 +207,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
                         className="place-items-center self-center rounded"
                         onClick={() => setMemberIdsToInvite(memberIdsToInvite.filter((_, i) => i !== index))}
                       >
-                        <CloseIcon className="h-4 w-4 text-custom-text-200" />
+                        <CloseIcon className="h-4 w-4 text-secondary" />
                       </button>
                     </div>
                   )}
@@ -216,19 +220,18 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
       <div className="mt-5 flex items-center justify-between gap-2">
         <button
           type="button"
-          className="flex items-center gap-1.5 bg-transparent py-2 pr-3 text-sm font-medium text-custom-primary outline-custom-primary"
+          className="flex items-center gap-1.5 bg-transparent py-2 pr-3 text-body-xs-medium text-accent-primary outline-accent-strong"
           onClick={() => setMemberIdsToInvite([...memberIdsToInvite, ""])}
         >
           <Plus className="h-4 w-4" />
           Add another
         </button>
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClearAndClose}>
+          <Button variant="secondary" onClick={handleModalClearAndClose}>
             Cancel
           </Button>
           <Button
             variant="primary"
-            size="sm"
             type="button"
             loading={isSubmitting}
             disabled={isButtonDisabled}

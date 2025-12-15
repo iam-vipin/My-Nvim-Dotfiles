@@ -11,7 +11,7 @@ export function CommentItem({ comment }: { comment: IWorkspaceCommentEnhancedSea
     <div className="space-y-1">
       <div className="flex items-center gap-2">
         <div className="flex gap-2 items-center truncate">
-          <span className="text-custom-text-200 font-semibold">{userDetails?.display_name}</span>
+          <span className="text-secondary font-semibold">{userDetails?.display_name}</span>
           <span>commented on</span>
           <div className="flex gap-2 truncate">
             <IssueIdentifier
@@ -20,13 +20,12 @@ export function CommentItem({ comment }: { comment: IWorkspaceCommentEnhancedSea
               issueTypeId={comment.issue_type_id}
               issueSequenceId={comment.issue_sequence_id}
               size="xs"
-              textContainerClassName="text-xs"
             />
-            <span className="text-custom-text-200 truncate">{comment.issue_name}</span>
+            <span className="text-secondary truncate">{comment.issue_name}</span>
           </div>
         </div>
       </div>
-      <div className="text-custom-text-200 border-l border-custom-border-400 pl-2">{sanitizeHTML(comment.comment)}</div>
+      <div className="text-secondary border-l border-strong-1 pl-2">{sanitizeHTML(comment.comment)}</div>
     </div>
   );
 }

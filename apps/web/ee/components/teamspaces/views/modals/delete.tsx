@@ -76,9 +76,8 @@ export const DeleteTeamspaceViewModal = observer(function DeleteTeamspaceViewMod
       title="Delete view"
       content={
         <>
-          Are you sure you want to delete view-{" "}
-          <span className="break-all font-medium text-custom-text-100">{data?.name}</span>? All of the data related to
-          the view will be permanently removed. This action cannot be undone.
+          Are you sure you want to delete view- <span className="break-all font-medium text-primary">{data?.name}</span>
+          ? All of the data related to the view will be permanently removed. This action cannot be undone.
         </>
       }
     />

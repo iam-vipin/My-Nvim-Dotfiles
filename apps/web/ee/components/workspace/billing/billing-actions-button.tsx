@@ -19,9 +19,13 @@ export const BillingActionsButton = observer(function BillingActionsButton(props
       {isSeatManagementEnabled && canPerformWorkspaceAdminActions && (
         <CustomMenu
           customButton={
-            <Button variant="neutral-primary" size="sm" className="flex items-center justify-center gap-1">
+            <Button
+              variant="secondary"
+              size="lg"
+              className="flex items-center justify-center gap-1"
+              appendIcon={<ChevronDownIcon />}
+            >
               Manage seats
-              <ChevronDownIcon className="h-3 w-3" />
             </Button>
           }
           placement="bottom-end"

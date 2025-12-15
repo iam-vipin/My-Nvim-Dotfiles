@@ -46,7 +46,6 @@ import { ProjectTemplateLoader } from "./loader";
 import { ProjectDetails } from "./project-details";
 import { ProjectStates } from "./states";
 import { ProjectWorkItemTypes } from "./work-item-types/root";
-import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 
 export enum EProjectFormOperation {
   CREATE = "create",
@@ -413,7 +412,7 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
               }}
             />
           </div>
-          <div className="border-t border-custom-border-100 size-full">
+          <div className="border-t border-subtle size-full">
             <div className="w-full max-w-4xl py-page-y">
               {/* Project Details Section */}
               <div>
@@ -470,8 +469,7 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
               {/* Form Actions */}
               <div className="flex items-center justify-end gap-2 pt-8">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                   disabled={isSubmitting}
@@ -482,7 +480,6 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
                 <Button
                   variant="primary"
                   type="submit"
-                  size="sm"
                   className={cn("shadow-sm")}
                   loading={isSubmitting}
                   disabled={isSubmitting}

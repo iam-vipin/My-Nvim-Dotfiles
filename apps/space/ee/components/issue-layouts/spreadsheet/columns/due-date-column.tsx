@@ -15,7 +15,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
   const { issue } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <IssueBlockDate
         due_date={issue.target_date ?? undefined}
         stateId={issue.state_id ?? undefined}

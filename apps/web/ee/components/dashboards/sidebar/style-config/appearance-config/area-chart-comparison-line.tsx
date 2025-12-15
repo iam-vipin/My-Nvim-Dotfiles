@@ -20,8 +20,8 @@ export function AreaChartComparisonLineAppearanceConfig(props: Props) {
   const { control } = useFormContext<TDashboardWidget>();
 
   return (
-    <div className="flex-shrink-0 space-y-1 text-sm">
-      <h6 className="font-medium text-custom-text-200">{t("dashboards.widget.common.comparison_line_appearance")}</h6>
+    <div className="flex-shrink-0 space-y-1 text-13">
+      <h6 className="font-medium text-secondary">{t("dashboards.widget.common.comparison_line_appearance")}</h6>
       <Controller
         control={control}
         name="config.line_color"

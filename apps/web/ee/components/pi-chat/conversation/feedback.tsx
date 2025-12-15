@@ -28,12 +28,13 @@ export const Feedback = observer(function Feedback(props: TProps) {
   const { isWorkspaceAuthorized, sendFeedback, regenerateAnswer } = usePiChat();
   // handlers
   const handleCopyLink = () => {
-    copyTextToClipboard(answer).then(() => {
+    void copyTextToClipboard(answer).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Response copied!",
         message: "Response to clipboard.",
       });
+      return;
     });
   };
   const handleFeedback = async (feedback: EFeedback, feedbackMessage?: string) => {
@@ -44,7 +45,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
         title: "Feedback sent!",
         message: "Feedback sent!",
       });
-    } catch (e) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Feedback failed!",
@@ -65,7 +66,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
     <div className="flex gap-4">
       {/* Copy */}
       <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
-        <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-custom-text-300" />
+        <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-icon-secondary" />
       </Tooltip>
 
       {/* Good response */}
@@ -75,12 +76,14 @@ export const Feedback = observer(function Feedback(props: TProps) {
             className={cn({
               "cursor-default": feedback === EFeedback.POSITIVE,
             })}
-            onClick={() => !feedback && handleFeedback(EFeedback.POSITIVE)}
+            onClick={() => {
+              if (!feedback) void handleFeedback(EFeedback.POSITIVE);
+            }}
           >
             <ThumbsUp
               size={16}
               fill={feedback === EFeedback.POSITIVE ? "currentColor" : "none"}
-              className="my-auto text-custom-text-300 transition-colors	"
+              className="my-auto text-icon-secondary transition-colors	"
             />
           </button>
         </Tooltip>
@@ -98,7 +101,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
             <ThumbsDown
               size={16}
               fill={feedback === EFeedback.NEGATIVE ? "currentColor" : "none"}
-              className="my-auto text-custom-text-300 transition-colors	"
+              className="my-auto text-icon-secondary transition-colors	"
             />
           </button>
         </Tooltip>
@@ -106,20 +109,20 @@ export const Feedback = observer(function Feedback(props: TProps) {
       <FeedbackModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}
-        onSubmit={(feedbackMessage) => handleFeedback(EFeedback.NEGATIVE, feedbackMessage)}
+        onSubmit={(feedbackMessage) => void handleFeedback(EFeedback.NEGATIVE, feedbackMessage)}
       />
 
       {/* Rewrite */}
       {isLatest && (
         <Tooltip tooltipContent="Rewrite" position="bottom" className="mb-4">
-          <button onClick={handleRewrite}>
-            <Repeat2 strokeWidth={1.5} size={20} className="my-auto text-custom-text-300 transition-colors" />
+          <button onClick={() => void handleRewrite()}>
+            <Repeat2 strokeWidth={1.5} size={20} className="my-auto text-icon-secondary transition-colors" />
           </button>
         </Tooltip>
       )}
 
       {/* Convert to page */}
-      <div className="flex text-sm font-medium gap-1 cursor-pointer">
+      <div className="flex text-13 font-medium gap-1 cursor-pointer">
         <Tooltip
           tooltipContent={isWorkspaceAuthorized ? "Convert to page" : "Authorize workspace to convert to page"}
           position="bottom"
@@ -128,7 +131,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
           <button onClick={() => isWorkspaceAuthorized && handleConvertToPage?.()}>
             <FilePlus2
               size={16}
-              className={cn("my-auto text-custom-text-300 transition-colors", {
+              className={cn("my-auto text-icon-secondary transition-colors", {
                 "cursor-not-allowed text-custom-text-400": !isWorkspaceAuthorized,
               })}
             />

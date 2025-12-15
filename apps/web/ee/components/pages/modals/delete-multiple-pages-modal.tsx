@@ -115,20 +115,20 @@ export const DeleteMultiplePagesModal = observer(function DeleteMultiplePagesMod
       title={isMultiplePages ? "Delete pages" : "Delete page"}
       content={
         <div className="space-y-5">
-          <p className="text-sm text-custom-text-200">
+          <p className="text-13 text-secondary">
             {isMultiplePages
               ? "The following pages will be deleted permanently along with their sub pages. This action cannot be undone."
               : "The following page will be deleted permanently. This action cannot be undone."}
           </p>
 
           <div className="max-h-[120px] overflow-y-auto vertical-scrollbar scrollbar-sm">
-            <ul className="text-sm text-custom-text-100 rounded-md border border-custom-border-200 ">
+            <ul className="text-13 text-primary rounded-md border border-subtle-1 ">
               {pages.map((page) => (
                 <li
                   key={page.id}
-                  className="flex items-center gap-3 px-3 py-2.5 border-b last:border-b-0 border-custom-border-200 hover:bg-custom-background-80"
+                  className="flex items-center gap-3 px-3 py-2.5 border-b last:border-b-0 border-subtle-1 hover:bg-layer-1"
                 >
-                  <div className="flex items-center justify-center flex-shrink-0 w-5 h-5 text-custom-text-300">
+                  <div className="flex items-center justify-center flex-shrink-0 w-5 h-5 text-tertiary">
                     {page.logo_props?.in_use ? (
                       <Logo logo={page.logo_props} size={14} type="lucide" />
                     ) : (
@@ -136,14 +136,14 @@ export const DeleteMultiplePagesModal = observer(function DeleteMultiplePagesMod
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-custom-text-100 truncate">{getPageName(page.name)}</p>
+                    <p className="text-13 font-medium text-primary truncate">{getPageName(page.name)}</p>
                   </div>
                 </li>
               ))}
             </ul>
           </div>
           {isMultiplePages && (
-            <p className="text-xs text-custom-text-400 italic">`Total: ${pages.length} pages will be deleted`</p>
+            <p className="text-11 text-placeholder italic">`Total: ${pages.length} pages will be deleted`</p>
           )}
         </div>
       }

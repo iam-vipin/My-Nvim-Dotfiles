@@ -96,14 +96,14 @@ export function ProjectStateForm(props: TProjectStateForm) {
           value={formData?.description}
           onChange={(e) => handleFormData("description", e.target.value)}
           hasError={(errors && Boolean(errors.description)) || false}
-          className="w-full text-sm min-h-14 resize-none"
+          className="w-full text-13 min-h-14 resize-none"
         />
 
         <div className="flex gap-2 items-center">
-          <Button type="submit" variant="primary" size="sm" disabled={buttonDisabled}>
+          <Button type="submit" variant="primary" disabled={buttonDisabled}>
             {buttonTitle}
           </Button>
-          <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
+          <Button type="button" variant="secondary" disabled={buttonDisabled} onClick={onCancel}>
             {t("cancel")}
           </Button>
         </div>

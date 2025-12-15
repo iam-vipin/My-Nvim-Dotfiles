@@ -56,7 +56,7 @@ export const TeamspacePageDetailHeader = observer(function TeamspacePageDetailHe
 
   function BreadcrumbSeparator() {
     return (
-      <div className="flex items-center px-2 text-custom-text-300">
+      <div className="flex items-center px-2 text-tertiary">
         <ChevronRightIcon className="size-3" />
       </div>
     );
@@ -91,7 +91,7 @@ export const TeamspacePageDetailHeader = observer(function TeamspacePageDetailHe
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label="Teamspaces"
-                  icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<TeamsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -115,7 +115,7 @@ export const TeamspacePageDetailHeader = observer(function TeamspacePageDetailHe
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/pages`}
                   label="Pages"
-                  icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -124,7 +124,7 @@ export const TeamspacePageDetailHeader = observer(function TeamspacePageDetailHe
                 {isParentPagesLoading ? (
                   <div className="flex items-center">
                     <div className="flex items-center animate-pulse">
-                      <div className="h-4 w-24 bg-custom-background-80 rounded" />
+                      <div className="h-4 w-24 bg-layer-1 rounded" />
                     </div>
                   </div>
                 ) : (
@@ -182,7 +182,7 @@ export const TeamspacePageDetailHeader = observer(function TeamspacePageDetailHe
                   title={getPageName(page?.name)}
                   icon={
                     <Breadcrumbs.Icon>
-                      <PageIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                      <PageIcon className="size-4 flex-shrink-0 text-tertiary" />
                     </Breadcrumbs.Icon>
                   }
                   isLast
@@ -194,7 +194,7 @@ export const TeamspacePageDetailHeader = observer(function TeamspacePageDetailHe
       </Header.LeftItem>
       <Header.RightItem>
         <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
-        <CollaboratorsList page={page} className="bottom-1" />
+        <CollaboratorsList page={page} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>

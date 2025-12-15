@@ -85,7 +85,7 @@ export const CustomerWorkItem = observer(function CustomerWorkItem(props: TProps
         href={workItemLink}
         onClick={() => handleWorkItemPeekOverview(workItem)}
       >
-        <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-custom-background-90">
+        <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-layer-1">
           <div className="flex w-full truncate cursor-pointer items-center gap-3">
             <div
               className="h-2 w-2 flex-shrink-0 rounded-full"
@@ -100,14 +100,14 @@ export const CustomerWorkItem = observer(function CustomerWorkItem(props: TProps
                   issueTypeId={workItem.type_id}
                   projectIdentifier={projectDetail.identifier}
                   issueSequenceId={workItem.sequence_id}
-                  textContainerClassName="text-xs text-custom-text-200"
+                  variant="secondary"
                 />
               )}
             </div>
-            <span className="w-full truncate text-sm text-custom-text-100">{workItem.name}</span>
+            <span className="w-full truncate text-13 text-primary">{workItem.name}</span>
           </div>
           <div
-            className="flex-shrink-0 text-sm"
+            className="flex-shrink-0 text-13"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -120,7 +120,7 @@ export const CustomerWorkItem = observer(function CustomerWorkItem(props: TProps
               workItemOperations={workItemOperations}
             />
           </div>
-          <div className="flex-shrink-0 text-sm">
+          <div className="flex-shrink-0 text-13">
             <CustomMenu placement="bottom-end" ellipsis>
               <CustomMenu.MenuItem onClick={handleCopyWorkItemLink}>
                 <div className="flex items-center gap-2">

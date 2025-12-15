@@ -28,7 +28,8 @@ export const SEARCH_RESULTS_GROUPS_MAP_EXTENDED: TSearchResultsGroupsMapExtended
           issueTypeId={epic.type_id}
           projectIdentifier={epic.project__identifier}
           issueSequenceId={epic.sequence_id}
-          textContainerClassName="text-xs"
+          size="xs"
+          variant="secondary"
         />{" "}
         {epic.name}
       </div>

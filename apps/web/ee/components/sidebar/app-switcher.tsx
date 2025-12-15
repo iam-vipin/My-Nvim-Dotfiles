@@ -36,7 +36,7 @@ export const SidebarAppSwitcher = observer(function SidebarAppSwitcher() {
   if (!isWorkspacePagesEnabled) return null;
 
   return (
-    <div className="flex items-center gap-0.5 rounded-md p-0.5 bg-custom-sidebar-background-80/50 mb-4">
+    <div className="flex items-center gap-0.5 rounded-md p-0.5 bg-layer-1/50 mb-4">
       {APPS_LIST.map((app) => {
         const isSelected = (app.key === "pages" && isPagesApp) || (app.key === "projects" && !isPagesApp);
 
@@ -45,10 +45,10 @@ export const SidebarAppSwitcher = observer(function SidebarAppSwitcher() {
             key={app.key}
             href={`/${workspaceSlug}${app.href}`}
             className={cn(
-              "w-1/2 rounded flex items-center justify-center gap-2 text-sm font-medium text-center py-2 px-6",
+              "w-1/2 rounded-sm flex items-center justify-center gap-2 text-13 font-medium text-center py-2 px-6",
               {
-                "bg-custom-sidebar-background-100 border-[0.5px] border-custom-border-300": isSelected,
-                "hover:bg-custom-sidebar-background-80": !isSelected,
+                "bg-surface-1 border-[0.5px] border-subtle-1": isSelected,
+                "hover:bg-layer-1": !isSelected,
               }
             )}
           >

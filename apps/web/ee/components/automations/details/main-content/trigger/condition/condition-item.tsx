@@ -44,14 +44,14 @@ export const AutomationDetailsMainContentTriggerConditionItem = observer(
     if (!isFilterEnabled) return null;
 
     return (
-      <div className="flex items-center gap-2 flex-wrap text-xs text-custom-text-300">
+      <div className="flex items-center gap-2 flex-wrap text-11 text-custom-text-300">
         {config.icon && (
           <span className="shrink-0 transition-transform duration-200 ease-in-out">
             <config.icon className="size-3.5" />
           </span>
         )}
         <span className="shrink-0 truncate font-medium">{config.label}</span>
-        <span className="shrink-0 font-mono p-0.5 bg-custom-background-80 uppercase rounded-sm font-medium">
+        <span className="shrink-0 font-mono p-0.5 bg-layer-1 uppercase rounded-sm font-medium">
           {config.getLabelForOperator(selectedOperatorOption)}
         </span>
         {/* TODO: Handle date values */}

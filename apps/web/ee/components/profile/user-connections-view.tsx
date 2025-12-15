@@ -48,8 +48,8 @@ export const UserConnectionsView = observer(function UserConnectionsView() {
           <>
             <div className="w-full py-6 sm:gap-16">
               <div className="col-span-12">
-                <h4 className="text-lg font-medium text-custom-text-100">Connect Account</h4>
-                <p className="text-sm text-custom-text-200">
+                <h4 className="text-16 font-medium text-primary">Connect Account</h4>
+                <p className="text-13 text-secondary">
                   Connecting personal account unlocks new possibilities with connected workspace integrations.
                 </p>
               </div>
@@ -63,9 +63,9 @@ export const UserConnectionsView = observer(function UserConnectionsView() {
           </>
         ) : (
           <div className="w-full py-6 sm:gap-16">
-            <div className="flex gap-2 items-center col-span-12 p-4 border border-custom-border-100 rounded-md">
-              <Grid2x2X size={16} className="text-custom-primary-300" />
-              <p className="text-sm text-custom-text-200 col-span-12 font-medium">
+            <div className="flex gap-2 items-center col-span-12 p-4 border border-subtle rounded-md">
+              <Grid2x2X size={16} className="text-accent-secondary" />
+              <p className="text-13 text-secondary col-span-12 font-medium">
                 No integration is currently connected to the selected workspace.
               </p>
             </div>

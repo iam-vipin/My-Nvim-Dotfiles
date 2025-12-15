@@ -29,7 +29,7 @@ function AutomationDetailsPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="size-full flex overflow-hidden">
+      <div className="size-full flex overflow-hidden bg-surface-2">
         <AutomationDetailsMainContentRoot automationId={automationId} />
         <AutomationDetailsSidebarRoot automationId={automationId} />
       </div>

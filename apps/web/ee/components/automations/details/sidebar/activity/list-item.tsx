@@ -30,12 +30,12 @@ export const AutomationDetailsSidebarActivityListItem = observer(function Automa
 
   return (
     <div
-      className={cn("relative flex items-center gap-3 text-xs py-2", {
+      className={cn("relative flex items-center gap-3 text-11 py-2", {
         "pt-0": isFirst,
         "pb-0": isLast,
       })}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
+      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-layer-1" aria-hidden />
       {isRunHistory ? (
         <AutomationDetailsSidebarActivityRunHistoryItem automationId={automationId} activityId={activityId} />
       ) : (

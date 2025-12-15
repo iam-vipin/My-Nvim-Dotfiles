@@ -12,7 +12,7 @@ type TEpicActivityProps = {
   ends: "top" | "bottom" | undefined;
 };
 
-const commonIconClassName = "h-3 w-3 flex-shrink-0 text-custom-text-300";
+const commonIconClassName = "h-3 w-3 flex-shrink-0 text-tertiary";
 
 export const EpicActivity = observer(function EpicActivity(props: TEpicActivityProps) {
   const { activityId, ends } = props;
@@ -41,7 +41,7 @@ export const EpicActivity = observer(function EpicActivity(props: TEpicActivityP
         ) : (
           <>
             converted{" "}
-            <span className="text-custom-text-100 font-medium">{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+            <span className="text-primary font-medium">{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
             to work item.
           </>
         )}

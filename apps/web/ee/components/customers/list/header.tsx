@@ -39,7 +39,7 @@ export const CustomersListHeader = observer(function CustomersListHeader() {
               component={
                 <BreadcrumbLink
                   label={t("customers.label", { count: 2 })} // count for pluralization
-                  icon={<CustomersIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<CustomersIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -48,7 +48,8 @@ export const CustomersListHeader = observer(function CustomersListHeader() {
             <CustomerSearch />
             {hasAdminLevelPermissions && (
               <Button
-                size="sm"
+                variant="primary"
+                size="lg"
                 onClick={() => toggleCreateCustomerModal({ isOpen: true, customerId: undefined })}
                 className="items-center gap-1"
                 data-ph-element={CUSTOMER_TRACKER_ELEMENTS.CREATE_CUSTOMER}

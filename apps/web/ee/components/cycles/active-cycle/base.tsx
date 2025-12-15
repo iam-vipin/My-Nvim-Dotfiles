@@ -44,8 +44,8 @@ export const ActiveCycleBase = observer(function ActiveCycleBase(props: IActiveC
 
   return (
     <>
-      <div className="flex flex-shrink-0 flex-col border-b border-custom-border-200">
-        <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+      <div className="flex flex-shrink-0 flex-col border-b border-subtle-1">
+        <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle-1 bg-layer-1 cursor-pointer">
           <CycleProgressHeader
             cycleDetails={cycleDetails.cycle}
             progress={cycleDetails.cycleProgress}

@@ -106,13 +106,13 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
             <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
               <button
                 className={cn(
-                  "group/projects flex flex-shrink-0 items-center gap-1 text-xs text-custom-text-200 py-1 px-2 border-[0.5px] border-custom-border-400 rounded transition-[width] ease-linear duration-700",
+                  "group/projects flex flex-shrink-0 items-center gap-1 text-caption-sm-medium text-secondary py-1 px-2 border-[0.5px] border-strong-1 rounded-sm transition-[width] ease-linear duration-700",
                   !isEditingAllowed && "cursor-not-allowed"
                 )}
                 onClick={open}
                 data-ph-element={trackerElement}
               >
-                <BriefcaseIcon className="size-3.5 text-custom-text-300" />
+                <BriefcaseIcon className="size-3.5 text-tertiary" />
                 {!areProjectsPresent && "Link a project"}
                 {areProjectsPresent && (
                   <>
@@ -132,8 +132,7 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
               <div>
                 <Button
                   variant="primary"
-                  size="sm"
-                  className="flex-shrink-0 mt-2 text-xs"
+                  className="flex-shrink-0 mt-2 text-caption-sm-medium"
                   onClick={open}
                   disabled={!isEditingAllowed}
                   data-ph-element={trackerElement}

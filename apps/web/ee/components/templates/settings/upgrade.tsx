@@ -31,17 +31,14 @@ export const TemplatesUpgrade = observer(function TemplatesUpgrade(props: TTempl
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-            !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong": !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="flex flex-col w-full xl:max-w-[360px] gap-y-4">
-            <div className="text-xl font-semibold">{t("templates.empty_state.upgrade.title")}</div>
-            <div className="font-medium text-custom-text-300 text-sm">
-              {t("templates.empty_state.upgrade.description")}
-            </div>
-            <div className="font-medium text-custom-text-300 text-sm">
+            <div className="text-h5-semibold">{t("templates.empty_state.upgrade.title")}</div>
+            <div className="text-body-xs-medium text-tertiary">{t("templates.empty_state.upgrade.description")}</div>
+            <div className="text-body-xs-medium text-tertiary">
               {t("templates.empty_state.upgrade.sub_description")}
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
@@ -49,7 +46,7 @@ export const TemplatesUpgrade = observer(function TemplatesUpgrade(props: TTempl
               <Link
                 target="_blank"
                 href="https://plane.so/contact"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+                className={"bg-transparent underline text-body-xs-medium text-accent-secondary my-auto"}
               >
                 {t("common.upgrade_cta.talk_to_sales")}
               </Link>

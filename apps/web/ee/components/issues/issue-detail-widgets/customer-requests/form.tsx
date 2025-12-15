@@ -216,7 +216,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
       <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXXL}>
         <SourceCreateUpdateModal id={workItemId} setLinkData={setLink} preloadedData={{ url: link }} />
         <div className="p-4">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {data?.id ? t("customers.requests.update") : t("customers.requests.add")}
           </h3>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -238,7 +238,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                       )}
                     />
                   </div>
-                  <span className="text-xs text-red-500">{errors?.customer_id?.message}</span>
+                  <span className="text-11 text-red-500">{errors?.customer_id?.message}</span>
                 </div>
                 <div>
                   <Controller
@@ -260,11 +260,11 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                         onChange={onChange}
                         hasError={Boolean(errors.name)}
                         placeholder={t("customers.requests.form.name.placeholder")}
-                        className={"w-full text-base"}
+                        className={"w-full text-14"}
                       />
                     )}
                   />
-                  <span className="text-xs text-red-500">{errors?.name?.message}</span>
+                  <span className="text-11 text-red-500">{errors?.name?.message}</span>
                 </div>
                 <Controller
                   name="description_html"
@@ -286,7 +286,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                           ...payload,
                         })
                       }
-                      containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-custom-border-100"
+                      containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-subtle"
                       uploadFile={async (blockId, file) => {
                         try {
                           const { asset_id } = await uploadEditorAsset({
@@ -322,9 +322,8 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                 />
                 <div className="flex gap-2 flex-wrap items-center">
                   <Button
-                    variant="neutral-primary"
-                    size="sm"
-                    className="text-custom-text-200 bg-custom-background-90 text-sm"
+                    variant="secondary"
+                    className="text-secondary bg-layer-1 text-13"
                     onClick={() => toggleRequestSourceModal(workItemId)}
                   >
                     {link ? (
@@ -348,7 +347,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                 />
               )}
             </div>
-            <div className="border-t border-custom-border-200 flex justify-between items-center p-3">
+            <div className="border-t border-subtle-1 flex justify-between items-center p-3">
               <div>
                 {data?.id && data?.customer_id && (
                   <AddAttachmentButton
@@ -363,8 +362,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
               </div>
               <div className="flex gap-2">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   onClick={() => {
                     resetData();
                     handleClose();
@@ -372,7 +370,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                 >
                   {t("customers.create.cancel")}
                 </Button>
-                <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+                <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
                   {isSubmitting
                     ? data?.id
                       ? t("customers.update.loading")

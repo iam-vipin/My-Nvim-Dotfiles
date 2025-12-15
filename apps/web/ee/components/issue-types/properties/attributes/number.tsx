@@ -40,7 +40,7 @@ export const NumberAttributes = observer(function NumberAttributes(props: TNumbe
           ))}
         </div>
       )}
-      <div className="text-xs font-medium text-custom-text-300">
+      <div className="text-caption-sm-medium  text-tertiary">
         {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
       </div>
       <NumberValueInput
@@ -48,7 +48,7 @@ export const NumberAttributes = observer(function NumberAttributes(props: TNumbe
         value={numberPropertyDetail.default_value ?? []}
         onNumberValueChange={async (value) => onNumberDetailChange("default_value", value)}
         variant="create"
-        className="w-full text-sm bg-custom-background-100 border-[0.5px] rounded"
+        className="w-full text-body-xs-regular bg-surface-1 border-[0.5px] rounded"
         numberInputSize="xs"
         isDisabled={!!numberPropertyDetail.is_required}
       />

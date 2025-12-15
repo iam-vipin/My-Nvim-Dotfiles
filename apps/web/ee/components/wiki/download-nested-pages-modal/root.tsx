@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Button, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { ModalCore } from "@plane/ui";
 // plane web imports
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePage } from "@/plane-web/hooks/store";
@@ -35,9 +36,9 @@ export const DownloadNestedPagesModal = observer(function DownloadNestedPagesMod
     <ModalCore isOpen={isOpen} handleClose={onClose}>
       <div>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">Download nested pages data</h3>
+          <h3 className="text-18 font-medium text-secondary">Download nested pages data</h3>
           <div className="mt-2 space-y-4">
-            <p className="text-sm text-custom-text-200">
+            <p className="text-13 text-secondary">
               All the data from the nested pages listed below will be downloaded. You{"'"}ll receive an email with the
               files once ready. This may take 5{"'"}10 minutes.
             </p>
@@ -48,11 +49,11 @@ export const DownloadNestedPagesModal = observer(function DownloadNestedPagesMod
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+          <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={handleDownload} loading={isDownloading}>
+          <Button variant="primary" onClick={handleDownload} loading={isDownloading}>
             {isDownloading ? "Downloading" : "Download"}
           </Button>
         </div>

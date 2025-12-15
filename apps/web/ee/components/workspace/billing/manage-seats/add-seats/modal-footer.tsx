@@ -18,21 +18,21 @@ export function ModalFooter(props: TModalFooterProps) {
 
   return (
     <div
-      className={cn("p-5 flex items-center justify-end gap-2 border-t border-custom-border-200", {
+      className={cn("p-5 flex items-center justify-end gap-2 border-t border-subtle-1", {
         "justify-between": onPreviousStep,
       })}
     >
       {onPreviousStep && (
-        <Button variant="link-neutral" size="sm" className="flex gap-1" onClick={onPreviousStep}>
+        <Button variant="ghost" className="flex gap-1" onClick={onPreviousStep}>
           <ChevronLeftIcon className="size-3.5" />
           Go back
         </Button>
       )}
       <div className="flex items-center justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <Button variant="secondary" size="lg" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" onClick={onNext} loading={loading}>
+        <Button variant="primary" size="lg" onClick={onNext} loading={loading}>
           {loading ? loadingText : nextButtonText}
         </Button>
       </div>

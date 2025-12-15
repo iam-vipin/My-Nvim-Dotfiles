@@ -113,7 +113,7 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
             ? {
                 text: totalCount,
                 fill: "rgba(var(--color-text-100))",
-                className: "text-2xl font-semibold",
+                className: "text-20 font-semibold",
                 style: {
                   fontSize: ((height ?? 1) * 1.5) / totalCountDigits + "rem",
                 },

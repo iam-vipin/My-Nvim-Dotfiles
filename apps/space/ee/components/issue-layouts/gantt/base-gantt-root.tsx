@@ -85,7 +85,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
 
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
-      <div className="h-full w-full">
+      <div className="size-full">
         <GanttChartRoot
           border={false}
           title="Work items"

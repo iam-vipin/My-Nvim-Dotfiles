@@ -36,13 +36,13 @@ export function EstimateSwitchDropdown(props: TProps) {
 
   return (
     <Dropdown
-      buttonContainerClassName="text-left w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-100"
+      buttonContainerClassName="text-left w-full border border-subtle-1 rounded-sm px-3 py-2 bg-surface-1"
       buttonContent={(isOpen, value) => (
         <span className="flex-grow truncate flex justify-between items-center">
           {value ? (
             capitalize(value as string)
           ) : (
-            <span className="text-custom-text-400">{t("project_settings.estimates.select")}</span>
+            <span className="text-placeholder">{t("project_settings.estimates.select")}</span>
           )}
           {<ChevronDownIcon className={cn("h-3.5 w-3.5 flex-shrink-0 transition-transform", isOpen && "rotate-180")} />}
         </span>

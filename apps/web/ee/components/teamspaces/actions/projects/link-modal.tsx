@@ -95,7 +95,7 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
         {teamspace.logo_props?.in_use ? (
           <Logo logo={teamspace.logo_props} size={16} />
         ) : (
-          <TeamsIcon className="size-4 text-custom-text-300" />
+          <TeamsIcon className="size-4 text-tertiary" />
         )}
         <span className="max-w-[280px] truncate">{teamspace.name}</span>
       </>
@@ -108,13 +108,13 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedProjectIds} onChange={handleSelectedProjectChange}>
         <div className="px-4 pt-3 pb-2">
-          <h3 className="flex items-center gap-1.5 text-lg font-semibold text-custom-text-200 pb-2">
+          <h5 className="flex items-center gap-1.5 text-h5-semibold text-secondary pb-3">
             Link projects to {renderTeamspaceDetails()}
-          </h3>
-          <div className="flex items-center h-8 px-2 gap-2 border border-custom-border-200 rounded">
-            <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
+          </h5>
+          <div className="flex items-center h-8 px-2 gap-2 border border-subtle-1 rounded">
+            <Search className="flex-shrink-0 size-4 text-placeholder" aria-hidden="true" />
             <Combobox.Input
-              className="h-full w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+              className="h-full w-full border-0 bg-transparent text-body-xs-regular text-primary outline-none placeholder:text-placeholder focus:ring-0"
               placeholder="Search for projects"
               displayValue={() => ""}
               value={searchTerm}
@@ -130,16 +130,16 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
               return (
                 <div
                   key={projectDetails.id}
-                  className="group flex items-center gap-1.5 bg-custom-background-80 px-2 py-1 rounded cursor-pointer"
+                  className="group flex items-center gap-1.5 bg-layer-1 px-2 py-1 rounded-sm cursor-pointer"
                   onClick={() => {
                     handleSelectedProjectChange(selectedProjectIds.filter((id) => id !== projectDetails.id));
                   }}
                 >
                   <Logo logo={projectDetails.logo_props} size={14} />
-                  <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
+                  <p className="text-caption-sm-regular truncate text-tertiary group-hover:text-secondary transition-colors">
                     {projectDetails.identifier}
                   </p>
-                  <CloseIcon className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
+                  <CloseIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary transition-colors" />
                 </div>
               );
             })}
@@ -159,7 +159,7 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
             </div>
           ) : (
             <ul
-              className={cn("text-custom-text-100", {
+              className={cn("text-primary", {
                 "px-2.5": filteredProjectIds.length > 0,
               })}
             >
@@ -173,10 +173,10 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
                     value={projectDetails.id}
                     className={({ active }) =>
                       cn(
-                        "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-custom-text-200 transition-colors",
+                        "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-secondary transition-colors",
                         {
-                          "bg-custom-background-80": active,
-                          "text-custom-text-100": isProjectSelected,
+                          "bg-layer-1": active,
+                          "text-primary": isProjectSelected,
                         }
                       )
                     }
@@ -186,8 +186,8 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
                         <Checkbox checked={isProjectSelected} />
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
-                      <span className="flex-shrink-0 text-[10px]">{projectDetails.identifier}</span>
-                      <p className="text-sm truncate">{projectDetails.name}</p>
+                      <span className="flex-shrink-0 text-caption-xs-regular">{projectDetails.identifier}</span>
+                      <p className="text-body-xs-regular truncate">{projectDetails.name}</p>
                     </div>
                   </Combobox.Option>
                 );
@@ -204,13 +204,13 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
           )}
         >
           <div
-            className="flex items-start gap-2 px-4 py-3 text-sm text-custom-text-200 bg-custom-background-90 cursor-pointer"
+            className="flex items-start gap-2 px-4 py-3 text-body-xs-regular text-secondary bg-layer-1 cursor-pointer"
             onClick={() => setIsConfirmationChecked(!isConfirmationChecked)}
           >
             <Checkbox
               checked={isConfirmationChecked}
               className={cn("flex-shrink-0 mt-[1px]", {
-                "bg-custom-background-100": !isConfirmationChecked,
+                "bg-surface-1": !isConfirmationChecked,
               })}
             />
             <p className="select-none">
@@ -220,14 +220,14 @@ export const LinkProjectModal = observer(function LinkProjectModal(props: Props)
           </div>
         </div>
       </Combobox>
-      <div className="flex items-center justify-end gap-2 p-3 border-t border-custom-border-100">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="flex items-center justify-end gap-2 p-3 border-t border-subtle">
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {t("cancel")}
         </Button>
         <Button
           ref={moveButtonRef}
           variant="primary"
-          size="sm"
+          size="lg"
           onClick={handleSubmit}
           loading={isSubmitting}
           disabled={isButtonDisabled}

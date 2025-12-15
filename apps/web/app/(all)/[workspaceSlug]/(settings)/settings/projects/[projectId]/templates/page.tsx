@@ -67,7 +67,7 @@ function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             currentLevel={ETemplateLevel.PROJECT}
-            buttonSize="sm"
+            buttonSize="base"
             variant="settings"
           />
         }

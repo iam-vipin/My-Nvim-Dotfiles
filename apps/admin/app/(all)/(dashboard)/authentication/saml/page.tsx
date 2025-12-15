@@ -64,7 +64,7 @@ const InstanceSAMLAuthenticationPage = observer(function InstanceSAMLAuthenticat
     return (
       <div className="relative container mx-auto w-full h-full p-4 py-4 my-6 space-y-6 flex flex-col">
         <PageHeader title="Authentication - God Mode" />
-        <div className="text-center text-lg text-gray-500">
+        <div className="text-center text-16 text-gray-500">
           <p>Security Assertion Markup Language (SAML) authentication is not enabled for this instance.</p>
           <p>Activate any of your workspace to get this feature.</p>
         </div>
@@ -76,7 +76,7 @@ const InstanceSAMLAuthenticationPage = observer(function InstanceSAMLAuthenticat
     <>
       <PageHeader title="Authentication - God Mode" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
+        <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
             name="SAML"
             description="Authenticate your users via Security Assertion Markup Language

@@ -1,11 +1,10 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as LoaderIcon } from "lucide-react";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { getUpgradeButtonStyle, Loader } from "@plane/ui";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { Loader } from "@plane/ui";
+import { getSubscriptionName } from "@plane/utils";
 // plane web components
 import { PlanCard } from "@/plane-web/components/license";
 // plane web hooks
@@ -26,18 +25,16 @@ export const CloudFreePlanCard = observer(function CloudFreePlanCard(props: TClo
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
   const upgradeProductName = getSubscriptionName(upgradeProductType);
-  const upgradeButtonStyle =
-    getUpgradeButtonStyle(upgradeProductType, !!upgradeLoader) ?? getButtonStyling("primary", "lg", !!upgradeLoader);
 
   return (
     <PlanCard
       planVariant={EProductSubscriptionEnum.FREE}
       planDescription={
         <>
-          <div className="text-sm font-medium text-custom-text-200">
+          <div className="text-body-xs-medium text-secondary">
             12 members, unlimited projects, work items, cycles, modules, and pages
           </div>
-          <div className="text-sm font-medium text-custom-text-300">
+          <div className="text-body-xs-medium text-tertiary">
             Billable seats when you upgrade: {subscriptionDetail?.billable_members}
           </div>
         </>
@@ -49,20 +46,19 @@ export const CloudFreePlanCard = observer(function CloudFreePlanCard(props: TClo
               <Loader.Item height="30px" width="100%" />
             </Loader>
           ) : (
-            <button
-              className={cn(
-                upgradeButtonStyle,
-                "relative inline-flex items-center justify-center w-fit px-4 py-1 text-xs font-medium rounded-lg focus:outline-none"
-              )}
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-fit"
               tabIndex={-1}
               onClick={() => handleUpgrade(upgradeProductType)}
               disabled={!!upgradeLoader}
             >
-              {upgradeLoader === upgradeProductType ? "Redirecting to Stripe..." : `Upgrade to ${upgradeProductName}`}
-            </button>
+              {upgradeLoader === upgradeProductType ? "Redirecting to Stripe" : `Upgrade to ${upgradeProductName}`}
+            </Button>
           )}
           {subscriptionDetail?.is_trial_ended && (
-            <div className="px-2 text-center text-xs text-red-500 font-medium">Trial ended</div>
+            <div className="px-2 text-center text-caption-sm-medium text-danger-secondary">Trial ended</div>
           )}
           {subscriptionDetail?.is_trial_allowed && (
             <>
@@ -73,15 +69,16 @@ export const CloudFreePlanCard = observer(function CloudFreePlanCard(props: TClo
               ) : (
                 <>
                   <Button
-                    variant="link-neutral"
-                    size="sm"
+                    variant="ghost"
+                    size="lg"
                     onClick={() => handleTrial(upgradeProductType)}
-                    className="w-28"
                     disabled={!!trialLoader}
                   >
-                    <div className="w-3 h-3">
-                      {trialLoader === upgradeProductType && <LoaderIcon size={12} className="animate-spin" />}
-                    </div>
+                    {trialLoader === upgradeProductType && (
+                      <div className="w-3 h-3">
+                        <LoaderIcon size={12} className="animate-spin" />
+                      </div>
+                    )}
                     <span>Start free trial</span>
                   </Button>
                 </>

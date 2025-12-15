@@ -22,7 +22,7 @@ export const DisplayFiltersSelection = observer(function DisplayFiltersSelection
   };
 
   return (
-    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
+    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-subtle overflow-hidden overflow-y-auto px-2.5">
       {/* group by */}
       {isDisplayFilterEnabled("group_by") && (
         <div className="py-2">

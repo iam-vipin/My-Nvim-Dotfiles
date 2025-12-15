@@ -26,7 +26,7 @@ export const IssueStats = observer(function IssueStats(props: Props) {
   return (
     <div className={cn("flex gap-2 items-center", className)}>
       <CircularProgressIndicator size={size} percentage={progress} strokeWidth={3} />
-      <div className="text-xs my-auto w-auto overflow-hidden truncate ">
+      <div className="text-11 my-auto w-auto overflow-hidden truncate ">
         {showProgressText ? (epicStats?.total_issues ? `${completedIssues}/${epicStats?.total_issues}` : `0/0`) : ""}{" "}
         {showLabel && `Work items`}
       </div>

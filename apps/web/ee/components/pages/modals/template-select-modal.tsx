@@ -127,10 +127,10 @@ export const TemplateSelectModal = observer(function TemplateSelectModal(props: 
           value={template.id}
           className={({ active }) =>
             cn(
-              "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-custom-text-200 transition-colors",
+              "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-secondary transition-colors",
               {
-                "bg-custom-background-80": active,
-                "text-custom-text-100": isTemplateSelected,
+                "bg-layer-1": active,
+                "text-primary": isTemplateSelected,
               }
             )
           }
@@ -138,12 +138,12 @@ export const TemplateSelectModal = observer(function TemplateSelectModal(props: 
           <div className="flex items-center gap-2 truncate">
             <span className="flex-shrink-0 size-4 grid place-items-center">
               {isTemplateSelected ? (
-                <Check className="size-4 text-custom-text-100" />
+                <Check className="size-4 text-primary" />
               ) : (
-                <Shapes className="size-4 text-custom-text-100" />
+                <Shapes className="size-4 text-primary" />
               )}
             </span>
-            <p className="text-sm truncate">{template.name}</p>
+            <p className="text-13 truncate">{template.name}</p>
           </div>
         </Combobox.Option>
       );
@@ -154,7 +154,7 @@ export const TemplateSelectModal = observer(function TemplateSelectModal(props: 
   const renderTemplateList = useCallback(() => {
     const emptyState = renderEmptyState();
     if (emptyState) return emptyState;
-    return <ul className="px-2 text-custom-text-100">{filteredTemplates.map(renderTemplateOption)}</ul>;
+    return <ul className="px-2 text-primary">{filteredTemplates.map(renderTemplateOption)}</ul>;
   }, [filteredTemplates, renderEmptyState, renderTemplateOption]);
 
   return (
@@ -173,9 +173,9 @@ export const TemplateSelectModal = observer(function TemplateSelectModal(props: 
         }}
       >
         <div className="flex items-center gap-2 px-4">
-          <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
+          <Search className="flex-shrink-0 size-4 text-placeholder" aria-hidden="true" />
           <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+            className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder={t("common.search.placeholder")}
             displayValue={() => ""}
             value={searchTerm}
@@ -187,13 +187,12 @@ export const TemplateSelectModal = observer(function TemplateSelectModal(props: 
         </Combobox.Options>
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3">
-        <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose}>
           {t("common.cancel")}
         </Button>
         <Button
           ref={applyButtonRef}
           variant="primary"
-          size="sm"
           onClick={handleApplyTemplate}
           loading={isApplyingTemplate}
           disabled={!selectedTemplateId}

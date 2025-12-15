@@ -49,9 +49,9 @@ export const AutomationDetailsSidebarActivityRunHistoryItem = observer(
     return (
       <Disclosure
         as="div"
-        className="relative z-[4] w-full bg-custom-background-100 border border-custom-border-200 rounded-lg p-3"
+        className="relative z-[4] w-full bg-surface-1 border border-custom-border-200 rounded-lg p-3"
       >
-        <Disclosure.Button type="button" className="w-full flex items-center justify-between gap-2 text-xs text-left">
+        <Disclosure.Button type="button" className="w-full flex items-center justify-between gap-2 text-11 text-left">
           {({ open }) => (
             <>
               <div className="shrink-0 flex items-center gap-2">
@@ -77,7 +77,7 @@ export const AutomationDetailsSidebarActivityRunHistoryItem = observer(
               <div className="shrink-0 flex items-center gap-2">
                 <Tooltip
                   tooltipContent={
-                    <div className="text-xs font-medium text-custom-text-300">
+                    <div className="text-11 font-medium text-custom-text-300">
                       From{" "}
                       <span className="text-custom-text-100">
                         {renderFormattedDate(runDetails?.started_at ?? "")}{" "}
@@ -92,7 +92,7 @@ export const AutomationDetailsSidebarActivityRunHistoryItem = observer(
                     </div>
                   }
                 >
-                  <span className="shrink-0 bg-custom-background-80 p-1 rounded text-custom-text-200 flex items-center gap-1">
+                  <span className="shrink-0 bg-layer-1 p-1 rounded text-custom-text-200 flex items-center gap-1">
                     <Clock className="shrink-0 size-3" />
                     <span className="font-medium">{formatDuration(duration)}</span>
                   </span>
@@ -114,7 +114,7 @@ export const AutomationDetailsSidebarActivityRunHistoryItem = observer(
         <Disclosure.Panel as="div" className="pt-3">
           <hr className="mb-3 border-custom-border-200" />
           {runInitiator && (
-            <div className="space-y-1 text-xs font-medium">
+            <div className="space-y-1 text-11 font-medium">
               <p>{t("automations.activity.run_history.initiator")}</p>
               <div className="flex items-center gap-1">
                 <Avatar src={getFileURL(runInitiator.avatar_url)} name={runInitiator.display_name} />

@@ -25,9 +25,9 @@ export function OAuthRoot(props: TOAuthRoot) {
   return (
     <div className="relative space-y-6">
       <div className="mt-4 flex items-center pt-2">
-        <hr className="w-full border-custom-border-100" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
-        <hr className="w-full border-custom-border-100" />
+        <hr className="w-full border-subtle" />
+        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
+        <hr className="w-full border-subtle" />
       </div>
 
       <div className="space-y-2">

@@ -1,5 +1,15 @@
-import type { ReactNode } from "react";
-import { AlignLeft, ArrowRightLeft, Briefcase, CalendarDays, FileText, Link, Paperclip, Type } from "lucide-react";
+import type { FC, ReactNode } from "react";
+import {
+  AlignLeft,
+  ArrowRightLeft,
+  Briefcase,
+  CalendarDays,
+  FileText,
+  Link,
+  Network,
+  Paperclip,
+  Type,
+} from "lucide-react";
 import {
   CustomersIcon,
   EpicIcon,
@@ -46,30 +56,45 @@ export type TEpicActivityVerbs = TBaseActivityVerbs;
 export type TEpicActivityKeys = `${TEpicActivityFields}_${TEpicActivityVerbs}`;
 
 export type TEpicActivityDetails = {
-  icon: ReactNode;
+  icon: FC<{ className?: string }>;
   message: ReactNode;
   customUserName?: string;
+};
+
+// Helper to create a wrapper component for relation icons that need size parameter
+// TODO: update ISSUE_RELATION_OPTIONS constant icon type.
+const createRelationIconWrapper = (relationType: TIssueRelationTypes | undefined): FC<{ className?: string }> => {
+  return ({ className }) => {
+    if (!relationType) {
+      return <Network className={className} />;
+    }
+    const iconFn = ISSUE_RELATION_OPTIONS[relationType]?.icon;
+    if (!iconFn) {
+      return <Network className={className} />;
+    }
+    // h-3.5 = 14px, which matches the original size parameter
+    return <>{iconFn(14)}</>;
+  };
 };
 
 export type TEpicActivityDetailsHelperMap = {
   [key in TEpicActivityKeys]: (activity: TIssueActivity) => TEpicActivityDetails;
 };
 
-const commonIconClassName = "h-4 w-4 flex-shrink-0 text-custom-text-300";
-const commonTextClassName = "text-custom-text-100 font-medium";
+const commonTextClassName = "text-primary font-medium";
 
 // TODO: Add redirect link for relevant activities
 export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
   epic_created: () => ({
-    icon: <EpicIcon className={commonIconClassName} />,
+    icon: EpicIcon,
     message: <>created the epic.</>,
   }),
   epic_deleted: () => ({
-    icon: <EpicIcon className={commonIconClassName} />,
+    icon: EpicIcon,
     message: <>deleted the epic.</>,
   }),
   name_updated: (activity: TIssueActivity) => ({
-    icon: <Type className={commonIconClassName} />,
+    icon: Type,
     message: (
       <>
         renamed the epic to <span className={commonTextClassName}>{activity.new_value}</span>.
@@ -77,11 +102,11 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   description_updated: () => ({
-    icon: <AlignLeft className={commonIconClassName} />,
+    icon: AlignLeft,
     message: <>updated the description.</>,
   }),
   state_updated: (activity: TIssueActivity) => ({
-    icon: <StatePropertyIcon className={commonIconClassName} />,
+    icon: StatePropertyIcon,
     message: (
       <>
         set the state to <span className={commonTextClassName}>{activity.new_value}</span>.
@@ -89,7 +114,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   assignees_updated: (activity: TIssueActivity) => ({
-    icon: <MembersPropertyIcon className={commonIconClassName} />,
+    icon: MembersPropertyIcon,
     message: (
       <>
         {activity.old_value === "" ? `added a new assignee ` : `removed the assignee `}
@@ -98,7 +123,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   priority_updated: (activity: TIssueActivity) => ({
-    icon: <Briefcase className={commonIconClassName} />,
+    icon: Briefcase,
     message: (
       <>
         set the priority to <span className={commonTextClassName}>{activity.new_value}</span>
@@ -106,33 +131,33 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   start_date_updated: (activity: TIssueActivity) => ({
-    icon: <CalendarDays className={commonIconClassName} />,
+    icon: CalendarDays,
     message: (
       <>
         {activity.new_value ? `set the start date to ` : `removed the start date `}
         {activity.new_value && (
           <>
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-primary">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
       </>
     ),
   }),
   target_date_updated: (activity: TIssueActivity) => ({
-    icon: <CalendarDays className={commonIconClassName} />,
+    icon: CalendarDays,
     message: (
       <>
         {activity.new_value ? `set the due date to ` : `removed the due date `}
         {activity.new_value && (
           <>
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-primary">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
       </>
     ),
   }),
   labels_updated: (activity: TIssueActivity) => ({
-    icon: <LabelPropertyIcon className={commonIconClassName} />,
+    icon: LabelPropertyIcon,
     message: (
       <>
         {activity.old_value === "" ? `added a new label ` : `removed the label `}
@@ -148,7 +173,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   estimate_points_updated: (activity: TIssueActivity) => ({
-    icon: <EstimatePropertyIcon className={commonIconClassName} />,
+    icon: EstimatePropertyIcon,
     message: (
       <>
         {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
@@ -157,7 +182,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   estimate_categories_updated: (activity: TIssueActivity) => ({
-    icon: <EstimatePropertyIcon className={commonIconClassName} />,
+    icon: EstimatePropertyIcon,
     message: (
       <>
         {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
@@ -168,7 +193,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
   estimate_time_updated: (activity: TIssueActivity) => {
     const value = convertMinutesToHoursMinutesString(Number(activity.new_value));
     return {
-      icon: <EstimatePropertyIcon className={commonIconClassName} />,
+      icon: EstimatePropertyIcon,
       message: (
         <>
           {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
@@ -178,22 +203,22 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     };
   },
   relates_to_updated: (activity: TIssueActivity) => ({
-    icon: activity.field ? ISSUE_RELATION_OPTIONS[activity.field as TIssueRelationTypes]?.icon(14) : <></>,
+    icon: createRelationIconWrapper(activity.field as TIssueRelationTypes | undefined),
     message: (
       <>
         <span className={commonTextClassName}>
           {getRelationActivityContent(activity)}{" "}
           {activity.old_value === "" ? (
-            <span className="font-medium text-custom-text-100">{activity.new_value}.</span>
+            <span className="font-medium text-primary">{activity.new_value}.</span>
           ) : (
-            <span className="font-medium text-custom-text-100">{activity.old_value}.</span>
+            <span className="font-medium text-primary">{activity.old_value}.</span>
           )}
         </span>
       </>
     ),
   }),
   link_created: (activity: TIssueActivity) => ({
-    icon: <Link className={commonIconClassName} />,
+    icon: Link,
     message: (
       <>
         added{" "}
@@ -201,7 +226,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           href={`${activity.new_value}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
         >
           link
         </a>
@@ -209,7 +234,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   link_updated: (activity: TIssueActivity) => ({
-    icon: <Link className={commonIconClassName} />,
+    icon: Link,
     message: (
       <>
         updated the{" "}
@@ -217,7 +242,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           href={`${activity.old_value}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
         >
           link
         </a>
@@ -225,7 +250,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   link_deleted: (activity: TIssueActivity) => ({
-    icon: <Link className={commonIconClassName} />,
+    icon: Link,
     message: (
       <>
         removed this{" "}
@@ -233,7 +258,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           href={`${activity.old_value}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
         >
           link
         </a>
@@ -241,19 +266,19 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   attachment_created: () => ({
-    icon: <Paperclip className={commonIconClassName} />,
+    icon: Paperclip,
     message: <>uploaded a new attachment</>,
   }),
   attachment_updated: () => ({
-    icon: <Paperclip className={commonIconClassName} />,
+    icon: Paperclip,
     message: <>updated an attachment</>,
   }),
   attachment_deleted: () => ({
-    icon: <Paperclip className={commonIconClassName} />,
+    icon: Paperclip,
     message: <>removed an attachment</>,
   }),
   customer_request_created: (activity: TIssueActivity) => ({
-    icon: <CustomersIcon className={commonIconClassName} />,
+    icon: CustomersIcon,
     message: (
       <>
         added this epic to the customer request{" "}
@@ -261,7 +286,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
         >
           <span className="truncate">{activity.new_value}</span>
         </a>
@@ -269,7 +294,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   customer_request_deleted: (activity: TIssueActivity) => ({
-    icon: <CustomersIcon className={commonIconClassName} />,
+    icon: CustomersIcon,
     message: (
       <>
         removed this epic from the customer request{" "}
@@ -277,7 +302,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
         >
           <span className="truncate">{activity.old_value}</span>
         </a>
@@ -285,7 +310,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   customer_created: (activity: TIssueActivity) => ({
-    icon: <CustomersIcon className={commonIconClassName} />,
+    icon: CustomersIcon,
     message: (
       <>
         added this epic to the customer{" "}
@@ -293,7 +318,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
         >
           <span className="truncate">{activity.new_value}</span>
         </a>
@@ -301,7 +326,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   customer_deleted: (activity: TIssueActivity) => ({
-    icon: <CustomersIcon className={commonIconClassName} />,
+    icon: CustomersIcon,
     message: (
       <>
         removed this epic from the customer{" "}
@@ -309,7 +334,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
         >
           <span className="truncate">{activity.old_value}</span>
         </a>
@@ -317,7 +342,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   work_item_converted: (activity: TIssueActivity) => ({
-    icon: <ArrowRightLeft className={commonIconClassName} />,
+    icon: ArrowRightLeft,
     message: (
       <>
         converted{" "}
@@ -329,7 +354,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   epic_converted: (activity: TIssueActivity) => ({
-    icon: <ArrowRightLeft className={commonIconClassName} />,
+    icon: ArrowRightLeft,
 
     message: (
       <>
@@ -342,7 +367,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   page_added: (activity: TIssueActivity) => ({
-    icon: <FileText className={commonIconClassName} />,
+    icon: FileText,
     message: (
       <>
         added a new page <span className={commonTextClassName}>{getPageName(activity.new_value || "")}</span>.
@@ -350,7 +375,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   page_deleted: (activity: TIssueActivity) => ({
-    icon: <FileText className={commonIconClassName} />,
+    icon: FileText,
     message: (
       <>
         removed the page <span className={commonTextClassName}>{getPageName(activity.old_value || "")}</span>.

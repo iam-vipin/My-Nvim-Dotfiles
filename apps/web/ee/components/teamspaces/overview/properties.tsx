@@ -56,11 +56,11 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
         isOpen={isEmojiPickerOpen}
         handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
         label={
-          <div className="flex flex-shrink-0 size-12 items-center justify-center rounded-md bg-custom-background-90">
+          <div className="flex flex-shrink-0 size-12 items-center justify-center rounded-md bg-layer-1">
             {teamspace.logo_props ? (
               <Logo logo={teamspace.logo_props} size={24} />
             ) : (
-              <TeamsIcon className="size-6 text-custom-text-300" />
+              <TeamsIcon className="size-6 text-tertiary" />
             )}
           </div>
         }
@@ -95,7 +95,7 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
         containerClassName="-ml-3 border-none"
       />
       <div className="flex items-center justify-between gap-x-2 py-1.5">
-        <div className="flex items-center gap-x-2">
+        <div className="flex items-center gap-x-1.5">
           {teamLead && (
             <Tooltip tooltipContent={`${teamLead.first_name} ${teamLead.last_name} (Lead)`} position="bottom">
               <span className="flex-shrink-0 relative">
@@ -103,8 +103,7 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
                   key={teamLead.id}
                   name={teamLead.display_name}
                   src={getFileURL(teamLead.avatar_url)}
-                  size={26}
-                  className="text-xs"
+                  size={28}
                   showTooltip={false}
                 />
                 <LeadIcon className="flex-shrink-0 absolute top-0 -left-2.5 size-4 rounded-full" />

@@ -38,7 +38,7 @@ function Dropdown({ value, onChange, options }: TDropdownProps) {
         label={<span>{options.find((v) => v.value === value)?.label ?? "None"}</span>}
         onChange={onChange}
         maxHeight="lg"
-        buttonClassName="bg-custom-background-90 border-none rounded text-sm font-medium "
+        buttonClassName="bg-surface-2 border-none rounded text-13 font-medium "
       >
         {options.map((item) => (
           <CustomSelect.Option key={item.value} value={item.value}>
@@ -53,10 +53,10 @@ function Dropdown({ value, onChange, options }: TDropdownProps) {
 const Selection = observer(function Selection(props: TSelectionProps) {
   const { plotType, estimateType, projectId, handlePlotChange, handleEstimateChange, className, cycleId } = props;
   return (
-    <Row className={cn("h-[40px] mt-2 py-4 flex text-sm items-center gap-2 font-medium", className)}>
+    <Row className={cn("h-[40px] mt-2 py-4 flex text-13 items-center gap-2 font-medium", className)}>
       <Dropdown value={plotType} onChange={handlePlotChange} options={cycleChartOptions} />
       <>
-        <span className="text-custom-text-350">for</span>
+        <span className="text-tertiary">for</span>
         {
           <EstimateTypeDropdown
             value={estimateType}

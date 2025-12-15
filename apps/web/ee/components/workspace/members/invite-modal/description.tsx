@@ -27,11 +27,10 @@ export const InvitationDescription = observer(function InvitationDescription(pro
               <Loader.Item height="100%" width="100%" />
             </Loader>
           ) : (
-            <p className="text-sm text-custom-text-200">
+            <p className="text-13 text-secondary">
               You can add <b>{data?.allowed_admin_members}</b> more users as{" "}
-              <span className="text-custom-text-100 font-medium">Admins or Members</span> and{" "}
-              <b>{data?.allowed_guests}</b> more users as{" "}
-              <span className="text-custom-text-100 font-medium">Guests</span> to this workspace.
+              <span className="text-primary font-medium">Admins or Members</span> and <b>{data?.allowed_guests}</b> more
+              users as <span className="text-primary font-medium">Guests</span> to this workspace.
             </p>
           )}
         </>

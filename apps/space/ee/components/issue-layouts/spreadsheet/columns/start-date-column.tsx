@@ -13,7 +13,7 @@ export const SpreadsheetStartDateColumn = observer(function SpreadsheetStartDate
   const { issue } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <IssueBlockDate
         due_date={issue.start_date ?? undefined}
         stateId={issue.state_id ?? undefined}

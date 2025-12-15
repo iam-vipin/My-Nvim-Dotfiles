@@ -69,7 +69,7 @@ export const EpicDetail = observer(function EpicDetail(props: TEpicDetailProps) 
   return (
     <>
       {projectId && (
-        <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
+        <Card className="relative max-w-[700px] rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-hidden">
           <IssueModalProvider>
             <EpicFormRoot {...commonIssueModalProps} key={data.artifact_id} />
           </IssueModalProvider>

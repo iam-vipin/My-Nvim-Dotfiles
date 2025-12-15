@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { TButtonSizes } from "@plane/propel/button";
 import { Button } from "@plane/propel/button";
+import type { ButtonProps } from "@plane/propel/button";
 import { EUserProjectRoles } from "@plane/types";
 import { getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks
@@ -15,7 +15,7 @@ type TCreateRecurringWorkItemsButtonProps = {
   workspaceSlug: string;
   projectId: string;
   buttonI18nLabel?: string;
-  buttonSize?: TButtonSizes;
+  buttonSize?: NonNullable<ButtonProps["size"]>;
 };
 
 export const CreateRecurringWorkItemsButton = observer(function CreateRecurringWorkItemsButton(

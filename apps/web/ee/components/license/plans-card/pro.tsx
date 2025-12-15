@@ -69,25 +69,34 @@ export const ProPlanCard = observer(function ProPlanCard(props: TProPlanCardProp
       planVariant={EProductSubscriptionEnum.PRO}
       planDescription={
         <>
-          <div>Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more</div>
+          <div className="text-body-xs-medium text-secondary">
+            Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more
+          </div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isInTrialPeriod && (
-                <div className={cn("text-custom-text-300", subscriptionDetail.show_trial_banner && "text-red-500")}>
+                <div
+                  className={cn(
+                    "text-body-xs-medium text-tertiary",
+                    subscriptionDetail.show_trial_banner && "text-danger-secondary"
+                  )}
+                >
                   Pro trial ends{" "}
                   {subscriptionDetail.remaining_trial_days === 0
                     ? "today"
                     : `in ${subscriptionDetail.remaining_trial_days} days`}{" "}
-                  <span className="text-sm font-medium text-custom-text-300">
+                  <span className="text-body-sm-medium text-tertiary">
                     • Billable seats when you upgrade: {subscriptionDetail?.purchased_seats}
                   </span>
                 </div>
               )}
               {!isInTrialPeriod &&
                 (isSubscriptionCancelled ? (
-                  <div className="text-red-500 ">Your billing cycle ends on {renderFormattedDate(endDate)}.</div>
+                  <div className="text-body-xs-medium text-danger-secondary">
+                    Your billing cycle ends on {renderFormattedDate(endDate)}.
+                  </div>
                 ) : (
-                  <div>
+                  <div className="text-body-xs-medium text-secondary">
                     {startDate
                       ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                       : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
@@ -96,9 +105,9 @@ export const ProPlanCard = observer(function ProPlanCard(props: TProPlanCardProp
                 ))}
             </>
           ) : (
-            <div>
+            <div className="text-body-xs-medium text-secondary">
               To manage your subscription, please{" "}
-              <a className="text-custom-primary-300 hover:underline" href="mailto:support@plane.so">
+              <a className="text-accent-primary hover:underline" href="mailto:support@plane.so">
                 contact support.
               </a>
             </div>
@@ -110,17 +119,17 @@ export const ProPlanCard = observer(function ProPlanCard(props: TProPlanCardProp
         isSubscriptionManagementEnabled && (
           <div className="flex items-center gap-2.5">
             <Button
-              variant="link-neutral"
-              className="cursor-pointer px-3 py-1.5 text-center text-xs font-medium outline-none"
+              variant="secondary"
+              size="lg"
               onClick={
                 !isSelfManaged && isInTrialPeriod
                   ? () => handleUpgrade(EProductSubscriptionEnum.PRO)
                   : handleSubscriptionPageRedirection
               }
               disabled={isLoading}
+              appendIcon={<ExternalLink />}
             >
               {isLoading ? "Redirecting to Stripe" : isInTrialPeriod ? "Upgrade to Pro" : "Manage subscription"}
-              <ExternalLink className="h-3 w-3" strokeWidth={2} />
             </Button>
             <BillingActionsButton canPerformWorkspaceAdminActions />
           </div>

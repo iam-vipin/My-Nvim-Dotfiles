@@ -110,12 +110,12 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-heading-md font-medium text-secondary">
             {isEditing ? t("dashboards.create_modal.heading.update") : t("dashboards.create_modal.heading.create")}
           </h3>
           <div className="space-y-3">
             <div className="space-y-1">
-              <label className="inline-block mb-2 text-sm text-custom-text-200 font-medium">
+              <label className="inline-block mb-2 text-caption-md text-secondary font-medium">
                 {t("dashboards.create_modal.title.label")}
               </label>
               <Controller
@@ -128,7 +128,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                   <Input
                     type="text"
                     placeholder={t("dashboards.create_modal.title.placeholder")}
-                    className="w-full px-2 py-1.5 text-base"
+                    className="w-full px-2 py-1.5 text-body-xs"
                     value={value}
                     onChange={onChange}
                     hasError={Boolean(errors?.name)}
@@ -137,10 +137,10 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                   />
                 )}
               />
-              <span className="text-xs text-red-500">{errors?.name?.message}</span>
+              <span className="text-caption-xs text-red-500">{errors?.name?.message}</span>
             </div>
             <div>
-              <label className="inline-block mb-2 text-sm text-custom-text-200 font-medium">
+              <label className="inline-block mb-2 text-caption-md text-secondary font-medium">
                 {t("dashboards.create_modal.project.label")}
               </label>
               <div className="space-y-1">
@@ -161,7 +161,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                       button={
                         <div
                           className={cn(
-                            "px-2 py-1.5 rounded-md border-[0.5px] border-custom-border-200 text-left flex items-center gap-2 flex-wrap",
+                            "px-2 py-1.5 rounded-md border-[0.5px] border-subtle-1 text-left flex items-center gap-2 flex-wrap",
                             {
                               "border-red-500": errors?.project_ids,
                             }
@@ -174,7 +174,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                               return (
                                 <div
                                   key={projectId}
-                                  className="h-6 px-1 rounded bg-custom-background-80 text-sm text-custom-text-200 flex items-center gap-1 truncate"
+                                  className="h-6 px-1 rounded-sm bg-layer-1 text-caption-md text-secondary flex items-center gap-1 truncate"
                                 >
                                   <span className="flex-shrink-0 size-3 grid place-items-center">
                                     <Logo logo={projectDetails.logo_props} size={12} />
@@ -184,7 +184,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                               );
                             })
                           ) : (
-                            <span className="text-base text-custom-text-400">
+                            <span className="text-body-xs text-placeholder">
                               {t("dashboards.create_modal.project.placeholder")}
                             </span>
                           )}
@@ -195,16 +195,16 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                     />
                   )}
                 />
-                <span className="text-xs text-red-500">{errors?.project_ids?.message}</span>
+                <span className="text-caption-xs text-red-500">{errors?.project_ids?.message}</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+          <Button variant="secondary" size="lg" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {isEditing
               ? isSubmitting
                 ? t("common.updating")

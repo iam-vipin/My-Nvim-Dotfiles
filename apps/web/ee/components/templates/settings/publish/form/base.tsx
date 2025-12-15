@@ -69,8 +69,7 @@ export const PublishTemplateFormRoot = observer(function PublishTemplateFormRoot
         <div className="flex items-center justify-between gap-2 pt-4">
           <div className="flex w-full items-center justify-end gap-2">
             <Button
-              variant="neutral-primary"
-              size="sm"
+              variant="secondary"
               className={cn(COMMON_BUTTON_CLASS_NAME)}
               onClick={handleFormCancel}
               data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.PUBLISH_FORM_CANCEL_BUTTON}
@@ -80,7 +79,6 @@ export const PublishTemplateFormRoot = observer(function PublishTemplateFormRoot
             <Button
               variant="primary"
               type="submit"
-              size="sm"
               className={cn("shadow-sm")}
               loading={isSubmitting}
               data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.PUBLISH_FORM_SUBMIT_BUTTON}

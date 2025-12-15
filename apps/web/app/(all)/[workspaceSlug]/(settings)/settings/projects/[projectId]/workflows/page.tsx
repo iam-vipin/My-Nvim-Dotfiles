@@ -118,7 +118,7 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
             <>
               {isWorkflowFeatureFlagEnabled && (
                 <div className="flex-shrink-0 flex items-center justify-center gap-2 px-4">
-                  <span className="text-xs text-custom-text-300">{t("common.live")}</span>
+                  <span className="text-11 text-tertiary">{t("common.live")}</span>
                   <ToggleSwitch
                     value={!!isWorkflowEnabled}
                     onChange={handleEnableDisableWorkflow}

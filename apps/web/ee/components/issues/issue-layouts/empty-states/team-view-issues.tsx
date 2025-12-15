@@ -82,7 +82,7 @@ export const TeamViewEmptyState = observer(function TeamViewEmptyState() {
                 handleClearAllFilters();
               },
               disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceViewWorkItemFilter,
-              variant: "outline-primary",
+              variant: "secondary",
             },
           ]}
         />

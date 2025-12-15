@@ -13,7 +13,7 @@ export function ActiveCyclesProjectTitle(props: ActiveCyclesProjectTitleProps) {
   return (
     <div className="flex items-center gap-2 px-3">
       {project?.logo_props && <Logo logo={project.logo_props} />}
-      <h2 className="text-xl font-semibold">{project?.name}</h2>
+      <h2 className="text-18 font-semibold">{project?.name}</h2>
     </div>
   );
 }

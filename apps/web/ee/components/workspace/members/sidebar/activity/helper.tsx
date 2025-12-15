@@ -1,6 +1,4 @@
-"use client";
-
-import type { ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { LogOut, MailCheck, Mails, UserCog, MailX, Users, UserX, UserPlus, UserMinus } from "lucide-react";
 import type { IUserLite, TWorkspaceBaseActivity } from "@plane/types";
 
@@ -26,7 +24,7 @@ const getUserName = (email: string = "") => (email && email.includes("@") ? emai
 
 export const getWorkspaceMemberActivityDetails = (
   activity: TWorkspaceBaseActivity
-): { icon: ReactNode; message: ReactNode } => {
+): { icon: FC<{ className?: string }>; message: ReactNode } => {
   const workspaceActivity = activity as WorkspaceMemberActivity;
   const activityType = workspaceActivity.type;
   const subject = activity.new_value || activity.old_value;
@@ -35,7 +33,7 @@ export const getWorkspaceMemberActivityDetails = (
     case WorkspaceMemberActivityType.INVITED: {
       const emailUsername = getUserName(subject);
       return {
-        icon: <Mails className="h-4 w-4 text-custom-text-200" />,
+        icon: Mails,
         message: (
           <>
             invited{" "}
@@ -47,13 +45,13 @@ export const getWorkspaceMemberActivityDetails = (
     }
     case WorkspaceMemberActivityType.JOINED:
       return {
-        icon: <MailCheck className="h-4 w-4 text-custom-text-200" />,
+        icon: MailCheck,
         message: <>has accepted the invitation.</>,
       };
     case WorkspaceMemberActivityType.INVITATION_DELETED: {
       const emailUsername = getUserName(subject);
       return {
-        icon: <MailX className="h-4 w-4 text-custom-text-200" />,
+        icon: MailX,
         message: emailUsername ? (
           <>
             deleted the invitation for <span className="font-medium text-custom-text-100">{emailUsername}</span>.
@@ -65,7 +63,7 @@ export const getWorkspaceMemberActivityDetails = (
     }
     case WorkspaceMemberActivityType.REMOVED:
       return {
-        icon: <UserX className="h-4 w-4 text-custom-text-200" />,
+        icon: UserX,
         message: subject ? (
           <>
             removed <span className="font-medium text-custom-text-100">{subject}</span> from the workspace.
@@ -76,7 +74,7 @@ export const getWorkspaceMemberActivityDetails = (
       };
     case WorkspaceMemberActivityType.LEFT:
       return {
-        icon: <LogOut className="h-4 w-4 text-custom-text-200" />,
+        icon: LogOut,
         message: <>left the workspace.</>,
       };
     case WorkspaceMemberActivityType.ROLE_CHANGED: {
@@ -84,7 +82,7 @@ export const getWorkspaceMemberActivityDetails = (
       const newRole = activity.new_value || "Member";
       const memberName = workspaceActivity.workspace_member_detail?.display_name;
       return {
-        icon: <UserCog className="h-4 w-4 text-custom-text-200" />,
+        icon: UserCog,
         message: (
           <>
             changed {memberName ? <span className="font-medium text-custom-text-100">{memberName}</span> : "member"}
@@ -105,7 +103,7 @@ export const getWorkspaceMemberActivityDetails = (
             ? parseInt(activity.new_value, 10)
             : 0;
       return {
-        icon: <UserPlus className="h-4 w-4 text-custom-text-200" />,
+        icon: UserPlus,
         message: (
           <>
             added <span className="font-medium text-custom-text-100">{seatsAdded}</span>{" "}
@@ -121,7 +119,7 @@ export const getWorkspaceMemberActivityDetails = (
           ? parseInt(activity.old_value, 10) - parseInt(activity.new_value, 10)
           : 0;
       return {
-        icon: <UserMinus className="h-4 w-4 text-custom-text-200" />,
+        icon: UserMinus,
         message: (
           <>
             removed <span className="font-medium text-custom-text-100">{seatsRemoved}</span>{" "}
@@ -132,7 +130,7 @@ export const getWorkspaceMemberActivityDetails = (
     }
     default:
       return {
-        icon: <Users className="h-4 w-4 text-custom-text-200" />,
+        icon: Users,
         message: <>made a change</>,
       };
   }

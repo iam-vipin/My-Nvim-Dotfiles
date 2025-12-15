@@ -95,7 +95,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
   );
 
   return (
-    <div className="group/issue-type bg-custom-background-90/60 rounded-md">
+    <div className="group/issue-type bg-layer-1/60 rounded-md">
       <Collapsible
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
@@ -103,14 +103,14 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
           <div className="flex w-full gap-2 cursor-pointer items-center px-4">
             <div className="flex-shrink-0">
               <ChevronRightIcon
-                className={cn("flex-shrink-0 size-4 transition-all text-custom-text-300", {
+                className={cn("flex-shrink-0 size-4 transition-all text-tertiary", {
                   "rotate-90": isOpen,
                 })}
               />
             </div>
             <div className="text-left">
-              <h3 className="text-base font-medium">{t("customers.properties.custom.title")}</h3>
-              <p className="text-sm text-custom-text-300">{t("customers.properties.custom.info")}</p>
+              <h3 className="text-14 font-medium">{t("customers.properties.custom.title")}</h3>
+              <p className="text-13 text-tertiary">{t("customers.properties.custom.info")}</p>
             </div>
           </div>
         }
@@ -141,8 +141,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
               />
               <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
                 <Button
-                  variant="accent-primary"
-                  size="sm"
+                  variant="secondary"
                   className="rounded-md"
                   onClick={() => {
                     handleCustomerPropertiesCreate("add", {

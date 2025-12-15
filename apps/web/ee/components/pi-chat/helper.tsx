@@ -1,7 +1,7 @@
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
-import type { IFormattedValue, IItem } from "@/plane-web/types/pi-chat";
 import { IssueIdentifier } from "../issues/issue-details/issue-identifier";
+import type { TSearchResults, TWorkspaceSearchResultItem } from "@plane/types";
 
 export const parseDataStream = (dataStream: string) =>
   // Split the input by newline and filter out lines that start with 'data: '
@@ -18,7 +18,7 @@ export const scrollIntoViewHelper = async (elementId: string) => {
   if (sourceElement) await smoothScrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1500 });
 };
 
-export const getIcon = (type: string, item?: Partial<IItem>) => {
+export const getIcon = (type: string, item?: Partial<TWorkspaceSearchResultItem>) => {
   switch (type) {
     case "issue":
       if (!item) return <LayersIcon className="w-4 h-4" />;
@@ -28,7 +28,8 @@ export const getIcon = (type: string, item?: Partial<IItem>) => {
           projectId={item.project_id || ""}
           projectIdentifier={item.project__identifier || ""}
           issueSequenceId={item.sequence_id || ""}
-          textContainerClassName="text-custom-sidebar-text-400 text-xs whitespace-nowrap"
+          size="xs"
+          variant="secondary"
         />
       );
     case "cycle":
@@ -44,8 +45,8 @@ export const getIcon = (type: string, item?: Partial<IItem>) => {
   }
 };
 
-export const formatSearchQuery = (data: Partial<IFormattedValue>): IFormattedValue => {
-  const parsedResponse: IFormattedValue = {
+export const formatSearchQuery = (data: Partial<TSearchResults>): TSearchResults => {
+  const parsedResponse: TSearchResults = {
     cycle: [],
     module: [],
     page: [],

@@ -62,8 +62,8 @@ export const DefaultOptionSelect = observer(function DefaultOptionSelect(props: 
     options: customSearchOptions,
     className: "group w-full flex",
     chevronClassName: "h-3.5 w-3.5 hidden group-hover:inline",
-    buttonClassName: cn("rounded text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300", {
-      "text-custom-text-400": !data.length,
+    buttonClassName: cn("rounded-sm text-13 bg-surface-1 border-[0.5px] border-subtle-1", {
+      "text-placeholder": !data.length,
     }),
     disabled: isDisabled,
   };

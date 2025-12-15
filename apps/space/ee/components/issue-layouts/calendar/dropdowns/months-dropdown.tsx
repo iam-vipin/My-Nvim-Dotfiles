@@ -72,7 +72,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
         <button
           type="button"
           ref={setReferenceElement}
-          className="text-xl font-semibold outline-none"
+          className="text-18 font-semibold outline-none"
           disabled={calendarLayout === "week"}
         >
           {calendarLayout === "month"
@@ -94,7 +94,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="w-56 divide-y divide-custom-border-200 rounded border border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg"
+            className="w-56 divide-y divide-subtle-1 rounded-sm border border-subtle-1 bg-surface-1 p-3 shadow-custom-shadow-rg"
           >
             <div className="flex items-center justify-between gap-2 pb-3">
               <button
@@ -107,7 +107,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
               >
                 <ChevronLeftIcon height={14} width={14} />
               </button>
-              <span className="text-xs">{activeMonthDate.getFullYear()}</span>
+              <span className="text-11">{activeMonthDate.getFullYear()}</span>
               <button
                 type="button"
                 className="grid place-items-center"
@@ -124,7 +124,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
                 <button
                   key={month.shortTitle}
                   type="button"
-                  className="rounded py-0.5 text-xs hover:bg-custom-background-80"
+                  className="rounded-sm py-0.5 text-11 hover:bg-layer-transparent-hover"
                   onClick={() => {
                     const newDate = new Date(activeMonthDate.getFullYear(), index, 1);
                     handleDateChange(newDate);

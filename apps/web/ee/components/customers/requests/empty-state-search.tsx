@@ -19,8 +19,8 @@ export const CustomerRequestSearchEmptyState = observer(function CustomerRequest
           className="w-full h-full object-cover"
         />
       </div>
-      <span className="text-center text-base font-medium">{t("customers.requests.empty_state.search.title")}</span>
-      <span className="text-center text-sm text-custom-text-200">
+      <span className="text-center text-14 font-medium">{t("customers.requests.empty_state.search.title")}</span>
+      <span className="text-center text-13 text-secondary">
         {/* TODO: Translate here */}
         Try with another search term or{" "}
         <a href="mailto:support@plane.so" className="underline">

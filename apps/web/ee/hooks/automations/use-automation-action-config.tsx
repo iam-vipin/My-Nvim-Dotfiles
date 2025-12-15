@@ -80,7 +80,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
         const state = projectStates?.find((state) => state.id === value[0]);
         if (!state) return null;
         return (
-          <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+          <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
             <StateGroupIcon stateGroup={state.group} color={state.color} />
             <span className="flex-grow truncate">{state.name}</span>
           </div>
@@ -108,7 +108,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
         const priority = ISSUE_PRIORITIES.find((priority) => priority.key === value[0]);
         if (!priority) return null;
         return (
-          <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+          <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
             <PriorityIcon priority={priority.key} size={14} withContainer />
             <span className="flex-grow truncate">{priority.title}</span>
           </div>
@@ -149,7 +149,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
           <>
             {members.map((member, index) => (
               <div key={member?.id} className="shrink-0">
-                <div className="inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+                <div className="inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
                   <Avatar
                     name={member?.member?.display_name}
                     src={getFileURL(member?.member?.avatar_url ?? "")}
@@ -195,7 +195,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
           <>
             {labels.map((label, index) => (
               <div key={label.id} className="shrink-0">
-                <div className="inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+                <div className="inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
                   <span
                     className="size-2.5 flex-shrink-0 rounded-full"
                     style={{
@@ -220,7 +220,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
       component_type: EConfigurationComponentType.DATE_PICKER,
       minDate: new Date(),
       getPreviewContent: (value: string[]) => (
-        <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+        <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
           <StartDatePropertyIcon className="shrink-0 size-3.5" />
           <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
         </div>
@@ -235,7 +235,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
       component_type: EConfigurationComponentType.DATE_PICKER,
       minDate: new Date(),
       getPreviewContent: (value: string[]) => (
-        <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+        <div className="shrink-0 inline-flex items-center gap-2 bg-layer-1 rounded-sm px-1 py-0.5">
           <DueDatePropertyIcon className="shrink-0 size-3.5" />
           <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
         </div>

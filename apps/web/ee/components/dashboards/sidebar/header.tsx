@@ -18,7 +18,7 @@ export function WidgetConfigSidebarHeader(props: Props) {
       <div className="flex-shrink-0">
         <button
           type="button"
-          className="size-4 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
+          className=" grid place-items-center text-icon-secondary bg-layer-transparent hover:bg-layer-transparent-hover hover:text-primary transition-colors p-1 rounded-md"
           onClick={handleClose}
         >
           <CircleChevronRight className="size-3.5" />
@@ -29,7 +29,7 @@ export function WidgetConfigSidebarHeader(props: Props) {
           <button
             type="button"
             onClick={handleDelete}
-            className="size-4 grid place-items-center text-custom-text-200 hover:text-red-500 transition-colors"
+            className="size-4 grid place-items-center text-icon-secondary bg-layer-transparent hover:text-icon-danger transition-colors bg"
           >
             <Trash2 className="size-3.5" />
           </button>

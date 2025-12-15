@@ -47,8 +47,8 @@ export const ProjectStateMarksAsDefault = observer(function ProjectStateMarksAsD
   return (
     <button
       className={cn(
-        "text-sm whitespace-nowrap transition-colors",
-        isDefault ? "text-custom-text-300" : "text-custom-text-200 hover:text-custom-text-100"
+        "text-13 whitespace-nowrap transition-colors",
+        isDefault ? "text-tertiary" : "text-secondary hover:text-primary"
       )}
       disabled={isDefault || isLoading}
       onClick={handleMarkAsDefault}

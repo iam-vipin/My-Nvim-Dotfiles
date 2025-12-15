@@ -31,6 +31,7 @@
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/types": "workspace:*",
+    "@tailwindcss/typography": "0.5.19",
     "@types/lodash": "^4.17.6",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",

@@ -13,13 +13,13 @@ const PiChatList = observer(function PiChatList(props: TProps) {
 
   return (
     <div className="flex flex-col space-y-2  overflow-scroll">
-      <div className="flex flex-col divide-y divide-custom-border-200">
+      <div className="flex flex-col divide-y divide-subtle-1">
         {userThreads && userThreads.length > 0 ? (
           uniqBy(userThreads, "chat_id").map((thread) => <PiChatListItem key={thread.chat_id} thread={thread} />)
         ) : isLoading ? (
           <PiChatListLoader />
         ) : (
-          <div className="text-custom-text-400 text-sm">No threads available</div>
+          <div className="text-placeholder text-13">No threads available</div>
         )}
       </div>
     </div>

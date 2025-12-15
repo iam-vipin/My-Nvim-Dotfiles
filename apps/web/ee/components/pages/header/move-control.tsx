@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { FolderOutput } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
+import { IconButton } from "@plane/propel/icon-button";
 // core imports
 import type { TPageMoveControlProps } from "@/ce/components/pages/header/move-control";
 // plane web hooks
@@ -30,13 +31,13 @@ export const PageMoveControl = observer(function PageMoveControl(props: TPageMov
     <>
       <MovePageModal isOpen={isMovePageModalOpen} onClose={() => setIsMovePageModalOpen(false)} page={page} />
       <Tooltip tooltipContent="Move page" position="bottom">
-        <button
-          type="button"
+        <IconButton
+          variant="ghost"
+          size="lg"
+          icon={FolderOutput}
           onClick={() => setIsMovePageModalOpen(true)}
-          className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
-        >
-          <FolderOutput className="size-3.5" />
-        </button>
+          aria-label="Move page"
+        />
       </Tooltip>
     </>
   );

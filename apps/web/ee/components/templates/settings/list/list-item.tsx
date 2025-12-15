@@ -46,24 +46,27 @@ export const TemplateListItem = observer(function TemplateListItem<T extends TBa
 
   if (!template || !workspace) return null;
   return (
-    <div className="flex items-center justify-between gap-4 p-3 border border-custom-border-200 rounded-lg bg-custom-background-90/60">
+    <div className="flex items-center justify-between gap-4 p-3 border border-subtle rounded-lg bg-layer-1">
       <div className="flex flex-col w-full truncate">
-        <div className="text-sm font-medium text-custom-text-100 truncate">{template.name}</div>
+        <div className="text-body-xs-medium text-primary truncate">{template.name}</div>
         {template.short_description && (
-          <div className="text-xs font-medium text-custom-text-300 truncate">{template.short_description}</div>
+          <div className="text-caption-sm-medium text-tertiary truncate">{template.short_description}</div>
         )}
       </div>
       <div className="flex flex-shrink-0 items-center gap-3">
         {currentLevel === ETemplateLevel.PROJECT && !template.project && (
-          <span className="text-xs text-custom-text-300">{t("templates.settings.template_source.workspace.info")}</span>
+          <span className="text-caption-sm-regular text-tertiary">
+            {t("templates.settings.template_source.workspace.info")}
+          </span>
         )}
         {currentLevel === ETemplateLevel.WORKSPACE && template.project && (
-          <span className="text-xs text-custom-text-300">{t("templates.settings.template_source.project.info")}</span>
+          <span className="text-caption-sm-regular text-tertiary">
+            {t("templates.settings.template_source.project.info")}
+          </span>
         )}
         <Button
-          variant="neutral-primary"
-          className="rounded py-1 focus:bg-custom-background-100 focus:text-custom-text-200"
-          size="sm"
+          variant="secondary"
+          className="focus:bg-layer-1-hover focus:text-secondary"
           onClick={handleUseTemplateAction}
           disabled={!!selectedTemplateId}
         >

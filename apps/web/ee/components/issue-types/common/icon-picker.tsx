@@ -89,7 +89,7 @@ export const IssueTypeIconPicker = observer(function IssueTypeIconPicker(props: 
               style={styles.popper}
               {...attributes.popper}
               className={cn(
-                "w-72 mt-1 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
+                "w-72 mt-1 bg-surface-1 rounded-md border-[0.5px] border-subtle-1 overflow-hidden",
                 dropdownClassName
               )}
             >

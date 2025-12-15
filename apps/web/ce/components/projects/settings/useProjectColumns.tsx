@@ -96,7 +96,7 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <div className="w-48 text-custom-text-200">{rowData.member.email}</div>,
+      tdRender: (rowData: RowData) => <div className="w-48 text-secondary">{rowData.member.email}</div>,
     },
     {
       key: "Account Type",

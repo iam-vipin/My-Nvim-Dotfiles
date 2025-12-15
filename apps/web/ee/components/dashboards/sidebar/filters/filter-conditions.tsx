@@ -16,11 +16,11 @@ export const FilterConditions = observer(function FilterConditions({ filters }: 
 
           {index < filters.allConditionsForDisplay.length - 1 && (
             <div className="flex flex-col items-center">
-              <div className="h-2 border-l border-dashed border-custom-border-300" />
-              <span className="text-xs font-medium uppercase text-custom-text-400 px-2 py-0.5 bg-custom-background-80 rounded-sm">
+              <div className="h-2 border-l border-dashed border-strong" />
+              <span className="text-11 font-medium uppercase text-secondary px-2 py-0.5 bg-layer-2 rounded-sm">
                 And
               </span>
-              <div className="h-2 border-l border-dashed border-custom-border-300" />
+              <div className="h-2 border-l border-dashed border-strong" />
             </div>
           )}
         </div>

@@ -139,7 +139,7 @@ export const EditProjectIssueSyncForm = observer(function EditProjectIssueSyncFo
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
       <div className="space-y-5 p-5">
-        <div className="text-xl font-medium text-custom-text-200">{t("github_integration.link")}</div>
+        <div className="text-heading-sm-medium text-secondary">{t("github_integration.link")}</div>
 
         <div className="space-y-4">
           <div className="space-y-1">
@@ -156,10 +156,10 @@ export const EditProjectIssueSyncForm = observer(function EditProjectIssueSyncFo
             />
           </div>
 
-          <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
+          <div className="border border-subtle divide-y divide-subtle rounded">
             <div className="relative space-y-1 p-3">
-              <div className="text-base">{t("github_integration.project_issue_sync")}</div>
-              <div className="text-xs text-custom-text-200">
+              <div className="text-body-sm-medium">{t("github_integration.project_issue_sync")}</div>
+              <div className="text-caption-sm-regular text-secondary">
                 {t("github_integration.configure_project_issue_sync_state")}
               </div>
             </div>
@@ -176,10 +176,10 @@ export const EditProjectIssueSyncForm = observer(function EditProjectIssueSyncFo
           <SelectIssueSyncDirection value={allowBidirectionalSync} onChange={handleAllowBidirectionalSync} />
 
           <div className="relative flex justify-end items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={() => handleModal(false)}>
+            <Button variant="secondary" onClick={() => handleModal(false)}>
               {t("common.cancel")}
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={disableSubmit}>
+            <Button variant="primary" onClick={handleSubmit} loading={isSubmitting} disabled={disableSubmit}>
               {isSubmitting ? t("common.processing") : t("github_integration.save")}
             </Button>
           </div>

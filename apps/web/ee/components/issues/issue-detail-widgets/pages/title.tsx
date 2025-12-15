@@ -24,7 +24,7 @@ export const PagesCollapsibleTitle = observer(function PagesCollapsibleTitle(pro
   const indicatorElement = useMemo(
     () => (
       <span className="flex items-center justify-center ">
-        <p className="text-base text-custom-text-300 !leading-3">{count}</p>
+        <p className="text-14 text-tertiary !leading-3">{count}</p>
       </span>
     ),
     [count]

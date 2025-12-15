@@ -101,8 +101,8 @@ export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props)
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <img src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
-          <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
-          <p className="whitespace-pre-line text-base text-custom-text-400">
+          <h5 className="mb-1 mt-7 text-18 font-medium">No matching projects</h5>
+          <p className="whitespace-pre-line text-14 text-placeholder">
             {`No projects detected with the matching\ncriteria. Create a new project instead`}
           </p>
         </div>

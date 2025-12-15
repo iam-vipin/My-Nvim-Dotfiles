@@ -231,7 +231,7 @@ export const WorkItemBlueprintListRoot = observer(function WorkItemBlueprintList
         actionElement={({ setIsOpen }) => (
           <div className="flex items-center">
             <Button
-              variant="link-neutral"
+              variant="ghost"
               onClick={(e) => {
                 e.preventDefault();
                 handleCleanup();
@@ -247,7 +247,7 @@ export const WorkItemBlueprintListRoot = observer(function WorkItemBlueprintList
         borderVariant={borderVariant}
       >
         <div className="flex flex-col gap-y-2 pt-2 pb-4">
-          {showEmptyState && <div className="px-5 text-sm text-custom-text-300">{emptyStateDescription}</div>}
+          {showEmptyState && <div className="px-5 text-body-xs-regular text-tertiary">{emptyStateDescription}</div>}
           {!showEmptyState &&
             workItems.map((workItem, index) => (
               <WorkItemBlueprintListItem

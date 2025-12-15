@@ -6,7 +6,7 @@ function PiChatListLoader() {
     <Loader
       key={index}
       className={cn(
-        "w-full overflow-hidden py-4 flex-1 flex flex-col items-start gap-1 text-custom-text-200 truncate hover:text-custom-text-200 hover:bg-custom-background-90 pointer"
+        "w-full overflow-hidden py-4 flex-1 flex flex-col items-start gap-1 text-secondary truncate hover:text-secondary hover:bg-layer-1 pointer"
       )}
     >
       <Loader.Item width="200px" height="21px" />

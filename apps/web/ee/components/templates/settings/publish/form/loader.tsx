@@ -73,11 +73,11 @@ export function PublishTemplateLoader() {
         {/* File Upload Section */}
         <div className="space-y-2">
           <Loader.Item height="18px" width="360px" />
-          <Loader.Item height="108px" className="border-dashed border-2 border-custom-border-200 rounded-lg" />
+          <Loader.Item height="108px" className="border-dashed border-2 border-subtle rounded-lg" />
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-custom-border-200">
+        <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-subtle">
           <Loader.Item height="34px" width="80px" />
           <Loader.Item height="34px" width="120px" />
         </div>

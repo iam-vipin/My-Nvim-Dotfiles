@@ -122,12 +122,12 @@ export const PillInput = React.forwardRef(function PillInput(
     <div className="w-full">
       <div
         className={cn(
-          "flex min-h-[40px] w-full flex-wrap items-center gap-1 rounded-md bg-transparent text-sm focus-within:outline-none",
+          "flex min-h-[40px] w-full flex-wrap items-center gap-1 rounded-md bg-transparent text-13 focus-within:outline-none",
           {
-            "rounded-md border-[0.5px] border-custom-border-200": mode === "primary",
-            "rounded border-none bg-transparent ring-0 transition-all focus-within:ring-1 focus-within:ring-custom-primary":
+            "rounded-md border-[0.5px] border-subtle-1": mode === "primary",
+            "rounded-sm border-none bg-transparent ring-0 transition-all focus-within:ring-1 focus-within:ring-custom-primary":
               mode === "transparent",
-            "rounded border-none bg-transparent ring-0": mode === "true-transparent",
+            "rounded-sm border-none bg-transparent ring-0": mode === "true-transparent",
             "border-red-500": hasError,
             "px-1.5 py-1": inputSize === "xs",
             "px-3 py-2": inputSize === "sm",
@@ -142,7 +142,7 @@ export const PillInput = React.forwardRef(function PillInput(
           <div
             key={index}
             className={cn(
-              "flex items-center gap-1 rounded-full bg-custom-background-80 text-xs py-0.5",
+              "flex items-center gap-1 rounded-full bg-layer-1 text-11 py-0.5",
               {
                 "px-2": inputSize === "xs",
                 "px-2.5": inputSize === "sm",
@@ -158,7 +158,7 @@ export const PillInput = React.forwardRef(function PillInput(
                 e.stopPropagation();
                 removePill(index);
               }}
-              className={cn("text-custom-text-300 hover:text-custom-text-200", removePillClassName)}
+              className={cn("text-tertiary hover:text-secondary", removePillClassName)}
             >
               <CloseIcon className="size-3" />
             </button>
@@ -182,7 +182,7 @@ export const PillInput = React.forwardRef(function PillInput(
         />
       </div>
       {/* Helper text */}
-      {helperText && <p className={cn("text-[8px] text-custom-text-300", helperTextClassName)}>{helperText}</p>}
+      {helperText && <p className={cn("text-caption-xs-regular text-tertiary", helperTextClassName)}>{helperText}</p>}
     </div>
   );
 });

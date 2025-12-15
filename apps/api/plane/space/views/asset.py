@@ -12,15 +12,15 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+
+# Module imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.db.models import APIToken, BotTypeEnum, DeployBoard, FileAsset, Project
+from plane.db.models import DeployBoard, FileAsset, Project, APIToken, BotTypeEnum
+from plane.settings.storage import S3Storage
+from .base import BaseAPIView
 from plane.ee.models import IntakeForm, IntakeSetting
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
-from plane.settings.storage import S3Storage
-
-# Module imports
-from .base import BaseAPIView
 
 
 class EntityAssetEndpoint(BaseAPIView):

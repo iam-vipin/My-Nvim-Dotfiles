@@ -37,7 +37,8 @@ export const ParentIssuesListItem = observer(function ParentIssuesListItem(props
             issueTypeId={issue.type_id}
             projectIdentifier={issue.project__identifier}
             issueSequenceId={issue.sequence_id}
-            textContainerClassName="text-xs text-custom-text-200"
+            variant="secondary"
+            size="xs"
           />
         </span>{" "}
         <span className="truncate">{issue.name}</span>
@@ -52,7 +53,7 @@ export const ParentIssuesListItem = observer(function ParentIssuesListItem(props
           isEpic: isParentEpic,
         })}
         target="_blank"
-        className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+        className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
       >

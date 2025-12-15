@@ -51,7 +51,7 @@ function ActionStatusBlock(props: TProps) {
     }
   };
   if (actions?.length === 0 || !query_id) return null;
-  if (execution_status === "pending") {
+  if (execution_status === EExecutionStatus.PENDING) {
     if (isPiThinking || (isLatest && isPiTyping)) return null;
     if (isLatest) {
       return (
@@ -65,7 +65,7 @@ function ActionStatusBlock(props: TProps) {
       );
     } else
       return (
-        <div className="flex gap-2 text-custom-text-400 text-sm">
+        <div className="flex gap-2 text-placeholder text-13 mb-4">
           <Info size={16} className="my-auto" />
           <div> {actions?.length} action(s) not executed </div>
         </div>
@@ -73,8 +73,8 @@ function ActionStatusBlock(props: TProps) {
   }
   if (action_summary && action_summary?.completed + action_summary?.failed !== actions?.length)
     return (
-      <div className="flex gap-2 text-custom-text-400 text-sm">
-        <Info size={16} className="my-auto" />
+      <div className="flex gap-2 text-placeholder text-body-sm-regular mb-4">
+        <Info size={16} className="my-auto text-icon-tertiary" />
         <div> {actions?.length} action(s) not executed </div>
       </div>
     );
@@ -86,7 +86,7 @@ function ActionStatusBlock(props: TProps) {
   return (
     <div className="flex flex-col gap-2">
       {action_error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{action_error}</div>
+        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-13 text-red-600">{action_error}</div>
       )}
       {shouldShowSummary && (
         <SummaryBlock

@@ -18,7 +18,7 @@ export const WorkspaceWorklogHeaderRoot = observer(function WorkspaceWorklogHead
   const { workspaceSlug, workspaceId } = props;
 
   return (
-    <div className="pb-4 space-y-4 border-b border-custom-border-100">
+    <div className="pb-4 space-y-4 border-b border-subtle">
       <div className="relative flex justify-between items-center gap-2">
         <WorkspaceWorklogFilterRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
         <WorkspaceWorklogDownloadButton workspaceSlug={workspaceSlug} workspaceId={workspaceId} />

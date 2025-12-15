@@ -57,14 +57,7 @@ export const InitiativeSidebarActivityRoot = observer(function InitiativeSidebar
   return (
     <SidebarContentWrapper
       title={t("activity")}
-      actionElement={
-        <ActivitySortRoot
-          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-          toggleSort={toggleSortOrder}
-          className="flex-shrink-0"
-          iconClassName="size-3"
-        />
-      }
+      actionElement={<ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />}
     >
       <div className="min-h-[200px]">
         {sortedActivity.length > 0 &&

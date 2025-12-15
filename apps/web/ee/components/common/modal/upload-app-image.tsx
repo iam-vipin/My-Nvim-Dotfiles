@@ -110,14 +110,14 @@ export const AppImageUploadModal = observer(function AppImageUploadModal(props: 
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:max-w-xl">
-              <Dialog.Title as="h3" className="text-lg font-medium text-custom-text-100">
+            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:max-w-xl">
+              <Dialog.Title as="h3" className="text-16 font-medium text-primary">
                 Upload Image
               </Dialog.Title>
               <div className="mt-4">
                 <div
                   {...getRootProps()}
-                  className="relative h-80 w-80 border-2 border-dashed border-custom-border-200 rounded-lg flex items-center justify-center cursor-pointer"
+                  className="relative h-80 w-80 border-2 border-dashed border-subtle-1 rounded-lg flex items-center justify-center cursor-pointer"
                 >
                   {image || initialValue ? (
                     <img
@@ -127,8 +127,8 @@ export const AppImageUploadModal = observer(function AppImageUploadModal(props: 
                     />
                   ) : (
                     <div className="text-center">
-                      <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-custom-text-200" />
-                      <p className="text-sm text-custom-text-200">
+                      <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-secondary" />
+                      <p className="text-13 text-secondary">
                         {isDragActive ? "Drop image here" : "Drag & drop or click to upload"}
                       </p>
                     </div>
@@ -136,18 +136,18 @@ export const AppImageUploadModal = observer(function AppImageUploadModal(props: 
                   <input {...getInputProps()} />
                 </div>
                 {fileRejections.length > 0 && (
-                  <p className="text-red-500 text-sm mt-2">Invalid file or exceeds size limit (5 MB).</p>
+                  <p className="text-red-500 text-13 mt-2">Invalid file or exceeds size limit (5 MB).</p>
                 )}
               </div>
               <div className="mt-6 flex justify-between">
-                <Button variant="danger" size="sm" onClick={handleImageRemove} disabled={!initialValue || isRemoving}>
+                <Button variant="error-fill" onClick={handleImageRemove} disabled={!initialValue || isRemoving}>
                   {isRemoving ? "Removing..." : "Remove Image"}
                 </Button>
                 <div className="flex gap-2">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <Button variant="secondary" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="primary" size="sm" onClick={handleSubmit} disabled={!image} loading={isUploading}>
+                  <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isUploading}>
                     {isUploading ? "Uploading..." : "Upload & Save"}
                   </Button>
                 </div>

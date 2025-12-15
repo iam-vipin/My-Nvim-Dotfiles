@@ -65,9 +65,9 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
   return (
-    <div className="flex flex-col gap-4 p-4 min-h-52 border border-custom-border-200 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 min-h-52 border border-subtle-1 rounded-lg">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-lg text-custom-text-300 font-medium">Work item burndown</h3>
+        <h3 className="text-16 text-tertiary font-medium">Work item burndown</h3>
         {estimate_distribution ? (
           isCurrentEstimateTypeIsPoints && (
             <div className="flex items-center gap-2">
@@ -94,8 +94,8 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
 
       <div className="h-full w-full">
         {estimate_distribution && (
-          <div className="flex items-center justify-between gap-4 py-1 text-xs text-custom-text-300">
-            <div className="flex items-center gap-3 text-custom-text-300">
+          <div className="flex items-center justify-between gap-4 py-1 text-11 text-tertiary">
+            <div className="flex items-center gap-3 text-tertiary">
               <div className="flex items-center justify-center gap-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
                 <span>Ideal</span>

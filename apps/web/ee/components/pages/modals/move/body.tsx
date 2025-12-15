@@ -19,9 +19,9 @@ export function MovePageModalBody(props: Props) {
     <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
       {!canPageBeMovedToTeamspace && (
         <section className="mb-3 px-2">
-          <div className="p-2 bg-custom-background-80 rounded flex items-center gap-2 text-custom-text-300">
+          <div className="p-2 bg-layer-1 rounded-sm flex items-center gap-2 text-tertiary">
             <AlertCircle className="shrink-0 size-3.5" />
-            <p className="text-xs font-medium">{t("page_actions.move_page.cannot_move_to_teamspace")}</p>
+            <p className="text-11 font-medium">{t("page_actions.move_page.cannot_move_to_teamspace")}</p>
           </div>
         </section>
       )}

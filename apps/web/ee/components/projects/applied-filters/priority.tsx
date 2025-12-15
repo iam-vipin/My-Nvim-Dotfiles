@@ -19,13 +19,13 @@ export const AppliedPriorityFilters = observer(function AppliedPriorityFilters(p
         const priorityDetails = PROJECT_PRIORITIES.find((p) => p.key === priority);
         if (!priorityDetails) return null;
         return (
-          <div key={priority} className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+          <div key={priority} className="flex items-center gap-1 rounded-sm p-1 text-11 bg-layer-1">
             <PriorityIcon priority={priorityDetails.key} className={`h-3 w-3`} />
             {priorityDetails?.label}
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(priority)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />

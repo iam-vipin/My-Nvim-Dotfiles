@@ -70,7 +70,7 @@ export function TrialButton(props: TTrialButtonProps) {
     <button
       data-element={LICENSE_TRACKER_ELEMENTS.MODAL_TRIAL_BUTTON}
       disabled={trialLoader}
-      className="text-center text-sm text-custom-text-300 hover:text-custom-text-100 font-medium transition-all flex justify-center items-center gap-1.5 -ml-5"
+      className="text-center text-body-xs-medium text-tertiary hover:text-primary transition-all flex justify-center items-center gap-1.5 -ml-5"
       onClick={() => handleTrial(productId, priceId)}
     >
       <div className="relative w-3 h-3">

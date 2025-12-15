@@ -39,9 +39,9 @@ export const PropertyMultiSelect = observer(function PropertyMultiSelect(props: 
       options={memberPickerAttributeOptions}
       onChange={(value) => onChange(value === "multi_select")}
       className="z-10"
-      buttonClassName="size-3"
-      fieldClassName="text-sm gap-1"
-      wrapperClassName="gap-3"
+      buttonClassName="size-3!"
+      fieldClassName="text-caption-sm-regular! gap-1!"
+      wrapperClassName="gap-3!"
     />
   );
 });

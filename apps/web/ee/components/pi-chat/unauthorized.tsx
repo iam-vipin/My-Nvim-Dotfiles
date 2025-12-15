@@ -18,7 +18,8 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
   const { resolvedTheme } = useTheme();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
+  const isInFullScreen = pathname.includes("/pi-chat");
   // SWR
   const { data: instance } = useSWR(
     workspaceId ? `PI_STARTER_${workspaceId}` : null,
@@ -35,7 +36,7 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
       <div
         className={cn("flex @[400px]:flex-row flex-col size-full items-center justify-center gap-8  px-8", className)}
       >
-        <div className="flex max-h-full bg-custom-background-90 p-12 pr-0 rounded-lg items-center max-w-[350px] overflow-hidden shadow-r-md justify-end">
+        <div className="flex max-h-full bg-layer-1 p-12 pr-0 rounded-lg items-center max-w-[350px] overflow-hidden shadow-r-md justify-end">
           <img
             className={cn("w-auto", imgClassName)}
             src={resolveGeneralTheme(resolvedTheme) === "dark" ? darkState : lightState}
@@ -44,18 +45,18 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
         </div>
 
         <div className="flex flex-col gap-4 max-w-[400px]">
-          <div className="flex flex-col">
-            <div className="text-lg font-semibold leading-7 text-custom-text-100">
+          <div className="flex flex-col gap-2">
+            <div className={cn("text-h4-medium text-primary", { "text-h5-medium": !isInFullScreen })}>
               Plane AI can now take actions for you.
             </div>
-            <div className="text-sm leading-5 text-custom-text-300">
+            <div className={cn("text-body-md-regular text-secondary", { "text-body-xs-regular": !isInFullScreen })}>
               Use Build mode to create work items, cycles and more. Activate now to start Plane AI actions.
             </div>
           </div>
           {instance && !instance?.is_authorized && (
             <a
               href={`${instance.oauth_url}?sidebar_open_url=${pathname}${isPiChatDrawerOpen ? "?pi_sidebar_open=true" : ""}`}
-              className={cn(getButtonStyling("primary", "md"), "w-fit")}
+              className={cn(getButtonStyling("primary", "base"), "w-fit p-2")}
             >
               Activate Build mode
             </a>

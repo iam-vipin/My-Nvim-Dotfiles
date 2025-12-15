@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -71,16 +70,16 @@ export const SubscriptionActivationModal = observer(function SubscriptionActivat
   if (!isOpen) return null;
   return (
     <ModalCore isOpen={isOpen} width={EModalWidth.XXXL} position={EModalPosition.CENTER} className="rounded-xl">
-      <div className="py-4 bg-custom-background-100 rounded-lg space-y-4">
+      <div className="py-4 bg-surface-1 rounded-lg space-y-4">
         <div className="px-4 space-y-2">
-          <h3 className="flex items-center whitespace-nowrap flex-wrap gap-2 text-lg font-medium">
+          <h3 className="flex items-center whitespace-nowrap flex-wrap gap-2 text-16 font-medium">
             Activate
             <div className="flex flex-shrink-0 items-center gap-2 truncate">
               <WorkspaceLogo logo={currentWorkspaceLogoUrl} name={currentWorkspace?.name} />
             </div>
             {currentWorkspace?.name}
           </h3>
-          <div className="text-sm font-medium text-custom-text-300">
+          <div className="text-13 font-medium text-tertiary">
             {isAirGapped
               ? "Upload a license file to activate the plan you subscribed to on this workspace. Any other workspaces without a license key on this instance will continue to be on the Free plan."
               : "Enter a license key to activate the plan you subscribed to on this workspace. Any other workspaces without a license key on this instance will continue to be on the Free plan."}

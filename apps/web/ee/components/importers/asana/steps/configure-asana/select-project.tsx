@@ -53,9 +53,7 @@ export const ConfigureAsanaSelectProject = observer(function ConfigureAsanaSelec
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">
-        {t("importers.select_service_project", { serviceName: "Asana" })}
-      </div>
+      <div className="text-13 text-secondary">{t("importers.select_service_project", { serviceName: "Asana" })}</div>
       {isLoading && (!asanaProjects || asanaProjects.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />

@@ -39,7 +39,7 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
 
   return (
     <Disclosure as="div" className="flex flex-col">
-      <div className="group group/teamspace-item hover:bg-custom-sidebar-background-90 px-2 py-1 rounded-md flex items-center">
+      <div className="group group/teamspace-item hover:bg-surface-2 px-2 py-1 rounded-md flex items-center">
         <Disclosure.Button
           as="button"
           className="flex-1 flex items-center gap-1.5 py-[1px] text-left outline-none justify-between w-full"
@@ -52,16 +52,16 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
             }}
           >
             <Logo logo={teamspace.logo_props} size={16} />
-            <p className="text-sm text-custom-sidebar-text-200 leading-5 font-medium truncate">{teamspace.name}</p>
+            <p className="text-body-xs-medium text-secondary leading-5 font-medium truncate">{teamspace.name}</p>
           </div>
         </Disclosure.Button>
         <Disclosure.Button
           as="button"
-          className="flex-shrink-0 size-4 text-custom-sidebar-text-400 transition-all opacity-0 group-hover/teamspace-item:opacity-100"
+          className="flex-shrink-0 size-4 text-tertiary transition-all opacity-0 group-hover/teamspace-item:opacity-100"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <ChevronRightIcon
-            className={cn("flex-shrink-0 size-4 text-custom-sidebar-text-400 transition-transform", {
+            className={cn("flex-shrink-0 size-4 text-tertiary transition-transform", {
               "rotate-90": isExpanded,
             })}
           />
@@ -96,7 +96,7 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
                   <SidebarNavItem isActive={isProjectActive}>
                     <div className="flex items-center gap-1.5 py-[1px] truncate">
                       <Logo logo={project.logo_props} size={14} />
-                      <p className="text-xs leading-4 font-medium truncate">{project.name}</p>
+                      <p className="text-caption-sm-medium leading-4 font-medium truncate">{project.name}</p>
                     </div>
                   </SidebarNavItem>
                 </Link>

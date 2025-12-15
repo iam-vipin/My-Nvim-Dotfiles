@@ -77,7 +77,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
       } else if (page?.archivedAt && canCurrentUserAccessPage) {
         return {
           text: getPageName(page?.name),
-          badge: <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-custom-text-300" />} />,
+          badge: <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-tertiary de" />} />,
         };
       } else if (!canCurrentUserAccessPage && page?.id) {
         return {
@@ -130,7 +130,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
 
   if (page?.name == null) {
     return (
-      <Loader className="not-prose relative h-10 page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-custom-background-80 w-full bg-custom-background-80">
+      <Loader className="not-prose relative h-10 page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-layer-1 w-full bg-layer-1">
         <Loader.Item className="h-9" />
       </Loader>
     );
@@ -158,7 +158,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
   return (
     <div
       className={cn(
-        "not-prose relative page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-custom-background-90"
+        "not-prose relative page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-layer-1"
       )}
       onTouchStart={(event) => {
         // Record touch start position and time
@@ -208,7 +208,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
     >
       <div className="flex-shrink-0">{pageEmbedLogo}</div>
       <div className="flex items-center gap-3 truncate">
-        <p className="not-prose text-base font-medium break truncate underline decoration-custom-text-300 underline-offset-4">
+        <p className="not-prose text-14 font-medium break truncate underline decoration-custom-text-300 underline-offset-4">
           {displayState.text}
         </p>
         <div className="flex-shrink-0">{displayState?.badge}</div>

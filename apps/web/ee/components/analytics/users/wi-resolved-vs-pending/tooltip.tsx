@@ -92,7 +92,7 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
       spacing={ECardSpacing.SM}
     >
       {member && (
-        <p className="flex-shrink-0 text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-3 truncate">
+        <p className="flex-shrink-0 text-11 text-primary font-medium border-b border-subtle-1 pb-3 truncate">
           <UserAvatarName userId={member.id} />
         </p>
       )}
@@ -100,18 +100,18 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
         {tooltipItems.map((item) => (
           <div key={item.key} className="space-y-1">
             {/* Parent item */}
-            <div className="flex items-center gap-2 text-xs transition-opacity justify-between text-custom-text-500 font-medium">
+            <div className="flex items-center gap-2 text-11 transition-opacity justify-between text-tertiary font-medium">
               <span className="truncate">{item.label}</span>
               <span className="flex-shrink-0 font-medium">{item.value}</span>
             </div>
 
             {/* Children items with left border */}
             {item.children && item.children.length > 0 && (
-              <div className="border-l border-custom-border-100 pl-2 flex flex-col gap-1">
+              <div className="border-l border-subtle pl-2 flex flex-col gap-1">
                 {item.children.map((child) => (
                   <div
                     key={child.key}
-                    className="flex items-center gap-2 text-xs transition-opacity justify-between text-custom-text-400 "
+                    className="flex items-center gap-2 text-11 transition-opacity justify-between text-placeholder "
                   >
                     <span className="truncate">{child.label}</span>
                     <span className="flex-shrink-0 font-medium">{child.value}</span>

@@ -15,6 +15,15 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // types
 import type { TPageInstance } from "@/store/pages/base-page";
 
+const EMPTY_COMMENT_JSON: JSONContent = {
+  type: "doc",
+  content: [
+    {
+      type: "paragraph",
+    },
+  ],
+};
+
 type CommentBoxProps = {
   // Required props
   workspaceSlug: string;
@@ -45,15 +54,6 @@ type CommentBoxProps = {
     uploadedAssetIds: string[];
   }) => void;
   onCancel?: () => void;
-};
-
-export const EMPTY_COMMENT_JSON: JSONContent = {
-  type: "doc",
-  content: [
-    {
-      type: "paragraph",
-    },
-  ],
 };
 
 export const PageCommentForm = observer(function PageCommentForm(props: CommentBoxProps) {
@@ -217,8 +217,8 @@ export const PageCommentForm = observer(function PageCommentForm(props: CommentB
       className={cn(
         "relative w-full ",
         comment && "px-2 -mx-2",
-        isReply || !comment ? "border border-custom-border-200 rounded p-2" : "",
-        isFocused && editable ? "border-2 border-custom-primary-100 rounded py-2" : ""
+        isReply || !comment ? "border border-subtle-1 rounded-sm p-2" : "",
+        isFocused && editable ? "border-2 border-accent-strong rounded-sm py-2" : ""
       )}
     >
       <Controller

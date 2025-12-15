@@ -18,7 +18,7 @@ export const SpreadsheetMembersColumn = observer(function SpreadsheetMembersColu
   return (
     <div
       className={cn(
-        "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-4 py-1 text-xs hover:bg-custom-background-80 group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
+        "flex h-11 w-full items-center border-b-[0.5px] border-subtle-1 px-4 py-1 text-11 hover:bg-layer-1 group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
       )}
     >
       {membersCount}

@@ -25,7 +25,7 @@ export const PageCommentUserDetails = observer(function PageCommentUserDetails({
 
   return (
     <div className={cn("flex items-baseline gap-2 flex-1", className)}>
-      <div className="text-custom-text-100 text-sm font-medium truncate">{memberDetails?.member.display_name}</div>
+      <div className="text-primary text-13 font-medium truncate">{memberDetails?.member.display_name}</div>
       {timestamp && <PageCommentTimestampDisplay timestamp={timestamp} />}
     </div>
   );

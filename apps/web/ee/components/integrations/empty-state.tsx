@@ -29,13 +29,13 @@ export const IntegrationsEmptyState = observer(function IntegrationsEmptyState(p
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": theme === "dark",
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400": theme === "light",
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": theme === "light",
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 pl-8 lg:w-1/2">
           <div className="flex max-w-96 flex-col gap-2">
-            <h2 className="text-2xl font-semibold">Popular integrations are coming soon!</h2>
-            <p className="text-base font-medium text-custom-text-300">
+            <h2 className="text-heading-md-semibold">Popular integrations are coming soon!</h2>
+            <p className="text-body-sm-medium text-tertiary">
               Send changes in issues to Slack, turn a Support email into a ticket in Plane, and more—coming soon to Pro
               on Plane Cloud and One.
             </p>

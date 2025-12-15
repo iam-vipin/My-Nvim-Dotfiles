@@ -15,7 +15,7 @@ export const SpreadsheetStateColumn = observer(function SpreadsheetStateColumn(p
   if (!issue.state_id) return null;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <IssueBlockState stateId={issue.state_id} shouldShowBorder={false} />
     </div>
   );

@@ -32,7 +32,7 @@ export const EditorWorkItemMentionContent = observer(function EditorWorkItemMent
   return (
     <button
       type="button"
-      className="group/work-item-mention not-prose inline-flex items-center gap-1 text-sm font-medium outline-none"
+      className="group/work-item-mention not-prose inline-flex items-center gap-1 text-13 font-medium outline-none"
       onClick={handleClick}
     >
       <EditorWorkItemMentionLogo
@@ -42,10 +42,10 @@ export const EditorWorkItemMentionContent = observer(function EditorWorkItemMent
         stateGroup={workItemDetails.state__group}
         workItemTypeId={workItemDetails.type_id}
       />
-      <span className="shrink-0 text-custom-text-300">
+      <span className="shrink-0 text-tertiary">
         {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
       </span>
-      <span className="text-custom-text-200 group-hover/work-item-mention:text-custom-text-100 transition-colors truncate">
+      <span className="text-secondary group-hover/work-item-mention:text-primary transition-colors truncate">
         {workItemDetails.name}
       </span>
     </button>

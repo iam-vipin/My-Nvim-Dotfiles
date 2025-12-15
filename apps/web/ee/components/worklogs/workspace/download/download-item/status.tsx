@@ -11,7 +11,7 @@ export function WorklogDownloadStatus(props: { status: TWorklogDownloadStatus | 
   if (!status) return <></>;
   return (
     <span
-      className={cn(`rounded px-2 py-0.5 text-xs capitalize`, {
+      className={cn(`rounded-sm px-2 py-0.5 text-11 capitalize`, {
         "bg-green-500/20 text-green-500": status === "completed",
         "bg-yellow-500/20 text-yellow-500": ["processing", "queued"].includes(status),
         "bg-red-500/20 text-red-500": status === "failed",

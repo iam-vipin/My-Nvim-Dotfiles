@@ -130,12 +130,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -198,12 +198,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -315,12 +315,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -380,12 +380,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -434,12 +434,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>

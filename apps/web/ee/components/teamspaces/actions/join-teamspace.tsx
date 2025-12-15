@@ -87,12 +87,7 @@ export const JoinTeamspaceButton = observer(function JoinTeamspaceButton(props: 
         handleSubmit={handleJoinTeam}
         isSubmitting={isJoinTeamLoading}
       />
-      <Button
-        variant="accent-primary"
-        size="sm"
-        onClick={() => setIsJoinTeamspaceModalOpen(true)}
-        data-ph-element={trackerElement}
-      >
+      <Button variant="secondary" onClick={() => setIsJoinTeamspaceModalOpen(true)} data-ph-element={trackerElement}>
         Join teamspace
       </Button>
     </>

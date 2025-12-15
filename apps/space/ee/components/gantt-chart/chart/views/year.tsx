@@ -7,18 +7,18 @@ export const YearChartView = observer(function YearChartView(_props: any) {
   const { currentViewData, renderView } = useGanttChart();
 
   return (
-    <div className="absolute flex h-full flex-grow divide-x divide-custom-border-200">
+    <div className="absolute flex h-full flex-grow divide-x divide-subtle-1">
       {renderView &&
         renderView.length > 0 &&
         renderView.map((_itemRoot: any, _idxRoot: any) => (
           <div key={`title-${_idxRoot}`} className="relative flex flex-col">
-            <div className="relative border-b border-custom-border-200">
-              <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-sm font-medium capitalize">
+            <div className="relative border-b border-subtle-1">
+              <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-13 font-medium capitalize">
                 {_itemRoot?.title}
               </div>
             </div>
 
-            <div className="flex h-full w-full divide-x divide-custom-border-200">
+            <div className="flex h-full w-full divide-x divide-subtle">
               {_itemRoot.children &&
                 _itemRoot.children.length > 0 &&
                 _itemRoot.children.map((_item: any, _idx: any) => (
@@ -28,8 +28,8 @@ export const YearChartView = observer(function YearChartView(_props: any) {
                     style={{ width: `${currentViewData?.data.width}px` }}
                   >
                     <div
-                      className={`flex-shrink-0 border-b py-1 text-center text-sm font-medium capitalize ${
-                        _item?.today ? `border-red-500 text-red-500` : `border-custom-border-200`
+                      className={`flex-shrink-0 border-b py-1 text-center text-13 font-medium capitalize ${
+                        _item?.today ? `border-red-500 text-red-500` : `border-subtle-1`
                       }`}
                     >
                       <div>{_item.title}</div>

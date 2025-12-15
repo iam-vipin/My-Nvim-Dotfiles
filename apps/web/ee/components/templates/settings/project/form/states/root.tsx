@@ -115,8 +115,8 @@ export const ProjectStates = observer(function ProjectStates(props: TProjectStat
           shouldTrackEvents={false}
           isEditable
           groupListClassName="space-y-4"
-          groupItemClassName="bg-custom-background-100 border-custom-border-100 rounded-lg"
-          stateItemClassName="border-custom-border-200"
+          groupItemClassName="bg-surface-1 border-subtle rounded-lg"
+          stateItemClassName="border-subtle"
         />
       </div>
     </TemplateCollapsibleWrapper>

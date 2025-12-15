@@ -35,8 +35,7 @@ export function WorkspaceWorklogDownloadRefresh(props: TWorkspaceWorklogDownload
   if (!paginationInfo) return <></>;
   return (
     <Button
-      size="sm"
-      variant="neutral-primary"
+      variant="secondary"
       className="whitespace-nowrap border-none !px-1"
       onClick={refreshStatus}
       disabled={isLoaderButtonDisabled}

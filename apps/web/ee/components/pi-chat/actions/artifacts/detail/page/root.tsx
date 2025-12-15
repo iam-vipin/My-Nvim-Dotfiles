@@ -57,7 +57,7 @@ export const PageFormRoot = observer(function PageFormRoot(props: Props) {
         <div className="size-full">
           <div className="w-full max-w-4xl">
             {/* Page Logo */}
-            <div className="size-10 -ml-[4px] grid place-items-center rounded hover:bg-custom-background-80 transition-colors">
+            <div className="size-10 -ml-[4px] grid place-items-center rounded-sm hover:bg-layer-1 transition-colors">
               <Controller
                 control={control}
                 name="logo_props"
@@ -73,7 +73,7 @@ export const PageFormRoot = observer(function PageFormRoot(props: Props) {
                         {value?.in_use ? (
                           <Logo logo={value} size={36} type="lucide" />
                         ) : (
-                          <PageIcon className="size-9 text-custom-text-300" />
+                          <PageIcon className="size-9 text-tertiary" />
                         )}
                       </span>
                     }

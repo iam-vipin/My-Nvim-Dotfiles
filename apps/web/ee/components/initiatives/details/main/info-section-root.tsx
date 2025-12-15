@@ -55,7 +55,7 @@ export const InitiativeInfoSection = observer(function InitiativeInfoSection(pro
       fileAssetType={EFileAssetType.INITIATIVE_DESCRIPTION}
       disabled={disabled}
       iconElement={
-        <div className="flex-shrink-0 size-11 bg-custom-background-80 rounded-md flex items-center justify-center text-custom-text-300">
+        <div className="flex-shrink-0 size-11 bg-layer-3 hover:bg-layer-3-hover rounded-md flex items-center justify-center text-tertiary">
           <EmojiPicker
             iconType="lucide"
             isOpen={isOpen}
@@ -65,9 +65,9 @@ export const InitiativeInfoSection = observer(function InitiativeInfoSection(pro
             label={
               <>
                 {logoValue?.in_use ? (
-                  <Logo logo={logoValue} size={18} type="lucide" />
+                  <Logo logo={logoValue} size={24} type="lucide" />
                 ) : (
-                  <InitiativeIcon className="h-4 w-4 flex-shrink-0 text-custom-text-300" />
+                  <InitiativeIcon className="h-6 w-6 flex-shrink-0 text-tertiary" />
                 )}
               </>
             }

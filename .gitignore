@@ -111,11 +111,12 @@ monitor.db
 claude.md
 agents.md
 CLAUDE.md
-AGENTS.md
 
 build/
 .react-router/
 
+build/
+.react-router/
 temp/
 
 # Ignore any test results JSON files

@@ -66,7 +66,7 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
         value: template.id,
         query: template.name ?? "",
         content: (
-          <div className="flex w-full gap-2 items-center text-custom-text-200">
+          <div className="flex w-full gap-2 items-center text-secondary">
             <Shapes
               className={cn("flex-shrink-0", {
                 "size-3": size === "xs",
@@ -75,8 +75,8 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
             />
             <div
               className={cn("truncate", {
-                "text-xs": size === "xs",
-                "text-sm font-medium": size === "sm",
+                "text-caption-sm-regular": size === "xs",
+                "text-body-xs-medium": size === "sm",
               })}
             >
               {template.name}
@@ -124,16 +124,16 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
           ) : (
             <>
               <Shapes
-                className={cn("flex-shrink-0", templateId ? "text-custom-text-200" : "text-custom-text-300", {
+                className={cn("flex-shrink-0", templateId ? "text-secondary" : "text-tertiary", {
                   "size-3": size === "xs",
                   "size-4": size === "sm",
                 })}
               />
               {(currentProjectTemplate?.name || placeholder) && (
                 <div
-                  className={cn("truncate", templateId ? "text-custom-text-200" : "text-custom-text-300", {
-                    "text-xs": size === "xs",
-                    "text-sm font-medium": size === "sm",
+                  className={cn("truncate", templateId ? "text-secondary" : "text-tertiary", {
+                    "text-caption-sm-regular": size === "xs",
+                    "text-body-xs-medium": size === "sm",
                   })}
                 >
                   {templateId ? currentProjectTemplate?.name : placeholder}
@@ -147,17 +147,14 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
       onChange={handleTemplateChange}
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
-      customButtonClassName={cn(
-        "rounded text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300",
-        buttonClassName
-      )}
+      customButtonClassName={cn("rounded-sm text-body-xs-regular bg-surface-1 border border-subtle", buttonClassName)}
       disabled={disabled}
       noResultsMessage={t("templates.dropdown.no_results.project")}
       footerOption={
         showCreateNewTemplate ? (
           <Button
-            variant="link-neutral"
-            className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded text-xs text-custom-text-200 font-medium hover:bg-custom-background-80"
+            variant="ghost"
+            className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded-sm text-caption-sm-medium text-secondary hover:bg-layer-transparent-hover"
             onClick={redirectToCreateTemplatePage}
             data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_PROJECT_MODAL_CREATE_BUTTON}
           >

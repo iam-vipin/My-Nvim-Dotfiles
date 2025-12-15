@@ -46,7 +46,7 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
   // hooks
   const { favoriteChat, unfavoriteChat, initPiChat } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
 
   const handleFavorite = async () => {
     if (isFavorite) {
@@ -69,7 +69,7 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
     },
     {
       key: "favorite",
-      action: () => handleFavorite(),
+      action: () => void handleFavorite(),
       title: isFavorite ? t("remove_from_favorites") : t("add_to_favorites"),
       icon: Star,
       iconClassName: isFavorite ? "fill-yellow-500 stroke-yellow-500" : "",
@@ -105,14 +105,14 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
           workspaceId={workspaceId}
         />
       </ModalCore>{" "}
-      <div className="py-0.5 group/recent-chat">
+      <div className="group/recent-chat">
         <SidebarNavItem isActive={isActive} className="gap-0">
           {isFullScreen ? (
             <Link
               href={joinUrlPath(workspaceSlug?.toString() || "", isProjectLevel ? "projects" : "", "pi-chat", chatId)}
               className="w-full overflow-hidden"
             >
-              <div className="text-sm leading-5 font-medium truncate capitalize"> {title || "No title"}</div>
+              <div className="text-body-xs-medium text-secondary truncate capitalize"> {title || "No title"}</div>
             </Link>
           ) : (
             <button
@@ -122,23 +122,24 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
                 onClickItem();
               }}
             >
-              <div className="text-sm leading-5 font-medium truncate capitalize text-start">{title || "No title"}</div>
+              <div className="text-body-xs-medium text-secondary truncate capitalize text-start">
+                {title || "No title"}
+              </div>
             </button>
           )}
           <CustomMenu
             customButton={
-              <span
+              <button
                 className={cn(
-                  "opacity-0 w-0 grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded group-hover/recent-chat:w-auto group-hover/recent-chat:opacity-100 group-hover/recent-chat:ml-1 outline-none",
+                  "opacity-0 w-0 grid place-items-center p-0.5 text-placeholder bg-layer-transparent hover:bg-layer-transparent-hover rounded group-hover/recent-chat:w-auto group-hover/recent-chat:opacity-100 group-hover/recent-chat:ml-1 outline-none",
                   {
-                    "text-custom-primary-350  hover:bg-custom-primary-100/20": isActive,
                     "w-auto opacity-100 ml-1": isMenuActive,
                   }
                 )}
                 onClick={() => setIsMenuActive(!isMenuActive)}
               >
                 <MoreHorizontal className="size-4" />
-              </span>
+              </button>
             }
             className={cn(
               "opacity-0 pointer-events-none flex-shrink-0 group-hover/recent-chat:opacity-100 group-hover/recent-chat:pointer-events-auto",
@@ -163,7 +164,7 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
                   className={cn(
                     "flex items-center gap-2",
                     {
-                      "text-custom-text-400": item.disabled,
+                      "text-placeholder": item.disabled,
                     },
                     item.className
                   )}
@@ -174,8 +175,8 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
                     <h5 className="capitalize">{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}

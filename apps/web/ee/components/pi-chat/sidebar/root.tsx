@@ -46,8 +46,8 @@ export const PiSidebar = observer(function PiSidebar() {
         userThreads={filteredUserThread ?? []}
         isLoading={isLoadingThreads}
         activeChatId={activeChatId}
-        isFullScreen
         onClickItem={() => {}}
+        isFullScreen
       />
     </SidebarWrapper>
   );

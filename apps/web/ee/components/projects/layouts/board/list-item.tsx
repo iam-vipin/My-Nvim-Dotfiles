@@ -53,7 +53,7 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
   }, [cardRef?.current, project, isDragAllowed]);
   return (
     <div
-      className="flex whitespace-nowrap gap-2 rounded w-full"
+      className="flex whitespace-nowrap gap-2 rounded-sm w-full"
       ref={cardRef}
       id={`kanban-${project.id}`}
       onDragStart={() => {

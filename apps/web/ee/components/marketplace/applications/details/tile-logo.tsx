@@ -12,8 +12,8 @@ export function AppTileLogo(props: AppTileLogoProps) {
   return logoUrl ? (
     <img src={logoUrl} alt={app.name} className="h-full w-full" />
   ) : (
-    <div className=" bg-custom-background-80 flex items-center justify-center h-full w-full">
-      <div className="text-lg font-medium">{app.name?.charAt(0)}</div>
+    <div className=" bg-layer-1 flex items-center justify-center h-full w-full">
+      <div className="text-body-sm-medium">{app.name?.charAt(0)}</div>
     </div>
   );
 }

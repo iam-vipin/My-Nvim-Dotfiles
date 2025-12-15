@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 // plane imports
 import type {
   ETeamspaceAnalyticsDataKeys,
@@ -11,7 +11,7 @@ import type {
 import type { TChartData, TStateGroups, TTeamspaceActivity, TTeamspaceActivityKeys } from "@plane/types";
 
 export type TTeamspaceActivityDetails = {
-  icon: ReactNode;
+  icon: FC<{ className?: string }>;
   message: ReactNode;
   customUserName?: string;
 };

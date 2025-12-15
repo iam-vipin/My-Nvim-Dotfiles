@@ -17,7 +17,7 @@ export const WorkflowStateItem = observer(function WorkflowStateItem(props: TSta
   const { workspaceSlug, projectId, totalStates, state } = props;
 
   return (
-    <div className={cn("relative border border-custom-border-100 rounded group")}>
+    <div className={cn("relative border border-subtle rounded-sm group")}>
       <StateItemChild workspaceSlug={workspaceSlug} projectId={projectId} stateCount={totalStates} state={state} />
     </div>
   );

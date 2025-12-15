@@ -89,24 +89,23 @@ export function DeleteTeamspaceModal(props: DeleteTeamspaceModal) {
     <ModalCore isOpen={isModalOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={onSubmit} className="flex flex-col gap-6 p-6">
         <div className="flex w-full items-center justify-start gap-4">
-          <span className="place-items-center rounded-full bg-red-500/20 p-3">
-            <AlertTriangle className="size-6 text-red-600" aria-hidden="true" />
+          <span className="place-items-center rounded-full bg-danger-subtle p-3">
+            <AlertTriangle className="size-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-xl font-medium 2xl:text-2xl">Delete teamspace</h3>
+            <h3 className="text-h5-medium 2xl:text-h4-medium">Delete teamspace</h3>
           </span>
         </div>
         <span>
-          <p className="text-sm leading-5 text-custom-text-200">
+          <p className="text-body-xs-regular leading-5 text-secondary">
             Are you sure you want to delete teamspace{" "}
             <span className="break-words font-semibold">{teamspace?.name}</span>? All of the data related to the
             teamspace will be permanently removed. This action cannot be undone
           </p>
         </span>
-        <div className="text-custom-text-200">
-          <p className="break-words text-sm ">
-            Enter the teamspace name <span className="font-medium text-custom-text-100">{teamspace?.name}</span> to
-            continue:
+        <div className="text-secondary">
+          <p className="break-words text-body-xs-regular ">
+            Enter the teamspace name <span className="font-medium text-primary">{teamspace?.name}</span> to continue:
           </p>
           <Input
             id="projectName"
@@ -119,9 +118,9 @@ export function DeleteTeamspaceModal(props: DeleteTeamspaceModal) {
             autoComplete="off"
           />
         </div>
-        <div className="text-custom-text-200">
-          <p className="text-sm">
-            To confirm, type <span className="font-medium text-custom-text-100">delete my teamspace</span> below:
+        <div className="text-secondary">
+          <p className="text-body-xs-regular">
+            To confirm, type <span className="font-medium text-primary">delete my teamspace</span> below:
           </p>
           <Input
             id="confirmDelete"
@@ -135,10 +134,10 @@ export function DeleteTeamspaceModal(props: DeleteTeamspaceModal) {
           />
         </div>
         <div className="flex justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="secondary" size="lg" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="danger" size="sm" type="submit" disabled={!isDeletionAllowed} loading={isSubmitting}>
+          <Button variant="error-fill" size="lg" type="submit" disabled={!isDeletionAllowed} loading={isSubmitting}>
             {isSubmitting ? "Deleting" : "Delete teamspace"}
           </Button>
         </div>

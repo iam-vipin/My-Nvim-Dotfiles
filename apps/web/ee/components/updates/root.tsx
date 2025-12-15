@@ -95,18 +95,13 @@ export const UpdatesWrapper = observer(function UpdatesWrapper({
       {!showInput && updates.length !== 0 && allowNew && (
         <div className="flex justify-between h-7 items-center">
           <button
-            className="flex text-custom-primary-100 text-sm font-medium rounded w-fit py-1 px-2"
+            className="flex text-accent-primary text-13 font-medium rounded w-fit py-1 px-2"
             onClick={() => setShowInput(true)}
           >
             <Plus size={15} className="my-auto mr-1" />
             <div>{t("updates.add_update")}</div>
           </button>
-          <ActivitySortRoot
-            sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-            toggleSort={toggleSortOrder}
-            className="flex-shrink-0"
-            iconClassName="size-3"
-          />
+          <ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
         </div>
       )}
 

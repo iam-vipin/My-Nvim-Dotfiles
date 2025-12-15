@@ -64,10 +64,10 @@ export function UpdateStatusIcons({
           }}
           className={cn(
             sizes[size].container,
-            "flex-shrink-0 place-items-center rounded-full bg-custom-background-80 flex gap-1 p-1 justify-center",
+            "flex-shrink-0 place-items-center rounded-full bg-layer-1 flex gap-1 p-1 justify-center",
             className,
             {
-              "border border-dashed border-custom-border-300": !status,
+              "border border-dashed border-subtle-1": !status,
               "px-2 w-auto": showText,
             }
           )}
@@ -83,7 +83,7 @@ export function UpdateStatusIcons({
             />
           )}
           {showText && (
-            <span className="text-xs font-semibold" style={{ color: iconColor }}>
+            <span className="text-11 font-semibold" style={{ color: iconColor }}>
               {statusType && capitalizeFirstLetter(statusType.replaceAll("-", " ").toLowerCase())}
             </span>
           )}

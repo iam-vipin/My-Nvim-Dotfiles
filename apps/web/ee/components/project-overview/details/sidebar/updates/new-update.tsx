@@ -20,21 +20,21 @@ export function NewUpdate(props: TProps) {
   const [selectedStatus, setSelectedStatus] = useState(initialValues?.status ?? EUpdateStatus.ON_TRACK);
 
   return (
-    <div className="border border-custom-border-100 rounded-md p-4 flex flex-col gap-4 mb-4">
+    <div className="border border-subtle rounded-md p-4 flex flex-col gap-4 mb-4">
       {/* Type */}
       <StatusDropdown selectedStatus={selectedStatus} setStatus={setSelectedStatus} />
 
       {/* Textarea */}
       <TextArea
-        className="border-none p-0 text-sm min-h-4"
+        className="border-none p-0 text-13 min-h-4"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Add your update."
       />
 
       {/* actions */}
-      <div className="flex m-auto mr-0 text-sm gap-2 w-fit">
-        <Button onClick={handleClose} variant="neutral-primary" size="sm">
+      <div className="flex m-auto mr-0 text-13 gap-2 w-fit">
+        <Button onClick={handleClose} variant="secondary">
           Cancel
         </Button>
         <Button

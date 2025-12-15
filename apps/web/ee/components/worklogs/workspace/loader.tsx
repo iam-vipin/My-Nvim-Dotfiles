@@ -12,7 +12,7 @@ export function WorklogLoader(props: TWorklogLoader) {
     <Loader>
       {/* filter */}
       {loader === EWorklogLoader.WORKSPACE_INIT_LOADER && (
-        <div className="flex justify-between items-center h-full gap-5 border-b border-custom-border-200 pb-3">
+        <div className="flex justify-between items-center h-full gap-5 border-b border-subtle-1 pb-3">
           <div className="flex items-center gap-2">
             <Loader.Item height="20px" width="70px" />
             <Loader.Item height="20px" width="70px" />
@@ -24,8 +24,8 @@ export function WorklogLoader(props: TWorklogLoader) {
 
       {/* table */}
       <div>
-        <table className="table-auto border-b border-custom-border-200 w-full overflow-hidden whitespace-nowrap">
-          <thead className="border-b border-custom-border-200">
+        <table className="table-auto border-b border-subtle-1 w-full overflow-hidden whitespace-nowrap">
+          <thead className="border-b border-subtle-1">
             <tr>
               <th className="p-2.5">
                 <Loader.Item height="18.9px" width="70px" />

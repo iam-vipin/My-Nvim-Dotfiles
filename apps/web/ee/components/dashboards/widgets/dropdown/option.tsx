@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Lock } from "lucide-react";
@@ -8,7 +8,6 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -56,12 +55,7 @@ export const DashboardWidgetChartTypesDropdownOption = observer(function Dashboa
           {isUpgradeNeeded ? (
             <>
               Upgrade to{" "}
-              <span
-                className={cn(
-                  "px-0.5 rounded",
-                  getSubscriptionTextAndBackgroundColor(EProductSubscriptionEnum.BUSINESS)
-                )}
-              >
+              <span className={cn("px-0.5 rounded bg-accent-primary text-accent-primary")}>
                 {getSubscriptionName(EProductSubscriptionEnum.BUSINESS)}
               </span>{" "}
               to
@@ -77,9 +71,9 @@ export const DashboardWidgetChartTypesDropdownOption = observer(function Dashboa
       <button
         type="button"
         className={cn(
-          "flex-shrink-0 relative size-14 grid place-items-center border-2 border-custom-border-300 rounded hover:bg-custom-background-80 transition-colors",
+          "flex-shrink-0 relative size-14 grid place-items-center border-2 border-subtle-1 rounded-sm hover:bg-layer-1 transition-colors",
           {
-            "border-custom-primary-100 pointer-events-none": isSelected,
+            "border-accent-strong pointer-events-none": isSelected,
           }
         )}
         onClick={() => {
@@ -93,17 +87,12 @@ export const DashboardWidgetChartTypesDropdownOption = observer(function Dashboa
         <WidgetChartTypeIcon
           chartModel={model.value}
           chartType={widget}
-          className={cn("size-8 text-custom-text-300 transition-colors", {
-            "text-custom-primary-100": isSelected,
+          className={cn("size-8 text-tertiary transition-colors", {
+            "text-accent-primary": isSelected,
           })}
         />
         {isUpgradeNeeded && (
-          <span
-            className={cn(
-              "absolute top-0.5 right-0.5 size-3.5 grid place-items-center rounded-sm",
-              getSubscriptionTextAndBackgroundColor(EProductSubscriptionEnum.BUSINESS)
-            )}
-          >
+          <span className="absolute top-0.5 right-0.5 size-3.5 grid place-items-center rounded-sm bg-accent-primary text-accent-primary">
             <Lock className="size-3" />
           </span>
         )}

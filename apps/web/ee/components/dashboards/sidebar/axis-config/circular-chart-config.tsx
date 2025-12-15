@@ -30,7 +30,7 @@ export function WidgetConfigSidebarCircularChartConfig(props: Props) {
   );
 
   return (
-    <div className="flex-shrink-0 space-y-1 text-sm">
+    <div className="flex-shrink-0 space-y-1 text-13">
       {isPropertySelectEnabled && (
         <Controller
           control={control}

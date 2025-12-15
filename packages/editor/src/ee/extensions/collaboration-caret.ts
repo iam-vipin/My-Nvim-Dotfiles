@@ -18,7 +18,7 @@ const renderUserCursor = (user: TUserDetails): HTMLSpanElement => {
   label.dataset.collaboratorId = user?.id;
 
   label.classList.value =
-    "custom-collaboration-caret absolute rounded-[3px_3px_3px_0] text-[#0d0d0d] text-xs font-semibold leading-normal -top-[1.3rem] -left-[1px] py-0.5 px-1.5 select-none whitespace-nowrap";
+    "custom-collaboration-caret absolute rounded-[3px_3px_3px_0] text-[#0d0d0d] text-11 font-semibold leading-normal -top-[1.3rem] -left-[1px] py-0.5 px-1.5 select-none whitespace-nowrap";
   label.setAttribute("style", `background-color: ${user.color}`);
   label.insertBefore(document.createTextNode(user.name), null);
 

@@ -12,12 +12,9 @@ export function WidgetConfigSelectButton(props: Props) {
 
   return (
     <div
-      className={cn(
-        "w-full px-2 py-1 rounded hover:bg-custom-background-80 text-left cursor-pointer transition-colors",
-        {
-          "text-custom-text-400": !value,
-        }
-      )}
+      className={cn("w-full px-2 py-1 rounded-sm hover:bg-layer-1 text-left cursor-pointer transition-colors", {
+        "text-placeholder": !value,
+      })}
     >
       {value ? title : placeholder}
     </div>

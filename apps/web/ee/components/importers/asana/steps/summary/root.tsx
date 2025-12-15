@@ -185,12 +185,7 @@ export const SummaryRoot = observer(function SummaryRoot() {
         {/* stepper button */}
         <div className="flex-shrink-0 relative flex items-center gap-2">
           <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleOnClickNext}
-              disabled={createConfigLoader || isNextBtnDisabled}
-            >
+            <Button variant="primary" onClick={handleOnClickNext} disabled={createConfigLoader || isNextBtnDisabled}>
               {createConfigLoader ? t("common.configuring") : t("common.confirm")}
             </Button>
           </StepperNavigation>

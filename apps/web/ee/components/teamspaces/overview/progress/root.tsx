@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -133,7 +132,7 @@ export const TeamspaceProgressRoot = observer(function TeamspaceProgressRoot(pro
           isOpen={isOpen}
           title="Team's progress"
           className="border-none px-0"
-          titleClassName={cn(isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200")}
+          titleClassName={cn(isOpen ? "text-primary" : "text-tertiary hover:text-secondary")}
         />
       }
       className="py-2"
@@ -163,7 +162,7 @@ export const TeamspaceProgressRoot = observer(function TeamspaceProgressRoot(pro
           <SectionEmptyState
             heading={t("teamspace_analytics.empty_state.progress.title")}
             subHeading={t("teamspace_analytics.empty_state.progress.description")}
-            icon={<BarIcon className="size-6 text-custom-text-400" />}
+            icon={<BarIcon className="size-6 text-placeholder" />}
             variant="solid"
             iconVariant="round"
             size="md"

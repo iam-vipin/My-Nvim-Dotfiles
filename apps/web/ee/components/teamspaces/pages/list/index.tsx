@@ -228,8 +228,8 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto object-cover"
             alt="No matching pages"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="text-h5-medium mt-7 mb-1">No matching pages</h5>
+          <p className="text-placeholder text-body-sm-regular">
             {debouncedSearchQuery.length > 0
               ? "Remove the search criteria to see all pages"
               : "Remove the filters to see all pages"}
@@ -241,9 +241,7 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
   return (
     <div
       ref={rootDropRef}
-      className={`size-full overflow-y-scroll vertical-scrollbar scrollbar-sm ${
-        isRootDropping ? "bg-custom-background-80" : ""
-      }`}
+      className={`size-full overflow-y-scroll vertical-scrollbar scrollbar-sm ${isRootDropping ? "bg-layer-1" : ""}`}
     >
       {pageIds.map((pageId) => (
         <PageListBlockRoot

@@ -78,7 +78,7 @@ export const EpicsRoot = observer(function EpicsRoot() {
   return (
     <div className="container mx-auto h-full pb-8">
       <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-        <div className="flex justify-between gap-2 pb-3.5 border-b border-custom-border-100">
+        <div className="flex justify-between gap-2 pb-3.5 border-b border-subtle">
           <SettingsHeading
             title={t("project_settings.epics.heading")}
             description={t("project_settings.epics.description")}

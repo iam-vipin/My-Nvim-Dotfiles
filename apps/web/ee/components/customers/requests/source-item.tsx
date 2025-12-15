@@ -13,7 +13,7 @@ export function SourceItem(props: TProps) {
     <div className="flex gap-2 items-center max-w-40 truncate">
       {/* TODO: Add favicon from backend */}
       {/* {link && <Image src={faviconUrl} height={20} width={20} alt="favicon" />} */}
-      <p className="text-sm truncate">{link}</p>
+      <p className="text-13 truncate">{link}</p>
     </div>
   );
 }

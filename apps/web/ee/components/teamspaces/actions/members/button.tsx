@@ -27,7 +27,7 @@ const AddMembersIcon = observer(function AddMembersIcon(props: {
         height: containerSize,
       }}
       className={cn(
-        `bg-custom-background-80/60 hover:bg-custom-background-80 group-hover:bg-custom-background-80 rounded-full flex items-center justify-center`,
+        `bg-layer-1 hover:bg-layer-1-hover group-hover:bg-layer-1-hover rounded-full flex items-center justify-center`,
         containerClassName
       )}
     >
@@ -36,10 +36,7 @@ const AddMembersIcon = observer(function AddMembersIcon(props: {
           width: iconSize,
           height: iconSize,
         }}
-        className={cn(
-          "text-custom-text-400 hover:text-custom-text-300 group-hover:text-custom-text-300",
-          iconClassName
-        )}
+        className={cn("text-tertiary hover:text-secondary group-hover:text-secondary", iconClassName)}
         strokeWidth={2}
       />
     </div>
@@ -62,7 +59,7 @@ export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersBu
         isModalOpen={isAddMembersModalOpen}
         handleModalClose={() => setIsAddMembersModalOpen(false)}
       />
-      <div
+      <button
         className="flex-shrink-0 cursor-pointer"
         onClick={() => setIsAddMembersModalOpen(true)}
         data-ph-element={
@@ -77,12 +74,10 @@ export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersBu
             <span className="flex-shrink-0 relative rounded-full">
               <AddMembersIcon containerSize={32} iconSize={18} />
             </span>
-            <span className="text-sm font-medium text-custom-text-400 group-hover:text-custom-text-300">
-              Add new member
-            </span>
+            <span className="text-body-xs-medium text-placeholder group-hover:text-tertiary">Add new member</span>
           </div>
         )}
-      </div>
+      </button>
     </>
   );
 });

@@ -23,14 +23,13 @@ export const CustomerUpgrade = observer(function CustomerUpgrade() {
         <div
           className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
             "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-            "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-              !resolvedTheme?.includes("dark"),
+            "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": !resolvedTheme?.includes("dark"),
           })}
         >
           <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
             <div className="w-full xl:max-w-[300px]">
-              <div className="text-2xl/7 font-semibold mb-2 line-">{t("customers.upgrade.title")}</div>
-              <div className="text-sm">{t("customers.upgrade.description")}</div>
+              <div className="text-20/7 font-semibold mb-2 line-">{t("customers.upgrade.title")}</div>
+              <div className="text-13">{t("customers.upgrade.description")}</div>
               <div className="mt-6">
                 <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={E_FEATURE_FLAGS.CUSTOMERS} />
               </div>

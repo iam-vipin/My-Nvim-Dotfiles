@@ -5,6 +5,7 @@ import type {
   ISearchIssueResponse,
   TEditorWorkItemMention,
   TWorkspaceEpicsSearchParams,
+  TSearchResults,
 } from "@plane/types";
 // helpers
 // services
@@ -36,7 +37,7 @@ export class WorkspaceService extends CoreWorkspaceService {
   async searchAcrossWorkspace(
     workspaceSlug: string,
     params: { search: string; workspace_search?: boolean; project_id?: string }
-  ) {
+  ): Promise<{ results: TSearchResults }> {
     return this.get(`/api/workspaces/${workspaceSlug}/search/`, { params }).then((response) => response?.data);
   }
 

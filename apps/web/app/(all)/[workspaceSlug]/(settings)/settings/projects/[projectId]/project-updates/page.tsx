@@ -36,7 +36,7 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
     return (
       <>
         <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+          <p className="text-13 text-tertiary">You are not authorized to access this page.</p>
         </div>
       </>
     );
@@ -71,14 +71,14 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
         />
         <WithFeatureFlagHOC flag="PROJECT_UPDATES" fallback={<ProjectUpdatesUpgrade />} workspaceSlug={workspaceSlug}>
           <>
-            <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100">
+            <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle">
               <div className="flex items-center gap-4">
-                <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-                  <UpdatesIcon className="size-5 text-custom-text-300" />
+                <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
+                  <UpdatesIcon className="size-5 text-tertiary" />
                 </div>
                 <div className="leading-tight">
                   <h5 className="font-medium">Turn on Project Updates</h5>
-                  <span className="text-custom-sidebar-text-400 text-sm">
+                  <span className="text-custom-sidebar-text-400 text-13">
                     See all updates on demand from anyone in this project. Easily track updates across four preset
                     categories.
                   </span>

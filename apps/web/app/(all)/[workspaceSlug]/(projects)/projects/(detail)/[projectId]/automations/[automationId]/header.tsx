@@ -7,7 +7,8 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { EAutomationSidebarTab } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Button, Header, Tooltip } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Tooltip } from "@plane/ui";
 // hooks
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
@@ -141,7 +142,7 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
               <BreadcrumbLink
                 href={automationDetails.settingsLink}
                 label={t("automations.settings.title")}
-                icon={<Repeat className="size-4 text-custom-text-300 hover:text-custom-text-100" />}
+                icon={<Repeat className="size-3 text-tertiary hover:text-primary" />}
               />
             }
           />
@@ -158,7 +159,7 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
                 title={automationDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <Repeat className="size-4 flex-shrink-0 text-custom-text-300" />
+                    <Repeat className="size-4 flex-shrink-0 text-tertiary" />
                   </Breadcrumbs.Icon>
                 }
                 isLast
@@ -169,12 +170,7 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
         </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem className="items-center">
-        <Button
-          variant="neutral-primary"
-          size="sm"
-          onClick={handleOpenActivity}
-          prependIcon={<Activity className="size-3 shrink-0" />}
-        >
+        <Button variant="secondary" onClick={handleOpenActivity} prependIcon={<Activity className="size-3 shrink-0" />}>
           {t("common.activity")}
         </Button>
         <Tooltip
@@ -187,7 +183,6 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
           <span>
             <Button
               variant="primary"
-              size="sm"
               onClick={handleAutomationStatusChange}
               loading={isUpdatingStatus}
               disabled={isUpdatingStatus || (!automationDetails.is_enabled ? !canEnableAutomation : false)}

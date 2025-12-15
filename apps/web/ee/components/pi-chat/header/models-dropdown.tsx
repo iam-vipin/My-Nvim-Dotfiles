@@ -24,7 +24,7 @@ export const ModelsDropdown = observer(function ModelsDropdown(props: TModelsDro
           setActiveModel(model);
         }}
       >
-        <div className="truncate font-medium text-xs">{model.name}</div>
+        <div className="truncate font-medium text-11">{model.name}</div>
       </CustomMenu.MenuItem>
     ));
   }
@@ -32,14 +32,15 @@ export const ModelsDropdown = observer(function ModelsDropdown(props: TModelsDro
   return (
     <CustomMenu
       maxHeight={"md"}
-      className={cn("flex justify-center text-xs w-fit ", className)}
+      className={cn("flex justify-center text-11 w-fit ", className)}
       placement="bottom-start"
       customButton={
-        <button className="flex hover:bg-custom-background-80 p-2 rounded gap-1">
-          <span className="font-medium text-sm my-auto"> Plane AI {activeModel && `(${activeModel?.name})`}</span>
-          <ChevronDownIcon
-            className={cn("size-3 my-auto text-custom-text-300 hover:text-custom-text-200 duration-300")}
-          />
+        <button className="flex hover:bg-layer-1 p-2 rounded-md gap-1">
+          <span className="text-body-xs-medium my-auto text-primary">
+            {" "}
+            Plane AI {activeModel && `(${activeModel?.name})`}
+          </span>
+          <ChevronDownIcon className={cn("size-3 my-auto text-tertiary hover:text-secondary duration-300")} />
         </button>
       }
       customButtonClassName="flex justify-center"

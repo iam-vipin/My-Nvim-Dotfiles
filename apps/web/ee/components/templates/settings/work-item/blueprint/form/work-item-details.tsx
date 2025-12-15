@@ -128,15 +128,15 @@ export function WorkItemBlueprintDetails<T extends FieldValues>(props: TWorkItem
               placeholder={placeholders?.name || t("templates.settings.form.work_item.name.placeholder")}
               className={cn("w-full", {
                 "p-0": inputBorderVariant === "true-transparent",
-                "text-lg font-bold": inputTextSize === "lg",
-                "text-base": inputTextSize === "md",
+                "text-h5-bold": inputTextSize === "lg",
+                "text-body-sm-regular": inputTextSize === "md",
               })}
               mode={inputBorderVariant}
             />
           )}
         />
         {nameError && typeof nameError.message === "string" && (
-          <span className="text-xs font-medium text-red-500">{nameError.message}</span>
+          <span className="text-caption-sm-medium text-danger">{nameError.message}</span>
         )}
       </div>
       {/* Work Item Description */}
@@ -161,7 +161,7 @@ export function WorkItemBlueprintDetails<T extends FieldValues>(props: TWorkItem
                   : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
               }
               containerClassName={cn("min-h-[120px]", {
-                "border border-custom-border-100 py-2": inputBorderVariant === "primary",
+                "border border-subtle py-2": inputBorderVariant === "primary",
                 "px-0": inputBorderVariant === "true-transparent",
               })}
               disabledExtensions={["image", "attachments"]}

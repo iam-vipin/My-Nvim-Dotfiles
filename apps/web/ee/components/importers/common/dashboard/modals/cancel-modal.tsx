@@ -14,14 +14,14 @@ export function CancelModal({ onClose, onSubmit, isLoading }: ICancelModalProps)
   return (
     <div className="space-y-5 p-5">
       <div className="space-y-2">
-        <div className="text-xl font-medium text-custom-text-200">{t("importers.cancel_import_job")}</div>
-        <div className="text-sm text-custom-text-300">{t("importers.cancel_import_job_confirmation")}</div>
+        <div className="text-18 font-medium text-secondary">{t("importers.cancel_import_job")}</div>
+        <div className="text-13 text-tertiary">{t("importers.cancel_import_job_confirmation")}</div>
       </div>
       <div className="relative flex justify-end items-center gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose}>
           {t("common.cancel")}
         </Button>
-        <Button variant="primary" size="sm" onClick={onSubmit} loading={isLoading} disabled={isLoading}>
+        <Button variant="primary" onClick={onSubmit} loading={isLoading} disabled={isLoading}>
           {isLoading ? t("common.cancelling") : t("common.continue")}
         </Button>
       </div>

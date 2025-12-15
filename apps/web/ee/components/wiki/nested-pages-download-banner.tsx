@@ -5,7 +5,7 @@ import { CircleAlert } from "lucide-react";
 import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // helpers
 import { captureView } from "@/helpers/event-tracker.helper";
 // plane web imports
@@ -67,13 +67,13 @@ export const NestedPagesDownloadBanner = observer(function NestedPagesDownloadBa
     <div className="flex items-center justify-between gap-4 py-3.5 px-4 bg-red-500/30">
       <div className="flex items-center gap-2 text-red-500">
         <CircleAlert className="shrink-0 size-4" />
-        <p className="text-sm font-medium">{t("wiki.nested_pages_download_banner.title")}</p>
+        <p className="text-13 font-medium">{t("wiki.nested_pages_download_banner.title")}</p>
       </div>
       <div className="shrink-0 flex items-center gap-3">
-        <Button variant="neutral-primary" size="sm" onClick={handleDownload} loading={isDownloading}>
+        <Button variant="secondary" onClick={handleDownload} loading={isDownloading}>
           {isDownloading ? t("wiki.upgrade_flow.download_button.loading") : t("wiki.upgrade_flow.download_button.text")}
         </Button>
-        <Button variant="primary" size="sm" onClick={handlePaidPlanPurchaseModalOpen}>
+        <Button variant="primary" onClick={handlePaidPlanPurchaseModalOpen}>
           {t("wiki.upgrade_flow.upgrade_button.text")}
         </Button>
       </div>

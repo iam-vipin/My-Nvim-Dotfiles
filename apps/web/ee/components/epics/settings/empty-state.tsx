@@ -67,7 +67,7 @@ export const EpicsEmptyState = observer(function EpicsEmptyState(props: TIssueTy
         redirect ? (
           <a
             href={`/${workspaceSlug}/projects/${projectId}/settings/epics/`}
-            className={getButtonStyling("primary", "md")}
+            className={getButtonStyling("primary", "base")}
           >
             Enable
           </a>
@@ -80,7 +80,7 @@ export const EpicsEmptyState = observer(function EpicsEmptyState(props: TIssueTy
         <a
           href="https://prime.plane.so/"
           target="_blank"
-          className={getButtonStyling("primary", "md")}
+          className={getButtonStyling("primary", "base")}
           rel="noreferrer"
         >
           Get Pro

@@ -10,17 +10,15 @@ export const NoAutomationsEmptyState = observer(function NoAutomationsEmptyState
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col items-center justify-center text-center gap-4 px-4 py-10 border-b border-custom-border-100">
-      <span className="flex flex-shrink-0 items-center justify-center size-8 rounded bg-custom-background-80/70">
-        <Zap className="size-4 text-custom-text-300" strokeWidth={1.5} />
+    <div className="flex flex-col items-center justify-center text-center gap-4 px-4 py-10 border-b border-subtle">
+      <span className="flex flex-shrink-0 items-center justify-center size-8 rounded-sm bg-layer-1/70">
+        <Zap className="size-4 text-tertiary" strokeWidth={1.5} />
       </span>
       <p className="flex flex-col gap-0.5">
-        <span className="text-sm font-medium text-custom-text-200">
-          {t("automations.empty_state.no_automations.title")}
-        </span>
-        <span className="text-xs text-custom-text-300">{t("automations.empty_state.no_automations.description")}</span>
+        <span className="text-13 font-medium text-secondary">{t("automations.empty_state.no_automations.title")}</span>
+        <span className="text-11 text-tertiary">{t("automations.empty_state.no_automations.description")}</span>
       </p>
-      <CreateAutomationButton variant="accent-primary" />
+      <CreateAutomationButton variant="secondary" />
     </div>
   );
 });

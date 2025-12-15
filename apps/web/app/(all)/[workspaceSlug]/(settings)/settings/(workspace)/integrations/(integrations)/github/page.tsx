@@ -80,7 +80,7 @@ function GitHubIntegration() {
       <div className="relative space-y-6">
         {/* header */}
         <GithubHeader />
-        <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
+        <div className="flex flex-col border border-subtle rounded-sm p-4 mb-2 justify-center">
           {/* Icon and Title Section */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -99,14 +99,14 @@ function GitHubIntegration() {
 
   if (!externalApiToken)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.external_api_unreachable")}
       </div>
     );
 
   if (supportedIntegrationsError)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.error_fetching_supported_integrations")}
       </div>
     );
@@ -115,7 +115,7 @@ function GitHubIntegration() {
     return (
       <div className={"flex h-full flex-col items-center justify-center"}>
         <Cloud size={96} />
-        <div className="text-custom-text-200 text-center text-md relative flex justify-center items-center">
+        <div className="text-secondary text-center text-body-sm-regular relative flex justify-center items-center">
           {isSelfManaged
             ? t("integrations.not_configured_message_admin", { name: "GitHub" })
             : t("integrations.not_configured_message_support", { name: "GitHub" })}

@@ -8,6 +8,7 @@ import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { IssueWorklogPropertyButton } from "./button";
 
 type TIssueWorklogProperty = {
@@ -40,19 +41,11 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
 
   if (!isWorklogsEnabledByProjectId(projectId)) return <></>;
   return (
-    <div className="flex w-full items-center gap-3 min-h-8">
-      <div
-        className={`flex items-center gap-1 flex-shrink-0 text-sm text-custom-text-300 ${isPeekOverview ? "w-1/4" : "w-2/5"}`}
-      >
-        <Timer className="h-4 w-4 flex-shrink-0" />
-        <span>Tracked time</span>
-      </div>
-      <div className="relative h-full min-h-8 w-full flex-grow flex items-center">
-        <IssueWorklogPropertyButton
-          content={convertMinutesToHoursMinutesString(totalMinutes).trim()}
-          isLoading={isLoading}
-        />
-      </div>
-    </div>
+    <SidebarPropertyListItem icon={Timer} label="Tracked time" childrenClassName="px-2">
+      <IssueWorklogPropertyButton
+        content={convertMinutesToHoursMinutesString(totalMinutes).trim()}
+        isLoading={isLoading}
+      />
+    </SidebarPropertyListItem>
   );
 });

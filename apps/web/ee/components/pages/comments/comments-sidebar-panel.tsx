@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -107,9 +107,9 @@ export const PageCommentsSidebarPanel = observer(function PageCommentsSidebarPan
       className="size-full pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none flex flex-col pb-14"
     >
       {/* Header */}
-      <div className="flex-shrink-0 py-1 px-3.5">
+      <div className="shrink-0 py-1 px-3.5">
         <div className="flex justify-between items-start w-full">
-          <h2 className="text-custom-text-100 text-base font-medium leading-6">Comments</h2>
+          <h2 className="text-primary text-14 font-medium leading-6">Comments</h2>
           <PageCommentFilterControls filters={commentsFilters} onFilterChange={updateCommentFilters} />
         </div>
       </div>

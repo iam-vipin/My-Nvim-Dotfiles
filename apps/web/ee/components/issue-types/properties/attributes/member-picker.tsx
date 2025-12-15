@@ -33,7 +33,7 @@ export const MemberPickerAttributes = observer(function MemberPickerAttributes(p
   return (
     <>
       <div>
-        <span className="text-xs text-custom-text-300 font-medium">
+        <span className="text-caption-sm-regular text-tertiary">
           {t("work_item_types.settings.properties.attributes.label")}
         </span>
         <PropertyMultiSelect
@@ -67,7 +67,7 @@ export const MemberPickerAttributes = observer(function MemberPickerAttributes(p
         </div>
       )}
       <div>
-        <div className="text-xs font-medium text-custom-text-300">
+        <div className="text-caption-sm-medium text-tertiary">
           {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <MemberValueSelect

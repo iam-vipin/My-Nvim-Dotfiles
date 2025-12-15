@@ -42,11 +42,11 @@ export const PropertyRadioInputSelect = observer(function PropertyRadioInputSele
       options={radioInputOptions}
       onChange={handleDataChange}
       className="z-10"
-      buttonClassName="size-3"
-      fieldClassName={cn("text-sm", {
-        "gap-1": !isVerticalLayout,
+      buttonClassName="size-3!"
+      fieldClassName={cn("text-caption-sm-regular!", {
+        "gap-1!": !isVerticalLayout,
       })}
-      wrapperClassName={cn(isVerticalLayout ? "gap-1.5" : "gap-3")}
+      wrapperClassName={cn(isVerticalLayout ? "gap-1.5!" : "gap-3!")}
       vertical={isVerticalLayout}
     />
   );

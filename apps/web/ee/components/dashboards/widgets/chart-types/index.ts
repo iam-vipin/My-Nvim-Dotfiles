@@ -36,9 +36,9 @@ export const commonWidgetClassName = (args: TArgs) => {
   const { className, isEditingEnabled, isSelected, isResizingDisabled } = args;
 
   const commonClassName = cn(
-    "group/widget dashboard-widget-item size-full rounded-lg bg-custom-background-100 border border-custom-border-200 transition-colors",
+    "group/widget dashboard-widget-item size-full rounded-lg bg-surface-1 border border-subtle-1 transition-colors",
     {
-      "selected border-custom-primary-100": isSelected,
+      "selected border-accent-strong": isSelected,
       "cursor-pointer": isEditingEnabled,
       disabled: isResizingDisabled,
     },

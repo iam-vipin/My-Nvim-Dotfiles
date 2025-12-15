@@ -42,7 +42,7 @@ export const InitiativeInfoIndicatorItem = observer(function InitiativeInfoIndic
         size={46}
         strokeColor="stroke-green-500"
       >
-        <span className="flex items-baseline justify-center text-sm text-custom-primary-100">
+        <span className="flex items-baseline justify-center text-12 stroke-success">
           <span className="font-semibold">{completePercentage}</span>
           <span>%</span>
         </span>

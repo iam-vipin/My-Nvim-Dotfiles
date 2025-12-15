@@ -39,7 +39,7 @@ export const AutomationDetailsSidebarTriggerConditionRoot = observer(
           <section className="space-y-2">
             {filter && (
               <div className="space-y-2 px-4">
-                <p className="text-xs font-medium">{t("automations.condition.label")}</p>
+                <p className="text-11 font-medium">{t("automations.condition.label")}</p>
                 <div className="flex flex-col items-start">
                   {filter.allConditionsForDisplay.map((condition, index) => (
                     <div key={condition.id} className="flex flex-col items-start">
@@ -48,11 +48,11 @@ export const AutomationDetailsSidebarTriggerConditionRoot = observer(
                       </div>
                       {index < filter.allConditionsForDisplay.length - 1 && (
                         <div className="flex flex-col items-center">
-                          <div className="h-2 border-l border-dashed border-custom-border-300" />
-                          <span className="text-xs font-medium uppercase text-custom-text-400 px-2 py-0.5 bg-custom-background-80 rounded-sm">
+                          <div className="h-2 border-l border-dashed border-strong" />
+                          <span className="text-11 font-medium uppercase text-secondary px-2 py-0.5 bg-layer-2 rounded-sm">
                             {t("automations.conjunctions.and")}
                           </span>
-                          <div className="h-2 border-l border-dashed border-custom-border-300" />
+                          <div className="h-2 border-l border-dashed border-strong" />
                         </div>
                       )}
                     </div>
@@ -66,7 +66,7 @@ export const AutomationDetailsSidebarTriggerConditionRoot = observer(
                       filter={filter}
                       buttonConfig={{
                         label: t("automations.condition.add_condition"),
-                        variant: "accent-primary",
+                        variant: "secondary",
                         iconConfig: {
                           shouldShowIcon: false,
                         },

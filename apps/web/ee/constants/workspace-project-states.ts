@@ -70,12 +70,12 @@ export const WORKSPACE_PROJECT_STATE_PRIORITY: {
   },
   low: {
     title: "Low",
-    colorClassName: "text-custom-primary-100",
+    colorClassName: "text-accent-primary",
     background: "#D9E3FF",
   },
   none: {
     title: "None",
-    colorClassName: "text-custom-text-200",
+    colorClassName: "text-secondary",
     background: "#BBC5EB",
   },
 };

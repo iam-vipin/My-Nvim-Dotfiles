@@ -21,7 +21,7 @@ export function ArchivedBadge() {
 
 export function Badge({ text, icon }: { text: string; icon?: React.ReactNode }) {
   return (
-    <div className="py-0 px-2 text-xs rounded text-custom-text-300 bg-custom-background-80/70 flex items-center gap-1">
+    <div className="py-0 px-2 text-11 rounded text-custom-text-300 bg-layer-1/70 flex items-center gap-1">
       {icon}
       {text}
     </div>
@@ -100,7 +100,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
 
   if (page?.name === null) {
     return (
-      <Loader className="not-prose relative h-10 page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-custom-background-80 w-full bg-custom-background-80">
+      <Loader className="not-prose relative h-10 page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-layer-1 w-full bg-layer-1">
         <Loader.Item className="h-9" />
       </Loader>
     );
@@ -114,7 +114,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
     <>
       <div
         role="button"
-        className={`not-prose relative page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-custom-background-90 ${displayState.bgColor}`}
+        className={`not-prose relative page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-layer-1 ${displayState.bgColor}`}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
@@ -129,7 +129,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
       >
         {pageEmbedLogo}
         <div className="flex-shrink-0 flex items-center gap-3">
-          <p className="not-prose text-base font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
+          <p className="not-prose text-14 font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
             {displayState.text}
           </p>
           {displayState?.badge}

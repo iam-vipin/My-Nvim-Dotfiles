@@ -33,6 +33,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values/addition-properties-update";
+// common components
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 // helpers
 import { WorkItemSidebarCustomers } from "@/plane-web/components/issues/issue-details/sidebar/customer-list-root";
 import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
@@ -95,30 +97,22 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         }
       />
       <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-            <span>State</span>
-          </div>
+        <SidebarPropertyListItem icon={StatePropertyIcon} label="State">
           <StateDropdown
             value={epicDetails?.state_id}
             onChange={(val) => epicOperations.update(workspaceSlug, projectId, epicId, { state_id: val })}
             projectId={projectId?.toString() ?? ""}
             disabled={disabled}
             buttonVariant="transparent-with-text"
-            className="group w-3/5 flex-grow"
+            className="group w-full grow"
             buttonContainerClassName="w-full text-left"
-            buttonClassName="text-sm"
+            buttonClassName="text-13"
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
           />
-        </div>
+        </SidebarPropertyListItem>
 
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Assignees</span>
-          </div>
+        <SidebarPropertyListItem icon={MembersPropertyIcon} label="Assignees">
           <MemberDropdown
             value={epicDetails?.assignee_ids ?? undefined}
             onChange={(val) => epicOperations.update(workspaceSlug, projectId, epicId, { assignee_ids: val })}
@@ -127,53 +121,39 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             placeholder="Add assignees"
             multiple
             buttonVariant={epicDetails?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
-            className="group w-3/5 flex-grow"
+            className="group w-full grow"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm justify-between ${epicDetails?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-13 justify-between ${epicDetails?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
             hideIcon={epicDetails.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
           />
-        </div>
+        </SidebarPropertyListItem>
 
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Priority</span>
-          </div>
+        <SidebarPropertyListItem icon={PriorityPropertyIcon} label="Priority">
           <PriorityDropdown
             value={epicDetails?.priority}
             onChange={(val) => epicOperations.update(workspaceSlug, projectId, epicId, { priority: val })}
             disabled={disabled}
             buttonVariant="border-with-text"
-            className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+            className="w-full grow"
             buttonContainerClassName="w-full text-left"
             buttonClassName="w-min h-auto whitespace-nowrap"
           />
-        </div>
+        </SidebarPropertyListItem>
 
         {createdByDetails && (
-          <div className="flex h-8 items-center gap-2">
-            <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-              <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
-              <span>Created by</span>
-            </div>
-            <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
-              <ButtonAvatars showTooltip userIds={createdByDetails.id} />
-              <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-            </div>
-          </div>
+          <SidebarPropertyListItem icon={UserCirclePropertyIcon} label="Created by">
+            <ButtonAvatars showTooltip userIds={createdByDetails.id} />
+            <span className="grow truncate text-11 leading-5">{createdByDetails?.display_name}</span>
+          </SidebarPropertyListItem>
         )}
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <InitiativeIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Initiatives</span>
-          </div>
+        <SidebarPropertyListItem icon={InitiativeIcon} label="Initiatives">
           <div
             className={cn(
-              "p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start cursor-pointer",
+              "p-2 rounded-xs text-13 text-secondary hover:bg-layer-1 justify-start flex items-start cursor-pointer",
               {
-                "text-custom-text-400": !epicDetails.initiative_ids?.length,
+                "text-placeholder": !epicDetails.initiative_ids?.length,
               }
             )}
             onClick={() => toggleInitiativeModal(epicId)}
@@ -182,12 +162,8 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               ? t("initiatives.placeholder", { count: epicDetails.initiative_ids?.length })
               : t("initiatives.add_initiative")}
           </div>
-        </div>
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Start date</span>
-          </div>
+        </SidebarPropertyListItem>
+        <SidebarPropertyListItem icon={StartDatePropertyIcon} label="Start date">
           <DateDropdown
             placeholder="Add start date"
             value={epicDetails.start_date}
@@ -199,19 +175,15 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             maxDate={maxDate ?? undefined}
             disabled={disabled}
             buttonVariant="transparent-with-text"
-            className="group w-3/5 flex-grow"
+            className="group w-full grow"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${epicDetails?.start_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-13 ${epicDetails?.start_date ? "" : "text-placeholder"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
-        </div>
+        </SidebarPropertyListItem>
 
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Due date</span>
-          </div>
+        <SidebarPropertyListItem icon={DueDatePropertyIcon} label="Due date">
           <div className="flex items-center gap-2">
             <DateDropdown
               placeholder="Add due date"
@@ -224,27 +196,23 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               minDate={minDate ?? undefined}
               disabled={disabled}
               buttonVariant="transparent-with-text"
-              className="group w-3/5 flex-grow"
+              className="group w-full grow"
               buttonContainerClassName="w-full text-left"
-              buttonClassName={cn("text-sm", {
-                "text-custom-text-400": !epicDetails.target_date,
+              buttonClassName={cn("text-13", {
+                "text-placeholder": !epicDetails.target_date,
                 "text-red-500": shouldHighlightIssueDueDate(epicDetails.target_date, stateDetails?.group),
               })}
               hideIcon
-              clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+              clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"
             />
             {epicDetails.target_date && (
               <DateAlert date={epicDetails.target_date} workItem={epicDetails} projectId={projectId} />
             )}
           </div>
-        </div>
+        </SidebarPropertyListItem>
 
         {projectId && areEstimateEnabledByProjectId(projectId) && (
-          <div className="flex h-8 items-center gap-2">
-            <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-              <EstimatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-              <span>Estimate</span>
-            </div>
+          <SidebarPropertyListItem icon={EstimatePropertyIcon} label="Estimate">
             <EstimateDropdown
               value={epicDetails?.estimate_point ?? undefined}
               onChange={(val: string | undefined) =>
@@ -253,32 +221,26 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               projectId={projectId}
               disabled={disabled}
               buttonVariant="transparent-with-text"
-              className="group w-3/5 flex-grow"
+              className="group w-full grow"
               buttonContainerClassName="w-full text-left"
-              buttonClassName={`text-sm ${epicDetails?.estimate_point !== null ? "" : "text-custom-text-400"}`}
+              buttonClassName={`text-13 ${epicDetails?.estimate_point !== null ? "" : "text-placeholder"}`}
               placeholder="None"
               hideIcon
               dropdownArrow
               dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
             />
-          </div>
+          </SidebarPropertyListItem>
         )}
 
-        <div className="flex min-h-8 gap-2">
-          <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-            <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Labels</span>
-          </div>
-          <div className="h-full min-h-8 w-3/5 flex-grow">
-            <IssueLabel
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={epicId}
-              disabled={disabled}
-              issueServiceType={EIssueServiceType.EPICS}
-            />
-          </div>
-        </div>
+        <SidebarPropertyListItem icon={LabelPropertyIcon} label="Labels">
+          <IssueLabel
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={epicId}
+            disabled={disabled}
+            issueServiceType={EIssueServiceType.EPICS}
+          />
+        </SidebarPropertyListItem>
 
         {isCustomersFeatureEnabled && (
           <WorkItemSidebarCustomers workItemId={epicId} workspaceSlug={workspaceSlug} isPeekView={false} />

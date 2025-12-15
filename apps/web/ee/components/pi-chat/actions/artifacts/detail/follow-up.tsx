@@ -55,6 +55,7 @@ export const FollowUpDetail = observer(function FollowUpDetail(props: TProps) {
           setShowAlert(true);
           onSubmit?.(response.artifact_data);
         }
+        return;
       })
       .catch((error) => {
         console.error(error);
@@ -75,27 +76,25 @@ export const FollowUpDetail = observer(function FollowUpDetail(props: TProps) {
       });
   });
   return (
-    <div className="w-fit rounded-xl shadow-sm border-[0.5px] border-custom-border-200 bg-custom-background-100 text-base p-2 flex items-center transition-all duration-300 ease-in-out">
+    <div className="w-fit rounded-xl shadow-overlay-100 border border-subtle bg-layer-2 text-14 p-2 flex items-center transition-all duration-300 ease-in-out">
       {/* Follow Up input */}
       {!isThinking && !showAlert && (
         <div className="flex justify-between items-end gap-2 w-[300px]">
           <div className="max-h-[100px] overflow-scroll my-auto flex-1">
             <PiChatEditorWithRef
-              setEditorCommand={(command) => {
+              setEditorCommand={(command: TEditCommands) => {
                 setEditorCommands({ ...command });
               }}
-              handleSubmit={handleSubmit}
+              handleSubmit={() => void handleSubmit()}
               className={cn("flex-1")}
               ref={editorRef}
               placeholder="Ask Plane AI to edit"
             />
           </div>
           <button
-            className="rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 disabled:bg-pi-700/10"
+            className="rounded-full bg-accent-primary text-on-color size-8 flex items-center justify-center flex-shrink-0 disabled:bg-accent-primary/10"
             type="submit"
-            onClick={() => {
-              handleSubmit();
-            }}
+            onClick={() => void handleSubmit()}
             disabled={false}
           >
             <ArrowUp size={16} />
@@ -105,13 +104,13 @@ export const FollowUpDetail = observer(function FollowUpDetail(props: TProps) {
       {/* thinking */}
       {isThinking && (
         <div className="flex items-center gap-2 p-1 w-full text-nowrap">
-          <div className="w-2 h-4 rounded-[1px] pi-cursor animate-vertical-scale" />
-          <div className="flex gap-2 items-center shimmer">Taking required actions</div>
+          <div className="w-2 h-4 rounded-[1px] bg-inverse animate-vertical-scale" />
+          <div className="flex gap-2 items-center text-body-sm-regular text-secondary">Taking required actions</div>
         </div>
       )}
       {/* alert */}
       {showAlert && (
-        <div className="w-full flex justify-center items-center gap-2 text-base text-custom-text-200 p-1 text-nowrap">
+        <div className="w-full flex justify-center items-center gap-2 text-body-sm-regular text-primary p-1 text-nowrap">
           {error ? (
             <FilledCross width={16} height={16} />
           ) : (

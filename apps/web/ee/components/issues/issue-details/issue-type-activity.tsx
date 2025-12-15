@@ -32,7 +32,7 @@ const IssueTypeDetail = observer(function IssueTypeDetail(props: TIssueTypeDetai
   const issueTypeDetail = getIssueTypeById(issueTypeId);
 
   return (
-    <span className={cn("inline-flex gap-1 items-center font-medium text-custom-text-100", className)}>
+    <span className={cn("inline-flex gap-1 items-center font-medium text-primary", className)}>
       <IssueTypeLogo icon_props={issueTypeDetail?.logo_props?.icon} size="xs" isDefault={issueTypeDetail?.is_default} />
       {issueTypeDetail?.name}
     </span>
@@ -61,7 +61,7 @@ export const IssueTypeActivity = observer(function IssueTypeActivity(props: TIss
 
   return (
     <IssueActivityBlockComponent
-      icon={<ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />}
+      icon={<ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />}
       activityId={activityId}
       ends={ends}
     >

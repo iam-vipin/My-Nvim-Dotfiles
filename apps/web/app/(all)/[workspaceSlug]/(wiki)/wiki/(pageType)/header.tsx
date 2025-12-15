@@ -94,7 +94,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/pages`}
                   label="Pages"
-                  icon={<PageIcon className="size-4 text-custom-text-300" />}
+                  icon={<PageIcon className="size-4 text-tertiary" />}
                 />
               }
             />
@@ -133,13 +133,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
             memberIds={workspaceMemberIds ?? undefined}
           />
         </FiltersDropdown>
-        <Button
-          variant="primary"
-          size="sm"
-          className="flex-shrink-0"
-          onClick={handleCreatePage}
-          loading={isCreatingPage}
-        >
+        <Button variant="primary" className="flex-shrink-0" onClick={handleCreatePage} loading={isCreatingPage}>
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>
       </Header.RightItem>

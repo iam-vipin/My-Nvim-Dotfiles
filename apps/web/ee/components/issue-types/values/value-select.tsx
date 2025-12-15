@@ -61,13 +61,18 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
       <>
         <div className="flex-shrink-0 grid place-items-center">
           {propertyDetail?.logo_props?.in_use && (
-            <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-custom-text-300" />
+            <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-tertiary" />
           )}
         </div>
-        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
+        <span
+          className={cn(
+            "w-full cursor-default truncate",
+            variant === "create" && "text-body-xs-regular text-secondary"
+          )}
+        >
           <span className="flex gap-0.5 items-center">
             <span className="truncate">{propertyDetail?.display_name}</span>
-            {propertyDetail?.is_required && <span className="text-red-500">*</span>}
+            {propertyDetail?.is_required && <span className="text-danger">*</span>}
             {propertyDetail.description && (
               <Tooltip
                 tooltipContent={propertyDetail?.description}
@@ -206,7 +211,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         <div className={cn("flex w-full items-start gap-y-1 min-h-8")}>
           <div
             className={cn(
-              "flex items-center h-8 gap-1 flex-shrink-0 text-sm text-custom-text-300",
+              "flex items-center h-8 gap-1 flex-shrink-0 text-sm text-tertiary",
               isPeekOverview ? "w-1/4" : "w-2/5"
             )}
           >

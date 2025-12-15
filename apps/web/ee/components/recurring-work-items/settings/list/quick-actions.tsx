@@ -89,7 +89,7 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
       title: t("common.actions.delete"),
       icon: Trash2,
       shouldRender: recurringWorkItem.canCurrentUserDelete,
-      className: "text-red-500",
+      className: "text-danger",
     },
   ];
 
@@ -104,7 +104,7 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
         content={
           <>
             {t("recurring_work_items.delete_confirmation.description.prefix")}
-            <span className="font-medium text-custom-text-100">{recurringWorkItem.workitem_blueprint.name}</span>
+            <span className="font-medium text-primary">{recurringWorkItem.workitem_blueprint.name}</span>
             {t("recurring_work_items.delete_confirmation.description.suffix")}
           </>
         }
@@ -123,7 +123,7 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
                 className={cn(
                   "flex items-center gap-2",
                   {
-                    "text-custom-text-400": item.disabled,
+                    "text-placeholder": item.disabled,
                   },
                   item.className
                 )}
@@ -134,8 +134,8 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
                   <h5>{item.title}</h5>
                   {item.description && (
                     <p
-                      className={cn("text-custom-text-300 whitespace-pre-line", {
-                        "text-custom-text-400": item.disabled,
+                      className={cn("text-tertiary whitespace-pre-line", {
+                        "text-placeholder": item.disabled,
                       })}
                     >
                       {item.description}

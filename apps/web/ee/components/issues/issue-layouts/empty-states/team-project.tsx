@@ -81,7 +81,7 @@ export const TeamProjectWorkItemEmptyState = observer(function TeamProjectWorkIt
                 handleClearAllFilters();
               },
               disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceProjectWorkItemFilter,
-              variant: "outline-primary",
+              variant: "secondary",
             },
           ]}
         />

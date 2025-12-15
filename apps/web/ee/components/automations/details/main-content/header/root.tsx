@@ -19,10 +19,8 @@ export const AutomationDetailsMainContentHeader = observer(function AutomationDe
   if (!automation) return null;
   return (
     <header>
-      <h2 className="flex-grow text-xl text-custom-text-200 font-medium truncate">{automation.name}</h2>
-      {automation.description && (
-        <p className="mt-1 text-xs text-custom-text-300 line-clamp-2">{automation.description}</p>
-      )}
+      <h2 className="flex-grow text-18 text-secondary font-medium truncate">{automation.name}</h2>
+      {automation.description && <p className="mt-1 text-11 text-tertiary line-clamp-2">{automation.description}</p>}
     </header>
   );
 });

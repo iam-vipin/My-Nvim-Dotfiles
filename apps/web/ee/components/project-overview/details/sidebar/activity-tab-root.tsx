@@ -60,14 +60,7 @@ export const ProjectOverviewSidebarActivityRoot = observer(function ProjectOverv
   return (
     <SidebarContentWrapper
       title="Activity"
-      actionElement={
-        <ActivitySortRoot
-          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-          toggleSort={toggleSortOrder}
-          className="flex-shrink-0"
-          iconClassName="size-3"
-        />
-      }
+      actionElement={<ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />}
     >
       <div className="space-y-4 pt-3 pb-20">
         <div className="space-y-3">

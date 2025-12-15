@@ -60,7 +60,7 @@ export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintList
       className={cn(
         "group relative flex min-h-10 h-full w-full items-center gap-3 px-1.5 py-1 transition-all rounded",
         {
-          "hover:bg-custom-background-90 cursor-pointer": allowEdit,
+          "hover:bg-layer-transparent-hover cursor-pointer": allowEdit,
           "cursor-not-allowed": !allowEdit,
         }
       )}
@@ -74,14 +74,15 @@ export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintList
             issueTypeId={workItem.type_id}
             projectIdentifier={projectDetails.identifier}
             issueSequenceId={index + 1}
-            textContainerClassName="text-xs text-custom-text-200"
+            size="sm"
+            variant="secondary"
           />
         </div>
       )}
       <div className="flex w-full truncate items-center gap-3">
-        <span className="w-full truncate text-sm text-custom-text-100">{workItem.name}</span>
+        <span className="w-full truncate text-body-xs-regular text-primary">{workItem.name}</span>
       </div>
-      <div className={cn("flex items-center gap-3.5 flex-shrink-0 text-sm", !allowEdit && "opacity-60")}>
+      <div className={cn("flex items-center gap-3.5 flex-shrink-0 text-body-xs-regular", !allowEdit && "opacity-60")}>
         <PriorityIcon priority={workItem.priority} className="size-3.5 flex-shrink-0" withContainer />
         {workItemState && <StateGroupIcon stateGroup={workItemState.group} className="size-5 flex-shrink-0" />}
         {workItem.assignee_ids.length > 0 && (
@@ -95,7 +96,7 @@ export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintList
         )}
       </div>
       {allowEdit && (
-        <div className="flex-shrink-0 text-sm">
+        <div className="flex-shrink-0 text-body-xs-regular">
           <CustomMenu placement="bottom-end" ellipsis>
             {handleEdit && (
               <CustomMenu.MenuItem onClick={handleEdit}>
@@ -107,7 +108,7 @@ export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintList
             )}
             {handleDelete && (
               <CustomMenu.MenuItem onClick={handleDelete}>
-                <div className="flex items-center gap-2 text-red-500">
+                <div className="flex items-center gap-2 text-danger">
                   <CircleMinus className="h-3.5 w-3.5" strokeWidth={2} />
                   <span>Delete</span>
                 </div>

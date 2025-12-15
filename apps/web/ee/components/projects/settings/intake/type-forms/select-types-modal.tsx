@@ -49,16 +49,14 @@ export const SelectTypesModal = observer(function SelectTypesModal(props: Props)
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.TOP} width={EModalWidth.MD}>
       <div className="p-4">
-        <h3 className="text-lg font-medium text-custom-text-200 pb-2">
-          {t("intake_forms.type_forms.select_types.title")}
-        </h3>
-        <div className="flex gap-2 border border-custom-border-200 items-center rounded-md px-2 py-1 mb-2">
-          <Search className="size-3 text-custom-text-300" />
+        <h3 className="text-16 font-medium text-secondary pb-2">{t("intake_forms.type_forms.select_types.title")}</h3>
+        <div className="flex gap-2 border border-subtle-1 items-center rounded-md px-2 py-1 mb-2">
+          <Search className="size-3 text-tertiary" />
           <Input
             placeholder={t("intake_forms.type_forms.select_types.search_placeholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="outline-none border-none w-full text-sm p-0"
+            className="outline-none border-none w-full text-13 p-0"
           />
         </div>
         {/* Search Results */}
@@ -72,13 +70,13 @@ export const SelectTypesModal = observer(function SelectTypesModal(props: Props)
                 onClick={() => handleSelect(type.id as string)}
               >
                 <IssueTypeIdentifier issueTypeId={type.id} size="md" />
-                <span className="text-sm text-custom-text-300">{type.name}</span>
+                <span className="text-13 text-tertiary">{type.name}</span>
               </div>
             );
           })}
         </div>
-        <div className="flex justify-end border-t border-custom-border-200 pt-2 mt-2">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <div className="flex justify-end border-t border-subtle-1 pt-2 mt-2">
+          <Button variant="secondary" onClick={onClose}>
             {t("common.cancel")}
           </Button>
         </div>

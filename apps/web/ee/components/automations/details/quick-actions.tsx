@@ -74,7 +74,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
       icon: Trash2,
       shouldRender: automation.canCurrentUserDelete,
       disabled: automation.isDeleteDisabled,
-      className: automation.isDeleteDisabled ? "text-custom-text-400 cursor-not-allowed" : "text-red-500",
+      className: automation.isDeleteDisabled ? "text-placeholder cursor-not-allowed" : "text-red-500",
       tooltipContent: automation.isDeleteDisabled ? t("automations.delete.validation.enabled") : undefined,
     },
   ];
@@ -108,7 +108,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": item.disabled,
+                        "text-placeholder": item.disabled,
                       },
                       item.className
                     )}
@@ -119,8 +119,8 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
                       <h5>{item.title}</h5>
                       {item.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": item.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": item.disabled,
                           })}
                         >
                           {item.description}

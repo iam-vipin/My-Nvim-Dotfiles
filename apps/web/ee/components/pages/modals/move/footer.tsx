@@ -1,6 +1,6 @@
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 type Props = {
   disabled: boolean;
@@ -16,10 +16,10 @@ export function MovePageModalFooter(props: Props) {
 
   return (
     <div className="flex items-center justify-end gap-2 p-3">
-      <Button variant="neutral-primary" size="sm" onClick={onClose}>
+      <Button variant="secondary" onClick={onClose}>
         {t("common.cancel")}
       </Button>
-      <Button variant="primary" size="sm" onClick={onMove} loading={isMoving} disabled={disabled}>
+      <Button variant="primary" onClick={onMove} loading={isMoving} disabled={disabled}>
         {isMoving
           ? t("page_actions.move_page.submit_button.loading")
           : t("page_actions.move_page.submit_button.default")}

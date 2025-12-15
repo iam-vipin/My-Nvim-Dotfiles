@@ -21,11 +21,9 @@ export default function WorkspacePagesPage({ params }: Route.ComponentProps) {
   return (
     <>
       <AppHeader header={<PagesAppDashboardHeader />} />
-      <ContentWrapper
-        className={cn("gap-6 bg-custom-background-100 max-w-[800px] mx-auto scrollbar-hide px-page-x lg:px-0")}
-      >
+      <ContentWrapper className={cn("gap-6 bg-surface-1 max-w-[800px] mx-auto scrollbar-hide px-page-x lg:px-0")}>
         {currentUser && <UserGreetingsView user={currentUser} />}
-        <div className="size-full divide-y-[1px] divide-custom-border-100">
+        <div className="size-full divide-y-[1px] divide-subtle">
           <div className="py-4">
             <RecentActivityWidget
               workspaceSlug={workspaceSlug}

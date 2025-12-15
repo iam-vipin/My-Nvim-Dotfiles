@@ -18,10 +18,10 @@ export const PagePreviewCard = observer(function PagePreviewCard(props: TProps) 
         {data.logo_props?.in_use ? (
           <Logo logo={data.logo_props} size={16} type="lucide" />
         ) : (
-          <PageIcon className="size-4 text-custom-text-100" />
+          <PageIcon className="size-4 text-primary" />
         )}
         <div className="flex flex-col w-full overflow-hidden items-start">
-          <div className="text-sm text-custom-text-100 font-medium truncate text-start capitalize">
+          <div className="text-body-sm-medium text-primary truncate text-start capitalize">
             {data.name || "Unknown"}
           </div>
         </div>

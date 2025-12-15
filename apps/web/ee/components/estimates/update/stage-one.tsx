@@ -18,7 +18,7 @@ export function EstimateUpdateStageOne(props: TEstimateUpdateStageOne) {
   return (
     <>
       <div className="relative flex justify-between items-center gap-2 px-5">
-        <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.edit.title")}</div>
+        <div className="text-18 font-medium text-secondary">{t("project_settings.estimates.edit.title")}</div>
       </div>
 
       {!estimateEditType && (
@@ -29,13 +29,13 @@ export function EstimateUpdateStageOne(props: TEstimateUpdateStageOne) {
               return (
                 <div
                   key={currentStage}
-                  className="border border-custom-border-300 cursor-pointer space-y-1 p-3 rounded transition-colors"
+                  className="border border-subtle-1 cursor-pointer space-y-1 p-3 rounded-sm transition-colors"
                   onClick={() => handleEstimateEditType && handleEstimateEditType(currentStage)}
                 >
-                  <h3 className="text-base font-medium">
+                  <h3 className="text-14 font-medium">
                     {t(ESTIMATE_OPTIONS_STAGE_ONE?.[currentStage]?.i18n_title || "")}
                   </h3>
-                  <p className="text-sm text-custom-text-200">
+                  <p className="text-13 text-secondary">
                     {t(ESTIMATE_OPTIONS_STAGE_ONE?.[currentStage]?.i18n_description || "")}
                   </p>
                 </div>
@@ -44,8 +44,8 @@ export function EstimateUpdateStageOne(props: TEstimateUpdateStageOne) {
         </div>
       )}
 
-      <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle-1">
+        <Button variant="secondary" onClick={handleClose}>
           {t("common.cancel")}
         </Button>
       </div>

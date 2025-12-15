@@ -339,7 +339,7 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
             filter={filterInstance}
             buttonConfig={{
               label: "Add filter",
-              variant: "accent-primary",
+              variant: "secondary",
               defaultOpen: false,
               iconConfig: {
                 shouldShowIcon: false,
@@ -356,7 +356,7 @@ const WidgetConfigSidebarFilters = observer(function WidgetConfigSidebarFilters(
   return (
     <div className="flex flex-col gap-4 w-full overflow-x-hidden flex-shrink-0">
       <div className="flex items-center justify-between w-full">
-        <h6 className="font-semibold text-custom-text-200 text-sm">Filters</h6>
+        <h6 className="font-semibold text-custom-text-200 text-13">Filters</h6>
       </div>
       {props.initialFilters ? <FilterContent {...props} /> : <Loader.Item height="24px" width="100%" />}
     </div>

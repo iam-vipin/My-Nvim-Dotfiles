@@ -89,9 +89,9 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
       <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
         {/* States Drop down */}
         <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <InitiativeStateIcon className="h-4 w-4 flex-shrink-0" state="DRAFT" size={EIconSize.XL} />
-            <span>State</span>
+            <span className="text-13 font-medium text-tertiary">State</span>
           </div>
           <InitiativeStateDropdown
             value={initiative.state}
@@ -102,12 +102,12 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
         </div>
         {/* Projects Drop down*/}
         <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <ProjectIcon className="h-4 w-4 flex-shrink-0" />
-            <span>{t("projects")}</span>
+            <span className="text-13 font-medium text-tertiary">{t("projects")}</span>
           </div>
           <button
-            className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
+            className="text-11 font-medium text-tertiary border-[0.5px] px-2 py-1 border-subtle-1 hover:bg-layer-1-hover rounded-sm cursor-pointer"
             onClick={() => toggleProjectsModal(true)}
           >
             {initiativeProjectIds?.length} {initiativeProjectIds?.length === 1 ? "project" : "projects"}
@@ -115,12 +115,12 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
         </div>
         {/* Epics dropdown */}
         <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <EpicIcon className="h-4 w-4 text-custom-text-300" />
-            <span>{t("common.epic")}</span>
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
+            <EpicIcon className="h-4 w-4 text-tertiary" />
+            <span className="text-13 font-medium text-tertiary">{t("common.epic")}</span>
           </div>
           <button
-            className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
+            className="text-11 font-medium text-tertiary border-[0.5px] px-2 py-1 border-subtle-1 hover:bg-layer-1-hover rounded-sm cursor-pointer"
             onClick={() => toggleEpicModal(true)}
           >
             {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
@@ -128,9 +128,9 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
         </div>
         {/* Lead Drop down*/}
         <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
-            <span>{t("lead")}</span>
+            <span className="text-13 font-medium text-tertiary">{t("lead")}</span>
           </div>
           <MemberDropdown
             value={initiative.lead}
@@ -145,9 +145,9 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
         </div>
         {/* Dates Drop down*/}
         <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <CalendarLayoutIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Start date</span>
+            <span className="text-13 font-medium text-tertiary">Start date</span>
           </div>
           <DateDropdown
             value={initiative.start_date}
@@ -160,16 +160,16 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             placeholder={t("common.order_by.start_date")}
             icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.start_date ? "border-with-text" : "border-without-text"}
-            buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+            buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-tertiary rounded-sm text-11`}
             optionsClassName="z-[30]"
             showTooltip
             maxDate={getDate(initiative.end_date)}
           />
         </div>
         <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
             <CalendarLayoutIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Due date</span>
+            <span className="text-13 font-medium text-tertiary">Due date</span>
           </div>
           <DateDropdown
             value={initiative.end_date}
@@ -182,7 +182,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             placeholder={t("common.order_by.due_date")}
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.end_date ? "border-with-text" : "border-without-text"}
-            buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+            buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-tertiary rounded-sm text-11`}
             optionsClassName="z-[30]"
             showTooltip
             minDate={getDate(initiative.start_date)}
@@ -190,21 +190,21 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
         </div>
         {createdByDetails && (
           <div className="flex h-8 items-center gap-2">
-            <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
               <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
-              <span>{t("common.created_by")}</span>
+              <span className="text-13 font-medium text-tertiary">{t("common.created_by")}</span>
             </div>
-            <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
+            <div className="w-full h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-13 justify-between cursor-not-allowed">
               <ButtonAvatars showTooltip userIds={createdByDetails.id} />
-              <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+              <span className="flex-grow truncate text-11 leading-5">{createdByDetails?.display_name}</span>
             </div>
           </div>
         )}
         {/* Labels Drop down*/}
         <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <Tags className="h-4 w-4 text-custom-text-300" />
-            <span>Labels</span>
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
+            <Tags className="h-4 w-4 text-tertiary" />
+            <span className="text-13 font-medium text-tertiary">Labels</span>
           </div>
           <InitiativeLabelDropdown
             value={initiativeLabelIds || []}

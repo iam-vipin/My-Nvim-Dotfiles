@@ -141,7 +141,7 @@ export const TeamspacePagesList = observer(function TeamspacePagesList(props: Pr
                 <PageListBlockRoot key={pageId} paddingLeft={0} pageId={pageId} storeType={storeType} />
               ))
             ) : (
-              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+              <p className="mt-10 text-center text-body-xs-regular text-tertiary">No results found</p>
             )}
           </ListLayout>
         </div>

@@ -99,17 +99,18 @@ export const ProjectIssueSyncRoot = observer(function ProjectIssueSyncRoot({
     return <MappingLoader />;
   }
   return (
-    <div className="relative border border-custom-border-200 rounded">
+    <div className="relative border border-subtle rounded">
       {/* Header */}
-      <div className="flex flex-row items-center justify-between py-5 px-5 bg-custom-background-90 border-b border-custom-border-200">
+      <div className="flex flex-row items-center justify-between py-5 px-5 bg-layer-1 border-b border-subtle">
         <div className="space-y-1">
-          <div className="text-base font-medium">{t("github_integration.project_issue_sync")}</div>
-          <div className="text-sm text-custom-text-200">{t("github_integration.project_issue_sync_description")}</div>
+          <div className="text-body-sm-medium">{t("github_integration.project_issue_sync")}</div>
+          <div className="text-body-xs-regular text-secondary">
+            {t("github_integration.project_issue_sync_description")}
+          </div>
         </div>
         <Button
-          variant="neutral-primary"
-          size="sm"
-          className="h-8 w-8 rounded p-0"
+          variant="secondary"
+          className="h-8 w-8 rounded-sm p-0"
           onClick={() => setModalCreateOpen(true)}
           data-ph-element={GITHUB_INTEGRATION_TRACKER_ELEMENTS.REPOSITORY_MAPPING_HEADER_ADD_BUTTON}
         >
@@ -142,7 +143,9 @@ export const ProjectIssueSyncRoot = observer(function ProjectIssueSyncRoot({
         </div>
       ) : (
         <div className="p-10 relative text-center">
-          <div className="text-sm text-custom-text-200">{t("github_integration.project_issue_sync_empty_state")}</div>
+          <div className="text-body-xs-regular text-secondary">
+            {t("github_integration.project_issue_sync_empty_state")}
+          </div>
         </div>
       )}
 

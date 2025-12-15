@@ -34,13 +34,13 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
             <div className="whitespace-nowrap font-medium my-auto">
               {(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}
             </div>
-            <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+            <div className="px-2 py-0.5 flex-shrink-0 bg-accent-primary/20 text-accent-primary text-11 font-semibold rounded-xl">
               {selectedScopeCount}
             </div>
           </div>
           <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
         </div>
-        <div className="flex md:hidden text-sm items-center gap-2 neutral-primary text-custom-text-200 justify-center w-full">
+        <div className="flex md:hidden text-13 items-center gap-2 text-custom-text-200 justify-center w-full">
           <span>{(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}</span>
           <ChevronDownIcon className="h-3 w-3 hidden md:flex" strokeWidth={2} />
         </div>
@@ -64,8 +64,8 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
             updateLayout(workspaceSlug, EProjectLayouts.GALLERY);
         }}
       >
-        <div className="truncate font-medium text-xs">{scope?.label}</div>
-        <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+        <div className="truncate font-medium text-11">{scope?.label}</div>
+        <div className="px-2 py-0.5 flex-shrink-0 bg-accent-primary/20 text-accent-primary text-11 font-semibold rounded-xl">
           {scopeProjectsCount?.[scope.key]}
         </div>
       </CustomMenu.MenuItem>
@@ -76,7 +76,7 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
     <CustomMenu
       maxHeight={"md"}
       className={cn(
-        "flex flex-grow justify-center text-xs text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded px-3 py-1.5",
+        "flex flex-grow justify-center text-11 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded-sm px-3 py-1.5",
         className
       )}
       placement="bottom-start"

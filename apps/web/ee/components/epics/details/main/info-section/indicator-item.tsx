@@ -46,9 +46,9 @@ export const EpicInfoIndicatorItem = observer(function EpicInfoIndicatorItem(pro
         percentage={completePercentage}
         strokeWidth={4}
         size={46}
-        strokeColor="stroke-green-500"
+        strokeColor="stroke-success-strong"
       >
-        <span className="flex items-baseline justify-center text-sm text-custom-primary-100">
+        <span className="flex items-baseline justify-center text-14 text-accent-primary stroke-success">
           <span className="font-semibold">{completePercentage}</span>
           <span>%</span>
         </span>

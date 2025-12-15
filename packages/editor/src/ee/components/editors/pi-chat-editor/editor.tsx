@@ -138,7 +138,7 @@ function PiChatEditor(props: PiChatEditorProps) {
   return (
     <div
       onClick={handleContainerClick}
-      className={cn("w-full text-base editor-container", className, {
+      className={cn("w-full text-14 editor-container", className, {
         "max-h-[185px] overflow-y-scroll": editable,
       })}
     >

@@ -2,9 +2,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EpicIcon, LayersIcon } from "@plane/propel/icons";
 // components
-import { cn, stripAndTruncateHTML } from "@plane/utils";
-import { ReadonlyLabels } from "@/components/readonly";
 import { ReadonlyCycle } from "@/components/readonly/cycle";
+import { ReadonlyLabels } from "@/components/readonly";
 import { ReadonlyDate } from "@/components/readonly/date";
 import { ReadonlyEstimate } from "@/components/readonly/estimate";
 import { ReadonlyMember } from "@/components/readonly/member";
@@ -24,17 +23,17 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
   const { workspaceSlug } = useParams();
   return (
     <WithPreviewHOC artifactId={artifactId}>
-      <div className="flex flex-col gap-2 items-start">
+      <div className="flex flex-col items-start">
         {/* header */}
         <div className="flex gap-2 items-center overflow-hidden w-full">
           {/* issue type icon */}
           {isEpic ? (
-            <EpicIcon className="size-4 rounded text-custom-text-200 flex-shrink-0" />
+            <EpicIcon className="size-4 rounded-sm text-secondary flex-shrink-0" />
           ) : (
-            <LayersIcon className="size-4 rounded flex-shrink-0" />
+            <LayersIcon className="size-4 rounded-sm flex-shrink-0" />
           )}
           {/* title */}
-          <div className="truncate text-sm font-medium text-start">{data.name}</div>
+          <div className="truncate text-body-sm-medium text-start">{data.name}</div>
         </div>
         {/* properties */}
         <WithPreviewHOC.PreviewProperties>

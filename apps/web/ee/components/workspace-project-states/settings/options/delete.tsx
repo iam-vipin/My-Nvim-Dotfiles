@@ -85,19 +85,16 @@ export const ProjectStateDelete = observer(function ProjectStateDelete(props: TP
         title="Delete State"
         content={
           <>
-            Are you sure you want to delete state-{" "}
-            <span className="font-medium text-custom-text-100">{state?.name}</span>? All of the data related to the
-            state will be permanently removed. This action cannot be undone.
+            Are you sure you want to delete state- <span className="font-medium text-primary">{state?.name}</span>? All
+            of the data related to the state will be permanently removed. This action cannot be undone.
           </>
         }
       />
 
       <button
         className={cn(
-          "flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors cursor-pointer focus:outline-none",
-          isDeleteDisabled
-            ? "bg-custom-background-90 text-custom-text-200"
-            : "text-red-500 hover:bg-custom-background-80"
+          "flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors cursor-pointer focus:outline-none",
+          isDeleteDisabled ? "bg-layer-1 text-secondary" : "text-red-500 hover:bg-layer-1"
         )}
         disabled={isDeleteDisabled}
         data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_LIST_DELETE_BUTTON}
@@ -111,7 +108,7 @@ export const ProjectStateDelete = observer(function ProjectStateDelete(props: TP
           disabled={!isDeleteDisabled}
           className="focus:outline-none"
         >
-          {isDelete ? <Loader className="w-3.5 h-3.5 text-custom-text-200" /> : <CloseIcon className="w-3.5 h-3.5" />}
+          {isDelete ? <Loader className="w-3.5 h-3.5 text-secondary" /> : <CloseIcon className="w-3.5 h-3.5" />}
         </Tooltip>
       </button>
     </>

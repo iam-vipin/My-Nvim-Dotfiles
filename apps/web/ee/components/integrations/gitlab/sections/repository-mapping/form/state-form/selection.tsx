@@ -19,8 +19,8 @@ export const StateFormSelection = observer(function StateFormSelection(props: TS
   const { t } = useTranslation();
 
   return (
-    <div className="relative grid grid-cols-2 items-center space-y-1.5 text-sm">
-      <div className="text-custom-text-200">{title}</div>
+    <div className="relative grid grid-cols-2 items-center space-y-1.5 text-body-xs-regular">
+      <div className="text-secondary">{title}</div>
       <div>
         <Dropdown
           dropdownOptions={(planeStates || [])?.map((state) => ({

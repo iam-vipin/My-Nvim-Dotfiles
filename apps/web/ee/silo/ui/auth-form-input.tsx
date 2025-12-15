@@ -35,7 +35,7 @@ export function AuthFormInput(props: Props) {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-sm text-custom-text-300">{label}</h4>
+      <h4 className="text-13 text-tertiary">{label}</h4>
       <div className="relative">
         <Input
           id={name}
@@ -54,7 +54,7 @@ export function AuthFormInput(props: Props) {
           (showPassword ? (
             <button
               tabIndex={-1}
-              className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+              className="absolute right-3 top-2.5 flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(false)}
             >
               <EyeOff className="h-4 w-4" />
@@ -62,14 +62,14 @@ export function AuthFormInput(props: Props) {
           ) : (
             <button
               tabIndex={-1}
-              className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+              className="absolute right-3 top-2.5 flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(true)}
             >
               <Eye className="h-4 w-4" />
             </button>
           ))}
       </div>
-      {description && <p className="pt-0.5 text-xs text-custom-text-300">{description}</p>}
+      {description && <p className="pt-0.5 text-11 text-tertiary">{description}</p>}
     </div>
   );
 }

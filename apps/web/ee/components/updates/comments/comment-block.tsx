@@ -38,8 +38,8 @@ export const CommentBlock = observer(function CommentBlock(props: TProps) {
         <div className="flex-1">
           <div className="flex w-full">
             <div className="flex-1">
-              <div className="text-sm">{creator?.display_name}</div>
-              <div className="text-xs text-custom-text-350">{renderFormattedDate(commentData?.updated_at)}</div>
+              <div className="text-13">{creator?.display_name}</div>
+              <div className="text-11 text-tertiary">{renderFormattedDate(commentData?.updated_at)}</div>
             </div>
             {/* quick actions */}
             {currentUser?.id === creator?.id && (
@@ -56,7 +56,7 @@ export const CommentBlock = observer(function CommentBlock(props: TProps) {
               />
             )}
           </div>
-          <div className="text-base mb-2">{commentData?.description}</div>
+          <div className="text-14 mb-2">{commentData?.description}</div>
           <UpdateReaction
             workspaceSlug={workspaceSlug}
             entityId={entityId}

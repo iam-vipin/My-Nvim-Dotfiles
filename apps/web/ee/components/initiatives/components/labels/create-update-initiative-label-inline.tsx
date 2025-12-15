@@ -9,7 +9,8 @@ import { Popover, Transition } from "@headlessui/react";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TInitiativeLabel } from "@plane/types";
-import { Button, Input } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/ui";
 
 export type TInitiativeLabelOperationsCallbacks = {
   createLabel: (data: Partial<TInitiativeLabel>) => Promise<TInitiativeLabel | undefined>;
@@ -111,15 +112,15 @@ export const CreateUpdateInitiativeLabelInline = observer(
         <>
           <div
             ref={ref}
-            className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 px-3 py-2 rounded-lg ${labelForm ? "" : "hidden"}`}
+            className={`flex w-full scroll-m-8 items-center gap-2 bg-surface-1 px-3 py-2 rounded-lg ${labelForm ? "" : "hidden"}`}
           >
             <div className="flex-shrink-0">
               <Popover className="relative z-10 flex h-full w-full items-center justify-center">
                 {({ open }) => (
                   <>
                     <Popover.Button
-                      className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                        open ? "text-custom-text-100" : "text-custom-text-200"
+                      className={`group inline-flex items-center text-14 font-medium focus:outline-none ${
+                        open ? "text-primary" : "text-secondary"
                       }`}
                     >
                       <span
@@ -184,7 +185,7 @@ export const CreateUpdateInitiativeLabelInline = observer(
                 )}
               />
             </div>
-            <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
+            <Button variant="secondary" onClick={() => handleClose()}>
               {t("cancel")}
             </Button>
             <Button
@@ -193,13 +194,12 @@ export const CreateUpdateInitiativeLabelInline = observer(
                 e.preventDefault();
                 handleSubmit(handleFormSubmit)();
               }}
-              size="sm"
               loading={isSubmitting}
             >
               {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
             </Button>
           </div>
-          {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
+          {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-red-500">{errors.name?.message}</p>}
         </>
       );
     }

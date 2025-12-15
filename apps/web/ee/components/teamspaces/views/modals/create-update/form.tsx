@@ -85,7 +85,7 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} view</h3>
+        <h3 className="text-h5-medium text-secondary">{data ? "Update" : "Create"} view</h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
             <EmojiPicker
@@ -95,12 +95,12 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
               className="flex items-center justify-center flex-shrink0"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+                <span className="grid h-9 w-9 place-items-center rounded-md bg-layer-1">
                   <>
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <ViewsIcon className="h-4 w-4 text-custom-text-300" />
+                      <ViewsIcon className="h-4 w-4 text-tertiary" />
                     )}
                   </>
                 </span>
@@ -147,13 +147,13 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
                     onChange={onChange}
                     hasError={Boolean(errors.name)}
                     placeholder="Title"
-                    className="w-full text-base"
+                    className="w-full text-body-sm-regular"
                     tabIndex={1}
                     autoFocus
                   />
                 )}
               />
-              <span className="text-xs text-red-500">{errors?.name?.message?.toString()}</span>
+              <span className="text-caption-xs-medium text-danger">{errors?.name?.message?.toString()}</span>
             </div>
           </div>
           <div>
@@ -165,7 +165,7 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
                   id="description"
                   name="description"
                   placeholder="Description"
-                  className="w-full text-base resize-none min-h-24"
+                  className="w-full text-body-sm-regular resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
@@ -253,11 +253,11 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={5}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={5}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" tabIndex={6} loading={isSubmitting}>
+        <Button variant="primary" size="lg" type="submit" tabIndex={6} loading={isSubmitting}>
           {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
         </Button>
       </div>

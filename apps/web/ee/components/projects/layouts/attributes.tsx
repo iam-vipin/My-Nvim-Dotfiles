@@ -77,7 +77,7 @@ export const Attributes = observer(function Attributes(props: Props) {
             disabled={!isEditingAllowed || isArchived}
             optionsClassName="z-[11]"
             buttonClassName={cn(
-              "z-1 h-5 px-2 py-0 text-left rounded group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
+              "z-1 h-5 px-2 py-0 text-left rounded-sm group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
             )}
           />
         </div>
@@ -90,7 +90,7 @@ export const Attributes = observer(function Attributes(props: Props) {
               onChange={(data: EProjectPriority | undefined) => handleUpdateProject({ priority: data })}
               buttonVariant="border-with-text"
               buttonClassName={cn(
-                "px-4 text-left rounded group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
+                "px-4 text-left rounded-sm group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
               )}
               showTooltip
               buttonContainerClassName="w-full"
@@ -130,7 +130,7 @@ export const Attributes = observer(function Attributes(props: Props) {
                 <Tooltip tooltipContent="Lead" position={"top"} className="ml-4">
                   <div
                     className={cn(
-                      "h-full text-xs px-2 flex items-center gap-2 text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded",
+                      "h-full text-11 px-2 flex items-center gap-2 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded",
                       { "cursor-not-allowed": !isEditingAllowed }
                     )}
                   >
@@ -139,7 +139,7 @@ export const Attributes = observer(function Attributes(props: Props) {
                       name={lead.display_name}
                       src={getFileURL(lead.avatar_url)}
                       size={14}
-                      className="text-[9px]"
+                      className="text-9"
                     />
                     <div>{lead.first_name}</div>
                   </div>
@@ -148,7 +148,7 @@ export const Attributes = observer(function Attributes(props: Props) {
                 <Tooltip tooltipContent="Lead" position={"top"} className="ml-4">
                   <div
                     className={cn(
-                      "h-full text-xs px-2 flex items-center gap-2 text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded",
+                      "h-full text-11 px-2 flex items-center gap-2 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded",
                       { "cursor-not-allowed": !isEditingAllowed }
                     )}
                   >
@@ -193,7 +193,7 @@ export const Attributes = observer(function Attributes(props: Props) {
             isClearable
             mergeDates
             buttonVariant={project.start_date ? "border-with-text" : "border-without-text"}
-            buttonContainerClassName={`h-5 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+            buttonContainerClassName={`h-5 w-full flex cursor-pointer items-center gap-1.5 text-tertiary rounded-sm text-11`}
             showTooltip
             disabled={!isEditingAllowed || isArchived}
             renderPlaceholder={false}

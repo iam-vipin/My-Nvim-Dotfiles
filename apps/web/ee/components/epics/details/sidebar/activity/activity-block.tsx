@@ -35,11 +35,7 @@ export const EpicActivityItem = observer(function EpicActivityItem(props: TEpicA
   // adding this for conversion compatibility
   if (activity.field === null && activity.verb === "created") {
     return (
-      <ActivityBlockComponent
-        icon={<LayersIcon className="size-4 text-sm flex-shrink-0 text-custom-text-300" aria-hidden="true" />}
-        activity={activity}
-        ends={ends}
-      >
+      <ActivityBlockComponent icon={LayersIcon} activity={activity} ends={ends}>
         <span> created the work item.</span>
       </ActivityBlockComponent>
     );

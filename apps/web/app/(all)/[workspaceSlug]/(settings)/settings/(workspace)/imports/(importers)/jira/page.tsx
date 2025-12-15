@@ -63,7 +63,7 @@ function JiraImporter() {
 
   if (!externalApiToken || !currentAuth)
     return (
-      <div className="text-custom-text-200 flex h-full justify-center items-center">
+      <div className="text-secondary flex h-full justify-center items-center">
         Not able to access the external api token. Please try again later.
       </div>
     );

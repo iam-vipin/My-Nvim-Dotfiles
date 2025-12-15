@@ -21,7 +21,7 @@ export const ExtendedAppHeader = observer(function ExtendedAppHeader(props: { he
   return (
     <>
       {sidebarCollapsed && shouldShowSidebarToggleButton && <AppSidebarToggleButton />}
-      <div className="flex items-center gap-2 divide-x divide-custom-border-100 w-full">
+      <div className="flex items-center gap-2 divide-x divide-subtle w-full">
         <div className="w-full flex-1">{header}</div>
       </div>
     </>

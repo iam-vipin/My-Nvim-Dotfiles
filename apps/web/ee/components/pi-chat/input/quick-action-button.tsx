@@ -29,7 +29,7 @@ export const AttachmentActionButton = observer(function AttachmentActionButton(p
         }}
         disabled={disabled || isLoading}
         aria-label="Attach files"
-        className="size-8 flex items-center justify-center hover:bg-custom-background-80 rounded-full"
+        className="size-8 flex items-center justify-center hover:bg-layer-1 rounded-full"
       >
         <Paperclip className="h-4 w-4" />
       </button>

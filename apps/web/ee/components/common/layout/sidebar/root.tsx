@@ -31,7 +31,6 @@ export function SidebarRoot(props: TSidebarRootProps) {
         storageKey={storageKey}
         defaultTab={defaultTab}
         containerClassName="gap-4"
-        tabListContainerClassName="px-6"
         tabPanelClassName="h-full"
       />
     </SidebarWrapper>

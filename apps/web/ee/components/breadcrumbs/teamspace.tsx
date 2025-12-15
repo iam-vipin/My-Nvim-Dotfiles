@@ -31,16 +31,16 @@ export const TeamspaceBreadcrumb = observer(function TeamspaceBreadcrumb(props: 
     <>
       <Link
         href={`/${workspaceSlug}/teamspaces`}
-        className={cn("text-sm font-medium text-custom-text-300 hover:text-custom-text-200", {
+        className={cn("text-body-xs-medium text-tertiary hover:text-secondary", {
           "pointer-events-none": isLast,
         })}
       >
         Teamspaces
       </Link>
-      <span className="mx-2 text-custom-text-300">/</span>
+      <span className="mx-2 text-tertiary">/</span>
       <Link
         href={`/${workspaceSlug}/teamspaces/${teamspaceId}`}
-        className={cn("text-sm font-medium text-custom-text-300 hover:text-custom-text-200", {
+        className={cn("text-body-xs-medium text-tertiary hover:text-secondary", {
           "pointer-events-none": isLast && !featureKey,
         })}
       >
@@ -48,7 +48,7 @@ export const TeamspaceBreadcrumb = observer(function TeamspaceBreadcrumb(props: 
       </Link>
       {featureKey && (
         <>
-          <span className="mx-2 text-custom-text-300">/</span>
+          <span className="mx-2 text-tertiary">/</span>
           <ProjectFeatureBreadcrumb
             workspaceSlug={workspaceSlug}
             projectId={teamspaceId}

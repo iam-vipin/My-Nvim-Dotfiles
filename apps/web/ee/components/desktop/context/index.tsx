@@ -23,7 +23,7 @@ export const DesktopAppProvider = observer(function DesktopAppProvider(props: TD
   // handle theme change
   const handleThemeChange = useCallback(() => {
     const currentTheme = localStorage.getItem("theme") || "light";
-    document.body.classList.toggle("bg-custom-background-100/90", currentTheme === "custom");
+    document.body.classList.toggle("bg-surface-1/90", currentTheme === "custom");
   }, []);
 
   useEffect(() => {

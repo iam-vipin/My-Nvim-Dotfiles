@@ -46,7 +46,7 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"
-        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -55,7 +55,7 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
               key={item.key}
               onClick={item.action}
               className={cn("flex items-center gap-2", {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               })}
               disabled={item.disabled}
             >

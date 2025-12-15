@@ -31,7 +31,7 @@ export const DuplicateIssueReadOnlyHeaderRoot = observer(function DuplicateIssue
             projectIdentifier={projectIdentifier}
             issueTypeId={issue.type_id}
             projectId={issue.project_id}
-            textContainerClassName="text-xs font-medium text-custom-text-300"
+            variant="tertiary"
             size="xs"
             displayProperties={{
               key: true,

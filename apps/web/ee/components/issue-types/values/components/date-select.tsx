@@ -59,11 +59,11 @@ export const DateValueSelect = observer(function DateValueSelect(props: TDateVal
         className="w-full flex-grow group"
         buttonContainerClassName="w-full text-left"
         buttonClassName={cn(
-          "text-sm bg-custom-background-100",
+          "text-sm bg-surface-1",
           {
-            "text-custom-text-400": !data?.length,
-            "border-custom-border-200": variant === "create",
-            "border-red-500": Boolean(error),
+            "text-placeholder": !data?.length,
+            "border-subtle-1": variant === "create",
+            "border-danger-strong": Boolean(error),
           },
           buttonClassName
         )}
@@ -72,7 +72,7 @@ export const DateValueSelect = observer(function DateValueSelect(props: TDateVal
         formatToken={displayFormat}
       />
       {Boolean(error) && (
-        <span className="text-xs font-medium text-red-500">
+        <span className="text-caption-md-medium text-danger">
           {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
         </span>
       )}

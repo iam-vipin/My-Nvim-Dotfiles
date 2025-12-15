@@ -38,16 +38,16 @@ export const MemberValueSelect = observer(function MemberValueSelect(props: TMem
 
   const memberPickerProps: Partial<MemberDropdownProps> = {
     buttonClassName: cn(
-      "h-full py-1 text-sm justify-between bg-custom-background-100",
+      "h-full py-1 text-body-xs-regular justify-between bg-surface-1",
       {
-        "text-custom-text-400": !value?.length,
-        "border-custom-border-200": variant === "create",
-        "border-red-500": Boolean(error),
+        "text-placeholder": !value?.length,
+        "border-subtle-1": variant === "create",
+        "border-danger-strong": Boolean(error),
       },
       buttonClassName
     ),
     buttonContainerClassName: cn("w-full text-left", {
-      "bg-custom-background-90": variant === "create" && isDisabled,
+      "bg-layer-1": variant === "create" && isDisabled,
     }),
     dropdownArrowClassName: "h-3.5 w-3.5 hidden group-hover:inline",
     placeholder: isMultiSelect ? "Select members" : "Select a member",
@@ -115,7 +115,7 @@ export const MemberValueSelect = observer(function MemberValueSelect(props: TMem
         />
       )}
       {Boolean(error) && (
-        <span className="text-xs font-medium text-red-500">
+        <span className="text-caption-md-medium text-danger">
           {error === "REQUIRED" ? t("common.errors.entity_required", { entity: propertyDetail.display_name }) : error}
         </span>
       )}

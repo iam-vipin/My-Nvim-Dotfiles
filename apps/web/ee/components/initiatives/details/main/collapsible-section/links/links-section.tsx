@@ -24,7 +24,7 @@ export const LinksSection = observer(function LinksSection(props: Props) {
   return (
     <CollapsibleDetailSection
       title={t("common.links")}
-      actionItemElement={!disabled && <InitiativeLinksActionButton disabled={disabled} />}
+      actionItemElement={!disabled && <InitiativeLinksActionButton disabled={disabled} variant="layer-1" />}
       count={count}
       collapsibleContent={
         <InitiativeLinksCollapsibleContent

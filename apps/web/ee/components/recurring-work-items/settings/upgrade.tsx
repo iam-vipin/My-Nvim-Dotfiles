@@ -26,14 +26,13 @@ export const RecurringWorkItemsUpgrade = observer(function RecurringWorkItemsUpg
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-            !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong": !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="flex flex-col w-full xl:max-w-[360px] gap-y-4">
-            <div className="text-xl font-semibold">{t("recurring_work_items.empty_state.upgrade.title")}</div>
-            <div className="font-medium text-custom-text-300 text-sm">
+            <div className="text-h5-semibold">{t("recurring_work_items.empty_state.upgrade.title")}</div>
+            <div className="text-body-xs-medium text-tertiary">
               {t("recurring_work_items.empty_state.upgrade.description")}
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
@@ -44,7 +43,7 @@ export const RecurringWorkItemsUpgrade = observer(function RecurringWorkItemsUpg
               <Link
                 target="_blank"
                 href="https://plane.so/contact"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+                className={"bg-transparent underline text-body-xs-medium text-accent-secondary my-auto"}
                 onClick={() => {}}
               >
                 {t("common.upgrade_cta.talk_to_sales")}

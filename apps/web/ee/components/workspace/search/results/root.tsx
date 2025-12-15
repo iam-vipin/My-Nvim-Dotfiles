@@ -123,11 +123,11 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
           key={filter.key}
           onClick={() => setSearchFilter(filter.key)}
           className={cn(
-            "shrink-0 flex w-fit items-center gap-2 text-xs font-medium rounded-md py-1.5 px-3 transition-all",
+            "shrink-0 flex w-fit items-center gap-2 text-11 font-medium rounded-md py-1.5 px-3 transition-all",
             {
-              "text-custom-text-200 bg-custom-background-90": searchFilter !== filter.key,
-              "hover:bg-custom-background-80": searchFilter !== filter.key && !isSearching,
-              "text-custom-primary-300 bg-custom-primary-200/15": searchFilter === filter.key,
+              "text-secondary bg-layer-1": searchFilter !== filter.key,
+              "hover:bg-layer-1": searchFilter !== filter.key && !isSearching,
+              "text-accent-secondary bg-accent-primary/80/15": searchFilter === filter.key,
               "cursor-not-allowed opacity-60": isSearching,
             }
           )}
@@ -137,7 +137,7 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
           {isSearching && searchFilter === filter.key ? (
             <Spinner className="size-3.5 animate-spin" />
           ) : getSearchResultsCount(filter.key) > 0 ? (
-            <span className={cn("min-w-4 text-center", { "text-custom-text-350": searchFilter !== filter.key })}>
+            <span className={cn("min-w-4 text-center", { "text-tertiary": searchFilter !== filter.key })}>
               {getSearchResultsCount(filter.key)}
             </span>
           ) : null}
@@ -149,7 +149,7 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
   const renderSearchResults = () => {
     if (error) {
       return (
-        <div className="flex items-center gap-2 text-sm text-red-500 bg-red-50 p-3 rounded-md">
+        <div className="flex items-center gap-2 text-13 text-red-500 bg-red-50 p-3 rounded-md">
           <AlertCircle className="h-4 w-4" />
           {t("common.search.error")}
         </div>
@@ -159,14 +159,12 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
     if (!isSearching && filteredSearchResults.length === 0 && query) {
       return (
         <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
-          <div className="w-24 h-24 bg-custom-background-90 rounded-full flex items-center justify-center">
-            <Search className="w-14 h-14 text-custom-text-400/40" />
+          <div className="w-24 h-24 bg-layer-1 rounded-full flex items-center justify-center">
+            <Search className="w-14 h-14 text-placeholder/40" />
           </div>
           <div className="text-center space-y-2">
-            <div className="text-xl font-bold text-custom-text-300">{t("common.search.no_results.title")}</div>
-            <div className="text-sm text-custom-text-300 max-w-[300px]">
-              {t("common.search.no_results.description")}
-            </div>
+            <div className="text-18 font-bold text-tertiary">{t("common.search.no_results.title")}</div>
+            <div className="text-13 text-tertiary max-w-[300px]">{t("common.search.no_results.description")}</div>
           </div>
         </div>
       );
@@ -179,7 +177,7 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
             key={entity.id}
             href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
             onClick={handleResultClick}
-            className="group rounded-md flex gap-2 p-3 text-sm text-custom-text-100 transition-all duration-300 ease-in-out hover:bg-custom-background-90 hover:px-3"
+            className="group rounded-md flex gap-2 p-3 text-13 text-primary transition-all duration-300 ease-in-out hover:bg-layer-1 hover:px-3"
           >
             <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
             <span className="flex-1 line-clamp-2">

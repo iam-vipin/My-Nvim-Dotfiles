@@ -78,7 +78,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
             tabIndex={-1}
             href="https://app.asana.com/0/my-apps"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Asana Security Settings.
@@ -126,7 +126,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
           <Button variant="primary" onClick={handlePATAuthentication} loading={isLoading} disabled={isLoading}>
             {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Asana" })}
           </Button>{" "}
-          <Button variant="link-neutral" className="font-medium" onClick={clearFromData}>
+          <Button variant="ghost" className="font-medium" onClick={clearFromData}>
             {t("common.clear")}
           </Button>
         </div>

@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 // components
 import type { EPageStoreType } from "@/plane-web/hooks/store";

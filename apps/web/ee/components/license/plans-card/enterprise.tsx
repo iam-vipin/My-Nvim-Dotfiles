@@ -70,13 +70,17 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TE
       planVariant={EProductSubscriptionEnum.ENTERPRISE}
       planDescription={
         <>
-          <div>Unlimited members, Unlimited Guests, Custom Workflows, Advanced Analytics, and more</div>
+          <div className="text-body-xs-medium text-secondary">
+            Unlimited members, Unlimited Guests, Custom Workflows, Advanced Analytics, and more
+          </div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isSubscriptionCancelled ? (
-                <div className="text-red-500 ">Your billing cycle ends on {renderFormattedDate(endDate)}.</div>
+                <div className="text-body-xs-medium text-danger-secondary">
+                  Your billing cycle ends on {renderFormattedDate(endDate)}.
+                </div>
               ) : (
-                <div>
+                <div className="text-body-xs-medium text-secondary">
                   {startDate
                     ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                     : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
@@ -85,9 +89,9 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TE
               )}
             </>
           ) : (
-            <div>
+            <div className="text-body-xs-medium text-secondary">
               To manage your subscription, please{" "}
-              <a className="text-custom-primary-300 hover:underline" href="mailto:support@plane.so">
+              <a className="text-accent-primary hover:underline" href="mailto:support@plane.so">
                 contact support.
               </a>
             </div>
@@ -99,8 +103,9 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TE
         isSubscriptionManagementEnabled && (
           <div className="flex items-center gap-2.5">
             <Button
-              variant="link-neutral"
-              className="cursor-pointer px-3 py-1.5 text-center text-xs font-medium outline-none"
+              variant="secondary"
+              size="lg"
+              appendIcon={<ExternalLink />}
               onClick={
                 !isSelfManaged && isInTrialPeriod
                   ? () => handleUpgrade(EProductSubscriptionEnum.ENTERPRISE)
@@ -109,7 +114,6 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TE
               disabled={isLoading}
             >
               {isLoading ? "Redirecting to Stripe" : "Manage subscription"}
-              <ExternalLink className="h-3 w-3" strokeWidth={2} />
             </Button>
             <BillingActionsButton canPerformWorkspaceAdminActions />
           </div>

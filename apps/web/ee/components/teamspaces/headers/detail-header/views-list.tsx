@@ -32,13 +32,13 @@ export const TeamspaceViewsListHeaderActions = observer(function TeamspaceViewsL
       {isEditingAllowed && (
         <Button
           variant="primary"
-          size="sm"
           onClick={() => {
             captureClick({
               elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.HEADER_CREATE_VIEW_BUTTON,
             });
             toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId });
           }}
+          size="lg"
         >
           Add view
         </Button>

@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
@@ -79,7 +78,8 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
   );
 
   const handleFetchSubIssues = useCallback(async () => {
-    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
+    const currentSubIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
+    if (!currentSubIssueHelpers.issue_visibility.includes(parentIssueId)) {
       try {
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
         await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
@@ -90,14 +90,7 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", "");
       }
     }
-  }, [
-    parentIssueId,
-    projectId,
-    setSubIssueHelpers,
-    subIssueHelpers.issue_visibility,
-    subIssueOperations,
-    workspaceSlug,
-  ]);
+  }, [parentIssueId, projectId, setSubIssueHelpers, subIssueHelpersByIssueId, subIssueOperations, workspaceSlug]);
 
   useEffect(() => {
     handleFetchSubIssues();

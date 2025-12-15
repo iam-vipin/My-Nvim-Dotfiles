@@ -29,10 +29,10 @@ export const ProjectLayoutSelection = observer(function ProjectLayoutSelection(p
     <>
       <CustomMenu
         maxHeight={"md"}
-        className="flex md:hidden flex-grow justify-center text-sm text-custom-text-200"
+        className="flex md:hidden flex-grow justify-center text-13 text-secondary"
         placement="bottom-start"
-        customButton={<span className="flex flex-grow justify-center text-sm text-custom-text-200 m-auto">Layout</span>}
-        customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+        customButton={<span className="flex flex-grow justify-center text-13 text-secondary m-auto">Layout</span>}
+        customButtonClassName="flex flex-grow justify-center text-secondary text-13"
         closeOnSelect
       >
         {PROJECT_LAYOUTS.map((layout, index) => (
@@ -42,26 +42,26 @@ export const ProjectLayoutSelection = observer(function ProjectLayoutSelection(p
             className="flex items-center gap-2"
           >
             <layout.icon className="h-3 w-3" />
-            <div className="text-custom-text-300">{layout.title}</div>
+            <div className="text-tertiary">{layout.title}</div>
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>
-      <div className="hidden md:flex items-center gap-1 rounded bg-custom-background-80 p-1">
+      <div className="hidden md:flex items-center gap-1 rounded-sm bg-layer-1 p-1">
         {PROJECT_LAYOUTS.filter(
           (layout) => !layout.selectivelyHide || filters?.scope === EProjectScope.MY_PROJECTS
         ).map((layout) => (
           <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
             <button
               type="button"
-              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                selectedLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-surface-1 ${
+                selectedLayout == layout.key ? "bg-surface-1 shadow-custom-shadow-2xs" : ""
               }`}
               onClick={() => updateLayout(workspaceSlug, layout.key)}
             >
               <layout.icon
                 size={14}
                 strokeWidth={2}
-                className={`h-3.5 w-3.5 ${selectedLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
+                className={`h-3.5 w-3.5 ${selectedLayout == layout.key ? "text-primary" : "text-secondary"}`}
               />
             </button>
           </Tooltip>

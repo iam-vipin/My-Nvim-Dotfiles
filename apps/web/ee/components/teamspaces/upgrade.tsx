@@ -28,7 +28,7 @@ export const TeamspaceUpgrade = observer(function TeamspaceUpgrade() {
           data-ph-element={TEAMSPACE_UPGRADE_TRACKER_ELEMENTS.HIGHER_SUBSCRIPTION_BUTTON}
           href="https://prime.plane.so/"
           target="_blank"
-          className={getButtonStyling("primary", "md")}
+          className={getButtonStyling("primary", "base")}
           rel="noreferrer"
         >
           Upgrade to higher subscription
@@ -53,14 +53,13 @@ export const TeamspaceUpgrade = observer(function TeamspaceUpgrade() {
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-            !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="w-full xl:max-w-[300px]">
-            <div className="text-2xl font-semibold">Organize work even better with Teamspaces.</div>
-            <div className="text-sm">
+            <div className="text-h4-semibold">Organize work even better with Teamspaces.</div>
+            <div className="text-body-xs-regular">
               Get Teamspaces with a Pro or higher subscription and organize people + their work into a separate space.
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
@@ -68,7 +67,7 @@ export const TeamspaceUpgrade = observer(function TeamspaceUpgrade() {
               <Link
                 target="_blank"
                 href="https://plane.so/contact"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+                className={"bg-transparent underline text-body-xs-medium text-accent-secondary my-auto"}
                 onClick={() => {}}
               >
                 Get custom quote

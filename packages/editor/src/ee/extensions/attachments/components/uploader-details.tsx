@@ -39,7 +39,7 @@ export function CustomAttachmentUploaderDetails(props: Props) {
             href="https://docs.plane.so/core-concepts/issues/overview#supported-file-types"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -65,7 +65,7 @@ export function CustomAttachmentUploaderDetails(props: Props) {
   return (
     <div className="truncate">
       <p
-        className={cn("not-prose text-sm truncate", {
+        className={cn("not-prose text-13 truncate", {
           "text-red-500": !fileBeingUploaded && fileUploadError,
         })}
       >
@@ -76,7 +76,7 @@ export function CustomAttachmentUploaderDetails(props: Props) {
             : // : t("attachmentComponent.uploader.drag_and_drop")
               "Drop files here or click to upload"}
       </p>
-      <p className="not-prose text-xs text-custom-text-300">
+      <p className="not-prose text-11 text-tertiary">
         {fileBeingUploaded ? (
           <CustomAttachmentUploadStatus editor={editor} nodeId={blockId} />
         ) : fileUploadError ? (

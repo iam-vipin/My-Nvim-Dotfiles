@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { HomeIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
+import { Breadcrumbs, Button, Header as HeaderUI } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppHeader } from "@/components/core/app-header";
@@ -42,17 +42,15 @@ export const Header = observer(function Header(props: THeaderProps) {
                     <BreadcrumbLink
                       href={"/"}
                       label={t("home.title")}
-                      icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
+                      icon={<HomeIcon className="h-4 w-4 text-tertiary" />}
                     />
                   }
                 />
               )}
               <Breadcrumbs.Item
                 component={
-                  <div className="flex rounded gap-2 items-center">
-                    {isFullScreen && (
-                      <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />
-                    )}
+                  <div className="flex rounded-sm gap-2 items-center">
+                    {isFullScreen && <PiIcon className="size-4 text-icon-primary fill-current m-auto align-center" />}
                     {models?.length > 1 ? (
                       <ModelsDropdown
                         models={models}
@@ -60,7 +58,7 @@ export const Header = observer(function Header(props: THeaderProps) {
                         setActiveModel={(model) => setActiveModel(activeChatId, model)}
                       />
                     ) : (
-                      <span className="font-medium text-sm my-auto">Plane AI</span>
+                      <span className="text-body-xs-medium text-primary my-auto">Plane AI</span>
                     )}
                     <BetaBadge />
                   </div>
@@ -74,7 +72,10 @@ export const Header = observer(function Header(props: THeaderProps) {
                 <>
                   {!isFullScreen ? (
                     <Tooltip tooltipContent="Start a new chat" position="left">
-                      <button className={cn(buttonClass)} onClick={() => initPiChat()}>
+                      <button
+                        className="border border-subtle rounded-md shadow-raised-100 px-2 py-[0.5px] h-7 text-secondary"
+                        onClick={() => initPiChat()}
+                      >
                         <SquarePen className="flex-shrink-0 size-3.5" />
                       </button>
                     </Tooltip>
@@ -83,7 +84,7 @@ export const Header = observer(function Header(props: THeaderProps) {
                       <Link
                         href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
                         tabIndex={-1}
-                        className={cn(buttonClass)}
+                        className="border border-subtle rounded-md shadow-raised-100 px-2 py-[0.5px] h-7 text-secondary flex items-center justify-center"
                       >
                         <SquarePen className="flex-shrink-0 size-3.5" />
                       </Link>
@@ -91,7 +92,11 @@ export const Header = observer(function Header(props: THeaderProps) {
                   )}
                   {!isSidePanelOpen && (
                     <Tooltip tooltipContent="History" position="bottom">
-                      <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
+                      <button
+                        type="button"
+                        className="border border-subtle rounded-md shadow-raised-100 px-2 py-[0.5px] h-7 text-secondary"
+                        onClick={() => toggleSidePanel(true)}
+                      >
                         <PanelLeft className="size-3.5" />
                       </button>
                     </Tooltip>

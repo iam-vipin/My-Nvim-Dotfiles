@@ -26,11 +26,11 @@ export const DownloadNestedPagesModalSubPageItem = observer(function DownloadNes
   return (
     <div className="flex items-center gap-2 p-1">
       {logo_props && (
-        <div className="shrink-0 size-6 grid place-items-center bg-custom-background-80 rounded">
+        <div className="shrink-0 size-6 grid place-items-center bg-layer-1 rounded">
           <Logo logo={logo_props} type="lucide" size={16} />
         </div>
       )}
-      <h6 className="text-sm font-medium truncate">{name}</h6>
+      <h6 className="text-13 font-medium truncate">{name}</h6>
     </div>
   );
 });

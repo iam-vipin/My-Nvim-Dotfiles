@@ -59,29 +59,10 @@ class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
 
     class Meta:
         ordering = ["sort_order"]
-        unique_together = ["workspace", "name", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["workspace", "name"],
-                condition=Q(deleted_at__isnull=True),
-                name="issue_property_unique_name_workspace_when_deleted_at_null",
-            )
-        ]
         db_table = "issue_properties"
 
     def save(self, *args, **kwargs):
-        if not self.project and not self.issue_type:
-            # This will be the case going forward for new issue properties
-            self.name = slugify(self.display_name)
-        else:
-            # This is required for backward compatibility until we update the existing logic
-            self.name = slugify(
-                "{}_{}_{}".format(
-                    self.display_name,
-                    self.project.identifier if self.project else "",
-                    self.issue_type.name if self.issue_type else "",
-                )
-            )
+        self.name = slugify(self.display_name)
         created = self._state.adding
         if created:
             # Get the maximum sequence value from the database

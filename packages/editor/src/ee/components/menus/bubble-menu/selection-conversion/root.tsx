@@ -18,6 +18,7 @@ export function BubbleMenuSelectionConversion(props: Props) {
   const { editor, selectionConversion } = props;
   // states
   const [isProjectsListModalOpen, setIsProjectsListModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   // find all selected list items or mixed content
   const { selectedListItems } = useEditorState({
     editor,
@@ -28,13 +29,20 @@ export function BubbleMenuSelectionConversion(props: Props) {
   const shouldOpenModal = !!selectionConversion?.projectSelectionEnabled;
 
   const handleWorkItemsCreation = async (projectId?: string) => {
-    await handleSelectionConversion({
-      editor,
-      items: selectedListItems.items,
-      projectId,
-      selectionConversion,
-      totalCount: selectedListItems.totalCount,
-    });
+    setIsCreating(true);
+    try {
+      await handleSelectionConversion({
+        editor,
+        items: selectedListItems.items,
+        projectId,
+        selectionConversion,
+        totalCount: selectedListItems.totalCount,
+      });
+    } catch (error) {
+      console.error("Error in creating work items from selection", error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   if (!selectedListItems.items.length || !selectionConversion?.isConversionEnabled) return null;
@@ -60,6 +68,7 @@ export function BubbleMenuSelectionConversion(props: Props) {
             }
           }}
           aria-label="Convert selection to work items"
+          disabled={isCreating}
         >
           <ConvertToWorkItemsIcon className="size-4" />
         </button>

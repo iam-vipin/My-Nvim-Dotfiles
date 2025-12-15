@@ -7,6 +7,7 @@ from django.contrib.postgres.fields import ArrayField
 
 # Module imports
 from plane.db.models import WorkspaceBaseModel
+from plane.db.mixins import ChangeTrackerMixin
 
 
 class PropertyTypeEnum(models.TextChoices):
@@ -26,7 +27,7 @@ class RelationTypeEnum(models.TextChoices):
     USER = "USER", "User"
 
 
-class IssueProperty(WorkspaceBaseModel):
+class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
     name = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -38,39 +39,112 @@ class IssueProperty(WorkspaceBaseModel):
     default_value = ArrayField(models.TextField(), blank=True, default=list)
     settings = models.JSONField(blank=True, default=dict)
     is_active = models.BooleanField(default=True)
-    issue_type = models.ForeignKey("db.IssueType", on_delete=models.CASCADE, related_name="properties")
+    issue_type = models.ForeignKey(
+        "db.IssueType", on_delete=models.CASCADE, related_name="properties", null=True, blank=True
+    )
     is_multi = models.BooleanField(default=False)
     validation_rules = models.JSONField(blank=True, default=dict)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
+    TRACKED_FIELDS = [
+        "is_required",
+        "default_value",
+        "is_active",
+        "sort_order",
+        "external_source",
+        "external_id",
+        "deleted_at",
+    ]
+
     class Meta:
         ordering = ["sort_order"]
-        unique_together = ["name", "issue_type", "deleted_at"]
+        unique_together = ["workspace", "name", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "issue_type"],
+                fields=["workspace", "name"],
                 condition=Q(deleted_at__isnull=True),
-                name="issue_property_unique_name_project_when_deleted_at_null",
+                name="issue_property_unique_name_workspace_when_deleted_at_null",
             )
         ]
         db_table = "issue_properties"
 
     def save(self, *args, **kwargs):
-        self.name = slugify(self.display_name)
-        if self._state.adding:
+        if not self.project and not self.issue_type:
+            # This will be the case going forward for new issue properties
+            self.name = slugify(self.display_name)
+        else:
+            # This is required for backward compatibility until we update the existing logic
+            self.name = slugify(
+                "{}_{}_{}".format(
+                    self.display_name,
+                    self.project.identifier if self.project else "",
+                    self.issue_type.name if self.issue_type else "",
+                )
+            )
+        created = self._state.adding
+        if created:
             # Get the maximum sequence value from the database
-            last_id = IssueProperty.objects.filter(project=self.project).aggregate(largest=models.Max("sort_order"))[
-                "largest"
-            ]
+            last_id = IssueProperty.objects.filter(workspace_id=self.workspace_id).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sort_order = last_id + 10000
 
         super(IssueProperty, self).save(*args, **kwargs)
 
+        if self.issue_type:
+            # Use _changes_on_save which is captured by ChangeTrackerMixin.save()
+            self.sync_to_issue_type_properties(created=created, changed_fields=self._changes_on_save)
+
+    def sync_to_issue_type_properties(self, created=False, changed_fields=None):
+        issue_type = self.issue_type
+        if created:
+            IssueTypeProperty.objects.create(
+                workspace_id=self.workspace_id,
+                issue_type=issue_type,
+                property=self,
+                is_required=self.is_required,
+                default_value=self.default_value,
+                is_active=self.is_active,
+                sort_order=self.sort_order,
+                external_source=self.external_source,
+                external_id=self.external_id,
+            )
+        else:
+            if changed_fields:
+                fields_to_update = {field: getattr(self, field) for field in changed_fields}
+                IssueTypeProperty.objects.filter(issue_type=issue_type, property=self).update(**fields_to_update)
+
     def __str__(self):
         return self.display_name
+
+
+class IssueTypeProperty(WorkspaceBaseModel):
+    issue_type = models.ForeignKey("db.IssueType", on_delete=models.CASCADE, related_name="issue_type_properties")
+    property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="issue_type_properties")
+    is_required = models.BooleanField(default=False)
+    default_value = ArrayField(models.TextField(), blank=True, default=list)
+    is_active = models.BooleanField(default=True)
+    sort_order = models.FloatField(default=65535)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ["sort_order"]
+        unique_together = ["issue_type", "property", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue_type", "property"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_type_property_unique_issue_type_property_when_deleted_at_null",
+            )
+        ]
+        db_table = "issue_type_properties"
+
+    def __str__(self):
+        return f"{self.issue_type.name} - {self.property.display_name}"
 
 
 class IssuePropertyOption(WorkspaceBaseModel):
@@ -100,7 +174,7 @@ class IssuePropertyOption(WorkspaceBaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = IssuePropertyOption.objects.filter(project=self.project, property=self.property).aggregate(
+            last_id = IssuePropertyOption.objects.filter(workspace=self.workspace, property=self.property).aggregate(
                 largest=models.Max("sort_order")
             )["largest"]
             # if last_id is not None

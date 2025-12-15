@@ -167,8 +167,8 @@ export type TDashboardWidgetFilterKeys =
   | "state_group"
   | "state_id"
   | "type_id"
-  // | "start_date"
-  // | "target_date"
+  | "start_date"
+  | "target_date"
   | "is_draft"
   | "priority";
 

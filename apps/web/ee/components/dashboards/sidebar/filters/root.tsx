@@ -14,6 +14,8 @@ import {
   PriorityIcon,
   StateGroupIcon,
   ViewsIcon,
+  StartDatePropertyIcon,
+  DueDatePropertyIcon,
 } from "@plane/propel/icons";
 import { FilterInstance } from "@plane/shared-state";
 import type {
@@ -40,8 +42,10 @@ import {
   getMentionFilterConfig,
   getModuleFilterConfig,
   getPriorityFilterConfig,
+  getStartDateFilterConfig,
   getStateFilterConfig,
   getStateGroupFilterConfig,
+  getTargetDateFilterConfig,
   getWorkItemTypeFilterConfig,
 } from "@plane/utils";
 
@@ -75,11 +79,12 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
         adapter: new DashboardWidgetFilterAdapter(),
         initialExpression: initialFilters,
         onExpressionChange: (expression) => {
-          handleSubmit({
+          void handleSubmit({
             filters: expression,
           });
         },
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -311,6 +316,28 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
     [operatorConfigs]
   );
 
+  // start date filter config
+  const startDateFilterConfig = useMemo(
+    () =>
+      getStartDateFilterConfig<TDashboardWidgetFilterKeys>("start_date")({
+        isEnabled: true,
+        filterIcon: StartDatePropertyIcon,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
+  // target date filter config
+  const targetDateFilterConfig = useMemo(
+    () =>
+      getTargetDateFilterConfig<TDashboardWidgetFilterKeys>("target_date")({
+        isEnabled: true,
+        filterIcon: DueDatePropertyIcon,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
   if (filterInstance) {
     filterInstance.configManager.registerAll([
       assigneeFilterConfig,
@@ -323,6 +350,8 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
       workItemTypeFilterConfig,
       stateFilterConfig,
       stateGroupFilterConfig,
+      startDateFilterConfig,
+      targetDateFilterConfig,
     ]);
   }
 

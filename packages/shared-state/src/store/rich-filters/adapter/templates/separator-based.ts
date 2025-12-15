@@ -8,7 +8,7 @@ import type {
   TFilterProperty,
   TExternalFilter,
 } from "@plane/types";
-import { COLLECTION_OPERATOR, EQUALITY_OPERATOR, LOGICAL_OPERATOR } from "@plane/types";
+import { EQUALITY_OPERATOR, LOGICAL_OPERATOR } from "@plane/types";
 import {
   createAndGroupNode,
   createConditionNode,
@@ -84,7 +84,7 @@ export abstract class SeparatorBasedFilterAdapter<
   } {
     const { property, operator, value } = params;
 
-    const suffix = operator === COLLECTION_OPERATOR.IN ? this.config.operatorSeparator + "in" : "";
+    const suffix = operator === EQUALITY_OPERATOR.EXACT ? "" : this.config.operatorSeparator + operator;
     const externalKey = property + suffix;
 
     return {
@@ -156,6 +156,6 @@ export abstract class SeparatorBasedFilterAdapter<
       }
     }
 
-    throw new Error(`Unknown logical operator for expression: ${expression}`);
+    throw new Error(`Unknown logical operator for expression: ${JSON.stringify(expression)}`);
   }
 }

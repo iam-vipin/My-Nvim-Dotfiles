@@ -38,14 +38,15 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
 
   useEffect(() => {
     if (moduleIds.length > 0 && projectId) {
-      fetchModules(workspaceSlug, projectId);
+      void fetchModules(workspaceSlug, projectId);
     }
-  }, [value, projectId, workspaceSlug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, projectId, workspaceSlug, fetchModules]);
 
   if (modules.length === 0) {
     return (
-      <div className={cn("flex items-center gap-1 text-13", className)}>
-        {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
+        {!hideIcon && <Layers className="size-4 shrink-0" />}
         <span className="flex-grow truncate">{placeholder ?? t("common.none")}</span>
       </div>
     );
@@ -56,8 +57,8 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
       showCount && modules.length > 1 ? `${modules[0]?.name} +${modules.length - 1}` : modules[0]?.name;
 
     return (
-      <div className={cn("flex items-center gap-1 text-13", className)}>
-        {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
+        {!hideIcon && <Layers className="size-4 shrink-0" />}
         <span className="flex-grow truncate">{displayText}</span>
       </div>
     );
@@ -65,8 +66,8 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
 
   const moduleItem = modules[0];
   return (
-    <div className={cn("flex items-center gap-2 text-13", className)}>
-      {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
+    <div className={cn("flex items-center gap-2 text-body-xs-regular", className)}>
+      {!hideIcon && <Layers className="size-4 shrink-0" />}
       <span className="flex-grow truncate">{moduleItem?.name}</span>
     </div>
   );

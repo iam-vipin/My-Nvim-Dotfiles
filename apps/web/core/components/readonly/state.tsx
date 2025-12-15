@@ -41,12 +41,13 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
   };
 
   useEffect(() => {
-    fetchStates();
+    void fetchStates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, workspaceSlug]);
 
   if (stateLoader) {
     return (
-      <Loader className={cn("flex items-center gap-1 text-13", className)}>
+      <Loader className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         <Loader.Item height="16px" width="16px" className="rounded-full" />
         <Loader.Item height="16px" width="50px" />
       </Loader>
@@ -54,7 +55,7 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
   }
 
   return (
-    <div className={cn("flex items-center gap-1 text-13", className)}>
+    <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
       {!hideIcon && (
         <StateGroupIcon
           stateGroup={state?.group ?? "backlog"}

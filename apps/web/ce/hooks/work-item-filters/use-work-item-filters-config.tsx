@@ -1,14 +1,15 @@
 import { useCallback, useMemo } from "react";
-import { AtSign, Briefcase, Calendar } from "lucide-react";
+import { AtSign, Briefcase } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
+  CalendarLayoutIcon,
   CycleGroupIcon,
   CycleIcon,
   ModuleIcon,
-  StatePropertyIcon,
   PriorityIcon,
   StateGroupIcon,
+  StatePropertyIcon,
   MembersPropertyIcon,
   LabelPropertyIcon,
   StartDatePropertyIcon,
@@ -326,7 +327,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getCreatedAtFilterConfig<TWorkItemFilterProperty>("created_at")({
         isEnabled: true,
-        filterIcon: Calendar,
+        filterIcon: CalendarLayoutIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]
@@ -337,7 +338,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getUpdatedAtFilterConfig<TWorkItemFilterProperty>("updated_at")({
         isEnabled: true,
-        filterIcon: Calendar,
+        filterIcon: CalendarLayoutIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]

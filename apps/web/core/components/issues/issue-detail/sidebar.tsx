@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";

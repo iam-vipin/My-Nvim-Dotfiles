@@ -167,8 +167,7 @@ export const syncCommentWithPlane = async (
       planeComment
     );
     // Set key with Plane comment ID so Plane->GitHub handler can detect and skip
-    // Use 5 second TTL to allow the webhook loop back but expire quickly
-    await store.set(`silo:comment:plane:${comment.id}`, "true", 5);
+    await store.set(`silo:comment:plane:${comment.id}`, "true", 60);
   } else {
     const createdComment = await planeClient.issueComment.create(
       workspaceConnection.workspace_slug,
@@ -177,8 +176,7 @@ export const syncCommentWithPlane = async (
       planeComment
     );
     // Set key with Plane comment ID so Plane->GitHub handler can detect and skip
-    // Use 5 second TTL to allow the webhook loop back but expire quickly
-    await store.set(`silo:comment:plane:${createdComment.id}`, "true", 5);
+    await store.set(`silo:comment:plane:${createdComment.id}`, "true", 60);
   }
 };
 

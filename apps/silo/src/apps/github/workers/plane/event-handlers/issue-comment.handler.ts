@@ -127,7 +127,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     );
     // Set key with GitHub comment ID so GitHub->Plane handler can detect and skip
     // Use 5 second TTL to allow the webhook loop back but expire quickly
-    await store.set(`silo:comment:gh:${githubComment.data.id}`, "true", 5);
+    await store.set(`silo:comment:gh:${githubComment.data.id}`, "true", 60);
 
     if (
       !comment.external_id ||

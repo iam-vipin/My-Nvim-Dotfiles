@@ -204,7 +204,7 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
       );
       // Set key with Plane issue ID so Plane->GitHub handler can detect and skip
       // Use 5 second TTL to allow the webhook loop back but expire quickly
-      await store.set(`silo:issue:plane:${issue.id}`, "true", 5);
+      await store.set(`silo:issue:plane:${issue.id}`, "true", 60);
     } else {
       const createdIssue = await planeClient.issue.create(
         entityConnection.workspace_slug,
@@ -241,8 +241,7 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
       };
 
       // Set key with Plane issue ID so Plane->GitHub handler can detect and skip
-      // Use 5 second TTL to allow the webhook loop back but expire quickly
-      await Promise.all([createLink(), createLinkBack(), store.set(`silo:issue:plane:${createdIssue.id}`, "true", 5)]);
+      await Promise.all([createLink(), createLinkBack(), store.set(`silo:issue:plane:${createdIssue.id}`, "true", 60)]);
     }
   } catch (error) {
     logger.error("Error syncing issue with Plane", error);

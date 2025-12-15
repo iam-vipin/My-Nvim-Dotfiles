@@ -126,7 +126,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
 
     // Set key with GitHub issue number so GitHub->Plane handler can detect and skip
     // Use 5 second TTL to allow the webhook loop back but expire quickly
-    await store.set(`silo:issue:gh:${githubIssue?.data.number}`, "true", 5);
+    await store.set(`silo:issue:gh:${githubIssue?.data.number}`, "true", 60);
   } catch (error) {
     logger.error("[Plane][Github] Error handling issue create/update event", {
       error,

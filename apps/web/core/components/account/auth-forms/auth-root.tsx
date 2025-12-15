@@ -117,7 +117,6 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
           currentAuthStep={authStep}
         />
 
-        {/* TODO: code splitting needed here */}
         {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
 
         <AuthFormRoot

@@ -78,7 +78,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
     <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-subtle px-4 py-3.5">
       <div className="h-full w-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-2 truncate rounded-sm ${
+          className={`flex flex-grow items-center gap-x-2 truncate rounded-sm py-1 ${
             isSidebarCollapsed ? "justify-center" : ""
           }`}
         >
@@ -88,8 +88,8 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
                 "cursor-default": !isSidebarCollapsed,
               })}
             >
-              <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
-                <UserCog2 className="h-4 w-4 text-secondary" />
+              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
+                <UserCog2 className="h-5 w-5 text-secondary" />
               </div>
             </Menu.Button>
             {isSidebarCollapsed && (

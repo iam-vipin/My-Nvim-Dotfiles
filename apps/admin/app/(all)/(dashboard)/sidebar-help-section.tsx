@@ -109,7 +109,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                     <Link href={href} key={name} target="_blank">
                       <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1-hover">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-secondary" />
+                          <Icon className="h-3.5 w-3.5 text-secondary" width={14} height={14} />
                         </div>
                         <span className="text-11">{name}</span>
                       </div>

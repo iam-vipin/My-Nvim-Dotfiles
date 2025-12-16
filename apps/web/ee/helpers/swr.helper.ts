@@ -13,8 +13,14 @@ import {
   WORKSPACE_PARTIAL_PROJECTS,
   WORKSPACE_PROJECTS_ROLES_INFORMATION,
 } from "@/constants/fetch-keys";
+import type { EUserPermissions } from "@plane/types";
 
-export const revalidateProjectData = (workspaceSlug: string, entities: string[], projectId?: string) => {
+export const revalidateProjectData = (
+  workspaceSlug: string,
+  entities: string[],
+  projectId?: string,
+  currentProjectRole?: EUserPermissions
+) => {
   const entitySet = new Set(entities);
   if (entitySet.has("project")) {
     mutate(WORKSPACE_PROJECTS_ROLES_INFORMATION(workspaceSlug));
@@ -22,31 +28,31 @@ export const revalidateProjectData = (workspaceSlug: string, entities: string[],
   }
   if (!projectId) return;
   if (entitySet.has("module")) {
-    mutate(PROJECT_MODULES(workspaceSlug, projectId));
+    mutate(PROJECT_MODULES(projectId, currentProjectRole));
   }
   if (entitySet.has("cycle")) {
-    mutate(PROJECT_ALL_CYCLES(workspaceSlug, projectId));
+    mutate(PROJECT_ALL_CYCLES(projectId, currentProjectRole));
   }
   if (entitySet.has("estimate")) {
-    mutate(PROJECT_ESTIMATES(workspaceSlug, projectId));
+    mutate(PROJECT_ESTIMATES(projectId, currentProjectRole));
   }
   if (entitySet.has("view")) {
-    mutate(PROJECT_VIEWS(workspaceSlug, projectId));
+    mutate(PROJECT_VIEWS(projectId, currentProjectRole));
   }
   if (entitySet.has("workflow")) {
-    mutate(PROJECT_WORKFLOWS(workspaceSlug, projectId));
+    mutate(PROJECT_WORKFLOWS(projectId, currentProjectRole));
   }
   if (entitySet.has("label")) {
-    mutate(PROJECT_LABELS(workspaceSlug, projectId));
+    mutate(PROJECT_LABELS(projectId, currentProjectRole));
   }
   if (entitySet.has("member")) {
-    mutate(PROJECT_MEMBERS(workspaceSlug, projectId));
+    mutate(PROJECT_MEMBERS(projectId, currentProjectRole));
   }
   if (entitySet.has("state")) {
-    mutate(PROJECT_STATES(workspaceSlug, projectId));
+    mutate(PROJECT_STATES(projectId, currentProjectRole));
   }
   if (entitySet.has("workitem") || entitySet.has("epic")) {
-    mutate(WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId));
-    mutate(EPICS_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId));
+    mutate(WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(projectId, currentProjectRole));
+    mutate(EPICS_PROPERTIES_AND_OPTIONS(projectId, currentProjectRole));
   }
 };

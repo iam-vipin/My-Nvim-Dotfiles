@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Info } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { useUserPermissions } from "@/hooks/store/user";
 import { revalidateProjectData } from "@/plane-web/helpers/swr.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TDialogue } from "@/plane-web/types";
@@ -27,6 +28,7 @@ function ActionStatusBlock(props: TProps) {
   // states
   const [isExecutingAction, setIsExecutingAction] = useState(false);
   // store
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getChatFocus, executeAction } = usePiChat();
 
   const chatFocus = getChatFocus(activeChatId);
@@ -37,7 +39,10 @@ function ActionStatusBlock(props: TProps) {
       const actionableEntities = await executeAction(workspaceId, activeChatId, query_id);
       if (actionableEntities && actionableEntities.length > 0 && workspaceSlug) {
         const projectId = chatFocus?.entityType === "project_id" ? chatFocus?.entityIdentifier : undefined;
-        revalidateProjectData(workspaceSlug, actionableEntities, projectId);
+        const currentProjectRole = projectId
+          ? getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId)
+          : undefined;
+        revalidateProjectData(workspaceSlug, actionableEntities, projectId, currentProjectRole);
       }
     } catch (e: any) {
       console.error(e);

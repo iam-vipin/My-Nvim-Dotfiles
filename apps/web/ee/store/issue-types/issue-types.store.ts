@@ -537,7 +537,7 @@ export class IssueTypes implements IIssueTypesStore {
   fetchAll = async (workspaceSlug: string, projectId?: string) => {
     if (!workspaceSlug) return;
     try {
-      this.loader = "init-loader";
+      this.loader = this.loader === "loaded" ? "mutation" : "init-loader";
       this.issueTypePromise = Promise.all([
         this.fetchAllIssueTypes(workspaceSlug, projectId),
         this.fetchAllEpics(workspaceSlug, projectId),

@@ -49,4 +49,11 @@ export class UserPermissionStore extends BaseUserPermissionStore implements IUse
       return getHighestRole(roles);
     }
   );
+
+  fetchWorkspaceLevelProjectEntities = (workspaceSlug: string, projectId: string): void => {
+    void Promise.all([
+      this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId),
+      this.store.issueTypes.fetchAll(workspaceSlug, projectId),
+    ]);
+  };
 }

@@ -21,7 +21,6 @@ from plane.db.models import ExporterHistory, Issue, IssueRelation, StateGroup
 from plane.ee.models import CustomerRequestIssue, InitiativeEpic
 from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
-from plane.utils.exporters import Exporter, IssueExportSchema
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters

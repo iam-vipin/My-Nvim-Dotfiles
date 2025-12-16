@@ -15,6 +15,9 @@ from .schemas import (
     StringField,
 )
 
+
+from .extended.schemas import ExtendedIssueExportSchema as IssueExportSchema
+
 __all__ = [
     # Core Exporter
     "Exporter",

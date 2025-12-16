@@ -15,7 +15,17 @@ import type {
   TFilterConditionPayload,
 } from "@plane/types";
 import { LOGICAL_OPERATOR } from "@plane/types";
-import { addAndCondition, createConditionNode, updateNodeInExpression } from "@plane/utils";
+import {
+  addAndCondition,
+  addOrCondition,
+  createConditionNode,
+  findNodeById,
+  isDirectlyWrappedInNotGroup,
+  replaceNodeInExpression,
+  unwrapFromNotGroup,
+  updateNodeInExpression,
+  wrapInNotGroup,
+} from "@plane/utils";
 // local imports
 import type { IFilterInstance } from "./filter";
 
@@ -227,9 +237,14 @@ export class FilterInstanceHelper<
    */
   private _getConditionPayloadToAdd = (
     condition: TFilterConditionPayload<P, TFilterValue>,
-    _isNegation: boolean
+    isNegation: boolean
   ): TFilterExpression<P> => {
     const conditionNode = createConditionNode(condition);
+
+    // Wrap the condition in a NOT group if it is negation
+    if (isNegation) {
+      return wrapInNotGroup(conditionNode);
+    }
 
     return conditionNode;
   };
@@ -249,6 +264,8 @@ export class FilterInstanceHelper<
     switch (groupOperator) {
       case LOGICAL_OPERATOR.AND:
         return addAndCondition(expression, conditionToAdd);
+      case LOGICAL_OPERATOR.OR:
+        return addOrCondition(expression, conditionToAdd);
       default:
         console.warn(`Unsupported logical operator: ${groupOperator}`);
         return expression;
@@ -267,10 +284,22 @@ export class FilterInstanceHelper<
     expression: TFilterExpression<P>,
     conditionId: string,
     payload: Partial<TFilterConditionNode<P, TFilterValue>>,
-    _isNegation: boolean
+    isNegation: boolean
   ): TFilterExpression<P> | null => {
     // Update the condition with the payload
     updateNodeInExpression(expression, conditionId, payload);
+    const isWrappedInNotGroup = isDirectlyWrappedInNotGroup(expression, conditionId);
+
+    // Handle negation wrapping/unwrapping
+    if (isNegation && !isWrappedInNotGroup) {
+      const conditionNode = findNodeById(expression, conditionId) as TFilterConditionNode<P, TFilterValue>;
+      const notGroup = wrapInNotGroup(conditionNode);
+      return replaceNodeInExpression(expression, conditionId, notGroup);
+    }
+
+    if (!isNegation && isWrappedInNotGroup) {
+      return unwrapFromNotGroup(expression, conditionId);
+    }
 
     return expression;
   };

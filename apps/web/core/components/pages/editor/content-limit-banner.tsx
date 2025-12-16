@@ -10,7 +10,7 @@ export function ContentLimitBanner({ className, onDismiss }: Props) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2 bg-custom-background-80 border-b border-custom-border-200 px-4 py-2.5 text-sm",
+        "flex items-center gap-2 bg-layer-1 border-b border-custom-border-200 px-4 py-2.5 text-13",
         className
       )}
     >

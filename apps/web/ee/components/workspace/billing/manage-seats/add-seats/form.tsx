@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane imports
 import type { TProrationPreview } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
@@ -34,6 +36,7 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
     getIsInTrialPeriod,
     updateSubscribedPlan,
   } = useWorkspaceSubscription();
+  const { mutateWorkspaceMembersActivity } = useWorkspace();
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("SELECT_SEATS");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -121,29 +124,28 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
     const updatedSeats = purchasedSeats + Number(numberOfSeats);
 
     setIsSubmitting(true);
-    await paymentService
-      .updateWorkspaceSeats(workspaceSlug?.toString(), updatedSeats)
-      .then((response) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Congratulations.",
-          message: `Your workspace in now updated to ${response?.seats} seats.`,
-        });
-        updateSubscribedPlan(workspaceSlug?.toString(), {
-          purchased_seats: response?.seats,
-        });
-        onSuccess?.();
-      })
-      .catch((err) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "We couldn't update seats.",
-          message: err?.error || "Try again.",
-        });
-      })
-      .finally(() => {
-        setIsSubmitting(false);
+    try {
+      const response = await paymentService.updateWorkspaceSeats(workspaceSlug?.toString(), updatedSeats);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Congratulations.",
+        message: `Your workspace in now updated to ${response?.seats} seats.`,
       });
+      updateSubscribedPlan(workspaceSlug?.toString(), {
+        purchased_seats: response?.seats,
+      });
+      void mutateWorkspaceMembersActivity(workspaceSlug);
+      onSuccess?.();
+    } catch (err: unknown) {
+      const error = err as { error?: string };
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "We couldn't update seats.",
+        message: error?.error || "Try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSeatChange = (action: "increase" | "decrease") => {
@@ -167,11 +169,8 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
   return (
     <form
       onSubmit={(e) => {
-        if (currentStep === "SELECT_SEATS") handleNextStep(e);
-        else handleFormSubmit(e);
-      }}
-      onKeyDown={(e) => {
-        if (e.code === "Enter") e.preventDefault();
+        if (currentStep === "SELECT_SEATS") void handleNextStep(e);
+        else void handleFormSubmit(e);
       }}
     >
       {currentStep === "SELECT_SEATS" ? (
@@ -182,7 +181,7 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
           setError={setError}
           handleSeatChange={handleSeatChange}
           isLoading={isOnTrial ? isSubmitting : isFetchingProrationPreview}
-          handleNextStep={handleNextStep}
+          handleNextStep={(e) => void handleNextStep(e)}
           handleClose={handleClose}
           onPreviousStep={onPreviousStep ? handleOnPreviousStep : undefined}
           planeName={planeName}
@@ -194,7 +193,7 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
         prorationPreview && (
           <ConfirmPriceStep
             prorationPreview={prorationPreview}
-            handleFormSubmit={handleFormSubmit}
+            handleFormSubmit={(e) => void handleFormSubmit(e)}
             isSubmitting={isSubmitting}
             handleClose={handleClose}
             onPreviousStep={() => setCurrentStep("SELECT_SEATS")}

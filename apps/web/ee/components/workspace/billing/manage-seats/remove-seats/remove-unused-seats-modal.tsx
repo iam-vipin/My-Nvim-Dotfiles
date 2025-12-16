@@ -1,9 +1,9 @@
-import type { FC } from "react";
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // ui
 import { AlertModalCore } from "@plane/ui";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
@@ -14,49 +14,49 @@ const paymentService = new PaymentService();
 type TRemoveUnusedSeatsProps = {
   isOpen: boolean;
   handleClose: () => void;
+  workspaceSlug: string;
 };
 
 export function RemoveUnusedSeatsModal(props: TRemoveUnusedSeatsProps) {
-  const { isOpen, handleClose } = props;
-  // router
-  const { workspaceSlug } = useParams();
+  const { isOpen, handleClose, workspaceSlug } = props;
   // mobx store
   const { updateSubscribedPlan } = useWorkspaceSubscription();
+  const { mutateWorkspaceMembersActivity } = useWorkspace();
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
-    setIsSubmitting(true);
-    paymentService
-      .removeUnusedSeats(workspaceSlug?.toString())
-      .then((response) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: `Your workspace in now updated to ${response?.seats} seats.`,
-        });
-        updateSubscribedPlan(workspaceSlug?.toString(), {
-          purchased_seats: response?.seats,
-        });
-        handleClose();
-      })
-      .catch((err) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "We couldn't update seats.",
-          message: err?.error || "Try again.",
-        });
-      })
-      .finally(() => {
-        setIsSubmitting(false);
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      const response = await paymentService.removeUnusedSeats(workspaceSlug?.toString());
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success",
+        message: `Your workspace in now updated to ${response?.seats} seats.`,
       });
+      updateSubscribedPlan(workspaceSlug?.toString(), {
+        purchased_seats: response?.seats,
+      });
+      void mutateWorkspaceMembersActivity(workspaceSlug);
+      handleClose();
+    } catch (err: unknown) {
+      const error = err as { error?: string };
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "We couldn't update seats.",
+        message: error?.error || "Try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
   return (
     <AlertModalCore
       handleClose={handleClose}
-      handleSubmit={handleSubmit}
+      handleSubmit={() => void handleSubmit()}
       isSubmitting={isSubmitting}
       isOpen={isOpen}
       title="Remove unused seats?"

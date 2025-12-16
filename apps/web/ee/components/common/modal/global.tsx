@@ -78,6 +78,7 @@ export const GlobalModals = observer(function GlobalModals(props: TGlobalModalsP
       )}
       {isSeatManagementEnabled && (
         <RemoveUnusedSeatsModal
+          workspaceSlug={workspaceSlug}
           isOpen={removeUnusedSeatsConfirmationModal}
           handleClose={() => toggleRemoveUnusedSeatsConfirmationModal()}
         />

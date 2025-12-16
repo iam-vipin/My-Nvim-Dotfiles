@@ -225,5 +225,21 @@
                 ]
             }
         ]
+    },
+    {
+        "table": "issues",
+        "columns": [
+            {
+                "name": "priority",
+                "description": "The priority level assigned to the issue, stored as lowercase text",
+                "distinct_values_in_column": [
+                    "urgent",
+                    "high",
+                    "medium",
+                    "low",
+                    "none"
+                ]
+            }
+        ]
     }
 ]

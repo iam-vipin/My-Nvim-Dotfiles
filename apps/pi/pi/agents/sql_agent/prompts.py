@@ -50,11 +50,12 @@ Plane Context:
          - When avoiding duplicates without aggregation, use DISTINCT instead of GROUP BY.
          - Do not use both DISTINCT and GROUP BY together unless specifically needed for complex aggregation scenarios.
          - When using aggregate functions (COUNT, SUM, AVG, etc.), ensure every non-aggregated column in SELECT is in GROUP BY.
-      **ORDER BY Rules:**
-         - When using DISTINCT: ORDER BY columns must appear in the SELECT clause
-         - When using GROUP BY with aggregates: ORDER BY should reference columns from SELECT or use aggregate functions
-         - For regular SELECT queries: ORDER BY can reference any column from joined tables
-         - Always ensure ORDER BY columns exist in the available schema
+       **ORDER BY Rules:**
+          - When using DISTINCT: All ORDER BY expressions (including CASE statements, functions, and computed expressions) must appear in the SELECT clause exactly as written in ORDER BY. If ordering by a CASE expression, add the CASE expression to SELECT with an alias.
+          - Prefer simple column ordering when using DISTINCT to avoid complexity. Example: ORDER BY priority instead of ORDER BY CASE lower(priority) WHEN...
+          - When using GROUP BY with aggregates: ORDER BY should reference columns from SELECT or use aggregate functions
+          - For regular SELECT queries: ORDER BY can reference any column from joined tables
+          - Always ensure ORDER BY columns exist in the available schema
       - **Issue Key and Issue ID:**
          - issue_id is the UUID of the issue, like 123e4567-e89b-12d3-a456-426614174000, etc., which is primarily used to retrieve the issue from the database.
          - Issue key is the unique key of the issue, like PROJ-123, MOB-45, etc., which is primarily shown to the end user to refer to the issue.
@@ -107,22 +108,41 @@ Plane Context:
          - Prefer joining the states table and filtering by its canonical bucket/group column if present in the provided schema (e.g., states.group IN ('backlog','unstarted','started')).
          - If the schema does not expose a bucket/group column, fall back to case-insensitive name matching using the same buckets (e.g., states.name ILIKE 'backlog%'). Use only columns that exist in the provided schema.
    - **Priority Canonicalization and Ordering:**
-      - Canonical priority values: urgent, high, medium, low (case-insensitive). Do NOT invent values like "highest".
+       - Canonical priority values: urgent, high, medium, low, none (case-insensitive). Do NOT invent values like "highest".
       - Synonym mapping for user phrasing:
          - "highest", "critical", "blocker", "p0" → urgent
          - "very high", "p1" → high
          - "normal", "standard" → medium
-         - "lowest" → low
+          - "lowest" → low
+          - "no priority", "unset" → none
       - Normalize comparisons to these canonical values when filtering or ordering by priority.
       - Preferred order (most → least important): urgent, high, medium, low. Implement with CASE on lower(priority) or use a canonical priority field if present in the provided schema.
-      - Example ordering pattern (adapt column names to the provided schema):
-        CASE lower(issues.priority)
-          WHEN 'urgent' THEN 1
-          WHEN 'high' THEN 2
-          WHEN 'medium' THEN 3
-          WHEN 'low' THEN 4
-          ELSE 5
-        END ASC
+       - Example ordering pattern (adapt column names to the provided schema):
+         -- For queries WITHOUT DISTINCT, you can use CASE in ORDER BY directly:
+         CASE lower(issues.priority)
+           WHEN 'urgent' THEN 1
+           WHEN 'high' THEN 2
+           WHEN 'medium' THEN 3
+           WHEN 'low' THEN 4
+           WHEN 'none' THEN 5
+           ELSE 6
+         END ASC
+         
+         -- For queries WITH DISTINCT, add the CASE expression to SELECT:
+         SELECT DISTINCT
+           issues.id::text AS issues_id,
+           issues.name,
+           issues.priority,
+           CASE lower(issues.priority)
+             WHEN 'urgent' THEN 1
+             WHEN 'high' THEN 2
+             WHEN 'medium' THEN 3
+             WHEN 'low' THEN 4
+             WHEN 'none' THEN 5
+             ELSE 6
+           END AS priority_order
+         FROM issues
+         ORDER BY priority_order ASC
       - Interpreting "highest/top priority": If the user asks for the "highest" or "top" priority item and does NOT explicitly say "urgent", do NOT filter to urgent. Instead, order by the canonical priority ranking and return the top result(s). Only add an equality filter when the user explicitly requests a specific priority (e.g., "urgent").
    - **Date and Time:**
       - All datetime columns in the database are stored as timestamps.

@@ -1176,22 +1176,15 @@ def _get_existing_group_by_columns(select_stmt: exp.Select) -> set[str]:
 
 def fix_group_by_order_by_mismatch(sql_query: str, dialect: str = "postgres") -> str:
     """
-    Fix GROUP BY/ORDER BY mismatch by ensuring all non-aggregate columns in SELECT and ORDER BY are in GROUP BY clause.
-    Only applies to queries that actually need GROUP BY (not scalar subqueries).
+    Fix GROUP BY/ORDER BY and DISTINCT/ORDER BY mismatches to satisfy PostgreSQL requirements.
 
-    Logic:
-    IF (query has aggregate functions like COUNT, SUM, AVG, etc.)
-        THEN (
-            Find all columns that are NOT inside those aggregate functions
-            Make sure ALL those columns are in GROUP BY
-            This includes columns from:
-            - SELECT clause
-            - ORDER BY clause
-            - Any other clause that references columns
-        )
-    ELSE (
-        Do nothing - query is fine without GROUP BY
-    )
+    For aggregate queries:
+    - Ensures all non-aggregate columns in SELECT and ORDER BY are in GROUP BY clause
+
+    For DISTINCT queries:
+    - Ensures all ORDER BY expressions appear in the SELECT list (adds them with aliases if needed)
+
+    Only applies to queries that actually need these fixes.
 
     Args:
         sql_query: SQL query string to fix
@@ -1216,7 +1209,11 @@ def fix_group_by_order_by_mismatch(sql_query: str, dialect: str = "postgres") ->
 
 def _fix_group_by_order_by_mismatch_parsed(parsed: exp.Expression, dialect: str = "postgres") -> str:
     """
-    Optimized version that works with pre-parsed SQLGlot expressions.
+    Fix GROUP BY/ORDER BY and DISTINCT/ORDER BY mismatches.
+
+    Handles two PostgreSQL requirements:
+    1. GROUP BY: All non-aggregate columns in SELECT and ORDER BY must be in GROUP BY
+    2. DISTINCT: All ORDER BY expressions must appear in the SELECT list
 
     Args:
         parsed: Pre-parsed SQLGlot expression
@@ -1264,6 +1261,65 @@ def _fix_group_by_order_by_mismatch_parsed(parsed: exp.Expression, dialect: str 
                         if len(failed_columns) > len(columns_to_add) / 2:
                             log.error(f"Too many parsing failures ({len(failed_columns)}/{len(columns_to_add)}), returning original query")
                             return parsed.sql(dialect=dialect)
+
+            # Handle DISTINCT/ORDER BY mismatch (PostgreSQL requirement)
+            elif select.args.get("distinct"):
+                order_by = select.args.get("order")
+                if order_by and order_by.expressions:
+                    # Get all expressions currently in SELECT as normalized SQL strings
+                    select_expressions = set()
+                    for i, expr in enumerate(select.expressions):
+                        # Check if expression has an alias
+                        if isinstance(expr, exp.Alias):
+                            # Store both the aliased expression and the alias name
+                            select_expressions.add(expr.this.sql(dialect=dialect))
+                            select_expressions.add(expr.alias)
+                        else:
+                            select_expressions.add(expr.sql(dialect=dialect))
+
+                    # Track which ORDER BY expressions need to be added
+                    expressions_to_add = []
+
+                    for order_expr in order_by.expressions:
+                        # Get the expression being ordered (without ASC/DESC)
+                        expr_to_order = order_expr.this
+                        expr_sql = expr_to_order.sql(dialect=dialect)
+
+                        # Check if this ORDER BY expression is already in SELECT
+                        # We need to check both the exact expression and just the column name
+                        expr_found = False
+
+                        # Check exact match
+                        if expr_sql in select_expressions:
+                            expr_found = True
+                        else:
+                            # For complex expressions (CASE, functions), check if base columns are in SELECT
+                            # This handles cases like: SELECT col ORDER BY CASE col WHEN...
+                            if isinstance(expr_to_order, (exp.Case, exp.Anonymous, exp.Func)):
+                                # Extract all column references from the ORDER BY expression
+                                order_columns = [c.sql(dialect=dialect) for c in expr_to_order.find_all(exp.Column)]
+                                # If this is a simple expression over a single column that's in SELECT, skip it
+                                # Example: SELECT DISTINCT priority ORDER BY lower(priority) - we'd want to keep this
+                                # But we can't safely assume this will work, so we still add it
+                                pass
+
+                        # If not found, we need to add it to SELECT
+                        if not expr_found:
+                            expressions_to_add.append((expr_to_order, expr_sql))
+
+                    # Add missing ORDER BY expressions to SELECT with aliases
+                    if expressions_to_add:
+                        for idx, (expr_to_add, expr_sql) in enumerate(expressions_to_add):
+                            # Generate a unique alias name
+                            alias_name = f"_order_expr_{len(select.expressions) + idx + 1}"
+
+                            # Create an aliased expression and add to SELECT
+                            aliased_expr = exp.alias_(expr_to_add.copy(), alias_name)
+                            select.append("expressions", aliased_expr)
+
+                            log.info(f"[DISTINCT Fix] Added ORDER BY expression to SELECT: {expr_sql} AS {alias_name}")
+
+                        log.info(f"[DISTINCT Fix] Added {len(expressions_to_add)} ORDER BY expression(s) to SELECT for DISTINCT compatibility")
 
         return parsed.sql(dialect=dialect)
 

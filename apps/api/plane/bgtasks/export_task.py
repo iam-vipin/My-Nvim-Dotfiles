@@ -11,13 +11,16 @@ from celery import shared_task
 # Django imports
 from django.db.models import Prefetch
 from django.utils import timezone
-
+.
 # Module imports
+from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
+from plane.utils.exception_logger import log_exception
+from plane.utils.porters.exporter import DataExporter
+from plane.utils.porters.serializers.issue import IssueExportSerializer
 from plane.db.models import ExporterHistory, Issue, IssueRelation, StateGroup
 from plane.ee.models import CustomerRequestIssue, InitiativeEpic
 from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
-from plane.utils.exporters import Exporter, IssueExportSchema
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
@@ -210,10 +213,16 @@ def issue_export_task(
                 "labels",
                 "issue_cycle__cycle",
                 "issue_module__module",
-                "issue_comments",
                 "assignees",
-                "issue_subscribers",
                 "issue_link",
+                Prefetch(
+                    "issue_subscribers",
+                    queryset=IssueSubscriber.objects.select_related("subscriber"),
+                ),
+                Prefetch(
+                    "issue_comments",
+                    queryset=IssueComment.objects.select_related("actor").order_by("created_at"),
+                ),
                 Prefetch(
                     "issue_relation",
                     queryset=IssueRelation.objects.select_related("related_issue", "related_issue__project"),
@@ -272,11 +281,7 @@ def issue_export_task(
 
         # Create exporter for the specified format
         try:
-            exporter = Exporter(
-                format_type=provider,
-                schema_class=IssueExportSchema,
-                options={"list_joiner": ", "},
-            )
+            exporter = DataExporter(IssueExportSerializer, format_type=provider)
         except ValueError as e:
             # Invalid format type
             logger.error(

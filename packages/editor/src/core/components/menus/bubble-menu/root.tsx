@@ -25,13 +25,18 @@ import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
+// plane editor imports
+import { BubbleMenuSelectionConversion } from "@/plane-editor/components/menus/bubble-menu/selection-conversion/root";
 // types
 import type { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
+import { BubbleMenuCommentSelector } from "./comment-selector";
 import { BubbleMenuLinkSelector } from "./link-selector";
 
-type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
+type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children"> & {
+  editor: Editor;
+};
 
 export type EditorStateType = {
   code: boolean;
@@ -68,8 +73,9 @@ type Props = {
 };
 
 export function EditorBubbleMenu(props: Props) {
-  const { editor } = props;
+  const { editor, extendedEditorProps, flaggedExtensions, disabledExtensions } = props;
   // states
+  const [isCommentSelectorOpen, setIsCommentSelectorOpen] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
   // refs
   const menuRef = useRef<HTMLDivElement>(null);
@@ -196,6 +202,18 @@ export function EditorBubbleMenu(props: Props) {
               <BubbleMenuLinkSelector editor={editor} />
             </div>
           )}
+          {!flaggedExtensions?.includes("comments") && extendedEditorProps?.commentConfig?.canComment && (
+            <div className="px-2">
+              <BubbleMenuCommentSelector
+                editor={editor}
+                isOpen={isCommentSelectorOpen}
+                onStartNewComment={extendedEditorProps.commentConfig?.onStartNewComment}
+                setIsOpen={() => {
+                  setIsCommentSelectorOpen((prev) => !prev);
+                }}
+              />
+            </div>
+          )}
           {!editorState.code && (
             <div className="px-2">
               <BubbleMenuColorSelector editor={editor} editorState={editorState} />
@@ -222,6 +240,12 @@ export function EditorBubbleMenu(props: Props) {
             ))}
           </div>
           <TextAlignmentSelector editor={editor} editorState={editorState} />
+          {!disabledExtensions?.includes("selection-conversion") && (
+            <BubbleMenuSelectionConversion
+              editor={editor}
+              selectionConversion={extendedEditorProps?.selectionConversion}
+            />
+          )}
         </div>
       )}
     </BubbleMenu>

@@ -1,0 +1,69 @@
+# base
+fastapi==0.111.1
+uvicorn==0.38.0
+requests==2.32.5
+pydantic==2.8.2
+plane-sdk==0.2.0
+openai==2.8.1
+html2text==2024.2.26
+python-json-logger==3.3.0
+sqlglot==27.2.0
+aenum==3.1.15
+cryptography==46.0.2
+groq==0.31.0
+
+assemblyai==0.43.1
+boto3==1.40.16
+deepgram-sdk==4.8.1
+
+# langchain
+langchain_openai==1.1.0
+langchain_community==0.4.1
+
+# sentry
+sentry-sdk==2.17.0
+
+# datadog
+ddtrace==3.9.4
+
+# background tasks
+celery==5.4.0  # Core Celery
+kombu==5.4.2  # Message broker abstraction (supports RabbitMQ)
+APScheduler==3.10.4
+aiofiles==24.1.0
+types-aiofiles==24.1.0.20240626
+aiolimiter==1.1.0
+
+# vector search
+opensearch-py==2.8.0
+beautifulsoup4==4.12.3
+
+# logging
+colorlog==6.8.2
+rich==13.9.4
+python-json-logger==3.3.0
+
+# follower db
+asyncpg==0.30.0
+sqlmodel==0.0.22
+sqlalchemy==2.0.36
+alembic==1.14.0
+psycopg2-binary>=2.9.3
+
+# file validation and security
+Pillow==10.4.0
+clamd==1.0.2
+pypdf==6.4.0
+
+# testing
+pre-commit==3.8.0
+mypy==1.11.1
+mypy-extensions==1.0.0
+ruff==0.5.5
+pylint==3.1.0
+types-requests==2.32.0.20240712
+pytest==8.3.2
+
+# markdown to html
+markdown-it-py==4.0.0
+mdit-py-plugins==0.5.0

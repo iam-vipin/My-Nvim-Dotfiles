@@ -15,6 +15,7 @@ import { getTabIndex } from "@plane/utils";
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { Button } from "@plane/propel/button";
 //constants
 export interface IIssueLabelSelect {
   workspaceSlug: string;

@@ -5,14 +5,38 @@ import { EPageAccess } from "@plane/constants";
 import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
 import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 // plane web store
+import type {
+  TExtendedBasePagePermissions,
+  TExtendedBasePageServices,
+  TExtendedPageInstance,
+} from "@/plane-web/store/pages/extended-base-page";
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
 import { PageEditorInstance } from "./page-editor-info";
 
+// Types for page config
+type TPageConfig = Record<string, string>;
+type TPageConfigParams = {
+  pageId: string;
+  config: TPageConfig;
+};
+
+export type TVersionToBeRestored = {
+  versionId: string | null;
+  descriptionHTML: string | null;
+};
+
+export type TRestorationState = {
+  versionId: string | null;
+  descriptionHTML: string | null;
+  inProgress: boolean;
+};
+
 export type TBasePage = TPage & {
   // observables
   isSubmitting: TNameDescriptionLoader;
+  restoration: TRestorationState;
   isSyncingWithServer: "syncing" | "synced" | "error";
   // computed
   asJSON: TPage | undefined;
@@ -37,6 +61,9 @@ export type TBasePage = TPage & {
   duplicate: () => Promise<TPage | undefined>;
   mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
   setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
+  setVersionToBeRestored: (versionId: string | null, descriptionHTML: string | null) => void;
+  setRestorationStatus: (inProgress: boolean) => void;
+  setConfig: (config: TPageConfig, getBasePath?: (params: TPageConfigParams) => string) => void;
   // sub-store
   editor: PageEditorInstance;
 };
@@ -58,23 +85,34 @@ export type TBasePageServices = {
   update: (payload: Partial<TPage>) => Promise<Partial<TPage>>;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
   updateAccess: (payload: Pick<TPage, "access">) => Promise<void>;
-  lock: () => Promise<void>;
-  unlock: () => Promise<void>;
+  lock: (recursive: boolean) => Promise<void>;
+  unlock: (recursive: boolean) => Promise<void>;
   archive: () => Promise<{
     archived_at: string;
   }>;
   restore: () => Promise<void>;
   duplicate: () => Promise<TPage>;
-};
+} & TExtendedBasePageServices;
 
 export type TPageInstance = TBasePage &
+  TExtendedPageInstance &
+  TExtendedBasePagePermissions &
   TBasePagePermissions & {
     getRedirectionLink: () => string;
+    fetchSubPages: () => Promise<void>;
+    parentPageIds: string[];
+    subPageIds: string[];
+    subPages: TPageInstance[];
   };
 
 export class BasePage extends ExtendedBasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
+  restoration: TRestorationState = {
+    versionId: null,
+    descriptionHTML: null,
+    inProgress: false,
+  };
   isSyncingWithServer: "syncing" | "synced" | "error" = "syncing";
   // page properties
   id: string | undefined;
@@ -82,6 +120,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   logo_props: TLogoProps | undefined;
   description: object | undefined;
   description_html: string | undefined;
+  is_description_empty: boolean;
   color: string | undefined;
   label_ids: string[] | undefined;
   owned_by: string | undefined;
@@ -96,8 +135,13 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   created_at: Date | undefined;
   updated_at: Date | undefined;
   deleted_at: Date | undefined;
+  moved_to_page: string | null;
+  moved_to_project: string | null;
   // helpers
   oldName: string = "";
+  // page configuration from outside (workspace/project context)
+  private _config: TPageConfig | null = null;
+  private _getBasePath: ((params: TPageConfigParams) => string) | null = null;
   // services
   services: TBasePageServices;
   // reactions
@@ -122,9 +166,9 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.color = page?.color || undefined;
     this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
-    this.access = page?.access || EPageAccess.PUBLIC;
-    this.is_favorite = page?.is_favorite || false;
-    this.is_locked = page?.is_locked || false;
+    this.access = page?.access ?? EPageAccess.PUBLIC;
+    this.is_favorite = !!page?.is_favorite;
+    this.is_locked = !!page?.is_locked;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
     this.project_ids = page?.project_ids || undefined;
@@ -134,6 +178,9 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.updated_at = page?.updated_at || undefined;
     this.oldName = page?.name || "";
     this.deleted_at = page?.deleted_at || undefined;
+    this.moved_to_page = page?.moved_to_page || null;
+    this.moved_to_project = page?.moved_to_project || null;
+    this.is_description_empty = page?.is_description_empty || false;
 
     makeObservable(this, {
       // loaders
@@ -158,6 +205,9 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       created_at: observable.ref,
       updated_at: observable.ref,
       deleted_at: observable.ref,
+      moved_to_page: observable.ref,
+      moved_to_project: observable.ref,
+      restoration: observable,
       isSyncingWithServer: observable.ref,
       // helpers
       oldName: observable.ref,
@@ -181,6 +231,10 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       removePageFromFavorites: action,
       duplicate: action,
       mutateProperties: action,
+      setVersionToBeRestored: action,
+      setRestorationStatus: action,
+      setSyncingStatus: action,
+      setConfig: action,
     });
 
     // init
@@ -210,7 +264,66 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       { delay: 2000 }
     );
     this.disposers.push(titleDisposer);
+
+    // Auto-configure page context based on workspace and project information
+    this.autoConfigurePage();
   }
+
+  /**
+   * @description automatically configure page context based on workspace and project information
+   */
+  private autoConfigurePage = () => {
+    if (!this.workspace) return;
+
+    // Get workspace details from workspace ID
+    const workspaceDetails = this.store.workspaceRoot.getWorkspaceById(this.workspace);
+    if (!workspaceDetails) return;
+
+    const workspaceSlug = workspaceDetails.slug;
+
+    // Check if this is a project page (has project_ids)
+    if (this.project_ids && this.project_ids.length > 0) {
+      const projectId = this.project_ids[0];
+      // Set config for project page
+      this.setConfig(
+        {
+          workspaceSlug,
+          projectId,
+        },
+        // Custom getBasePath function for project pages
+        (params: TPageConfigParams) => {
+          const { pageId, config } = params;
+          const { workspaceSlug, projectId } = config;
+          return `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
+        }
+      );
+    } else if (this.team) {
+      // Set config for team page
+      this.setConfig(
+        {
+          workspaceSlug,
+          teamspaceId: this.team,
+        },
+        // Custom getBasePath function for team pages
+        (params: TPageConfigParams) => {
+          const { pageId, config } = params;
+          const { workspaceSlug, teamspaceId } = config;
+          return `/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`;
+        }
+      );
+    } else {
+      // Set config for workspace page
+      this.setConfig(
+        { workspaceSlug },
+        // Custom getBasePath function for workspace pages
+        (params: TPageConfigParams) => {
+          const { pageId, config } = params;
+          const { workspaceSlug } = config;
+          return `/api/workspaces/${workspaceSlug}/pages/${pageId}`;
+        }
+      );
+    }
+  };
 
   // computed
   get asJSON() {
@@ -234,6 +347,16 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       created_at: this.created_at,
       updated_at: this.updated_at,
       deleted_at: this.deleted_at,
+      moved_to_page: this.moved_to_page,
+      moved_to_project: this.moved_to_project,
+      is_description_empty: this.is_description_empty,
+      isSyncingWithServer: this.isSyncingWithServer,
+      version_to_be_restored: this.restoration.versionId
+        ? {
+            versionId: this.restoration.versionId,
+            descriptionHTML: this.restoration.descriptionHTML,
+          }
+        : null,
       ...this.asJSONExtended,
     };
   }
@@ -265,16 +388,32 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
    * @param {Partial<TPage>} pageData
    */
   update = async (pageData: Partial<TPage>) => {
-    const currentPage = this.asJSON;
+    const currentPage = { ...this.asJSON };
+
     try {
       runInAction(() => {
+        if (pageData.hasOwnProperty("parent_id") && pageData.parent_id !== this.parent_id) {
+          if (pageData.parent_id === null && this.parent_id) {
+            const pageDetails = this.rootStore.workspacePages.getPageById(this.parent_id);
+            const newSubPagesCount = (pageDetails?.sub_pages_count ?? 1) - 1;
+            pageDetails?.mutateProperties({ sub_pages_count: newSubPagesCount });
+          } else if (pageData.parent_id) {
+            const pageDetails = this.rootStore.workspacePages.getPageById(pageData.parent_id);
+            const newSubPagesCount = (pageDetails?.sub_pages_count ?? 0) + 1;
+            pageDetails?.mutateProperties({ sub_pages_count: newSubPagesCount });
+          }
+        }
+
         Object.keys(pageData).forEach((key) => {
           const currentPageKey = key as keyof TPage;
-          set(this, key, pageData[currentPageKey] || undefined);
+          set(this, key, pageData[currentPageKey] ?? undefined);
         });
+
+        // Update the updated_at field locally to ensure reactions trigger
+        this.updated_at = new Date();
       });
 
-      return await this.services.update(currentPage);
+      return await this.services.update(pageData);
     } catch (error) {
       runInAction(() => {
         Object.keys(pageData).forEach((key) => {
@@ -320,8 +459,10 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
    */
   makePublic = async ({ shouldSync = true }) => {
     const pageAccess = this.access;
+    const oldIsShared = this.is_shared;
     runInAction(() => {
       this.access = EPageAccess.PUBLIC;
+      this.is_shared = false;
     });
 
     if (shouldSync) {
@@ -332,6 +473,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       } catch (error) {
         runInAction(() => {
           this.access = pageAccess;
+          this.is_shared = oldIsShared;
         });
         throw error;
       }
@@ -364,12 +506,12 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description lock the page
    */
-  lock = async ({ shouldSync = true }) => {
+  lock = async ({ shouldSync = true, recursive = true }) => {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = true));
 
     if (shouldSync) {
-      await this.services.lock().catch((error) => {
+      await this.services.lock(recursive).catch((error) => {
         runInAction(() => {
           this.is_locked = pageIsLocked;
         });
@@ -381,12 +523,12 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description unlock the page
    */
-  unlock = async ({ shouldSync = true }) => {
+  unlock = async ({ shouldSync = true, recursive = true }) => {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = false));
 
     if (shouldSync) {
-      await this.services.unlock().catch((error) => {
+      await this.services.unlock(recursive).catch((error) => {
         runInAction(() => {
           this.is_locked = pageIsLocked;
         });
@@ -540,9 +682,47 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     });
   };
 
+  /**
+   * @description set the version to be restored data
+   * @param versionId
+   * @param descriptionHTML
+   */
+  setVersionToBeRestored = (versionId: string | null, descriptionHTML: string | null) => {
+    runInAction(() => {
+      this.restoration = {
+        ...this.restoration,
+        versionId,
+        descriptionHTML,
+      };
+    });
+  };
+
+  setRestorationStatus = (inProgress: boolean) => {
+    runInAction(() => {
+      this.restoration = {
+        ...this.restoration,
+        inProgress,
+      };
+    });
+  };
+
   setSyncingStatus = (status: "syncing" | "synced" | "error") => {
     runInAction(() => {
       this.isSyncingWithServer = status;
+    });
+  };
+
+  /**
+   * @description configure page context (workspace/project info for comment handlers etc.)
+   * @param config - Configuration object (e.g., { workspaceSlug } for workspace pages, { workspaceSlug, projectId } for project pages)
+   * @param getBasePath - Function to generate API base path for comments
+   */
+  setConfig = (config: TPageConfig, getBasePath?: (params: TPageConfigParams) => string) => {
+    runInAction(() => {
+      this._config = config;
+      if (getBasePath) {
+        this._getBasePath = getBasePath;
+      }
     });
   };
 }

@@ -1,0 +1,477 @@
+"""Retrieval tool execution logic for single and multi-tool scenarios.
+Also includes tools for ask mode."""
+
+import json
+from collections.abc import AsyncIterator
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Tuple
+from typing import Union
+
+from langchain_core.messages import BaseMessage
+from langchain_core.messages import HumanMessage
+from langchain_core.messages import SystemMessage
+from langchain_core.messages import ToolMessage
+
+from pi import logger
+from pi.app.models.enums import MessageMetaStepType
+from pi.services.chat.helpers import ask_mode_helpers
+from pi.services.chat.helpers.flow_tracking import check_and_build_clarification
+from pi.services.chat.helpers.flow_tracking import execute_tool_step
+from pi.services.chat.helpers.flow_tracking import orchestrate_llm_step
+from pi.services.chat.helpers.flow_tracking import store_and_format_clarification
+from pi.services.chat.helpers.tool_utils import format_tool_message_for_display
+from pi.services.chat.helpers.tool_utils import format_tool_query_for_display
+from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
+from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
+from pi.services.chat.prompts import pai_ask_system_prompt
+from pi.services.chat.utils import reasoning_dict_maker
+
+log = logger.getChild(__name__)
+
+
+def extract_facts_from_tool_result(tool_name: str, result: Any) -> Dict[str, Any]:
+    """Extract structured facts from tool results for enhanced history."""
+    facts = {}
+
+    try:
+        # Handle StandardAgentResponse dict format (most common case)
+        # Tool handlers return dicts like: {"results": "...", "entity_urls": [...], ...}
+        if isinstance(result, dict):
+            # Extract entity URLs (critical for citations and linking)
+            entity_urls = result.get("entity_urls")
+            if entity_urls and isinstance(entity_urls, list):
+                facts["entity_urls"] = entity_urls[:10]  # Limit to prevent bloat
+                facts["entity_urls_count"] = len(entity_urls)
+                # Extract IDs from entity URLs for easier reference
+                entity_ids = [url.get("id") for url in entity_urls if isinstance(url, dict) and url.get("id")]
+                if entity_ids:
+                    facts["entity_ids"] = entity_ids[:10]
+
+            # Extract intermediate results (SQL debugging for structured_db_tool)
+            intermediate_results = result.get("intermediate_results")
+            if intermediate_results and isinstance(intermediate_results, dict):
+                if intermediate_results.get("generated_sql"):
+                    facts["sql_query"] = str(intermediate_results["generated_sql"])[:300]
+                if intermediate_results.get("relevant_tables"):
+                    facts["relevant_tables"] = intermediate_results["relevant_tables"]
+                if intermediate_results.get("final_query"):
+                    facts["final_query"] = str(intermediate_results["final_query"])[:200]
+
+            # Extract search metadata (for vector/semantic search tools)
+            execution_metadata = result.get("execution_metadata")
+            if execution_metadata and isinstance(execution_metadata, dict):
+                facts["search_metadata"] = execution_metadata
+
+            # Extract result preview from "results" field
+            results_text = result.get("results")
+            if results_text:
+                facts["result_preview"] = str(results_text)[:300]
+
+            # Extract other common fields that might be in the dict
+            for key in ["entity_id", "entity_name", "entity_url", "count", "ids", "results_count"]:
+                if key in result and result[key]:
+                    facts[key] = result[key]
+
+        # Handle string results (simple tool responses)
+        elif isinstance(result, str):
+            facts["result_preview"] = result[:300]
+
+    except Exception as e:
+        log.debug(f"Could not extract facts from {tool_name}: {e}")
+
+    return facts
+
+
+async def execute_tools_for_ask_mode(
+    chatbot_instance,
+    user_meta,
+    workspace_id,
+    workspace_slug,
+    project_id,
+    conversation_history,
+    enhanced_conversation_history,  # 🆕 Enhanced context with action details
+    user_id,
+    chat_id,
+    query_flow_store,
+    enhanced_query_for_processing,  # This is what's actually passed from chat.py
+    query_id,
+    step_order,
+    db,
+    parsed_query,
+    reasoning_container=None,
+) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+    """Execute tools for ask mode"""
+    log.info(f"ChatID: {chat_id} - Executing tools for ask mode with enhanced_conversation_history: {enhanced_conversation_history}")
+    try:
+        # Extract workspace_in_context from query_flow_store
+        workspace_in_context = True
+        if isinstance(query_flow_store, dict):
+            workspace_in_context = query_flow_store.get("workspace_in_context", True)
+
+        log.info(f"ChatID: {chat_id} - Workspace in context: {workspace_in_context}")
+
+        # Resolve workspace_id and workspace_slug (only when workspace is in context)
+        workspace_id, workspace_slug = await ask_mode_helpers.resolve_workspace_id_and_slug(
+            workspace_id=workspace_id,
+            project_id=project_id,
+            chat_id=chat_id,
+        )
+
+        tools = await chatbot_instance._create_tools_for_ask_mode(
+            db,
+            user_meta,
+            workspace_id,
+            workspace_slug,
+            project_id,
+            user_id,
+            chat_id,
+            query_flow_store,
+            conversation_history,
+            query_id,
+            workspace_in_context=workspace_in_context,
+            chatbot_instance=chatbot_instance,
+        )
+
+        if not tools:
+            log.warning("Unable to initialize tools. Please try again.")
+            msg = "An unexpected error occurred. Please try again later."
+            yield msg
+            return
+
+        try:
+            # Determine if this is a clarification follow-up (raw user input)
+            is_clarification_followup = bool(user_meta and isinstance(user_meta, dict) and user_meta.get("clarification_context"))
+            query_label = "Query (raw user input from clarification)" if is_clarification_followup else "Query"
+
+            # Log comprehensive debugging information
+            log.info(f"ChatID: {chat_id} - {query_label}: {enhanced_query_for_processing}")
+            log.info(f"ChatID: {chat_id} - Ask mode LLM input - Available tools: {[t.name for t in tools]}")
+
+        except Exception as e:
+            log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
+
+        # Build enhanced prompt and context block
+        custom_prompt, context_block = await ask_mode_helpers.construct_enhanced_prompt_and_context(
+            enhanced_conversation_history=enhanced_conversation_history,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            user_id=user_id,
+            user_meta=user_meta,
+            workspace_in_context=workspace_in_context,
+        )
+
+        # Bind tools to the LLM - explicitly set tool_choice to 'auto' to ensure tool use is enabled
+        # deduplicate tools
+        tools = list({tool.name: tool for tool in tools}.values())
+        llm_with_tools = chatbot_instance.tool_llm.bind_tools(tools)
+
+        # Set tracking context on the bound LLM instance
+        llm_with_tools.set_tracking_context(query_id, db, MessageMetaStepType.TOOL_ORCHESTRATION, chat_id=str(chat_id))
+
+        # Track execution - use FlowStepCollector context manager for automatic persistence
+        current_step = step_order
+        messages: List[BaseMessage] = []  # type: ignore[no-redef]
+        responses: List[Tuple[str, str, Union[str, Dict[str, Any]]]] = []
+
+        system_prompt_to_use = f"{pai_ask_system_prompt}\n\n{context_block}"
+        messages.append(SystemMessage(content=system_prompt_to_use))
+
+        # log.info(f"ChatID: {chat_id} - Ask mode LLM input - System Prompt:\n{"=" * 80}\n{system_prompt_to_use}\n{"=" * 80}")
+
+        query_to_use = f"{custom_prompt}\n\nUser Query: {enhanced_query_for_processing}"
+        messages.append(HumanMessage(content=query_to_use))
+
+        # log.info(f"ChatID: {chat_id} - Ask mode LLM input - User Message:\n{"=" * 80}\n{query_to_use}\n{"=" * 80}")
+
+        # Log what's sent to the tool selection LLM
+        log.info(f"ChatID: {chat_id} - Ask mode LLM input - Query: {query_to_use}")
+
+        ## change point: "πspecial reasoning blockπ:
+        # Yield initial status - different message for clarification follow-ups
+        if is_clarification_followup:
+            stage = "ask_mode_clarification_followup"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+        else:
+            stage = "ask_mode_beginning"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+        if reasoning_container is not None:
+            reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+        yield reasoning_chunk_dict
+
+        # Initial invocation of LLM with tools (decorator persists selection/context/reasoning)
+        ai_message, current_step = await orchestrate_llm_step(
+            llm_with_tools,
+            messages,
+            query_id=query_id,
+            chat_id=chat_id,
+            db=db,
+            current_step=current_step,
+            include_context=True,
+            enhanced_conversation_history=enhanced_conversation_history,
+            enhanced_query_for_processing=enhanced_query_for_processing,
+            tools=tools,
+        )
+
+        # Log LLM's initial response for debugging
+        log.info(f"ChatID: {chat_id} - Has Tool Calls: {hasattr(ai_message, "tool_calls") and bool(getattr(ai_message, "tool_calls", None))}")
+
+        # Check if LLM made any tool calls
+        if not ai_message.tool_calls:
+            log.info(f"ChatID: {chat_id} - No tool calls found in the initial LLM response.")
+            stage = "final_response"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+            yield reasoning_chunk_dict
+
+            if ai_message.content:
+                # Stream the final answer in chunks to simulate streaming
+                async for chunk in stream_content_in_chunks(str(ai_message.content)):
+                    yield chunk
+            return
+
+        # Stream LLM's initial reasoning content (internal thinking)
+        # Only stream as reasoning if there ARE tool calls (otherwise it's the final answer)
+        try:
+            if hasattr(ai_message, "content") and ai_message.content:
+                reasoning_content = str(ai_message.content).strip()
+                if reasoning_content:
+                    stage = "planner_tool_selection"
+                    reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=reasoning_content)
+                    if reasoning_container is not None:
+                        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                    yield reasoning_chunk_dict
+        except Exception:
+            pass
+
+        # Add the AIMessage with tool_calls to conversation BEFORE processing tool calls
+        messages.append(ai_message)
+
+        # Process tool calls iteratively; persist steps via decorators
+        while ai_message.tool_calls:
+            # Execute all tool calls
+            tool_messages: List[ToolMessage] = []
+            for tool_call in ai_message.tool_calls:
+                tool_name = tool_call["name"]
+                tool_args = tool_call["args"]
+                tool_id = tool_call["id"]
+
+                # Intercept clarification requests and short-circuit
+                if tool_name == "ask_for_clarification":
+                    log.info(f"ChatID: {chat_id} - Clarification requested by LLM: {tool_args.get("reason", "No reason provided")}")
+                    clarification_payload, result = await check_and_build_clarification(tools=tools, tool_name=tool_name, tool_args=tool_args)
+                    formatted_text, current_step = await store_and_format_clarification(
+                        query_id=query_id,
+                        chat_id=chat_id,
+                        db=db,
+                        current_step=current_step,
+                        tool_name=tool_name,
+                        tool_args=tool_args,
+                        result=result,
+                        clarification_payload=clarification_payload,
+                        enhanced_query_for_processing=enhanced_query_for_processing,
+                        tools=tools,
+                    )
+                    yield formatted_text
+                    return
+
+                else:
+                    # Find and execute the tool (decorator persists success/error)
+                    tool_to_execute = next((t for t in tools if t.name == tool_name), None)
+                    if tool_to_execute:
+                        log.info(f"ChatID: {chat_id} - Executing tool: {tool_name} with args: {str(tool_args)[:100]}")
+                        try:
+                            # Yield tool execution status
+                            user_friendly_tool_name = tool_name_shown_to_user(tool_name)
+                            log.info(f"ChatID: {chat_id} - Tool name: {tool_name} - User friendly tool name: {user_friendly_tool_name}")
+                            # Format tool query for display (same as build mode)
+                            tool_query_str = format_tool_query_for_display(tool_name, tool_args, enhanced_query_for_processing)
+                            stage = "retrieval_tool_execution"
+                            content = ""
+                            reasoning_chunk_dict = reasoning_dict_maker(
+                                stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query_str, content=content
+                            )
+                            if reasoning_container is not None:
+                                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                            yield reasoning_chunk_dict
+
+                            # Provide current step_order to downstream structured DB tool sub-steps
+                            try:
+                                if tool_name == "structured_db_tool" and isinstance(query_flow_store, dict):
+                                    query_flow_store["step_order"] = current_step
+                            except Exception:
+                                pass
+
+                            # Execute the tool with persistence
+                            tool_result, current_step = await execute_tool_step(
+                                tool_to_execute,
+                                tool_name,
+                                tool_args,
+                                query_id=query_id,
+                                chat_id=chat_id,
+                                db=db,
+                                current_step=current_step,
+                                extract_facts_fn=extract_facts_from_tool_result,
+                            )
+
+                            # Log brief output for observability
+                            result_preview = str(tool_result) if tool_result else "None"
+                            log.info(f"ChatID: {chat_id} - Tool {tool_name} result preview: {result_preview[:200]}")
+                            log.debug(f"ChatID: {chat_id} - Tool {tool_name} completed successfully")
+
+                            # Track the response
+                            responses.append((tool_name, str(tool_args), tool_result))
+
+                            # Create tool message for LLM
+                            tool_message = ToolMessage(content=str(tool_result), tool_call_id=str(tool_id))
+                            tool_messages.append(tool_message)
+
+                            # Format tool result for display in reasoning block
+                            if isinstance(tool_result, dict):
+                                # Format as "message\n\nResult: {data}" so format_tool_message_for_display can clean it for users
+                                # while the LLM gets the full structured data with UUIDs
+                                message = tool_result.get("message", "")
+                                # If there's a 'data' field, use it; otherwise omit the Result section (simpler format)
+                                if "data" in tool_result and tool_result["data"]:
+                                    tool_content = f"{message}\n\nResult: {json.dumps(tool_result["data"], ensure_ascii=False)}"
+                                else:
+                                    # No data field, just use the message
+                                    tool_content = message
+                            else:
+                                tool_content = str(tool_result)
+
+                            # Format and stream tool message content for user-friendly display (remove UUIDs, URLs, etc.)
+                            cleaned_content = format_tool_message_for_display(tool_content)
+                            if cleaned_content and cleaned_content.strip():
+                                stage = "retrieval_tool_execution_message"
+                                content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
+                                reasoning_chunk_dict = reasoning_dict_maker(
+                                    stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query_str, content=content
+                                )
+                                if reasoning_container is not None:
+                                    reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                                yield reasoning_chunk_dict
+
+                        except Exception as e:
+                            log.error(f"ChatID: {chat_id} - Error executing tool {tool_name}: {str(e)}")
+
+                            # Yield error status
+                            stage = "tool_error"
+                            error_status_message = f"⚠️ Error executing {user_friendly_tool_name}\n\n"
+                            reasoning_chunk_dict = reasoning_dict_maker(
+                                stage=stage,
+                                tool_name=user_friendly_tool_name,
+                                tool_query=tool_query_str if "tool_query_str" in locals() else "",
+                                content=error_status_message,
+                            )
+                            if reasoning_container is not None:
+                                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                            yield reasoning_chunk_dict
+
+                            # Error step already persisted by decorator; step updated
+
+                            error_tool_message = ToolMessage(content=f"Error executing {tool_name}: {str(e)}", tool_call_id=str(tool_id or ""))
+                            tool_messages.append(error_tool_message)
+                    else:
+                        log.error(f"ChatID: {chat_id} - Tool {tool_name} not found")
+                        stage = "tool_unavailable"
+                        reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+                        if reasoning_container is not None:
+                            reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                        yield reasoning_chunk_dict
+                        error_tool_message = ToolMessage(content=f"Tool {tool_name} not found", tool_call_id=str(tool_id or ""))
+                        tool_messages.append(error_tool_message)
+
+            # Add tool messages to conversation
+            messages.extend(tool_messages)
+
+            # # Log the messages being sent to the LLM (includes tool results)
+            # log.info(f"ChatID: {chat_id} - Ask mode LLM iteration - Messages count: {len(messages)}")
+            # try:
+            #     # Log last few messages for context (tool results + conversation)
+            #     last_messages_preview = []
+            #     for message_preview in messages[-3:]:  # Last 3 messages
+            #         if hasattr(message_preview, "content"):
+            #             content_preview = str(message_preview.content)[:200] + "..." if
+            #                   len(str(message_preview.content)) > 200 else str(message_preview.content)
+            #             last_messages_preview.append(f"{message_preview.__class__.__name__}: {content_preview}")
+            #     log.info(f"ChatID: {chat_id} - Ask mode LLM iteration - Recent messages:\n" + "\n".join(last_messages_preview))
+            # except Exception:
+            #     pass
+
+            # Yield status before getting next LLM response
+            stage = "ask_mode_analyzing_results"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+            yield reasoning_chunk_dict
+
+            # Get next response from LLM (persist follow-up selection/reasoning)
+            ai_message, current_step = await orchestrate_llm_step(
+                llm_with_tools,
+                messages,
+                query_id=query_id,
+                chat_id=chat_id,
+                db=db,
+                current_step=current_step,
+                include_context=False,
+                enhanced_conversation_history=None,
+                enhanced_query_for_processing=None,
+                tools=tools,
+            )
+            # Handle failure case
+            if ai_message == "TOOL_ORCHESTRATION_FAILURE":
+                stage = "final_response"
+                reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+                if reasoning_container is not None:
+                    reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                yield reasoning_chunk_dict
+                yield "An unexpected error occurred. Please try again later."
+                return
+
+            # Stream LLM's reasoning content after tool execution (internal thinking)
+            # Only stream as reasoning if there are more tool calls coming (not the final response)
+            has_more_tool_calls = bool(getattr(ai_message, "tool_calls", None))
+            if has_more_tool_calls:
+                try:
+                    if hasattr(ai_message, "content") and ai_message.content:
+                        reasoning_content = str(ai_message.content).strip()
+                        if reasoning_content:
+                            stage = "planner_tool_selection"
+                            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=reasoning_content)
+                            if reasoning_container is not None:
+                                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                            yield reasoning_chunk_dict
+                except Exception:
+                    pass
+
+            messages.append(ai_message)
+
+            # Follow-up selection persisted by decorator above
+
+        # Final response from LLM (no more tool calls)
+        log.info(f"ChatID: {chat_id} - Tool orchestration complete, generating final response")
+
+        # Yield final response generation status
+        stage = "final_response"
+        reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+        if reasoning_container is not None:
+            reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+        yield reasoning_chunk_dict
+
+        # Stream the final answer back to caller
+        if ai_message.content:
+            final_content = str(ai_message.content)
+            log.info(f"ChatID: {chat_id} - Final response length: {len(final_content)} chars")
+            # Stream the final answer in chunks to simulate streaming
+            async for chunk in stream_content_in_chunks(final_content):
+                yield chunk
+        else:
+            log.warning(f"ChatID: {chat_id} - LLM provided no final content")
+            yield "I've gathered the information but couldn't generate a response. Please try again."
+
+    except Exception as e:
+        log.error(f"ChatID: {chat_id} - Error in execute_tools_for_ask_mode: {str(e)}")
+        raise e

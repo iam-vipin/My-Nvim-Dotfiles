@@ -3,6 +3,8 @@ import { Outlet } from "react-router";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
 import { SettingsHeader } from "@/components/settings/header";
+// plane web imports
+import { LicenseSeatsBanner } from "@/plane-web/components/license";
 
 export default function SettingsLayout() {
   return (
@@ -10,6 +12,7 @@ export default function SettingsLayout() {
       <ProjectsAppPowerKProvider />
       <div className="relative flex size-full overflow-hidden rounded-lg border border-subtle">
         <main className="relative flex size-full flex-col overflow-hidden">
+          <LicenseSeatsBanner />
           {/* Header */}
           <SettingsHeader />
           {/* Content */}

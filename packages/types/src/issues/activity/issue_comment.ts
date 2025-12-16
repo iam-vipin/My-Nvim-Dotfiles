@@ -9,6 +9,7 @@ import type {
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
+import type { TCommentReplyOperations } from "./issue_comment_extended";
 
 export type TCommentReaction = {
   id: string;
@@ -39,6 +40,10 @@ export type TIssueComment = {
   external_id: string | undefined;
   external_source: string | undefined;
   access: EIssueCommentAccessSpecifier;
+  parent_id?: string | null;
+  reply_count?: number;
+  replied_user_ids?: string[];
+  last_reply_at?: string | null;
 };
 
 export type TCommentsOperations = {
@@ -58,6 +63,8 @@ export type TCommentsOperations = {
     | undefined;
   userReactions: (commentId: string) => string[] | undefined;
   getReactionUsers: (reaction: string, reactionIds: Record<string, string[]>) => string;
+} & {
+  replyOperations?: TCommentReplyOperations;
 };
 
 export type TIssueCommentMap = {

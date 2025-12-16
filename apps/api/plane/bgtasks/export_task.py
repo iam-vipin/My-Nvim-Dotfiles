@@ -11,7 +11,6 @@ from celery import shared_task
 # Django imports
 from django.db.models import Prefetch
 from django.utils import timezone
-.
 # Module imports
 from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
 from plane.utils.exception_logger import log_exception

@@ -70,7 +70,7 @@ async def get_answer(
     except Exception as e:
         log.error(f"Error validating JWT: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
-
+        
     # Pre-validate required fields
     if data.workspace_in_context and not (data.workspace_id or data.project_id):
         # currently mobile not providing focus. so, set project_id as None
@@ -134,16 +134,29 @@ async def get_answer(
                                     await heartbeat_task
                             heartbeat_task = asyncio.create_task(heartbeat_emitter())
 
+                            # manage the chunk the old way
                             if isinstance(chunk, dict):
                                 if "chunk_type" in chunk and chunk["chunk_type"] == "reasoning":
-                                    # Till the mobile team updates the app to support json format, we need to yield the chunk as a string
-                                    bwc_payload = {"reasoning": f"{chunk["header"]}\n\n{chunk["content"]}\n\n"}
-                                    # payload = {'header': chunk.get('header', ''), 'content': chunk.get('content', '')}
-                                    # yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
-                                    yield f"event: reasoning\ndata: {json.dumps(bwc_payload)}\n\n"
+                                    # Check if dict already has proper reasoning structure to avoid double-wrapping
+                                    if "reasoning" in chunk and isinstance(chunk.get("reasoning"), str):
+                                        # Already has {"reasoning": "text"} structure, send directly
+                                        bwc_chunk = f"{chunk["header"]}\n\n{chunk["content"]}\n\n"
+                                        yield f"event: reasoning\ndata: {bwc_chunk}\n\n"
+                                    else:
+                                        # Till the mobile team updates the app to support json format, we need to yield the chunk as a string
+                                        bwc_payload = f"{chunk["header"]}\n\n{chunk["content"]}"
+                                        # payload = {'header': chunk.get('header', ''), 'content': chunk.get('content', '')}
+                                        # yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
+                                        yield f"event: reasoning\ndata: {bwc_payload}\n\n"
                                 else:
-                                    payload: Dict[str, Any] = {"chunk": chunk}
-                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                                    # Check if dict already has proper chunk structure to avoid double-wrapping
+                                    if "chunk" in chunk and isinstance(chunk.get("chunk"), str):
+                                        # Already has {"chunk": "text"} structure, send directly
+                                        yield f"event: delta\ndata: {chunk["chunk"]}\n\n"
+                                    else:
+                                        # Wrap the dict in chunk envelope
+                                        payload: Dict[str, Any] = {"chunk": chunk}
+                                        yield f"event: delta\ndata: {chunk["chunk"]}\n\n"
                             elif isinstance(chunk, str) and chunk.startswith("πspecial clarification blockπ: "):
                                 clarification_content = chunk.replace("πspecial clarification blockπ: ", "")
                                 try:
@@ -164,8 +177,8 @@ async def get_answer(
                                     payload = {"chunk": chunk}
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
                             else:
-                                payload = {"chunk": chunk}
-                                yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                                # payload = {"chunk": chunk}
+                                yield f"event: delta\ndata: {chunk}\n\n"
 
                             # Prepare next iteration
                             next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, Union[str, Dict[str, Any]]], base_iter.__anext__()))

@@ -1,0 +1,20 @@
+import React from "react";
+// types
+import type { TMathComponentProps } from "../../types";
+// local components
+import { BlockMathContainer } from "./container";
+
+type TBlockMathErrorProps = TMathComponentProps & {
+  errorMessage: string;
+  isEditable?: boolean;
+};
+
+export function BlockMathErrorState({ errorMessage, onClick, isEditable }: TBlockMathErrorProps) {
+  const latexMessage = errorMessage.replace("KaTeX", "LaTeX");
+
+  return (
+    <BlockMathContainer onClick={onClick} variant="error" isEditable={isEditable}>
+      <div className="block-equation-inner text-red-400 text-13">{latexMessage}</div>
+    </BlockMathContainer>
+  );
+}

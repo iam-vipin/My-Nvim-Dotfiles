@@ -6,7 +6,13 @@ import type { IProject } from "./project";
 import type { IUser } from "./users";
 import type { IWorkspace } from "./workspace";
 
-export type TSearchEntities = "user_mention" | "issue" | "project" | "cycle" | "module" | "page";
+export type TSearchEntities =
+  | "user_mention"
+  | "issue_mention"
+  | "project_mention"
+  | "cycle_mention"
+  | "module_mention"
+  | "page_mention";
 
 export type TUserSearchResponse = {
   member__avatar_url: IUser["avatar_url"];
@@ -22,15 +28,13 @@ export type TProjectSearchResponse = {
   workspace__slug: IWorkspace["slug"];
 };
 
-export type TIssueSearchResponse = {
-  name: TIssue["name"];
-  id: TIssue["id"];
-  sequence_id: TIssue["sequence_id"];
+export type TIssueSearchResponse = Pick<
+  TIssue,
+  "name" | "id" | "sequence_id" | "project_id" | "priority" | "state_id" | "type_id"
+> & {
   project__identifier: IProject["identifier"];
-  project_id: TIssue["project_id"];
-  priority: TIssue["priority"];
-  state_id: TIssue["state_id"];
-  type_id: TIssue["type_id"];
+  state__group: TIssue["state__group"];
+  state__color: string;
 };
 
 export type TCycleSearchResponse = {
@@ -60,11 +64,11 @@ export type TPageSearchResponse = {
 };
 
 export type TSearchResponse = {
-  cycle?: TCycleSearchResponse[];
-  issue?: TIssueSearchResponse[];
-  module?: TModuleSearchResponse[];
-  page?: TPageSearchResponse[];
-  project?: TProjectSearchResponse[];
+  cycle_mention?: TCycleSearchResponse[];
+  issue_mention?: TIssueSearchResponse[];
+  module_mention?: TModuleSearchResponse[];
+  page_mention?: TPageSearchResponse[];
+  project_mention?: TProjectSearchResponse[];
   user_mention?: TUserSearchResponse[];
 };
 

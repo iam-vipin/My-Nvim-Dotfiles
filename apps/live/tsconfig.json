@@ -9,7 +9,7 @@
 
     "paths": {
       "@/*": ["./src/*"],
-      "@/plane-live/*": ["./src/ce/*"]
+      "@/plane-live/*": ["./src/ee/*"]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

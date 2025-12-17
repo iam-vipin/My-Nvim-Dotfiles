@@ -9,7 +9,7 @@ import { DiscordIcon, GithubIcon, PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
-import { useTheme } from "@/hooks/store";
+import { useInstance, useTheme } from "@/hooks/store";
 // assets
 
 import packageJson from "package.json";
@@ -36,6 +36,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
+  const { instance } = useInstance();
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
@@ -128,8 +129,20 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                     </button>
                   );
               })}
+              {/* {instance?.latest_version && instance?.current_version != instance?.latest_version && (
+                <a
+                  href="https://docs.plane.so/docs/changelog"
+                  target="_blank"
+                  className="flex items-center gap-2 px-2 py-1 text-11 font-medium cursor-pointer transition-all border rounded-sm border-accent-strong/30 bg-accent-primary/20 hover:bg-accent-primary/30 text-primary"
+                  referrerPolicy="no-referrer"
+                >
+                  <RefreshCcw className="flex-shrink-0 h-3 w-3 text-primary" />
+                  <div>Updates available</div>
+                  <div className="flex-shrink-0 ml-auto animate-pulse bg-accent-primary !w-2 !h-2 rounded-full" />
+                </a>
+              )} */}
             </div>
-            <div className="px-2 pb-1 pt-2 text-10">Version: v{packageJson.version}</div>
+            <div className="px-2 pb-1 pt-2 text-10">Version: v{instance?.current_version}</div>
           </div>
         </Transition>
       </div>

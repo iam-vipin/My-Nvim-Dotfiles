@@ -15,6 +15,7 @@ import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { TrialBanner } from "@/plane-web/components/license/banner/trial-banner";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // local
@@ -61,6 +62,8 @@ export function Layout({ children }: { children: ReactNode }) {
           <div
             className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}
           >
+            {/* free trial banner */}
+            <TrialBanner />
             <main className="w-full h-full overflow-hidden relative">{children}</main>
           </div>
         </AppProvider>

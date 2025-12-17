@@ -19,7 +19,7 @@ export function MentionNodeView(props: MentionNodeViewProps) {
   } = props;
 
   return (
-    <NodeViewWrapper className="mention-component inline w-fit">
+    <NodeViewWrapper className="mention-component inline-flex max-w-full">
       {(extension.options as TMentionExtensionOptions).renderComponent({
         entity_identifier: attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER] ?? "",
         entity_name: attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention",

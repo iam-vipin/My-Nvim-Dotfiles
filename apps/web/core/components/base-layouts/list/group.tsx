@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { IBaseLayoutsListItem, IBaseLayoutsListGroupProps } from "@plane/types";
-import { cn, Row } from "@plane/ui";
+import { cn } from "@plane/ui";
 import { useGroupDropTarget } from "../hooks/use-group-drop-target";
 import { GroupHeader } from "./group-header";
 import { BaseListItem } from "./item";

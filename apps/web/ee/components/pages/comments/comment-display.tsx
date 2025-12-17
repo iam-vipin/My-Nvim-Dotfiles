@@ -164,14 +164,12 @@ export const PageCommentDisplay = observer(function PageCommentDisplay({
               >
                 <div
                   onClick={handleResolve}
-                  className="size-5 flex items-center justify-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors cursor-pointer"
+                  className="size-5 flex items-center justify-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1-hover transition-colors cursor-pointer"
                 >
                   <CircleCheck
                     className={cn(
                       "size-4 p-[1.5px]",
-                      comment.is_resolved
-                        ? "size-5 fill-custom-text-300 text-custom-background-100 hover:text-custom-background-90"
-                        : "text-tertiary"
+                      comment.is_resolved ? "size-5 fill-tertiary bg-layer-1 hover:bg-layer-1-hover" : "text-tertiary"
                     )}
                   />
                 </div>

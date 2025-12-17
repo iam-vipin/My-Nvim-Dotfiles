@@ -128,6 +128,7 @@ export function PiChatEditorMentionExtension(props: Props) {
       class: "mention",
     },
     suggestion: {
+      allowSpaces: true,
       render: renderPiChatEditorMentionsDropdown({
         searchCallback,
       }),

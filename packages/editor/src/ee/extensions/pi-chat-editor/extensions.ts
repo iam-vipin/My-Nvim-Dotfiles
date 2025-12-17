@@ -5,6 +5,7 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import StarterKit from "@tiptap/starter-kit";
 // extensions
+import { CustomLinkExtension } from "@/extensions";
 import { CustomCodeBlockExtension } from "@/extensions/code";
 import { CustomCodeInlineExtension } from "@/extensions/code-inline";
 // helpers
@@ -86,6 +87,7 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
         return text.trim().length > 0 ? "" : placeholder || "How can I help you today?";
       },
     }),
+    CustomLinkExtension,
     Extension.create({
       onUpdate(this) {
         setEditorCommand?.({

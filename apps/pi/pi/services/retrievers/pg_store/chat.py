@@ -1130,7 +1130,8 @@ async def retrieve_chat_history(
 
                                 # Build the formatted reasoning string for this message
                                 if standalone_original_query:
-                                    _, cleaned_query = parse_query(standalone_original_query)
+                                    parsed = await parse_query(standalone_original_query)
+                                    cleaned_query = parsed.parsed_content
                                     if standalone_rewritten_query and standalone_rewritten_query != cleaned_query:
                                         standalone_internal_reasoning_parts.append(
                                             f"User question: '{cleaned_query}' rewritten to '{standalone_rewritten_query}'."

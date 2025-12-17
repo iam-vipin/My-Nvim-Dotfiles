@@ -9,19 +9,20 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from pi.app.models import ActionArtifact  # noqa: F401
+from pi.app.models import ActionArtifactVersion  # noqa: F401
 from pi.app.models import Chat  # noqa: F401
 from pi.app.models import Message  # noqa: F401
+from pi.app.models import MessageClarification  # noqa: F401
 from pi.app.models import MessageFeedback  # noqa: F401
 from pi.app.models import MessageFlowStep  # noqa: F401
+from pi.app.models import MessageMention  # noqa: F401
 from pi.app.models import MessageMeta  # noqa: F401
+from pi.app.models import PlaneOAuthState  # noqa: F401
+from pi.app.models import PlaneOAuthToken  # noqa: F401
 from pi.app.models import Transcription  # noqa: F401
 from pi.app.models import WorkspaceVectorization  # noqa: F401
-from pi.app.models.action_artifact import ActionArtifact  # noqa: F401
-from pi.app.models.action_artifact import ActionArtifactVersion  # noqa: F401
 from pi.app.models.base import BaseModel
-from pi.app.models.message_clarification import MessageClarification  # noqa: F401
-from pi.app.models.oauth import PlaneOAuthState  # noqa: F401
-from pi.app.models.oauth import PlaneOAuthToken  # noqa: F401
 
 # Module imports
 from pi.config import settings

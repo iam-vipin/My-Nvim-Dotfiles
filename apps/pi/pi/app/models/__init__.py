@@ -12,6 +12,10 @@ from pi.app.models.message import MessageFeedback
 from pi.app.models.message import MessageFlowStep
 from pi.app.models.message import MessageMeta
 from pi.app.models.message_attachment import MessageAttachment
+from pi.app.models.message_clarification import MessageClarification
+from pi.app.models.message_mention import MessageMention
+from pi.app.models.oauth import PlaneOAuthState
+from pi.app.models.oauth import PlaneOAuthToken
 from pi.app.models.transcription import Transcription  # noqa: F401
 from pi.app.models.workspace_vectorization import WorkspaceVectorization  # noqa: F401
 
@@ -27,9 +31,13 @@ __all__ = [
     "MessageFeedback",
     "MessageFlowStep",
     "MessageMeta",
+    "MessageMention",
     "Transcription",
     "UserChatPreference",
     "WorkspaceVectorization",
     "ActionArtifact",
     "ActionArtifactVersion",
+    "MessageClarification",
+    "PlaneOAuthState",
+    "PlaneOAuthToken",
 ]  # noqa: F401

@@ -18,6 +18,7 @@ from pi.app.models import LlmModelPricing
 from pi.app.models import Message
 from pi.app.models import MessageFeedback
 from pi.app.models import MessageFlowStep
+from pi.app.models import MessageMention
 from pi.app.models import MessageMeta
 from pi.app.models import UserChatPreference
 from pi.app.models.enums import ExecutionStatus
@@ -674,3 +675,33 @@ async def reconstruct_chat_request_from_message(db: AsyncSession, user_message: 
         source=source,
         mode=mode,
     )
+
+
+async def create_message_mentions(db: AsyncSession, message_id: UUID4, workspace_id: UUID4, mentions: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Upsert message mentions into the database.
+    """
+    try:
+        for mention in mentions:
+            mention_type = mention.get("mention_type")
+            mention_id_val = mention.get("mention_id")
+            msg_id = mention.get("message_id", message_id)
+            ws_id = mention.get("workspace_id", workspace_id)
+
+            if not mention_type or not mention_id_val:
+                log.warning(f"Skipping invalid mention: {mention}")
+                continue
+
+            message_mention = MessageMention(
+                message_id=msg_id,
+                workspace_id=ws_id,
+                mention_type=mention_type,
+                mention_id=mention_id_val,
+            )
+            db.add(message_mention)
+        await db.commit()
+        return {"message": "success"}
+    except Exception as e:
+        log.error(f"Error creating message mentions: {e}")
+        await db.rollback()
+        return {"message": "error", "error": str(e)}

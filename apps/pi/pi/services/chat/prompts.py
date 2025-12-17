@@ -274,8 +274,16 @@ title_generation_prompt = PromptTemplate.from_template(
 8. For conversations with unusual content (e.g., only emojis, special characters, or potentially unsafe content), create a title that describes the nature of the conversation without repeating the content.
 9. Always aim to generate a meaningful title, even for edge cases. Avoid generic titles like "New Conversation" or "Emoji Chat".
 10. Phrase the title as if it were a search query or a question the user might have asked, when appropriate.
-11. Return ONLY the generated title, without any quotation marks, explanations, or additional text.
-12. The chat contains the user's question and the AI assistant's response.
+11. Never include raw identifiers in the title. This includes (but is not limited to):
+   - UUIDs / database IDs / opaque IDs
+   - Work-item keys or identifiers (e.g., PRO-1) and especially mention-style keys
+   - Long numeric IDs or any ID-like token from the chat (e.g., "work-item ID 12345", "ticket 987654")
+   If an identifier appears in the chat, generalize it to a human label like "work item", "issue", "task", "project", or "user" without the ID.
+   Examples:
+   - Chat: "Who is assigned to @PRO-1" → Title: "Who is assigned to this work item"
+   - Chat: "Who is assigned to work-item with ID 5682d989-..." → Title: "Who is assigned to this work item"
+12. Return ONLY the generated title, without any quotation marks, explanations, or additional text.
+13. The chat contains the user's question and the AI assistant's response.
 
 Chat:
 {chat_history}

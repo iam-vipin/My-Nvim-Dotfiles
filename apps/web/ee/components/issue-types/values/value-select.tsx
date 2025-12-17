@@ -26,6 +26,7 @@ import { NumberValueInput } from "./components/number-input";
 import { OptionValueSelect } from "./components/option-select";
 import { TextValueInput } from "./components/text-input";
 import { UrlValueInput } from "./components/url-input";
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -208,24 +209,14 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         </div>
       )}
       {variant === "update" && (
-        <div className={cn("flex w-full items-start gap-y-1 min-h-8")}>
-          <div
-            className={cn(
-              "flex items-center h-8 gap-1 flex-shrink-0 text-sm text-tertiary",
-              isPeekOverview ? "w-1/4" : "w-2/5"
-            )}
-          >
-            <IssuePropertyDetail />
-          </div>
-          <div
-            className={cn("relative h-full min-h-8 flex flex-col gap-0.5 pl-3", {
-              "w-3/4": isPeekOverview,
-              "w-3/5": !isPeekOverview,
-            })}
+        <>
+          <SidebarPropertyListItem
+            icon={<IssuePropertyLogo icon_props={propertyDetail?.logo_props?.icon} colorClassName="text-tertiary" />}
+            label={propertyDetail?.display_name ?? ""}
           >
             {CurrentPropertyAttribute}
-          </div>
-        </div>
+          </SidebarPropertyListItem>
+        </>
       )}
     </>
   );

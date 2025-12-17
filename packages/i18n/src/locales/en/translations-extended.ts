@@ -2349,7 +2349,7 @@ export default {
     label: "{count, plural, one {Customer} other {Customers}}",
     open: "Open customer",
     dropdown: {
-      placeholder: "Select customer",
+      placeholder: "Add customer",
       required: "Please select a customer",
       no_selection: "No customers",
     },

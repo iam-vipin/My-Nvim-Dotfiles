@@ -105,7 +105,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="group w-full grow"
-            buttonContainerClassName="w-full text-left"
+            buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName="text-13"
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -122,7 +122,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             multiple
             buttonVariant={epicDetails?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="group w-full grow"
-            buttonContainerClassName="w-full text-left"
+            buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName={`text-13 justify-between ${epicDetails?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
             hideIcon={epicDetails.assignee_ids?.length === 0}
             dropdownArrow
@@ -135,10 +135,10 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             value={epicDetails?.priority}
             onChange={(val) => epicOperations.update(workspaceSlug, projectId, epicId, { priority: val })}
             disabled={disabled}
-            buttonVariant="border-with-text"
-            className="w-full grow"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName="w-min h-auto whitespace-nowrap"
+            buttonVariant="transparent-with-text"
+            className="w-full h-7.5 grow rounded-sm"
+            buttonContainerClassName="size-full text-left"
+            buttonClassName="size-full px-2 py-0.5 whitespace-nowrap [&_svg]:size-3.5"
           />
         </SidebarPropertyListItem>
 
@@ -149,9 +149,10 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
           </SidebarPropertyListItem>
         )}
         <SidebarPropertyListItem icon={InitiativeIcon} label="Initiatives">
-          <div
+          <button
+            type="button"
             className={cn(
-              "p-2 rounded-xs text-13 text-secondary hover:bg-layer-1 justify-start flex items-start cursor-pointer",
+              "w-full h-7.5 text-left px-2 py-0.5 rounded text-13 text-secondary hover:bg-layer-transparent-hover",
               {
                 "text-placeholder": !epicDetails.initiative_ids?.length,
               }
@@ -161,7 +162,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             {epicDetails.initiative_ids?.length
               ? t("initiatives.placeholder", { count: epicDetails.initiative_ids?.length })
               : t("initiatives.add_initiative")}
-          </div>
+          </button>
         </SidebarPropertyListItem>
         <SidebarPropertyListItem icon={StartDatePropertyIcon} label="Start date">
           <DateDropdown
@@ -176,7 +177,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="group w-full grow"
-            buttonContainerClassName="w-full text-left"
+            buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName={`text-13 ${epicDetails?.start_date ? "" : "text-placeholder"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
@@ -184,7 +185,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label="Due date">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
             <DateDropdown
               placeholder="Add due date"
               value={epicDetails.target_date}
@@ -197,8 +198,8 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               disabled={disabled}
               buttonVariant="transparent-with-text"
               className="group w-full grow"
-              buttonContainerClassName="w-full text-left"
-              buttonClassName={cn("text-13", {
+              buttonContainerClassName="w-full text-left h-7.5"
+              buttonClassName={cn("w-full text-body-xs-regular", {
                 "text-placeholder": !epicDetails.target_date,
                 "text-red-500": shouldHighlightIssueDueDate(epicDetails.target_date, stateDetails?.group),
               })}

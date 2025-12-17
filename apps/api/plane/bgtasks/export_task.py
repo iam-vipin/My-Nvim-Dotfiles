@@ -12,14 +12,11 @@ from celery import shared_task
 from django.db.models import Prefetch
 from django.utils import timezone
 # Module imports
-from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
+from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber, StateGroup
 from plane.utils.exception_logger import log_exception
-from plane.utils.porters.exporter import DataExporter
-from plane.utils.porters.serializers.issue import IssueExportSerializer
-from plane.db.models import ExporterHistory, Issue, IssueRelation, StateGroup
+from plane.utils.porters import IssueExportSerializer, DataExporter
 from plane.ee.models import CustomerRequestIssue, InitiativeEpic
 from plane.settings.storage import S3Storage
-from plane.utils.exception_logger import log_exception
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
@@ -209,11 +206,16 @@ def issue_export_task(
                 "estimate_point",
             )
             .prefetch_related(
-                "labels",
+                "label_issue__label",
                 "issue_cycle__cycle",
                 "issue_module__module",
                 "assignees",
                 "issue_link",
+                "worklogs",
+                "worklogs__logged_by",
+                "properties",
+                "properties__property",
+                "properties__value_option",
                 Prefetch(
                     "issue_subscribers",
                     queryset=IssueSubscriber.objects.select_related("subscriber"),
@@ -225,10 +227,6 @@ def issue_export_task(
                 Prefetch(
                     "issue_relation",
                     queryset=IssueRelation.objects.select_related("related_issue", "related_issue__project"),
-                ),
-                Prefetch(
-                    "issue_related",
-                    queryset=IssueRelation.objects.select_related("issue", "issue__project"),
                 ),
                 Prefetch(
                     "parent",

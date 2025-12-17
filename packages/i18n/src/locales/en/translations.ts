@@ -991,7 +991,7 @@ export default {
     delete: "Delete attachment",
   },
   label: {
-    select: "Select label",
+    select: "Add labels",
     create: {
       success: "Label created successfully",
       failed: "Label creation failed",

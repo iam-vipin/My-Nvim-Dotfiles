@@ -37,7 +37,7 @@ export const AutomationDetailsSidebarActivityLogItem = observer(function Automat
 
   return (
     <>
-      <div className="shrink-0 ring-6 size-7 rounded-full overflow-hidden grid place-items-center z-[4] bg-layer-1 text-secondary border-2 border-transparent transition-border duration-1000">
+      <div className="shrink-0 size-7 rounded-full overflow-hidden grid place-items-center z-[4] bg-layer-3 text-secondary border-2 border-transparent transition-border duration-1000">
         <ActivityIcon className="size-3.5" />
       </div>
       <div className="w-full">

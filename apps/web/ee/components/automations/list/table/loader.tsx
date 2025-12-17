@@ -14,7 +14,7 @@ export function AutomationsTableLoader() {
       {/* Table */}
       <div>
         <Table className="min-w-[1000px]">
-          <TableHeader className="bg-surface-1 border-t-0 border-custom-border-100 py-4">
+          <TableHeader className="bg-surface-1 border-t-0 border-subtle py-4">
             <TableRow>
               <TableHead className={COMMON_TABLE_TITLE_HEADER_CLASSNAME}>
                 <Loader.Item height="16px" width="120px" />

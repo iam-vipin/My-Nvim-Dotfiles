@@ -35,7 +35,7 @@ export const AutomationDetailsSidebarActivityListItem = observer(function Automa
         "pb-0": isLast,
       })}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-layer-1" aria-hidden />
+      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-layer-3" aria-hidden />
       {isRunHistory ? (
         <AutomationDetailsSidebarActivityRunHistoryItem automationId={automationId} activityId={activityId} />
       ) : (

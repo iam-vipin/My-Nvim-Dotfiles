@@ -40,7 +40,7 @@ export interface IPiChatStore {
   isLoadingThreads: boolean;
   piThreads: string[];
   projectThreads: string[];
-  activeModel: TAiModels | undefined;
+  activeModel: string | undefined;
   models: TAiModels[];
   isAuthorized: boolean;
   isWorkspaceAuthorized: boolean;
@@ -86,7 +86,7 @@ export interface IPiChatStore {
   executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<string[] | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
   abortStream: (chatId: string) => void;
-  setActiveModel: (chatId: string, model: TAiModels) => void;
+  setActiveModel: (chatId: string, model: string) => void;
   createNewChat: (
     focus: TFocus,
     mode: string,
@@ -134,7 +134,7 @@ export class PiChatStore implements IPiChatStore {
   isNewChat: boolean = false;
   isLoadingThreads: boolean = false;
   models: TAiModels[] = [];
-  activeModel: TAiModels | undefined = undefined;
+  activeModel: string | undefined = undefined;
   isAuthorized = true;
   isWorkspaceAuthorized = true;
   chatMap: Record<string, TChatHistory> = {};
@@ -228,11 +228,11 @@ export class PiChatStore implements IPiChatStore {
     return this.isLoadingMap[this.activeChatId] ?? false;
   }
 
-  setActiveModel = (chatId: string, model: TAiModels) => {
+  setActiveModel = (chatId: string, model: string) => {
     this.activeModel = model;
     if (!chatId) return;
     update(this.chatMap, chatId, (chat: TChatHistory) => {
-      chat.llm = model.id;
+      chat.llm = model;
       return chat;
     });
   };
@@ -367,7 +367,7 @@ export class PiChatStore implements IPiChatStore {
       dialogue: [],
       dialogueMap: {},
       title: "New Chat",
-      llm: this.activeModel?.id,
+      llm: this.activeModel,
       last_modified: new Date().toISOString(),
       is_favorite: false,
       is_focus_enabled: focus.isInWorkspaceContext,
@@ -405,7 +405,7 @@ export class PiChatStore implements IPiChatStore {
       is_temp: false,
       workspace_in_context: focus.isInWorkspaceContext,
       source: ESource.WEB,
-      llm: this.activeModel?.id || "gpt-4.1",
+      llm: this.activeModel || "gpt-4.1",
       context: this.userStore.data
         ? {
             first_name: this.userStore.data.first_name,
@@ -553,7 +553,7 @@ export class PiChatStore implements IPiChatStore {
     const dialogueHistory = this.chatMap[chatId]?.dialogue || [];
     const newDialogue: TDialogue = {
       query,
-      llm: this.activeModel?.id,
+      llm: this.activeModel,
       answer: "",
       current_tick: "",
       reasoning: "",
@@ -647,7 +647,7 @@ export class PiChatStore implements IPiChatStore {
     // Optimistically update conversation with user query
     const newDialogue: TDialogue = {
       query: this.chatMap[chatId]?.dialogueMap?.[token]?.query,
-      llm: this.activeModel?.id,
+      llm: this.activeModel,
       answer: "",
       current_tick: "",
       reasoning: "",
@@ -706,7 +706,7 @@ export class PiChatStore implements IPiChatStore {
           llm: response.results.llm ?? chat?.llm,
         }));
         if (chatId === this.activeChatId) {
-          this.activeModel = this.models.find((model) => model.id === response?.results?.llm) || this.models[0] || null;
+          this.activeModel = response?.results?.llm || this.models[0]?.id || undefined;
         }
         this.isLoadingMap[chatId] = false;
       });
@@ -788,11 +788,9 @@ export class PiChatStore implements IPiChatStore {
       const response = await this.piChatService.listAiModels(workspaceId);
       runInAction(() => {
         this.models = response.models;
-        response.models.forEach((model) => {
-          if (model.is_default && !this.activeModel) {
-            this.activeModel = model;
-          }
-        });
+        if (!this.activeModel) {
+          this.activeModel = response.models?.find((model) => model.is_default)?.id;
+        }
       });
     } catch (e) {
       console.error(e);

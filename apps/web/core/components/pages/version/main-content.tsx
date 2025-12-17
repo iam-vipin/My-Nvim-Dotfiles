@@ -52,10 +52,6 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
     setIsRestoring(true);
     await handleRestore(versionDetails?.description_html ?? "<p></p>")
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Page version restored.",
-        });
         handleClose();
       })
       .catch(() =>

@@ -7,6 +7,11 @@ import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states/project-state-icon";
+import { EProjectStateGroup } from "@/plane-web/types/workspace-project-states";
+import type { TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
+import type { TStateGroups } from "@plane/types";
 
 export type TReadonlyStateProps = {
   className?: string;
@@ -14,7 +19,7 @@ export type TReadonlyStateProps = {
   hideIcon?: boolean;
   value: string | undefined | null;
   placeholder?: string;
-  projectId: string | undefined;
+  projectId?: string | undefined;
   workspaceSlug: string;
 };
 
@@ -24,16 +29,27 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
   const [stateLoader, setStateLoader] = useState(false);
   const { t } = useTranslation();
   const { getStateById, getProjectStateIds, fetchProjectStates } = useProjectState();
+  const {
+    getProjectStateById: getWorkspaceProjectStateById,
+    getProjectStateIdsWithGroupingByWorkspaceId: getWorkspaceProjectStateIdsWithGroupingByWorkspaceId,
+    fetchProjectStates: fetchWorkspaceProjectStates,
+  } = useWorkspaceProjectStates();
   // derived values
-  const stateIds = getProjectStateIds(projectId);
-  const state = getStateById(value);
+  const stateIds = projectId
+    ? getProjectStateIds(projectId)
+    : Object.values(getWorkspaceProjectStateIdsWithGroupingByWorkspaceId(workspaceSlug) ?? {}).flat();
+  const state = projectId ? getStateById(value) : getWorkspaceProjectStateById(value ?? "");
 
   // fetch states if not provided
   const fetchStates = async () => {
     if ((stateIds === undefined || stateIds.length === 0) && projectId) {
       setStateLoader(true);
       try {
-        await fetchProjectStates(workspaceSlug, projectId);
+        if (projectId) {
+          await fetchProjectStates(workspaceSlug, projectId);
+        } else {
+          await fetchWorkspaceProjectStates(workspaceSlug);
+        }
       } finally {
         setStateLoader(false);
       }
@@ -41,7 +57,8 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
   };
 
   useEffect(() => {
-    fetchStates();
+    void fetchStates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, workspaceSlug]);
 
   if (stateLoader) {
@@ -55,13 +72,21 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
 
   return (
     <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
-      {!hideIcon && (
-        <StateGroupIcon
-          stateGroup={state?.group ?? "backlog"}
-          className={cn(iconSize, "flex-shrink-0")}
-          color={state?.color}
-        />
-      )}
+      {!hideIcon &&
+        (projectId ? (
+          <StateGroupIcon
+            stateGroup={(state?.group as TStateGroups) ?? "backlog"}
+            className={cn(iconSize, "flex-shrink-0")}
+            color={state?.color}
+          />
+        ) : (
+          <ProjectStateIcon
+            projectStateGroup={(state?.group as TProjectStateGroupKey) ?? EProjectStateGroup.DRAFT}
+            color={state?.color}
+            width="12"
+            height="12"
+          />
+        ))}
       <span className="flex-grow truncate">{state?.name ?? placeholder ?? t("common.none")}</span>
     </div>
   );

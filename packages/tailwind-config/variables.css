@@ -351,6 +351,7 @@
   --background-color-danger-transparent-active: var(--color-red-100);
   --background-color-danger-transparent-selected: var(--color-red-100);
   --background-color-backdrop: var(--color-alpha-black-500);
+  --background-color-inverse: var(--color-alpha-black-1000);
 
   /* Border colors */
   --border-color-subtle: var(--color-neutral-400);
@@ -674,6 +675,8 @@
       --background-color-danger-transparent-active: var(--color-red-100);
       --background-color-danger-transparent-selected: var(--color-red-100);
       --background-color-backdrop: var(--color-alpha-black-1000);
+      --background-color-inverse: var(--color-alpha-white-1000);
+
 
       /* Border colors */
       --border-color-subtle: var(--color-neutral-400);

@@ -1,0 +1,36 @@
+import type { FC } from "react";
+import { useTheme } from "next-themes";
+// helpers
+import { API_BASE_URL } from "@plane/constants";
+// images
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
+
+export type TGoogleAuthButton = {
+  title: string;
+  invitationId?: string;
+};
+
+export function GoogleAuthButton(props: TGoogleAuthButton) {
+  // props
+  const { title, invitationId } = props;
+  // hooks
+  const { resolvedTheme } = useTheme();
+
+  const handleSignIn = () => {
+    let url = `${API_BASE_URL}/auth/mobile/google/`;
+    if (invitationId) url += `?invitation_id=${invitationId}`;
+    window.location.assign(url);
+  };
+
+  return (
+    <button
+      className={`flex h-[42px] w-full items-center justify-center gap-2 rounded-sm border px-2 text-13 font-medium text-primary duration-300 bg-surface-1 hover:bg-onboarding-background-300 ${
+        resolvedTheme === "dark" ? "border-[#43484F]" : "border-[#D9E4FF]"
+      }`}
+      onClick={handleSignIn}
+    >
+      <img src={GoogleLogo} alt="Google Logo" className="w-4 h-4 object-cover" />
+      {title}
+    </button>
+  );
+}

@@ -40,7 +40,7 @@ const TabsRoot = React.forwardRef(function TabsRoot(
 const TabsList = React.forwardRef(function TabsList(
   {
     className,
-    background = "layer-2",
+    background = "layer-1",
     ...props
   }: React.ComponentProps<typeof TabsPrimitive.List> & {
     background?: BackgroundVariant;

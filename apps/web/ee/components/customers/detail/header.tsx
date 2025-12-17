@@ -1,0 +1,113 @@
+import type { FC } from "react";
+import React, { useRef } from "react";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+// plane imports
+import { PanelRight } from "lucide-react";
+import { CustomersIcon } from "@plane/propel/icons";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+// components
+import { cn } from "@plane/utils";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CustomerQuickActions } from "@/plane-web/components/customers/actions";
+import { useCustomers } from "@/plane-web/hooks/store";
+
+export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
+  const { workspaceSlug, customerId } = useParams();
+  const router = useAppRouter();
+  // hooks
+  const { currentWorkspace } = useWorkspace();
+  const { getCustomerById, customerIds } = useCustomers();
+  const { toggleCustomerDetailSidebar, customerDetailSidebarCollapsed } = useCustomers();
+  // derived values
+  const workspaceId = currentWorkspace?.id || undefined;
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const customer = getCustomerById(customerId.toString());
+  if (!workspaceSlug || !workspaceId) return <></>;
+
+  const switcherOptions = customerIds
+    .map((id) => {
+      const _customer = getCustomerById(id);
+      if (!_customer?.id || !_customer?.name) return null;
+      return {
+        value: _customer.id,
+        query: _customer.name,
+        content: <SwitcherLabel logo_url={_customer.logo_url} name={_customer.name} LabelIcon={CustomersIcon} />,
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+
+  return (
+    <>
+      <Header>
+        <Header.LeftItem>
+          <div className="flex items-center gap-4">
+            {/* bread crumps */}
+            <Breadcrumbs>
+              <Breadcrumbs.Item
+                component={
+                  <BreadcrumbLink
+                    href={`/${workspaceSlug}/customers`}
+                    label="Customers"
+                    icon={<CustomersIcon className="h-4 w-4 text-tertiary" />}
+                  />
+                }
+              />
+              <Breadcrumbs.Item
+                component={
+                  <BreadcrumbNavigationSearchDropdown
+                    selectedItem={customerId.toString()}
+                    navigationItems={switcherOptions}
+                    onChange={(value: string) => {
+                      router.push(`/${workspaceSlug}/customers/${value}`);
+                    }}
+                    title={customer?.name}
+                    icon={
+                      <Breadcrumbs.Icon>
+                        <CustomersIcon className="size-4 flex-shrink-0 text-tertiary" />
+                      </Breadcrumbs.Icon>
+                    }
+                    isLast
+                  />
+                }
+                isLast
+              />
+            </Breadcrumbs>
+          </div>
+        </Header.LeftItem>
+        <Header.RightItem>
+          {customer && (
+            <div ref={parentRef} className="flex gap-2 items-center transition-colors duration-200">
+              <button
+                type="button"
+                className={cn("p-1 rounded-sm outline-none bg-layer-1", {
+                  "bg-layer-1-selected": !customerDetailSidebarCollapsed,
+                  "hover:bg-layer-1-hover": customerDetailSidebarCollapsed,
+                })}
+                onClick={() => toggleCustomerDetailSidebar()}
+              >
+                <PanelRight
+                  className={cn("h-4 w-4", !customerDetailSidebarCollapsed ? "text-tertiary" : "text-secondary")}
+                />
+              </button>
+              <CustomerQuickActions
+                customerId={customerId.toString()}
+                workspaceSlug={workspaceSlug.toString()}
+                parentRef={parentRef}
+                customClassName="p-1 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
+              />
+            </div>
+          )}
+        </Header.RightItem>
+      </Header>
+    </>
+  );
+});

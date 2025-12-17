@@ -44,7 +44,6 @@ export function NewUpdate(props: TProps) {
               description: input,
             })
           }
-          size="sm"
           disabled={input === ""}
         >
           Add update

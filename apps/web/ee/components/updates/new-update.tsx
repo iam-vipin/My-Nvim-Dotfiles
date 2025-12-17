@@ -46,7 +46,6 @@ export function NewUpdate(props: TProps) {
             });
             setIsSubmitting(false);
           }}
-          size="sm"
           disabled={input === "" || isSubmitting}
         >
           {t("updates.add_update")}

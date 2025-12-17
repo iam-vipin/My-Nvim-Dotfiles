@@ -113,12 +113,7 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
     <CustomSearchSelect
       value={templateId}
       customButton={
-        <div
-          className={cn("flex w-full items-center max-w-52 px-2 py-0.5", {
-            "gap-1": size === "xs",
-            "gap-2": size === "sm",
-          })}
-        >
+        <Button variant="secondary">
           {customLabelContent ? (
             customLabelContent
           ) : (
@@ -141,13 +136,13 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
               )}
             </>
           )}
-        </div>
+        </Button>
       }
       options={projectTemplateOptions}
       onChange={handleTemplateChange}
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
-      customButtonClassName={cn("rounded-sm text-body-xs-regular bg-surface-1 border border-subtle", buttonClassName)}
+      customButtonClassName={cn("rounded-sm text-body-xs-regular border border-subtle", buttonClassName)}
       disabled={disabled}
       noResultsMessage={t("templates.dropdown.no_results.project")}
       footerOption={

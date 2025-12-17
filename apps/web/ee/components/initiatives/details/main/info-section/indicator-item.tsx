@@ -36,12 +36,7 @@ export const InitiativeInfoIndicatorItem = observer(function InitiativeInfoIndic
 
   return (
     <div className="flex-shrink-0">
-      <CircularProgressIndicator
-        percentage={completePercentage}
-        strokeWidth={4}
-        size={46}
-        strokeColor="stroke-green-500"
-      >
+      <CircularProgressIndicator percentage={completePercentage} strokeWidth={4} size={46}>
         <span className="flex items-baseline justify-center text-12 stroke-success">
           <span className="font-semibold">{completePercentage}</span>
           <span>%</span>

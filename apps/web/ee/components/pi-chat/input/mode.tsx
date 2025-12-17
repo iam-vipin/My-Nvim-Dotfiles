@@ -1,5 +1,6 @@
 import { AiSearchIcon, AiWriteIcon } from "@plane/propel/icons";
-import { CustomSelect, Tooltip } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { ChevronDownIcon } from "lucide-react";
 

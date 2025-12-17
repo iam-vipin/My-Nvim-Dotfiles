@@ -42,13 +42,8 @@ export const EpicInfoIndicatorItem = observer(function EpicInfoIndicatorItem(pro
   if (!hasSubIssues) return <></>;
   return (
     <div className="flex-shrink-0">
-      <CircularProgressIndicator
-        percentage={completePercentage}
-        strokeWidth={4}
-        size={46}
-        strokeColor="stroke-success-strong"
-      >
-        <span className="flex items-baseline justify-center text-14 text-accent-primary stroke-success">
+      <CircularProgressIndicator percentage={completePercentage} strokeWidth={4} size={46}>
+        <span className="flex items-baseline justify-center text-14  stroke-success">
           <span className="font-semibold">{completePercentage}</span>
           <span>%</span>
         </span>

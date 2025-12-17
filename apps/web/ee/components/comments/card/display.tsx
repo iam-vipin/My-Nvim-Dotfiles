@@ -68,7 +68,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
             aria-hidden
           />
         )}
-        <div className="flex relative w-full gap-2 items-center">
+        <div className="flex relative w-full gap-2 items-center mb-3">
           <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
           <div className="flex-1 flex flex-wrap items-center gap-1">
             <div className="text-caption-sm-medium">{displayName}</div>

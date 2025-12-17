@@ -31,7 +31,7 @@ export function SidebarRoot(props: TSidebarRootProps) {
         storageKey={storageKey}
         defaultTab={defaultTab}
         containerClassName="gap-4"
-        tabPanelClassName="h-full"
+        tabPanelClassName="h-full overflow-hidden"
       />
     </SidebarWrapper>
   );

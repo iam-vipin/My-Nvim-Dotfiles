@@ -95,7 +95,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
   );
 
   return (
-    <div className="group/issue-type bg-layer-1/60 rounded-md">
+    <div className="group/issue-type bg-layer-1 rounded-md">
       <Collapsible
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}

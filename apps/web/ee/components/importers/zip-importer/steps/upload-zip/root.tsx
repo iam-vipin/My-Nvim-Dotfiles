@@ -269,12 +269,7 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
             <div className="flex items-center space-x-4">
               {isUploading || isConfirming ? (
                 <div className="w-10 h-10 flex items-center justify-center">
-                  <CircularProgressIndicator
-                    size={40}
-                    percentage={isConfirming ? 100 : uploadProgress}
-                    strokeWidth={4}
-                    strokeColor="stroke-custom-primary-100"
-                  >
+                  <CircularProgressIndicator size={40} percentage={isConfirming ? 100 : uploadProgress} strokeWidth={4}>
                     <span className="text-10 font-medium text-tertiary">
                       {isConfirming ? "..." : `${uploadProgress}%`}
                     </span>

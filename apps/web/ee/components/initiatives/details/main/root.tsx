@@ -26,7 +26,7 @@ export const InitiativeMainContentRoot = observer(function InitiativeMainContent
   const { initiativesSidebarCollapsed } = useAppTheme();
 
   return (
-    <MainWrapper isSidebarOpen={!initiativesSidebarCollapsed}>
+    <MainWrapper isSidebarOpen={!initiativesSidebarCollapsed} className="max-w-auto">
       <InitiativeInfoSection
         editorRef={editorRef}
         workspaceSlug={workspaceSlug}

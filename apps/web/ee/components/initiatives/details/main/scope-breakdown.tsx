@@ -54,7 +54,7 @@ function DataCard(props: TDataCardProps) {
         <div className="rounded-md flex gap-3 justify-between items-center">
           <div className="flex flex-col gap-3">
             <div className="flex gap-2 items-center">
-              <CircularProgressIndicator percentage={progress} strokeWidth={4} size={18} strokeColor="stroke-success" />
+              <CircularProgressIndicator percentage={progress} strokeWidth={4} size={18} />
               <span className="flex items-baseline text-13 justify-center">
                 <span>{progress}%</span>
               </span>

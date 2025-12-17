@@ -25,12 +25,7 @@ export const MilestoneTooltip: FC<Props> = function MilestoneTooltip({ title, wo
         {/* Progress and work items */}
         <div className="space-y-3 text-caption-sm-regular">
           <div className="flex items-center gap-1.5">
-            <CircularProgressIndicator
-              size={16}
-              percentage={progress}
-              strokeWidth={3}
-              strokeColor={cn(progress >= 100 ? "stroke-success" : "stroke-accent-primary")}
-            />
+            <CircularProgressIndicator size={16} percentage={progress} strokeWidth={3} />
             <span className="text-secondary text-caption-sm-medium">{Math.round(progress)}% Progress</span>
           </div>
           <div className="flex gap-2">

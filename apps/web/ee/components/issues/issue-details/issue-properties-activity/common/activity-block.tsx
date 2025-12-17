@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -42,16 +42,17 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
   if (!activityDetail) return <></>;
   return (
     <div
-      className={`relative flex items-center gap-3 text-11 ${
+      className={`relative flex items-center gap-3 text-caption-sm-regular ${
         ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
       }`}
       ref={activityBlockRef}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-layer-1" aria-hidden />
+      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-layer-3" aria-hidden />
       <div
         className={cn(
-          "flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden border-2 border-transparent flex justify-center items-center z-[4] bg-layer-1 text-secondary",
-          higlightedActivityIds.includes(activityId) ? "border-accent-strong" : ""
+          "flex-shrink-0 w-7 h-7 rounded-lg overflow-hidden flex justify-center items-center z-[4] bg-layer-2 text-secondary transition-border duration-1000 border border-subtle shadow-raised-100",
+          higlightedActivityIds.includes(activityId) ? "border-accent-strong" : "",
+          "text-secondary"
         )}
       >
         {propertyDetail?.logo_props?.in_use && (
@@ -67,7 +68,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
               isMobile={isMobile}
               tooltipContent={`${renderFormattedDate(activityDetail.created_at)}, ${renderFormattedTime(activityDetail.created_at)}`}
             >
-              <span className="whitespace-nowrap"> {calculateTimeAgo(activityDetail.created_at)}</span>
+              <span className="whitespace-nowrap text-tertiary"> {calculateTimeAgo(activityDetail.created_at)}</span>
             </Tooltip>
           </span>
         )}

@@ -85,14 +85,17 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
         </Header.LeftItem>
         <Header.RightItem>
           {customer && (
-            <div ref={parentRef} className="flex gap-2 items-center">
+            <div ref={parentRef} className="flex gap-2 items-center transition-colors duration-200">
               <button
                 type="button"
-                className="p-1 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
+                className={cn("p-1 rounded-sm outline-none bg-layer-1", {
+                  "bg-layer-1-selected": !customerDetailSidebarCollapsed,
+                  "hover:bg-layer-1-hover": customerDetailSidebarCollapsed,
+                })}
                 onClick={() => toggleCustomerDetailSidebar()}
               >
                 <PanelRight
-                  className={cn("h-4 w-4", !customerDetailSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")}
+                  className={cn("h-4 w-4", !customerDetailSidebarCollapsed ? "text-tertiary" : "text-secondary")}
                 />
               </button>
               <CustomerQuickActions

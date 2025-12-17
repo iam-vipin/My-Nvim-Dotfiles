@@ -25,6 +25,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import { ConvertWorkItemAction } from "../conversions";
 import { ProjectEpicQuickActions } from "../quick-actions/epic-quick-action";
+import { Button } from "@plane/propel/button";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -202,9 +203,9 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
             />
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
-            <button type="button" onClick={handleCopyText}>
+            <Button variant="secondary" size="lg" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
-            </button>
+            </Button>
           </Tooltip>
           {issue && (
             <div ref={parentRef} className="flex items-center gap-2">

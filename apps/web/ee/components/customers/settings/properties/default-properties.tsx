@@ -53,7 +53,7 @@ export function CustomerDefaultProperties() {
   // hooks
   const { t } = useTranslation();
   return (
-    <div className="group/issue-type bg-layer-1/60 rounded-md px-4">
+    <div className="group/issue-type bg-layer-1 rounded-md px-4">
       <Collapsible
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}

@@ -10,9 +10,15 @@ import type {
   TEditorMentionsResponse,
   TEditorMentionType,
   TPagesSummary,
+  TPaginationInfo,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
+
+// Paginated response type for pages
+export type TPagePaginatedResponse = TPaginationInfo & {
+  results: TPage[];
+};
 
 export class WorkspacePageService extends APIService {
   constructor() {
@@ -35,9 +41,20 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async fetchPagesByType(workspaceSlug: string, type: string, searchQuery?: string): Promise<TPage[]> {
+  async fetchPagesByType(
+    workspaceSlug: string,
+    type: string,
+    searchQuery?: string,
+    cursor?: string,
+    perPage: number = 20
+  ): Promise<TPagePaginatedResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/`, {
-      params: { search: searchQuery, type },
+      params: {
+        search: searchQuery,
+        type,
+        cursor,
+        per_page: perPage,
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {

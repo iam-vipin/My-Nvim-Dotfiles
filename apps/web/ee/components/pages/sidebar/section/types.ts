@@ -31,6 +31,9 @@ export interface SectionContentProps {
   sectionType: TPageNavigationTabs;
   expandedPageIds?: string[];
   setExpandedPageIds?: Dispatch<SetStateAction<string[]>>;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  fetchNextPage?: () => void;
 }
 
 // Props for main section component

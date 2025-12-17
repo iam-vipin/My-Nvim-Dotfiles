@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
@@ -23,11 +23,16 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
   sectionType,
   expandedPageIds,
   setExpandedPageIds,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
 }: SectionContentProps) {
   // Get current page ID to ensure it's always rendered
   const { pageId: currentPageId } = useParams();
   // store hooks
   const { getPageById } = usePageStore(EPageStoreType.WORKSPACE);
+  // refs for intersection observer (load more trigger)
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Placeholder for items not currently visible
   const renderPlaceholder = () => (
@@ -54,6 +59,31 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
 
     return false;
   };
+
+  // Set up intersection observer to trigger loading more pages
+  useEffect(() => {
+    const currentRef = loadMoreRef.current;
+    if (!currentRef || !fetchNextPage || !hasNextPage || isFetchingNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        rootMargin: "100px", // Start loading before reaching the bottom
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(currentRef);
+
+    return () => {
+      observer.unobserve(currentRef);
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const handleReorderPages = useCallback(
     (pageId: string, targetId: string, position: "before" | "after") => {
@@ -131,7 +161,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
                   expandedPageIds={expandedPageIds}
                   setExpandedPageIds={setExpandedPageIds}
                   sectionType={sectionType}
-                  isLastChild={index === pageIds.length - 1}
+                  isLastChild={index === pageIds.length - 1 && hasNextPage !== true}
                   handleReorderPages={handleReorderPages}
                 />
               </div>
@@ -152,12 +182,24 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
                   expandedPageIds={expandedPageIds}
                   setExpandedPageIds={setExpandedPageIds}
                   sectionType={sectionType}
-                  isLastChild={index === pageIds.length - 1}
+                  isLastChild={index === pageIds.length - 1 && hasNextPage !== true}
                   handleReorderPages={handleReorderPages}
                 />
               </RenderIfVisible>
             );
           })}
+          {hasNextPage && (
+            <div ref={loadMoreRef} className="flex items-center justify-center py-2">
+              {isFetchingNextPage ? (
+                <div className="flex items-center gap-2 text-custom-text-300">
+                  <Loader className="size-3 animate-spin" />
+                  <span className="text-xs">Loading more pages...</span>
+                </div>
+              ) : (
+                <div className="h-4" />
+              )}
+            </div>
+          )}
         </div>
       ) : (
         <p className="text-custom-text-400 text-11 text-center font-medium ml-1 mt-2">

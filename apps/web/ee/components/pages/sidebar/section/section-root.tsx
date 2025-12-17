@@ -62,7 +62,7 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
 
   // Custom hooks
   const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType, pageIds.length === 0);
-  const { isLoading } = useSectionPages(sectionType);
+  const { isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useSectionPages(sectionType);
 
   const sectionDetails = SECTION_DETAILS[sectionType];
   const sectionPages = useMemo(() => new Set(pageIds), [pageIds]);
@@ -209,6 +209,9 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
                   sectionType={sectionType}
                   expandedPageIds={expandedPageIds}
                   setExpandedPageIds={setExpandedPageIds}
+                  hasNextPage={hasNextPage}
+                  isFetchingNextPage={isFetchingNextPage}
+                  fetchNextPage={fetchNextPage}
                 />
               )}
             </Transition>

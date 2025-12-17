@@ -358,7 +358,7 @@ class WorkspacePageViewSet(BaseViewSet):
         if search:
             filters &= Q(name__icontains=search)
         if page_type == "private":
-            filters &= Q(access=1) & ~Q(id__in=user_pages)
+            filters &= Q(access=1) & ~Q(id__in=user_pages) & Q(archived_at__isnull=True)
         elif page_type == "archived":
             filters &= Q(archived_at__isnull=False)
         elif page_type == "public":
@@ -376,8 +376,14 @@ class WorkspacePageViewSet(BaseViewSet):
             .order_by("sort_order", "-created_at")
         )
 
-        pages = WorkspacePageSerializer(queryset, many=True).data
-        return Response(pages, status=status.HTTP_200_OK)
+        # This paginates the filtered results
+        return self.paginate(
+            request=request,
+            queryset=queryset,
+            on_results=lambda pages: WorkspacePageSerializer(pages, many=True).data,
+            default_per_page=20,
+            max_per_page=100,
+        )
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def archive(self, request, slug, page_id):

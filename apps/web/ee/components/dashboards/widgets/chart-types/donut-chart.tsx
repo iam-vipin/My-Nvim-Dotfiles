@@ -112,7 +112,7 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
           showCenterLabel
             ? {
                 text: totalCount,
-                fill: "rgba(var(--color-text-100))",
+                fill: "var(--text-color-primary)",
                 className: "text-20 font-semibold",
                 style: {
                   fontSize: ((height ?? 1) * 1.5) / totalCountDigits + "rem",

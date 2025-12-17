@@ -16,6 +16,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import type { TProject } from "@/plane-web/types";
+import { Tooltip } from "@plane/propel/tooltip";
 
 type THeroSection = {
   project: TProject;
@@ -159,7 +160,9 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
             )}
           />
         </form>
-        <div className="font-bold text-18">{project.name}</div>
+        <Tooltip tooltipContent={project.name} position="top">
+          <div className="font-bold text-18 pt-5 truncate">{project.name}</div>
+        </Tooltip>
       </div>
     </div>
   );

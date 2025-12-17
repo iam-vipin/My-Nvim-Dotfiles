@@ -48,7 +48,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col justify-between group/project-card border border-subtle bg-layer-1 hover:bg-layer-1-hover w-full rounded-lg overflow-hidden",
+        "flex flex-col justify-between group/project-card border border-subtle bg-layer-2 hover:shadow-raised-200 hover:border-strong w-full rounded-lg overflow-hidden duration-300 transition-all",
         {
           "bg-layer-1": isArchived,
         }

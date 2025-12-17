@@ -463,7 +463,7 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     return (
       <div
         className={cn(
-          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-surface-1 border border-subtle-1 cursor-default overflow-hidden"
+          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-surface-2 border border-subtle-1 cursor-default overflow-hidden"
         )}
         onDoubleClick={() => setIssuePropertyOperationMode("update")}
       >

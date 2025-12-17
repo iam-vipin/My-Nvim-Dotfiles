@@ -76,7 +76,7 @@ export const IssueTypesRoot = observer(function IssueTypesRoot(props: TIssueType
           },
         }}
       />
-      <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+      <div className="h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {isWorkItemTypeEnabled ? (
           <IssueTypesList
             onEditIssueTypeIdChange={handleEditIssueTypeIdChange}

@@ -41,19 +41,11 @@ const ActionItems = ({ pageUrl }: { pageUrl: string }) => {
     }
   };
   return (
-    <div className="flex items-center gap-1 text-xs text-custom-text-200">
-      <a
-        href={pageUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
-      >
+    <div className="flex items-center gap-3 text-xs text-custom-text-200 mt-1">
+      <a href={pageUrl} target="_blank" rel="noopener noreferrer" className="text-11 font-medium text-accent-primary">
         View page
       </a>
-      <button
-        onClick={copyToClipboard}
-        className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
-      >
+      <button onClick={copyToClipboard} className="text-11 font-medium text-accent-primary">
         {copied ? "Copied!" : "Copy link"}
       </button>
     </div>

@@ -182,7 +182,7 @@ export const AppConsent = observer(function AppConsent({
         </div>
       )}
 
-      <div className="flex flex-col gap-y-4 border border-custom-border-100 rounded-lg p-4 bg-surface-2 w-full md:min-w-[636px]">
+      <div className="flex flex-col gap-y-4 border border-subtle rounded-lg p-4 bg-surface-2 w-full md:min-w-[636px]">
         <div className="text-13 text-custom-text-300 font-medium">
           {t("workspace_settings.settings.applications.choose_workspace_to_connect_app_with")}
         </div>
@@ -203,7 +203,7 @@ export const AppConsent = observer(function AppConsent({
                 <ChevronDownIcon className="ml-auto h-4 w-4 text-custom-text-200" />
               </div>
             }
-            customButtonClassName="flex flex-grow border border-custom-border-200 rounded-md p-2 bg-surface-1 text-custom-text-200 text-13 w-40"
+            customButtonClassName="flex flex-grow border border-subtle-1 rounded-md p-2 bg-surface-1 text-custom-text-200 text-13 w-40"
             closeOnSelect
             disabled={disableDropdown}
           >
@@ -230,7 +230,7 @@ export const AppConsent = observer(function AppConsent({
                   app: application?.name,
                 })}
               </div>
-              <div className="flex flex-col space-y-2 py-2 border-b border-custom-border-200">
+              <div className="flex flex-col space-y-2 py-2 border-b border-subtle-1">
                 {workspaceLevelPermissions.map((permission) => (
                   <ApplicationPermissionText key={permission.key} permission={permission} />
                 ))}

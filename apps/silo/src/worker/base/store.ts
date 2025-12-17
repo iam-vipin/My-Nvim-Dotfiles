@@ -75,7 +75,18 @@ export class Store extends EventEmitter {
     await this.client.connect();
     await this.subscriber.connect();
 
-    await this.client.configSet("notify-keyspace-events", "Ex");
+    // Configure keyspace notifications - this may fail on ElastiCache
+    // as CONFIG command is often disabled. We'll try but not fail if it doesn't work.
+    try {
+      await this.client.configSet("notify-keyspace-events", "Ex");
+      logger.info("[Redis] Keyspace notifications enabled");
+    } catch (error) {
+      logger.warn(
+        "[Redis] Could not enable keyspace notifications (expected on ElastiCache, enable via Parameter Group instead):",
+        { error }
+      );
+    }
+
     await this.setupConnectionListeners();
     this.setupExpirationListener();
   }

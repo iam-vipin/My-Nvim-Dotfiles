@@ -43,7 +43,7 @@ export const ReasoningBlock = (props: TProps) => {
               }
             )}
           >
-            <div className="w-2 h-4 animate-vertical-scale bg-inverse" />
+            <div className="w-2 h-4 animate-vertical-scale bg-inverse shrink-0" />
             <div className={cn("flex gap-2 items-center text-body-sm-regular truncate")}>
               <span className="shimmer">{stripEmojis(currentTick || "Thinking")}</span>
             </div>

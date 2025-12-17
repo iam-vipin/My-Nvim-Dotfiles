@@ -136,10 +136,10 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
   return (
     <ModalCore isOpen={isOpen} handleClose={handleModalClose} position={EModalPosition.TOP} width={EModalWidth.SM}>
       <form onSubmit={(e) => void handleEditFormSubmit(e)}>
-        <div className="space-y-2 p-5">
-          <h3 className="text-h5-medium text-primary">Save this page in</h3>
+        <div className="p-5">
+          <h3 className="text-h5-medium text-primary mb-2">Save this page in</h3>
           {/* search project */}
-          <div className="space-y-1 flex-grow w-full">
+          <div className="flex-grow w-full">
             <Input
               id="name"
               type="text"

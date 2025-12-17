@@ -58,7 +58,7 @@ export const Header = observer(function Header(props: THeaderProps) {
                         setActiveModel={(model) => setActiveModel(activeChatId, model)}
                       />
                     ) : (
-                      <span className="text-body-xs-medium text-primary my-auto">Plane AI</span>
+                      <span className="text-body-xs-medium text-secondary my-auto">Plane AI</span>
                     )}
                     <BetaBadge />
                   </div>

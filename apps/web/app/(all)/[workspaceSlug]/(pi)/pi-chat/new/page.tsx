@@ -6,7 +6,7 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web imports
-import { NewConversation } from "@/plane-web/components/pi-chat/conversation/new-converstaion";
+
 import { InputBox } from "@/plane-web/components/pi-chat/input";
 
 function NewChatPage() {
@@ -18,7 +18,6 @@ function NewChatPage() {
       <PageHead title="Plane AI" />
       <div className="relative flex flex-col h-full flex-1 align-middle justify-center max-w-[780px] md:m-auto w-full">
         <div className={cn("flex-1 my-auto flex flex-co h-full mx-6 relative")}>
-          <NewConversation currentUser={currentUser} isFullScreen />
           {/* Chat Input */}
           <InputBox isFullScreen />
         </div>

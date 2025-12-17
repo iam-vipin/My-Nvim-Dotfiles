@@ -124,9 +124,9 @@ export const FocusFilter = observer(function FocusFilter(props: TProps) {
           <span className="text-tertiary font-medium">Ask AI to use data from:</span>
           <CustomSelect.Option
             value={`workspace_id%${workspace?.id}`}
-            className="text-13 text-secondary font-medium flex justify-start"
+            className="text-13 text-secondary font-medium flex justify-start items-center mb-2"
           >
-            <div className="flex flex-start gap-2 max-w-full">
+            <div className="flex flex-start gap-2 max-w-full items-center">
               <WorkspaceLogo
                 logo={workspace?.logo_url}
                 name={workspace?.name}

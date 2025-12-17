@@ -41,6 +41,7 @@ export const HomePageHeader = observer(function HomePageHeader() {
         {isWorkspaceAuthorized ? (
           <InputBox
             isFullScreen
+            onlyInput={true}
             isProjectLevel
             showProgress // Required since its taken to a whole different page
             className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"

@@ -8,7 +8,6 @@ import { scrollIntoViewHelper } from "../helper";
 import { SavePageModal } from "../modals/save-page-modal";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
-import { NewConversation } from "./new-converstaion";
 
 type TProps = {
   isLoading: boolean;
@@ -20,14 +19,7 @@ type TProps = {
 };
 
 export const Messages = observer(function Messages(props: TProps) {
-  const {
-    currentUser,
-    isLoading,
-    isFullScreen,
-    shouldRedirect = true,
-    isProjectLevel = false,
-    setHasMoreMessages,
-  } = props;
+  const { isLoading, setHasMoreMessages } = props;
   // store
   const { activeChat, regenerateAnswer, convertToPage } = usePiChat();
   // ref
@@ -109,16 +101,7 @@ export const Messages = observer(function Messages(props: TProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue?.length]);
 
-  if (!activeChat?.dialogue || activeChat?.dialogue.length === 0)
-    return (
-      <NewConversation
-        currentUser={currentUser}
-        isFullScreen={isFullScreen}
-        shouldRedirect={shouldRedirect}
-        isProjectLevel={isProjectLevel}
-      />
-    );
-
+  if (!activeChat?.dialogue || activeChat?.dialogue.length === 0) return;
   return (
     <div
       ref={containerRef}

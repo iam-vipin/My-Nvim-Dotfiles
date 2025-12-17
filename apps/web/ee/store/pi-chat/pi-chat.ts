@@ -332,6 +332,7 @@ export class PiChatStore implements IPiChatStore {
     } else {
       this.activeChatId = "";
       this.updateStorage({ chatId: "" });
+      this.isNewChat = true;
     }
     this.isAuthorized = true;
     this.isPiArtifactsDrawerOpen = undefined;
@@ -502,7 +503,6 @@ export class PiChatStore implements IPiChatStore {
           .retrieveTitle(chatId, workspaceId)
           .then((title: TSSETitleResponse) => {
             runInAction(() => {
-              this.isNewChat = false;
               update(this.chatMap, chatId, (chat: TChatHistory) => {
                 chat.title = title.title;
                 chat.last_modified = new Date().toISOString();
@@ -565,6 +565,7 @@ export class PiChatStore implements IPiChatStore {
     // Optimistically update conversation with user query
     runInAction(() => {
       this.isPiTypingMap[chatId] = true;
+      this.isNewChat = false;
       update(this.chatMap, chatId, (chat: TChatHistory) => {
         if (!chat) {
           chat = {

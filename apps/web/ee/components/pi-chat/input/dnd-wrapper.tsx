@@ -23,6 +23,7 @@ type Props = {
   isProjectLevel: boolean;
   focus: TFocus;
   mode: string;
+  showBg: boolean;
   createNewChat: (focus: TFocus, mode: string, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
   setAttachments: Dispatch<SetStateAction<TPiAttachment[]>>;
   children: (isUploading: boolean, open: () => void) => React.ReactNode;
@@ -40,6 +41,7 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
     focus,
     mode,
     children,
+    showBg,
   } = props;
 
   // state
@@ -168,9 +170,10 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
           tabIndex: 0,
           "aria-label": "Drop files here to upload",
           className: cn(
-            "relative w-full rounded-t-xl border border-transparent text-sm transition-colors focus:outline-none bg-surface-1",
+            "relative w-full rounded-t-xl border border-transparent text-sm transition-colors focus:outline-none",
             {
               "border-dashed border-accent-strong bg-accent-primary/10": isDragging,
+              "bg-layer-1": showBg,
             }
           ),
         })}
@@ -185,9 +188,6 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
           </div>
         )}
         {children(isUploading, open)}
-      </div>
-      <div className="text-caption-sm-regular text-disabled pt-2 text-center bg-surface-1">
-        Plane AI can make mistakes, please double-check responses.
       </div>
     </>
   );

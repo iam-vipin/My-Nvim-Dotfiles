@@ -36,7 +36,7 @@ export const ModelsDropdown = observer(function ModelsDropdown(props: TModelsDro
       placement="bottom-start"
       customButton={
         <button className="flex hover:bg-layer-1 p-2 rounded-md gap-1">
-          <span className="text-body-xs-medium my-auto text-primary">
+          <span className="text-body-xs-medium my-auto text-secondary">
             {" "}
             Plane AI {activeModel && `(${activeModel?.name})`}
           </span>

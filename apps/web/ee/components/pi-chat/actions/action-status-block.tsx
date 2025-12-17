@@ -91,7 +91,15 @@ function ActionStatusBlock(props: TProps) {
   return (
     <div className="flex flex-col gap-2">
       {action_error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-13 text-red-600">{action_error}</div>
+        <ConfirmBlock
+          title="Action failed"
+          summary={action_error}
+          isExecutingAction={isExecutingAction}
+          handleExecuteAction={handleExecuteAction}
+          workspaceId={workspaceId}
+          query_id={query_id}
+          buttonText="Try again"
+        />
       )}
       {shouldShowSummary && (
         <SummaryBlock

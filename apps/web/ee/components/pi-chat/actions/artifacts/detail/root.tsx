@@ -8,6 +8,7 @@ import { EpicDetail } from "./epic";
 import { Header } from "./header";
 import { ModuleDetail } from "./module";
 import { PageDetail } from "./page";
+import { ProjectDetail } from "./project";
 import { TemplateDetail } from "./template";
 import { WorkItemDetail } from "./work-item";
 
@@ -30,6 +31,8 @@ const DetailCardRenderer = observer(function DetailCardRenderer(props: {
       return <ModuleDetail {...props} />;
     case "cycle":
       return <CycleDetail {...props} />;
+    case "project":
+      return <ProjectDetail {...props} />;
     default:
       return <TemplateDetail {...props} />;
   }

@@ -1,30 +1,44 @@
 """Project artifact schema and field definitions."""
 
 from typing import Dict
-from typing import List
 from typing import Optional
 
 from pydantic import BaseModel
 
-# Field list for projects
-PROJECT_FIELDS = ["name", "description", "identifier", "priority", "start_date", "target_date", "state", "lead", "members"]
+# Field list for projects (matching edit modal fields)
+# Edit modal shows: name, description, logo_props (emoji/icon), cover_image, network, project_lead
+PROJECT_FIELDS = ["name", "description", "logo_props", "cover_image", "network", "project_lead"]
 
 
 class ProjectProperties(BaseModel):
-    """Properties specific to project artifacts."""
+    """Properties specific to project artifacts (matching edit modal)."""
 
+    # Edit modal fields
+    logo_props: Optional[Dict[str, str]] = None  # {"in_use": "emoji", "emoji": {"value": "8986"}}
+    emoji: Optional[str] = None  # Extracted emoji value
+    icon_prop: Optional[Dict[str, str]] = None  # Icon configuration
+    cover_image: Optional[str] = None  # Cover image URL
+    network: Optional[int] = None  # Network visibility: 0=private, 2=public
+    project_lead: Optional[str] = None  # Project lead user ID
+
+    # Other optional fields (not in edit modal)
     identifier: Optional[str] = None
-    priority: Optional[Dict[str, str]] = None  # {"name": "high"}
-    start_date: Optional[Dict[str, str]] = None  # {"name": "2025-10-15"}
-    target_date: Optional[Dict[str, str]] = None  # {"name": "2025-10-16"}
-    state: Optional[str] = None
-    lead: Optional[Dict[str, str]] = None  # {"id": "...", "name": "Lead User"}
-    members: Optional[List[Dict[str, str]]] = None  # [{"id": "...", "name": "Member"}]
+    default_assignee: Optional[str] = None
+    module_view: Optional[bool] = None
+    cycle_view: Optional[bool] = None
+    issue_views_view: Optional[bool] = None
+    page_view: Optional[bool] = None
+    intake_view: Optional[bool] = None
+    guest_view_all_features: Optional[bool] = None
+    archive_in: Optional[int] = None
+    close_in: Optional[int] = None
+    timezone: Optional[str] = None
 
 
 class ProjectArtifact(BaseModel):
-    """Complete project artifact schema."""
+    """Complete project artifact schema (matching edit modal structure)."""
 
     name: str
     description: Optional[str] = None
+    description_html: Optional[str] = None
     properties: Optional[ProjectProperties] = None

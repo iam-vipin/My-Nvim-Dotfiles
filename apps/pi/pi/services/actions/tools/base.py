@@ -227,6 +227,27 @@ class PlaneToolBase:
         return base_identifier
 
     @staticmethod
+    def generate_fallback_identifier(base_identifier: str) -> str:
+        """Generate a fallback identifier when the base identifier is already taken.
+
+        Keeps length stable and uses uppercase alphanumerics to match Plane identifier conventions.
+        """
+        if not base_identifier:
+            base_identifier = "PROJ"
+
+        ident = "".join(ch for ch in str(base_identifier).upper() if ch.isalnum() or ch == "_")
+        if not ident:
+            ident = "PROJ"
+
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        idx = int(time.time()) % len(alphabet)
+        replacement = alphabet[idx]
+
+        if len(ident) == 1:
+            return replacement
+        return ident[:-1] + replacement
+
+    @staticmethod
     def generate_fallback_name_identifier(base_name: str, base_identifier: str) -> Tuple[str, str]:
         """Generate fallback name and identifier with timestamp."""
         timestamp = str(int(time.time()))[-5:]  # Last 5 digits of timestamp

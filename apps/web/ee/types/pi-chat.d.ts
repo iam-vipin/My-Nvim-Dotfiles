@@ -283,5 +283,5 @@ export type TSSETitleResponse = {
 };
 
 // constants
-export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "cycle", "module"];
 export const PI_CHAT_ASSISTANT_KEY = "pi_chat_assistant";
+export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "project", "cycle", "module"];

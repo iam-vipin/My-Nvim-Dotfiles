@@ -113,7 +113,7 @@ export interface IPiChatStore {
     artifactId: string,
     query: string,
     messageId: string,
-    projectId: string,
+    projectId: string | undefined,
     workspace_id: string,
     chat_id: string,
     entity_type: string,
@@ -985,6 +985,8 @@ export class PiChatStore implements IPiChatStore {
     };
     try {
       dialogue.execution_status = EExecutionStatus.EXECUTING;
+      dialogue.action_error = undefined;
+
       this.updateDialogue(chatId, actionId, dialogue);
       // process artifact edits
       const artifactData: {
@@ -1053,7 +1055,7 @@ export class PiChatStore implements IPiChatStore {
     artifactId: string,
     query: string,
     messageId: string,
-    projectId: string,
+    projectId: string | undefined,
     workspace_id: string,
     chat_id: string,
     entity_type: string,

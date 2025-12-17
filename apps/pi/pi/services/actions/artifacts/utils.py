@@ -608,9 +608,9 @@ async def prepare_edited_artifact_data(entity_type: str, artifact_data: dict) ->
     edited_preparation_functions = {
         "workitem": prepare_edited_workitem_artifact_data,
         "epic": prepare_edited_workitem_artifact_data,
+        "project": prepare_edited_project_artifact_data,
         "cycle": prepare_edited_cycle_artifact_data,
         # TODO: Add other entity types later
-        # "project": prepare_edited_project_artifact_data,
         # "module": prepare_edited_module_artifact_data,
         # "comment": prepare_edited_comment_artifact_data,
         # "state": prepare_edited_state_artifact_data,
@@ -810,6 +810,65 @@ async def prepare_edited_workitem_artifact_data(artifact_data: dict) -> dict:
         log.info(f"Restored entity_info to clean workitem data: {entity_info}")
 
     return clean_data
+
+
+async def prepare_edited_project_artifact_data(artifact_data: dict) -> dict:
+    """Prepare edited project artifact data for execution.
+
+    Handles fields from edit modal:
+    - name
+    - description (always included, even if empty)
+    - cover_image_url → cover_image
+    - identifier
+    - network
+    - project_lead
+    """
+    result: dict[str, Any] = {}
+
+    # Process name (required)
+    if "name" in artifact_data:
+        result["name"] = artifact_data["name"]
+
+    # Process description (always include, even if empty - API requirement)
+    # Also handle description_html for UI compatibility
+    if "description" in artifact_data:
+        desc = artifact_data["description"] if artifact_data["description"] is not None else ""
+        result["description"] = desc
+        if "description_html" in artifact_data:
+            result["description_html"] = artifact_data["description_html"]
+        elif desc:
+            result["description_html"] = f"<p>{desc}</p>"
+        else:
+            result["description_html"] = ""
+    elif "description_html" in artifact_data:
+        result["description_html"] = artifact_data["description_html"]
+        result["description"] = artifact_data["description_html"]
+
+    # Process cover_image_url → cover_image
+    if "cover_image_url" in artifact_data and artifact_data["cover_image_url"]:
+        result["cover_image"] = artifact_data["cover_image_url"]
+
+    # Process identifier (only if not empty)
+    if "identifier" in artifact_data and artifact_data["identifier"]:
+        result["identifier"] = artifact_data["identifier"]
+
+    # Process network
+    if "network" in artifact_data and artifact_data["network"] is not None:
+        result["network"] = artifact_data["network"]
+
+    # Handle project_lead
+    if "project_lead" in artifact_data and artifact_data["project_lead"]:
+        project_lead = artifact_data["project_lead"]
+        if isinstance(project_lead, dict) and "id" in project_lead:
+            result["project_lead"] = project_lead["id"]
+        elif isinstance(project_lead, str):
+            result["project_lead"] = project_lead
+
+    if "logo_props" in artifact_data and artifact_data["logo_props"]:
+        result["logo_props"] = artifact_data["logo_props"]
+        result["icon_prop"] = artifact_data["logo_props"]
+
+    return result
 
 
 async def prepare_edited_unknown_artifact_data(artifact_data: dict) -> dict:
@@ -1386,9 +1445,8 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
                 tool_name = tn
 
     try:
-        if is_edited and artifact.entity == "workitem":
-            # Use special handling for edited workitem artifacts
-            # TODO: Handle other entities
+        if is_edited and artifact.entity in ["workitem", "project"]:
+            # Use special handling for edited artifacts
             enhanced_data = await prepare_edited_artifact_data(artifact.entity, artifact_data_to_use)
         else:
             # Use existing logic for unedited artifacts - pass action and entity_id for update operations

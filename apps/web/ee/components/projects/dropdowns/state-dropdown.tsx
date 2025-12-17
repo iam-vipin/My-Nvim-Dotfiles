@@ -44,7 +44,7 @@ export const StateDropdown = observer(function StateDropdown(props: TStateDropdo
             width={labelIconSize}
             height={labelIconSize}
           />
-        )}{" "}
+        )}
         {selectedState ? (
           <span className="flex-grow truncate">{selectedState?.name}</span>
         ) : (

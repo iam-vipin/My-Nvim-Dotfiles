@@ -66,7 +66,7 @@ export const PiChatArtifactsFooter = observer(function PiChatArtifactsFooter(pro
           >
             {(isSaving || showSavedToast) && <Toast error={error ?? null} isSaving={isSaving ?? false} />}
           </div>
-          {workspaceId && workspaceSlug && projectId && (
+          {workspaceId && workspaceSlug && (
             <FollowUpDetail
               projectId={projectId}
               workspaceId={workspaceId}

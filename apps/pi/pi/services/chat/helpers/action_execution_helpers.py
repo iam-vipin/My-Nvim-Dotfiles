@@ -164,6 +164,9 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
         "state_id": "state",  # SDK adapter handles state_id internally
         "lead_id": "lead",  # Module lead
         "member_ids": "members",  # Module members
+        "cover_image_url": "cover_image",
+        "logo_props": "logo_props",
+        "icon_prop": "icon_prop",
     }
 
     # Fields that cannot be set during creation (require separate API calls after creation)
@@ -195,6 +198,10 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
         if key == "description_html" and value == "":
             continue
 
+        # Skip empty identifier values (Plane rejects empty identifiers on update)
+        if key == "identifier" and isinstance(value, str) and value.strip() == "":
+            continue
+
         # Skip metadata fields that shouldn't be sent to tools
         if key in {"entity_info", "artifact_sub_type"}:
             continue
@@ -206,7 +213,15 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
 
         # Map artifact field names to tool parameter names
         mapped_key = ARTIFACT_TO_TOOL_MAPPING.get(key, key)
+
+        if mapped_key == "project_lead" and isinstance(value, dict) and value.get("id"):
+            value = value["id"]
+
         tool_params[mapped_key] = value
+
+        # Project logo/icon compatibility:
+        if mapped_key == "logo_props" and "icon_prop" not in tool_params:
+            tool_params["icon_prop"] = value
 
     log.debug(f"Extracted tool params for {entity_type} {action}: {list(tool_params.keys())}")
     return tool_params

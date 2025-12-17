@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
+
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -33,8 +33,14 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import ProjectAttributes from "./attributes";
 import { ProjectCreateLoader } from "./loader";
 import { ProjectCreationProvider } from "./provider";
+import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 
-export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormProps) {
+type TCreateProjectFormExtendedProps = TCreateProjectFormProps & {
+  dataResetProperties?: ReadonlyArray<string | number | boolean | null | Partial<TProject> | undefined>;
+  showActionButtons?: boolean;
+  onChange?: (data: Partial<TProject> | null) => void;
+};
+export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormExtendedProps) {
   return (
     <ProjectCreationProvider templateId={props.templateId}>
       <CreateProjectFormBase {...props} />
@@ -42,8 +48,18 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   );
 });
 
-export const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCreateProjectFormProps) {
-  const { setToFavorite, workspaceSlug, onClose, handleNextStep, data, updateCoverImageStatus } = props;
+export const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCreateProjectFormExtendedProps) {
+  const {
+    setToFavorite,
+    workspaceSlug,
+    onClose,
+    handleNextStep,
+    data,
+    updateCoverImageStatus,
+    showActionButtons = true,
+    onChange,
+    dataResetProperties = [],
+  } = props;
   // store
   const { addProjectToFavorites, createProject, updateProject } = useProject();
   const { projectCreationLoader, createProjectUsingTemplate } = useProjectAdvanced();
@@ -67,10 +83,11 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
     reValidateMode: "onChange",
   });
   const {
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty, dirtyFields },
     handleSubmit,
     reset,
     setValue,
+    watch,
   } = methods;
   // derived values
   const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
@@ -78,6 +95,13 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
   const isLoading = isSubmitting || isApplyingTemplate;
 
+  // Reset form when data prop changes
+  useEffect(() => {
+    if (data) {
+      reset({ ...getProjectFormValues(), ...data });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...dataResetProperties]);
   useEffect(() => {
     if (projectTemplateId) {
       handleTemplateChange({
@@ -98,6 +122,15 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
         message: "Couldn't remove the project from favorites. Please try again.",
       });
     });
+  };
+
+  const handleFormChange = () => {
+    if (!onChange) return;
+
+    // Check isDirty or if specific fields are dirty (for fields that may not update isDirty synchronously)
+    const isFormDirty = isDirty || Object.keys(dirtyFields).length > 0;
+    if (isFormDirty) onChange(watch());
+    else onChange(null);
   };
 
   const onSubmit = async (formData: Partial<TProject>) => {
@@ -261,7 +294,11 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
   return (
     <FormProvider {...methods}>
       <div className="p-3">
-        <ProjectCreateHeader handleClose={handleClose} />
+        <ProjectCreateHeader
+          handleClose={handleClose}
+          handleFormChange={handleFormChange}
+          isClosable={showActionButtons}
+        />
         <form onSubmit={handleSubmit(onSubmit)} className="px-3">
           <div className="mt-9 space-y-6 pb-5">
             <ProjectCommonAttributes
@@ -269,23 +306,27 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
               isMobile={isMobile}
               isChangeInIdentifierRequired={isChangeInIdentifierRequired}
               setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+              handleFormOnChange={handleFormChange}
             />
             <ProjectAttributes
               workspaceSlug={workspaceSlug}
               currentWorkspace={currentWorkspace}
               isProjectGroupingEnabled={isProjectGroupingEnabled}
               data={data}
+              handleFormOnChange={handleFormChange}
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-subtle">
-            <Button variant="secondary" onClick={handleClose} tabIndex={6}>
-              {t("common.cancel")}
-            </Button>
-            <Button variant="primary" type="submit" loading={isLoading} tabIndex={7}>
-              {isSubmitting ? t("common.creating") : t("create_project")}
-            </Button>
-          </div>
+          {showActionButtons && (
+            <div className="flex justify-end gap-2 pt-4 border-t border-subtle">
+              <Button variant="secondary" onClick={handleClose} tabIndex={6}>
+                {t("common.cancel")}
+              </Button>
+              <Button variant="primary" type="submit" loading={isLoading} tabIndex={7}>
+                {isSubmitting ? t("common.creating") : t("create_project")}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </FormProvider>

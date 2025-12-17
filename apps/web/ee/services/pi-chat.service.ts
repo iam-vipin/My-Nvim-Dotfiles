@@ -310,7 +310,7 @@ export class PiChatService extends APIService {
     current_artifact_data: TUpdatedArtifact,
     user_message_id: string,
     entity_type: string,
-    project_id: string
+    project_id: string | undefined
   ): Promise<TFollowUpResponse> {
     return this.post(`/api/v1/artifacts/${artifact_id}/followup/`, {
       query,

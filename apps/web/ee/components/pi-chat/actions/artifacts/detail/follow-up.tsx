@@ -8,11 +8,11 @@ import { cn } from "@plane/ui";
 import { isCommentEmpty } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import { useArtifactData } from "../useArtifactData";
 import type { TUpdatedArtifact } from "@/plane-web/types";
+import { useArtifactData } from "../useArtifactData";
 
 type TProps = {
-  projectId: string;
+  projectId?: string | undefined;
   workspaceId: string;
   workspaceSlug: string;
   activeChatId: string;

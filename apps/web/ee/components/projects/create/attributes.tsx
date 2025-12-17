@@ -31,7 +31,7 @@ function ProjectAttributes(props: Props) {
   // plane imports
   const { t } = useTranslation();
   // react-hook-form
-  const { control } = useFormContext<TProject>();
+  const { control, setValue } = useFormContext<TProject>();
   // store
   const { defaultState } = useWorkspaceProjectStates();
 
@@ -168,7 +168,11 @@ function ProjectAttributes(props: Props) {
                 <MemberDropdown
                   value={value ?? null}
                   onChange={(lead) => {
-                    onChange(lead === value ? null : lead);
+                    const newLead = lead === value ? null : lead;
+                    // Use setValue with shouldDirty to explicitly mark form as dirty
+                    setValue("project_lead", newLead, { shouldDirty: true });
+                    // Update Controller's field value to keep it in sync
+                    onChange(newLead);
                     handleFormOnChange?.();
                   }}
                   placeholder="Lead"

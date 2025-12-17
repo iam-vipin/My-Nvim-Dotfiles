@@ -9,6 +9,8 @@ from typing import Optional
 
 from langchain_core.tools import tool
 
+from pi.config import settings
+
 from .base import PlaneToolBase
 
 # Factory wired via CATEGORY_TO_PROVIDER in tools/__init__.py
@@ -17,6 +19,38 @@ from .base import PlaneToolBase
 
 def get_comment_tools(method_executor, context):
     """Return LangChain tools for the comments category using method_executor and context."""
+
+    async def _build_issue_entity(issue_id: str, comment_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """Build entity payload for comment actions.
+
+        - entity_url points to the parent issue (workitem) URL
+        - entity_type is "comment"
+        - entity_id is the comment_id when available (update/delete always, create best-effort)
+        - entity_name is left null for now (TODO)
+        """
+        try:
+            workspace_slug = context.get("workspace_slug") if isinstance(context, dict) else None
+            if not workspace_slug:
+                return None
+            from pi.agents.sql_agent.tools import construct_action_entity_url
+
+            url_info = await construct_action_entity_url({"id": str(issue_id)}, "workitem", workspace_slug, settings.plane_api.FRONTEND_URL)
+            if not url_info or not isinstance(url_info, dict):
+                return None
+            # Normalize expected keys for execute-action consumers
+            issue_identifier = url_info.get("issue_identifier")
+            entity: Dict[str, Any] = {
+                "entity_url": url_info.get("entity_url"),
+                "entity_name": None,
+                "entity_type": "comment",
+                "entity_id": str(comment_id) if comment_id else None,
+            }
+            if issue_identifier:
+                entity["issue_identifier"] = issue_identifier
+                entity["entity_identifier"] = issue_identifier
+            return entity
+        except Exception:
+            return None
 
     @tool
     async def comments_create(
@@ -58,7 +92,15 @@ def get_comment_tools(method_executor, context):
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully created comment", result["data"])
+            created_comment_id = None
+            try:
+                data = result.get("data") if isinstance(result, dict) else None
+                if isinstance(data, dict) and data.get("id"):
+                    created_comment_id = str(data["id"])
+            except Exception:
+                created_comment_id = None
+            entity = await _build_issue_entity(issue_id, comment_id=created_comment_id)
+            return PlaneToolBase.format_success_payload("Successfully created comment", result["data"], entity=entity)
         else:
             return PlaneToolBase.format_error_payload("Failed to create comment", result["error"])
 
@@ -190,7 +232,8 @@ def get_comment_tools(method_executor, context):
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully updated comment", result["data"])
+            entity = await _build_issue_entity(issue_id, comment_id=comment_id)
+            return PlaneToolBase.format_success_payload("Successfully updated comment", result["data"], entity=entity)
         else:
             return PlaneToolBase.format_error_payload("Failed to update comment", result["error"])
 
@@ -244,7 +287,8 @@ def get_comment_tools(method_executor, context):
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully deleted comment", result["data"])
+            entity = await _build_issue_entity(issue_id, comment_id=comment_id)
+            return PlaneToolBase.format_success_payload("Successfully deleted comment", result["data"], entity=entity)
         else:
             return PlaneToolBase.format_error_payload("Failed to delete comment", result["error"])
 

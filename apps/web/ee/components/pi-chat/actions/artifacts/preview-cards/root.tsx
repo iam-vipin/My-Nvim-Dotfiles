@@ -8,12 +8,15 @@ import { WorkItemPreviewCard } from "../preview-cards/work-item";
 import { AddRemovePreviewCard } from "./add-remove";
 import { DeleteArchivePreviewCard } from "./delete-archieve";
 import { TemplatePreviewCard } from "./template";
+import { CommentPreviewCard } from "./comment";
+import { WorklogPreviewCard } from "./worklogs";
 
 // --- Main PreviewCard Component ---
 export const PreviewCard = observer(function PreviewCard(props: { artifactId: string; type: string; action: string }) {
   const { artifactId, type, action } = props;
 
   // Special cases
+  if (type === "comment") return <CommentPreviewCard artifactId={artifactId} />;
   if (["add", "remove"].includes(action)) return <AddRemovePreviewCard artifactId={artifactId} />;
   if (["delete", "archive"].includes(action)) return <DeleteArchivePreviewCard artifactId={artifactId} />;
 
@@ -32,6 +35,10 @@ export const PreviewCard = observer(function PreviewCard(props: { artifactId: st
       return <ViewPreviewCard artifactId={artifactId} />;
     case "project":
       return <ProjectPreviewCard artifactId={artifactId} />;
+    case "comment":
+      return <CommentPreviewCard artifactId={artifactId} />;
+    case "worklog":
+      return <WorklogPreviewCard artifactId={artifactId} />;
     default:
       return <TemplatePreviewCard artifactId={artifactId} />;
   }

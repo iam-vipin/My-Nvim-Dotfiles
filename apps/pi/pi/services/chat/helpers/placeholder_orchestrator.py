@@ -21,6 +21,7 @@ from pydantic import Field
 
 from pi import logger
 from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENCY_RULES
+from pi.services.chat.helpers.entity_inference import infer_selected_entity
 
 log = logger.getChild(__name__)
 
@@ -451,6 +452,8 @@ IMPORTANT:
         message = result.get("message") or ""
         ok = bool(result.get("ok", True))
         entity_info = result.get("entity")
+        if ok and not entity_info:
+            entity_info = await infer_selected_entity(args, self.context, entity_type_hint=action.get("entity_type"))
 
         execution_result = {
             "tool_name": tool_name,

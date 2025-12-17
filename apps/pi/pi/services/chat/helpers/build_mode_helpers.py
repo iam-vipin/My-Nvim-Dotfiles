@@ -38,6 +38,7 @@ from pi.services.actions.registry import get_available_categories
 from pi.services.actions.registry import get_category_methods
 from pi.services.actions.tools.entity_search import get_entity_search_tools
 from pi.services.chat.helpers.action_property_mapper import map_tool_properties
+from pi.services.chat.helpers.planning_enrichment import enrich_planning_payload
 from pi.services.chat.helpers.tool_utils import TOOL_NAME_TO_CATEGORY_MAP
 from pi.services.chat.helpers.tool_utils import category_display_name
 from pi.services.chat.helpers.tool_utils import clean_tool_args_for_storage
@@ -519,19 +520,21 @@ async def plan_action_and_prepare_outputs(
         tool_args["workspace_slug"] = workspace_slug
         _tool_args["workspace_slug"] = workspace_slug
 
-    cleaned_args = clean_tool_args_for_storage(tool_args)
-
-    action_summary: Dict[str, Any] = {}
-
-    # Extract root keys from tool_name itself
     category = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {"action_type": "unknown", "entity_type": "unknown"})
     action_type = category["action_type"]
     artifact_type = category["entity_type"]
+
+    extras = await enrich_planning_payload(tool_args=tool_args, shadow_args=_tool_args, action_type=action_type, entity_type=artifact_type)
+
+    cleaned_args = clean_tool_args_for_storage(tool_args)
+
+    action_summary: Dict[str, Any] = {}
 
     action_summary = {
         "action": action_type,
         "artifact_type": artifact_type,
         "tool_name": tool_name,
+        **(extras or {}),
     }
 
     # Build parameters from tool_args

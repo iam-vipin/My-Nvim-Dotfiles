@@ -19,6 +19,7 @@ from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENC
 from pi.services.chat.helpers.action_execution_helpers import format_response
 from pi.services.chat.helpers.action_execution_helpers import load_artifacts
 from pi.services.chat.helpers.action_execution_helpers import update_flow_steps
+from pi.services.chat.helpers.entity_inference import infer_selected_entity
 from pi.services.chat.helpers.placeholder_orchestrator import PlaceholderOrchestrator
 
 log = logger.getChild(__name__)
@@ -139,6 +140,8 @@ class BuildModeToolExecutor:
         message = result.get("message") or ""
         ok = bool(result.get("ok", True))
         entity_info = result.get("entity")
+        if ok and not entity_info:
+            entity_info = await infer_selected_entity(args, context, entity_type_hint=entity_type)
 
         executed = {
             "tool_name": tool_name,

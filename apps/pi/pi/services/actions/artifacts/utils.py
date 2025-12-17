@@ -9,6 +9,7 @@ from pi import logger
 from pi.app.api.v1.helpers.plane_sql_queries import get_comment_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_name
+from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_label_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_label_name
 from pi.app.api.v1.helpers.plane_sql_queries import get_module_details_for_artifact
@@ -19,6 +20,7 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_by_id
 from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_user_name
 from pi.app.api.v1.helpers.plane_sql_queries import get_workitem_details_for_artifact
+from pi.config import settings
 from pi.services.retrievers.pg_store.action_artifact import get_latest_artifact_data_for_display
 
 log = logger.getChild(__name__)
@@ -400,6 +402,28 @@ async def populate_entity_info_from_artifact(
     issue_identifier = None
     entity_identifier = None
 
+    def _extract_issue_id_from_tool_args() -> Optional[str]:
+        try:
+            raw = getattr(artifact, "data", {}) or {}
+            tool_args = raw.get("tool_args_raw", {}) if isinstance(raw, dict) else {}
+            if isinstance(tool_args, dict) and tool_args.get("issue_id"):
+                return str(tool_args["issue_id"])
+        except Exception:
+            return None
+        return None
+
+    async def _populate_issue_link(issue_id: str) -> None:
+        nonlocal entity_url, issue_identifier, entity_identifier
+        issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+        if issue_info and isinstance(issue_info, dict):
+            ident = issue_info.get("identifier")
+            if ident:
+                issue_identifier = str(ident)
+                entity_identifier = issue_identifier
+                project_identifier = issue_info.get("project_identifier")
+                if project_identifier:
+                    entity_url = f"/projects/{project_identifier}/issues/{issue_identifier}"
+
     try:
         entity_details = None
 
@@ -437,9 +461,20 @@ async def populate_entity_info_from_artifact(
                 entity_name = entity_details.get("name")
 
         elif artifact.entity == "comment":
-            entity_details = await get_comment_details_for_artifact(entity_id)
-            if entity_details:
-                entity_name = f"Comment on {entity_details.get("workitem_name", "work item")}"
+            # Comment entity: keep entity_type as "comment" but link to the parent issue URL.
+            entity_type = "comment"
+            entity_name = None
+            issue_id = _extract_issue_id_from_tool_args()
+            if issue_id:
+                await _populate_issue_link(issue_id)
+
+        elif artifact.entity == "worklog":
+            # Worklog entity: keep entity_type as "worklog" but link to the parent issue URL.
+            entity_type = "worklog"
+            entity_name = None
+            issue_id = _extract_issue_id_from_tool_args()
+            if issue_id:
+                await _populate_issue_link(issue_id)
 
         elif artifact.entity == "page":
             entity_details = await get_page_details_for_artifact(entity_id)
@@ -1097,20 +1132,26 @@ async def prepare_module_artifact_data(module_data: dict):
         return module_data
 
 
-async def prepare_comment_artifact_data(comment_data: dict):
+async def prepare_comment_artifact_data(comment_data: dict) -> Optional[Dict[str, Any]]:
     """Prepare comment artifact data for enhanced UI display."""
     try:
+        original_entity_info = comment_data.get("entity_info") if isinstance(comment_data, dict) else None
+
         # For create operations, use the planning data
         if "planning_data" in comment_data:
             planning_data = comment_data["planning_data"]
             parameters = planning_data.get("parameters", {})
-            return normalize_parameters_structure(parameters, flatten_entities=False)
-
+            result: Optional[Dict[str, Any]] = normalize_parameters_structure(parameters, flatten_entities=False)
         # For update operations, fetch existing comment details
         elif "entity_id" in comment_data and comment_data["entity_id"]:
-            return await get_comment_details_for_artifact(comment_data["entity_id"])
+            result = await get_comment_details_for_artifact(comment_data["entity_id"])
+        else:
+            result = comment_data
 
-        return comment_data
+        if original_entity_info and isinstance(result, dict):
+            result["entity_info"] = original_entity_info
+
+        return result
 
     except Exception as e:
         log.error(f"Error preparing comment artifact data: {e}")
@@ -1121,16 +1162,19 @@ async def prepare_unknown_artifact_data(artifact_data: dict):
     """Prepare unknown entity artifact data for enhanced UI display."""
     log.info(f"Artifact data received in unknown type function: {artifact_data}")
     try:
-        # For unknown entities, return basic planning data
+        original_entity_info = artifact_data.get("entity_info") if isinstance(artifact_data, dict) else None
+
         if "planning_data" in artifact_data:
             planning_data = artifact_data["planning_data"]
-            return {
-                "action": planning_data.get("action", ""),
-                "tool_name": planning_data.get("tool_name", ""),
-                "parameters": planning_data.get("parameters", {}),
-            }
+            parameters = planning_data.get("parameters", {})
+            result = normalize_parameters_structure(parameters, flatten_entities=False) if isinstance(parameters, dict) else artifact_data
+        else:
+            result = artifact_data
 
-        return artifact_data
+        if original_entity_info and isinstance(result, dict):
+            result["entity_info"] = original_entity_info
+
+        return result
 
     except Exception as e:
         log.error(f"Error preparing unknown artifact data: {e}")
@@ -1333,6 +1377,14 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
 
     artifact_data_to_use, is_edited, actual_is_executed, actual_success = await get_latest_artifact_data_for_display(db, artifact)
 
+    tool_name: Optional[str] = None
+    if isinstance(artifact_data_to_use, dict):
+        pd = artifact_data_to_use.get("planning_data")
+        if isinstance(pd, dict):
+            tn = pd.get("tool_name")
+            if isinstance(tn, str) and tn:
+                tool_name = tn
+
     try:
         if is_edited and artifact.entity == "workitem":
             # Use special handling for edited workitem artifacts
@@ -1379,11 +1431,38 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
     elif actual_is_executed and artifact.entity_id:
         entity_id, entity_url, entity_name, entity_type, issue_identifier, entity_identifier = await populate_entity_info_from_artifact(artifact)
 
+    # Always return absolute entity_url (FE expects domain included)
+    if isinstance(entity_url, str) and entity_url.startswith("/"):
+        base = str(getattr(settings.plane_api, "FRONTEND_URL", "") or "").rstrip("/")
+        if base:
+            entity_url = f"{base}{entity_url}"
+
+    if isinstance(clean_parameters, dict):
+        if (
+            "action" in clean_parameters
+            and "tool_name" in clean_parameters
+            and "parameters" in clean_parameters
+            and isinstance(clean_parameters.get("parameters"), dict)
+        ):
+            tn = clean_parameters.get("tool_name")
+            if tool_name is None and isinstance(tn, str) and tn:
+                tool_name = tn
+            clean_parameters = clean_parameters["parameters"].copy()
+        elif "planning_data" in clean_parameters and isinstance(clean_parameters.get("planning_data"), dict):
+            pd = clean_parameters.get("planning_data", {})
+            tn = pd.get("tool_name")
+            if tool_name is None and isinstance(tn, str) and tn:
+                tool_name = tn
+            inner = pd.get("parameters")
+            if isinstance(inner, dict):
+                clean_parameters = inner.copy()
+
     return {
         "artifact_id": str(artifact.id),
         "sequence": artifact.sequence,
         "artifact_type": artifact.entity,
         "action": artifact.action,
+        "tool_name": tool_name,
         "parameters": serialize_for_json(clean_parameters),
         "message_id": str(artifact.message_id) if artifact.message_id else None,
         "is_executed": actual_is_executed,  # Use actual source

@@ -46,7 +46,7 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"
-        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
+        className="flex-shrink-0 flex items-center justify-center size-[26px] rounded"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;

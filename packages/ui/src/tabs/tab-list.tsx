@@ -38,7 +38,7 @@ function TabListInner({ tabs, tabListClassName, tabClassName, size = "md", selec
     <Tab.List
       as="div"
       className={cn(
-        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1/60",
+        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1",
         tabListClassName
       )}
     >

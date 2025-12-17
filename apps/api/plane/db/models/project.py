@@ -170,6 +170,11 @@ class Project(BaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
+    def __init__(self, *args, **kwargs):
+        # Track if timezone is provided, if so, don't override it with the workspace timezone when saving
+        self.is_timezone_provided = kwargs.get("timezone") is not None
+        super().__init__(*args, **kwargs)
+
     objects = ProjectBaseManager()
 
     @property
@@ -211,9 +216,17 @@ class Project(BaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        from plane.db.models import Workspace
+
         self.identifier = self.identifier.strip().upper()
+        
         # check is_adding value before calling super().save()
         is_adding = self._state.adding
+
+        if is_adding and not self.is_timezone_provided:
+            workspace = Workspace.objects.get(id=self.workspace_id)
+            self.timezone = workspace.timezone
+
         project = super().save(*args, **kwargs)
         # Add app bots to the newly created project
         if is_adding:

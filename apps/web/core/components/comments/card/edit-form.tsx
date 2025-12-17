@@ -105,14 +105,14 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           }}
         />
       </div>
-      <div className="flex gap-1 self-end">
+      <div className="flex gap-2 self-end">
         {!isEmpty && (
           <button
             type="button"
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
             className={cn(
-              "group rounded-sm border p-2 shadow-md duration-300",
+              "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
               isDisabled
                 ? "cursor-not-allowed border-green-500/50 bg-green-500/10"
                 : "border-green-500 bg-green-500/20 hover:bg-green-500"
@@ -120,7 +120,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           >
             <Check
               className={cn(
-                "h-3 w-3 duration-300",
+                "size-4 duration-300",
                 isDisabled ? "text-green-500/50" : "text-green-500 group-hover:text-on-color"
               )}
             />
@@ -130,7 +130,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           type="button"
           disabled={isSubmitting}
           className={cn(
-            "group rounded-sm border p-2 shadow-md duration-300",
+            "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
             isSubmitting
               ? "cursor-not-allowed border-red-500/50 bg-red-500/10"
               : "border-red-500 bg-red-500/20 hover:bg-red-500"
@@ -142,7 +142,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
         >
           <CloseIcon
             className={cn(
-              "size-3 duration-300",
+              "size-5 duration-300",
               isSubmitting ? "text-red-500/50" : "text-red-500 group-hover:text-on-color"
             )}
           />

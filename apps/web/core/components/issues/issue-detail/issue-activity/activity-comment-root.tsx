@@ -67,11 +67,13 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
           <CommentCard
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
+            entityId={issueId}
             comment={comment}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={!!showAccessSpecifier}
             showCopyLinkOption={!isIntakeIssue}
+            enableReplies
             disabled={disabled}
             projectId={projectId}
           />

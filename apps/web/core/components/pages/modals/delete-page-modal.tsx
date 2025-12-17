@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
 import { useParams } from "next/navigation";
+// plane imports
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-// plane web hooks
+// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
 // store
@@ -21,15 +23,17 @@ type TConfirmPageDeletionProps = {
   onClose: () => void;
   page: TPageInstance;
   storeType: EPageStoreType;
+  editorRef?: React.MutableRefObject<EditorRefApi | null>;
 };
 
 export const DeletePageModal = observer(function DeletePageModal(props: TConfirmPageDeletionProps) {
-  const { isOpen, onClose, page, storeType } = props;
+  const { isOpen, onClose, page, storeType, editorRef } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { removePage } = usePageStore(storeType);
-
+  const router = useAppRouter();
+  if (!page || !page.id) return null;
   // derived values
   const { id: pageId, name } = page;
 
@@ -38,7 +42,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
     onClose();
   };
 
-  const router = useAppRouter();
   const { pageId: routePageId } = useParams();
 
   const handleDelete = async () => {
@@ -52,6 +55,11 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
             id: pageId,
           },
         });
+        editorRef?.current?.findAndDeleteNode(
+          { attribute: "entity_identifier", value: page.id ?? "" },
+          "pageEmbedComponent"
+        );
+
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,

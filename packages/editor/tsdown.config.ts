@@ -4,6 +4,7 @@ export default defineConfig({
   entry: ["src/index.ts", "src/lib.ts"],
   format: ["esm"],
   dts: true,
+  clean: false,
   copy: ["src/styles"],
   exports: {
     customExports: (exports) => ({

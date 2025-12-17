@@ -1,0 +1,92 @@
+import { set } from "lodash-es";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import type { TIntakeTypeForm } from "@plane/types";
+
+export interface IIntakeTypeFormInstance {
+  id: string;
+  name: string;
+  work_item_type: string;
+  form_fields: string[];
+  is_active: boolean;
+  description?: string;
+  anchor?: string;
+  mutateInstance: (data: Partial<TIntakeTypeForm>) => void;
+  update: () => Promise<TIntakeTypeForm>;
+}
+
+export class IntakeTypeFormInstance implements IIntakeTypeFormInstance {
+  // observables
+  id: string;
+  name: string;
+  form_fields: string[] = [];
+  is_active: boolean;
+  description?: string;
+  anchor?: string;
+  work_item_type: string;
+
+  // services
+  updateCallback: (data: Partial<TIntakeTypeForm>) => Promise<TIntakeTypeForm>;
+
+  constructor(data: TIntakeTypeForm, updateCallback: (data: Partial<TIntakeTypeForm>) => Promise<TIntakeTypeForm>) {
+    this.id = data.id;
+    this.name = data.name;
+    this.work_item_type = data.work_item_type;
+    this.form_fields = data.form_fields;
+    this.is_active = data.is_active ?? false;
+    this.description = data.description;
+    this.anchor = data.anchor;
+
+    // services
+    this.updateCallback = updateCallback;
+
+    makeObservable(this, {
+      // observables
+      id: observable,
+      work_item_type: observable,
+      form_fields: observable,
+      is_active: observable,
+      description: observable,
+      anchor: observable,
+      // actions
+      mutateInstance: action,
+      update: action,
+    });
+  }
+
+  get asJSON(): TIntakeTypeForm {
+    return {
+      id: this.id,
+      name: this.name,
+      work_item_type: this.work_item_type,
+      form_fields: this.form_fields,
+      is_active: this.is_active,
+      description: this.description,
+      anchor: this.anchor,
+    };
+  }
+
+  // actions
+  mutateInstance = (data: Partial<TIntakeTypeForm>) => {
+    runInAction(() => {
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const keyType = key as keyof TIntakeTypeForm;
+          set(this, keyType, data[keyType]);
+        }
+      }
+    });
+  };
+
+  update = async () => {
+    try {
+      const typeForm = await this.updateCallback({
+        ...this.asJSON,
+      });
+      this.mutateInstance(typeForm);
+      return typeForm;
+    } catch (error) {
+      console.error("Error updating type form", error);
+      throw error;
+    }
+  };
+}

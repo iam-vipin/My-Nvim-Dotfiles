@@ -37,13 +37,13 @@ export const ReadonlyEstimate = observer(function ReadonlyEstimate(props: TReado
 
   useEffect(() => {
     if (projectId) {
-      getProjectEstimates(workspaceSlug, projectId);
+      void getProjectEstimates(workspaceSlug, projectId);
     }
-  }, [projectId, workspaceSlug]);
+  }, [projectId, workspaceSlug, getProjectEstimates]);
 
   return (
-    <div className={cn("flex items-center gap-1 text-13", className)}>
-      {!hideIcon && <EstimatePropertyIcon className="size-4 flex-shrink-0" />}
+    <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
+      {!hideIcon && <EstimatePropertyIcon className="size-4 shrink-0" />}
       <span className="flex-grow truncate">{displayValue ?? placeholder ?? t("common.none")}</span>
     </div>
   );

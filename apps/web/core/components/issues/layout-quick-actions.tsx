@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -13,7 +11,7 @@ type Props = {
   storeType: "PROJECT" | "EPIC";
 };
 
-export const LayoutQuickActions: React.FC<Props> = observer((props) => {
+export const LayoutQuickActions = observer(function LayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId, storeType } = props;
 
   const layoutLink = `${workspaceSlug}/projects/${projectId}/${storeType === "EPIC" ? "epics" : "issues"}`;
@@ -48,7 +46,7 @@ export const LayoutQuickActions: React.FC<Props> = observer((props) => {
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"
-        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -57,7 +55,7 @@ export const LayoutQuickActions: React.FC<Props> = observer((props) => {
               key={item.key}
               onClick={item.action}
               className={cn("flex items-center gap-2", {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               })}
               disabled={item.disabled}
             >

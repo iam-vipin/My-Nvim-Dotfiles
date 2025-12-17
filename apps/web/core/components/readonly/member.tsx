@@ -38,8 +38,8 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
   if (multiple) {
     return (
       <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
-        {!hideIcon && Icon && <Icon className="size-3 shrink-0" />}
-        <ButtonAvatars showTooltip={false} userIds={memberIds} size="sm" />
+        {!hideIcon && Icon && <Icon className="h-3 w-3 flex-shrink-0" />}
+        <ButtonAvatars showTooltip={false} userIds={memberIds} />
       </div>
     );
   }
@@ -48,7 +48,7 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
 
   return (
     <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
-      {!hideIcon && Icon && <Icon className="size-4 shrink-0" />}
+      {!hideIcon && Icon && <Icon className="size-4 flex-shrink-0" />}
       <div className="flex items-center gap-2">
         <div className="size-4 rounded-full bg-layer-1 flex items-center justify-center">
           <span className="text-body-xs-medium">

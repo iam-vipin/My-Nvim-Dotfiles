@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import type { TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // assets
@@ -13,23 +13,19 @@ import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?u
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
-import { IssueDetailRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-// assets
-// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane-web components
-import { EpicDetailRoot } from "@/plane-web/components/epics/details/root";
+// plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
+
 import type { Route } from "./+types/page";
 
-function IssueDetailsPage({ params }: Route.ComponentProps) {
-  // refs
-  const editorRef = useRef<EditorRefApi>(null);
+export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
   const { workspaceSlug, workItem } = params;
@@ -47,8 +43,9 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
   const [projectIdentifier, sequence_id] = workItem.split("-");
 
   // fetching issue details
-  const { data, isLoading, error } = useSWR(`ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`, () =>
-    fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
+  const { data, isLoading, error } = useSWR<TIssue, Error>(
+    `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`,
+    () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
   );
 
   // derived values
@@ -85,67 +82,56 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
     if (data?.is_intake) {
       router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
     }
-  }, [workspaceSlug, data]);
+  }, [workspaceSlug, data, router]);
+
+  if (error && !isLoading) {
+    return (
+      <EmptyState
+        image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
+        title={t("issue.empty_state.issue_detail.title")}
+        description={t("issue.empty_state.issue_detail.description")}
+        primaryButton={{
+          text: t("issue.empty_state.issue_detail.primary_button.text"),
+          onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
+        }}
+      />
+    );
+  }
+
+  if (issueLoader) {
+    return (
+      <Loader className="flex h-full gap-5 p-5">
+        <div className="basis-2/3 space-y-2">
+          <Loader.Item height="30px" width="40%" />
+          <Loader.Item height="15px" width="60%" />
+          <Loader.Item height="15px" width="60%" />
+          <Loader.Item height="15px" width="40%" />
+        </div>
+        <div className="basis-1/3 space-y-3">
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+        </div>
+      </Loader>
+    );
+  }
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-        {error && !issueLoader ? (
-          <EmptyState
-            image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-            title={t("issue.empty_state.issue_detail.title")}
-            description={t("issue.empty_state.issue_detail.description")}
-            primaryButton={{
-              text: t("issue.empty_state.issue_detail.primary_button.text"),
-              onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
-            }}
+      {workspaceSlug && projectId && issueId && (
+        <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+          <WorkItemDetailRoot
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            issueId={issueId.toString()}
+            issue={issue}
           />
-        ) : issueLoader ? (
-          <Loader className="flex h-full gap-5 p-5">
-            <div className="basis-2/3 space-y-2">
-              <Loader.Item height="30px" width="40%" />
-              <Loader.Item height="15px" width="60%" />
-              <Loader.Item height="15px" width="60%" />
-              <Loader.Item height="15px" width="40%" />
-            </div>
-            <div className="basis-1/3 space-y-3">
-              <Loader.Item height="30px" />
-              <Loader.Item height="30px" />
-              <Loader.Item height="30px" />
-              <Loader.Item height="30px" />
-            </div>
-          </Loader>
-        ) : (
-          workspaceSlug &&
-          projectId &&
-          issueId && (
-            <>
-              {issue?.is_epic ? (
-                <>
-                  <EpicDetailRoot
-                    editorRef={editorRef}
-                    workspaceSlug={workspaceSlug.toString()}
-                    projectId={projectId.toString()}
-                    epicId={issueId.toString()}
-                  />
-                </>
-              ) : (
-                <>
-                  <IssueDetailRoot
-                    workspaceSlug={workspaceSlug.toString()}
-                    projectId={projectId.toString()}
-                    issueId={issueId.toString()}
-                    is_archived={!!issue?.archived_at}
-                  />
-                </>
-              )}
-            </>
-          )
-        )}
-      </ProjectAuthWrapper>
+        </ProjectAuthWrapper>
+      )}
     </>
   );
-}
+});
 
-export default observer(IssueDetailsPage);
+export default IssueDetailsPage;

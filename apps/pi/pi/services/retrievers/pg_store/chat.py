@@ -413,7 +413,7 @@ async def retrieve_chat_history(
             select(Message)
             .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
             .where(~Message.is_replaced)  # type: ignore[arg-type]
-            .where(Message.source != "app")  # type: ignore[arg-type]
+            .where((Message.source != "app") | (Message.source.is_(None)))  # type: ignore[arg-type,union-attr]
             .order_by(Message.sequence)  # type: ignore[arg-type]
         )
         message_result = await db.execute(message_query)

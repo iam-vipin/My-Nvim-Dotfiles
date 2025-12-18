@@ -316,7 +316,7 @@ class ArtifactFollowupService:
 
         except Exception as e:
             log.error(f"Error processing followup query: {e}")
-            return {"modified_json": current_artifact_data, "change_summary": f"Error processing followup query", "success": False}
+            return {"modified_json": current_artifact_data, "change_summary": "Error processing followup query", "success": False}
 
     def _build_context(self, current_data: Dict[str, Any], query: str, previous_queries: List[str], entity_type: str, user_id: str) -> Dict[str, Any]:
         """Build context for LLM processing."""
@@ -655,7 +655,11 @@ async def generate_followup_artifact_data(
 
         if not workspace_slug:
             log.warning(f"Could not resolve workspace slug for workspace {workspace_id}")
-            return {"modified_json": current_artifact_data, "change_summary": f"Could not resolve workspace slug for workspace {workspace_id}", "success": False}
+            return {
+                "modified_json": current_artifact_data,
+                "change_summary": f"Could not resolve workspace slug for workspace {workspace_id}",
+                "success": False,
+            }
 
         # Create and execute followup service
         followup_service = ArtifactFollowupService(chatbot=chatbot, workspace_slug=workspace_slug, project_id=str(project_id) if project_id else None)
@@ -674,7 +678,7 @@ async def generate_followup_artifact_data(
 
     except Exception as e:
         log.error(f"Error generating followup artifact data: {e}")
-        return {"modified_json": current_artifact_data, "change_summary": f"Error generating followup artifact data", "success": False}
+        return {"modified_json": current_artifact_data, "change_summary": "Error generating followup artifact data", "success": False}
 
 
 async def handle_artifact_prompt_followup(
@@ -728,7 +732,7 @@ async def handle_artifact_prompt_followup(
 
     except Exception as e:
         log.error(f"Error handling artifact prompt followup: {e}")
-        return {"artifact_data": current_artifact_data, "change_summary": f"Error handling artifact prompt followup", "success": False}
+        return {"artifact_data": current_artifact_data, "change_summary": "Error handling artifact prompt followup", "success": False}
 
 
 async def _analyze_query_requirements(

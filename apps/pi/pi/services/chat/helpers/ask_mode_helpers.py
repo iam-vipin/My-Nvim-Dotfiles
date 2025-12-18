@@ -22,7 +22,6 @@ from pi.app.models.enums import MessageMetaStepType
 from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 from pi.services.chat.utils import StandardAgentResponse
 from pi.services.chat.utils import get_current_timestamp_context
-from pi.services.chat.utils import mask_uuids_in_text
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.chat.utils import resolve_workspace_slug
 from pi.services.chat.utils import standardize_flow_step_content
@@ -389,10 +388,15 @@ async def record_preset_routing_step(*, query_id: UUID4, chat_id: UUID4, step_or
 
 async def process_preset_reasoning_messages(reasoning_messages: List[str], reasoning_container: dict) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """Yield preset reasoning messages as special reasoning blocks."""
+    log.info(f"Reasoning messages: {reasoning_messages}")
+
     for reasoning_msg in reasoning_messages:
-        masked_reasoning_msg = mask_uuids_in_text(reasoning_msg)
-        stage = "ask_preset_reasoning"
-        reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=masked_reasoning_msg)
+        reasoning_chunk_dict = {
+            "chunk_type": "reasoning",
+            "header": reasoning_msg,
+            "content": "",
+            "stage": "ask_preset_reasoning",
+        }
         reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
         yield reasoning_chunk_dict
 

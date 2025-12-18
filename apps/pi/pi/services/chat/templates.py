@@ -62,7 +62,7 @@ def preset_question_flow(question: str) -> List[Dict[str, Any]]:
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for urgent work items query",
+                    "🎯 Using optimized path for urgent work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'urgent work items assigned to me'",
                 ],
                 "agents": [
@@ -94,7 +94,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for assigned work items query",
+                    "🎯 Using optimized path for assigned work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'work items assigned to me and not yet completed along with start and end dates, priorities'",  # noqa: E501
                 ],
                 "agents": [
@@ -130,7 +130,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for overdue work items query",
+                    "🎯 Using optimized path for overdue work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'overdue work items assigned to me'",
                 ],
                 "agents": [
@@ -165,7 +165,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for completed work items query",
+                    "🎯 Using optimized path for completed work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'work items I completed this week'",
                 ],
                 "agents": [
@@ -202,7 +202,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for current work items query",
+                    "🎯 Using optimized path for current work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'work items I am currently working on'",
                 ],
                 "agents": [
@@ -237,7 +237,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for blocked work items query",
+                    "🎯 Using optimized path for blocked work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'blocked work items assigned to me and their blocking issues'",
                 ],
                 "agents": [
@@ -276,7 +276,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for recent commenters query",
+                    "🎯 Using optimized path for recent commenters query\n\n",
                     "🔧 Performing database querying to pull details about: 'users who recently commented on my work items'",
                 ],
                 "agents": [
@@ -322,7 +322,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for today's work item changes query",
+                    "🎯 Using optimized path for today's work item changes query\n\n",
                     "🔧 Performing database querying to pull details about: 'changes made to my pending work items today'",
                 ],
                 "agents": [
@@ -364,7 +364,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for recent activity query",
+                    "🎯 Using optimized path for recent activity query\n\n",
                     "🔧 Performing database querying to pull details about: 'recent activity on my pending work items'",
                 ],
                 "agents": [
@@ -413,7 +413,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for active cycle progress query",
+                    "🎯 Using optimized path for active cycle progress query\n\n",
                     "🔧 Performing database querying to pull details about: 'progress of work items in current active cycles'",
                 ],
                 "agents": [

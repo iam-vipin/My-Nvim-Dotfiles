@@ -70,7 +70,7 @@ async def get_answer(
     except Exception as e:
         log.error(f"Error validating JWT: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
-        
+
     # Pre-validate required fields
     if data.workspace_in_context and not (data.workspace_id or data.project_id):
         # currently mobile not providing focus. so, set project_id as None
@@ -141,13 +141,13 @@ async def get_answer(
                                     if "reasoning" in chunk and isinstance(chunk.get("reasoning"), str):
                                         # Already has {"reasoning": "text"} structure, send directly
                                         bwc_chunk = f"{chunk["header"]}{chunk["content"]}"
-                                        yield f"event: reasoning\ndata: {bwc_chunk}"
+                                        yield f"event: reasoning\ndata: {bwc_chunk}\n\n"
                                     else:
                                         # Till the mobile team updates the app to support json format, we need to yield the chunk as a string
                                         bwc_payload = f"{chunk["header"]}{chunk["content"]}"
                                         # payload = {'header': chunk.get('header', ''), 'content': chunk.get('content', '')}
                                         # yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
-                                        yield f"event: reasoning\ndata: {bwc_payload}"
+                                        yield f"event: reasoning\ndata: {bwc_payload}\n\n"
                                 else:
                                     # Check if dict already has proper chunk structure to avoid double-wrapping
                                     if "chunk" in chunk and isinstance(chunk.get("chunk"), str):

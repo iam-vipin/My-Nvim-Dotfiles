@@ -159,10 +159,11 @@ def get_project_tools(method_executor, context):
                 if "name" in error_msg and "identifier" not in error_msg:
                     # Name conflict - inform user to choose a different name
                     log.info(f"Project name '{name}' already exists. Error: {result["error"]}\nPayload: {payload}")
-                    return PlaneToolBase.format_error_response(
+                    error_payload: Dict[str, Any] = PlaneToolBase.format_error_payload(
                         f"Failed to create project: A project with the name '{name}' already exists. Please choose a different name.",
                         result["error"],
                     )
+                    return error_payload
                 else:
                     # Identifier conflict - retry with new identifier
                     new_identifier = PlaneToolBase.generate_fallback_identifier(base_identifier)
@@ -170,7 +171,7 @@ def get_project_tools(method_executor, context):
                     retry_result = await method_executor.execute("projects", "create", **payload)
 
                     if retry_result["success"]:
-                        return await PlaneToolBase.format_success_response_with_url(
+                        return await PlaneToolBase.format_success_payload_with_url(
                             f"Successfully created project '{name}' with identifier '{new_identifier}' (original '{base_identifier}' was taken)",
                             retry_result["data"],
                             "project",
@@ -178,7 +179,10 @@ def get_project_tools(method_executor, context):
                         )
                     else:
                         log.info(f"Failed to create project. Error: {retry_result["error"]}\nPayload: {payload}")
-                        return PlaneToolBase.format_error_response("Failed to create project even with alternative identifier", retry_result["error"])
+                        error_payload_retry: Dict[str, Any] = PlaneToolBase.format_error_payload(
+                            "Failed to create project even with alternative identifier", retry_result["error"]
+                        )
+                        return error_payload_retry
             else:
                 # Check if project was actually created despite the error (e.g. timeout)
                 try:
@@ -372,11 +376,8 @@ def get_project_tools(method_executor, context):
 
         # Other optional fields
         # Plane rejects empty identifier updates; only send when non-empty
-        if isinstance(identifier, str):
-            if identifier.strip():
-                update_data["identifier"] = identifier.strip()
-        elif identifier is not None:
-            update_data["identifier"] = identifier
+        if identifier is not None and isinstance(identifier, str) and identifier.strip():
+            update_data["identifier"] = identifier.strip()
         if default_assignee is not None:
             update_data["default_assignee"] = default_assignee
         if module_view is not None:

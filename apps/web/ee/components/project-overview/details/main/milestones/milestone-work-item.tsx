@@ -81,7 +81,7 @@ export const MilestoneWorkItem = observer(function MilestoneWorkItem(props: TPro
 
   return (
     <ControlLink href={workItemLink} onClick={() => handleWorkItemPeekOverview(workItem)}>
-      <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-layer-transparent-hover">
+      <div className="group relative flex min-h-11 w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-layer-transparent-hover">
         <div className="flex w-full truncate items-center gap-3">
           <div
             className="h-2 w-2 shrink-0 rounded-full"

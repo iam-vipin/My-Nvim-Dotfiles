@@ -58,7 +58,7 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
   };
 
   return (
-    <Card className="shadow-none p-4 ">
+    <Card className="shadow-none p-4">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center overflow-hidden">
           <div className="size-4">

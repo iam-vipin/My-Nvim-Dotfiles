@@ -96,6 +96,7 @@ class UserPageQuery:
             .select_related("workspace", "owned_by")
             .prefetch_related("projects")
             .annotate(is_favorite=Exists(subquery))
+            .order_by("-updated_at", "-created_at", "sort_order")
         )
 
         return paginate(results_object=pages, cursor=cursor)

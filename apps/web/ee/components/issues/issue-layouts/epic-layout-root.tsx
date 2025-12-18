@@ -94,7 +94,7 @@ export const ProjectEpicsLayoutRoot = observer(function ProjectEpicsLayoutRoot()
                 }}
               />
             )}
-            <div className="relative h-full w-full overflow-auto bg-layer-1">
+            <div className="relative h-full w-full overflow-auto bg-layer-2">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (
                 <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">

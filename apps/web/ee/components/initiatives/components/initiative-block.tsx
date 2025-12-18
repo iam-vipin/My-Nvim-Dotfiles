@@ -68,7 +68,7 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
     <button
       ref={parentRef}
       className={cn(
-        "group/initiative-block w-full relative flex flex-col items-center justify-between gap-3 text-13 transition-colors  bg-layer-transparent hover:bg-layer-transparent-hover",
+        "group/initiative-block w-full relative flex flex-col items-center justify-between gap-3 text-13 transition-colors border-b border-subtle bg-layer-transparent hover:bg-layer-transparent-hover",
         {
           "lg:flex-row lg:gap-5 lg:py-0": !isSidebarCollapsed,
           "xl:flex-row xl:gap-5 xl:py-0": isSidebarCollapsed,

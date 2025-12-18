@@ -3,7 +3,7 @@ import { useEditorState } from "@tiptap/react";
 import { useState } from "react";
 // plane imports
 import { ConvertToWorkItemsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // types
 import type { IEditorPropsExtended } from "@/types";
 // local imports

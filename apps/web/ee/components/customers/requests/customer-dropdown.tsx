@@ -47,10 +47,7 @@ export const CustomerDropDown = observer(function CustomerDropDown(props: TProps
       value: customer?.id,
       query: `${customer?.name}`,
       content: (
-        <Button
-          variant={"tertiary"}
-          prependIcon={<SwitcherIcon logo_url={customer?.logo_url} LabelIcon={CustomersIcon} />}
-        >
+        <Button variant="ghost" prependIcon={<SwitcherIcon logo_url={customer?.logo_url} LabelIcon={CustomersIcon} />}>
           {customer?.name}
         </Button>
       ),

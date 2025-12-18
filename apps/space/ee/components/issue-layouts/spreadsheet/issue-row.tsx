@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";

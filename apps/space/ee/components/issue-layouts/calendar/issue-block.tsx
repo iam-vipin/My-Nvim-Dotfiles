@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // components
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane imports
 import { cn } from "@plane/utils";
 import { queryParamGenerator } from "@/helpers/query-param-generator";

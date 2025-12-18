@@ -111,7 +111,6 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
-            size="lg"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>

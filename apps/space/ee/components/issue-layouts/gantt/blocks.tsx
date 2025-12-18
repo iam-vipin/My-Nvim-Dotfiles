@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // ui
 import { StateGroupIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -49,7 +49,8 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
             </div>
           </div>
         }
-        position="top-left"
+        side="top"
+        align="start"
       >
         <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-13 text-primary">
           {issueDetails?.name}

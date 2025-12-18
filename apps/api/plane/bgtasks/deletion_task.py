@@ -106,7 +106,7 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
 def soft_delete_pages_on_project_deletion(project_id):
     from plane.db.models import Page
 
-    pages = Page.objects.filter(project_pages__project_id=project_id)
+    pages = Page.objects.filter(project_pages__project_id=project_id, project_pages__deleted_at__isnull=True)
 
     for page in pages:
         page.deleted_at = timezone.now()

@@ -150,7 +150,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
         {EMPTY_STATE_DATA.map((item) => {
           const isStateComplete = isComplete(item.flag);
           return (
-            <div key={item.id} className="flex flex-col p-4 bg-surface-1 rounded-xl border border-subtle/40">
+            <div key={item.id} className="flex flex-col p-4 bg-layer-2 rounded-xl border border-subtle">
               <div
                 className={cn("grid place-items-center bg-surface-2 rounded-full size-9 mb-3 text-placeholder", {
                   "text-accent-primary bg-accent-primary/10": !isStateComplete,
@@ -187,7 +187,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                 ) : (
                   <button
                     type="button"
-                    className="text-accent-primary hover:text-accent-secondary text-13 font-medium"
+                    className="text-accent-primary hover:text-accent-secondary text-13 font-medium text-left"
                     onClick={item.cta.onClick}
                   >
                     {t(item.cta.text)}

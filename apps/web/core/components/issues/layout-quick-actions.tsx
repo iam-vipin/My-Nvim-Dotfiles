@@ -4,6 +4,8 @@ import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
+import { Ellipsis, MoreHorizontal } from "lucide-react";
+import { IconButton } from "@plane/propel/icon-button";
 
 type Props = {
   workspaceSlug: string;
@@ -47,6 +49,7 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
         closeOnSelect
         maxHeight="lg"
         className="flex-shrink-0 flex items-center justify-center size-[26px] rounded"
+        customButton={<IconButton size="lg" variant="tertiary" icon={Ellipsis} />}
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;

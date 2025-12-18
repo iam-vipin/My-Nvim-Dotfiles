@@ -96,7 +96,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <div className="hidden gap-3 md:flex md:items-center">
+        <div className="hidden gap-2 md:flex md:items-center">
           <HeaderFilters
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}
@@ -111,6 +111,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
+            size="lg"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>

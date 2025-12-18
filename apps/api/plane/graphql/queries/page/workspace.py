@@ -54,13 +54,7 @@ class WorkspacePageQuery:
             error_extensions = {"code": "FEATURE_FLAG_NOT_ENABLED", "statusCode": 400}
             raise GraphQLError(message, extensions=error_extensions)
 
-        page_base_query = (
-            Page.objects.filter(workspace__slug=slug)
-            .filter(is_global=True)
-            .filter(projects__isnull=True)
-            .filter(parent__isnull=True)
-            .filter(moved_to_page__isnull=True)
-        )
+        page_base_query = Page.objects.filter(workspace__slug=slug).filter(is_global=True).filter(parent__isnull=True)
 
         shared_pages_data = await sync_to_async(list)(
             PageUser.objects.filter(workspace__slug=slug).values("page_id", "user_id")

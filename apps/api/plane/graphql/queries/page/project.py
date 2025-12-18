@@ -58,7 +58,6 @@ class PageQuery:
             .filter(project_teamspace_filter_query)
             .filter(is_global=False)
             .filter(parent__isnull=True)
-            .filter(moved_to_page__isnull=True)
         )
 
         # Get shared page ids for private and shared pages

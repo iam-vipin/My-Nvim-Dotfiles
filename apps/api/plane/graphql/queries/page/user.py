@@ -51,7 +51,6 @@ class UserPageQuery:
             Page.objects.filter(workspace__slug=slug)
             .filter(owned_by_id=user_id)
             .filter(parent__isnull=True)
-            .filter(moved_to_page__isnull=True)
             .filter(is_global=False)
             .filter(project_teamspace_filter_query)
         )

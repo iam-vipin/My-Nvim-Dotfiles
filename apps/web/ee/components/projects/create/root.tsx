@@ -319,10 +319,10 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
 
           {showActionButtons && (
             <div className="flex justify-end gap-2 pt-4 border-t border-subtle">
-              <Button variant="secondary" onClick={handleClose} tabIndex={6}>
+              <Button variant="secondary" size={"lg"} onClick={handleClose} tabIndex={6}>
                 {t("common.cancel")}
               </Button>
-              <Button variant="primary" type="submit" loading={isLoading} tabIndex={7}>
+              <Button variant="primary" type="submit" size={"lg"} loading={isLoading} tabIndex={7}>
                 {isSubmitting ? t("common.creating") : t("create_project")}
               </Button>
             </div>

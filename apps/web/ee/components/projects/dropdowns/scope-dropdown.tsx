@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { ChevronDownIcon } from "@plane/propel/icons";
-import { CustomMenu, Loader } from "@plane/ui";
+import { CustomMenu, getButtonStyling, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web constants
 import { PROJECT_SCOPES } from "@/plane-web/constants/project";
@@ -10,6 +10,7 @@ import { PROJECT_SCOPES } from "@/plane-web/constants/project";
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types
 import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { Button } from "@plane/propel/button";
 
 export type TProjectScopeDropdown = {
   workspaceSlug: string;
@@ -29,7 +30,7 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
   function DropdownLabel() {
     return (
       <>
-        <div className="hidden md:flex relative items-center gap-2 w-[150px]">
+        <div className="hidden md:flex relative items-center gap-2">
           <div className="flex gap-2 flex-1 my-auto">
             <div className="whitespace-nowrap font-medium my-auto">
               {(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}
@@ -75,12 +76,13 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
   return selectedScope ? (
     <CustomMenu
       maxHeight={"md"}
-      className={cn(
-        "flex flex-grow justify-center text-11 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded-sm px-3 py-1.5",
-        className
-      )}
+      // className={cn(getButtonStyling("secondary", "lg"), className)}
       placement="bottom-start"
-      customButton={<DropdownLabel />}
+      customButton={
+        <Button variant="secondary" size="lg">
+          <DropdownLabel />
+        </Button>
+      }
       customButtonClassName="flex flex-grow justify-center"
       closeOnSelect
     >

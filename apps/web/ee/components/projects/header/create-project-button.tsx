@@ -26,6 +26,7 @@ export const ProjectCreateButton = observer(function ProjectCreateButton() {
         toggleCreateProjectModal(true);
       }}
       className="items-center gap-1"
+      size={"lg"}
     >
       <span className="hidden sm:inline-block">Add</span> Project
     </Button>

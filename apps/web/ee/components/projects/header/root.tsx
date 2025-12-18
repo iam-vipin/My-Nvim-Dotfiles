@@ -52,10 +52,10 @@ export const ProjectsListHeader = observer(function ProjectsListHeader() {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {/* search */}
           <ProjectSearch />
-          <div className="hidden md:flex gap-4">
+          <div className="hidden md:flex gap-2">
             {/* layout selection */}
             {!isArchived && <ProjectLayoutSelection workspaceSlug={workspaceSlug.toString()} />}{" "}
             {/* attributes dropdown */}

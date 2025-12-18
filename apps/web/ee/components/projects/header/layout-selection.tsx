@@ -46,7 +46,7 @@ export const ProjectLayoutSelection = observer(function ProjectLayoutSelection(p
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>
-      <div className="hidden md:flex items-center gap-1 rounded-sm bg-layer-1 p-1">
+      <div className="hidden md:flex items-center gap-1 rounded-sm bg-layer-2 p-1">
         {PROJECT_LAYOUTS.filter(
           (layout) => !layout.selectivelyHide || filters?.scope === EProjectScope.MY_PROJECTS
         ).map((layout) => (

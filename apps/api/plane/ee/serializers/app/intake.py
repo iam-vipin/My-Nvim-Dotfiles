@@ -63,13 +63,12 @@ class IntakeResponsibilitySerializer(serializers.Serializer):
                 )
             )
 
-            return set(validated_users)
-        validated_users = list(
-            ProjectMember.objects.filter(project_id=project_id, member_id__in=value, is_active=True).values_list(
-                "member_id", flat=True
-            )
-        )
-        return validated_users
+            return list(set(validated_users))
+        validated_users = ProjectMember.objects.filter(
+            project_id=project_id, member_id__in=value, is_active=True
+        ).values_list("member_id", flat=True)
+
+        return list(validated_users)
 
     def create(self, validated_data):
         # Remove the existing responsibility and add the new user

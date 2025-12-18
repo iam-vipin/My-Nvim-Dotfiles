@@ -85,7 +85,7 @@ export const IssuePropertyOptionItem = observer(function IssuePropertyOptionItem
         onBlur={() => handleCreateUpdate()}
         placeholder={t("work_item_types.settings.properties.attributes.option.create_update.form.placeholder")}
         className={cn("w-full text-13 bg-surface-1 border-[0.5px] rounded", {
-          "border-custom-border-300": !error,
+          "border-strong": !error,
         })}
         inputSize="xs"
         hasError={Boolean(error)}

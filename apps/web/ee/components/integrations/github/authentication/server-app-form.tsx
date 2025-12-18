@@ -73,17 +73,13 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
     <form onSubmit={handleAppFormSubmit}>
       <div className="space-y-4 p-4">
         <div className="space-y-1">
-          <div className="text-custom-text-200 font-medium mb-1">
-            {t("github_enterprise_integration.app_form_title")}
-          </div>
-          <div className="text-body-xs-regular text-custom-text-300 mb-4">
+          <div className="text-secondary font-medium mb-1">{t("github_enterprise_integration.app_form_title")}</div>
+          <div className="text-body-xs-regular text-tertiary mb-4">
             {t("github_enterprise_integration.app_form_description")}
           </div>
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
-            {t("github_enterprise_integration.app_id_title")}
-          </div>
+          <div className="text-body-xs-regular text-tertiary">{t("github_enterprise_integration.app_id_title")}</div>
           <Input
             id="appId"
             type="text"
@@ -93,15 +89,13 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
             tabIndex={1}
             {...register("appId", { required: t("github_enterprise_integration.app_id_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.app_id_description")}
           </div>
           {errors.appId && <p className="text-red-500 text-caption-sm-regular">{errors.appId.message}</p>}
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
-            {t("github_enterprise_integration.app_name_title")}
-          </div>
+          <div className="text-body-xs-regular text-tertiary">{t("github_enterprise_integration.app_name_title")}</div>
           <Input
             id="appName"
             type="text"
@@ -111,15 +105,13 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
             tabIndex={1}
             {...register("appName", { required: t("github_enterprise_integration.app_name_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.app_name_description")}
           </div>
           {errors.appName && <p className="text-red-500 text-caption-sm-regular">{errors.appName.message}</p>}
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
-            {t("github_enterprise_integration.base_url_title")}
-          </div>
+          <div className="text-body-xs-regular text-tertiary">{t("github_enterprise_integration.base_url_title")}</div>
           <Input
             id="baseUrl"
             type="text"
@@ -135,15 +127,13 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
               },
             })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.base_url_description")}
           </div>
           {errors.baseUrl && <p className="text-red-500 text-caption-sm-regular">{errors.baseUrl.message}</p>}
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
-            {t("github_enterprise_integration.client_id_title")}
-          </div>
+          <div className="text-body-xs-regular text-tertiary">{t("github_enterprise_integration.client_id_title")}</div>
           <Input
             id="clientId"
             type="text"
@@ -153,13 +143,13 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
             tabIndex={1}
             {...register("clientId", { required: t("github_enterprise_integration.client_id_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.client_id_description")}
           </div>
           {errors.clientId && <p className="text-red-500 text-caption-sm-regular">{errors.clientId.message}</p>}
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
+          <div className="text-body-xs-regular text-tertiary">
             {t("github_enterprise_integration.client_secret_title")}
           </div>
           <Input
@@ -171,14 +161,14 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
             tabIndex={1}
             {...register("clientSecret", { required: t("github_enterprise_integration.client_secret_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.client_secret_description")}
           </div>
           {errors.clientSecret && <p className="text-red-500 text-caption-sm-regular">{errors.clientSecret.message}</p>}
         </div>
 
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
+          <div className="text-body-xs-regular text-tertiary">
             {t("github_enterprise_integration.webhook_secret_title")}
           </div>
           <Input
@@ -190,7 +180,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
             tabIndex={1}
             {...register("webhookSecret", { required: t("github_enterprise_integration.webhook_secret_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.webhook_secret_description")}
           </div>
           {errors.webhookSecret && (
@@ -198,7 +188,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
           )}
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
+          <div className="text-body-xs-regular text-tertiary">
             {t("github_enterprise_integration.private_key_title")}
           </div>
           <Input
@@ -212,7 +202,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
             tabIndex={1}
             {...register("privateKey", { required: t("github_enterprise_integration.private_key_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.private_key_description")}
           </div>
           {errors.privateKey && <p className="text-red-500 text-caption-sm-regular">{errors.privateKey.message}</p>}

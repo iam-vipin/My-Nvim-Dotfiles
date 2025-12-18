@@ -21,9 +21,7 @@ export const PageCommentsThreadList = observer(function PageCommentsThreadList({
     commentsFilters && (!commentsFilters.showAll || !commentsFilters.showActive || !commentsFilters.showResolved);
 
   return (
-    <div
-      className={`divide-y divide-custom-border-300 ${isFiltering ? "animate-smooth-comments" : "animate-stagger-comments"}`}
-    >
+    <div className={`divide-y divide-strong ${isFiltering ? "animate-smooth-comments" : "animate-stagger-comments"}`}>
       {comments.map((comment) => (
         <PageThreadCommentItem
           key={comment.id}

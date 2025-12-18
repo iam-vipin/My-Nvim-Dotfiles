@@ -23,7 +23,7 @@ export const WorklogPreviewCard = observer(function WorklogPreviewCard(props: TP
       <div className="flex gap-2 items-start justify-between">
         <div className="flex gap-2 items-start">
           <div className="flex items-center justify-center my-1">
-            <Timer className="h-5 w-5 flex-shrink-0 text-custom-text-300" />
+            <Timer className="h-5 w-5 flex-shrink-0 text-tertiary" />
           </div>
           <div className="flex flex-wrap gap-1 truncate text-sm text-start my-auto">
             Logging {getDuration(worklog?.duration?.name || "0")}

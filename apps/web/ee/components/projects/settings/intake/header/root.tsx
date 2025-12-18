@@ -121,7 +121,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
             </Button>
           }
           popperPosition="bottom-end"
-          panelClassName="rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-custom-shadow-rg focus:outline-none max-w-sm"
+          panelClassName="rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-raised-200 focus:outline-none max-w-sm"
         >
           <IntakeTooltip projectId={projectId.toString()} />
         </Popover>

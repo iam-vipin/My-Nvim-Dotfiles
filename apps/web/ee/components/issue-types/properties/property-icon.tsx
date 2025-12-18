@@ -23,5 +23,5 @@ type TPropertyTypeIconProps = {
 
 export function PropertyTypeIcon({ iconKey, className }: TPropertyTypeIconProps) {
   const Icon = CUSTOM_PROPERTY_ICON_MAP[iconKey];
-  return <Icon className={cn("size-3 text-custom-text-200", className)} />;
+  return <Icon className={cn("size-3 text-secondary", className)} />;
 }

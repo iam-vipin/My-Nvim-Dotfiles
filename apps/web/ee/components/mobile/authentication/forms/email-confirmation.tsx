@@ -137,7 +137,7 @@ export function MobileAuthEmailValidationForm(props: TMobileAuthEmailValidationF
             />
             {email.length > 0 && (
               <XCircle
-                className="h-10 w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-11"
+                className="h-10 w-11 px-3 stroke-placeholder hover:cursor-pointer text-11"
                 onClick={() => {
                   setEmail("");
                   inputRef.current?.focus();

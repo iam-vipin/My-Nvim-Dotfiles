@@ -142,9 +142,9 @@ function CreateTypeFormModal({ formSettings, anchor }: TProps) {
         {!success ? (
           <div
             className={cn(
-              "p-4 rounded-md w-[375px] md:w-[575px] shadow-custom-shadow-xs border-[1px] z-[5] border-subtle-1 bg-layer-1 my-auto",
+              "p-4 rounded-md w-[375px] md:w-[575px] shadow-raised-100 border-[1px] z-[5] border-subtle-1 bg-layer-1 my-auto",
               {
-                "bg-surface-1 border-subtle shadow-custom-shadow-sm": resolvedTheme === "light",
+                "bg-surface-1 border-subtle shadow-raised-100": resolvedTheme === "light",
               }
             )}
           >

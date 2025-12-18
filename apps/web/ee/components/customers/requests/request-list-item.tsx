@@ -205,7 +205,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
           <div className="flex gap-2">
             <Button
               variant="secondary"
-              className="text-secondary bg-layer-2 text-13 px-2 hover:bg-layer-2-hover hover:shadow-custom-shadow"
+              className="text-secondary bg-layer-2 text-13 px-2 hover:bg-layer-2-hover hover:shadow-raised-100"
               onClick={() => {
                 if (!link) toggleRequestSourceModal(request.id);
                 else handleOpenUrl(link);

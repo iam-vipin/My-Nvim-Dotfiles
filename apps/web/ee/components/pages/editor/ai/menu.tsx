@@ -171,7 +171,7 @@ export function EditorAIMenu(props: Props) {
   return (
     <div
       className={cn(
-        "flex max-h-72 w-[210px] rounded-md border-[0.5px] border-subtle-1 bg-surface-1 shadow-custom-shadow-rg transition-all overflow-hidden",
+        "flex max-h-72 w-[210px] rounded-md border-[0.5px] border-subtle-1 bg-surface-1 shadow-raised-200 transition-all overflow-hidden",
         {
           "w-[700px] divide-x divide-subtle-1": activeTask,
         }

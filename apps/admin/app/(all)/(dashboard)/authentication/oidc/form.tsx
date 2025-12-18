@@ -257,7 +257,7 @@ export function InstanceOIDCConfigForm(props: Props) {
               />
             ))}
             <div className="flex items-center justify-between gap-1">
-              <h4 className="text-sm text-custom-text-300">{ENABLE_IDP_SYNC_FORM_FIELD.description}</h4>
+              <h4 className="text-sm text-tertiary">{ENABLE_IDP_SYNC_FORM_FIELD.description}</h4>
               <div className="relative">
                 <Controller
                   control={control}

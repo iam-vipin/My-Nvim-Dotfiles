@@ -125,7 +125,7 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
         <div className="flex gap-2 items-center">
           <Link
             href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
-            className=" font-medium text-sm text-custom-text-200"
+            className=" font-medium text-sm text-secondary"
           >
             {t("initiatives.scope.view_scope")}
           </Link>

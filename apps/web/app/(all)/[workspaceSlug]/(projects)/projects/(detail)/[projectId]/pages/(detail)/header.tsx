@@ -57,7 +57,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
 
   function BreadcrumbSeparator() {
     return (
-      <div className="flex items-center px-2 text-custom-text-300">
+      <div className="flex items-center px-2 text-tertiary">
         <ChevronRightIcon className="size-3" />
       </div>
     );

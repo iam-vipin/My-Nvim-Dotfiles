@@ -119,7 +119,7 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
                 button={<></>}
                 popoverButtonRef={popoverButtonRef}
                 buttonClassName="w-0 h-0"
-                panelClassName="w-72 my-1 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-custom-shadow-rg focus:outline-none"
+                panelClassName="w-72 my-1 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-raised-200 focus:outline-none"
               >
                 <WorklogUpdate
                   workspaceSlug={workspaceSlug}

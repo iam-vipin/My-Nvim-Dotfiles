@@ -20,18 +20,18 @@ const TransferHistoryItem = observer(function TransferHistoryItem({
   return (
     <div className="relative flex items-start gap-3">
       {/* Vertical line */}
-      {!isLast && <div className="absolute left-[3px] top-4 bottom-0 w-0.5 bg-custom-border-200" aria-hidden />}
+      {!isLast && <div className="absolute left-[3px] top-4 bottom-0 w-0.5 bg-layer-3" aria-hidden />}
       {/* Dot indicator */}
-      <div className="flex-shrink-0 w-2 h-2 rounded-full bg-custom-text-400 my-1.5 z-[1]" />
+      <div className="flex-shrink-0 w-2 h-2 rounded-full bg-layer-3 my-1.5 z-[1]" />
       {/* Content */}
       <div
         className={cn("flex-1 pb-4 truncate", {
           "pb-0": isLast,
         })}
       >
-        <p className="text-13 font-medium text-custom-text-100 truncate">{cycleDetails.name}</p>
+        <p className="text-13 font-medium text-primary truncate">{cycleDetails.name}</p>
         {cycleDetails.start_date && cycleDetails.end_date && (
-          <p className="text-11 text-custom-text-300 mt-0.5">
+          <p className="text-11 text-tertiary mt-0.5">
             {renderFormattedDate(cycleDetails.start_date)} - {renderFormattedDate(cycleDetails.end_date)}
           </p>
         )}

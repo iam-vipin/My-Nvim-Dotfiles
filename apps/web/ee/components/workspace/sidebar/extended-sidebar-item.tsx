@@ -154,7 +154,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
       <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
       <div
         className={cn(
-          "group/project-item relative w-full  flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-surface-2"
+          "group/project-item relative w-full  flex items-center rounded-md text-primary hover:bg-surface-2"
         )}
         id={`${item.key}`}
       >
@@ -168,7 +168,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             <button
               type="button"
               className={cn(
-                "flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-custom-sidebar-text-400 cursor-grab group-hover/project-item:opacity-100 opacity-0",
+                "flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab group-hover/project-item:opacity-100 opacity-0",
                 {
                   // "cursor-not-allowed opacity-60": project.sort_order === null,
                   "cursor-grabbing": isDragging,

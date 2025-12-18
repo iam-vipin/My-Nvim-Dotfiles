@@ -92,8 +92,8 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
               <div
                 className={`
                 w-8 h-8 rounded-full flex items-center justify-center
-                bg-gradient-to-r from-custom-background-80 to-custom-background-90
-                border border-subtle shadow-sm transition-all duration-200
+                bg-gradient-to-r from-layer-1 to-surface-2
+                border border-subtle shadow-raised-100 transition-all duration-200
                 group-hover:shadow group-hover:border-accent-strong/30
               `}
               >

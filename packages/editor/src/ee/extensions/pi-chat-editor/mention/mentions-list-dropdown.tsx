@@ -184,7 +184,7 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
       />
       <div
         ref={dropdownContainer}
-        className="relative max-h-[500px] w-[14rem] overflow-y-auto rounded-md border border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-[500px] w-[14rem] overflow-y-auto rounded-md border border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-raised-200 space-y-2"
         style={{
           zIndex: 100,
         }}

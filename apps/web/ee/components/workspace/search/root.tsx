@@ -42,7 +42,7 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
               if (e.target.value) setIsSearching(true);
             }}
             className={cn(
-              "shadow-sm px-10 w-full rounded-lg border-subtle-1 bg-surface-1 ring-0 transition-all duration-200 focus:ring-2 focus:ring-custom-primary/30 focus:border-accent-strong placeholder:text-placeholder h-10"
+              "shadow-sm px-10 w-full rounded-lg border-subtle-1 bg-surface-1 ring-0 transition-all duration-200 focus:ring-2 focus:ring-accent-strong/30 focus:border-accent-strong placeholder:text-placeholder h-10"
             )}
             placeholder="Search everything in your workspace"
             autoFocus

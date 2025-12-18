@@ -135,7 +135,7 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
       >
         <div className="flex flex-col gap-3 p-4 pb-0 ">
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-semibold text-custom-text-200">Link pages to</h3>
+            <h3 className="text-xl font-semibold text-secondary">Link pages to</h3>
             <IssueIdentifier
               issueId={workItemId}
               projectId={projectId ?? ""}
@@ -144,10 +144,10 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
               variant="secondary"
             />
           </div>
-          <div className="flex items-center gap-2 rounded border border-custom-border-200 px-2 py-1.5">
-            <Search className="flex-shrink-0 size-4 text-custom-text-200" aria-hidden="true" />
+          <div className="flex items-center gap-2 rounded border border-subtle-1 px-2 py-1.5">
+            <Search className="flex-shrink-0 size-4 text-secondary" aria-hidden="true" />
             <Combobox.Input
-              className="w-full border-0 bg-transparent text-base text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+              className="w-full border-0 bg-transparent text-base text-primary outline-none placeholder:text-placeholder focus:ring-0"
               placeholder="Search for pages"
               displayValue={() => ""}
               value={searchTerm}
@@ -155,8 +155,8 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
               tabIndex={baseTabIndex}
             />
           </div>
-          <div className="w-full flex items-center gap-2 text-13 text-custom-text-200 justify-end">
-            <span className="text-11 font-medium text-custom-text-200">{t("issue.pages.show_wiki_pages")}</span>
+          <div className="w-full flex items-center gap-2 text-13 text-secondary justify-end">
+            <span className="text-11 font-medium text-secondary">{t("issue.pages.show_wiki_pages")}</span>
             <ToggleSwitch value={showWikiPages} onChange={() => setShowWikiPages(!showWikiPages)} />
           </div>
         </div>
@@ -173,13 +173,13 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
                   {page?.logo_props && page.logo_props?.in_use ? (
                     <Logo logo={page.logo_props} size={16} type="lucide" />
                   ) : (
-                    <PageIcon className="size-4 text-custom-text-300" />
+                    <PageIcon className="size-4 text-tertiary" />
                   )}
                 </div>
-                <p className="text-11 truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
+                <p className="text-11 truncate text-tertiary group-hover:text-secondary transition-colors">
                   {getPageName(page?.name ?? "")}
                 </p>
-                <CloseIcon className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
+                <CloseIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary transition-colors" />
               </div>
             ))}
           </div>
@@ -206,9 +206,9 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
                   htmlFor={`page-${page.id}`}
                   value={page}
                   className={({ active }) =>
-                    `group flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                      active ? "bg-layer-1 text-custom-text-100" : ""
-                    } ${selected ? "text-custom-text-100" : ""}`
+                    `group flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                      active ? "bg-layer-1 text-primary" : ""
+                    } ${selected ? "text-primary" : ""}`
                   }
                 >
                   <div className="flex items-center gap-2 truncate">
@@ -217,13 +217,13 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
                       {page.logo_props && page.logo_props?.in_use ? (
                         <Logo logo={page.logo_props} size={16} type="lucide" />
                       ) : (
-                        <PageIcon className="size-4 text-custom-text-300" />
+                        <PageIcon className="size-4 text-tertiary" />
                       )}
                     </div>
                     <span className="truncate text-13">{getPageName(page.name)}</span>
                   </div>
                   {page.access != null && (
-                    <div className="hidden flex-shrink-0 text-custom-text-350 group-hover:flex">
+                    <div className="hidden flex-shrink-0 text-placeholder group-hover:flex">
                       {page.access === EPageAccess.PUBLIC ? <Earth className="size-4" /> : <Lock className="size-4" />}
                     </div>
                   )}
@@ -232,12 +232,12 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
             })
           ) : (
             <div className="flex items-center h-full w-full px-3 ">
-              <p className="text-13 text-custom-text-200">No pages found</p>
+              <p className="text-13 text-secondary">No pages found</p>
             </div>
           )}
         </Combobox.Options>
       </Combobox>
-      <div className="flex items-center justify-end gap-2 p-3 border-t-[0.5px] border-custom-border-200 ">
+      <div className="flex items-center justify-end gap-2 p-3 border-t-[0.5px] border-subtle-1 ">
         <Button variant="secondary" onClick={handleClose}>
           {t("common.cancel")}
         </Button>

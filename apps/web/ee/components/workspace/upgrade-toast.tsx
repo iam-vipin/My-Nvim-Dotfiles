@@ -8,7 +8,7 @@ export function UpgradeToast() {
       </div>
       <div className="flex flex-col gap-0.5">
         <div className="text-13 font-medium leading-5">Upgrade</div>
-        <div className="text-custom-text-200">Get this feature when you upgrade to Pro.</div>
+        <div className="text-secondary">Get this feature when you upgrade to Pro.</div>
       </div>
     </div>
   );

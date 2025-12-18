@@ -41,7 +41,7 @@ const ActionItems = ({ pageUrl }: { pageUrl: string }) => {
     }
   };
   return (
-    <div className="flex items-center gap-3 text-xs text-custom-text-200 mt-1">
+    <div className="flex items-center gap-3 text-xs text-secondary mt-1">
       <a href={pageUrl} target="_blank" rel="noopener noreferrer" className="text-11 font-medium text-accent-primary">
         View page
       </a>

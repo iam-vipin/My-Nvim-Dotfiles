@@ -97,7 +97,7 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
           <div
             className={cn(
               "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
-              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong",
               fullWidth && "w-full"
             )}
           >
@@ -117,7 +117,7 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
           className={cn(
             "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-11",
             fullWidth && "w-full",
-            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+            noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong",
             disabled ? "cursor-not-allowed" : "cursor-pointer"
           )}
         >
@@ -131,8 +131,8 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
               .join(", ")}
             renderByDefault={false}
           >
-            <div className="flex h-full items-center gap-1.5 text-custom-text-200">
-              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+            <div className="flex h-full items-center gap-1.5 text-secondary">
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               {`${value.length} Labels`}
             </div>
           </Tooltip>
@@ -159,10 +159,10 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
               "flex overflow-hidden justify-center hover:bg-layer-1 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-11",
               !disabled && "cursor-pointer",
               fullWidth && "w-full",
-              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong"
             )}
           >
-            <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+            <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-secondary">
               <span
                 className="h-2 w-2 flex-shrink-0 rounded-full"
                 style={{

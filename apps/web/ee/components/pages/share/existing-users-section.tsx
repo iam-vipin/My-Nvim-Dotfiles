@@ -68,7 +68,7 @@ export function ExistingUsersSection({
                         className={`relative ${index > 0 ? "-ml-2.5" : ""} transition-all duration-200 ease-in-out`}
                         style={{ zIndex: index + 1 }}
                       >
-                        <div className="ring-2 ring-custom-background-100 rounded-full">
+                        <div className="rounded-full">
                           <Avatar
                             name={memberDetails?.member?.display_name || "Unknown User"}
                             src={getFileURL(memberDetails?.member?.avatar_url || "")}
@@ -80,7 +80,7 @@ export function ExistingUsersSection({
                   })}
                   {existingUsers.length > 3 && (
                     <div
-                      className="flex items-center justify-center w-5 h-5 -ml-2 rounded-full bg-layer-1 text-secondary text-11 font-normal ring-2 ring-custom-background-100 transition-all duration-200 ease-in-out"
+                      className="flex items-center justify-center w-5 h-5 -ml-2 rounded-full bg-layer-1 text-secondary text-11 font-normal transition-all duration-200 ease-in-out"
                       style={{ zIndex: 4 }}
                     >
                       +{existingUsers.length - 3}

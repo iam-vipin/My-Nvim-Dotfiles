@@ -1,5 +1,5 @@
 export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-primary-100))";
+  if (!string) return "var(--background-color-accent-primary)";
 
   string = `${string}`;
 

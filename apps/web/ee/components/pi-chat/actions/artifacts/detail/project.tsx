@@ -61,7 +61,7 @@ export const ProjectDetail = observer(function ProjectDetail(props: TProjectDeta
           dataResetProperties={[data.artifact_id, updatedData]}
         />
         <div
-          className={cn("absolute top-0 right-0 w-full h-full bg-custom-background-100 rounded-xl opacity-50", {
+          className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
             hidden: data.is_editable,
           })}
         />

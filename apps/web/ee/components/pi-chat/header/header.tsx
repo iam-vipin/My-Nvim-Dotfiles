@@ -23,7 +23,7 @@ type THeaderProps = {
 };
 
 const buttonClass =
-  "w-auto p-2 rounded-lg text-custom-text-200 grid place-items-center border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-200 hover:shadow-sm hover:text-custom-text-300";
+  "w-auto p-2 rounded-lg text-secondary grid place-items-center border-[0.5px] border-strong bg-layer-2 hover:shadow-sm hover:text-tertiary";
 export const Header = observer(function Header(props: THeaderProps) {
   const router = useRouter();
   const { workspaceSlug } = useParams();

@@ -22,9 +22,9 @@ export const AutomationDetailsMainContentAddCommentBlock = observer(
     return (
       <div className="flex gap-2">
         <span className="shrink-0 size-12 rounded-full bg-layer-1 grid place-items-center">
-          <MessageCircle className="size-5 text-custom-text-300" />
+          <MessageCircle className="size-5 text-tertiary" />
         </span>
-        <div className="flex-grow text-13 text-custom-text-300 font-medium">
+        <div className="flex-grow text-13 text-tertiary font-medium">
           <p>{t("automations.action.comment_block.title")}</p>
           <LiteTextEditor
             editable={false}

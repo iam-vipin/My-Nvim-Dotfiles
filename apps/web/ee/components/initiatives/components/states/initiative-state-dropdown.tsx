@@ -113,7 +113,7 @@ export const InitiativeStateDropdown = observer(function InitiativeStateDropdown
           emptyMessage={t("no_matching_results")}
           maxHeight="md"
           className={cn(
-            "rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg",
+            "rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-raised-200",
             currentSize.dropdown
           )}
           inputClassName="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"

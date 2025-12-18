@@ -34,7 +34,7 @@ export function UpdateQuickActions(props: TProps) {
         customButton={
           <span
             ref={actionSectionRef}
-            className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-layer-1 rounded-sm my-auto"
+            className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm my-auto"
             onClick={() => {
               setIsMenuActive(!isMenuActive);
             }}

@@ -152,7 +152,7 @@ export const NumberRangeFilterValueInput = observer(function NumberRangeFilterVa
           min={config.min}
           max={config.max}
         />
-        <span className="text-custom-text-400 flex-shrink-0">→</span>
+        <span className="text-placeholder flex-shrink-0">→</span>
         <Input
           ref={toRef}
           type="number"

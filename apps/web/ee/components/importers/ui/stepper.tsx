@@ -37,7 +37,7 @@ export function Stepper<T>(props: TStepper<T>) {
                       className={cn(
                         "relative shrink-0 w-5 h-5  flex justify-center items-center bg-transparent text-secondary rounded-full transition-all",
                         {
-                          "bg-custom-primary-90/10  text-on-color": index === currentStepIndex,
+                          "bg-surface-2/10  text-on-color": index === currentStepIndex,
                         }
                       )}
                     >

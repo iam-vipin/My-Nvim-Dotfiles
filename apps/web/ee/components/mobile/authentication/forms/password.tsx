@@ -153,7 +153,7 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
           />
           {formData.email.length > 0 && (
             <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
               onClick={handleEmailClear}
             />
           )}
@@ -180,12 +180,12 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
             />
             {showPassword?.password ? (
               <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("password")}
               />
             ) : (
               <Eye
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("password")}
               />
             )}
@@ -217,12 +217,12 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
               />
               {showPassword?.passwordConfirmation ? (
                 <EyeOff
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("passwordConfirmation")}
                 />
               ) : (
                 <Eye
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("passwordConfirmation")}
                 />
               )}

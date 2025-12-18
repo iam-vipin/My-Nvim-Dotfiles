@@ -13,7 +13,7 @@ export function AutomationDetailsMainContentBlockWrapper(props: TProps) {
 
   return (
     <div
-      className={cn("flex-grow p-4 space-y-2 bg-layer-2 rounded-lg shadow-custom-shadow-2xs border shadow-raised-100", {
+      className={cn("flex-grow p-4 space-y-2 bg-layer-2 rounded-lg shadow-raised-100 border shadow-raised-100", {
         "border-accent-strong": isSelected,
         "border-subtle": !isSelected,
       })}

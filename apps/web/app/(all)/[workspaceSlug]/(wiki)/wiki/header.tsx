@@ -11,7 +11,7 @@ export function PagesAppDashboardHeader() {
         <div>
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={<BreadcrumbLink label="Home" icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />} />}
+              component={<BreadcrumbLink label="Home" icon={<HomeIcon className="h-4 w-4 text-tertiary" />} />}
             />
           </Breadcrumbs>
         </div>

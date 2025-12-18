@@ -317,7 +317,7 @@ export function IntakePublishForm({
                     placeholder="Add as much detail as you'd like to help the team identify your exact situation and needs."
                     disabled={isPreview}
                     className={cn(
-                      "w-full px-3 py-2 rounded-md border border-subtle-1 bg-surface-1 text-13 placeholder-custom-text-400 focus:outline-none min-h-[120px] resize-none",
+                      "w-full px-3 py-2 rounded-md border border-subtle-1 bg-surface-1 text-13 focus:outline-none min-h-[120px] resize-none",
                       {
                         "cursor-not-allowed opacity-60": isPreview,
                       }

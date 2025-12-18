@@ -66,7 +66,7 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
       >
         <Popover.Panel ref={setPopperElement} style={styles.popper} {...attributes.popper} className="fixed z-10">
           {({ close }) => (
-            <div className="my-1 max-h-[90vh] overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-4 text-11 shadow-custom-shadow-rg focus:outline-none min-w-64 whitespace-nowrap divide-y divide-custom-border-300">
+            <div className="my-1 max-h-[90vh] overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-4 text-11 shadow-raised-200 focus:outline-none min-w-64 whitespace-nowrap divide-y divide-strong">
               {WIDGET_DROPDOWN_SECTIONS.map((section, index) => (
                 <div
                   key={section.key}

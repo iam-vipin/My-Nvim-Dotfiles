@@ -34,9 +34,9 @@ export const IntakeFormLink = observer(function IntakeFormLink(props: Props) {
         )}
       >
         <span className="truncate flex-1 mr-4">{publishLink}</span>
-        <Copy className="text-custom-text-400 w-[16px] cursor-pointer" onClick={() => copyToClipboard(publishLink)} />
+        <Copy className="text-placeholder w-[16px] cursor-pointer" onClick={() => copyToClipboard(publishLink)} />
         <a href={publishLink} target="_blank" rel="noreferrer">
-          <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
+          <ExternalLink className="text-placeholder w-[16px] cursor-pointer" />
         </a>
       </div>
       <Button

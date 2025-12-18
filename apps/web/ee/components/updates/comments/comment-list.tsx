@@ -112,7 +112,7 @@ export const CommentList = observer(function CommentList(props: TProps) {
             className={`flex items-center justify-center size-6 text-13 rounded-full flex-shrink-0 ${
               newComment.trim() === ""
                 ? "bg-layer-1 text-tertiary cursor-not-allowed"
-                : "bg-accent-primary text-on-color hover:bg-custom-primary/90"
+                : "bg-accent-primary text-on-color hover:bg-accent-primary/90"
             }`}
           >
             <SendHorizonal className="size-3.5" />

@@ -29,7 +29,7 @@ export const WorkspaceSelectorEmptyState = observer(function WorkspaceSelectorEm
             <a
               href="https://docs.plane.so/core-concepts/workspaces/overview"
               target="_blank"
-              className={cn(getButtonStyling("secondary", "base"), "border-custom-border-200 text-custom-text-100")}
+              className={cn(getButtonStyling("secondary", "base"), "border-subtle-1 text-primary")}
               rel="noreferrer"
             >
               {t("learn_more_about_workspaces")}

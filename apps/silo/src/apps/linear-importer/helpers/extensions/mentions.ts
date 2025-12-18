@@ -148,7 +148,7 @@ export class LinearProjectMentionParserExtension implements IParserExtension {
     // Add styling classes if needed
     node.setAttribute(
       "class",
-      "text-accent-secondary underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer"
+      "text-accent-secondary underline underline-offset-[3px] hover:text-accent-primary transition-colors cursor-pointer"
     );
 
     return node;

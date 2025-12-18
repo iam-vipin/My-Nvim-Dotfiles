@@ -23,7 +23,7 @@ export const PowerKInitiativesMenu = observer(function PowerKInitiativesMenu({ i
           {initiative?.logo_props?.in_use ? (
             <Logo logo={initiative?.logo_props} size={14} type="lucide" />
           ) : (
-            <InitiativeIcon className="size-3.5 text-custom-text-300" />
+            <InitiativeIcon className="size-3.5 text-tertiary" />
           )}
         </>
       )}

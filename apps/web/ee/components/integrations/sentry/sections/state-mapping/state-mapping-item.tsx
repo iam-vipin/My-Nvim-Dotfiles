@@ -52,7 +52,7 @@ function StateMappingItemComponent({ mapping, onEdit, onDelete }: StateMappingIt
 
           {/* Arrow */}
           <div className="flex-shrink-0">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-custom-background-80 to-custom-background-90 border border-subtle shadow-sm transition-all duration-200 group-hover:shadow group-hover:border-accent-strong/30">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-layer-2 to-surface-2 border border-subtle shadow-sm transition-all duration-200 group-hover:shadow group-hover:border-accent-strong/30">
               <ArrowRight className="h-4 w-4 text-tertiary group-hover:text-accent-primary transition-colors duration-300" />
             </div>
           </div>

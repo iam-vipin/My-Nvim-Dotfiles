@@ -11,7 +11,7 @@ export function PageDetailsError() {
           </div>
         </div>
         <h1 className="mt-12 text-28 font-semibold">Oops! Something went wrong.</h1>
-        <p className="mt-4 text-custom-text-300">The page does not exist. Please check the URL.</p>
+        <p className="mt-4 text-tertiary">The page does not exist. Please check the URL.</p>
       </div>
     </div>
   );

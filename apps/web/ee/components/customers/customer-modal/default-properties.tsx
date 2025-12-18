@@ -234,7 +234,7 @@ export function DefaultProperties(props: Props) {
                   ...payload,
                 })
               }
-              containerClassName="pt-3 min-h-[120px] border-[0.5px] border-subtle-1 rounded-lg relative focus:ring-1 focus:ring-custom-primary"
+              containerClassName="pt-3 min-h-[120px] border-[0.5px] border-subtle-1 rounded-lg relative focus:ring-1 focus:ring-accent-strong"
               disabledExtensions={["attachments"]}
               uploadFile={async (blockId, file) => {
                 try {

@@ -233,7 +233,7 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
         {isOpen && (
           <Combobox.Options className="fixed z-10" static>
             <div
-              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded border border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded border border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none ${optionsClassName}`}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}

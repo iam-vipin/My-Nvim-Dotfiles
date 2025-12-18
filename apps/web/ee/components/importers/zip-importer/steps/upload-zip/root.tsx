@@ -239,14 +239,14 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
             </div>
             <button
               type="button"
-              className="mt-2 px-4 py-2 bg-accent-primary text-on-color rounded-md text-13 font-medium hover:bg-accent-primary/80 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+              className="mt-2 px-4 py-2 bg-accent-primary text-on-color rounded-md text-13 font-medium hover:bg-accent-primary/80 focus:outline-none focus:ring-2 focus:ring-accent-strong"
             >
               {t(`${driverType}_importer.upload.select_file`)}
             </button>
           </div>
         </div>
       ) : (
-        <div className="border border-subtle-1 rounded-lg p-6 bg-surface-1 shadow-custom-shadow-sm">
+        <div className="border border-subtle-1 rounded-lg p-6 bg-surface-1 shadow-raised-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 flex-shrink-0 bg-accent-primary/10 rounded-md flex items-center justify-center text-accent-primary">

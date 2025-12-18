@@ -27,7 +27,7 @@ function IntakeInfo() {
         </Button>
       }
       popperPosition="bottom-end"
-      panelClassName="rounded-sm border-1 border-subtle bg-surface-1 p-3 text-11 shadow-custom-shadow-sm focus:outline-none max-w-lg"
+      panelClassName="rounded-sm border-1 border-subtle bg-surface-1 p-3 text-11 shadow-raised-100 focus:outline-none max-w-lg"
     >
       <div className="p-2">
         <div>

@@ -50,7 +50,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
   function CustomerPropertyDetail() {
     return (
       <>
-        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-13 text-custom-text-200")}>
+        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-13 text-secondary")}>
           <span className="flex gap-0.5 items-center">
             <span className="truncate">{propertyDetail?.display_name}</span>
             {propertyDetail?.is_required && <span className="text-danger">*</span>}

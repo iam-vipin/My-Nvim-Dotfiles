@@ -15,9 +15,7 @@ export const DisplayProject = observer(function DisplayProject(props: {
   const projectDetails = getProjectById(project.id);
   const logoProps = project?.logo_props || projectDetails?.logo_props;
   return (
-    <div
-      className={cn("flex items-center gap-1 text-13 text-custom-text-300 max-w-[100px] overflow-hidden", className)}
-    >
+    <div className={cn("flex items-center gap-1 text-13 text-tertiary max-w-[100px] overflow-hidden", className)}>
       {!isEmpty(logoProps) ? (
         <Logo logo={logoProps} size={16} />
       ) : (

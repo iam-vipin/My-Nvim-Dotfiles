@@ -31,9 +31,7 @@ export const AutomationDetailsSidebarActivityHeaderFilters = observer(
     return (
       <div className="shrink-0 flex items-center gap-2">
         <div className="shrink-0 flex items-center gap-2">
-          <span className="text-custom-text-200 text-11 font-medium">
-            {t("automations.activity.filters.show_fails")}
-          </span>
+          <span className="text-secondary text-11 font-medium">{t("automations.activity.filters.show_fails")}</span>
           <ToggleSwitch
             value={isShowFailsToggleEnabled}
             onChange={() => {

@@ -30,7 +30,7 @@ export function CustomerPreview(props: TProps) {
   return (
     <div className="bg-layer-1/40">
       <div ref={setPopperElement} className={"min-w-[350px] max-w-[400px] z-30"} style={styles.popper}>
-        <div className="bg-surface-1 border border-subtle-1 rounded-lg p-5 shadow-custom-shadow-sm">
+        <div className="bg-surface-1 border border-subtle-1 rounded-lg p-5 shadow-raised-100">
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center truncate">
               <div className="border border-subtle-1 rounded-md">
@@ -143,7 +143,7 @@ function PreviewProperty(props: TPreviewProps) {
   return (
     <div className="flex h-8 gap-2 items-center">
       <div className="w-2/5 flex-shrink-0">
-        <span className="text-13 text-custom-text-300">{props.name}</span>
+        <span className="text-13 text-tertiary">{props.name}</span>
       </div>
       <div className="w-3/5 flex-grow truncate">{props.children}</div>
     </div>

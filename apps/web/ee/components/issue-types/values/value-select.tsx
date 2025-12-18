@@ -80,7 +80,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
                 position="right"
                 disabled={!propertyDetail?.description}
               >
-                <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
+                <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-tertiary cursor-pointer" />
               </Tooltip>
             )}
           </span>

@@ -322,7 +322,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
                 {playbackSpeed}x
               </button>
               {showSpeedMenu && (
-                <div className="absolute bottom-full right-0 mb-1 bg-surface-1 border border-custom-border-200 rounded-md shadow-lg py-1 min-w-16">
+                <div className="absolute bottom-full right-0 mb-1 bg-surface-1 border border-subtle-1 rounded-md shadow-lg py-1 min-w-16">
                   {PLAYBACK_SPEEDS.map((speed) => (
                     <button
                       key={speed}

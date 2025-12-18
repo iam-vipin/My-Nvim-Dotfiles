@@ -5,7 +5,7 @@ export function IssueEmbedUpgradeCard() {
   return (
     <div
       className={
-        "w-full h-min cursor-pointer space-y-2.5 rounded-lg bg-surface-1 border-[0.5px] border-custom-border-200 shadow-custom-shadow-2xs"
+        "w-full h-min cursor-pointer space-y-2.5 rounded-lg bg-surface-1 border-[0.5px] border-subtle-1 shadow-raised-100"
       }
     >
       <div className="relative h-[71%]">
@@ -14,9 +14,7 @@ export function IssueEmbedUpgradeCard() {
             <div className="rounded p-2 bg-surface-2 w-min mb-3">
               <Crown size={16} color="#FFBA18" />
             </div>
-            <div className="text-custom-text text-base">
-              Embed and access work items in pages seamlessly, upgrade to plane pro now.
-            </div>
+            <div className="text-base">Embed and access work items in pages seamlessly, upgrade to plane pro now.</div>
           </div>
           <Button className="py-2" variant="primary" onClick={() => {}}>
             Upgrade

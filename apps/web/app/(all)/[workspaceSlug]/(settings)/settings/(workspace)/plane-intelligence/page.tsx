@@ -101,9 +101,7 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
             </div>
             <div className="leading-tight">
               <h5 className="font-medium">Turn on AI for this workspace.</h5>
-              <span className="text-custom-sidebar-text-400 text-13">
-                Your new smart teammate, ready when you are.{" "}
-              </span>
+              <span className="text-placeholder text-13">Your new smart teammate, ready when you are. </span>
             </div>
           </div>
 

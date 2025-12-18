@@ -44,7 +44,7 @@ export function AutomationsTableLoader() {
           </TableHeader>
           <TableBody>
             {Array.from({ length: 5 }).map((_, index) => (
-              <TableRow key={index} className="border-b border-custom-border-100 transition-colors duration-75">
+              <TableRow key={index} className="border-b border-subtle transition-colors duration-75">
                 {/* Automation title */}
                 <TableCell className={COMMON_TABLE_TITLE_CELL_CLASSNAME}>
                   <div className="flex items-center gap-2.5 truncate">

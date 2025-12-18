@@ -55,7 +55,7 @@ export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockPr
     <Row
       ref={projectRef}
       className={cn(
-        "group/list-block min-h-[52px] relative flex flex-col gap-2 bg-surface-1 hover:bg-layer-1 py-4 text-13 transition-colors border border-transparent border-b border-b-custom-border-200 md:py-0",
+        "group/list-block min-h-[52px] relative flex flex-col gap-2 bg-surface-1 hover:bg-layer-1 py-4 text-13 transition-colors border border-transparent border-b border-b-subtle-1 md:py-0",
         {
           "bg-layer-1": isCurrentBlockDragging,
           "md:flex-row md:items-center": isSidebarCollapsed,

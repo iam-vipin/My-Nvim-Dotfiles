@@ -93,7 +93,7 @@ export const getMilestoneColumns = (): IGroupByColumn[] | undefined => {
     {
       id: "None",
       name: "None",
-      icon: <MilestoneIcon className="w-4 h-4 text-custom-text-100" />,
+      icon: <MilestoneIcon className="w-4 h-4 text-primary" />,
       payload: {},
     },
   ];

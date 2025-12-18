@@ -75,7 +75,7 @@ export const DashboardsFeatureFlagFallback = observer(function DashboardsFeature
             <a
               href="https://plane.so/contact"
               target="_blank"
-              className="bg-transparent underline text-13 text-custom-primary-200 my-auto font-medium"
+              className="bg-transparent underline text-13 text-accent-primary my-auto font-medium"
               rel="noreferrer"
             >
               {t("common.upgrade_cta.talk_to_sales")}

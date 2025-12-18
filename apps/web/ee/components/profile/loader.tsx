@@ -2,7 +2,7 @@ import { Loader } from "@plane/ui";
 
 export function ConnectionLoader() {
   return (
-    <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
+    <div className="flex flex-col border border-subtle-1 rounded p-4 mb-2 justify-center">
       {/* Icon and Title Section */}
       <div className="flex items-center gap-1">
         <Loader>
@@ -19,7 +19,7 @@ export function ConnectionLoader() {
         </Loader>
       </div>
       {/* Connection Status Section */}
-      <div className="rounded p-2 flex justify-between items-center border-[1px] border-custom-border-100">
+      <div className="rounded p-2 flex justify-between items-center border-[1px] border-subtle">
         <div className="flex-1">
           <Loader>
             <Loader.Item height="16px" width="80%" />

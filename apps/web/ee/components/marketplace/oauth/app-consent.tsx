@@ -153,7 +153,7 @@ export const AppConsent = observer(function AppConsent({
         {application?.logo_url ? (
           <img src={getFileURL(application?.logo_url ?? "") ?? ""} alt="Plane logo" className="w-10 h-10" />
         ) : (
-          <div className="w-10 h-10 flex items-center justify-center rounded-md bg-custom-primary-500 text-white capitalize">
+          <div className="w-10 h-10 flex items-center justify-center rounded-md bg-accent-primary text-white capitalize">
             {application?.name?.[0] ?? "..."}
           </div>
         )}
@@ -183,27 +183,27 @@ export const AppConsent = observer(function AppConsent({
       )}
 
       <div className="flex flex-col gap-y-4 border border-subtle rounded-lg p-4 bg-surface-2 w-full md:min-w-[636px]">
-        <div className="text-13 text-custom-text-300 font-medium">
+        <div className="text-13 text-tertiary font-medium">
           {t("workspace_settings.settings.applications.choose_workspace_to_connect_app_with")}
         </div>
         {isLoadingWorkspaces ? (
-          <div className="text-13 text-custom-text-400">Loading workspaces...</div>
+          <div className="text-13 text-placeholder">Loading workspaces...</div>
         ) : workspacesList.length > 0 ? (
           <CustomMenu
             maxHeight={"md"}
-            className="flex flex-grow justify-center text-13 text-custom-text-200"
+            className="flex flex-grow justify-center text-13 text-secondary"
             placement="bottom-start"
             customButton={
-              <div className="flex flex-grow gap-1.5 justify-between items-center text-13 text-custom-text-200 w-full overflow-hidden">
+              <div className="flex flex-grow gap-1.5 justify-between items-center text-13 text-secondary w-full overflow-hidden">
                 {selectedWorkspace ? (
                   <WorkspaceDetails workspace={selectedWorkspace} />
                 ) : (
-                  <span className="text-custom-text-400">Select workspace...</span>
+                  <span className="text-placeholder">Select workspace...</span>
                 )}
-                <ChevronDownIcon className="ml-auto h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-auto h-4 w-4 text-secondary" />
               </div>
             }
-            customButtonClassName="flex flex-grow border border-subtle-1 rounded-md p-2 bg-surface-1 text-custom-text-200 text-13 w-40"
+            customButtonClassName="flex flex-grow border border-subtle-1 rounded-md p-2 bg-surface-1 text-secondary text-13 w-40"
             closeOnSelect
             disabled={disableDropdown}
           >
@@ -220,12 +220,12 @@ export const AppConsent = observer(function AppConsent({
             ))}
           </CustomMenu>
         ) : (
-          <div className="text-13 text-custom-text-400">No workspaces available for this application.</div>
+          <div className="text-13 text-placeholder">No workspaces available for this application.</div>
         )}
         {hasPermissions ? (
           <>
             <div className="flex flex-col gap-y-2">
-              <div className="text-13 text-custom-text-200 font-medium">
+              <div className="text-13 text-secondary font-medium">
                 {t("workspace_settings.settings.applications.app_consent_workspace_permissions_title", {
                   app: application?.name,
                 })}
@@ -237,10 +237,10 @@ export const AppConsent = observer(function AppConsent({
               </div>
             </div>
             <div className="flex flex-col gap-y-2">
-              <div className="text-13 text-custom-text-200 font-medium">
+              <div className="text-13 text-secondary font-medium">
                 {t("workspace_settings.settings.applications.user_permissions")}
               </div>
-              <div className="text-13 text-custom-text-300">
+              <div className="text-13 text-tertiary">
                 {t("workspace_settings.settings.applications.app_consent_user_permissions_title", {
                   app: application?.name,
                 })}
@@ -253,10 +253,10 @@ export const AppConsent = observer(function AppConsent({
             </div>
 
             <div className="flex flex-col gap-y-1">
-              <div className="text-13 text-custom-text-300 font-medium">
+              <div className="text-13 text-tertiary font-medium">
                 {t("workspace_settings.settings.applications.app_consent_accept_title")}
               </div>
-              <ul className="list-disc list-inside text-custom-text-300 text-13">
+              <ul className="list-disc list-inside text-tertiary text-13">
                 <li>{t("workspace_settings.settings.applications.app_consent_accept_1")}</li>
                 <li>
                   {t("workspace_settings.settings.applications.app_consent_accept_2", { app: application?.name })}
@@ -269,7 +269,7 @@ export const AppConsent = observer(function AppConsent({
             <div className="flex-shrink-0">
               <div
                 className={cn(
-                  "relative flex  justify-start items-start gap-2 p-2 px-4 w-full rounded-lg bg-surface-1 text-custom-text-300"
+                  "relative flex  justify-start items-start gap-2 p-2 px-4 w-full rounded-lg bg-surface-1 text-tertiary"
                 )}
               >
                 <CircleAlert className="size-4" />

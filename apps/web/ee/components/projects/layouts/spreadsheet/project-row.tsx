@@ -50,9 +50,7 @@ export const SpreadsheetProjectRow = observer(function SpreadsheetProjectRow(pro
         as="tr"
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
-        placeholderChildren={
-          <td colSpan={100} className="border-[0.5px] border-transparent border-b-custom-border-200" />
-        }
+        placeholderChildren={<td colSpan={100} className="border-[0.5px] border-transparent border-b-subtle-1" />}
         classNames={cn("bg-surface-1 transition-[background-color]")}
         verticalOffset={100}
       >

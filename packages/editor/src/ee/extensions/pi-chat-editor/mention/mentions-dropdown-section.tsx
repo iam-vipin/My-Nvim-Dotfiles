@@ -19,7 +19,7 @@ export function MentionsDropdownSection(props: Props) {
     <Disclosure as="div" className="flex flex-col">
       <div
         className={cn(
-          "shrink-0 group w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-custom-sidebar-text-400"
+          "shrink-0 group w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
         )}
       >
         <>

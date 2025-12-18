@@ -67,9 +67,9 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
   return (
     <button
       className={cn(
-        "relative flex items-center rounded-sm transition-all bg-accent-primary hover:bg-accent-primary/80 focus:text-custom-brand-40 focus:bg-accent-primary/80 font-semibold text-on-color",
+        "relative flex items-center rounded-sm transition-all bg-accent-primary hover:bg-accent-primary/80 focus:bg-accent-primary/80 font-semibold text-on-color",
         {
-          "cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60": buttonLoader,
+          "cursor-not-allowed hover:bg-accent-subtle!": buttonLoader,
         }
       )}
       disabled={buttonLoader}

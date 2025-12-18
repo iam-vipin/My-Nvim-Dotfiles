@@ -135,7 +135,7 @@ export function IntakeFormsRoot(props: Props) {
                             onClick={() => copyToClipboard()}
                           />
                           <a href={publishLink} target="_blank" rel="noreferrer">
-                            <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
+                            <ExternalLink className="text-placeholder w-[16px] cursor-pointer" />
                           </a>
                         </div>
                       ) : (

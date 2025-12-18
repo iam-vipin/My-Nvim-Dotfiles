@@ -35,7 +35,7 @@ export function PagesAppShortcutsModal(props: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -50,7 +50,7 @@ export function PagesAppShortcutsModal(props: Props) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative flex h-full items-center justify-center">
-                <div className="flex w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-surface-1 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
+                <div className="flex w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-surface-1 p-5 shadow-raised-200 transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-16 font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>

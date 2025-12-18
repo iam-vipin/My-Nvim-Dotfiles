@@ -9,7 +9,7 @@ export function IssueEmbedUpgradeCard(props: any) {
     <div
       className={`${
         props.selected ? "border-accent-strong-200 border-[2px]" : ""
-      } w-full h-[100px] cursor-pointer space-y-2 rounded-md border-[0.5px] border-subtle-1 shadow-custom-shadow-2xs`}
+      } w-full h-[100px] cursor-pointer space-y-2 rounded-md border-[0.5px] border-subtle-1 shadow-raised-100`}
     >
       <h5 className="h-[20%] text-11 text-tertiary p-2">
         {props.node?.attrs?.project_identifier}-{props?.node?.attrs?.sequence_id}
@@ -20,9 +20,7 @@ export function IssueEmbedUpgradeCard(props: any) {
             <div className="rounded">
               <Crown className="m-2" size={16} color="#FFBA18" />
             </div>
-            <div className="text-custom-text text-13">
-              Embed and access work items in pages seamlessly, upgrade to plane pro now.
-            </div>
+            <div className="text-13">Embed and access work items in pages seamlessly, upgrade to plane pro now.</div>
           </div>
           <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
             Upgrade

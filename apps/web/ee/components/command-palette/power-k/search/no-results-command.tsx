@@ -36,9 +36,7 @@ export const PowerKModalNoSearchResultsCommand = observer(function PowerKModalNo
         label={
           <p className="flex items-center gap-2">
             {t("power_k.search_menu.no_results")}{" "}
-            <span className="shrink-0 text-13 text-custom-text-300">
-              {t("power_k.search_menu.go_to_advanced_search")}
-            </span>
+            <span className="shrink-0 text-13 text-tertiary">{t("power_k.search_menu.go_to_advanced_search")}</span>
           </p>
         }
         onSelect={() => {

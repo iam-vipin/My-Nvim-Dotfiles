@@ -18,7 +18,7 @@ export const EditorWorkItemMention = observer(function EditorWorkItemMention(pro
           {workItemDetails && <EditorWorkItemMentionContent workItemDetails={workItemDetails} />}
         </Popover.Button>
         <Popover.Panel side="bottom" align="start">
-          <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-surface-1 border-[0.5px] border-subtle-1">
+          <div className="p-3 space-y-2 w-72 rounded-lg shadow-raised-200 bg-surface-1 border-[0.5px] border-subtle-1">
             {workItemDetails ? (
               <EditorWorkItemMentionPreview workItemDetails={workItemDetails} />
             ) : (

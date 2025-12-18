@@ -70,17 +70,13 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
     <form onSubmit={handleAppFormSubmit}>
       <div className="space-y-4 p-4">
         <div className="space-y-1">
-          <div className="text-custom-text-200 font-medium mb-1">
-            {t("gitlab_enterprise_integration.app_form_title")}
-          </div>
-          <div className="text-body-xs-regular text-custom-text-300 mb-4">
+          <div className="text-secondary font-medium mb-1">{t("gitlab_enterprise_integration.app_form_title")}</div>
+          <div className="text-body-xs-regular text-tertiary mb-4">
             {t("gitlab_enterprise_integration.app_form_description")}
           </div>
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
-            {t("gitlab_enterprise_integration.base_url_title")}
-          </div>
+          <div className="text-body-xs-regular text-tertiary">{t("gitlab_enterprise_integration.base_url_title")}</div>
           <Input
             id="baseUrl"
             type="text"
@@ -96,15 +92,13 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
               },
             })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.base_url_description")}
           </div>
           {errors.baseUrl && <p className="text-red-500 text-caption-sm-regular">{errors.baseUrl.message}</p>}
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
-            {t("gitlab_enterprise_integration.client_id_title")}
-          </div>
+          <div className="text-body-xs-regular text-tertiary">{t("gitlab_enterprise_integration.client_id_title")}</div>
           <Input
             id="clientId"
             type="text"
@@ -114,13 +108,13 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
             tabIndex={1}
             {...register("clientId", { required: t("gitlab_enterprise_integration.client_id_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.client_id_description")}
           </div>
           {errors.clientId && <p className="text-red-500 text-caption-sm-regular">{errors.clientId.message}</p>}
         </div>
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
+          <div className="text-body-xs-regular text-tertiary">
             {t("gitlab_enterprise_integration.client_secret_title")}
           </div>
           <Input
@@ -132,14 +126,14 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
             tabIndex={1}
             {...register("clientSecret", { required: t("gitlab_enterprise_integration.client_secret_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.client_secret_description")}
           </div>
           {errors.clientSecret && <p className="text-red-500 text-caption-sm-regular">{errors.clientSecret.message}</p>}
         </div>
 
         <div>
-          <div className="text-body-xs-regular text-custom-text-300">
+          <div className="text-body-xs-regular text-tertiary">
             {t("gitlab_enterprise_integration.webhook_secret_title")}
           </div>
           <Input
@@ -151,7 +145,7 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
             tabIndex={1}
             {...register("webhookSecret", { required: t("gitlab_enterprise_integration.webhook_secret_error") })}
           />
-          <div className="text-caption-sm-regular text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.webhook_secret_description")}
           </div>
           {errors.webhookSecret && (

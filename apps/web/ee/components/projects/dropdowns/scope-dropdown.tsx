@@ -40,7 +40,7 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
           </div>
           <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
         </div>
-        <div className="flex md:hidden text-13 items-center gap-2 text-custom-text-200 justify-center w-full">
+        <div className="flex md:hidden text-13 items-center gap-2 text-secondary justify-center w-full">
           <span>{(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}</span>
           <ChevronDownIcon className="h-3 w-3 hidden md:flex" strokeWidth={2} />
         </div>

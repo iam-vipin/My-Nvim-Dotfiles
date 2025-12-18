@@ -16,12 +16,12 @@ export const getPageName = (name: string | undefined) => {
 };
 
 export function ArchivedBadge() {
-  return <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-custom-text-300" />} />;
+  return <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-tertiary" />} />;
 }
 
 export function Badge({ text, icon }: { text: string; icon?: React.ReactNode }) {
   return (
-    <div className="py-0 px-2 text-11 rounded text-custom-text-300 bg-layer-1/70 flex items-center gap-1">
+    <div className="py-0 px-2 text-11 rounded text-tertiary bg-layer-1/70 flex items-center gap-1">
       {icon}
       {text}
     </div>
@@ -129,7 +129,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
       >
         {pageEmbedLogo}
         <div className="flex-shrink-0 flex items-center gap-3">
-          <p className="not-prose text-14 font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
+          <p className="not-prose text-14 font-medium break-words truncate underline decoration-tertiary underline-offset-4">
             {displayState.text}
           </p>
           {displayState?.badge}

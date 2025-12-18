@@ -57,7 +57,7 @@ export const IntakePropertyValues = observer(function IntakePropertyValues(props
                       href={value}
                       target="_blank"
                       rel="noreferrer"
-                      className="block break-words text-custom-primary-500 hover:underline"
+                      className="block break-words text-accent-primary hover:underline"
                     >
                       {value}
                     </a>

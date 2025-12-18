@@ -118,7 +118,7 @@ export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
           />
           {formData.email.length > 0 && (
             <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
               onClick={handleEmailClear}
             />
           )}

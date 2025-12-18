@@ -49,10 +49,10 @@ export const EmptyState = memo(function EmptyState({
     return (
       <div className="text-center py-8 animate-in fade-in duration-500 transition-all ease-in-out">
         <div className="w-16 h-16 bg-layer-1 rounded-xl flex items-center justify-center mx-auto mb-4">
-          <MembersPropertyIcon className="w-8 h-8 text-custom-text-300" />
+          <MembersPropertyIcon className="w-8 h-8 text-tertiary" />
         </div>
-        <h4 className="text-13 font-medium text-custom-text-200 mb-1">No one has access yet</h4>
-        <p className="text-11 text-custom-text-400">Add people above to start collaborating on this page</p>
+        <h4 className="text-13 font-medium text-secondary mb-1">No one has access yet</h4>
+        <p className="text-11 text-placeholder">Add people above to start collaborating on this page</p>
       </div>
     );
   }

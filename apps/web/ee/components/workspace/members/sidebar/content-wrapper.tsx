@@ -32,7 +32,7 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
   return (
     <div
       className={cn(
-        "flex overflow-y-scroll absolute right-0 flex-col pt-4 pb-10 h-full border-l ease-linear border-custom-border-200 bg-custom-sidebar-background-100 xl:relative transition-[width] md:pt-page-y",
+        "flex overflow-y-scroll absolute right-0 flex-col pt-4 pb-10 h-full border-l ease-linear border-subtle-1 bg-surface-1 xl:relative transition-[width] md:pt-page-y",
         {
           "hidden w-0": !isSidebarOpen,
           "sm:min-w-[368px] max-w-[368px]": isSidebarOpen,
@@ -46,7 +46,7 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
           {workspaceMembersActivityLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
           {workspaceMembersActivities && workspaceMembersActivities.length > 0 && (
             <button
-              className="flex overflow-hidden relative flex-shrink-0 justify-center items-center w-6 h-6 rounded transition-colors cursor-pointer hover:bg-custom-background-80 text-custom-text-300"
+              className="flex overflow-hidden relative flex-shrink-0 justify-center items-center w-6 h-6 rounded transition-colors cursor-pointer hover:bg-layer-2 text-tertiary"
               onClick={() => toggleWorkspaceMembersActivitySortOrder()}
             >
               {workspaceMembersActivitySortOrder === E_SORT_ORDER.ASC ? (
@@ -57,7 +57,7 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
             </button>
           )}
           <button
-            className="flex overflow-hidden relative flex-shrink-0 justify-center items-center w-6 h-6 rounded transition-colors cursor-pointer hover:bg-custom-background-80 text-custom-text-300"
+            className="flex overflow-hidden relative flex-shrink-0 justify-center items-center w-6 h-6 rounded transition-colors cursor-pointer hover:bg-layer-2 text-tertiary"
             onClick={() => toggleWorkspaceMembersActivitySidebar(workspaceSlug, false)}
           >
             <X className="size-4" />
@@ -73,7 +73,7 @@ export const SidebarContentWrapper = observer(function SidebarContentWrapper(pro
           </Loader>
         ) : workspaceMembersActivities && workspaceMembersActivities.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <p className="text-sm text-custom-text-300">No activity yet</p>
+            <p className="text-sm text-tertiary">No activity yet</p>
           </div>
         ) : (
           <>{children}</>

@@ -36,8 +36,7 @@ export const getWorkspaceMemberActivityDetails = (
         icon: Mails,
         message: (
           <>
-            invited{" "}
-            {emailUsername ? <span className="font-medium text-custom-text-100">{emailUsername}</span> : "a new member"}
+            invited {emailUsername ? <span className="font-medium text-primary">{emailUsername}</span> : "a new member"}
             {" to the workspace."}
           </>
         ),
@@ -54,7 +53,7 @@ export const getWorkspaceMemberActivityDetails = (
         icon: MailX,
         message: emailUsername ? (
           <>
-            deleted the invitation for <span className="font-medium text-custom-text-100">{emailUsername}</span>.
+            deleted the invitation for <span className="font-medium text-primary">{emailUsername}</span>.
           </>
         ) : (
           <>deleted the invitation.</>
@@ -66,7 +65,7 @@ export const getWorkspaceMemberActivityDetails = (
         icon: UserX,
         message: subject ? (
           <>
-            removed <span className="font-medium text-custom-text-100">{subject}</span> from the workspace.
+            removed <span className="font-medium text-primary">{subject}</span> from the workspace.
           </>
         ) : (
           <>removed a member from the workspace.</>
@@ -85,11 +84,11 @@ export const getWorkspaceMemberActivityDetails = (
         icon: UserCog,
         message: (
           <>
-            changed {memberName ? <span className="font-medium text-custom-text-100">{memberName}</span> : "member"}
+            changed {memberName ? <span className="font-medium text-primary">{memberName}</span> : "member"}
             {"'s role from "}
-            <span className="font-medium text-custom-text-100">{oldRole}</span>
+            <span className="font-medium text-primary">{oldRole}</span>
             {" to "}
-            <span className="font-medium text-custom-text-100">{newRole}</span>.
+            <span className="font-medium text-primary">{newRole}</span>.
           </>
         ),
       };
@@ -106,8 +105,8 @@ export const getWorkspaceMemberActivityDetails = (
         icon: UserPlus,
         message: (
           <>
-            added <span className="font-medium text-custom-text-100">{seatsAdded}</span>{" "}
-            {seatsAdded === 1 ? "seat" : "seats"} to the workspace.
+            added <span className="font-medium text-primary">{seatsAdded}</span> {seatsAdded === 1 ? "seat" : "seats"}{" "}
+            to the workspace.
           </>
         ),
       };
@@ -122,7 +121,7 @@ export const getWorkspaceMemberActivityDetails = (
         icon: UserMinus,
         message: (
           <>
-            removed <span className="font-medium text-custom-text-100">{seatsRemoved}</span>{" "}
+            removed <span className="font-medium text-primary">{seatsRemoved}</span>{" "}
             {seatsRemoved === 1 ? "seat" : "seats"} from the workspace.
           </>
         ),

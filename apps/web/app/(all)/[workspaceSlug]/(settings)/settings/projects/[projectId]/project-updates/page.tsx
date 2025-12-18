@@ -78,7 +78,7 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
                 </div>
                 <div className="leading-tight">
                   <h5 className="font-medium">Turn on Project Updates</h5>
-                  <span className="text-custom-sidebar-text-400 text-13">
+                  <span className="text-placeholder text-13">
                     See all updates on demand from anyone in this project. Easily track updates across four preset
                     categories.
                   </span>

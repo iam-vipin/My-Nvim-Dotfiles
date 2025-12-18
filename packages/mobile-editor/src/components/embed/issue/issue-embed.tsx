@@ -77,7 +77,7 @@ export function IssueEmbedCard(props: Props) {
     );
 
   return (
-    <div className="issue-embed cursor-pointer space-y-2 rounded-lg border border-strong bg-surface-1 shadow-custom-shadow-2xs p-3 px-4 my-2">
+    <div className="issue-embed cursor-pointer space-y-2 rounded-lg border border-strong bg-surface-1 shadow-raised-100 p-3 px-4 my-2">
       <IssueIdentifier
         workspaceSlug={workspaceSlug}
         projectId={projectId}

@@ -103,9 +103,7 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
               </div>
               <div className="leading-tight">
                 <h5 className="font-medium">{t("project_settings.initiatives.title")}</h5>
-                <span className="text-custom-sidebar-text-400 text-13">
-                  {t("project_settings.initiatives.description")}
-                </span>
+                <span className="text-placeholder text-13">{t("project_settings.initiatives.description")}</span>
               </div>
             </div>
             <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />

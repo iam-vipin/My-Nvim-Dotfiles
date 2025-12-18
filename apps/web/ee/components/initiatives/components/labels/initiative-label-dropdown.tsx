@@ -167,7 +167,7 @@ export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown
           emptyMessage=""
           maxHeight="md"
           className={cn(
-            "rounded border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg",
+            "rounded border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-raised-200",
             currentSize.dropdown
           )}
           positionerClassName="z-50"

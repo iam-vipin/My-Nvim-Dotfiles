@@ -38,7 +38,7 @@ export const IssueActivityWorklogCreateButton = observer(function IssueActivityW
         </Button>
       }
       popperPosition="bottom-end"
-      panelClassName="w-72 my-1 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-custom-shadow-rg focus:outline-none"
+      panelClassName="w-72 my-1 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-raised-200 focus:outline-none"
     >
       <WorklogCreate
         workspaceSlug={workspaceSlug}

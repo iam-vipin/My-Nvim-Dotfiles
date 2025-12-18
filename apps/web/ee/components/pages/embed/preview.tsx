@@ -107,7 +107,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
         e.preventDefault();
       }}
       className={cn(
-        "absolute top-full left-0 z-10 w-80 bg-surface-1 shadow-custom-shadow-rg rounded-lg overflow-hidden max-h-[250px] cursor-default",
+        "absolute top-full left-0 z-10 w-80 bg-surface-1 shadow-raised-200 rounded-lg overflow-hidden max-h-[250px] cursor-default",
         "transition-all duration-200 transform origin-top-left",
         isAnimatedIn ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-2 scale-95"
       )}

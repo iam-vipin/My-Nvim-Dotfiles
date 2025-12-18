@@ -25,7 +25,7 @@ export const AccessMenu = memo(function AccessMenu({
   canCurrentUserChangeAccess = true,
 }: TAccessMenuProps) {
   if (isOwner) {
-    return <span className="text-11 text-custom-text-300 px-2 py-1">Owner</span>;
+    return <span className="text-11 text-tertiary px-2 py-1">Owner</span>;
   }
 
   const currentOption = ACCESS_OPTIONS.find((opt) => opt.value === currentAccess.toString());
@@ -33,13 +33,13 @@ export const AccessMenu = memo(function AccessMenu({
 
   // If user cannot change access, show read-only label
   if (!canCurrentUserChangeAccess) {
-    return <span className="text-11 text-custom-text-300 px-2 py-1">can {accessLabel.toLowerCase()}</span>;
+    return <span className="text-11 text-tertiary px-2 py-1">can {accessLabel.toLowerCase()}</span>;
   }
 
   return (
     <CustomMenu
       customButton={
-        <div className="flex items-center gap-1 px-2 py-1 text-11 text-custom-text-300 hover:bg-surface-2 rounded transition-colors whitespace-nowrap">
+        <div className="flex items-center gap-1 px-2 py-1 text-11 text-tertiary hover:bg-surface-2 rounded transition-colors whitespace-nowrap">
           can {accessLabel.toLowerCase()}
           <ChevronDownIcon className="h-3 w-3" />
         </div>

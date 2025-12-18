@@ -28,12 +28,12 @@ export const SectionHeader = React.memo(function SectionHeader({
   return (
     <div
       className={cn(
-        "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-surface-2"
+        "group w-full flex items-center justify-between px-2 py-0.5 rounded text-placeholder hover:bg-surface-2"
       )}
     >
       <Link
         href={`/${workspaceSlug}/wiki/${sectionType}`}
-        className={cn("flex-grow text-13 font-semibold text-custom-sidebar-text-400")}
+        className={cn("flex-grow text-13 font-semibold text-placeholder")}
       >
         {sectionDetails.label === SECTION_DETAILS.public.label ? "Workspace" : sectionDetails.label}
       </Link>

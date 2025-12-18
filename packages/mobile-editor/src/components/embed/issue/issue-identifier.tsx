@@ -36,7 +36,5 @@ export function IssueIdentifier(props: Props) {
       </Loader>
     );
 
-  return (
-    <span className={"text-13 font-medium text-custom-text-300"}>{`${projectIdentifier}-${issueIdentifier}`}</span>
-  );
+  return <span className={"text-13 font-medium text-tertiary"}>{`${projectIdentifier}-${issueIdentifier}`}</span>;
 }

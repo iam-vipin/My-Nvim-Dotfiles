@@ -14,7 +14,7 @@ export const PageHeader = observer(function PageHeader({ pageDetails }: Props) {
           {pageDetails.logo_props?.in_use ? (
             <Logo logo={pageDetails.logo_props} size={36} type="lucide" />
           ) : (
-            <PageIcon className="size-9 text-custom-text-300" />
+            <PageIcon className="size-9 text-tertiary" />
           )}
         </div>
         <h1 className="text-h1-bold break-words">{pageDetails.name}</h1>

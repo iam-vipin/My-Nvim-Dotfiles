@@ -92,7 +92,7 @@ export function UpdateStatusPills(props: TStatusPills) {
 
             <Popover.Panel
               className={cn(
-                "absolute left-0 top-full z-20 w-screen mt-2 rounded-md border-[0.5px] border-subtle-1 bg-surface-1 text-11 shadow-custom-shadow-rg focus:outline-none max-w-[320px]"
+                "absolute left-0 top-full z-20 w-screen mt-2 rounded-md border-[0.5px] border-subtle-1 bg-surface-1 text-11 shadow-raised-200 focus:outline-none max-w-[320px]"
               )}
               ref={setPopperElement}
               style={styles.popper}

@@ -101,7 +101,7 @@ export function EmbedLinkView(props: EmbedLinkViewProps) {
   return (
     <div
       ref={modalRef}
-      className="my-1 min-w-32 overflow-hidden rounded-md border-[0.5px]  max-w-[12rem] border-strong bg-layer-1 shadow-custom-shadow-rg animate-in fade-in slide-in-from-bottom-2 focus:outline-none"
+      className="my-1 min-w-32 overflow-hidden rounded-md border-[0.5px]  max-w-[12rem] border-strong bg-layer-1 shadow-raised-200 animate-in fade-in slide-in-from-bottom-2 focus:outline-none"
       tabIndex={-1}
       role="menu"
       aria-label="Paste options"

@@ -27,7 +27,7 @@ function Component({ dockItems }: Props) {
             "bg-layer-1": isMenuOpen,
           })}
         >
-          <Grip className="size-5 text-custom-sidebar-text-300" />
+          <Grip className="size-5 text-tertiary" />
         </button>
       }
       menuButtonOnClick={() => !isMenuOpen && setIsMenuOpen(true)}

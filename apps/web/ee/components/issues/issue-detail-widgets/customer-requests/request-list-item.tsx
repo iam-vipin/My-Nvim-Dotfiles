@@ -164,7 +164,7 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
           <div className="flex gap-2">
             <Button
               variant="secondary"
-              className="text-secondary bg-surface-1 text-13 px-2 hover:bg-surface-1 hover:shadow-custom-shadow"
+              className="text-secondary bg-surface-1 text-13 px-2 hover:bg-surface-1 hover:shadow-raised-100"
               onClick={() => {
                 if (!link) toggleRequestSourceModal(request.id);
                 else handleOpenUrl(link);

@@ -31,7 +31,7 @@ export function GroupDragOverlay(props: Props) {
   return (
     <div
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded-sm bg-custom-background-overlay ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded-sm bg-backdrop ${dragColumnOrientation}`,
         {
           "flex flex-col border-[1px] border-subtle-1 z-[2]": shouldOverlayBeVisible,
         },
@@ -45,7 +45,7 @@ export function GroupDragOverlay(props: Props) {
             "text-secondary": shouldOverlayBeVisible,
           },
           {
-            "text-custom-text-error": isDropDisabled,
+            "text-danger-primary": isDropDisabled,
           }
         )}
       >

@@ -87,7 +87,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+            <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("common.access.public")}
             <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>

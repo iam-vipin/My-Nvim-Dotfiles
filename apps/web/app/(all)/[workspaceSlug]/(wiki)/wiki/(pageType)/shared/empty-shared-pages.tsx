@@ -45,7 +45,7 @@ export const SharedPagesFallback = observer(function SharedPagesFallback() {
           {canUpgrade && (
             <div className="flex justify-center gap-4 self-center mt-4">
               <Button
-                className="bg-accent-primary hover:bg-custom-primary/90 focus:bg-custom-primary/90"
+                className="bg-accent-primary hover:bg-accent-primary/90 focus:bg-accent-primary/90"
                 onClick={() => togglePaidPlanModal(true)}
               >
                 <Crown className="w-3.5 h-3.5" />

@@ -207,7 +207,7 @@ export function CustomerForm(props: TCustomerForms) {
         <div
           className={cn(
             "px-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle",
-            isFormOverFlowing && "shadow-custom-shadow-xs"
+            isFormOverFlowing && "shadow-raised-100"
           )}
         >
           <div className="flex items-center justify-end gap-2">

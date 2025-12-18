@@ -116,7 +116,7 @@ export function EndCycleModal(props: EndCycleModalProps) {
             </>
           ) : (
             <>
-              You have <span className="text-custom-80 font-semibold">{transferrableIssuesCount}</span>
+              You have <span className="font-semibold">{transferrableIssuesCount}</span>
               &nbsp;incomplete work items in this cycle that you can move to an upcoming cycle or leave as-is in this
               one.
             </>
@@ -134,7 +134,7 @@ export function EndCycleModal(props: EndCycleModalProps) {
                   onChange={() => setTransferIssues(false)}
                   {...props}
                 />
-                <span className="text-custom-100 text-13">Leave pending work items in this cycle.</span>
+                <span className="text-13">Leave pending work items in this cycle.</span>
               </div>
               <div className="flex gap-1">
                 <Input
@@ -145,7 +145,7 @@ export function EndCycleModal(props: EndCycleModalProps) {
                   onChange={() => setTransferIssues(true)}
                   {...props}
                 />
-                <span className="text-custom-100 text-13">Transfer pending work items to an upcoming cycle.</span>
+                <span className="text-13">Transfer pending work items to an upcoming cycle.</span>
               </div>
             </>
           )}

@@ -119,7 +119,7 @@ const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropd
       <div
         ref={dropdownContainer}
         id="issue-list-container"
-        className="relative max-h-80 w-96 overflow-y-auto rounded-md border-[0.5px] border-subtle-1 bg-layer-1 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-80 w-96 overflow-y-auto rounded-md border-[0.5px] border-subtle-1 bg-layer-1 px-2 py-2.5 shadow-raised-200 space-y-2"
         style={{
           zIndex: 100,
         }}

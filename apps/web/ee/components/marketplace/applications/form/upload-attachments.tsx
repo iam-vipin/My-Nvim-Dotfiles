@@ -169,11 +169,11 @@ export const UploadAppAttachments = observer(function UploadAppAttachments(props
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+            <div className="fixed inset-0 bg-backdrop transition-opacity" />
           </Transition.Child>
           <div className="fixed inset-0 z-30 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center px-4 text-center">
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-4 py-4 text-left shadow-custom-shadow-md transition-all sm:max-w-xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-4 py-4 text-left shadow-raised-200 transition-all sm:max-w-xl">
                 <Dialog.Title as="h3" className="text-h6-medium text-primary">
                   {t("workspace_settings.settings.applications.uploading_images", { count: newImages.length })}
                 </Dialog.Title>

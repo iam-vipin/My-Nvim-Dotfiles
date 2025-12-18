@@ -125,7 +125,7 @@ export const PillInput = React.forwardRef(function PillInput(
           "flex min-h-[40px] w-full flex-wrap items-center gap-1 rounded-md bg-transparent text-13 focus-within:outline-none",
           {
             "rounded-md border-[0.5px] border-subtle-1": mode === "primary",
-            "rounded-sm border-none bg-transparent ring-0 transition-all focus-within:ring-1 focus-within:ring-custom-primary":
+            "rounded-sm border-none bg-transparent ring-0 transition-all focus-within:ring-1 focus-within:ring-accent-strong":
               mode === "transparent",
             "rounded-sm border-none bg-transparent ring-0": mode === "true-transparent",
             "border-red-500": hasError,

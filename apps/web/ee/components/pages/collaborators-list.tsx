@@ -132,7 +132,7 @@ export const CollaboratorsList = observer(function CollaboratorsList(props: Coll
               }}
             >
               <Tooltip tooltipContent={memberDetails.display_name} position="bottom" disabled={!isGroupHovered}>
-                <div className="ring-2 ring-custom-background-100 rounded-full transition-all duration-200">
+                <div className="rounded-full transition-all duration-200">
                   <Avatar
                     name={memberDetails.display_name}
                     src={getFileURL(memberDetails.avatar_url)}
@@ -151,7 +151,7 @@ export const CollaboratorsList = observer(function CollaboratorsList(props: Coll
             position="bottom"
           >
             <div
-              className={`flex items-center justify-center rounded-full bg-layer-1 text-secondary text-11 font-medium ring-2 ring-custom-background-100 transition-all duration-200 ease-out ${
+              className={`flex items-center justify-center rounded-full bg-layer-1 text-secondary text-11 font-medium transition-all duration-200 ease-out ${
                 isGroupHovered
                   ? "w-6 h-6 ml-1 opacity-100 translate-x-0 scale-100"
                   : "-ml-2.5 opacity-100 translate-x-0 scale-100 w-6 h-6"

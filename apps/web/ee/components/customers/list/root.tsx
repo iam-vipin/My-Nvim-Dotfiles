@@ -119,7 +119,7 @@ export const CustomersListRoot = observer(function CustomersListRoot() {
         ) : (
           <div
             className={
-              "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-custom-border-200 pl-8 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
+              "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-subtle-1 pl-8 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
             }
             onClick={handleLoadMore}
           >

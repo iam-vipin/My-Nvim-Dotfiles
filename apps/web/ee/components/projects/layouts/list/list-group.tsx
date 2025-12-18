@@ -28,7 +28,7 @@ const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
-    <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
+    <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-subtle-1">
       <div className="flex items-center gap-3">
         <span className="h-5 w-10 bg-layer-1 rounded animate-pulse" />
         <span className={`h-5 w-52 bg-layer-1 rounded animate-pulse`} />

@@ -133,7 +133,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
             <FilePlus2
               size={16}
               className={cn("my-auto text-icon-secondary transition-colors", {
-                "cursor-not-allowed text-custom-text-400": !isWorkspaceAuthorized,
+                "cursor-not-allowed text-placeholder": !isWorkspaceAuthorized,
               })}
             />
           </button>

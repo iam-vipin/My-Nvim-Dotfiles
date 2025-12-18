@@ -91,7 +91,7 @@ export function OptionSelect({ property, options, isPreview = false, required = 
               <Combobox.Button
                 disabled={isPreview}
                 className={cn("flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-14", {
-                  "border-subtle-1 focus:ring-custom-primary-100": !error,
+                  "border-subtle-1 focus:ring-accent-strong": !error,
                   "border-red-500 focus:ring-red-500": error,
                   "cursor-not-allowed opacity-60": isPreview,
                 })}

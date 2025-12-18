@@ -38,8 +38,8 @@ export const getColors = (resolvedTheme: string | undefined) => {
       startedStroke: "#FF9500",
       startedArea: "#FF9500",
       todayLine: "black",
-      scopeStroke: "rgba(var(--color-primary-100))",
-      scopeArea: "rgba(var(--color-primary-100))",
+      scopeStroke: "var(--border-color-accent-strong)",
+      scopeArea: "var(--border-color-accent-strong)",
       actual: "#26D950",
     };
 };

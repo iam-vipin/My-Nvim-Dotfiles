@@ -20,8 +20,8 @@ export function IssueUser(props: TIssueUser) {
 
   return (
     <>
-      {customUserName ? (
-        <span className="text-primary font-medium">{customUserName}</span>
+      {customUserName || activity.actor_detail?.display_name.includes("-intake") ? (
+        <span className="text-primary font-medium">{customUserName || "Plane"}</span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}

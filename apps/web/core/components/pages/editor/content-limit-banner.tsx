@@ -8,7 +8,7 @@ type Props = {
 
 export function ContentLimitBanner({ className, onDismiss }: Props) {
   return (
-    <div className={cn("flex items-center gap-2 bg-layer-2 border-b border-subtle-1 px-4 py-2.5 text-sm", className)}>
+    <div className={cn("flex items-center gap-2 bg-layer-2 border-b border-subtle-1 px-4 py-2.5 text-13", className)}>
       <div className="flex items-center gap-2 text-secondary mx-auto">
         <span className="text-amber-500">
           <TriangleAlert />

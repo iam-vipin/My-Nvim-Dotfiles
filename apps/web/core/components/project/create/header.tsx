@@ -19,11 +19,13 @@ import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/te
 type Props = {
   handleClose: () => void;
   isMobile?: boolean;
+  handleFormChange?: () => void;
+  isClosable?: boolean;
 };
 
 function ProjectCreateHeader(props: Props) {
-  const { handleClose, isMobile = false } = props;
-  const { watch, control } = useFormContext<IProject>();
+  const { handleClose, isMobile = false, handleFormChange, isClosable = true } = props;
+  const { watch, control, setValue } = useFormContext<IProject>();
   const { t } = useTranslation();
   // derived values
   const coverImage = watch("cover_image_url");
@@ -43,11 +45,13 @@ function ProjectCreateHeader(props: Props) {
       <div className="absolute left-2.5 top-2.5">
         <ProjectTemplateSelect handleModalClose={handleClose} />
       </div>
-      <div className="absolute right-2 top-2 p-2">
-        <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
-          <CloseIcon className="h-5 w-5 text-on-color" />
-        </button>
-      </div>
+      {isClosable && (
+        <div className="absolute right-2 top-2 p-2">
+          <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
+            <CloseIcon className="h-5 w-5 text-on-color" />
+          </button>
+        </div>
+      )}
       <div className="absolute bottom-2 right-2">
         <Controller
           name="cover_image_url"
@@ -55,8 +59,11 @@ function ProjectCreateHeader(props: Props) {
           render={({ field: { value, onChange } }) => (
             <ImagePickerPopover
               label={t("change_cover")}
+              onChange={(data) => {
+                onChange(data);
+                handleFormChange?.();
+              }}
               control={control}
-              onChange={onChange}
               value={value ?? null}
               tabIndex={getIndex("cover_image")}
             />
@@ -76,7 +83,7 @@ function ProjectCreateHeader(props: Props) {
               buttonClassName="flex items-center justify-center"
               label={
                 <span className="grid h-11 w-11 place-items-center rounded-md bg-layer-1">
-                  <Logo logo={value} size={20} />
+                  {value && <Logo logo={value} size={20} />}
                 </span>
               }
               onChange={(val: any) => {
@@ -88,15 +95,20 @@ function ProjectCreateHeader(props: Props) {
                   };
                 else if (val?.type === "icon") logoValue = val.value;
 
-                onChange({
+                const newLogoProps = {
                   in_use: val?.type,
                   [val?.type]: logoValue,
+                };
+                setValue("logo_props", newLogoProps, {
+                  shouldDirty: true,
                 });
+                onChange(newLogoProps);
+                handleFormChange?.();
                 setIsOpen(false);
               }}
-              defaultIconColor={value.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
+              defaultIconColor={value?.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
               defaultOpen={
-                value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
+                value?.in_use && value?.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
               }
             />
           )}

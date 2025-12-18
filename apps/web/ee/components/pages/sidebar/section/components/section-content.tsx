@@ -193,7 +193,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
               {isFetchingNextPage ? (
                 <div className="flex items-center gap-2 text-tertiary">
                   <Loader className="size-3 animate-spin" />
-                  <span className="text-xs">Loading more pages...</span>
+                  <span className="ml-2 text-13 text-tertiary">Loading more pages...</span>
                 </div>
               ) : (
                 <div className="h-4" />

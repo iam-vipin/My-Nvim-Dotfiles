@@ -52,7 +52,8 @@ class IntakeResponsibilitySerializer(serializers.Serializer):
             teamspace_ids = TeamspaceProject.objects.filter(project_id=project_id).values_list(
                 "team_space_id", flat=True
             )
-            return list(
+
+            validated_users = list(
                 ProjectMember.objects.filter(project_id=project_id, member_id__in=value, is_active=True).values_list(
                     "member_id", flat=True
                 )
@@ -61,11 +62,14 @@ class IntakeResponsibilitySerializer(serializers.Serializer):
                     "member_id", flat=True
                 )
             )
-        return list(
+
+            return set(validated_users)
+        validated_users = list(
             ProjectMember.objects.filter(project_id=project_id, member_id__in=value, is_active=True).values_list(
                 "member_id", flat=True
             )
         )
+        return validated_users
 
     def create(self, validated_data):
         # Remove the existing responsibility and add the new user

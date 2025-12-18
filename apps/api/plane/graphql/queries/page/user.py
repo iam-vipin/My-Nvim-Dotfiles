@@ -72,7 +72,7 @@ class UserPageQuery:
             page_base_query = page_base_query.filter(archived_at__isnull=False)
 
         # Filter pages by access level
-        if type == "all":
+        if type in ["all", "archived"]:
             page_base_query = page_base_query.filter(Q(access=0) | (Q(access=1) & Q(owned_by_id=user_id)))
         elif type == "public":
             page_base_query = page_base_query.filter(access=0)
@@ -82,6 +82,8 @@ class UserPageQuery:
             page_base_query = page_base_query.filter(
                 Q(access=1) & (Q(id__in=pages_shared_with_user) | (Q(owned_by_id=user_id) & Q(id__in=shared_page_ids)))
             )
+        else:
+            page_base_query = page_base_query.none()
 
         subquery = UserFavorite.objects.filter(
             user=info.context.user,

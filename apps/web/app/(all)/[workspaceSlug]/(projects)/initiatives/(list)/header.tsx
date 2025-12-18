@@ -55,7 +55,7 @@ export const InitiativesListHeader = observer(function InitiativesListHeader() {
           </Breadcrumbs>
         </Header.LeftItem>
         <Header.RightItem>
-          <div className="hidden gap-3 md:flex">
+          <div className="hidden gap-2 md:flex">
             <LayoutSwitcher
               selectedLayout={activeLayout || DEFAULT_INITIATIVE_LAYOUT}
               onChange={(layout) => updateDisplayFilters(workspaceSlug.toString(), { layout })}

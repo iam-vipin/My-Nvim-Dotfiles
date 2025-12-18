@@ -79,7 +79,7 @@ export const EpicsHeader = observer(function EpicsHeader() {
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <div className="hidden gap-3 md:flex items-center">
+          <div className="hidden gap-2 md:flex items-center">
             <HeaderFilters
               storeType={EIssuesStoreType.EPIC}
               projectId={projectId?.toString()}

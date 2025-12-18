@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Link2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -100,7 +101,12 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
         onClose={() => setIsDeleteModalOpen(false)}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />}
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={buttonClassName}>
+      <CustomMenu
+        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
+        placement="bottom-end"
+        closeOnSelect
+        buttonClassName={buttonClassName}
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

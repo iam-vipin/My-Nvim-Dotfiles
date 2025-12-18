@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { PanelRight } from "lucide-react";
 import { CustomersIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
@@ -86,18 +87,15 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
         <Header.RightItem>
           {customer && (
             <div ref={parentRef} className="flex gap-2 items-center transition-colors duration-200">
-              <button
-                type="button"
-                className={cn("p-1 rounded-sm outline-none bg-layer-1", {
-                  "bg-layer-1-selected": !customerDetailSidebarCollapsed,
-                  "hover:bg-layer-1-hover": customerDetailSidebarCollapsed,
-                })}
+              <IconButton
+                variant="tertiary"
+                size="lg"
+                icon={PanelRight}
                 onClick={() => toggleCustomerDetailSidebar()}
-              >
-                <PanelRight
-                  className={cn("h-4 w-4", !customerDetailSidebarCollapsed ? "text-tertiary" : "text-secondary")}
-                />
-              </button>
+                className={cn({
+                  "text-accent-primary bg-accent-subtle": !customerDetailSidebarCollapsed,
+                })}
+              />
               <CustomerQuickActions
                 customerId={customerId.toString()}
                 workspaceSlug={workspaceSlug.toString()}

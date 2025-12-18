@@ -1,25 +1,21 @@
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 import { cn } from "@plane/utils";
+import { IconButton } from "@plane/propel/icon-button";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 
 export const InitiativeOverviewHeaderActions = observer(function InitiativeOverviewHeaderActions() {
   const { initiativesSidebarCollapsed, toggleInitiativesSidebar } = useAppTheme();
   return (
-    <button
-      type="button"
-      className={cn("p-1 rounded outline-none hover:bg-layer-transparent-hover bg-layer-transparent", {
-        "bg-layer-transparent-selected": !initiativesSidebarCollapsed,
-      })}
+    <IconButton
+      variant="tertiary"
+      size="lg"
+      icon={PanelRight}
       onClick={() => toggleInitiativesSidebar()}
-    >
-      <PanelRight
-        className={cn(
-          "size-4 cursor-pointer",
-          !initiativesSidebarCollapsed ? "text-icon-primary" : "text-icon-secondary"
-        )}
-      />
-    </button>
+      className={cn({
+        "text-accent-primary bg-accent-subtle": !initiativesSidebarCollapsed,
+      })}
+    />
   );
 });

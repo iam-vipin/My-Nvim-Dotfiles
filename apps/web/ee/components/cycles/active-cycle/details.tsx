@@ -11,11 +11,11 @@ import type {
 } from "@plane/types";
 import { Loader, Row } from "@plane/ui";
 // components
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { cn } from "@plane/utils";
 // assets
 import activeCycleDark from "@/app/assets/empty-state/cycle/active-dark.webp?url";
 import activeCycleLight from "@/app/assets/empty-state/cycle/active-light.webp?url";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -85,10 +85,11 @@ const ActiveCycleDetail = observer(function ActiveCycleDetail(props: ActiveCycle
 
   if (!activeCycle)
     return (
-      <DetailedEmptyState
+      <EmptyStateDetailed
+        assetKey="cycle"
         title={t("project_cycles.empty_state.active.title")}
         description={t("project_cycles.empty_state.active.description")}
-        assetPath={activeCycleResolvedPath}
+        rootClassName="py-10 h-auto"
       />
     );
 

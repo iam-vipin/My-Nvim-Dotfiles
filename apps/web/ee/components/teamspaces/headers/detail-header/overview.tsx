@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { Link2, Sidebar } from "lucide-react";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
@@ -47,22 +48,21 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
 
   if (!workspaceSlug || !isTeamspaceMember) return;
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       {isSubmitting && <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />}
-      <div className={cn(commonButtonClassName, "hover:bg-layer-1-hover")}>
-        <Sidebar
-          className={cn("size-4 cursor-pointer select-none text-accent-primary", {
-            "text-tertiary hover:text-secondary": isTeamSidebarCollapsed,
-          })}
-          onClick={() => toggleTeamsSidebar(!isTeamSidebarCollapsed)}
-        />
-      </div>
-      <div className={cn(commonButtonClassName, "hover:bg-layer-1-hover")}>
-        <Link2
-          className={cn("-rotate-45 size-4 cursor-pointer select-none text-tertiary hover:text-secondary")}
-          onClick={handleCopyText}
-        />
-      </div>
+
+      <IconButton
+        variant="tertiary"
+        size="lg"
+        icon={Sidebar}
+        onClick={() => toggleTeamsSidebar(!isTeamSidebarCollapsed)}
+        className={cn({
+          "text-accent-primary bg-accent-subtle": !isTeamSidebarCollapsed,
+        })}
+      />
+
+      <IconButton variant="tertiary" size="lg" icon={Link2} onClick={handleCopyText} />
+
       <TeamQuickActions
         teamspaceId={teamspaceId?.toString()}
         workspaceSlug={workspaceSlug?.toString()}

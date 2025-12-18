@@ -30,7 +30,7 @@ export const TeamspaceProjectListHeaderActions = observer(function TeamspaceProj
           isEditingAllowed={isEditingAllowed}
           trackerElement={TEAMSPACE_TRACKER_ELEMENTS.HEADER_UPDATE_PROJECT_BUTTON}
           renderButton={({ open, trackerElement }) => (
-            <Button onClick={open} data-ph-element={trackerElement}>
+            <Button onClick={open} data-ph-element={trackerElement} size="lg">
               <div className="hidden sm:block">Update</div> projects
             </Button>
           )}

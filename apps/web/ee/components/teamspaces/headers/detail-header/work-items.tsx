@@ -28,7 +28,7 @@ export const TeamspaceProjectDetailHeaderActions = observer(function TeamspacePr
 
   return (
     <>
-      <div className="hidden gap-3 md:flex">
+      <div className="hidden gap-2 items-center md:flex">
         <TeamspaceProjectWorkItemFilters
           teamspaceId={teamspaceId}
           workspaceSlug={workspaceSlug.toString()}

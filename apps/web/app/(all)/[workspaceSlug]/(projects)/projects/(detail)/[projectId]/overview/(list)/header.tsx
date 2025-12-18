@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
 // plane imports
 import { OverviewIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -40,10 +41,13 @@ export const ProjectOverviewHeader = observer(function ProjectOverviewHeader() {
       </Header.LeftItem>
       <Header.RightItem>
         <div className="flex items-center gap-2">
-          <Sidebar
-            className={cn("size-4 cursor-pointer", {
-              "text-accent-primary": !projectOverviewSidebarCollapsed,
+          <IconButton
+            size="lg"
+            variant="ghost"
+            className={cn({
+              "text-accent-primary bg-accent-subtle": !projectOverviewSidebarCollapsed,
             })}
+            icon={Sidebar}
             onClick={() => toggleProjectOverviewSidebar()}
           />
         </div>

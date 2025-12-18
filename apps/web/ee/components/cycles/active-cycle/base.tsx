@@ -2,12 +2,11 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { useTranslation } from "@plane/i18n";
 // assets
 import activeCycleDark from "@/app/assets/empty-state/cycle/active-dark.webp?url";
 import activeCycleLight from "@/app/assets/empty-state/cycle/active-light.webp?url";
-// components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // local imports
 import ActiveCycleDetail from "./details";
 import { CycleProgressHeader } from "./progress-header";
@@ -33,13 +32,12 @@ export const ActiveCycleBase = observer(function ActiveCycleBase(props: IActiveC
 
   if (!cycleDetails.cycle || isEmpty(cycleDetails.cycle))
     return (
-      <div className="max-h-[500px]">
-        <DetailedEmptyState
-          title={t("project_cycles.empty_state.active.title")}
-          description={t("project_cycles.empty_state.active.description")}
-          assetPath={activeCycleResolvedPath}
-        />
-      </div>
+      <EmptyStateDetailed
+        assetKey="cycle"
+        title={t("project_cycles.empty_state.active.title")}
+        description={t("project_cycles.empty_state.active.description")}
+        rootClassName="py-10 h-auto"
+      />
     );
 
   return (

@@ -59,7 +59,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   const getCTA = () => {
     if (!isAdvancedIntakeEnabled) {
       return (
-        <Button variant="primary" onClick={() => setCreateIssueModal(true)}>
+        <Button variant="primary" size="lg" onClick={() => setCreateIssueModal(true)}>
           Add work item
         </Button>
       );
@@ -69,6 +69,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
         <Button
           disabled={!intakeForms[projectId.toString()].is_in_app_enabled}
           variant="primary"
+          size="lg"
           onClick={() => setCreateIssueModal(true)}
         >
           Add work item
@@ -116,7 +117,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
           popoverButtonRef={popoverButtonRef}
           buttonClassName="my-auto outline-none text-tertiary"
           button={
-            <Button variant="secondary" className="my-auto outline-none text-secondary font-medium">
+            <Button variant="secondary" size="lg">
               Intake source
             </Button>
           }

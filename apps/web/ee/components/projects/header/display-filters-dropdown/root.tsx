@@ -1,6 +1,5 @@
 " use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";

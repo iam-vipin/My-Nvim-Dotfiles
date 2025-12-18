@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Link2, Pencil, Trash2 } from "lucide-react";
+import { Link2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -86,7 +87,12 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
+      <CustomMenu
+        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
+        placement="bottom-end"
+        closeOnSelect
+        buttonClassName={customClassName}
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

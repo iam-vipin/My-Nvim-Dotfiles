@@ -1,5 +1,7 @@
+import { MoreHorizontal } from "lucide-react";
 import { cn, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
+import { IconButton } from "@plane/propel/icon-button";
 import { useIntakeHeaderMenuItems } from "@/components/common/quick-actions-helper";
 
 type Props = {
@@ -19,7 +21,7 @@ export function IntakeHeaderQuickActions(props: Props) {
   return (
     <>
       <CustomMenu
-        ellipsis
+        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"

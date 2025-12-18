@@ -32,7 +32,7 @@ export const TeamspaceWorkItemListHeaderActions = observer(function TeamspaceWor
 
   return (
     <>
-      <div className="hidden gap-3 md:flex">
+      <div className="hidden gap-2 items-center md:flex">
         <TeamHeaderFilters teamspaceId={teamspaceId} workspaceSlug={workspaceSlug.toString()} />
       </div>
       {isEditingAllowed ? (

@@ -70,7 +70,7 @@ class IssueNotificationBuilder:
         return f"set the state to '{self.new_value}'"
 
     def _handle_priority_change(self) -> str:
-        return f"set the priority to '{self.new_value}'"
+        return f"set the priority to '{self.new_value.capitalize()}'"
 
     def _handle_assignees_change(self) -> str:
         final_string = ""
@@ -134,7 +134,7 @@ class IssueNotificationBuilder:
 
     def _handle_attachment_change(self) -> str:
         final_string = ""
-        if self.new_value:
+        if self.new_value and self.new_value != "None":
             final_string += "updated a new attachment"
         else:
             final_string += "removed an attachment"
@@ -196,6 +196,23 @@ class IssueNotificationBuilder:
         )
         return f"{action} {f'{self.new_value}' if self.new_value else self.old_value}"
 
+    def _handle_implements_change(self) -> str:
+        action = (
+            "marked this work item as implements"
+            if self.new_value
+            else "removed the implementing relation from work item"
+        )
+        return f"{action} {f'{self.new_value}' if self.new_value else self.old_value}"
+
+    def _handle_implemented_by_change(self) -> str:
+        action = (
+            "marked this work item as implemented by"
+            if self.new_value
+            else "removed the implemented by relation from work item"
+        )
+        return f"{action} {f'{self.new_value}' if self.new_value else self.old_value}"
+
+    # comments
     def _handle_comment_change(self) -> str:
         comment_content = None if self.new_value == "None" and self.old_value == "None" else self.new_value
         constructed_comment = construct_comment_content_with_mentions(comment_content) if comment_content else None
@@ -218,8 +235,11 @@ class IssueNotificationBuilder:
             else:
                 action = "commented"
 
-        content = constructed_comment["content"] if constructed_comment and constructed_comment["content"] else ""
-        return f"{action} '{content}'"
+        content = constructed_comment["content"] if constructed_comment and constructed_comment["content"] else None
+        if content:
+            return f"{action} {f"'{content}'" if content else ''}"
+        else:
+            return "added a comment"
 
     def build_notification(self) -> str:
         """Build and return the notification string for the property change."""
@@ -247,6 +267,8 @@ class IssueNotificationBuilder:
             "start_after": self._handle_start_after_change,
             "finish_before": self._handle_finish_before_change,
             "finish_after": self._handle_finish_after_change,
+            "implements": self._handle_finish_after_change,
+            "implemented_by": self._handle_finish_after_change,
             # Comments
             "comment": self._handle_comment_change,
         }
@@ -255,4 +277,4 @@ class IssueNotificationBuilder:
         if handler:
             return f"{self.sender['name']} {handler()}"
         else:
-            return f"{self.actor['name']} updated {self.property_key}"
+            return f"{self.sender['name']} updated {self.property_key}"

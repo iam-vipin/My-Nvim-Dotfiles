@@ -48,6 +48,7 @@ from .mutations.issues import (
     IssueRelationMutation,
     SubIssueMutation,
     WorkItemCommentReactionMutation,
+    WorkItemArchiveMutation,
 )
 from .mutations.module import (
     ModuleFavoriteMutation,
@@ -353,6 +354,7 @@ class Mutation(
     IssueCommentMutation,
     SubIssueMutation,
     WorkItemCommentReactionMutation,
+    WorkItemArchiveMutation,
     # workitem type
     # label
     # state

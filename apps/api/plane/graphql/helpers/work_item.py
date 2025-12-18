@@ -19,6 +19,8 @@ def work_item_base_query(
     workspace_slug: Optional[str] = None,
     project_id: Optional[str] = None,
     user_id: Optional[str] = None,
+    filters: Optional[dict] = None,
+    include_archived: Optional[bool] = False,
 ):
     """
     Get the work item base query for objects and all objects the given workspace slug
@@ -35,11 +37,15 @@ def work_item_base_query(
         )
         # old intake filters
         .filter(state__is_triage=False)
-        # archived filters
-        .filter(archived_at__isnull=True)
         # draft filters
         .filter(is_draft=False)
     )
+
+    # archived filters
+    if include_archived:
+        work_item_base_query = work_item_base_query.filter(archived_at__isnull=False)
+    else:
+        work_item_base_query = work_item_base_query.filter(archived_at__isnull=True)
 
     # workspace filters
     if workspace_slug:
@@ -59,6 +65,10 @@ def work_item_base_query(
         )
         work_item_base_query = work_item_base_query.filter(project_teamspace_filter.query).distinct()
 
+    # filters
+    if filters:
+        work_item_base_query = work_item_base_query.filter(**filters)
+
     return work_item_base_query
 
 
@@ -68,11 +78,19 @@ def get_work_item(
     work_item_id: str,
     project_id: Optional[str] = None,
     user_id: Optional[str] = None,
+    filters: Optional[dict] = None,
+    include_archived: Optional[bool] = False,
 ):
     """
     Get the work item for the given project and work item id
     """
-    base_query = work_item_base_query(workspace_slug=workspace_slug, project_id=project_id, user_id=user_id)
+    base_query = work_item_base_query(
+        workspace_slug=workspace_slug,
+        project_id=project_id,
+        user_id=user_id,
+        filters=filters,
+        include_archived=include_archived,
+    )
 
     try:
         return base_query.get(id=work_item_id)

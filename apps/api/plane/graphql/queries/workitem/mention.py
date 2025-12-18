@@ -36,4 +36,6 @@ class WorkspaceWorkItemMentionQuery:
             project_identifier=work_item.project.identifier,
             state_group=work_item.state.group if work_item.state else None,
             state_name=work_item.state.name if work_item.state else None,
+            archived_at=work_item.archived_at,
+            is_epic=work_item.type.is_epic if work_item.type else False,
         )

@@ -36,9 +36,9 @@ export function BubbleMenuCommentSelector(props: Props) {
       <button
         type="button"
         className={cn(
-          "h-full flex items-center gap-1 px-3 text-13 font-medium text-tertiary hover:bg-layer-1 active:bg-layer-1 rounded-sm transition-colors",
+          "h-full flex items-center gap-1 px-3 text-13 font-medium text-tertiary hover:bg-layer-transparent-hover active:bg-layer-transparent-active rounded-sm transition-colors",
           {
-            "bg-layer-1": isOpen,
+            "bg-layer-transparent-active": isOpen,
           }
         )}
         onClick={(e) => {

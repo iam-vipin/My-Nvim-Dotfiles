@@ -200,8 +200,8 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
             >
               {showLoader ? (
                 <div className="ml-2 mt-2 flex items-center justify-center py-3">
-                  <Loader className="size-4 animate-spin text-tertiary" />
-                  <span className="ml-2 text-13 text-tertiary">Loading pages...</span>
+                  <Loader className="size-4 animate-spin text-placeholder" />
+                  <span className="ml-2 text-13 text-placeholder">Loading pages...</span>
                 </div>
               ) : (
                 <SectionContent

@@ -332,7 +332,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
       role="button"
       tabIndex={0}
       className={cn(
-        "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-secondary hover:bg-surface-2",
+        "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
         {
           "bg-accent-primary/10 hover:bg-accent-primary/10 text-accent-primary font-medium": isPageActive,
           "cursor-pointer": pageContent?.status.hasAccess && !isPageActive,
@@ -361,7 +361,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
             <button
               type="button"
               onClick={handleSubPagesToggle}
-              className="rounded-sm hover:bg-layer-1 grid place-items-center"
+              className="rounded-sm hover:bg-layer-transparent-hover grid place-items-center"
               data-prevent-progress
             >
               {isFetchingSubPages ? (

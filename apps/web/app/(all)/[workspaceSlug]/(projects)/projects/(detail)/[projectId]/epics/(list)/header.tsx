@@ -90,6 +90,7 @@ export const EpicsHeader = observer(function EpicsHeader() {
           </div>
           {canUserCreateIssue && (
             <Button
+              size="lg"
               onClick={() => {
                 setIsCreateIssueModalOpen(true);
               }}

@@ -41,7 +41,7 @@ export const SectionHeader = React.memo(function SectionHeader({
       <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
         {sectionType !== "archived" && sectionType !== "shared" && (
           <button
-            className="grid place-items-center hover:bg-layer-1 p-0.5 rounded"
+            className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
             data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.SIDEBAR}
             onClick={() => {
               handleCreatePage(sectionType);
@@ -58,7 +58,7 @@ export const SectionHeader = React.memo(function SectionHeader({
           ref={buttonRef}
           as="button"
           type="button"
-          className="grid place-items-center hover:bg-layer-1 p-0.5 rounded"
+          className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
           onClick={(e) => {
             e.stopPropagation();
             if (onButtonClick) onButtonClick();

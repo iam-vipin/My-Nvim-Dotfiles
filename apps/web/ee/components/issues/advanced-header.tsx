@@ -106,6 +106,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         </div>
         {canUserCreateIssue ? (
           <Button
+            size="lg"
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);

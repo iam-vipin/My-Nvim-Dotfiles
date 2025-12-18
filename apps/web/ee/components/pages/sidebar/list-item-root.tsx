@@ -402,7 +402,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         {isHovered && canShowAddButton && (
           <button
             type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-layer-1 text-tertiary hover:text-primary transition-all duration-200 ease-in-out z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-layer-transparent-hover text-tertiary hover:text-primary transition-all duration-200 ease-in-out z-10"
             onClick={handleCreatePage}
             data-prevent-progress
             disabled={isCreatingPage}

@@ -46,7 +46,7 @@ export const PagesAppSidebarMenu = observer(function PagesAppSidebarMenu() {
           <Link key={link.key} href={`/${workspaceSlug}${link.href}`} className="block">
             <div
               className={cn(
-                "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-secondary hover:bg-surface-2 focus:bg-surface-2",
+                "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
                 {
                   "text-accent-primary bg-accent-primary/10 hover:bg-accent-primary/10 focus:bg-accent-primary/10":
                     link.highlight(pathname, `/${workspaceSlug}${link.href}/`),

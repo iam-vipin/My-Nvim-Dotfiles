@@ -67,12 +67,11 @@ export const buttonStyling: IButtonStyling = {
     pressed: `focus:text-accent-primary/80 `,
     disabled: `cursor-not-allowed !text-accent-primary/60`,
   },
-
   danger: {
-    default: `text-on-color bg-red-500`,
-    hover: ` hover:bg-red-600`,
-    pressed: `focus:text-red-200 focus:bg-red-600`,
-    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
+    default: `bg-danger-primary text-on-color`,
+    hover: ` hover:bg-danger-primary-hover`,
+    pressed: `focus:bg-danger-primary-active`,
+    disabled: `cursor-not-allowed bg-layer-disabled! text-disabled!`,
   },
   "accent-danger": {
     default: `text-red-500 bg-red-50`,
@@ -81,16 +80,10 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
   },
   "outline-danger": {
-    default: `text-red-500 bg-transparent border border-red-500`,
-    hover: `hover:text-red-400 hover:border-red-400`,
-    pressed: `focus:text-red-400 focus:border-red-400`,
-    disabled: `cursor-not-allowed !text-placeholder !border-subtle-1`,
-  },
-  "link-danger": {
-    default: `text-red-500 bg-surface-1`,
-    hover: `hover:text-red-400`,
-    pressed: `focus:text-red-400`,
-    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
+    default: `bg-layer-2 text-danger border border-danger-strong`,
+    hover: `hover:bg-danger-subtle`,
+    pressed: `focus:bg-danger-subtle-hover`,
+    disabled: `cursor-not-allowed text-disabled! border-subtle-1!`,
   },
   "tertiary-danger": {
     default: `text-red-500 bg-surface-1 border border-red-200`,

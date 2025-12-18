@@ -9,27 +9,32 @@ import strawberry
 # Django imports
 from asgiref.sync import sync_to_async
 from django.utils import timezone
+from strawberry.exceptions import GraphQLError
 
 # Strawberry imports
 from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module imports
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.db.models import Issue, IssueAssignee, IssueLabel
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.helpers import (
-    epic_base_query,
     get_project,
     get_project_default_state,
     get_project_epic_type,
+    get_project_member,
+    get_work_item_ids_async,
     get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
-    is_workflow_create_allowed,
-    is_workflow_update_allowed,
-    is_workflow_feature_flagged,
     is_project_workflow_enabled,
+    is_workflow_create_allowed,
+    is_workflow_feature_flagged,
+    is_workflow_update_allowed,
+    update_work_item_parent_id_async,
 )
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectPermission, Roles
 from plane.graphql.types.epics.base import (
     EpicCreateInputType,
@@ -168,6 +173,14 @@ class EpicMutation:
             actor_id=str(user.id),
             current_instance=None,
             requested_data=json.dumps(activity_payload),
+        )
+
+        # issue description activity
+        issue_description_version_task.delay(
+            updated_issue=json.dumps(epic_payload),
+            issue_id=epic_id,
+            user_id=user_id,
+            is_creating=True,
         )
 
         return epic
@@ -337,29 +350,89 @@ class EpicMutation:
             requested_data=json.dumps(activity_payload),
         )
 
+        # issue description activity
+        issue_description_version_task.delay(
+            updated_issue=json.dumps(activity_payload),
+            issue_id=epic_id,
+            user_id=user_id,
+        )
+
         return epic
 
-    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])])
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def delete_epic(self, info: Info, slug: str, project: str, epic: str) -> bool:
         user = info.context.user
         user_id = str(user.id)
 
+        workspace = await get_workspace_async(slug=slug)
+        workspace_slug = workspace.slug
+
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
+        project_id = str(project_details.id)
+
         # Check if the epic feature flag is enabled for the workspace
-        await is_epic_feature_flagged(user_id=user_id, workspace_slug=slug)
+        await is_epic_feature_flagged(user_id=user_id, workspace_slug=workspace_slug)
 
         # check if the epic is enabled for the project
-        await is_project_epics_enabled(workspace_slug=slug, project_id=project)
+        await is_project_epics_enabled(workspace_slug=workspace_slug, project_id=project_id)
 
-        epics_base_query = epic_base_query(workspace_slug=slug, project_id=project, user_id=user_id)
-
-        epic = await sync_to_async(epics_base_query.get)(id=epic)
+        # get the epic
+        epic = await sync_to_async(Issue.objects.get)(id=epic)
         epic_id = str(epic.id)
+        epic_created_by_id = str(epic.created_by_id)
 
-        if epic.created_by_id != info.context.user.id:
-            raise Exception("You are not authorized to delete this epic")
+        # project member check
+        current_user_role = None
+        project_member = await get_project_member(
+            workspace_slug=workspace_slug,
+            project_id=project_id,
+            user_id=user_id,
+            raise_exception=False,
+        )
+        if not project_member:
+            project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+                user_id=user_id,
+                workspace_slug=workspace_slug,
+            )
+            teamspace_project_ids = project_teamspace_filter.teamspace_project_ids
+            if project_id not in teamspace_project_ids:
+                message = "You are not allowed to access this project"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+            current_user_role = Roles.MEMBER.value
+        else:
+            current_user_role = project_member.role
+
+        if current_user_role in [Roles.MEMBER.value, Roles.GUEST.value]:
+            if epic_created_by_id != user_id:
+                message = "You are not allowed to delete this epic"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
 
         # activity tracking data
         current_epic_activity = await convert_issue_properties_to_activity_dict(epic)
+
+        # get all the issues that have this epic as a parent
+        work_item_ids = await get_work_item_ids_async(filters={"parent_id": epic_id})
+        if len(work_item_ids) > 0:
+            # update the parent id of the issues
+            await update_work_item_parent_id_async(
+                work_item_ids=work_item_ids,
+                parent_id=None,
+            )
+            # update the activity that we have removed the parent from the issues
+            for work_item_id in work_item_ids:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps({"parent_id": None}),
+                    actor_id=user_id,
+                    issue_id=work_item_id,
+                    project_id=project,
+                    current_instance=json.dumps({"parent_id": epic_id}),
+                    epoch=int(timezone.now().timestamp()),
+                )
+
+        # delete the epic
         await sync_to_async(epic.delete)()
 
         # Track the issue

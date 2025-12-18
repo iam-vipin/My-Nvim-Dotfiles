@@ -34,7 +34,6 @@ from .mutations.intake import (
     IntakeWorkItemStatusMutation,
 )
 from .mutations.issue import (
-    IssueMutation,
     IssueSubscriptionMutation,
     IssueUserPropertyMutation,
 )
@@ -47,8 +46,9 @@ from .mutations.issues import (
     IssueMutationV2,
     IssueRelationMutation,
     SubIssueMutation,
-    WorkItemCommentReactionMutation,
     WorkItemArchiveMutation,
+    WorkItemCommentReactionMutation,
+    WorkItemMutation,
 )
 from .mutations.module import (
     ModuleFavoriteMutation,
@@ -141,7 +141,6 @@ from .queries.issues import (
     SubIssuesQuery,
     WorkItemCommentReactionQuery,
 )
-from .queries.workitem import WorkspaceWorkItemMentionQuery
 from .queries.label import LabelQuery, WorkspaceLabelQuery
 from .queries.module import (
     ModuleIssueQuery,
@@ -166,7 +165,7 @@ from .queries.page import (
 from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery
 from .queries.roles import UserProjectRolesQuery
 from .queries.search import GlobalSearchQuery
-from .queries.state import StateQuery, WorkspaceStateQuery, TriageStateQuery
+from .queries.state import StateQuery, TriageStateQuery, WorkspaceStateQuery
 from .queries.stickies import WorkspaceStickiesQuery
 from .queries.teamspace import TeamspaceMemberQuery
 from .queries.timezone import TimezoneListQuery
@@ -178,6 +177,7 @@ from .queries.users import (
     UserRecentVisitQuery,
 )
 from .queries.version_check import VersionCheckQuery
+from .queries.workitem import WorkspaceWorkItemMentionQuery
 from .queries.workspace import (
     PublicWorkspaceInviteQuery,
     WorkspaceFeatureQuery,
@@ -345,8 +345,7 @@ class Mutation(
     ProjectFavoriteMutation,
     # workitem
     IssueUserPropertyMutation,
-    IssueMutation,  # old
-    IssueMutationV2,  # new
+    IssueMutationV2,
     IssueLinkMutation,
     IssueAttachmentMutation,
     IssueSubscriptionMutation,
@@ -354,6 +353,7 @@ class Mutation(
     IssueCommentMutation,
     SubIssueMutation,
     WorkItemCommentReactionMutation,
+    WorkItemMutation,
     WorkItemArchiveMutation,
     # workitem type
     # label

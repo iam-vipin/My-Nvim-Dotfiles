@@ -1,7 +1,8 @@
 # Python imports
-from typing import Optional
+from typing import Optional, Union
 
 # Third Party Imports
+import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
@@ -12,7 +13,7 @@ from strawberry.exceptions import GraphQLError
 from strawberry.scalars import JSON
 
 # Module Imports
-from plane.db.models import FileAsset, Issue, IssueLink, IssueRelation, IssueType
+from plane.db.models import FileAsset, Issue, IssueLink, IssueRelation, IssueType, StateGroup
 from plane.ee.models import ProjectFeature
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.types.asset import FileAssetEntityType
@@ -41,6 +42,8 @@ def epic_base_query(
         )
         # old intake filters
         .filter(state__is_triage=False)
+        # new intake filters
+        .exclude(state__group=StateGroup.TRIAGE.value)
         # epic filters
         .filter(Q(type__isnull=False) & Q(type__is_epic=True))
         # archived filters
@@ -210,3 +213,25 @@ def get_epic_stats_count(workspace_slug: str, project_id: str, epic: str) -> Epi
 @sync_to_async
 def get_epic_stats_count_async(workspace_slug: str, project_id: str, epic: str) -> EpicStatsType:
     return get_epic_stats_count(workspace_slug=workspace_slug, project_id=project_id, epic=epic)
+
+
+def get_work_item_ids(filters: Optional[dict] = {}) -> list[str]:
+    return list(Issue.objects.filter(**filters).only("id").values_list("id", flat=True))
+
+
+@sync_to_async
+def get_work_item_ids_async(filters: Optional[dict] = {}) -> list[str]:
+    return get_work_item_ids(filters=filters)
+
+
+def update_work_item_parent_id(
+    work_item_ids: list[Union[str, strawberry.ID]], parent_id: Optional[Union[str, strawberry.ID]] = None
+):
+    Issue.objects.filter(id__in=work_item_ids).update(parent_id=parent_id)
+
+
+@sync_to_async
+def update_work_item_parent_id_async(
+    work_item_ids: list[Union[str, strawberry.ID]], parent_id: Optional[Union[str, strawberry.ID]] = None
+):
+    return update_work_item_parent_id(work_item_ids=work_item_ids, parent_id=parent_id)

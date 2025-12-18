@@ -5,8 +5,12 @@ from .epics import (
     get_epic_stats_count_async,
     get_project_epic_type,
     get_project_epics,
+    get_work_item_ids,
+    get_work_item_ids_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
+    update_work_item_parent_id,
+    update_work_item_parent_id_async,
 )
 from .feature_flag import feature_flagged
 from .intake import (

@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // helpers
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
 import { cn } from "@plane/utils";
 // components
 import { AddTeamspaceMembersModal } from "./modal";
@@ -12,36 +13,6 @@ type TAddTeamspaceMembersButtonProps = {
   variant: "icon" | "sidebar";
   isEditingAllowed: boolean;
 };
-
-const AddMembersIcon = observer(function AddMembersIcon(props: {
-  containerSize: number;
-  iconSize: number;
-  containerClassName?: string;
-  iconClassName?: string;
-}) {
-  const { containerSize, iconSize, containerClassName, iconClassName } = props;
-  return (
-    <div
-      style={{
-        width: containerSize,
-        height: containerSize,
-      }}
-      className={cn(
-        `bg-layer-1 hover:bg-layer-1-hover group-hover:bg-layer-1-hover rounded-full flex items-center justify-center`,
-        containerClassName
-      )}
-    >
-      <Plus
-        style={{
-          width: iconSize,
-          height: iconSize,
-        }}
-        className={cn("text-tertiary hover:text-secondary group-hover:text-secondary", iconClassName)}
-        strokeWidth={2}
-      />
-    </div>
-  );
-});
 
 export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersButton(
   props: TAddTeamspaceMembersButtonProps
@@ -59,25 +30,34 @@ export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersBu
         isModalOpen={isAddMembersModalOpen}
         handleModalClose={() => setIsAddMembersModalOpen(false)}
       />
-      <button
-        className="flex-shrink-0 cursor-pointer"
-        onClick={() => setIsAddMembersModalOpen(true)}
-        data-ph-element={
-          variant === "icon"
-            ? TEAMSPACE_TRACKER_ELEMENTS.OVERVIEW_ADD_MEMBER_BUTTON
-            : TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_ADD_MEMBER_BUTTON
-        }
-      >
-        {variant === "icon" && <AddMembersIcon containerSize={24} iconSize={16} />}
-        {variant === "sidebar" && (
-          <div className="group flex items-center gap-x-2">
-            <span className="flex-shrink-0 relative rounded-full">
-              <AddMembersIcon containerSize={32} iconSize={18} />
-            </span>
-            <span className="text-body-xs-medium text-placeholder group-hover:text-tertiary">Add new member</span>
+      {variant === "icon" && (
+        <IconButton
+          variant="secondary"
+          size="base"
+          icon={Plus}
+          onClick={() => setIsAddMembersModalOpen(true)}
+          data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.OVERVIEW_ADD_MEMBER_BUTTON}
+          aria-label="Add member"
+        />
+      )}
+      {variant === "sidebar" && (
+        <button
+          className="group flex items-center gap-x-2 cursor-pointer"
+          onClick={() => setIsAddMembersModalOpen(true)}
+          data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_ADD_MEMBER_BUTTON}
+        >
+          <div
+            className={cn(
+              "flex-shrink-0 size-8 rounded-md inline-flex items-center justify-center",
+              "bg-layer-transparent group-hover:bg-layer-transparent-hover active:bg-layer-transparent-active",
+              "text-secondary transition-colors"
+            )}
+          >
+            <Plus className="size-5" strokeWidth={2} />
           </div>
-        )}
-      </button>
+          <span className="text-body-xs-medium text-placeholder group-hover:text-tertiary">Add new member</span>
+        </button>
+      )}
     </>
   );
 });

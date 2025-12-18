@@ -32,7 +32,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
   const createdByDetails = getUserDetails(customer.created_by);
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2">
       <p className="text-13 font-medium mb-2">{t("customers.sidebar.properties")}</p>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
@@ -40,7 +40,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             {t("customers.properties.default.email.name")} <span className="text-red-500">*</span>
           </span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.email}
             key={"email"}
@@ -63,7 +63,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
         <div className="w-2/5 flex-shrink-0">
           <span className="text-13 text-secondary">{t("customers.properties.default.website_url.name")}</span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.website_url}
             updateProperty={(value) => {
@@ -83,7 +83,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
         <div className="w-2/5 flex-shrink-0">
           <span className="text-13 text-secondary">{t("customers.properties.default.size.name")}</span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.employees}
             updateProperty={(value) => {
@@ -105,7 +105,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
         <div className="w-2/5 flex-shrink-0">
           <span className="text-13 text-secondary">{t("customers.properties.default.domain.name")}</span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.domain}
             updateProperty={(value) => {
@@ -126,7 +126,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             updateProperty({ contract_status: value });
           }}
           className="flex-grow w-3/5"
-          buttonClassName="group border-none w-3/5 flex-grow w-full px-3 py-2"
+          buttonClassName="group border-none flex-grow w-full px-3 py-2"
           chevronClassName="hidden group-hover:inline"
           disabled={isDisabled}
         />
@@ -141,7 +141,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             updateProperty({ stage: value });
           }}
           className="flex-grow w-3/5"
-          buttonClassName="group border-none w-3/5 flex-grow w-full px-3 py-2"
+          buttonClassName="group border-none flex-grow w-full px-3 py-2"
           chevronClassName="hidden group-hover:inline"
           disabled={isDisabled}
         />
@@ -233,10 +233,7 @@ function PropertyField(props: TPropertyFiledProps) {
           onBlur={handleBlur}
           disabled={disabled}
           placeholder={placeholder}
-          className={cn(
-            "w-full border-none truncate hover:bg-layer-1 focus:bg-layer-1 rounded-md",
-            disabled && "cursor-not-allowed"
-          )}
+          className="w-full"
         />
       )}
     />

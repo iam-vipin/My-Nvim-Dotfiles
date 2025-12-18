@@ -65,7 +65,7 @@ export const CustomerDetailSidebar = observer(function CustomerDetailSidebar(pro
     <SidebarWrapper isSidebarOpen={!customerDetailSidebarCollapsed}>
       <div className="flex h-full w-full flex-col overflow-hidden">
         <ScrollArea className="h-full w-full">
-          <div className="px-6 space-y-2">
+          <div className="flex flex-col gap-2">
             <CustomerDefaultSidebarProperties
               customer={customer}
               updateProperty={updateProperty}

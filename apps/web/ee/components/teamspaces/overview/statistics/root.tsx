@@ -27,7 +27,7 @@ import { StatisticsStateGroupFilter } from "./filters/state-group";
 
 const COMMON_FILTER_LIST_CLASSNAME = "flex flex-wrap items-center gap-2.5 text-body-xs-regular pb-3 px-1.5";
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
-  "px-2.5 py-0.5 bg-transparent hover:bg-layer-1 rounded-sm text-primary font-medium";
+  "px-2.5 py-0.5 bg-layer-2 hover:bg-layer-2-hover active:bg-layer-2-active disabled:bg-layer-transparent text-secondary disabled:text-disabled border border-strong disabled:border-subtle-1 shadow-raised-100 rounded-md font-medium transition-colors";
 const COMMON_CHEVRON_CLASSNAME = "size-3 text-placeholder transition-all";
 
 type Props = {

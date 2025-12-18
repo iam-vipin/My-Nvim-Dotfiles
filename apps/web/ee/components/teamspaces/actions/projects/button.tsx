@@ -104,27 +104,30 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
         <>
           {variant === "default" && (
             <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
-              <button
+              <Button
+                variant="secondary"
+                size="base"
+                prependIcon={<BriefcaseIcon />}
+                onClick={open}
+                disabled={!isEditingAllowed}
+                data-ph-element={trackerElement}
                 className={cn(
-                  "group/projects flex flex-shrink-0 items-center gap-1 text-caption-sm-medium text-secondary py-1 px-2 border-[0.5px] border-strong-1 rounded-sm transition-[width] ease-linear duration-700",
+                  "group/projects transition-[width] ease-linear duration-700",
                   !isEditingAllowed && "cursor-not-allowed"
                 )}
-                onClick={open}
-                data-ph-element={trackerElement}
               >
-                <BriefcaseIcon className="size-3.5 text-tertiary" />
                 {!areProjectsPresent && "Link a project"}
                 {areProjectsPresent && (
                   <>
                     <span className={cn(isEditingAllowed && "group-hover/projects:hidden")}>
                       {teamspace.project_ids?.length}
                     </span>
-                    <span className={cn("hidden", isEditingAllowed && "group-hover/projects:block")}>
+                    <span className={cn("hidden", isEditingAllowed && "group-hover/projects:inline")}>
                       Update projects
                     </span>
                   </>
                 )}
-              </button>
+              </Button>
             </Tooltip>
           )}
           {variant === "empty-state" && (

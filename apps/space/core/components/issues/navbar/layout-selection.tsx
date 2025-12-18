@@ -4,8 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
-import { BoardLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { cn } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -37,13 +37,15 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
 
   const handleCurrentBoardView = (boardView: TIssueLayout) => {
-    updateIssueFilters(anchor, "display_filters", "layout", boardView);
-    const { queryParam } = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
-    router.push(`/issues/${anchor}?${queryParam}`);
+    if (activeLayout !== boardView) {
+      updateIssueFilters(anchor, "display_filters", "layout", boardView);
+      const { queryParam } = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
+      router.push(`/issues/${anchor}?${queryParam}`);
+    }
   };
 
   return (
-    <div className="flex items-center gap-1 rounded-sm bg-layer-2 p-1">
+    <div className="flex items-center gap-1 rounded-md bg-layer-3 p-1">
       {SITES_ISSUE_LAYOUTS.map((layout) => {
         if (!layoutOptions[layout.key]) return;
 
@@ -51,14 +53,22 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
           <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)}>
             <button
               type="button"
-              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all bg-layer-transparent hover:bg-layer-transparent-hover ${
-                activeLayout == layout.key ? "bg-layer-transparent-active hover:bg-layer-transparent-selected" : ""
-              }`}
+              className={cn(
+                "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
+                {
+                  "bg-layer-transparent-active hover:bg-layer-transparent-active": activeLayout === layout.key,
+                }
+              )}
               onClick={() => handleCurrentBoardView(layout.key)}
             >
               <IssueLayoutIcon
                 layout={layout.key}
-                className={`size-3.5 ${activeLayout == layout.key ? "text-primary" : "text-secondary"}`}
+                size={14}
+                strokeWidth={2}
+                className={cn("size-3.5", {
+                  "text-primary": activeLayout === layout.key,
+                  "text-secondary": activeLayout !== layout.key,
+                })}
               />
             </button>
           </Tooltip>

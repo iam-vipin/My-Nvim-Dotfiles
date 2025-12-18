@@ -87,6 +87,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else epic_id
                 ),
@@ -97,6 +98,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else related_work_item_id
                 ),
@@ -170,6 +172,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else issue
                 ),
@@ -180,6 +183,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else related_issue
                 ),

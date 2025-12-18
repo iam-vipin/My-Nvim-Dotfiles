@@ -64,6 +64,7 @@ class IssueRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else issue
                 ),
@@ -74,6 +75,7 @@ class IssueRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else related_issue_id
                 ),
@@ -138,6 +140,7 @@ class IssueRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else issue
                 ),
@@ -148,6 +151,7 @@ class IssueRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else related_issue
                 ),

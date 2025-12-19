@@ -69,7 +69,9 @@ def construct_catch_up_activity(
         activity_id = workitem_activity.get("id", None)
         activity_updated_at = notification_updated_at or None
         workitem_activity_field = workitem_activity.get("field", None)
+        workitem_activity_comment_id = workitem_activity.get("new_identifier", None)
         if workitem_activity_field is not None and workitem_activity_field == "comment":
+            activity_id = workitem_activity_comment_id or activity_id
             activity_type = CatchUpActivityTypeEnum.COMMENT
 
     return CatchUpActivityType(

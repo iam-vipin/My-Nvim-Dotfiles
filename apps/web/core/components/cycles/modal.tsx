@@ -140,14 +140,20 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
 
     if (payload.start_date && payload.end_date) {
       if (data?.id) {
-        // Update existing cycle - always include cycle_id for validation
-        isDateValid = await dateChecker(projectId, {
-          start_date: payload.start_date,
-          end_date: payload.end_date,
-          cycle_id: data.id,
-        });
+        // Update existing cycle - only check dates if they've changed
+        const originalStartDate = renderFormattedPayloadDate(data.start_date) ?? null;
+        const originalEndDate = renderFormattedPayloadDate(data.end_date) ?? null;
+        const hasDateChanged = payload.start_date !== originalStartDate || payload.end_date !== originalEndDate;
+
+        if (hasDateChanged) {
+          isDateValid = await dateChecker(projectId, {
+            start_date: payload.start_date,
+            end_date: payload.end_date,
+            cycle_id: data.id,
+          });
+        }
       } else {
-        // Create new cycle - no cycle_id needed
+        // Create new cycle - always check dates
         isDateValid = await dateChecker(projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,

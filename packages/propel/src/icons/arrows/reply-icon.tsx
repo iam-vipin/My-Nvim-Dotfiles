@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { IconWrapper } from "../icon-wrapper";
 import type { ISvgIcons } from "../type";
 

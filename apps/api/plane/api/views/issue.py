@@ -691,7 +691,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         epoch=int(timezone.now().timestamp()),
                     )
                     cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
-                    if cycle_issue and (request.data.get("state_id") or request.data.get("estimate_point")):
+                    if cycle_issue and (request.data.get("state") or request.data.get("estimate_point")):
                         entity_issue_state_activity_task.delay(
                             issue_cycle_data=[
                                 {
@@ -742,7 +742,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     issue.created_by_id = request.data.get("created_by", request.user.id)
                     issue.save(update_fields=["created_at", "created_by"])
                     cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
-                    if cycle_issue and (request.data.get("state_id") or request.data.get("estimate_point")):
+                    if cycle_issue and (request.data.get("state") or request.data.get("estimate_point")):
                         entity_issue_state_activity_task.delay(
                             issue_cycle_data=[
                                 {
@@ -853,7 +853,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 epoch=int(timezone.now().timestamp()),
             )
             cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
-            if cycle_issue and (request.data.get("state_id") or request.data.get("estimate_point")):
+            if cycle_issue and (request.data.get("state") or request.data.get("estimate_point")):
                 entity_issue_state_activity_task.delay(
                     issue_cycle_data=[
                         {

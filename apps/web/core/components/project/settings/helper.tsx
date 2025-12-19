@@ -1,24 +1,38 @@
-import Link from "next/link";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
 import { ToggleSwitch } from "@plane/ui";
-import { joinUrlPath } from "@plane/utils";
-import type { TProperties } from "@/plane-web/constants/project/settings/features";
+import type { TProperties } from "@/ce/constants/project/settings/features";
 
 type Props = {
-  workspaceSlug: string;
-  projectId: string;
   featureItem: TProperties;
   value: boolean;
   handleSubmit: (featureKey: string, featureProperty: string) => void;
   disabled?: boolean;
+  isCreateModal?: boolean;
 };
 
 export function ProjectFeatureToggle(props: Props) {
-  const { workspaceSlug, projectId, featureItem, value, handleSubmit, disabled } = props;
-  return featureItem.href ? (
-    <Link href={joinUrlPath(workspaceSlug, "settings", "projects", projectId, "features", featureItem.href)}>
+  const { featureItem, value, handleSubmit, disabled, isCreateModal } = props;
+
+  const handleToggle = () => {
+    handleSubmit(featureItem.key, featureItem.property);
+  };
+
+  // ToggleSwitch props
+  const toggleSwitchProps = {
+    value,
+    onChange: handleToggle,
+    disabled,
+    size: "sm" as const,
+  };
+
+  if (isCreateModal) {
+    return <ToggleSwitch {...toggleSwitchProps} />;
+  }
+
+  if (featureItem.href) {
+    return (
       <div className="flex items-center gap-2">
         <Pill
           variant={value ? EPillVariant.PRIMARY : EPillVariant.DEFAULT}
@@ -29,14 +43,8 @@ export function ProjectFeatureToggle(props: Props) {
         </Pill>
         <ChevronRightIcon className="h-4 w-4 text-tertiary" />
       </div>
-    </Link>
-  ) : (
-    <ToggleSwitch
-      value={value}
-      onChange={() => handleSubmit(featureItem.key, featureItem.property)}
-      disabled={disabled}
-      size="sm"
-      data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
-    />
-  );
+    );
+  }
+
+  return <ToggleSwitch {...toggleSwitchProps} data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE} />;
 }

@@ -73,6 +73,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={!!showAccessSpecifier}
             showCopyLinkOption={!isIntakeIssue}
+            enableReplies
             disabled={disabled}
             projectId={projectId}
             enableReplies

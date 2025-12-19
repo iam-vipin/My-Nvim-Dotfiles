@@ -204,12 +204,16 @@ export const InputBox = observer(function InputBox(props: TProps) {
       >
         {isNewChat && !onlyInput && (
           <div className="flex flex-col gap-2.5 mb-6">
-            <div className={cn("text-center text-h2-medium text-tertiary", { "text-h3-semibold": !isFullScreen })}>
+            <div className={cn("text-center text-h3-medium text-primary", { "text-h3-semibold": !isFullScreen })}>
               What can I do for you?
             </div>
           </div>
         )}
-        <div className={cn("bg-layer-1 rounded-xl transition-[max-height] duration-100")}>
+        <div
+          className={cn("rounded-xl transition-[max-height] duration-100", {
+            "bg-layer-1": onlyInput,
+          })}
+        >
           {/* Audio Recorder Loader */}
           {SPEECH_LOADERS.includes(loader) && (
             <div className="flex gap-2 p-2 items-center">
@@ -232,7 +236,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
             {(isUploading: boolean, open: () => void) => (
               <div
                 className={cn(
-                  "bg-surface-1 rounded-xl p-3 flex flex-col gap-1 shadow-raised-100 border-[0.5px] border-subtle-1 justify-between h-fit",
+                  "bg-surface-1 rounded-xl p-3 flex flex-col gap-1 shadow-raised-100 border border-subtle-1 justify-between h-fit",
                   {
                     "min-h-[120px]": !SPEECH_LOADERS.includes(loader),
                   }

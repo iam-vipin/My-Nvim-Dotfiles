@@ -27,7 +27,7 @@ export type TCommentCardDisplayProps = {
   workspaceSlug: string;
   isEditing?: boolean;
   setIsEditing?: (isEditing: boolean) => void;
-  renderFooter?: (ReactionsComponent: ReactNode) => ReactNode;
+  renderFooter?: (ReactionsComponent: ReactNode | null) => ReactNode;
 };
 
 export const CommentCardDisplay = observer(function CommentCardDisplay(props: TCommentCardDisplayProps) {
@@ -50,6 +50,10 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
   const pathname = usePathname();
   // derived values
   const commentBlockId = `comment-${comment?.id}`;
+  // Check if there are any reactions to determine if we should render the footer
+  const reactionIds = activityOperations.reactionIds(comment.id);
+  const hasReactions = reactionIds && Object.keys(reactionIds).some((key) => reactionIds[key]?.length > 0);
+
   // scroll to comment
   const { isHashMatch } = useHashScroll({
     elementId: commentBlockId,
@@ -65,6 +69,8 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
 
     return () => clearTimeout(timeout);
   }, [isHashMatch]);
+
+  const shouldRenderReactions = hasReactions && !disabled;
 
   return (
     <div id={commentBlockId} className="relative flex flex-col gap-2">
@@ -102,17 +108,16 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
             displayConfig={{
               fontSize: "small-font",
             }}
-            parentClassName="border-none pl-1"
+            parentClassName="border-none"
           />
-          {renderFooter ? (
-            renderFooter(
+          {shouldRenderReactions &&
+            (renderFooter ? (
+              renderFooter(
+                <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+              )
+            ) : (
               <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
-            )
-          ) : (
-            <div className="pl-2">
-              <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
-            </div>
-          )}
+            ))}
         </>
       )}
     </div>

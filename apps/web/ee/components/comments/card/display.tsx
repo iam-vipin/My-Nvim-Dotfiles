@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Separator } from "@plane/propel/separator";
+import { EmojiReactionButton, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import { IconButton } from "@plane/propel/icon-button";
+import { ReplyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
@@ -41,8 +41,8 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
   // refs
   const repliesRootRef = useRef<CommentRepliesRootHandle>(null);
   const editorRef = useRef<EditorRefApi>(null);
-  // hooks
-  const { t } = useTranslation();
+  // state
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   // store hooks
   const { getUserDetails } = useMember();
   // derived values
@@ -52,12 +52,23 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
     : (userDetails?.display_name ?? comment?.actor_detail?.display_name);
   const avatarUrl = userDetails?.avatar_url ?? comment?.actor_detail?.avatar_url;
 
+  const userReactions = activityOperations.userReactions(comment.id);
+
   const handleReply = useCallback(() => {
     repliesRootRef.current?.showReplyEditor();
   }, []);
+
+  const handleEmojiSelect = useCallback(
+    (emoji: string) => {
+      if (!userReactions) return;
+      // emoji is already in decimal string format from EmojiReactionPicker
+      void activityOperations.react(comment.id, emoji, userReactions);
+    },
+    [activityOperations, comment.id, userReactions]
+  );
+
   const areRepliesAvailable = comment.reply_count !== undefined && comment.reply_count > 0;
   const shouldShowIndicator = isReply || areRepliesAvailable;
-  const shouldShowReplyButton = enableReplies && !isReply && !disabled;
 
   return (
     <>
@@ -85,7 +96,20 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
               </Tooltip>
             </div>
           </div>
-          {!disabled && <div className="shrink-0">{renderQuickActions()}</div>}
+          {!disabled && (
+            <div className="flex items-center gap-1 shrink-0">
+              <IconButton variant="ghost" size="sm" icon={ReplyIcon} onClick={handleReply} />
+              <EmojiReactionPicker
+                isOpen={isPickerOpen}
+                handleToggle={setIsPickerOpen}
+                onChange={handleEmojiSelect}
+                disabled={disabled}
+                label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
+                placement="bottom-start"
+              />
+              {renderQuickActions()}
+            </div>
+          )}
         </div>
         {/* Core: Comment content */}
         <div className="ml-4">
@@ -97,19 +121,6 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
             workspaceSlug={workspaceSlug}
             activityOperations={activityOperations}
             showAccessSpecifier={showAccessSpecifier}
-            renderFooter={(ReactionsComponent) => (
-              <div className="flex items-center gap-1">
-                {shouldShowReplyButton && (
-                  <>
-                    <Button variant="ghost" size="sm" onClick={handleReply} className="px-2.5 text-caption-sm-medium">
-                      {t("common.actions.reply")}
-                    </Button>
-                    <Separator orientation="vertical" className="h-4 bg-layer-1-active" />
-                  </>
-                )}
-                <div className="px-2">{ReactionsComponent}</div>
-              </div>
-            )}
           />
         </div>
       </div>

@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +18,6 @@ import type { CommentRepliesRootHandle } from "../replies/root";
 import { CommentRepliesRoot } from "../replies/root";
 
 type Props = TCommentCardDisplayProps & {
-  renderQuickActions: () => ReactNode;
   enableReplies: boolean;
   isReply?: boolean;
 };
@@ -107,7 +105,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
                 label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
                 placement="bottom-start"
               />
-              {renderQuickActions()}
+              {renderQuickActions ? renderQuickActions() : null}
             </div>
           )}
         </div>

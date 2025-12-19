@@ -187,7 +187,8 @@ export const isJSONContentEmpty = (content: JSONContent | undefined): boolean =>
       content.type !== "hardBreak" &&
       content.type !== "image" &&
       content.type !== "mention-component" &&
-      content.type !== "image-component"
+      content.type !== "image-component" &&
+      content.type !== "attachmentComponent"
     );
   }
 
@@ -224,7 +225,7 @@ export const isCommentEmpty = (comment: Content | undefined): boolean => {
     return (
       comment.trim() === "" ||
       comment === "<p></p>" ||
-      isEmptyHtmlString(comment, ["img", "mention-component", "image-component"])
+      isEmptyHtmlString(comment, ["img", "mention-component", "image-component", "attachment-component"])
     );
   }
 
@@ -250,7 +251,13 @@ export const isStringCommentEmpty = (comment: string | undefined): boolean => {
   return (
     comment?.trim() === "" ||
     comment === "<p></p>" ||
-    isEmptyHtmlString(comment ?? "", ["img", "mention-component", "image-component", "embed-component"])
+    isEmptyHtmlString(comment ?? "", [
+      "img",
+      "mention-component",
+      "image-component",
+      "embed-component",
+      "attachment-component",
+    ])
   );
 };
 
@@ -424,4 +431,63 @@ export const joinUrlPath = (...segments: string[]): string => {
     const pathParts = joined.split("/").filter((part) => part !== "");
     return pathParts.length > 0 ? `/${pathParts.join("/")}` : "";
   }
+};
+
+// Utility function to trim empty paragraphs from start and end of JSONContent
+export const trimEmptyParagraphsFromJson = (content: JSONContent): JSONContent => {
+  if (!content?.content) return content;
+
+  const trimmed = [...content.content];
+
+  // Remove empty paragraphs from the beginning
+  while (trimmed.length > 0 && isEmptyParagraph(trimmed[0])) {
+    trimmed.shift();
+  }
+
+  // Remove empty paragraphs from the end
+  while (trimmed.length > 0 && isEmptyParagraph(trimmed[trimmed.length - 1])) {
+    trimmed.pop();
+  }
+
+  // If all content was removed, keep one empty paragraph
+  if (trimmed.length === 0) {
+    trimmed.push({ type: "paragraph" });
+  }
+
+  return {
+    ...content,
+    content: trimmed,
+  };
+};
+
+const isEmptyParagraph = (node: JSONContent): boolean => {
+  if (node.type !== "paragraph") return false;
+  if (!node.content || node.content.length === 0) return true;
+
+  // Check if paragraph only contains empty text nodes or whitespace
+  return node.content.every((child) => {
+    if (child.type === "text") {
+      return !child.text || child.text.trim() === "";
+    }
+    return false;
+  });
+};
+
+// Utility function to trim empty paragraphs from HTML content
+export const trimEmptyParagraphsFromHTML = (html: string): string => {
+  if (!html) return "<p></p>";
+
+  // Remove leading and trailing empty paragraphs
+  const trimmed = html
+    // Remove empty paragraphs at the start
+    .replace(/^(\s*<p[^>]*>\s*<\/p>\s*)*/g, "")
+    // Remove empty paragraphs at the end
+    .replace(/(\s*<p[^>]*>\s*<\/p>\s*)*$/g, "");
+
+  // If all content was removed, return a single empty paragraph
+  if (!trimmed.trim()) {
+    return "<p></p>";
+  }
+
+  return trimmed;
 };

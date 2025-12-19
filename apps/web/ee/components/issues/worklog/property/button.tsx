@@ -9,7 +9,7 @@ export function IssueWorklogPropertyButton(props: TIssueWorklogPropertyButton) {
   const { content, isLoading } = props;
 
   return (
-    <div className="flex justify-between items-center text-13 p-2 rounded-sm transition-all cursor-not-allowed w-full">
+    <div className="flex justify-between items-center text-13 py-2 rounded-sm transition-all cursor-not-allowed w-full">
       <div
         className={cn({
           "text-tertiary": !content,

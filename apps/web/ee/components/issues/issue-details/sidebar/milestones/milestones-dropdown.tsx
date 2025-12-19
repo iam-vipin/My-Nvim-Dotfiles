@@ -82,7 +82,7 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
     <Combobox value={value || "none"} onValueChange={handleChange} disabled={disabled || readonly}>
       <Combobox.Button
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary",
+          "h-full w-full flex items-center gap-1.5 rounded-sm py-0.5 hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary",
           buttonClassName
         )}
         disabled={disabled || readonly}

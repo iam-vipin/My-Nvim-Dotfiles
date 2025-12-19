@@ -151,6 +151,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             showTooltip
             customTooltipHeading="Date Range"
             renderPlaceholder={false}
+            renderInPortal
           />
         </div>
       </WithDisplayPropertiesHOC>

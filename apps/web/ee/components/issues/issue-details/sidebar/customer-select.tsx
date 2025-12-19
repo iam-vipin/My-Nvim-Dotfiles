@@ -94,7 +94,7 @@ export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
         <button
           type="button"
           className={cn(
-            "w-full rounded-sm px-2 py-0.5 bg-layer-transparent hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary",
+            "w-full rounded-sm px-2 py-0.5 bg-layer-transparent hover:bg-layer-transparent-hover text-body-xs-regular text-placeholder",
             customButtonClassName
           )}
         >

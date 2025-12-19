@@ -239,7 +239,10 @@ class IssueNotificationBuilder:
         if content:
             return f"{action} {f"'{content}'" if content else ''}"
         else:
-            return "added a comment"
+            if self.new_value == "None" and self.old_value == "None":
+                return f"{action}"
+            else:
+                return "added a comment"
 
     def build_notification(self) -> str:
         """Build and return the notification string for the property change."""
@@ -267,8 +270,8 @@ class IssueNotificationBuilder:
             "start_after": self._handle_start_after_change,
             "finish_before": self._handle_finish_before_change,
             "finish_after": self._handle_finish_after_change,
-            "implements": self._handle_finish_after_change,
-            "implemented_by": self._handle_finish_after_change,
+            "implements": self._handle_implements_change,
+            "implemented_by": self._handle_implemented_by_change,
             # Comments
             "comment": self._handle_comment_change,
         }

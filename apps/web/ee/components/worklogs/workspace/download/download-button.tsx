@@ -67,7 +67,7 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
   return (
     <button
       className={cn(
-        "relative flex items-center rounded-sm transition-all bg-accent-primary hover:bg-accent-primary/80 focus:bg-accent-primary/80 font-semibold text-on-color",
+        "relative flex items-center rounded-sm transition-all bg-accent-primary hover:bg-accent-primary/80 focus:bg-accent-primary/80 font-semibold",
         {
           "cursor-not-allowed hover:bg-accent-subtle!": buttonLoader,
         }
@@ -75,7 +75,7 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
       disabled={buttonLoader}
     >
       <div
-        className="flex w-full h-full px-2 py-0.5 text-13 font-medium border-r border-white"
+        className="flex w-full h-full px-2 py-0.5 text-13 font-medium border-r border-white text-on-color"
         onClick={() => downloadWorklogs("csv")}
       >
         {buttonLoader ? "Downloading" : "Download"}
@@ -83,7 +83,7 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
       <PopoverMenu
         buttonClassName="outline-none focus:outline-none flex"
         button={
-          <div className="flex-shrink-0 px-2 py-0.5 overflow-hidden flex justify-center items-center my-auto">
+          <div className="flex-shrink-0 px-2 py-0.5 overflow-hidden flex justify-center items-center my-auto text-on-color">
             <ChevronDownIcon height={16} width={16} className="my-auto" />
           </div>
         }
@@ -92,7 +92,7 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
         panelClassName="space-y-0.5 w-32 flex flex-col"
         render={(option: TDownloadFormatOptions) => (
           <button
-            className="px-1.5 py-1 text-left rounded-sm text-11 font-medium cursor-pointer bg-layer-1 hover:bg-layer-1-hover transition-all"
+            className="px-1.5 py-1 text-left rounded-sm text-11 font-medium cursor-pointer hover:bg-layer-transparent-hover transition-all"
             onClick={() => downloadWorklogs(option.value)}
             disabled={buttonLoader}
             data-ph-element={WORKSPACE_WORKLOG_TRACKER_ELEMENTS.HEADER_DOWNLOAD_CONTEXT_MENU}

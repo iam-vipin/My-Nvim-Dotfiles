@@ -1,7 +1,8 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
+import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -49,7 +50,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   if (MENU_ITEMS.length === 0) return null;
 
   return (
-    <CustomMenu ellipsis closeOnSelect>
+    <CustomMenu customButton={<IconButton icon={MoreHorizontal} variant="ghost" size="sm" />} closeOnSelect>
       {MENU_ITEMS.map((item) => {
         if (item.shouldRender === false) return null;
 

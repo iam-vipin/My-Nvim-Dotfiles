@@ -1,0 +1,126 @@
+import { useMemo } from "react";
+import type { TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
+// plane types
+import type { TPage } from "@plane/types";
+// components
+import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/components";
+// constants
+import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+// helpers
+import { callNative } from "@/helpers";
+// store
+import { usePages } from "@/hooks/store";
+import { IBasePageStore } from "@/store/base-page.store";
+// types
+import type { TDocumentEditorParams } from "@/types/editor";
+
+export type TEmbedHookProps = {
+  initialParams: TDocumentEditorParams | undefined;
+  isIssueEmbedEnabled: boolean;
+  isNestedPagesEnabled: boolean;
+};
+
+export const useEditorEmbeds = (props: TEmbedHookProps) => {
+  const { initialParams, isIssueEmbedEnabled, isNestedPagesEnabled } = props;
+  const { subPageIds, getSubPageById } = usePages();
+
+  const issueEmbedHandler: TIssueEmbedConfig = useMemo(
+    () => ({
+      searchCallback: undefined,
+      widgetCallback: ({ issueId, projectId, workspaceSlug }) => {
+        if (!isIssueEmbedEnabled) return <IssueEmbedUpgradeCard />;
+        return <IssueEmbedCard issueId={issueId} projectId={projectId} workspaceSlug={workspaceSlug} />;
+      },
+    }),
+    [isIssueEmbedEnabled]
+  );
+
+  const pageEmbedHandler: TPageEmbedConfig | undefined = useMemo(() => {
+    if (!initialParams) return undefined;
+
+    return {
+      widgetCallback: ({ pageId }) => (
+        <PageEmbedCardRoot
+          pageId={pageId}
+          currentUserId={initialParams.userId}
+          workspaceSlug={initialParams.workspaceSlug}
+          projectId={initialParams.projectId}
+          isNestedPagesEnabled={isNestedPagesEnabled}
+        />
+      ),
+      getSubPagesCallback: () => subPageIds,
+      getPageDetailsCallback(pageId) {
+        const page = getSubPageById(pageId);
+        if (!page) throw new Error("Page not found");
+        return {
+          id: page.id,
+          name: page.name,
+          archived_at: page.archivedAt,
+        } as TPage;
+      },
+
+      deletePage: async (pageIds) => {
+        try {
+          const pages = [] as IBasePageStore[];
+          for (const pageId of pageIds) {
+            const page = getSubPageById(pageId);
+            if (page) {
+              pages.push(page);
+            }
+          }
+          if (!pages.length) return;
+          callNative(
+            CallbackHandlerStrings.deleteSubPages,
+            JSON.stringify({
+              workspaceSlug: initialParams.workspaceSlug,
+              projectId: initialParams.projectId,
+              pages: pages.map((page) =>
+                JSON.stringify({
+                  id: page.id,
+                  logoProps: page.logoProps,
+                  name: page.name,
+                })
+              ),
+            })
+          );
+        } catch {}
+      },
+
+      archivePage: async (pageId) => {
+        await callNative(
+          CallbackHandlerStrings.archivePage,
+          JSON.stringify({
+            pageId: pageId,
+            projectId: initialParams.projectId,
+            workspaceSlug: initialParams.workspaceSlug,
+          })
+        );
+      },
+      unarchivePage: async (pageId) => {
+        await callNative(
+          CallbackHandlerStrings.restorePage,
+          JSON.stringify({
+            pageId: pageId,
+            projectId: initialParams.projectId,
+            workspaceSlug: initialParams.workspaceSlug,
+          })
+        );
+      },
+      workspaceSlug: initialParams.workspaceSlug.toString(),
+    };
+  }, [initialParams, isNestedPagesEnabled, subPageIds, getSubPageById]);
+
+  const embedHandler = useMemo(
+    () => ({
+      issue: issueEmbedHandler,
+      ...(pageEmbedHandler && { page: pageEmbedHandler }),
+    }),
+    [issueEmbedHandler, pageEmbedHandler]
+  );
+
+  return {
+    embedHandler,
+    pageEmbedHandler,
+    issueEmbedHandler,
+  };
+};

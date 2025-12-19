@@ -4,7 +4,7 @@ import type { Editor } from "@tiptap/react";
 import { cn } from "@plane/utils";
 // components
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
-import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
+import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
 import type { TCollabValue } from "@/contexts";
 import type {
@@ -45,14 +45,18 @@ export function PageRenderer(props: Props) {
     editorContainerClassName,
     extendedEditorProps,
     flaggedExtensions,
-    id,
+    extendedDocumentEditorProps,
     isLoading,
     isTouchDevice,
+    id,
     tabIndex,
     titleEditor,
     provider,
     state,
+    aiHandler,
   } = props;
+  const { isSelfHosted, titleContainerClassName } = extendedDocumentEditorProps ?? {};
+
   return (
     <div
       className={cn("frame-renderer flex-grow w-full", {
@@ -63,14 +67,17 @@ export function PageRenderer(props: Props) {
         <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <>
-          {titleEditor && (
+          {titleEditor && !isSelfHosted && (
             <div className="relative w-full py-3">
               <EditorContainer
+                displayConfig={displayConfig}
                 editor={titleEditor}
+                editorContainerClassName={cn(
+                  "page-title-editor bg-transparent py-3 border-none",
+                  titleContainerClassName
+                )}
                 id={id + "-title"}
                 isTouchDevice={isTouchDevice}
-                editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
-                displayConfig={displayConfig}
               >
                 <EditorContentWrapper
                   editor={titleEditor}
@@ -106,6 +113,7 @@ export function PageRenderer(props: Props) {
                   flaggedExtensions={flaggedExtensions}
                   disabledExtensions={disabledExtensions}
                 />
+                <AIFeaturesMenu menu={aiHandler?.menu} />
               </div>
             )}
           </EditorContainer>

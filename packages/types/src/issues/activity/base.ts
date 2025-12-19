@@ -1,5 +1,6 @@
 export * from "./issue_activity";
 export * from "./issue_comment";
+export * from "./issue_comment_extended";
 export * from "./issue_comment_reaction";
 
 import type { TIssuePriorities } from "../../issues";

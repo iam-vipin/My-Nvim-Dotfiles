@@ -62,11 +62,11 @@ export function WorkItemSelectionPage(props: Props) {
       .searchEntity(workspaceSlug.toString(), {
         count: 10,
         query: debouncedSearchTerm,
-        query_type: ["issue"],
+        query_type: ["issue_mention"],
         ...(!isWorkspaceLevel && projectId ? { project_id: projectId.toString() } : {}),
       })
       .then((res) => {
-        setIssueResults(res.issue || []);
+        setIssueResults(res.issue_mention || []);
       })
       .catch(() => setIssueResults([]));
   }, [debouncedSearchTerm, workspaceSlug, projectId, isWorkspaceLevel]);
@@ -89,7 +89,8 @@ export function WorkItemSelectionPage(props: Props) {
                     projectId={issue.project_id}
                     projectIdentifier={issue.project_identifier}
                     issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-13 text-secondary"
+                    size="sm"
+                    variant="secondary"
                   />
                 )}
                 <span className="truncate">{issue.name}</span>
@@ -127,7 +128,8 @@ export function WorkItemSelectionPage(props: Props) {
                   projectId={issue.project_id}
                   projectIdentifier={issue.project__identifier}
                   issueSequenceId={issue.sequence_id}
-                  textContainerClassName="text-13 text-secondary"
+                  size="sm"
+                  variant="secondary"
                 />
               )}
               <span className="truncate">{issue.name}</span>

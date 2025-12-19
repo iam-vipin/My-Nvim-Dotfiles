@@ -35,6 +35,6 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
   );
 });
 
-export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(_props: TIssueTypeIdentifier) {
+export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(_props: TIssueIdentifierProps) {
   return <></>;
 });

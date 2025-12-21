@@ -78,7 +78,9 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
           />
         )}
         <div className="flex relative w-full gap-2 items-center mb-3">
-          <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
+          <div className="shrink-0">
+            <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} />
+          </div>
           <div className="flex-1 flex flex-wrap items-center gap-1">
             <div className="text-caption-sm-medium">{displayName}</div>
             <div className="text-caption-sm-regular text-tertiary">
@@ -96,7 +98,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
           </div>
           {!disabled && (
             <div className="flex items-center gap-1 shrink-0">
-              <IconButton variant="ghost" size="sm" icon={ReplyIcon} onClick={handleReply} />
+              {enableReplies && <IconButton variant="ghost" size="sm" icon={ReplyIcon} onClick={handleReply} />}
               <EmojiReactionPicker
                 isOpen={isPickerOpen}
                 handleToggle={setIsPickerOpen}
@@ -119,6 +121,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
             workspaceSlug={workspaceSlug}
             activityOperations={activityOperations}
             showAccessSpecifier={showAccessSpecifier}
+            renderHeader={false}
           />
         </div>
       </div>

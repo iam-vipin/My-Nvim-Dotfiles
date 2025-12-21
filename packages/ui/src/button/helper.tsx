@@ -85,12 +85,6 @@ export const buttonStyling: IButtonStyling = {
     pressed: `focus:bg-danger-subtle-hover`,
     disabled: `cursor-not-allowed text-disabled! border-subtle-1!`,
   },
-  "link-danger": {
-    default: `text-red-500 bg-surface-1`,
-    hover: `hover:text-red-400`,
-    pressed: `focus:text-red-400`,
-    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
-  },
   "tertiary-danger": {
     default: `text-red-500 bg-surface-1 border border-red-200`,
     hover: `hover:bg-red-50 hover:border-red-300`,

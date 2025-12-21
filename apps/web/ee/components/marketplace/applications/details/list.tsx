@@ -1,0 +1,17 @@
+import React from "react";
+import type { TUserApplication } from "@plane/types";
+import { AppTile } from "@/plane-web/components/marketplace";
+
+// list all the applications
+// have tabs to filter by category
+// have search bar to search by name
+
+type AppListProps = {
+  apps: TUserApplication[];
+};
+
+export function AppList(props: AppListProps) {
+  const { apps } = props;
+
+  return apps.map((app) => <AppTile key={app.id} app={app} />);
+}

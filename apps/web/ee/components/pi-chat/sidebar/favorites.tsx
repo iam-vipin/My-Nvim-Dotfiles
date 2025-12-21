@@ -1,0 +1,37 @@
+import { uniqBy } from "lodash-es";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import type { TUserThreads } from "@/plane-web/types";
+import { SidebarItem } from "./sidebar-item";
+
+type TProps = {
+  favoriteChats: TUserThreads[];
+  isProjectLevel?: boolean;
+};
+const FavoriteChats = observer(function FavoriteChats(props: TProps) {
+  const { favoriteChats, isProjectLevel = false } = props;
+  // router
+  const { workspaceSlug } = useParams();
+
+  return (
+    <div className="flex flex-col space-y-2">
+      <div className="text-13 font-semibold text-tertiary">Favorites</div>
+      <div className="flex flex-col gap-0.5">
+        {uniqBy(favoriteChats, "chat_id").map((chat) => (
+          <SidebarItem
+            key={chat.chat_id}
+            isActive={false}
+            chatId={chat.chat_id}
+            title={chat.title}
+            workspaceSlug={workspaceSlug?.toString() || ""}
+            isProjectLevel={isProjectLevel}
+            isFavorite={chat.is_favorite}
+            optionToExclude={["rename", "delete"]}
+            onClickItem={() => {}}
+          />
+        ))}
+      </div>
+    </div>
+  );
+});
+export default FavoriteChats;

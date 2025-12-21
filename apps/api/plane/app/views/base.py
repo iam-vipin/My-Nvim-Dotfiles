@@ -1,6 +1,6 @@
 # Python imports
 import traceback
-
+import logging
 import zoneinfo
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -27,6 +27,9 @@ from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
+logger = logging.getLogger("plane.api")
+
+
 class TimezoneMixin:
     """
     This enables timezone conversion according
@@ -35,7 +38,7 @@ class TimezoneMixin:
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
-        if request.user.is_authenticated:
+        if request.user and request.user.is_authenticated:
             timezone.activate(zoneinfo.ZoneInfo(request.user.user_timezone))
         else:
             timezone.deactivate()
@@ -74,25 +77,46 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         except Exception as e:
             (print(e, traceback.format_exc()) if settings.DEBUG else print("Server Error"))
             if isinstance(e, IntegrityError):
+                log_exception(e)
                 return Response(
                     {"error": "The payload is not valid"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if isinstance(e, ValidationError):
+                logger.warning(
+                    "Validation Error",
+                    extra={
+                        "error_code": "VALIDATION_ERROR",
+                        "error_message": str(e),
+                    },
+                )
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if isinstance(e, ObjectDoesNotExist):
+                logger.warning(
+                    "Object Does Not Exist",
+                    extra={
+                        "error_code": "OBJECT_DOES_NOT_EXIST",
+                        "error_message": str(e),
+                    },
+                )
                 return Response(
                     {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
-                log_exception(e)
+                logger.error(
+                    "Key Error",
+                    extra={
+                        "error_code": "KEY_ERROR",
+                        "error_message": str(e),
+                    },
+                )
                 return Response(
                     {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -170,24 +194,46 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
             return response
         except Exception as e:
             if isinstance(e, IntegrityError):
+                log_exception(e)
                 return Response(
                     {"error": "The payload is not valid"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if isinstance(e, ValidationError):
+                logger.warning(
+                    "Validation Error",
+                    extra={
+                        "error_code": "VALIDATION_ERROR",
+                        "error_message": str(e),
+                    },
+                )
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if isinstance(e, ObjectDoesNotExist):
+                logger.warning(
+                    "Object Does Not Exist",
+                    extra={
+                        "error_code": "OBJECT_DOES_NOT_EXIST",
+                        "error_message": str(e),
+                    },
+                )
                 return Response(
                     {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
+                logger.error(
+                    "Key Error",
+                    extra={
+                        "error_code": "KEY_ERROR",
+                        "error_message": str(e),
+                    },
+                )
                 return Response(
                     {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,

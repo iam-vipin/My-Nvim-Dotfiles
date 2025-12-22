@@ -16,7 +16,7 @@ type TWorkItemSideBarMilestoneItemProps = {
 export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMilestoneItem(
   props: TWorkItemSideBarMilestoneItemProps
 ) {
-  const { workspaceSlug, projectId, workItemId, isPeekView } = props;
+  const { workspaceSlug, projectId, workItemId } = props;
 
   //store hooks
   const {
@@ -43,12 +43,12 @@ export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMil
   };
 
   return (
-    <SidebarPropertyListItem icon={MilestoneIcon} label="Milestone" childrenClassName="px-2">
+    <SidebarPropertyListItem icon={MilestoneIcon} label="Milestone">
       <MilestonesDropdown
         projectId={projectId}
         value={workItem.milestone_id}
         onChange={handleChange}
-        buttonClassName="h-7.5"
+        buttonClassName="h-7.5 px-2"
       />
     </SidebarPropertyListItem>
   );

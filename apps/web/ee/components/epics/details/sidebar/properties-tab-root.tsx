@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -143,7 +142,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         </SidebarPropertyListItem>
 
         {createdByDetails && (
-          <SidebarPropertyListItem icon={UserCirclePropertyIcon} label="Created by">
+          <SidebarPropertyListItem icon={UserCirclePropertyIcon} label="Created by" childrenClassName="px-2">
             <ButtonAvatars showTooltip userIds={createdByDetails.id} />
             <span className="grow truncate text-11 leading-5">{createdByDetails?.display_name}</span>
           </SidebarPropertyListItem>

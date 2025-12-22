@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -46,7 +45,7 @@ export const ConversionToastActionItems = observer(function ConversionToastActio
       await copyUrlToClipboard(workItemLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
-    } catch (error) {
+    } catch {
       setCopied(false);
     }
     e.preventDefault();
@@ -61,7 +60,7 @@ export const ConversionToastActionItems = observer(function ConversionToastActio
         rel="noopener noreferrer"
         className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
       >
-        {`${t("common.view")} ${workItem?.is_epic ? t("common.epic") : t("work_item")}`}
+        {`${t("common.view")} ${workItem?.is_epic ? t("common.epic") : t("common.work_item")}`}
       </a>
 
       {copied ? (

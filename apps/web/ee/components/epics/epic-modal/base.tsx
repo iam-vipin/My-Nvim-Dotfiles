@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -226,7 +226,9 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
       if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload);
       else {
-        if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
+        if (isConversionOperation) {
+          await handleConvert(workspaceSlug.toString(), data);
+        }
         response = await handleUpdateIssue(payload, !isConversionOperation);
       }
     } catch (error) {

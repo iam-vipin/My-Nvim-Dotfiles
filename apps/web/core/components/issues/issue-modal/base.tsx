@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -386,7 +386,9 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else {
         // if the issue is being converted, handle the conversion
-        if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
+        if (isConversionOperation) {
+          await handleConvert(workspaceSlug.toString(), data);
+        }
         response = await handleUpdateIssue(payload, !isConversionOperation);
       }
     } catch (error) {

@@ -34,7 +34,7 @@ export function NewUpdate(props: TProps) {
 
       {/* actions */}
       <div className="flex m-auto mr-0 text-13 gap-2 w-fit">
-        <Button onClick={handleClose} variant="secondary" size="sm">
+        <Button onClick={handleClose} variant="secondary">
           {t("cancel")}
         </Button>
         <Button

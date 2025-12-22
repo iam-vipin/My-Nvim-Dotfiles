@@ -59,7 +59,7 @@ export function CustomAttachmentBlock(props: Props) {
     <div
       key={node.attrs.id}
       id={getAttachmentBlockId(node.attrs.id ?? "")}
-      className="py-3 px-2 rounded-lg bg-layer-2 hover:bg-layer-2-hover border border-subtle-1 flex items-start gap-2 transition-colors"
+      className="py-3 px-2 rounded-lg bg-layer-3 hover:bg-layer-3-hover border border-subtle-1 flex items-start gap-2 transition-colors"
       contentEditable={false}
     >
       <a

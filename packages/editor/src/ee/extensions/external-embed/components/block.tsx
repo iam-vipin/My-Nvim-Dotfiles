@@ -57,10 +57,10 @@ export const ExternalEmbedBlock = memo(function ExternalEmbedBlock(externalEmbed
       <div
         ref={embedButtonRef}
         className={cn(
-          "flex items-center justify-start gap-2 py-3 px-2 my-2 rounded-lg text-tertiary bg-layer-2 border border-dashed transition-all duration-200 ease-in-out cursor-default",
+          "flex items-center justify-start gap-2 py-3 px-2 my-2 rounded-lg text-tertiary bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default",
           {
             "border-subtle": !(externalEmbedProps.selected && externalEmbedProps.editor.isEditable),
-            "hover:text-secondary hover:bg-layer-2-hover cursor-pointer": externalEmbedProps.editor.isEditable,
+            "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": externalEmbedProps.editor.isEditable,
             "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
               externalEmbedProps.selected && externalEmbedProps.editor.isEditable,
           }

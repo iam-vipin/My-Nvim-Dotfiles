@@ -32,16 +32,16 @@ export function BlockMathContainer({
 
   const variantClasses = {
     empty: cn(
-      "flex items-center justify-start gap-2 py-3 text-tertiary bg-layer-2 border border-dashed transition-all duration-200 ease-in-out cursor-default",
+      "flex items-center justify-start gap-2 py-3 text-tertiary bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default",
       {
         "border-subtle-1": !(selected && editor?.isEditable),
-        "hover:text-secondary hover:bg-layer-2-hover cursor-pointer": isEditable,
+        "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": isEditable,
         "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
           selected && isEditable,
       }
     ),
-    error: `flex bg-layer-2 py-3 text-primary ${isEditable ? "hover:bg-layer-2-hover hover:shadow-md cursor-pointer" : "cursor-default"}`,
-    content: `text-center bg-layer-2 text-primary overflow-hidden ${isEditable ? "cursor-pointer hover:bg-layer-2-hover hover:shadow-md" : "cursor-default"}`,
+    error: `flex bg-layer-3 py-3 text-primary ${isEditable ? "hover:bg-layer-3-hover hover:shadow-md cursor-pointer" : "cursor-default"}`,
+    content: `text-center bg-layer-3 text-primary overflow-hidden ${isEditable ? "cursor-pointer hover:bg-layer-3-hover hover:shadow-md" : "cursor-default"}`,
   };
 
   return (

@@ -183,11 +183,11 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
   return (
     <div
       className={cn(
-        "py-3 px-2 rounded-lg bg-layer-2 border border-dashed transition-all duration-200 ease-in-out cursor-default flex items-center gap-2",
+        "py-3 px-2 rounded-lg bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default flex items-center gap-2",
         {
           "border-subtle-1": !(selected && editor.isEditable && !isErrorState),
-          "hover:text-secondary hover:bg-layer-2-hover cursor-pointer": editor.isEditable && !isErrorState,
-          "bg-layer-2-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
+          "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": editor.isEditable && !isErrorState,
+          "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
           "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && editor.isEditable && !isErrorState,
           "text-red-500 cursor-default": isErrorState,

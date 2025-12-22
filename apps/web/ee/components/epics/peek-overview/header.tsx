@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -19,7 +18,6 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "../../feature-flags";
@@ -75,13 +73,10 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
     toggleEditEpicModal,
     toggleDeleteEpicModal,
     toggleDuplicateEpicModal,
-    disabled,
     embedIssue = false,
     removeRoutePeekId,
     isSubmitting,
   } = props;
-  // router
-  const router = useAppRouter();
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   // store hooks
@@ -113,13 +108,22 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(workItemLink).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Epic link copied to clipboard.",
+    copyUrlToClipboard(workItemLink)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Link Copied!",
+          message: "Epic link copied to clipboard.",
+        });
+        return;
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to copy link",
+        });
       });
-    });
   };
 
   const handleDelete = async () => {
@@ -127,6 +131,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
       await removeIssue(issue.project_id, issue.id).then(() => {
         // TODO: add toast
         setPeekIssue(undefined);
+        return;
       });
     }
   };
@@ -134,13 +139,15 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
   const handleUpdate = async (data: Partial<TIssue>) => {
     if (issue && updateIssue) {
       // TODO: add toast
-      updateIssue(issue.project_id, issue.id, data);
+      await updateIssue(issue.project_id, issue.id, data);
     }
   };
 
   const isEditingAllowed = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
   );
 
   return (

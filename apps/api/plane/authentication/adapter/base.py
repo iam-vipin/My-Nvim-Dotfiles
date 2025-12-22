@@ -112,6 +112,24 @@ class Adapter:
             return {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
         return {}
 
+    def check_sync_enabled(self):
+        """Check if sync is enabled for the provider"""
+
+        provider_config_keys = {
+            "google": "ENABLE_GOOGLE_SYNC",
+            "github": "ENABLE_GITHUB_SYNC",
+            "gitlab": "ENABLE_GITLAB_SYNC",
+            "gitea": "ENABLE_GITEA_SYNC",
+            "oidc": "ENABLE_OIDC_IDP_SYNC",
+            "saml": "ENABLE_SAML_IDP_SYNC",
+        }
+
+        config_key = provider_config_keys.get(self.provider)
+        if not config_key:
+            return False
+        (enabled_value,) = get_configuration_value([{"key": config_key, "default": os.environ.get(config_key, "0")}])
+        return enabled_value == "1"
+
     def download_and_upload_avatar(self, avatar_url, user):
         """
         Downloads avatar from OAuth provider and uploads to our storage.
@@ -308,10 +326,7 @@ class Adapter:
             Profile.objects.create(user=user)
 
         # Check if IDP sync is enabled
-        (ENABLE_IDP_SYNC,) = get_configuration_value(
-            [{"key": "ENABLE_IDP_SYNC", "default": os.environ.get("ENABLE_IDP_SYNC", "0")}]
-        )
-        if ENABLE_IDP_SYNC == "1":
+        if self.check_sync_enabled():
             user = self.sync_user_data(user=user)
 
         # Save user data

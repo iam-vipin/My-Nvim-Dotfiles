@@ -14,13 +14,13 @@ import { cn } from "@plane/utils";
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
+import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
+import { ControllerSwitch } from "@/components/common/controller-switch";
 import { ControllerInput } from "@/components/common/controller-input";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
-// local components
-import { GithubMobileForm } from "./mobile-form";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -45,6 +45,7 @@ export function InstanceGithubConfigForm(props: Props) {
       GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
       GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
       GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
+      ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"],
     },
   });
 
@@ -106,6 +107,11 @@ export function InstanceGithubConfigForm(props: Props) {
     },
   ];
 
+  const GITHUB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GithubConfigFormValues> = {
+    name: "ENABLE_GITHUB_SYNC",
+    label: "GitHub",
+  };
+
   const GITHUB_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URL",
@@ -154,20 +160,22 @@ export function InstanceGithubConfigForm(props: Props) {
   const onSubmit = async (formData: GithubConfigFormValues) => {
     const payload: Partial<GithubConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then((response = []) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Done!",
-          message: "Your GitHub authentication is configured. You should test it now.",
-        });
-        reset({
-          GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
-          GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
-          GITHUB_ORGANIZATION_ID: response.find((item) => item.key === "GITHUB_ORGANIZATION_ID")?.value,
-        });
-      })
-      .catch((err) => console.error(err));
+    try {
+      const response = await updateInstanceConfigurations(payload);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Done!",
+        message: "Your GitHub authentication is configured. You should test it now.",
+      });
+      reset({
+        GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
+        GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
+        GITHUB_ORGANIZATION_ID: response.find((item) => item.key === "GITHUB_ORGANIZATION_ID")?.value,
+        ENABLE_GITHUB_SYNC: response.find((item) => item.key === "ENABLE_GITHUB_SYNC")?.value,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -201,12 +209,12 @@ export function InstanceGithubConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
+            <ControllerSwitch control={control} field={GITHUB_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
                 <Button
                   variant="primary"
-                  size="lg"
-                  onClick={handleSubmit(onSubmit)}
+                  onClick={(e) => void handleSubmit(onSubmit)(e)}
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
@@ -241,9 +249,6 @@ export function InstanceGithubConfigForm(props: Props) {
                   ))}
                 </div>
               </div>
-
-              {/* mobile service details */}
-              <GithubMobileForm />
             </div>
           </div>
         </div>

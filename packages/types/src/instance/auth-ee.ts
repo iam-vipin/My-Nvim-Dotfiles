@@ -8,14 +8,15 @@ export type TInstanceOIDCAuthenticationConfigurationKeys =
   | "OIDC_AUTHORIZE_URL"
   | "OIDC_LOGOUT_URL"
   | "OIDC_PROVIDER_NAME"
-  | "ENABLE_IDP_SYNC";
+  | "ENABLE_OIDC_IDP_SYNC";
 
 export type TInstanceSAMLAuthenticationConfigurationKeys =
   | "SAML_ENTITY_ID"
   | "SAML_SSO_URL"
   | "SAML_LOGOUT_URL"
   | "SAML_CERTIFICATE"
-  | "SAML_PROVIDER_NAME";
+  | "SAML_PROVIDER_NAME"
+  | "ENABLE_SAML_IDP_SYNC";
 
 export type TInstanceEnterpriseAuthenticationConfigurationKeys =
   | TInstanceOIDCAuthenticationConfigurationKeys

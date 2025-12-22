@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
@@ -14,6 +13,8 @@ import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
+import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
+import { ControllerSwitch } from "@/components/common/controller-switch";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
@@ -45,6 +46,7 @@ export function InstanceSAMLConfigForm(props: Props) {
       SAML_LOGOUT_URL: config["SAML_LOGOUT_URL"],
       SAML_CERTIFICATE: config["SAML_CERTIFICATE"],
       SAML_PROVIDER_NAME: config["SAML_PROVIDER_NAME"],
+      ENABLE_SAML_IDP_SYNC: config["ENABLE_SAML_IDP_SYNC"],
     },
   });
 
@@ -97,6 +99,11 @@ export function InstanceSAMLConfigForm(props: Props) {
       required: false,
     },
   ];
+
+  const SAML_FORM_SWITCH_FIELD: TControllerSwitchFormField<SAMLConfigFormValues> = {
+    name: "ENABLE_SAML_IDP_SYNC",
+    label: "IdP",
+  };
 
   const SAML_WEB_SERVICE_DETAILS: TCopyField[] = [
     {
@@ -169,22 +176,24 @@ export function InstanceSAMLConfigForm(props: Props) {
   const onSubmit = async (formData: SAMLConfigFormValues) => {
     const payload: Partial<SAMLConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then((response = []) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Done!",
-          message: "Your SAML-based authentication is configured. You should test it now.",
-        });
-        reset({
-          SAML_ENTITY_ID: response.find((item) => item.key === "SAML_ENTITY_ID")?.value,
-          SAML_SSO_URL: response.find((item) => item.key === "SAML_SSO_URL")?.value,
-          SAML_LOGOUT_URL: response.find((item) => item.key === "SAML_LOGOUT_URL")?.value,
-          SAML_CERTIFICATE: response.find((item) => item.key === "SAML_CERTIFICATE")?.value,
-          SAML_PROVIDER_NAME: response.find((item) => item.key === "SAML_PROVIDER_NAME")?.value,
-        });
-      })
-      .catch((err) => console.error(err));
+    try {
+      const response = await updateInstanceConfigurations(payload);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Done!",
+        message: "Your SAML-based authentication is configured. You should test it now.",
+      });
+      reset({
+        SAML_ENTITY_ID: response.find((item) => item.key === "SAML_ENTITY_ID")?.value,
+        SAML_SSO_URL: response.find((item) => item.key === "SAML_SSO_URL")?.value,
+        SAML_LOGOUT_URL: response.find((item) => item.key === "SAML_LOGOUT_URL")?.value,
+        SAML_CERTIFICATE: response.find((item) => item.key === "SAML_CERTIFICATE")?.value,
+        SAML_PROVIDER_NAME: response.find((item) => item.key === "SAML_PROVIDER_NAME")?.value,
+        ENABLE_SAML_IDP_SYNC: response.find((item) => item.key === "ENABLE_SAML_IDP_SYNC")?.value,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -218,6 +227,7 @@ export function InstanceSAMLConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
+
             <div className="flex flex-col gap-1">
               <h4 className="text-13">SAML certificate</h4>
               <Controller
@@ -240,9 +250,15 @@ export function InstanceSAMLConfigForm(props: Props) {
                 IdP-generated certificate for signing this Plane app as an authorized service provider for your IdP
               </p>
             </div>
+            <ControllerSwitch control={control} field={SAML_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
+                <Button
+                  variant="primary"
+                  onClick={(e) => void handleSubmit(onSubmit)(e)}
+                  loading={isSubmitting}
+                  disabled={!isDirty}
+                >
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
                 <Link

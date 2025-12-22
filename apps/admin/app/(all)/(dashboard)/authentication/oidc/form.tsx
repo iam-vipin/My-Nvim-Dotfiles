@@ -1,18 +1,19 @@
 import { useState } from "react";
 import Link from "next/link";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Monitor, Smartphone } from "lucide-react";
 // plane internal packages
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceOIDCAuthenticationConfigurationKeys } from "@plane/types";
 import { cn } from "@plane/utils";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
+import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
+import { ControllerSwitch } from "@/components/common/controller-switch";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
@@ -23,11 +24,6 @@ type Props = {
 };
 
 type OIDCConfigFormValues = Record<TInstanceOIDCAuthenticationConfigurationKeys, string>;
-
-type TEnableIDPSyncFormField = {
-  key: TInstanceOIDCAuthenticationConfigurationKeys;
-  description: string;
-};
 
 export function InstanceOIDCConfigForm(props: Props) {
   const { config } = props;
@@ -50,7 +46,7 @@ export function InstanceOIDCConfigForm(props: Props) {
       OIDC_AUTHORIZE_URL: config["OIDC_AUTHORIZE_URL"],
       OIDC_LOGOUT_URL: config["OIDC_LOGOUT_URL"],
       OIDC_PROVIDER_NAME: config["OIDC_PROVIDER_NAME"],
-      ENABLE_IDP_SYNC: config["ENABLE_IDP_SYNC"] || "0",
+      ENABLE_OIDC_IDP_SYNC: config["ENABLE_OIDC_IDP_SYNC"],
     },
   });
 
@@ -131,9 +127,9 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
   ];
 
-  const ENABLE_IDP_SYNC_FORM_FIELD: TEnableIDPSyncFormField = {
-    key: "ENABLE_IDP_SYNC",
-    description: "Refresh user attributes from IdP during sign in",
+  const OIDC_FORM_SWITCH_FIELD: TControllerSwitchFormField<OIDCConfigFormValues> = {
+    name: "ENABLE_OIDC_IDP_SYNC",
+    label: "IdP",
   };
 
   const OIDC_SERVICE_DETAILS: TCopyField[] = [
@@ -218,7 +214,7 @@ export function InstanceOIDCConfigForm(props: Props) {
         OIDC_USERINFO_URL: response.find((item) => item.key === "OIDC_USERINFO_URL")?.value,
         OIDC_LOGOUT_URL: response.find((item) => item.key === "OIDC_LOGOUT_URL")?.value,
         OIDC_PROVIDER_NAME: response.find((item) => item.key === "OIDC_PROVIDER_NAME")?.value,
-        ENABLE_IDP_SYNC: response.find((item) => item.key === "ENABLE_IDP_SYNC")?.value,
+        ENABLE_OIDC_IDP_SYNC: response.find((item) => item.key === "ENABLE_OIDC_IDP_SYNC")?.value,
       });
     } catch (err) {
       console.error(err);
@@ -256,29 +252,12 @@ export function InstanceOIDCConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
-            <div className="flex items-center justify-between gap-1">
-              <h4 className="text-sm text-tertiary">{ENABLE_IDP_SYNC_FORM_FIELD.description}</h4>
-              <div className="relative">
-                <Controller
-                  control={control}
-                  name={ENABLE_IDP_SYNC_FORM_FIELD.key}
-                  render={({ field: { value, onChange } }) => (
-                    <ToggleSwitch
-                      value={Boolean(parseInt(value))}
-                      onChange={() => (Boolean(parseInt(value)) === true ? onChange("0") : onChange("1"))}
-                      size="sm"
-                    />
-                  )}
-                />
-              </div>
-            </div>
+            <ControllerSwitch control={control} field={OIDC_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
                 <Button
                   variant="primary"
-                  onClick={(e) => {
-                    void handleSubmit(onSubmit)(e);
-                  }}
+                  onClick={(e) => void handleSubmit(onSubmit)(e)}
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >

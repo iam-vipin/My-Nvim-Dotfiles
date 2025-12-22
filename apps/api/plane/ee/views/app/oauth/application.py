@@ -198,6 +198,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
                     Q(slug=app_slug, application_owners__workspace__slug=slug)
                     | Q(published_at__isnull=False, slug=app_slug)
                     | Q(
+                        slug=app_slug,
                         workspace_app_installations__workspace__slug=slug,
                         workspace_app_installations__status=WorkspaceAppInstallation.Status.INSTALLED,
                     )

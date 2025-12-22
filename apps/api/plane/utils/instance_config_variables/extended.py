@@ -49,7 +49,7 @@ oidc_config_variables = [
         "is_encrypted": False,
     },
     {
-        "key": "ENABLE_IDP_SYNC",
+        "key": "ENABLE_OIDC_IDP_SYNC",
         "value": "0",
         "category": "AUTHENTICATION",
         "is_encrypted": False,
@@ -91,6 +91,12 @@ saml_config_variables = [
     {
         "key": "SAML_PROVIDER_NAME",
         "value": "",
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
+    {
+        "key": "ENABLE_SAML_IDP_SYNC",
+        "value": "0",
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },

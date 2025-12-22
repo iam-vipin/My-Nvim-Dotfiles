@@ -274,7 +274,7 @@ class Adapter:
             user.avatar_asset = avatar_asset
         # If avatar upload fails, set the avatar to the original URL
         else:
-            user.avatar = avatar
+            user.avatar = avatar if avatar else ""
 
         user.save()
         return user
@@ -335,10 +335,10 @@ class Adapter:
                 avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
                 if avatar_asset:
                     user.avatar_asset = avatar_asset
-                    user.avatar = avatar
+                    user.avatar = avatar if avatar else ""
                 # If avatar upload fails, set the avatar to the original URL
                 else:
-                    user.avatar = avatar
+                    user.avatar = avatar if avatar else ""
 
             # Create profile
             Profile.objects.create(user=user)

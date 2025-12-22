@@ -1,7 +1,11 @@
+# Python imports
+import json
+
 # Django imports
 from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
 from django.utils import timezone
 from django.db.models.functions import Coalesce
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party modules
 from rest_framework import status
@@ -17,10 +21,19 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
 from plane.utils.cache import invalidate_cache
-
+from plane.db.models import (
+    Project,
+    ProjectMember,
+    WorkspaceMember,
+    DraftIssue,
+    Cycle,
+)
+from plane.ee.models import TeamspaceMember, PageUser
+from plane.payment.bgtasks.member_sync_task import member_sync_task
+from plane.payment.utils.member_payment_count import workspace_member_check
 from .. import BaseViewSet
+from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
@@ -80,14 +93,44 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # If a user is moved to a guest role he can't have any other role in projects
         if "role" in request.data and int(request.data.get("role")) == 5:
+            # If a user is moved to a guest role he can't have any other role in projects
             ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
+            # When a user is moved to a guest role, they must be removed from all teamspaces
+            TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
+
+        if "role" in request.data:
+            allowed, _, _ = workspace_member_check(
+                slug=slug,
+                requested_role=request.data.get("role"),
+                current_role=workspace_member.role,
+                requested_invite_list=[],
+            )
+            if not allowed:
+                return Response(
+                    {"error": "Cannot update the role as it exceeds the purchased seat limit"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
 
+        current_instance = json.dumps(WorkSpaceMemberSerializer(workspace_member).data, cls=DjangoJSONEncoder)
+
         if serializer.is_valid():
             serializer.save()
+
+            workspace_members_activity.delay(
+                type="workspace_member.activity.updated",
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                workspace_id=workspace_member.workspace_id,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                workspace_member_id=workspace_member.id,
+            )
+            # Sync workspace members
+            member_sync_task.delay(slug)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -141,8 +184,29 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False, updated_at=timezone.now())
 
+        removed_member_name = workspace_member.member.display_name
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(workspace__slug=slug, user_id=workspace_member.member_id).delete()
+
+        # Sync workspace members
+        member_sync_task.delay(slug)
+
+        workspace_members_activity.delay(
+            type="workspace_member.activity.removed",
+            requested_data={"name": removed_member_name},
+            current_instance=None,
+            actor_id=request.user.id,
+            workspace_id=workspace_member.workspace_id,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
@@ -198,6 +262,26 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # # Deactivate the user
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(workspace__slug=slug, user_id=workspace_member.member_id).delete()
+
+        # # Sync workspace members
+        member_sync_task.delay(slug)
+
+        workspace_members_activity.delay(
+            type="workspace_member.activity.left",
+            requested_data=None,
+            current_instance=None,
+            actor_id=request.user.id,
+            workspace_id=workspace_member.workspace_id,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -215,15 +299,34 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         draft_issue_count = (
-            DraftIssue.objects.filter(created_by=request.user, workspace_id=OuterRef("workspace_id"))
+            DraftIssue.objects.filter(
+                created_by=OuterRef("member"),
+                workspace_id=OuterRef("workspace_id"),
+                project__project_projectmember__member=OuterRef("member"),
+                project__project_projectmember__is_active=True,
+            )
             .values("workspace_id")
-            .annotate(count=Count("id"))
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
+        )
+        active_cycles_count = (
+            Cycle.objects.filter(
+                workspace__slug=OuterRef("workspace__slug"),
+                project__project_projectmember__role__gt=5,
+                project__project_projectmember__member=OuterRef("member"),
+                project__project_projectmember__is_active=True,
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now(),
+            )
+            .values("workspace__slug")
+            .annotate(count=Count("id", distinct=True))
             .values("count")
         )
 
         workspace_member = (
             WorkspaceMember.objects.filter(member=request.user, workspace__slug=slug, is_active=True)
             .annotate(draft_issue_count=Coalesce(Subquery(draft_issue_count, output_field=IntegerField()), 0))
+            .annotate(active_cycles_count=Coalesce(Subquery(active_cycles_count, output_field=IntegerField()), 0))
             .first()
         )
         serializer = WorkspaceMemberMeSerializer(workspace_member)

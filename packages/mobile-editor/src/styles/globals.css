@@ -1,0 +1,31 @@
+@import "@plane/tailwind-config/index.css";
+@import "@plane/editor/styles";
+@import "@plane/propel/styles/react-day-picker.css";
+@plugin "@tailwindcss/typography";
+
+.custom-collaboration-cursor {
+  position: absolute;
+  border-radius: 3px 3px 3px 0;
+  color: #0d0d0d;
+  font-size: 0.75rem; /* equivalent to text-11 */
+  font-weight: 600; /* equivalent to font-semibold */
+  line-height: 1.5; /* equivalent to leading-normal */
+  top: -1.3rem; /* equivalent to -top-[1.3rem] */
+  left: -1px; /* equivalent to -left-[1px] */
+  padding-top: 0.125rem; /* equivalent to py-0.5 */
+  padding-bottom: 0.125rem; /* equivalent to py-0.5 */
+  padding-left: 0.375rem; /* equivalent to px-1.5 */
+  padding-right: 0.375rem; /* equivalent to px-1.5 */
+  user-select: none; /* equivalent to select-none */
+  white-space: nowrap;
+}
+
+/* Placeholder only for the first line in an empty editor. */
+.ProseMirror p.is-editor-empty:first-child::before {
+  display: block !important;
+}
+
+/* Display Placeholders on every new line. */
+.ProseMirror p.is-empty::before {
+  display: none;
+}

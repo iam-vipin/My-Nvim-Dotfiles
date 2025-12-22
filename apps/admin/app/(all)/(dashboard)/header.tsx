@@ -68,7 +68,7 @@ export const AdminHeader = observer(function AdminHeader() {
     return breadcrumbItems;
   };
 
-  const breadcrumbItems = generateBreadcrumbItems(pathName);
+  const breadcrumbItems = generateBreadcrumbItems(pathName || "");
 
   return (
     <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-subtle bg-surface-1 p-4">

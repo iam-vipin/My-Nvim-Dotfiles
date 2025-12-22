@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import type { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
 import type { TDocumentEventsClient } from "@plane/editor/lib";
 import { DocumentCollaborativeEvents, getServerEventName } from "@plane/editor/lib";
@@ -22,9 +22,6 @@ type Props = {
 export const useCollaborativePageActions = (props: Props) => {
   const { page } = props;
   const editorRef = page.editor.editorRef;
-  // currentUserAction local state to track if the current action is being processed, a
-  // local action is basically the action performed by the current user to avoid double operations
-  const [currentActionBeingProcessed, setCurrentActionBeingProcessed] = useState<TDocumentEventsClient | null>(null);
 
   // @ts-expect-error - TODO: fix this
   const actionHandlerMap: Record<TDocumentEventsClient, CollaborativeAction> = useMemo(
@@ -83,27 +80,5 @@ export const useCollaborativePageActions = (props: Props) => {
     [actionHandlerMap, editorRef]
   );
 
-  useEffect(() => {
-    const realTimeStatelessMessageListener = editorRef?.listenToRealTimeUpdate();
-    const handleStatelessMessage = (message: { payload: TDocumentEventsClient }) => {
-      if (currentActionBeingProcessed === message.payload) {
-        setCurrentActionBeingProcessed(null);
-        return;
-      }
-
-      if (message.payload) {
-        executeCollaborativeAction({ type: "receivedMessageFromServer", message: message.payload });
-      }
-    };
-
-    realTimeStatelessMessageListener?.on("stateless", handleStatelessMessage);
-
-    return () => {
-      realTimeStatelessMessageListener?.off("stateless", handleStatelessMessage);
-    };
-  }, [editorRef, currentActionBeingProcessed, executeCollaborativeAction]);
-
-  return {
-    executeCollaborativeAction,
-  };
+  return { executeCollaborativeAction, actionHandlerMap };
 };

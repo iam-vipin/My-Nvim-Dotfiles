@@ -1,0 +1,18 @@
+import { Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
+
+function PiChatListLoader() {
+  return Array.from({ length: 3 }).map((_, index) => (
+    <Loader
+      key={index}
+      className={cn(
+        "w-full overflow-hidden py-4 flex-1 flex flex-col items-start gap-1 text-secondary truncate hover:text-secondary hover:bg-layer-1 pointer"
+      )}
+    >
+      <Loader.Item width="200px" height="21px" />
+      <Loader.Item width="100px" height="18px" />
+    </Loader>
+  ));
+}
+
+export default PiChatListLoader;

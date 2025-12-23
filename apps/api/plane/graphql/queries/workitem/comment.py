@@ -1,7 +1,5 @@
-# Third-Party Imports
-import strawberry
-
 # Python Standard Library Imports
+import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
@@ -14,27 +12,19 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import CommentReaction, IssueComment
-from plane.graphql.helpers import (
-    is_epic_feature_flagged,
-    is_project_epics_enabled,
-    project_member_filter_via_teamspaces_async,
-)
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.types.epics.comment import EpicCommentActivityType
+from plane.graphql.types.issues.comment import IssueCommentActivityType
 
 
 @strawberry.type
-class EpicCommentQuery:
+class IssueCommentActivityQuery:
     @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
-    async def epic_comments(self, info: Info, slug: str, project: str, epic: str) -> list[EpicCommentActivityType]:
+    async def issue_comment_activities(
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
+    ) -> list[IssueCommentActivityType]:
         user = info.context.user
         user_id = str(user.id)
-
-        # Check if the epic feature flag is enabled for the workspace
-        await is_epic_feature_flagged(user_id=user_id, workspace_slug=slug)
-
-        # check if the epic is enabled for the project
-        await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(
             user_id=user_id,
@@ -51,10 +41,10 @@ class EpicCommentQuery:
             0,
         )
 
-        epic_comments = await sync_to_async(list)(
+        issue_comments = await sync_to_async(list)(
             IssueComment.all_objects.filter(workspace__slug=slug)
             .filter(project__id=project)
-            .filter(issue_id=epic)
+            .filter(issue_id=issue)
             .filter(project_teamspace_filter.query)
             .annotate(comment_replies_count=comment_replies_count_subquery)
             .filter(Q(deleted_at__isnull=True) | Q(comment_replies_count__gt=0))
@@ -69,4 +59,4 @@ class EpicCommentQuery:
             )
         )
 
-        return epic_comments
+        return issue_comments

@@ -4,5 +4,5 @@ from .link import EpicLinkMutation
 from .attachment import EpicAttachmentMutation
 from .work_item import EpicWorkItemsMutation
 from .relation import EpicRelationMutation
-from .comment import EpicCommentMutation
+from .comment import EpicCommentMutation, EpicCommentReplyMutation
 from .comment_reaction import EpicCommentReactionMutation

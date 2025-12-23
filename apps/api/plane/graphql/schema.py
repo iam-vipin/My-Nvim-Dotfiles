@@ -19,6 +19,7 @@ from .mutations.epics import (
     EpicAttachmentMutation,
     EpicCommentMutation,
     EpicCommentReactionMutation,
+    EpicCommentReplyMutation,
     EpicLinkMutation,
     EpicMutation,
     EpicRelationMutation,
@@ -30,6 +31,7 @@ from .mutations.intake import (
     IntakeWorkItemAttachmentMutation,
     IntakeWorkItemCommentMutation,
     IntakeWorkItemCommentReactionMutation,
+    IntakeWorkItemCommentReplyMutation,
     IntakeWorkItemMutation,
     IntakeWorkItemStatusMutation,
 )
@@ -47,7 +49,9 @@ from .mutations.issues import (
     IssueRelationMutation,
     SubIssueMutation,
     WorkItemArchiveMutation,
+    WorkItemCommentMutation,
     WorkItemCommentReactionMutation,
+    WorkItemCommentReplyMutation,
     WorkItemMutation,
 )
 from .mutations.module import (
@@ -123,7 +127,6 @@ from .queries.intake import (
     IntakeWorkItemQuery,
 )
 from .queries.issue import (
-    IssueCommentActivityQuery,
     IssuePropertiesActivityQuery,
     IssueQuery,
     IssuesInformationQuery,
@@ -177,7 +180,7 @@ from .queries.users import (
     UserRecentVisitQuery,
 )
 from .queries.version_check import VersionCheckQuery
-from .queries.workitem import WorkspaceWorkItemMentionQuery
+from .queries.workitem import IssueCommentActivityQuery, WorkspaceWorkItemMentionQuery
 from .queries.workspace import (
     PublicWorkspaceInviteQuery,
     WorkspaceFeatureQuery,
@@ -351,6 +354,8 @@ class Mutation(
     IssueSubscriptionMutation,
     IssueRelationMutation,
     IssueCommentMutation,
+    WorkItemCommentMutation,
+    WorkItemCommentReplyMutation,
     SubIssueMutation,
     WorkItemCommentReactionMutation,
     WorkItemMutation,
@@ -391,6 +396,7 @@ class Mutation(
     EpicWorkItemsMutation,
     EpicRelationMutation,
     EpicCommentMutation,
+    EpicCommentReplyMutation,
     EpicCommentReactionMutation,
     # sticky
     WorkspaceStickiesMutation,
@@ -398,6 +404,7 @@ class Mutation(
     IntakeWorkItemMutation,
     IntakeWorkItemCommentMutation,
     IntakeWorkItemCommentReactionMutation,
+    IntakeWorkItemCommentReplyMutation,
     IntakeWorkItemAttachmentMutation,
     IntakeWorkItemStatusMutation,
     # catch up

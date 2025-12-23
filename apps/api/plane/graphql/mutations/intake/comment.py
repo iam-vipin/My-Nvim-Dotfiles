@@ -359,7 +359,7 @@ class IntakeWorkItemCommentReplyMutation:
             type="comment.activity.deleted",
             requested_data=json.dumps(comment_activity_payload),
             actor_id=user_id,
-            issue_id=intake_work_item_comment_reply_id,
+            issue_id=intake_work_item_id,
             project_id=project_id,
             current_instance=None,
             epoch=int(timezone.now().timestamp()),

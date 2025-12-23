@@ -168,7 +168,7 @@ class EpicCommentMutation:
         await is_epic_feature_flagged(user_id=user_id, workspace_slug=slug)
 
         # check if the epic is enabled for the project
-        await is_project_epics_enabled(workspace_slug=workspace_slug, project_id=project)
+        await is_project_epics_enabled(workspace_slug=workspace_slug, project_id=project_id)
 
         # get the work item
         epic_details = await get_epic(workspace_slug=workspace_slug, project_id=project_id, epic_id=epic)

@@ -46,6 +46,7 @@ const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewH
     >
       {children}
       {showEdited &&
+        isFullScreen &&
         originalArtifact?.is_editable &&
         EDITABLE_ARTIFACT_TYPES.includes(originalArtifact.artifact_type) && (
           <div

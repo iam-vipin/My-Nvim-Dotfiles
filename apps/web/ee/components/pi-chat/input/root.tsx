@@ -320,7 +320,14 @@ export const InputBox = observer(function InputBox(props: TProps) {
                           }
                         )}
                         type="submit"
-                        onClick={isPiTyping ? void handleAbortStream : void handleSubmit}
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                          e.preventDefault();
+                          if (isPiTyping) {
+                            void handleAbortStream();
+                          } else {
+                            void handleSubmit();
+                          }
+                        }}
                         disabled={loader === "submitting"}
                       >
                         {!isPiTyping || loader === "submitting" ? (

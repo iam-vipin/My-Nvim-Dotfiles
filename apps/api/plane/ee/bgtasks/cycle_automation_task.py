@@ -50,13 +50,11 @@ def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
         start_date = automated_cycle.start_date
         workspace_id = automated_cycle.workspace_id
 
-        desired_windows = [
-            (
-                start_date + timedelta(days=i * (cycle_duration + cooldown_period)),
-                start_date + timedelta(days=i * (cycle_duration + cooldown_period) + cycle_duration),
-            )
-            for i in range(number_of_cycles)
-        ]
+        desired_windows = []
+        for i in range(number_of_cycles):
+            start_dt = start_date + timedelta(days=i * (cycle_duration + cooldown_period))
+            end_dt = start_dt + timedelta(days=cycle_duration - 1)
+            desired_windows.append((start_dt, end_dt))
 
         # Prefetch all existing cycles in the same project/workspace that could possibly overlap
         existing_cycles = Cycle.objects.filter(
@@ -316,10 +314,8 @@ def maintain_future_cycles():
                 # Build cycles list with proper UTC conversion for each cycle
                 cycles_to_create = []
                 for i in range(number_of_cycles_diff):
-                    start_dt = last_cycle_end_date + timedelta(days=i * (cycle_duration + cooldown_period))
-                    end_dt = last_cycle_end_date + timedelta(
-                        days=(i * (cycle_duration + cooldown_period) + cycle_duration)
-                    )
+                    start_dt = last_cycle_end_date + timedelta(days=i * (cycle_duration + cooldown_period) + 1)
+                    end_dt = start_dt + timedelta(days=cycle_duration - 1)
 
                     # Convert dates to UTC using the project's timezone
                     start_date = convert_to_utc(

@@ -914,6 +914,15 @@ class IssueViewSet(BaseViewSet):
         )
         if serializer.is_valid():
             serializer.save()
+
+            if issue.cycle_id and (request.data.get("state_id") or request.data.get("estimate_point")):
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[{"issue_id": str(issue.id), "cycle_id": str(issue.cycle_id)}],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
+
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates

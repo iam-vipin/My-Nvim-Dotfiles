@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -13,6 +12,8 @@ import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
+import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
+import { ControllerSwitch } from "@/components/common/controller-switch";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
@@ -45,6 +46,7 @@ export function InstanceOIDCConfigForm(props: Props) {
       OIDC_AUTHORIZE_URL: config["OIDC_AUTHORIZE_URL"],
       OIDC_LOGOUT_URL: config["OIDC_LOGOUT_URL"],
       OIDC_PROVIDER_NAME: config["OIDC_PROVIDER_NAME"],
+      ENABLE_OIDC_IDP_SYNC: config["ENABLE_OIDC_IDP_SYNC"] || "0",
     },
   });
 
@@ -125,6 +127,11 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
   ];
 
+  const OIDC_FORM_SWITCH_FIELD: TControllerSwitchFormField<OIDCConfigFormValues> = {
+    name: "ENABLE_OIDC_IDP_SYNC",
+    label: "IdP",
+  };
+
   const OIDC_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URI",
@@ -192,24 +199,26 @@ export function InstanceOIDCConfigForm(props: Props) {
   const onSubmit = async (formData: OIDCConfigFormValues) => {
     const payload: Partial<OIDCConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then((response = []) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Done!",
-          message: "Your OIDC-based authentication is configured. You should test it now.",
-        });
-        reset({
-          OIDC_CLIENT_ID: response.find((item) => item.key === "OIDC_CLIENT_ID")?.value,
-          OIDC_CLIENT_SECRET: response.find((item) => item.key === "OIDC_CLIENT_SECRET")?.value,
-          OIDC_AUTHORIZE_URL: response.find((item) => item.key === "OIDC_AUTHORIZE_URL")?.value,
-          OIDC_TOKEN_URL: response.find((item) => item.key === "OIDC_TOKEN_URL")?.value,
-          OIDC_USERINFO_URL: response.find((item) => item.key === "OIDC_USERINFO_URL")?.value,
-          OIDC_LOGOUT_URL: response.find((item) => item.key === "OIDC_LOGOUT_URL")?.value,
-          OIDC_PROVIDER_NAME: response.find((item) => item.key === "OIDC_PROVIDER_NAME")?.value,
-        });
-      })
-      .catch((err) => console.error(err));
+    try {
+      const response = await updateInstanceConfigurations(payload);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Done!",
+        message: "Your OIDC-based authentication is configured. You should test it now.",
+      });
+      reset({
+        OIDC_CLIENT_ID: response.find((item) => item.key === "OIDC_CLIENT_ID")?.value,
+        OIDC_CLIENT_SECRET: response.find((item) => item.key === "OIDC_CLIENT_SECRET")?.value,
+        OIDC_AUTHORIZE_URL: response.find((item) => item.key === "OIDC_AUTHORIZE_URL")?.value,
+        OIDC_TOKEN_URL: response.find((item) => item.key === "OIDC_TOKEN_URL")?.value,
+        OIDC_USERINFO_URL: response.find((item) => item.key === "OIDC_USERINFO_URL")?.value,
+        OIDC_LOGOUT_URL: response.find((item) => item.key === "OIDC_LOGOUT_URL")?.value,
+        OIDC_PROVIDER_NAME: response.find((item) => item.key === "OIDC_PROVIDER_NAME")?.value,
+        ENABLE_OIDC_IDP_SYNC: response.find((item) => item.key === "ENABLE_OIDC_IDP_SYNC")?.value,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -243,9 +252,15 @@ export function InstanceOIDCConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
+            <ControllerSwitch control={control} field={OIDC_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
+                <Button
+                  variant="primary"
+                  onClick={(e) => void handleSubmit(onSubmit)(e)}
+                  loading={isSubmitting}
+                  disabled={!isDirty}
+                >
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
                 <Link

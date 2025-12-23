@@ -26,6 +26,8 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
+from plane.utils.ip_address import get_client_ip
+from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
 from plane.payment.utils.member_payment_count import workspace_member_check
@@ -137,6 +139,19 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 current_site,
                 request.user.email,
             )
+            track_event.delay(
+                user_id=request.user.id,
+                event_name=USER_INVITED_TO_WORKSPACE,
+                slug=slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": workspace.id,
+                    "workspace_slug": workspace.slug,
+                    "invitee_role": invitation.role,
+                    "invited_at": str(timezone.now()),
+                    "invitee_email": invitation.email,
+                },
+            )
 
         for email in emails:
             workspace_members_activity.delay(
@@ -241,24 +256,21 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
+                    track_event.delay(
+                        user_id=user.id,
+                        event_name=USER_JOINED_WORKSPACE,
+                        slug=slug,
+                        event_properties={
+                            "user_id": user.id,
+                            "workspace_id": workspace_invite.workspace.id,
+                            "workspace_slug": workspace_invite.workspace.slug,
+                            "role": workspace_invite.role,
+                            "joined_at": str(timezone.now()),
+                        },
+                    )
 
                     # Delete the invitation
                     workspace_invite.delete()
-
-                # Send event
-                track_event.delay(
-                    email=email,
-                    event_name="MEMBER_ACCEPTED",
-                    properties={
-                        "event_id": uuid.uuid4().hex,
-                        "user": {"email": email, "id": str(user)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR", None),
-                            "user_agent": request.META.get("HTTP_USER_AGENT", None),
-                        },
-                        "accepted_from": "EMAIL",
-                    },
-                )
 
                 # sync workspace members
                 member_sync_task.delay(slug)
@@ -315,6 +327,20 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
                 is_active=True, role=invitation.role
+            )
+
+            # Track event
+            track_event.delay(
+                user_id=request.user.id,
+                event_name=USER_JOINED_WORKSPACE,
+                slug=invitation.workspace.slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": invitation.workspace.id,
+                    "workspace_slug": invitation.workspace.slug,
+                    "role": invitation.role,
+                    "joined_at": str(timezone.now()),
+                },
             )
 
             # Bulk create the user for all the workspaces

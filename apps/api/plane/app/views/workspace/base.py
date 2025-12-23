@@ -49,7 +49,9 @@ from plane.app.permissions import ROLE, allow_permission
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
+from plane.bgtasks.event_tracking_task import track_event
 from plane.utils.url import contains_url
+from plane.utils.analytics_events import WORKSPACE_CREATED, WORKSPACE_DELETED
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from django.conf import settings
 
@@ -143,6 +145,20 @@ class WorkSpaceViewSet(BaseViewSet):
                 # Sync workspace members
                 member_sync_task.delay(slug)
 
+                track_event.delay(
+                    user_id=request.user.id,
+                    event_name=WORKSPACE_CREATED,
+                    slug=data["slug"],
+                    event_properties={
+                        "user_id": request.user.id,
+                        "workspace_id": data["id"],
+                        "workspace_slug": data["slug"],
+                        "role": "owner",
+                        "workspace_name": data["name"],
+                        "created_at": data["created_at"],
+                    },
+                )
+
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
                 [serializer.errors[error][0] for error in serializer.errors],
@@ -171,12 +187,9 @@ class WorkSpaceViewSet(BaseViewSet):
         Profile.objects.filter(last_workspace_id=id).update(last_workspace_id=None)
         return
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         # Get the workspace
         workspace = self.get_object()
-        self.remove_last_workspace_ids_from_user_settings(workspace.id)
-
         # Fetch the workspace subcription
         if settings.PAYMENT_SERVER_BASE_URL:
             try:
@@ -199,6 +212,19 @@ class WorkSpaceViewSet(BaseViewSet):
                 # Return the response
                 response = response.json()
                 # Check if the response contains the product key
+                track_event.delay(
+                    user_id=request.user.id,
+                    event_name=WORKSPACE_DELETED,
+                    slug=workspace.slug,
+                    event_properties={
+                        "user_id": request.user.id,
+                        "workspace_id": workspace.id,
+                        "workspace_slug": workspace.slug,
+                        "role": "owner",
+                        "workspace_name": workspace.name,
+                        "deleted_at": str(timezone.now().isoformat()),
+                    },
+                )
                 self.remove_last_workspace_ids_from_user_settings(workspace.id)
                 super().destroy(request, *args, **kwargs)
                 return Response(response, status=status.HTTP_200_OK)

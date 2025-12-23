@@ -13,7 +13,6 @@ from django.db.models import Q
 
 # Module imports
 from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import process_workitem_notifications
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.db.models import (
     CommentReaction,
@@ -30,12 +29,23 @@ from plane.db.models import (
     User,
     EstimatePoint,
     IssueType,
+    Page,
 )
+from plane.ee.models import Milestone
 from plane.db.models.workspace import Workspace
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
+from plane.bgtasks.notification_task import process_workitem_notifications
+
+
+def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
+    if not data:
+        return set()
+    if primary_key in data:
+        return {str(x) for x in data.get(primary_key, [])}
+    return {str(x) for x in data.get(fallback_key, [])}
 
 
 # Track Changes in name
@@ -135,17 +145,18 @@ def track_parent(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("parent_id") != requested_data.get("parent_id"):
-        old_parent = (
-            Issue.objects.filter(pk=current_instance.get("parent_id")).first()
-            if current_instance.get("parent_id") is not None
-            else None
-        )
-        new_parent = (
-            Issue.objects.filter(pk=requested_data.get("parent_id")).first()
-            if requested_data.get("parent_id") is not None
-            else None
-        )
+    current_parent_id = current_instance.get("parent_id") or current_instance.get("parent")
+    requested_parent_id = requested_data.get("parent_id") or requested_data.get("parent")
+
+    # Validate UUIDs before database queries
+    if current_parent_id is not None and not is_valid_uuid(current_parent_id):
+        return
+    if requested_parent_id is not None and not is_valid_uuid(requested_parent_id):
+        return
+
+    if current_parent_id != requested_parent_id:
+        old_parent = Issue.objects.filter(pk=current_parent_id).first() if current_parent_id is not None else None
+        new_parent = Issue.objects.filter(pk=requested_parent_id).first() if requested_parent_id is not None else None
 
         issue_activities.append(
             IssueActivity(
@@ -211,27 +222,28 @@ def track_state(
     current_state_id = current_instance.get("state_id") or current_instance.get("state")
     requested_state_id = requested_data.get("state_id") or requested_data.get("state")
 
-    if current_state_id != requested_state_id:
-        # check if the current state
-        if not is_valid_uuid(requested_state_id):
-            return
+    if current_state_id is not None and not is_valid_uuid(current_state_id):
+        current_state_id = None
+    if requested_state_id is not None and not is_valid_uuid(requested_state_id):
+        requested_state_id = None
 
-        new_state = State.objects.get(pk=requested_state_id)
-        old_state = State.objects.get(pk=current_state_id)
+    if current_state_id != requested_state_id:
+        new_state = State.objects.filter(pk=requested_state_id, project_id=project_id).first()
+        old_state = State.objects.filter(pk=current_state_id, project_id=project_id).first()
 
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=old_state.name,
-                new_value=new_state.name,
+                old_value=old_state.name if old_state else None,
+                new_value=new_state.name if new_state else None,
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the state to",
-                old_identifier=old_state.id,
-                new_identifier=new_state.id,
+                old_identifier=old_state.id if old_state else None,
+                new_identifier=new_state.id if new_state else None,
                 epoch=epoch,
             )
         )
@@ -308,8 +320,9 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-    requested_labels = set([str(lab) for lab in requested_data.get("label_ids", [])])
-    current_labels = set([str(lab) for lab in current_instance.get("label_ids", [])])
+    # Labels
+    requested_labels = extract_ids(requested_data, "label_ids", "labels")
+    current_labels = extract_ids(current_instance, "label_ids", "labels")
 
     added_labels = requested_labels - current_labels
     dropped_labels = current_labels - requested_labels
@@ -374,12 +387,9 @@ def track_assignees(
     issue_activities,
     epoch,
 ):
-    requested_assignees = (
-        set([str(asg) for asg in requested_data.get("assignee_ids", [])]) if requested_data is not None else set()
-    )
-    current_assignees = (
-        set([str(asg) for asg in current_instance.get("assignee_ids", [])]) if current_instance is not None else set()
-    )
+    # Assignees
+    requested_assignees = extract_ids(requested_data, "assignee_ids", "assignees")
+    current_assignees = extract_ids(current_instance, "assignee_ids", "assignees")
 
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
@@ -634,6 +644,18 @@ def create_epic_activity(
     issue_activity.created_at = epic.created_at
     issue_activity.actor_id = epic.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    if requested_data.get("assignee_ids") is not None:
+        track_assignees(
+            requested_data,
+            current_instance,
+            issue_id,
+            project_id,
+            workspace_id,
+            actor_id,
+            issue_activities,
+            epoch,
+        )
 
 
 def update_issue_activity(
@@ -651,7 +673,6 @@ def update_issue_activity(
         "parent_id": track_parent,
         "priority": track_priority,
         "state_id": track_state,
-        "state": track_state,
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
@@ -660,6 +681,11 @@ def update_issue_activity(
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        # External endpoint keys
+        "parent": track_parent,
+        "state": track_state,
+        "assignees": track_assignees,
+        "labels": track_labels,
         "type_id": track_type,
     }
 
@@ -962,6 +988,110 @@ def delete_module_issue_activity(
             workspace_id=workspace_id,
             comment=f"removed this issue from {module_name}",
             old_identifier=(requested_data.get("module_id") if requested_data.get("module_id") is not None else None),
+            epoch=epoch,
+        )
+    )
+
+
+def create_milestone_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    milestone = Milestone.objects.filter(pk=requested_data.get("milestone_id")).first()
+    issue = Issue.objects.filter(pk=issue_id).first()
+    if issue:
+        issue.updated_at = timezone.now()
+        issue.save(update_fields=["updated_at"])
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="created",
+            old_value="",
+            new_value=milestone.title if milestone else "",
+            field="milestones",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"added to milestone {milestone.title if milestone else ''}",
+            new_identifier=requested_data.get("milestone_id"),
+            epoch=epoch,
+        )
+    )
+
+
+def update_milestone_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    milestone = Milestone.objects.filter(pk=requested_data.get("milestone_id")).first()
+    issue = Issue.objects.filter(pk=issue_id).first()
+    if issue:
+        issue.updated_at = timezone.now()
+        issue.save(update_fields=["updated_at"])
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="updated",
+            old_value=milestone.title if milestone else "",
+            new_value=milestone.title if milestone else "",
+            field="milestones",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"updated milestone from {milestone.title if milestone else ''} to {milestone.title if milestone else ''}",
+            old_identifier=requested_data.get("milestone_id"),
+            new_identifier=requested_data.get("milestone_id"),
+            epoch=epoch,
+        )
+    )
+
+
+def delete_milestone_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    milestone_name = current_instance.get("milestone_name")
+    current_issue = Issue.objects.filter(pk=issue_id).first()
+    if current_issue:
+        current_issue.updated_at = timezone.now()
+        current_issue.save(update_fields=["updated_at"])
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="deleted",
+            old_value=milestone_name,
+            new_value="",
+            field="milestones",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"removed from milestone {milestone_name}",
+            old_identifier=(
+                requested_data.get("milestone_id") if requested_data.get("milestone_id") is not None else None
+            ),
             epoch=epoch,
         )
     )
@@ -1689,6 +1819,100 @@ def convert_work_item_to_epic_activity(
     )
 
 
+def create_page_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = requested_data["pages_ids"]
+
+    existing_pages = current_instance
+
+    added_pages = set(requested_data) - set(existing_pages)
+    dropped_pages = set(existing_pages) - set(requested_data)
+
+    for added_page in added_pages:
+        if not is_valid_uuid(added_page):
+            continue
+
+        page = Page.objects.get(pk=added_page)
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                verb="added",
+                field="page",
+                comment="added page",
+                old_value="",
+                new_value=page.name,
+                new_identifier=page.id,
+                old_identifier=None,
+                epoch=epoch,
+            )
+        )
+
+    for removed_page in dropped_pages:
+        if not is_valid_uuid(removed_page):
+            continue
+
+        page = Page.objects.get(pk=removed_page)
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                verb="deleted",
+                field="page",
+                comment="removed page",
+                old_value=page.name,
+                new_value="",
+                new_identifier=None,
+                old_identifier=page.id,
+                epoch=epoch,
+            )
+        )
+
+
+def delete_page_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    page = Page.objects.get(pk=requested_data)
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            verb="deleted",
+            field="page",
+            comment="removed page",
+            old_value=page.name,
+            new_value="",
+            new_identifier=None,
+            old_identifier=page.id,
+            epoch=epoch,
+        )
+    )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1759,6 +1983,11 @@ def issue_activity(
             "epic.activity.converted": convert_work_item_to_epic_activity,
             "customer.activity.created": create_customer_activity,
             "customer.activity.deleted": delete_customer_activity,
+            "milestone_issue.activity.created": create_milestone_issue_activity,
+            "milestone_issue.activity.updated": update_milestone_issue_activity,
+            "milestone_issue.activity.deleted": delete_milestone_issue_activity,
+            "page.activity.created": create_page_activity,
+            "page.activity.deleted": delete_page_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)
@@ -1801,17 +2030,17 @@ def issue_activity(
 
         if notification:
             process_workitem_notifications.delay(
-                notification_type=type,
                 issue_id=issue_id,
-                actor_id=actor_id,
                 project_id=project_id,
-                subscriber=subscriber,
+                actor_id=actor_id,
                 activities_data=json.dumps(
                     IssueActivitySerializer(issue_activities_created, many=True).data,
                     cls=DjangoJSONEncoder,
                 ),
                 requested_data=requested_data,
                 current_instance=current_instance,
+                subscriber=subscriber,
+                notification_type=type,
             )
 
         return

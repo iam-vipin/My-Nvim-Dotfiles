@@ -21,6 +21,9 @@ from plane.graphql.types.epics.base import EpicStatsType
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.utils.feature_flag import _validate_feature_flag
 
+# Local Imports
+from .page import is_epic_page_feature_flagged, get_epic_pages_count
+
 
 def epic_base_query(
     workspace_slug: Optional[str] = None,
@@ -109,6 +112,13 @@ def is_project_epics_enabled(workspace_slug: str, project_id: str, raise_excepti
     try:
         project_feature = ProjectFeature.objects.filter(workspace__slug=workspace_slug, project_id=project_id).first()
 
+        if not project_feature:
+            if raise_exception:
+                message = "Project epics are not enabled"
+                error_extensions = {"code": "EPIC_NOT_ENABLED", "statusCode": 400}
+                raise GraphQLError(message, extensions=error_extensions)
+            return False
+
         if not project_feature.is_epic_enabled:
             if raise_exception:
                 message = "Project epics are not enabled"
@@ -189,30 +199,53 @@ def get_epic(workspace_slug: str, project_id: str, epic_id: str):
         raise GraphQLError(message, extensions=error_extensions)
 
 
-def get_epic_stats_count(workspace_slug: str, project_id: str, epic: str) -> EpicStatsType:
+def get_epic_stats_count(
+    user_id: Union[str, strawberry.ID],
+    workspace_id: Union[str, strawberry.ID],
+    workspace_slug: str,
+    project_id: Union[str, strawberry.ID],
+    epic_id: Union[str, strawberry.ID],
+) -> EpicStatsType:
     sub_work_items_count = Issue.objects.filter(
-        workspace__slug=workspace_slug,
+        workspace_id=workspace_id,
         project_id=project_id,
-        parent_id=epic,
+        parent_id=epic_id,
     ).count()
     attachments_count = FileAsset.objects.filter(
         entity_type=FileAssetEntityType.ISSUE_ATTACHMENT.value,
-        issue_id=epic,
+        issue_id=epic_id,
     ).count()
-    relations_count = IssueRelation.objects.filter(Q(issue_id=epic) | Q(related_issue_id=epic)).count()
-    links_count = IssueLink.objects.filter(issue_id=epic).count()
+    relations_count = IssueRelation.objects.filter(Q(issue_id=epic_id) | Q(related_issue_id=epic_id)).count()
+    links_count = IssueLink.objects.filter(issue_id=epic_id).count()
+
+    pages_count = 0
+    if is_epic_page_feature_flagged(workspace_slug=workspace_slug, user_id=user_id, raise_exception=False):
+        pages_count = get_epic_pages_count(workspace_id=workspace_id, project_id=project_id, epic_id=epic_id)
 
     return EpicStatsType(
         attachments=attachments_count,
         relations=relations_count,
         sub_work_items=sub_work_items_count,
         links=links_count,
+        pages=pages_count,
     )
 
 
 @sync_to_async
-def get_epic_stats_count_async(workspace_slug: str, project_id: str, epic: str) -> EpicStatsType:
-    return get_epic_stats_count(workspace_slug=workspace_slug, project_id=project_id, epic=epic)
+def get_epic_stats_count_async(
+    user_id: Union[str, strawberry.ID],
+    workspace_id: Union[str, strawberry.ID],
+    workspace_slug: str,
+    project_id: Union[str, strawberry.ID],
+    epic_id: Union[str, strawberry.ID],
+) -> EpicStatsType:
+    return get_epic_stats_count(
+        user_id=user_id,
+        workspace_id=workspace_id,
+        workspace_slug=workspace_slug,
+        project_id=project_id,
+        epic_id=epic_id,
+    )
 
 
 def get_work_item_ids(filters: Optional[dict] = {}) -> list[str]:

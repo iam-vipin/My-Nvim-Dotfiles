@@ -33,6 +33,7 @@ class EpicStatsType:
     relations: int = 0
     sub_work_items: int = 0
     links: int = 0
+    pages: Optional[int] = 0
 
 
 # Epic Types

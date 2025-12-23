@@ -22,6 +22,7 @@ from .mutations.epics import (
     EpicCommentReplyMutation,
     EpicLinkMutation,
     EpicMutation,
+    EpicPageMutation,
     EpicRelationMutation,
     EpicUserPropertyMutation,
     EpicWorkItemsMutation,
@@ -53,6 +54,7 @@ from .mutations.issues import (
     WorkItemCommentReactionMutation,
     WorkItemCommentReplyMutation,
     WorkItemMutation,
+    WorkItemPageMutation,
 )
 from .mutations.module import (
     ModuleFavoriteMutation,
@@ -106,6 +108,8 @@ from .queries.epics import (
     EpicCommentReactionQuery,
     EpicCountQuery,
     EpicLinkQuery,
+    EpicPageQuery,
+    EpicPageSearchQuery,
     EpicQuery,
     EpicRelationQuery,
     EpicStatsQuery,
@@ -180,7 +184,12 @@ from .queries.users import (
     UserRecentVisitQuery,
 )
 from .queries.version_check import VersionCheckQuery
-from .queries.workitem import IssueCommentActivityQuery, WorkspaceWorkItemMentionQuery
+from .queries.workitem import (
+    IssueCommentActivityQuery,
+    WorkItemPageQuery,
+    WorkItemPageSearchQuery,
+    WorkspaceWorkItemMentionQuery,
+)
 from .queries.workspace import (
     PublicWorkspaceInviteQuery,
     WorkspaceFeatureQuery,
@@ -255,6 +264,8 @@ class Query(
     WorkItemCommentReactionQuery,
     IssueStatsQuery,
     WorkspaceWorkItemMentionQuery,
+    WorkItemPageQuery,
+    WorkItemPageSearchQuery,
     # workitem type
     IssueTypesTypeQuery,
     # label
@@ -300,6 +311,8 @@ class Query(
     EpicCommentQuery,
     EpicCommentReactionQuery,
     EpicStatsQuery,
+    EpicPageQuery,
+    EpicPageSearchQuery,
     # sticky
     WorkspaceStickiesQuery,
     # teamspace
@@ -358,6 +371,7 @@ class Mutation(
     WorkItemCommentReplyMutation,
     SubIssueMutation,
     WorkItemCommentReactionMutation,
+    WorkItemPageMutation,
     WorkItemMutation,
     WorkItemArchiveMutation,
     # workitem type
@@ -398,6 +412,7 @@ class Mutation(
     EpicCommentMutation,
     EpicCommentReplyMutation,
     EpicCommentReactionMutation,
+    EpicPageMutation,
     # sticky
     WorkspaceStickiesMutation,
     # intake

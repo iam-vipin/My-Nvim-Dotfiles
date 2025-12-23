@@ -14,7 +14,9 @@ from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 from plane.graphql.helpers import (
     get_epic,
     get_epic_stats_count_async,
+    get_project,
     get_project_epics,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
@@ -52,13 +54,26 @@ class EpicStatsQuery:
         user = info.context.user
         user_id = str(user.id)
 
+        workspace = await get_workspace_async(slug=slug)
+        workspace_id = str(workspace.id)
+        workspace_slug = workspace.slug
+
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
+        project_id = str(project_details.id)
+
         # Check if the epic feature flag is enabled for the workspace
-        await is_epic_feature_flagged(user_id=user_id, workspace_slug=slug)
+        await is_epic_feature_flagged(user_id=user_id, workspace_slug=workspace_slug)
 
         # check if the epic is enabled for the project
-        await is_project_epics_enabled(workspace_slug=slug, project_id=project)
+        await is_project_epics_enabled(workspace_slug=workspace_slug, project_id=project_id)
 
-        stats = await get_epic_stats_count_async(workspace_slug=slug, project_id=project, epic=epic)
+        stats = await get_epic_stats_count_async(
+            user_id=user_id,
+            workspace_id=workspace_id,
+            workspace_slug=workspace_slug,
+            project_id=project_id,
+            epic_id=epic,
+        )
         return stats
 
 

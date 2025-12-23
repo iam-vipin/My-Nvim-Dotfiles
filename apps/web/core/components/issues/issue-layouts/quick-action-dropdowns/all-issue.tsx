@@ -14,7 +14,8 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane-web components
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
+import { useIssueType } from "@/plane-web/hooks/store";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -45,6 +46,8 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
   const { workspaceSlug } = useParams();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
+  // plane web hooks
+  const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const isEditingAllowed = !readOnly;
@@ -72,6 +75,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
     isArchivingAllowed,
     isDeletingAllowed: isEditingAllowed,
     isInArchivableGroup,
+    issueTypeDetail,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,

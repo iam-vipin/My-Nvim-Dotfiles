@@ -38,9 +38,10 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
 
   useEffect(() => {
     if (moduleIds.length > 0 && projectId) {
-      fetchModules(workspaceSlug, projectId);
+      void fetchModules(workspaceSlug, projectId);
     }
-  }, [value, projectId, workspaceSlug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, projectId, workspaceSlug, fetchModules]);
 
   if (modules.length === 0) {
     return (

@@ -1,0 +1,17 @@
+import { env } from "@/env";
+import { AppError } from "@/lib/errors";
+import { PageService } from "./extended.service";
+
+export class ServerAgentPageService extends PageService {
+  protected basePath: string;
+
+  constructor() {
+    super();
+    // validate cookie
+    if (!env.LIVE_SERVER_SECRET_KEY) throw new AppError("live server secret key is required.");
+    // set secret key
+    this.setHeader("live-server-secret-key", env.LIVE_SERVER_SECRET_KEY);
+    // set base path
+    this.basePath = `/api`;
+  }
+}

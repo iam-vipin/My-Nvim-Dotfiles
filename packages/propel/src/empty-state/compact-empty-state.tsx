@@ -44,7 +44,11 @@ export function EmptyStateCompact({
             ? customButton
             : actions &&
               actions.length > 0 && (
-                <div className="flex flex-col gap-4 sm:flex-row">
+                <div
+                  className={cn("flex flex-col gap-4 sm:flex-row", {
+                    "justify-center": align === "center",
+                  })}
+                >
                   {actions.map((action, index) => {
                     const { label, variant, ...rest } = action;
                     return (

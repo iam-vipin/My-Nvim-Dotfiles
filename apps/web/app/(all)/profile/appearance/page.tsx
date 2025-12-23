@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { applyCustomTheme } from "@plane/utils";
 // components
 import { PreferencesList } from "@/components/appearance/list";
 import { LogoSpinner } from "@/components/common/logo-spinner";

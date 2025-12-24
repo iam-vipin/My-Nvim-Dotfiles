@@ -1770,3 +1770,51 @@ async def stream_content_in_chunks(content: str, words_per_chunk: int = 15, dela
     # Yield remaining content
     if current_chunk:
         yield "".join(current_chunk)
+
+
+async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_batch: int = 10) -> AsyncIterator[str]:
+    """
+    Batch LLM stream chunks in real-time by word count to reduce browser event overhead.
+
+    This function collects chunks from an LLM stream as they arrive and batches them
+    by word count before yielding. Unlike stream_content_in_chunks which operates on
+    complete content with artificial delays, this performs true real-time batching
+    without delays.
+
+    Args:
+        llm_stream: Async iterator of LLM chunks (e.g., from llm.astream())
+        words_per_batch: Number of words to accumulate before yielding a batch (default: 10)
+
+    Yields:
+        Batched content chunks as strings
+    """
+    current_batch = []
+    word_count = 0
+
+    async for chunk in llm_stream:
+        # Extract content from LLM chunk (handles different LLM response formats)
+        chunk_content = getattr(chunk, "content", None)
+        if not chunk_content:
+            continue
+
+        chunk_str = str(chunk_content)
+
+        # Split the chunk into tokens (words and whitespace)
+        # Using the same pattern as stream_content_in_chunks to preserve formatting
+        tokens = re.split(r"(\s+)", chunk_str)
+
+        for token in tokens:
+            current_batch.append(token)
+            # Count non-whitespace tokens as words
+            if token and not token.isspace():
+                word_count += 1
+
+            # Yield batch when word count threshold is reached
+            if word_count >= words_per_batch:
+                yield "".join(current_batch)
+                current_batch = []
+                word_count = 0
+
+    # Yield any remaining content
+    if current_batch:
+        yield "".join(current_batch)

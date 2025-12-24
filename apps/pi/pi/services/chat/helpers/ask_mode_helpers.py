@@ -19,6 +19,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
+from pi.services.chat.helpers.tool_utils import batch_llm_stream_by_words
 from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 from pi.services.chat.utils import StandardAgentResponse
 from pi.services.chat.utils import get_current_timestamp_context
@@ -760,8 +761,8 @@ Be helpful, concise, and professional."""
         reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
     yield reasoning_chunk_dict
 
-    # Stream LLM response
-    # Marker used by collector to start capturing final response
-    async for chunk in llm.astream(messages):
-        if getattr(chunk, "content", None):
-            yield str(chunk.content)
+    # Stream LLM response with batching to avoid overwhelming browser with individual token events
+
+    # Wrap the LLM stream with batching (10 words per batch)
+    async for batched_chunk in batch_llm_stream_by_words(llm.astream(messages), words_per_batch=15):
+        yield batched_chunk

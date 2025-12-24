@@ -406,6 +406,7 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
+
 class IssueLink(ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
@@ -579,6 +580,11 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
                     Description.objects.filter(pk=self.description_id).update(
                         **changed_fields, updated_by_id=self.updated_by_id, updated_at=self.updated_at
                     )
+        # trigger the agent run comment task if comment is created by a user
+        if is_creating and not self.actor.is_bot:
+            from plane.agents.bgtasks.agent_run_user_comment_task import handle_agent_run_user_comment_task
+
+            handle_agent_run_user_comment_task.delay(self.id)
 
     class Meta:
         verbose_name = "Issue Comment"

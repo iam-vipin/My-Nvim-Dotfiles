@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "plane.payment",
     "plane.silo",
     "plane.event_stream",
+    "plane.agents",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -301,6 +302,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.cleanup_task",
+    "plane.bgtasks.logger_task",
     "plane.license.bgtasks.tracer",
     "plane.license.bgtasks.version_check_task",
     # payment tasks
@@ -327,6 +329,11 @@ CELERY_IMPORTS = (
     "plane.silo.bgtasks.bulk_update_issue_relations_task_v2",
     # event stream tasks
     "plane.event_stream.bgtasks.outbox_cleaner",
+    # agents tasks
+    "plane.agents.bgtasks.agent_run_agent_assigned_task",
+    "plane.agents.bgtasks.agent_run_user_comment_task",
+    "plane.agents.bgtasks.agent_run_activity_webhook",
+    "plane.agents.bgtasks.agent_run_webhook",
 )
 
 # Application Envs

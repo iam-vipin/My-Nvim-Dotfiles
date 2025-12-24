@@ -19,6 +19,9 @@ from plane.ee.urls.api import urlpatterns as ee_api_urls
 from .initiative import urlpatterns as initiative_patterns
 from .teamspace import urlpatterns as teamspace_patterns
 
+# agents imports
+from plane.agents.urls.api import urlpatterns as agents_api_urls
+
 urlpatterns = [
     *asset_patterns,
     *customer_patterns,
@@ -39,4 +42,5 @@ urlpatterns = [
     *sticky_patterns,
     *initiative_patterns,
     *teamspace_patterns,
+    *agents_api_urls,
 ]

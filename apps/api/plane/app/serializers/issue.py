@@ -384,6 +384,26 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
+            # check if any assignee is a bot and there is no agent assigned yet
+            # trigger the agent assigned task
+            if assignees_to_add:
+                existing_agent_assignees = IssueAssignee.objects.filter(
+                    issue=instance,
+                    assignee__is_bot=True,
+                    deleted_at__isnull=True,
+                ).exclude(
+                    assignee_id__in=assignees_to_add,
+                )
+                # if no existing agent assignees, check if any of the assignees are bots and trigger the task
+                if not existing_agent_assignees.exists():
+                    is_agent_assigned = User.objects.filter(id__in=assignees_to_add, is_bot=True).first()
+                    if is_agent_assigned:
+                        from plane.agents.bgtasks.agent_run_agent_assigned_task import (
+                            handle_assignee_for_agent_run_task,
+                        )
+
+                        handle_assignee_for_agent_run_task.delay(instance.id, created_by_id)
+
         if labels is not None:
             # Here we get label instances as a list
             current_label_ids = list(IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True))
@@ -827,6 +847,18 @@ class IssueCommentSerializer(BaseSerializer):
     reply_count = serializers.SerializerMethodField()
     replied_user_ids = serializers.SerializerMethodField()
     last_reply_at = serializers.DateTimeField(read_only=True)
+    agent_run = serializers.SerializerMethodField()
+
+    def get_agent_run(self, obj):
+        # Get the first agent run for this comment (if any)
+        agent_runs = obj.comment_agent_runs.all()
+        if agent_runs:
+            agent_run = {
+                "id": str(agent_runs[0].id),
+                "status": agent_runs[0].status,
+            }
+            return agent_run
+        return None
 
     class Meta:
         model = IssueComment

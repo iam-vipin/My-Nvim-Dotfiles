@@ -26,6 +26,9 @@ from .integration import urlpatterns as integration_urls
 # url patterns
 from plane.ee.urls.app import urlpatterns as ee_urls
 
+# agents imports
+from plane.agents.urls.app import urlpatterns as agents_app_urls
+
 urlpatterns = [
     *analytic_urls,
     *asset_urls,
@@ -51,4 +54,5 @@ urlpatterns = [
     *importer_urls,
     *ee_urls,
     *page_urls,
+    *agents_app_urls,
 ]

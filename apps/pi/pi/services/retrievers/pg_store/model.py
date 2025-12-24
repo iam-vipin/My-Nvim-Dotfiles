@@ -14,6 +14,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.models import LlmModel
 from pi.app.models import LlmModelPricing
+from pi.config import settings
 from pi.core.db.fixtures.llms import LLMS_DATA
 
 log = logger.getChild(__name__)
@@ -33,7 +34,10 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
 
         # Visible models for users (extendable via feature flags later)
         # NOTE: Hide gpt-5-standard from user selection to reduce latency
-        user_visible_models = ["gpt-4.1", "gpt-5-fast", "gpt-5.1", "gpt-5.2", "claude-sonnet-4-0", "claude-sonnet-4-5"]
+        user_visible_models = ["gpt-4.1", "gpt-5-fast", "gpt-5.2", "claude-sonnet-4-0", "claude-sonnet-4-5"]
+
+        # Define desired display order
+        model_order = ["gpt-5.2", "gpt-5-fast", "gpt-4.1", "claude-sonnet-4-5", "claude-sonnet-4-0"]
 
         default_found = False
         for db_model in db_models:
@@ -46,13 +50,17 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
                 "name": db_model.name,
                 "description": db_model.description or "",
                 "type": "language_model",
-                # Set default model to GPT-4.1
-                "is_default": (db_model.model_key == "gpt-4.1" and not default_found),
+                # Set default model based on config
+                "is_default": (db_model.model_key == settings.llm_model.DEFAULT and not default_found),
             }
             if model_entry["is_default"]:
                 default_found = True
 
             models_list.append(model_entry)
+
+        # Sort models_list based on the defined order
+        # Models not in model_order will appear at the end in their original order
+        models_list.sort(key=lambda x: model_order.index(x["id"]) if x["id"] in model_order else len(model_order))
 
         return models_list
     except Exception as e:

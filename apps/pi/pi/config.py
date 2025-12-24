@@ -171,7 +171,7 @@ class LLMModels:
     GPT_5_FAST: str = "gpt-5-fast"
     GPT_5_1: str = "gpt-5.1"
     GPT_5_2: str = "gpt-5.2"
-    DEFAULT: str = GPT_4_1
+    DEFAULT: str = GPT_5_2
     CLAUDE_SONNET_4_0: str = "claude-sonnet-4-0"
     CLAUDE_SONNET_4_5: str = "claude-sonnet-4-5"
 

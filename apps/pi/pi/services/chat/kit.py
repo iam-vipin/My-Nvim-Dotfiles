@@ -12,7 +12,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.agents.sql_agent.tools import construct_entity_urls_vectordb
+from pi.agents.sql_agent.tools import construct_entity_urls_from_db
 from pi.agents.sql_agent.tools import extract_ids_from_sql_result
 from pi.agents.sql_agent.tools import format_as_bullet_points
 from pi.app.models.enums import MessageMetaStepType
@@ -187,6 +187,8 @@ class ChatKit(AttachmentMixin):
         self.current_context: dict[str, Any] = {}
         # Store standardized tool responses for URL access
         self.tool_responses: dict[str, Dict[str, Any]] = {}
+        # Store entity URLs for post-processing (app source only)
+        self.pending_entity_urls: List[Dict[str, str]] = []
 
         # Token tracking context (set externally when needed)
         self._token_tracking_context: Optional[Dict[str, Any]] = None
@@ -268,7 +270,9 @@ Provide concise, relevant context from the attachment(s):"""
             log.error(f"Error extracting attachment context: {e}")
             return ""
 
-    async def _create_entity_urls_for_vector_search(self, entity_ids: List[str], entity_type: str) -> Optional[List[Dict[str, str]]]:
+    async def _create_entity_urls_for_vector_search(
+        self, entity_ids: List[str], entity_type: str, source: Optional[str] = None
+    ) -> Optional[List[Dict[str, str]]]:
         """Generic method to create entity URLs for any vector search type"""
         if not entity_ids:
             return None
@@ -283,7 +287,15 @@ Provide concise, relevant context from the attachment(s):"""
                 entity_ids_dict["pages"] = entity_ids
             # Can easily extend for other types like cycles, modules, etc.
 
-            return await construct_entity_urls_vectordb(entity_ids=entity_ids_dict, api_base_url=api_base_url)
+            entity_urls = await construct_entity_urls_from_db(entity_ids=entity_ids_dict, api_base_url=api_base_url)
+
+            # For app source: store URLs instead of returning them
+            if source == "app" and entity_urls:
+                self.pending_entity_urls.extend(entity_urls)  # Use extend to accumulate
+                log.info(f"Stored {len(entity_urls)} {entity_type} URLs for post-processing (source=app)")
+                return None  # Don't return URLs for app source
+
+            return entity_urls
         except Exception as e:
             log.error(f"Error constructing entity URLs for {entity_type}: {e}")
             return None
@@ -354,7 +366,12 @@ Provide concise, relevant context from the attachment(s):"""
         return entity_urls or None
 
     async def _create_entity_urls_for_db_search(
-        self, query_execution_result: str, query_flow_store: QueryFlowStore, intermediate_results: Dict[str, Any], chat_id: str | None = None
+        self,
+        query_execution_result: str,
+        query_flow_store: QueryFlowStore,
+        intermediate_results: Dict[str, Any],
+        chat_id: str | None = None,
+        source: str | None = None,
     ) -> Optional[List[Dict[str, str]]]:
         """Create entity URLs for the query execution result"""
         entity_urls = None
@@ -365,16 +382,22 @@ Provide concise, relevant context from the attachment(s):"""
             if any(extracted_ids.values()):
                 api_base_url = settings.plane_api.FRONTEND_URL
                 log.info(f"ChatID: {chat_id} - kit.py:_create_entity_urls_for_db_search: API Base URL: {api_base_url}")
-                entity_urls = await construct_entity_urls_vectordb(entity_ids=extracted_ids, api_base_url=api_base_url)
+                entity_urls = await construct_entity_urls_from_db(entity_ids=extracted_ids, api_base_url=api_base_url)
                 log.info(f"ChatID: {chat_id} - kit.py:_create_entity_urls_for_db_search: Entity URLs: {entity_urls}")
                 # intermediate_results["entity_urls"] = entity_urls
 
                 query_flow_store["tool_response"] += f"Entity extraction: {sum(len(ids) for ids in extracted_ids.values())} entities found\n"
                 if entity_urls:
-                    intermediate_results["urls"] = entity_urls
-                    query_flow_store["tool_response"] += f"Entity URLs: {len(entity_urls)} URLs constructed\n"
-                    for url_info in entity_urls:
-                        query_flow_store["tool_response"] += f"  - {url_info["type"]}: {url_info["name"]} - URL: {url_info["url"]}\n"
+                    if source == "app":
+                        # For app source: Store URLs but DON'T send to LLM
+                        self.pending_entity_urls.extend(entity_urls)  # Use extend to accumulate, not overwrite
+                        log.info(f"ChatID: {chat_id} - Stored {len(entity_urls)} URLs for post-processing (source=app)")
+                    else:
+                        # For web/mobile: Keep existing behavior - send URLs to LLM
+                        intermediate_results["urls"] = entity_urls
+                        query_flow_store["tool_response"] += f"Entity URLs: {len(entity_urls)} URLs constructed\n"
+                        for url_info in entity_urls:
+                            query_flow_store["tool_response"] += f"  - {url_info["type"]}: {url_info["name"]} - URL: {url_info["url"]}\n"
 
         except Exception as e:
             log.error(f"Error extracting entity IDs for chat {chat_id or "unknown chat_id"}: {e}")
@@ -501,7 +524,18 @@ Provide concise, relevant context from the attachment(s):"""
             return None
 
     def _create_tools(
-        self, db, user_meta, workspace_id, project_id, user_id, chat_id, query_flow_store, conversation_history, message_id, is_project_chat=None
+        self,
+        db,
+        user_meta,
+        workspace_id,
+        project_id,
+        user_id,
+        chat_id,
+        query_flow_store,
+        conversation_history,
+        message_id,
+        is_project_chat=None,
+        source=None,
     ):
         """Create LangChain tools with access to current execution context."""
 
@@ -645,7 +679,7 @@ Provide concise, relevant context from the attachment(s):"""
             """Search for issues using semantic vector search. Use this first when you need to find issues related to specific topics or keywords.
             Remember that this tool is designed to search for issues, not to retrieve detailed information or metadata about them."""
             try:
-                result = await self.handle_vector_search_query(query, workspace_id, project_id, user_id, self.vector_search_issue_ids)
+                result = await self.handle_vector_search_query(query, workspace_id, project_id, user_id, self.vector_search_issue_ids, source)
 
                 # Store the standardized response for entity URL access
                 self._store_agent_response("vector_search_tool", result)
@@ -689,6 +723,7 @@ Provide concise, relevant context from the attachment(s):"""
                     user_meta,
                     conversation_history,
                     attachment_blocks=attachment_blocks,
+                    source=source,
                 )
 
                 # Store the standardized response for entity URL access
@@ -1078,7 +1113,7 @@ Provide concise, relevant context from the attachment(s):"""
         async def pages_search_tool(query: str) -> str:
             """Search for pages using semantic vector search. Use this when looking for documentation pages or wiki content not for page metadata."""
             try:
-                result = await self.handle_pages_query(query, workspace_id, project_id, user_id, self.vector_search_page_ids)
+                result = await self.handle_pages_query(query, workspace_id, project_id, user_id, self.vector_search_page_ids, source)
 
                 # Store the standardized response for entity URL access
                 self._store_agent_response("pages_search_tool", result)
@@ -1302,6 +1337,7 @@ Provide concise, relevant context from the attachment(s):"""
         preset_sql_query: Optional[str] = None,
         preset_placeholders: Optional[List[str]] = None,
         attachment_blocks: Optional[List[Dict[str, Any]]] = None,
+        source: Optional[str] = None,
     ) -> Dict[str, Any]:  # noqa: E501
         timestamp_context = await get_current_timestamp_context(user_id)
         # time_context_query = f"{query}\n\n**Context**: {timestamp_context}"
@@ -1336,7 +1372,7 @@ Provide concise, relevant context from the attachment(s):"""
 
         query_execution_result: str = response_data.get("results", "")
 
-        entity_urls = await self._create_entity_urls_for_db_search(query_execution_result, query_flow_store, intermediate_results, chat_id)
+        entity_urls = await self._create_entity_urls_for_db_search(query_execution_result, query_flow_store, intermediate_results, chat_id, source)
         log.info(f"ChatID: {chat_id} - kit.py:handle_structured_db_query: Entity URLs: {entity_urls}")
         # Format results into a string, passing SQL query so we can detect LIMIT clauses
         sql_query_for_format = intermediate_results.get("generated_sql") if isinstance(intermediate_results, dict) else None
@@ -1346,7 +1382,7 @@ Provide concise, relevant context from the attachment(s):"""
         return result
 
     async def handle_vector_search_query(
-        self, query: str, workspace_id: str, project_id: str, user_id: str, vector_search_issue_ids: list[str]
+        self, query: str, workspace_id: str, project_id: str, user_id: str, vector_search_issue_ids: list[str], source: Optional[str] = None
     ) -> Dict[str, Any]:
         try:
             retrieved_issues = await self.issue_retriever.ainvoke(query, project_id=project_id, workspace_id=workspace_id, user_id=user_id)
@@ -1365,7 +1401,7 @@ Provide concise, relevant context from the attachment(s):"""
         formatted_results = self.format_retrieved_results(retrieved_issues, "issues")
 
         # Generate entity URLs using the generic method
-        entity_urls = await self._create_entity_urls_for_vector_search(vector_search_issue_ids, "issues")
+        entity_urls = await self._create_entity_urls_for_vector_search(vector_search_issue_ids, "issues", source)
 
         # Include execution metadata for debugging
         execution_metadata = {
@@ -1381,7 +1417,7 @@ Provide concise, relevant context from the attachment(s):"""
         return StandardAgentResponse.create_response(formatted_results, entity_urls, execution_metadata=execution_metadata)
 
     async def handle_pages_query(
-        self, query: str, workspace_id: str, project_id: str, user_id: str, vector_search_page_ids: list[str]
+        self, query: str, workspace_id: str, project_id: str, user_id: str, vector_search_page_ids: list[str], source: Optional[str] = None
     ) -> Dict[str, Any]:
         try:
             retrieved_pages = await self.page_retriever.ainvoke(query, workspace_id=workspace_id, project_id=project_id, user_id=user_id)
@@ -1400,7 +1436,7 @@ Provide concise, relevant context from the attachment(s):"""
         formatted_results = self.format_retrieved_results(retrieved_pages, "pages")
 
         # Generate entity URLs using the generic method
-        entity_urls = await self._create_entity_urls_for_vector_search(vector_search_page_ids, "pages")
+        entity_urls = await self._create_entity_urls_for_vector_search(vector_search_page_ids, "pages", source)
 
         # Include execution metadata for debugging
         execution_metadata = {

@@ -5,6 +5,7 @@ import json
 from collections.abc import AsyncIterator
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Sequence
 from typing import Union
@@ -15,6 +16,8 @@ from langchain_core.messages import SystemMessage
 
 from pi import logger
 from pi import settings
+from pi.app.models.enums import ExecutionStatus
+from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.chat.utils import get_current_timestamp_context
@@ -52,6 +55,68 @@ from .helpers.tool_utils import tool_name_shown_to_user
 
 log = logger.getChild(__name__)
 
+
+async def _inject_urls_into_entities(entities: list[Dict[str, Any]], pending_urls: list[Dict[str, str]]) -> list[Dict[str, Any]]:
+    """Inject URLs into entities by matching IDs (app source only)"""
+    if not entities:
+        return entities
+
+    # Create lookup from pending URLs if available
+    url_map = {url_info["id"]: url_info["url"] for url_info in pending_urls} if pending_urls else {}
+
+    # If no pending URLs, fetch them from database
+    # This happens when action tools (not retrieval tools) are used
+    if not url_map:
+        from pi import settings
+        from pi.agents.sql_agent.tools import construct_entity_urls_from_db
+
+        # Collect entity IDs by type
+        entity_ids_by_type: Dict[str, List[str]] = {"issues": [], "pages": [], "cycles": [], "modules": [], "projects": []}
+
+        type_mapping = {
+            "workitem": "issues",
+            "issue": "issues",
+            "epic": "issues",
+            "page": "pages",
+            "cycle": "cycles",
+            "module": "modules",
+            "project": "projects",
+        }
+
+        for entity in entities:
+            entity_type = entity.get("type", "").lower()
+            entity_id = entity.get("properties", {}).get("id")
+
+            if entity_id and entity_type in type_mapping:
+                key = type_mapping[entity_type]
+                if entity_id not in entity_ids_by_type[key]:
+                    entity_ids_by_type[key].append(entity_id)
+
+        # Fetch URLs from database
+        if any(entity_ids_by_type.values()):
+            try:
+                api_base_url = settings.plane_api.FRONTEND_URL
+                entity_urls = await construct_entity_urls_from_db(entity_ids_by_type, api_base_url)
+                url_map = {url_info["id"]: url_info["url"] for url_info in entity_urls}
+                log.info(f"Fetched {len(url_map)} URLs from database for action tool results")
+            except Exception as e:
+                log.error(f"Failed to fetch URLs from database: {e}")
+
+    # Inject URLs
+    enriched = []
+    for entity in entities:
+        entity_copy = entity.copy()
+        entity_copy["properties"] = entity.get("properties", {}).copy()
+
+        entity_id = entity_copy["properties"].get("id")
+        if entity_id and entity_id in url_map:
+            entity_copy["properties"]["url"] = url_map[entity_id]
+
+        enriched.append(entity_copy)
+
+    return enriched
+
+
 MAX_ACTION_EXECUTOR_ITERATIONS = settings.chat.MAX_ACTION_EXECUTOR_ITERATIONS
 
 
@@ -75,6 +140,7 @@ async def execute_tools_for_build_mode(
     is_project_chat=None,
     pi_sidebar_open=None,
     sidebar_open_url=None,
+    source=None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """
     Execute action planner with access to retrieval tools
@@ -223,6 +289,7 @@ async def execute_tools_for_build_mode(
             conversation_history,
             query_id,
             is_project_chat=is_project_chat,
+            source=source,
         )
 
         combined_tools, all_method_tools, built_categories = build_planning_tools(
@@ -232,6 +299,18 @@ async def execute_tools_for_build_mode(
             context=context,
             fresh_retrieval_tools=fresh_retrieval_tools,
         )
+
+        # Add app response tool if source is 'app'
+        if source == "app":
+            try:
+                from pi.services.actions.tools.app_response import get_app_response_tool
+
+                app_tool = get_app_response_tool()
+                combined_tools.append(app_tool)
+                log.info(f"ChatID: {chat_id} - Added app response tool for source='app'")
+            except Exception as e:
+                log.warning(f"ChatID: {chat_id} - Failed to add app response tool: {e}")
+
         if not combined_tools:
             log.warning("No method or retrieval tools available for selected categories")
             msg = "An unexpected error occurred. Please try again later."
@@ -248,6 +327,7 @@ async def execute_tools_for_build_mode(
             enhanced_conversation_history,
             clarification_context=clar_ctx,
             user_meta=user_meta,
+            source=source,
         )
 
         date_time_context = await get_current_timestamp_context(user_id)
@@ -454,6 +534,62 @@ async def execute_tools_for_build_mode(
                     clarification_requested = True
                     response.tool_calls = [] if hasattr(response, "tool_calls") else None
                     break
+
+                # Special handling for app response tool
+                elif tool_name == "provide_final_answer_for_app":
+                    log.info(f"ChatID: {chat_id} - App response tool called, formatting structured output")
+
+                    # Extract structured response from tool arguments
+                    text_response = tool_args.get("text_response", "")
+                    entities = tool_args.get("entities", [])
+
+                    # **NEW: Inject URLs programmatically for app source**
+                    if source == "app" and chatbot_instance and hasattr(chatbot_instance, "pending_entity_urls"):
+                        enriched_entities = await _inject_urls_into_entities(entities=entities, pending_urls=chatbot_instance.pending_entity_urls)
+                        log.info(f"ChatID: {chat_id} - Enriched {len(enriched_entities)} entities with URLs")
+                        chatbot_instance.pending_entity_urls = []  # Clear after use
+                    else:
+                        enriched_entities = entities
+
+                    # Format as object with enriched entities
+                    app_response = {"text": text_response, "entities": enriched_entities}
+
+                    # Stream the JSON response
+                    json_response = json.dumps(app_response, indent=2)
+                    yield json_response
+                    yield "\n"
+
+                    # Record flow step
+                    try:
+                        flow_step = {
+                            "step_order": current_step,
+                            "step_type": FlowStepType.TOOL,
+                            "tool_name": "provide_final_answer_for_app",
+                            "content": text_response[:500],  # Truncate for storage
+                            "execution_data": {"entity_count": len(entities)},
+                            "is_planned": False,
+                            "is_executed": True,
+                            "execution_success": ExecutionStatus.SUCCESS,
+                        }
+                        tool_flow_steps.append(flow_step)
+                        current_step += 1
+                    except Exception as e:
+                        log.warning(f"ChatID: {chat_id} - Failed to record app response flow step: {e}")
+
+                    # Persist flow steps before exiting
+                    if tool_flow_steps:
+                        with contextlib.suppress(Exception):
+                            async with get_streaming_db_session() as _subdb:
+                                await _upsert_message_flow_steps(
+                                    message_id=query_id,
+                                    chat_id=chat_id,
+                                    flow_steps=tool_flow_steps,
+                                    db=_subdb,
+                                )
+
+                    # Signal completion and exit
+                    yield f"__FINAL_RESPONSE__{json_response}"
+                    return
 
                 # Check if this is an action tool (not a retrieval tool)
                 #

@@ -534,6 +534,173 @@ def log_toolset_details(tools: List[Any], chat_id: str) -> None:
 # - Even for simple searches, explain your thinking (e.g., "Searching for project 'Mobile' to get its UUID for creating workitems...")
 # - Provide this in the content field surrounding your tool_calls"""  # noqa: E501
 
+app_response_instructions = """
+
+**CRITICAL - APP INTEGRATION RESPONSE:**
+You have access to a special tool: `provide_final_answer_for_app`
+
+**WHEN TO USE THIS TOOL:**
+- After you have gathered all necessary information via retrieval tools
+- When you have completed answering the user's question
+- ONLY for retrieval/informational queries (NOT for modification requests with actions)
+
+**HOW TO USE:**
+Call `provide_final_answer_for_app` with:
+1. **text_response**: Your comprehensive natural language answer (be detailed and well-formatted)
+2. **entities**: List of relevant entities from the retrieval results
+
+**Entity format for each item:**
+- **type**: Entity type (workitem, project, cycle, module, page, user, label, state, etc.)
+- **name**: Entity name/title
+- **properties**: Dictionary containing relevant fields:
+  - id: Entity UUID (when available)
+  - identifier: Human-readable ID like PROJECT-123 (for workitems)
+  - state: Current state (for workitems)
+  - priority: Priority level (for workitems)
+  - assignee: Assigned user name (for workitems)
+  - status: Status (for cycles/modules)
+  - ... other relevant fields based on entity type
+
+NOTE: Do NOT include 'url' in properties - URLs are added automatically by the system.
+
+**Example:**
+```
+provide_final_answer_for_app(
+    text_response="You have 3 high priority work items assigned to you:\n1. Fix login bug (PROJ-123) - In Progress\n2. Update documentation (PROJ-124) - Todo\n3. Refactor API (PROJ-125) - In Progress",
+    entities=[
+        {
+            "type": "workitem",
+            "name": "Fix login bug",
+            "properties": {
+                "id": "abc-123-uuid",
+                "identifier": "PROJ-123",
+                "state": "In Progress",
+                "priority": "high",
+                "assignee": "John Doe"
+            }
+        },
+        {
+            "type": "workitem",
+            "name": "Update documentation",
+            "properties": {
+                "id": "def-456-uuid",
+                "identifier": "PROJ-124",
+                "state": "Todo",
+                "priority": "high",
+                "assignee": "John Doe"
+            }
+        },
+        {
+            "type": "workitem",
+            "name": "Refactor API",
+            "properties": {
+                "id": "ghi-789-uuid",
+                "identifier": "PROJ-125",
+                "state": "In Progress",
+                "priority": "high",
+                "assignee": "John Doe"
+            }
+        }
+    ]
+)
+```
+
+**This will be formatted as:**
+```json
+{
+  "text": "You have 3 high priority work items... (PROJ-123) - In Progress...",
+  "entities": [{"type": "workitem", "name": "Fix login bug", "properties": {"url": "https://...", "identifier": "PROJ-123", ...}}]
+}
+```
+**CRITICAL - REGARDING ENTITIES:**
+- Extract entity information from retrieval tool results
+- Only include entities if they are the **actual subject** of the user's query. Do not include supporting/contextual entities.
+- Do NOT include entities that are merely context or filters for the query.
+- Only include entities that are the direct answer to what the user asked for.
+- If no specific entities are the direct answer, pass an empty list for entities
+- This structured format enables rich display in external applications like Slack
+"""  # noqa E501
+
+work_tree_instructions_normal_response = """
+**IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
+1. Use retrieval/search tools to gather the requested information
+2. Provide a detailed, elaborate, and neatly formatted answer in the content section based on the retrieved data. Do NOT be brief.
+3. Do NOT plan any modifying actions - just return tool_calls for retrieval, then answer in your content
+4. **Formatting Requirements**:
+    While formatting the answer in the final content section, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
+    - Use tables for multi-attribute data (suppress UUIDs, apply URL rules)
+5. The requirement for an elaborate answer doesn't apply to modification requests - those require action planning followed by a very brief summary.
+
+**IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
+1. Use retrieval/search tools to gather necessary information (IDs, etc.)
+2. **AND** plan at least one MODIFYING ACTION using tool_calls (create, update, delete, add, remove, move, etc.)
+3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions with tool_calls
+4. Provide a very brief summary of what you planned in your content
+5. **Formatting Requirements**:
+    While formatting the action plan in the final content section, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
+
+
+**IF the user's request cannot be fulfilled with available tools:**
+- Examples: Analytics/visualizations, external integrations, bulk operations, administrative functions, file uploads
+- Use retrieval tools if relevant to understand the request
+- Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
+- Do NOT create workaround entities (like workitems) to satisfy these requests
+- Do NOT plan any actions - just provide the explanation in your content
+
+Note: The system uses absence of tool_calls as the signal to stop and deliver your content as the final answer. For modification requests, include at least one write tool_call in your plan.
+"""  # noqa E501
+
+work_tree_instructions_app_response = f"""
+**IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
+1. Use retrieval/search tools to gather the requested information
+2. Provide a detailed, elaborate, and neatly formatted answer in the 'text' field in the provide_final_answer_for_app tool based on the retrieved data. Do NOT be brief.
+3. Do NOT plan any modifying actions - just return tool_calls for retrieval, then call provide_final_answer_for_app
+4. **Formatting Requirements**:
+    While formatting the answer in the 'text' field in the provide_final_answer_for_app tool, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - **CRITICAL: DO NOT create markdown links like [text](url) in the text field**
+    - **URLs are added programmatically to entity properties - you must NOT include them**
+    - You can reference entities by identifier (e.g., "PROJ-123") but NOT as markdown links
+    - Use plain text references only: "Fix login bug (PROJ-123)" not "[PROJ-123](url)"
+    - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Never ever use tables, because the external app will not be able to parse any content other than text.
+5. The requirement for an elaborate answer doesn't apply to modification requests - those require action planning followed by a very brief summary.
+
+{app_response_instructions}
+
+**IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
+1. Use retrieval/search tools to gather necessary information (IDs, etc.)
+2. **AND** plan at least one MODIFYING ACTION using tool_calls (create, update, delete, add, remove, move, etc.)
+3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions with tool_calls
+4. Provide a very brief summary of what you planned in your content
+5. **Formatting Requirements**:
+    While formatting the action plan in the final content section, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
+
+**IF the user's request cannot be fulfilled with available tools:**
+- Examples: Analytics/visualizations, external integrations, bulk operations, administrative functions, file uploads
+- Use retrieval tools if relevant to understand the request
+- Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
+- Do NOT create workaround entities (like workitems) to satisfy these requests
+- Do NOT plan any actions - just provide the explanation in your content
+
+Note: This is a response for consumption by an external app. So, calling provide_final_answer_for_app signals completion for retrieval-only requests. For modification requests, include at least one write tool_call in your plan.
+"""  # noqa E501
+
 
 # Build the planning method prompt used by the executor
 def build_method_prompt(
@@ -544,11 +711,14 @@ def build_method_prompt(
     enhanced_conversation_history: Optional[str],
     clarification_context: Optional[Dict[str, Any]] = None,
     user_meta: Optional[Dict[str, Any]] = None,
+    source: Optional[str] = None,
 ) -> str:
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
     from pi.services.chat.prompts import plane_context
 
     address_user_by_name = True
+
+    WORK_TREE_INSTRUCTIONS = work_tree_instructions_app_response if source == "app" else work_tree_instructions_normal_response
 
     method_prompt = f"""You are an AI assistant that helps users perform actions in Plane.
 
@@ -781,45 +951,9 @@ After resolving project_id for cycles/modules/pages creation:
 - Do NOT provide workspace_slug - auto-provided from context
 - search_workitem_by_identifier requires format: PROJECT-123 as input argument
 
-
-
 **WORKFLOW DECISION TREE:**
 
-**IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
-1. Use retrieval/search tools to gather the requested information
-2. Provide a detailed, elaborate, and neatly formatted answer in the content section based on the retrieved data. Do NOT be brief.
-3. Do NOT plan any modifying actions - just return tool_calls for retrieval, then answer in your content
-4. **Formatting Requirements**:
-    While formatting the answer in the final content section, use the following rules:
-    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
-    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
-    - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
-    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
-    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
-    - Use tables for multi-attribute data (suppress UUIDs, apply URL rules)
-5. The requirement for an elaborate answer doesn't apply to modification requests - those require action planning followed by a very brief summary.
-
-**IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
-1. Use retrieval/search tools to gather necessary information (IDs, etc.)
-2. **AND** plan at least one MODIFYING ACTION using tool_calls (create, update, delete, add, remove, move, etc.)
-3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions with tool_calls
-4. Provide a very brief summary of what you planned in your content
-5. **Formatting Requirements**:
-    While formatting the action plan in the final content section, use the following rules:
-    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
-    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
-    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
-    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
-
-
-**IF the user's request cannot be fulfilled with available tools:**
-- Examples: Analytics/visualizations, external integrations, bulk operations, administrative functions, file uploads
-- Use retrieval tools if relevant to understand the request
-- Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
-- Do NOT create workaround entities (like workitems) to satisfy these requests
-- Do NOT plan any actions - just provide the explanation in your content
-
-Note: The system uses absence of tool_calls as the signal to stop and deliver your content as the final answer. For modification requests, include at least one write tool_call in your plan.
+{WORK_TREE_INSTRUCTIONS}
 """  # noqa: E501
 
     if project_id:

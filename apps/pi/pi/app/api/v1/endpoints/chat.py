@@ -163,6 +163,129 @@ async def chat_start(
         return JSONResponse(status_code=500, content={"detail": "Failed to initialize chat"})
 
 
+@router.post("/silo-app/answer/")
+async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: AsyncSession = Depends(get_async_session)):
+    try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return JSONResponse(status_code=401, content={"detail": "Missing Authorization header"})
+        auth_response = await validate_plane_token(auth_header)
+        access_token = auth_response.plane_token
+    except Exception as e:
+        log.error(f"Error validating plane token: {e!s}")
+        return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
+
+    plane_apps_llm = "claude-sonnet-4-5"
+    chatbot = PlaneChatBot(llm=plane_apps_llm, token=access_token)
+
+    final_response = ""
+    actions_data = {}
+    clarification_data = {}
+    formatted_context: dict[str, Any] = {}
+    response_type = "response"
+
+    # listen to all the stream chunks, join the chunks and return the complete response
+    # as json object
+    async with get_streaming_db_session() as stream_db:
+        data.mode = "build"  # type: ignore
+        data.llm = plane_apps_llm  # type: ignore
+        data.source = "app"  # type: ignore  # Enable app-specific features (structured response, URL injection)
+        base_iter = chatbot.process_chat_stream(data, db=stream_db)
+        async for chunk in base_iter:
+            if isinstance(chunk, dict):
+                # Currently only reasoning chunk is sent as dict.
+                continue
+            # Ignore all intermediate chunks
+            if chunk.startswith("πspecial actions blockπ: "):
+                response_type = "actions"
+                actions_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
+            elif chunk.startswith("πspecial clarification blockπ: "):
+                response_type = "clarification"
+                clarification_data = json.loads(chunk.replace("πspecial clarification blockπ: ", ""))
+
+            final_response += chunk
+
+    if actions_data:
+        # Validate required fields before creating ActionBatchExecutionRequest
+        workspace_id = data.workspace_id
+        chat_id = data.chat_id
+        message_id_raw = actions_data.get("message_id")
+        artifact_id_raw = actions_data.get("artifact_id")
+        user_id = data.user_id
+
+        if not workspace_id or not chat_id or not message_id_raw or not artifact_id_raw or not user_id:
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Missing required fields: workspace_id, chat_id, message_id, artifact_id, or user_id"},
+            )
+
+        # Convert message_id to UUID if it's a string
+        if isinstance(message_id_raw, str):
+            message_id = UUID(message_id_raw)
+        elif isinstance(message_id_raw, UUID):
+            message_id = message_id_raw
+        else:
+            return JSONResponse(status_code=400, content={"detail": "Invalid message_id format"})
+
+        # Convert artifact_id to UUID if it's a string
+        if isinstance(artifact_id_raw, str):
+            artifact_id = UUID(artifact_id_raw)
+        elif isinstance(artifact_id_raw, UUID):
+            artifact_id = artifact_id_raw
+        else:
+            return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
+
+        # Execute batch actions using the service
+        service = BuildModeToolExecutor(chatbot=PlaneChatBot(plane_apps_llm), db=db)
+        result = await service.execute(
+            ActionBatchExecutionRequest(
+                workspace_id=workspace_id,
+                chat_id=chat_id,
+                message_id=message_id,
+                artifact_data=[ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data)],
+                access_token=access_token,
+            ),
+            user_id,
+        )
+
+        # Check if service returned an error
+        if result.get("error"):
+            status_code = result.get("status_code", 500)
+            detail = result.get("detail", "Unknown error")
+            content = {"detail": detail}
+            if "error_code" in result:
+                content["error_code"] = result["error_code"]
+            if "workspace_id" in result:
+                content["workspace_id"] = result["workspace_id"]
+            if "user_id" in result:
+                content["user_id"] = result["user_id"]
+            return JSONResponse(status_code=status_code, content=content)
+
+        # Extract the formatted context from successful result
+        formatted_context = result
+
+    # Parse JSON response for proper API format (avoid double-encoded JSON string)
+    parsed_response = final_response
+    if response_type == "response" and final_response:
+        try:
+            # Try to parse as JSON for structured app responses
+            parsed_response = json.loads(final_response)
+        except (json.JSONDecodeError, TypeError):
+            # If not valid JSON, keep as string (backward compatible)
+            parsed_response = final_response
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "response": parsed_response,
+            "actions_data": actions_data,
+            "context": formatted_context,
+            "response_type": response_type,
+            "clarification_data": clarification_data,
+        },
+    )
+
+
 @router.post("/slack/answer/")
 async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSession = Depends(get_async_session)):
     try:

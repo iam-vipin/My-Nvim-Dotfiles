@@ -713,107 +713,150 @@ async def get_refs_from_chat(db: AsyncSession, chat_id: str) -> List[str]:
     return extracted_entities
 
 
-async def construct_entity_urls_vectordb(entity_ids: Dict[str, List[str]], api_base_url: str) -> List[Dict[str, str]]:
-    """Construct entity links using OpenSearch indices for better efficiency"""
+async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_base_url: str) -> List[Dict[str, str]]:
+    """Construct entity links using database queries for reliability and accuracy"""
+    from pi.core.db.plane import PlaneDBPool
+
     entity_links: List[Dict[str, str]] = []
-    log.info(f"construct_entity_urls_vectordb: Entity IDs: {entity_ids}")
+    log.info(f"construct_entity_urls_from_db: Entity IDs: {entity_ids}")
+
     if not entity_ids or not any(entity_ids.values()):
         return entity_links
 
     try:
-        # Initialize VectorStore client
-        vectorstore = VectorStore()
+        # Process workitems/issues
+        if entity_ids.get("issues"):
+            issue_ids = entity_ids["issues"]
+            query = """
+                SELECT 
+                    i.id,
+                    i.name,
+                    i.sequence_id,
+                    p.identifier as project_identifier,
+                    w.slug as workspace_slug
+                FROM issues i
+                JOIN projects p ON i.project_id = p.id
+                JOIN workspaces w ON p.workspace_id = w.id
+                WHERE i.id = ANY($1::uuid[])
+                AND i.deleted_at IS NULL
+            """
+            rows = await PlaneDBPool.fetch(query, (issue_ids,))
 
-        # Define index mappings based on the provided OpenSearch indices
-        index_mappings = {
-            "issues": settings.vector_db.ISSUE_INDEX,
-            "pages": settings.vector_db.PAGES_INDEX,
-            "modules": settings.vector_db.MODULES_INDEX,
-            "cycles": settings.vector_db.CYCLES_INDEX,
-            "projects": settings.vector_db.PROJECTS_INDEX,
-        }
+            for row in rows:
+                project_identifier = row["project_identifier"]
+                sequence_id = row["sequence_id"]
+                if project_identifier and sequence_id:
+                    issue_identifier = f"{project_identifier}-{sequence_id}"
+                    url = f"{api_base_url}/{row["workspace_slug"]}/browse/{issue_identifier}/"
+                    entity_link = {"name": row["name"], "id": str(row["id"]), "issue_identifier": issue_identifier, "url": url, "type": "issue"}
+                    entity_links.append(entity_link)
+                    log.info(f"construct_entity_urls_from_db: Entity (workitem) Link: {entity_link}")
 
-        # Process each entity type with batch queries for better efficiency
-        for entity_type, entity_list in entity_ids.items():
-            if not entity_list or entity_type not in index_mappings:
-                continue
+        # Process projects
+        if entity_ids.get("projects"):
+            project_ids = entity_ids["projects"]
+            query = """
+                SELECT 
+                    p.id,
+                    p.name,
+                    p.identifier,
+                    w.slug as workspace_slug
+                FROM projects p
+                JOIN workspaces w ON p.workspace_id = w.id
+                WHERE p.id = ANY($1::uuid[])
+                AND p.deleted_at IS NULL
+            """
+            rows = await PlaneDBPool.fetch(query, (project_ids,))
 
-            index_name = index_mappings[entity_type]
+            for row in rows:
+                url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["id"]}/overview/"
+                entity_link = {"name": row["name"], "id": str(row["id"]), "identifier": row["identifier"], "url": url, "type": "project"}
+                entity_links.append(entity_link)
+                log.info(f"construct_entity_urls_from_db: Entity (project) Link: {entity_link}")
 
-            try:
-                # Build batch query to get all documents by IDs
-                query = {"query": {"terms": {"id": entity_list}}, "size": len(entity_list)}
-                log.info(f"construct_entity_urls_vectordb: Query: {query}")
-                # Execute search
-                response = await vectorstore.async_search(index=index_name, body=query)
+        # Process pages
+        if entity_ids.get("pages"):
+            page_ids = entity_ids["pages"]
+            query = """
+                SELECT 
+                    pg.id,
+                    pg.name,
+                    pg.is_global,
+                    w.slug as workspace_slug,
+                    ARRAY_AGG(DISTINCT pp.project_id) FILTER (WHERE pp.project_id IS NOT NULL) as project_ids
+                FROM pages pg
+                JOIN workspaces w ON pg.workspace_id = w.id
+                LEFT JOIN project_pages pp ON pg.id = pp.page_id
+                WHERE pg.id = ANY($1::uuid[])
+                AND pg.deleted_at IS NULL
+                GROUP BY pg.id, pg.name, pg.is_global, w.slug
+            """
+            rows = await PlaneDBPool.fetch(query, (page_ids,))
 
-                # Process results
-                for hit in response["hits"]["hits"]:
-                    source = hit["_source"]
-                    entity_id = source.get("id", "")
-                    log.info(f"construct_entity_urls_vectordb: Source: {source}")
-                    # Extract common fields
-                    name = source.get("name", "")
-                    workspace_slug = source.get("workspace_slug", "")
-                    log.info(f"construct_entity_urls_vectordb: Name: {name}, Workspace Slug: {workspace_slug}")
-                    # Construct URLs based on entity type
-                    if entity_type == "issues":
-                        # For issues: /workspace_slug/browse/PROJECT_IDENTIFIER-SEQUENCE_ID/
-                        project_identifier = source.get("project_identifier", "")
-                        sequence_id = source.get("sequence_id", "")
-                        if project_identifier and sequence_id:
-                            issue_identifier = f"{project_identifier}-{sequence_id}"
-                            url = f"{api_base_url}/{workspace_slug}/browse/{issue_identifier}/"
-                            entity_link = {"name": name, "id": entity_id, "issue_identifier": issue_identifier, "url": url, "type": "issue"}
-                            entity_links.append(entity_link)
-                            log.info(f"construct_entity_urls_vectordb: Entity (workitem) Link: {entity_link}")
-                    elif entity_type == "pages":
-                        # For pages: global vs project pages
-                        is_global = source.get("is_global", False)
-                        if is_global:
-                            # Global page: /workspace_slug/wiki/page_id/
-                            url = f"{api_base_url}/{workspace_slug}/wiki/{entity_id}/"
-                        else:
-                            # Project page: /workspace_slug/projects/project_id/pages/page_id/
-                            project_ids = source.get("project_ids", [])
-                            if project_ids:
-                                project_id = project_ids[0]  # Take first project if multiple
-                                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/pages/{entity_id}/"
-                            else:
-                                continue  # Skip if no project_id for project page
+            for row in rows:
+                if row["is_global"]:
+                    # Global page: /workspace_slug/wiki/page_id/
+                    url = f"{api_base_url}/{row["workspace_slug"]}/wiki/{row["id"]}/"
+                else:
+                    # Project page: /workspace_slug/projects/project_id/pages/page_id/
+                    if row["project_ids"] and len(row["project_ids"]) > 0:
+                        project_id = row["project_ids"][0]  # Take first project if multiple
+                        url = f"{api_base_url}/{row["workspace_slug"]}/projects/{project_id}/pages/{row["id"]}/"
+                    else:
+                        continue  # Skip if no project_id for project page
 
-                        entity_link = {"name": name, "id": entity_id, "url": url, "type": "page"}
-                        entity_links.append(entity_link)
-                        log.info(f"construct_entity_urls_vectordb: Entity (page) Link: {entity_link}")
-                    elif entity_type == "projects":
-                        # For projects: /workspace_slug/projects/project_id/overview/
-                        url = f"{api_base_url}/{workspace_slug}/projects/{entity_id}/overview/"
-                        entity_link = {"name": name, "id": entity_id, "url": url, "type": "project"}
-                        entity_links.append(entity_link)
-                        log.info(f"construct_entity_urls_vectordb: Entity (project) Link: {entity_link}")
-                    elif entity_type in ["modules", "cycles"]:
-                        # For modules and cycles: /workspace_slug/projects/project_id/modules|cycles/entity_id/
-                        project_id = source.get("project_id", "")
-                        if project_id:
-                            path = "modules" if entity_type == "modules" else "cycles"
-                            url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/{path}/{entity_id}/"
-                            entity_link = {
-                                "name": name,
-                                "id": entity_id,
-                                "url": url,
-                                "type": entity_type[:-1],  # Remove 's' from end (modules -> module)
-                            }
-                            entity_links.append(entity_link)
-                            log.info(f"construct_entity_urls_vectordb: Entity (module or cycle) Link: {entity_link}")
-            except Exception as e:
-                log.error(f"Error constructing URLs for {entity_type}: {e}")
-                continue
+                entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "page"}
+                entity_links.append(entity_link)
+                log.info(f"construct_entity_urls_from_db: Entity (page) Link: {entity_link}")
 
-        # Close the vectorstore connection
-        await vectorstore.close()
+        # Process modules
+        if entity_ids.get("modules"):
+            module_ids = entity_ids["modules"]
+            query = """
+                SELECT 
+                    m.id,
+                    m.name,
+                    m.project_id,
+                    w.slug as workspace_slug
+                FROM modules m
+                JOIN projects p ON m.project_id = p.id
+                JOIN workspaces w ON p.workspace_id = w.id
+                WHERE m.id = ANY($1::uuid[])
+                AND m.deleted_at IS NULL
+            """
+            rows = await PlaneDBPool.fetch(query, (module_ids,))
+
+            for row in rows:
+                url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["project_id"]}/modules/{row["id"]}/"
+                entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "module"}
+                entity_links.append(entity_link)
+                log.info(f"construct_entity_urls_from_db: Entity (module) Link: {entity_link}")
+
+        # Process cycles
+        if entity_ids.get("cycles"):
+            cycle_ids = entity_ids["cycles"]
+            query = """
+                SELECT 
+                    c.id,
+                    c.name,
+                    c.project_id,
+                    w.slug as workspace_slug
+                FROM cycles c
+                JOIN projects p ON c.project_id = p.id
+                JOIN workspaces w ON p.workspace_id = w.id
+                WHERE c.id = ANY($1::uuid[])
+                AND c.deleted_at IS NULL
+            """
+            rows = await PlaneDBPool.fetch(query, (cycle_ids,))
+
+            for row in rows:
+                url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["project_id"]}/cycles/{row["id"]}/"
+                entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "cycle"}
+                entity_links.append(entity_link)
+                log.info(f"construct_entity_urls_from_db: Entity (cycle) Link: {entity_link}")
 
     except Exception as e:
-        log.error(f"Error constructing entity URLs from vectordb: {e}")
+        log.error(f"Error constructing entity URLs from database: {e}")
 
     return entity_links
 

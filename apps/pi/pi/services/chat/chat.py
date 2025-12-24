@@ -178,6 +178,7 @@ class PlaneChatBot(ChatKit):
         is_project_chat=None,
         pi_sidebar_open=None,
         sidebar_open_url=None,
+        source=None,
     ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
         """Execute tools for build mode"""
         async for chunk in action_planner.execute_tools_for_build_mode(
@@ -200,6 +201,7 @@ class PlaneChatBot(ChatKit):
             is_project_chat,
             pi_sidebar_open,
             sidebar_open_url,
+            source,
         ):
             yield chunk
 
@@ -610,6 +612,7 @@ class PlaneChatBot(ChatKit):
                         is_project_chat=data.is_project_chat,
                         pi_sidebar_open=data.pi_sidebar_open,
                         sidebar_open_url=data.sidebar_open_url,
+                        source=getattr(data, "source", None),
                     )
                 else:
                     # Ask mode: Retrieval and answering

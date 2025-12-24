@@ -83,7 +83,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
               });
               return;
             })
-            .catch((error) => {
+            .catch((error: unknown) => {
               captureError({
                 eventName: WORK_ITEM_TRACKER_EVENTS.update,
                 payload: { id: issueId },

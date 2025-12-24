@@ -23,11 +23,18 @@ type UseYjsSetupArgs = {
   options?: {
     maxConnectionAttempts?: number;
   };
+  shouldSendSyncedEvent?: boolean;
 };
 
 const DEFAULT_MAX_RETRIES = 3;
 
-export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseYjsSetupArgs) => {
+export const useYjsSetup = ({
+  docId,
+  serverUrl,
+  authToken,
+  onStateChange,
+  shouldSendSyncedEvent = true,
+}: UseYjsSetupArgs) => {
   // Current collaboration stage
   const [stage, setStage] = useState<CollabStage>({ kind: "initial" });
 
@@ -97,6 +104,28 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
         const newStage = { kind: "synced" as const };
         stageRef.current = newStage;
         setStage(newStage);
+
+        let workspaceSlug: string | null = null;
+        let projectId: string | null = null;
+        let teamspaceId: string | null = null;
+        try {
+          const urlParams = new URL(serverUrl);
+          workspaceSlug = urlParams.searchParams.get("workspaceSlug");
+          projectId = urlParams.searchParams.get("projectId");
+          teamspaceId = urlParams.searchParams.get("teamspaceId");
+        } catch {
+          // Ignore malformed URL
+        }
+        if (shouldSendSyncedEvent) {
+          provider.sendStateless(
+            JSON.stringify({
+              action: "synced",
+              workspaceSlug,
+              projectId,
+              teamspaceId,
+            })
+          );
+        }
       },
     });
 

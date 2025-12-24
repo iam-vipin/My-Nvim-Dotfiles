@@ -1,14 +1,18 @@
 import { useMemo } from "react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { TCommentsOperations } from "@plane/types";
 import { copyUrlToClipboard, formatTextList, generateWorkItemLink } from "@plane/utils";
+// hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
+// plane web imports
+import { useCommentRepliesOperations } from "@/plane-web/components/comments/replies/helper";
 
 export const useWorkItemCommentOperations = (
   workspaceSlug: string | undefined,
@@ -34,6 +38,8 @@ export const useWorkItemCommentOperations = (
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
   // translation
   const { t } = useTranslation();
+  // reply operations
+  const replyOperations = useCommentRepliesOperations(workspaceSlug, projectId, issueId);
 
   const operations: TCommentsOperations = useMemo(() => {
     // Define operations object with all methods
@@ -202,9 +208,19 @@ export const useWorkItemCommentOperations = (
         const formattedUsers = formatTextList(reactionUsers);
         return formattedUsers;
       },
+      replyOperations,
     };
     return ops;
-  }, [workspaceSlug, projectId, issueId, createComment, updateComment, uploadEditorAsset, removeComment]);
+  }, [
+    workspaceSlug,
+    projectId,
+    issueId,
+    createComment,
+    updateComment,
+    uploadEditorAsset,
+    removeComment,
+    replyOperations,
+  ]);
 
   return operations;
 };

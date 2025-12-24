@@ -29,6 +29,15 @@ type IPrimeMonitorApi interface {
 	InitializeInstance(CredentialsPayload) (SetupResponse, *APIError)
 	GetSubscriptionDetails(WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, *APIError)
 	GetProrationPreview(ProrationPreviewPayload) (*ProrationPreviewResponse, *APIError)
+
+	// Enterprise License
+	EnterpriseLicenseActivate(EnterpriseLicenseActivatePayload) (*EnterpriseLicenseActivateResponse, *APIError)
+	SyncEnterpriseLicense(EnterpriseLicenseSyncPayload) (*EnterpriseLicenseActivateResponse, *APIError)
+	GetEnterpriseFeatureFlags(licenseKey string) (*FlagDataResponse, *APIError)
+	DeactivateEnterpriseLicense(LicenseDeactivatePayload) *APIError
+	UpdateEnterpriseLicenseSeats(UpdateEnterpriseLicenseSeatsPayload) (*SeatUpdateResponse, *APIError)
+	GetEnterpriseLicensePortal() (*EnterpriseLicensePortalResponse, *APIError)
+	GetEnterpriseLicenseProrationPreview(UpdateEnterpriseLicenseSeatsPayload) (*ProrationPreviewResponse, *APIError)
 }
 
 type LicenseDeactivatePayload struct {
@@ -144,6 +153,13 @@ var (
 	RETRIEVE_PAYMENT_LINK       = API_PREFIX + "/instances/payment-link/"
 	DEACTIVATE_LICENSE_ENDPOINT = API_PREFIX + "/licenses/deactivate/"
 	PRORATION_PREVIEW           = API_PREFIX + "/subscriptions/proration-preview/"
+	// Enterprise License
+	ENTERPRISE_LICENSE_ACTIVATE     = API_PREFIX + "/enterprise/licenses/activate/"
+	SYNC_ENTERPRISE_LICENSE         = API_PREFIX + "/enterprise/licenses/sync/"
+	DEACTIVATE_ENTERPRISE_LICENSE   = API_PREFIX + "/enterprise/licenses/deactivate/"
+	UPDATE_ENTERPRISE_LICENSE_SEATS = API_PREFIX + "/enterprise/licenses/update-subscriptions/"
+	ENTERPRISE_SUBSCRIPTION_PORTAL  = API_PREFIX + "/enterprise/licenses/subscription-portal/"
+	ENTERPRISE_PRORATION_PREVIEW    = API_PREFIX + "/enterprise/licenses/subscription-proration-preview/"
 )
 
 /* ----------------------- Controller Methods ------------------------------ */
@@ -364,6 +380,110 @@ func (api *PrimeMonitorApi) GetProrationPreview(payload ProrationPreviewPayload)
 		}
 	}
 	// Return the response
+	return &data, nil
+}
+
+func (api *PrimeMonitorApi) EnterpriseLicenseActivate(payload EnterpriseLicenseActivatePayload) (*EnterpriseLicenseActivateResponse, *APIError) {
+	resp, apiError := api.post(api.host+ENTERPRISE_LICENSE_ACTIVATE, payload)
+	if apiError != nil {
+		return nil, apiError
+	}
+	data := EnterpriseLicenseActivateResponse{}
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
+	}
+	return &data, nil
+}
+
+func (api *PrimeMonitorApi) SyncEnterpriseLicense(payload EnterpriseLicenseSyncPayload) (*EnterpriseLicenseActivateResponse, *APIError) {
+	resp, apiError := api.post(api.host+SYNC_ENTERPRISE_LICENSE, payload)
+	if apiError != nil {
+		return nil, apiError
+	}
+	data := EnterpriseLicenseActivateResponse{}
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
+	}
+	return &data, nil
+}
+
+func (api *PrimeMonitorApi) GetEnterpriseFeatureFlags(licenseKey string) (*FlagDataResponse, *APIError) {
+	resp, apiError := api.post(api.host+FEATURE_FLAGS, map[string]string{
+		"license_key": licenseKey,
+		"version":     api.version,
+	})
+
+	if apiError != nil {
+		return nil, apiError
+	}
+	data := FlagDataResponse{}
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
+	}
+	return &data, nil
+}
+
+func (api *PrimeMonitorApi) DeactivateEnterpriseLicense(payload LicenseDeactivatePayload) *APIError {
+	_, apiError := api.post(api.host+DEACTIVATE_ENTERPRISE_LICENSE, payload)
+	if apiError != nil {
+		return apiError
+	}
+	return nil
+}
+
+// ====================== Enterprise License ==========================
+
+func (api *PrimeMonitorApi) UpdateEnterpriseLicenseSeats(payload UpdateEnterpriseLicenseSeatsPayload) (*SeatUpdateResponse, *APIError) {
+	resp, apiError := api.post(api.host+UPDATE_ENTERPRISE_LICENSE_SEATS, payload)
+	if apiError != nil {
+		return nil, apiError
+	}
+	data := SeatUpdateResponse{}
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
+	}
+	return &data, nil
+}
+
+func (api *PrimeMonitorApi) GetEnterpriseLicensePortal() (*EnterpriseLicensePortalResponse, *APIError) {
+	resp, apiError := api.post(api.host+ENTERPRISE_SUBSCRIPTION_PORTAL, nil)
+	if apiError != nil {
+		return nil, apiError
+	}
+	data := EnterpriseLicensePortalResponse{}
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
+	}
+	return &data, nil
+}
+
+func (api *PrimeMonitorApi) GetEnterpriseLicenseProrationPreview(payload UpdateEnterpriseLicenseSeatsPayload) (*ProrationPreviewResponse, *APIError) {
+	resp, apiError := api.post(api.host+ENTERPRISE_PRORATION_PREVIEW, payload)
+	if apiError != nil {
+		return nil, apiError
+	}
+	data := ProrationPreviewResponse{}
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
+	}
 	return &data, nil
 }
 

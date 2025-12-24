@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -15,15 +16,22 @@ type Props = {
 
 export const AddSeatsAlertBanner = observer(function AddSeatsAlertBanner(props: Props) {
   const { additionalUserCount = 15, extraSeatRequired } = props;
+  // router
+  const { workspaceSlug } = useParams();
+  // states
   const [addWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
   const {
-    togglePaidPlanModal,
     currentWorkspaceSubscribedPlanDetail: subscribedPlan,
     currentWorkspaceSubscriptionAvailableSeats,
+    getIsInTrialPeriod,
+    togglePaidPlanModal,
+    updateSubscribedPlan,
   } = useWorkspaceSubscription();
+  // derived values
   const isFreePlan = subscribedPlan?.product === EProductSubscriptionEnum.FREE;
-
-  const { t } = useTranslation();
 
   const toggleAddWorkspaceSeatsModal = (flag: boolean) => {
     if (isFreePlan) {
@@ -61,14 +69,20 @@ export const AddSeatsAlertBanner = observer(function AddSeatsAlertBanner(props: 
       >
         {isFreePlan ? t("common.upgrade") : t("common.add_seats")}
       </Button>
-      <AddSeatsModal
-        data={{
-          isOpen: addWorkspaceSeatsModal,
-        }}
-        onClose={() => {
-          toggleAddWorkspaceSeatsModal(false);
-        }}
-      />
+      {workspaceSlug && subscribedPlan && (
+        <AddSeatsModal
+          data={{
+            isOpen: addWorkspaceSeatsModal,
+          }}
+          getIsInTrialPeriod={getIsInTrialPeriod}
+          subscribedPlan={subscribedPlan}
+          updateSubscribedPlan={updateSubscribedPlan}
+          workspaceSlug={workspaceSlug}
+          onClose={() => {
+            toggleAddWorkspaceSeatsModal(false);
+          }}
+        />
+      )}
     </div>
   );
 });

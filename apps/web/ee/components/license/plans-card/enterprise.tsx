@@ -1,68 +1,18 @@
-import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { ExternalLink } from "lucide-react";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
 // helpers
 import { renderFormattedDate } from "@plane/utils";
 // plane web imports
-import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
-import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
+import { PlanCard } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { PaymentService } from "@/plane-web/services/payment.service";
 
-const paymentService = new PaymentService();
-
-type TEnterprisePlanCardProps = {
-  upgradeLoader: EProductSubscriptionEnum | null;
-  handleUpgrade: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
-};
-
-export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TEnterprisePlanCardProps) {
-  const { upgradeLoader, handleUpgrade } = props;
-  // params
-  const { workspaceSlug } = useParams();
-  // states
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export const EnterprisePlanCard = observer(function EnterprisePlanCard() {
   // hooks
-  const {
-    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
-    isSubscriptionManagementEnabled,
-    getIsInTrialPeriod,
-  } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
-  const isSelfManaged = subscriptionDetail?.is_self_managed;
   const startDate = subscriptionDetail?.current_period_start_date;
   const endDate = subscriptionDetail?.current_period_end_date;
   const isSubscriptionCancelled = subscriptionDetail?.is_cancelled;
-  const isInTrialPeriod = getIsInTrialPeriod(true);
-
-  useEffect(() => {
-    setIsLoading(upgradeLoader === EProductSubscriptionEnum.ENTERPRISE);
-  }, [upgradeLoader]);
-
-  const handleSubscriptionPageRedirection = () => {
-    setIsLoading(true);
-    paymentService
-      .getWorkspaceSubscriptionPageLink(workspaceSlug.toString())
-      .then((response) => {
-        if (response.url) {
-          window.open(response.url, "_blank");
-        }
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to redirect to subscription page. Please try again.",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
 
   if (!subscriptionDetail) return null;
   return (
@@ -87,6 +37,9 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TE
                   • Billable seats: {subscriptionDetail?.purchased_seats}
                 </div>
               )}
+              <div className="text-body-xs-medium text-secondary">
+                To manage your subscription or seats, please contact your instance admin.
+              </div>
             </>
           ) : (
             <div className="text-body-xs-medium text-secondary">
@@ -96,28 +49,7 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TE
               </a>
             </div>
           )}
-          <SelfManagedLicenseActions />
         </>
-      }
-      button={
-        isSubscriptionManagementEnabled && (
-          <div className="flex items-center gap-2.5">
-            <Button
-              variant="secondary"
-              size="lg"
-              appendIcon={<ExternalLink />}
-              onClick={
-                !isSelfManaged && isInTrialPeriod
-                  ? () => handleUpgrade(EProductSubscriptionEnum.ENTERPRISE)
-                  : handleSubscriptionPageRedirection
-              }
-              disabled={isLoading}
-            >
-              {isLoading ? "Redirecting to Stripe" : "Manage subscription"}
-            </Button>
-            <BillingActionsButton canPerformWorkspaceAdminActions />
-          </div>
-        )
       }
     />
   );

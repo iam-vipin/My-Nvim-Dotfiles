@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // context
-import { StoreContext } from "@/app/(all)/store.provider";
+import { StoreContext } from "@/providers/store.provider";
 
 export enum E_FEATURE_FLAGS {
   OIDC_SAML_AUTH = "OIDC_SAML_AUTH",

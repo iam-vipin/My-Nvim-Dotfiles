@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // context
-import { StoreContext } from "@/app/(all)/store.provider";
+import { StoreContext } from "@/providers/store.provider";
 // plane admin stores
 import type { IInstanceFeatureFlagsStore } from "@/plane-admin/store/instance-feature-flags.store";
 

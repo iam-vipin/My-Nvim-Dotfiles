@@ -23,3 +23,15 @@ from .subscription import (
     ProrationPreviewEndpoint,
 )
 from .feature_flag import FeatureFlagProxyEndpoint, FeatureFlagProxySpaceEndpoint
+
+from .enterprise import (
+    EnterpriseLicenseActivateEndpoint,
+    EnterpriseLicenseDeactivateEndpoint,
+    InstanceLicenseSyncEndpoint,
+    EnterpriseModifySeatsEndpoint,
+    EnterpriseSubscriptionPortalEndpoint,
+    EnterpriseSubscriptionProrationPreviewEndpoint,
+    EnterpriseLicenseActivateUploadEndpoint,
+    EnterpriseLicenseRemoveUnusedSeatsEndpoint,
+    InstanceLicenseEndpoint,
+)

@@ -278,9 +278,7 @@ export const BillingRoot = observer(function BillingRoot() {
                 {subscriptionDetail.product === EProductSubscriptionEnum.BUSINESS && (
                   <BusinessPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
                 )}
-                {subscriptionDetail.product === EProductSubscriptionEnum.ENTERPRISE && (
-                  <EnterprisePlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
-                )}
+                {subscriptionDetail.product === EProductSubscriptionEnum.ENTERPRISE && <EnterprisePlanCard />}
               </>
             )}
           </div>

@@ -651,6 +651,15 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 
 func CheckDeleteWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) (err error) {
+		// Check if the instance is an enterprise instance
+		isEnterprise, _ := checkIfEnterpriseInstance()
+		if isEnterprise {
+			return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+				"message": "Workspace can be deleted",
+				"status":  true,
+			})
+		}
+
 		// Get the workspace id from the URL
 		workspaceId := ctx.Params("workspaceId")
 

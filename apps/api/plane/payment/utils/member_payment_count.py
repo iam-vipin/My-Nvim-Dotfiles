@@ -2,7 +2,7 @@
 from django.conf import settings
 
 # Model imports
-from plane.db.models import WorkspaceMember, WorkspaceMemberInvite
+from plane.db.models import User, WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
 from plane.payment.utils.workspace_license_request import resync_workspace_license
 
@@ -218,6 +218,36 @@ def handle_invite_check_case(slug, workspace_license):
     )
 
 
+def handle_enterprise_plan_invite_case(slug, requested_invite_list, workspace_license):
+    """This function handles the free plan invite case"""
+
+    # Case 1a
+    total_requested_invite_count = len(requested_invite_list)
+
+    # Get the current total invited and current active users in the workspace
+    current_active_users = User.objects.filter(is_active=True, is_bot=False).count()
+
+    # Get the current total invited users in the workspace
+    # Here check all the invites that does not have an active account right now
+    current_invited_users = WorkspaceMemberInvite.objects.exclude(
+        email__in=User.objects.filter(is_active=True, is_bot=False).values_list("email", flat=True)
+    ).count()
+
+    # Check if the total
+    if current_active_users + current_invited_users + total_requested_invite_count <= workspace_license.purchased_seats:
+        return True, 0, 0
+    else:
+        return False, 0, 0
+
+
+def handle_enterprise_plan_update_case(slug, requested_role, workspace_license):
+    """This function handles the free plan update case"""
+    # Case 1b
+    # Allow update for all roles since the total count of current members and invited
+    # members is less than or equal to workspace_license.purchased_seats
+    return True, 0, 0
+
+
 def handle_cloud_payments(slug, requested_invite_list, requested_role, workspace_license, current_role):
     """
     Case1: Free Plan and Trial Plan
@@ -301,7 +331,6 @@ def handle_self_managed_payments(slug, requested_invite_list, requested_role, wo
     if workspace_license.plan in [
         WorkspaceLicense.PlanChoice.PRO.value,
         WorkspaceLicense.PlanChoice.BUSINESS.value,
-        WorkspaceLicense.PlanChoice.ENTERPRISE.value,
     ]:
         if requested_invite_list and not requested_role:
             return handle_member_invite_case(
@@ -321,6 +350,28 @@ def handle_self_managed_payments(slug, requested_invite_list, requested_role, wo
 
         if not requested_invite_list and not requested_role:
             return handle_invite_check_case(slug=slug, workspace_license=workspace_license)
+
+    # Enterprise plan case
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.ENTERPRISE:
+        # Enterprise plan case
+        if requested_invite_list and not requested_role:
+            return handle_enterprise_plan_invite_case(
+                slug=slug,
+                requested_invite_list=requested_invite_list,
+                workspace_license=workspace_license,
+            )
+        if requested_role and not requested_invite_list:
+            return handle_enterprise_plan_update_case(
+                slug=slug,
+                requested_role=requested_role,
+                workspace_license=workspace_license,
+            )
+        if not requested_invite_list and not requested_role:
+            return handle_enterprise_plan_invite_case(
+                slug=slug,
+                requested_invite_list=[],
+                workspace_license=workspace_license,
+            )
 
 
 def workspace_member_check(slug, requested_invite_list, requested_role, current_role):

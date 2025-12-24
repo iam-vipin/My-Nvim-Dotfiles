@@ -27,7 +27,10 @@ func RegisterFeatureFlags(router *fiber.Router, plogger *primelogger.Handler, ap
 
 	(*router).Mount("/", ffController)
 	addAirgappedActivation(ffController, api, key)
+
+	//TODO: Remove these routes as they are not used anymore
 	addFreeWorkspace(ffController, api, key)
+
 	addActivateRoutes(ffController, api, key)
 	addFeatureFlagRoutes(ffController, api, key)
 	addSyncRoutes(ffController, api, key)
@@ -36,6 +39,9 @@ func RegisterFeatureFlags(router *fiber.Router, plogger *primelogger.Handler, ap
 	addWorkspaceSubscriptionRoutes(ffController, api, key)
 	addInstanceLicenseRoutes(ffController, api, key)
 	addPlansLicenseHandler(ffController, api, key)
+
+	// Enterprise license routes
+	addEnterpriseLicenseRoutes(ffController, api, key)
 }
 
 func addFreeWorkspace(routes fiber.Router, api *prime_api.IPrimeMonitorApi, key string) {
@@ -82,4 +88,17 @@ func addInstanceLicenseRoutes(controller *fiber.App, api *prime_api.IPrimeMonito
 func addPlansLicenseHandler(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
 	controller.Get("/products/", handlers.GetPlansHandler(*api, key))
 	controller.Post("/payment-link/", handlers.GetPaymentLinkHandler(*api, key))
+}
+
+func addEnterpriseLicenseRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
+	controller.Post("/licenses/enterprise/activate/", handlers.GetEnterpriseLicenseActivateHandler(*api, key))
+	controller.Post("/licenses/enterprise/sync/", handlers.GetEnterpriseLicenseManualSyncHandler(*api, key))
+	controller.Post("/licenses/enterprise/deactivate/", handlers.DeactivateEnterpriseLicense(*api, key))
+	controller.Post("/licenses/enterprise/modify-seats/", handlers.UpdateEnterpriseLicenseSeats(*api, key))
+	controller.Post("/licenses/enterprise/subscription-portal/", handlers.GetEnterpriseLicensePortal(*api, key))
+	controller.Post("/licenses/enterprise/subscription-proration-preview/", handlers.GetEnterpriseLicenseProrationPreview(*api, key))
+	controller.Get("/licenses/enterprise/current-plan/", handlers.GetEnterpriseLicenseCurrentPlan(*api, key))
+
+	// Airgapped routes
+	controller.Post("/licenses/enterprise/activate/upload/", airgapped_handlers.GetEnterpriseAirgappedActivationHandler(*api, key))
 }

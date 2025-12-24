@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -36,7 +36,12 @@ export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvit
   // router
   const { workspaceSlug } = useParams();
   // plane web hooks
-  const { isSeatManagementEnabled } = useWorkspaceSubscription();
+  const {
+    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    getIsInTrialPeriod,
+    isSeatManagementEnabled,
+    updateSubscribedPlan,
+  } = useWorkspaceSubscription();
   // derived values
   const {
     control,
@@ -62,7 +67,7 @@ export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvit
 
   useEffect(() => {
     if (isOpen) {
-      mutateMemberInviteCheck();
+      void mutateMemberInviteCheck();
     }
   }, [isOpen, mutateMemberInviteCheck]);
 
@@ -120,14 +125,20 @@ export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvit
           )}
         </InvitationForm>
       ) : (
-        <AddSeatsForm
-          onClose={handleClose}
-          onSuccess={() => {
-            mutateMemberInviteCheck();
-            setCurrentStep("INVITE_MEMBERS");
-          }}
-          onPreviousStep={() => setCurrentStep("INVITE_MEMBERS")}
-        />
+        subscriptionDetail && (
+          <AddSeatsForm
+            getIsInTrialPeriod={getIsInTrialPeriod}
+            subscribedPlan={subscriptionDetail}
+            updateSubscribedPlan={updateSubscribedPlan}
+            workspaceSlug={workspaceSlug.toString()}
+            onClose={handleClose}
+            onSuccess={() => {
+              void mutateMemberInviteCheck();
+              setCurrentStep("INVITE_MEMBERS");
+            }}
+            onPreviousStep={() => setCurrentStep("INVITE_MEMBERS")}
+          />
+        )
       )}
     </ModalCore>
   );

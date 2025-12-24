@@ -19,6 +19,16 @@ from .views import (
     FeatureFlagProxySpaceEndpoint,
     LicenseActivateUploadEndpoint,
     LicenseFileFetchEndpoint,
+    # Enterprise License
+    EnterpriseLicenseActivateEndpoint,
+    EnterpriseLicenseDeactivateEndpoint,
+    InstanceLicenseSyncEndpoint,
+    EnterpriseModifySeatsEndpoint,
+    EnterpriseSubscriptionPortalEndpoint,
+    EnterpriseSubscriptionProrationPreviewEndpoint,
+    EnterpriseLicenseActivateUploadEndpoint,
+    EnterpriseLicenseRemoveUnusedSeatsEndpoint,
+    InstanceLicenseEndpoint,
 )
 
 urlpatterns = [
@@ -98,6 +108,52 @@ urlpatterns = [
         "workspaces/<str:slug>/license-file/",
         LicenseFileFetchEndpoint.as_view(),
         name="license-fetch",
+    ),
+    # Enterprise License
+    path(
+        "instances/admin/licenses/enterprise/activate/",
+        EnterpriseLicenseActivateEndpoint.as_view(),
+        name="enterprise-license-activate",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/deactivate/",
+        EnterpriseLicenseDeactivateEndpoint.as_view(),
+        name="enterprise-license-deactivate",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/sync/",
+        InstanceLicenseSyncEndpoint.as_view(),
+        name="enterprise-license-sync",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/modify-seats/",
+        EnterpriseModifySeatsEndpoint.as_view(),
+        name="enterprise-license-modify-seats",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/subscription-portal/",
+        EnterpriseSubscriptionPortalEndpoint.as_view(),
+        name="enterprise-license-subscription-portal",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/subscription-proration-preview/",
+        EnterpriseSubscriptionProrationPreviewEndpoint.as_view(),
+        name="enterprise-license-subscription-proration-preview",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/upload/",
+        EnterpriseLicenseActivateUploadEndpoint.as_view(),
+        name="enterprise-license-upload",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/remove-unused-seats/",
+        EnterpriseLicenseRemoveUnusedSeatsEndpoint.as_view(),
+        name="enterprise-license-remove-unused-seats",
+    ),
+    path(
+        "instances/admin/licenses/enterprise/current-plan/",
+        InstanceLicenseEndpoint.as_view(),
+        name="enterprise-license-current-plan",
     ),
 ]
 

@@ -9,12 +9,14 @@ import OIDCLogo from "@/app/assets/logos/oidc-logo.svg";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageHeader } from "@/components/common/page-header";
+import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // plane admin hooks
 import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
-// local components
+// types
 import type { Route } from "./+types/page";
+// local
 import { InstanceOIDCConfigForm } from "./form";
 
 const InstanceOIDCAuthenticationPage = observer(function InstanceOIDCAuthenticationPage(_props: Route.ComponentProps) {
@@ -39,7 +41,7 @@ const InstanceOIDCAuthenticationPage = observer(function InstanceOIDCAuthenticat
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration...",
+      loading: "Saving Configuration",
       success: {
         title: "Configuration saved",
         message: () => `OIDC authentication is now ${value === "1" ? "active" : "disabled"}.`,
@@ -75,8 +77,8 @@ const InstanceOIDCAuthenticationPage = observer(function InstanceOIDCAuthenticat
   return (
     <>
       <PageHeader title="Authentication - God Mode" />
-      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
+      <PageWrapper
+        customHeader={
           <AuthenticationMethodCard
             name="OIDC"
             description="Authenticate your users via the OpenID connect protocol."
@@ -98,22 +100,21 @@ const InstanceOIDCAuthenticationPage = observer(function InstanceOIDCAuthenticat
             disabled={isSubmitting || !formattedConfig}
             withBorder={false}
           />
-        </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
-          {formattedConfig ? (
-            <InstanceOIDCConfigForm config={formattedConfig} />
-          ) : (
-            <Loader className="space-y-8">
-              <Loader.Item height="50px" width="25%" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" width="50%" />
-            </Loader>
-          )}
-        </div>
-      </div>
+        }
+      >
+        {formattedConfig ? (
+          <InstanceOIDCConfigForm config={formattedConfig} />
+        ) : (
+          <Loader className="space-y-8">
+            <Loader.Item height="50px" width="25%" />
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" width="50%" />
+          </Loader>
+        )}
+      </PageWrapper>
     </>
   );
 });

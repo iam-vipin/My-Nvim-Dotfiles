@@ -144,6 +144,107 @@ func GetAirgappedActivationHandler(api prime_api.IPrimeMonitorApi, key string) f
 	}
 }
 
+func GetEnterpriseAirgappedActivationHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		// Get the file from the request
+		file, err := ctx.FormFile("activation_file")
+		membersListValue := ctx.FormValue("members_list", "[]")
+
+		if membersListValue == "[]" {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "No members list provided",
+			})
+		}
+
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "No file uploaded. Please upload the activation file.",
+			})
+		}
+		// If the extension of the file is not `.json`, return error for unsupported file type
+		if file.Header.Get("Content-Type") != "application/json" {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Unsupported file type. Please upload a .json file.",
+			})
+		}
+
+		// Open the file and get the file content
+		fileContent, err := file.Open()
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to read the file",
+			})
+		}
+
+		// Read the file content
+		content, err := io.ReadAll(fileContent)
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to read the file",
+			})
+		}
+
+		// Create filename using workspaceId and app version
+		filename := fmt.Sprintf("%s_%s.json", "enterprise", api.AppVersion())
+
+		// Write content to file
+		err = os.WriteFile(filename, content, 0644)
+		if err != nil {
+			// Let's not return an error here, as we want to continue with the activation
+			fmt.Println("Failed to write file to local system", err)
+		}
+
+		// Parse the json text file for the encrypted data
+		var encryptedData feat_flag.EncryptedData
+		var looseDecryptedData interface{}
+
+		err = json.Unmarshal(content, &encryptedData)
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to parse the file",
+			})
+		}
+
+		err = feat_flag.GetDecryptedJson(key, encryptedData, &looseDecryptedData)
+		if err != nil {
+			fmt.Println("Failed to decrypt the file", err)
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to decrypt the file",
+			})
+		}
+
+		decryptedData, err := ConvertToAirgappedLicensePayload(looseDecryptedData)
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to parse the file",
+			})
+		}
+
+		decryptedData.WorkspaceID = uuid.New().String()
+		decryptedData.WorkspaceSlug = uuid.New().String()
+
+		// In the Go code, when receiving:
+		var memberList []prime_api.WorkspaceMember
+		err = json.Unmarshal([]byte(membersListValue), &memberList)
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to parse the members list",
+			})
+		}
+
+		// Warm up the database with the payload
+		if err := PopulateDatabaseWithFilePayload(decryptedData, memberList); err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Enterprise license activated successfully",
+		})
+	}
+}
+
 /*
 We need to warm up the database with the payload of the file
 which includes the license, feature flags and workspace details

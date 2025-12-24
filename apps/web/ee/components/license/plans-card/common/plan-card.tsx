@@ -8,7 +8,7 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 type TPlanCard = {
   planVariant: EProductSubscriptionEnum;
   planDescription: React.ReactNode;
-  button: React.ReactNode;
+  button?: React.ReactNode;
 };
 
 export const PlanCard = observer(function PlanCard({ planVariant, planDescription, button }: TPlanCard) {
@@ -26,7 +26,7 @@ export const PlanCard = observer(function PlanCard({ planVariant, planDescriptio
         </h4>
         <div className="text-13 text-secondary font-medium">{planDescription}</div>
       </div>
-      <div className="flex flex-col gap-1 items-center justify-center">{button}</div>
+      {button && <div className="flex flex-col gap-1 items-center justify-center">{button}</div>}
     </div>
   );
 });

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
+import { AdminHeader } from "@/components/common/header";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { NewUserPopup } from "@/components/new-user-popup";
 // hooks
@@ -12,7 +13,6 @@ import { useUser } from "@/hooks/store";
 import { useInstanceFeatureFlags } from "@/plane-admin/hooks/store/use-instance-feature-flag";
 // local components
 import type { Route } from "./+types/layout";
-import { AdminHeader } from "./header";
 import { AdminSidebar } from "./sidebar";
 
 function AdminLayout(_props: Route.ComponentProps) {

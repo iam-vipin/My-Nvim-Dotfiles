@@ -113,6 +113,11 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.payments": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
     },
 }
 

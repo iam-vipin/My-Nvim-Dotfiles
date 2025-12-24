@@ -24,7 +24,7 @@ export function UpgradeButton() {
         title="Activate workspace"
         content="Activate any of your workspace to get this feature."
         primaryButtonText={{
-          loading: "Redirecting...",
+          loading: "Redirecting",
           default: "Go to Plane",
         }}
         secondaryButtonText="Close"

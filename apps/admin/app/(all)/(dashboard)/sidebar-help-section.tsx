@@ -12,8 +12,6 @@ import { cn } from "@plane/utils";
 import { useInstance, useTheme } from "@/hooks/store";
 // assets
 
-import packageJson from "package.json";
-
 const helpOptions = [
   {
     name: "Documentation",
@@ -56,9 +54,9 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Redirect to Plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
           <a
             href={redirectionLink}
-            className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded-sm border border-accent-strong/20 bg-accent-primary/10 text-11 text-accent-secondary whitespace-nowrap`}
+            className={`relative px-2 py-1 flex items-center gap-1 rounded-sm bg-layer-1 text-body-xs-medium text-secondary whitespace-nowrap`}
           >
-            <ExternalLink size={14} />
+            <ExternalLink size={16} />
             {!isSidebarCollapsed && "Redirect to Plane"}
           </a>
         </Tooltip>
@@ -70,7 +68,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
           >
-            <HelpCircle className="h-3.5 w-3.5" />
+            <HelpCircle className="size-4" />
           </button>
         </Tooltip>
         <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
@@ -81,7 +79,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
             }`}
             onClick={() => toggleSidebar(!isSidebarCollapsed)}
           >
-            <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
+            <MoveLeft className={`size-4 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
           </button>
         </Tooltip>
       </div>
@@ -109,7 +107,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                     <Link href={href} key={name} target="_blank">
                       <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1-hover">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-secondary" width={14} height={14} />
+                          <Icon className="h-3.5 w-3.5 text-secondary" />
                         </div>
                         <span className="text-11">{name}</span>
                       </div>

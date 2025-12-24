@@ -17,7 +17,7 @@ from plane.graphql.types.page import PageMentionEntityNameEnum, PageMentionType
 # Local Imports
 from .feature_flag import is_page_mention_feature_flagged
 from ...project import _get_project
-from ...workspace import _get_workspace
+from ...workspace import get_workspace
 
 
 # constructing page log query
@@ -39,7 +39,7 @@ def page_log_base_query(
     )
 
     # validating workspace
-    workspace = _get_workspace(workspace_slug=workspace_slug)
+    workspace = get_workspace(slug=workspace_slug)
     workspace_slug = workspace.slug
 
     # validating project

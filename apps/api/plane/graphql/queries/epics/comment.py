@@ -5,7 +5,8 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Prefetch
+from django.db.models import Count, OuterRef, Prefetch, Q, Subquery
+from django.db.models.functions import Coalesce
 
 # Strawberry Imports
 from strawberry.permission import PermissionExtension
@@ -39,12 +40,24 @@ class EpicCommentQuery:
             user_id=user_id,
             workspace_slug=slug,
         )
+
+        comment_replies_count_subquery = Coalesce(
+            Subquery(
+                IssueComment.objects.filter(parent_id=OuterRef("id"))
+                .values("parent_id")
+                .annotate(count=Count("id"))
+                .values("count")
+            ),
+            0,
+        )
+
         epic_comments = await sync_to_async(list)(
-            IssueComment.objects.filter(workspace__slug=slug)
+            IssueComment.all_objects.filter(workspace__slug=slug)
             .filter(project__id=project)
             .filter(issue_id=epic)
-            .filter(deleted_at__isnull=True)
             .filter(project_teamspace_filter.query)
+            .annotate(comment_replies_count=comment_replies_count_subquery)
+            .filter(Q(deleted_at__isnull=True) | Q(comment_replies_count__gt=0))
             .distinct()
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")

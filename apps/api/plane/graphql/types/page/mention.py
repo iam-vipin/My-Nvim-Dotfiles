@@ -84,6 +84,8 @@ class PageMentionType:
             project_identifier=current_issue_details.project.identifier,
             state_group=current_issue_details.state.group if current_issue_details.state else None,
             state_name=current_issue_details.state.name if current_issue_details.state else None,
+            archived_at=current_issue_details.archived_at,
+            is_epic=current_issue_details.type.is_epic if current_issue_details.type else False,
         )
 
     @strawberry.field

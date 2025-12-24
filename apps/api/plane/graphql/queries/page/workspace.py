@@ -54,13 +54,7 @@ class WorkspacePageQuery:
             error_extensions = {"code": "FEATURE_FLAG_NOT_ENABLED", "statusCode": 400}
             raise GraphQLError(message, extensions=error_extensions)
 
-        page_base_query = (
-            Page.objects.filter(workspace__slug=slug)
-            .filter(is_global=True)
-            .filter(projects__isnull=True)
-            .filter(parent__isnull=True)
-            .filter(moved_to_page__isnull=True)
-        )
+        page_base_query = Page.objects.filter(workspace__slug=slug).filter(is_global=True).filter(parent__isnull=True)
 
         shared_pages_data = await sync_to_async(list)(
             PageUser.objects.filter(workspace__slug=slug).values("page_id", "user_id")
@@ -75,7 +69,7 @@ class WorkspacePageQuery:
             page_base_query = page_base_query.filter(archived_at__isnull=False)
 
         # Filter pages by access level
-        if type == "all":
+        if type in ["all", "archived"]:
             page_base_query = page_base_query.filter(Q(access=0) | (Q(access=1) & Q(owned_by_id=user_id)))
         elif type == "public":
             page_base_query = page_base_query.filter(access=0)
@@ -85,6 +79,8 @@ class WorkspacePageQuery:
             page_base_query = page_base_query.filter(
                 Q(access=1) & (Q(id__in=pages_shared_with_user) | (Q(owned_by_id=user_id) & Q(id__in=shared_page_ids)))
             )
+        else:
+            page_base_query = page_base_query.none()
 
         # Build subquery for UserFavorite
         subquery = UserFavorite.objects.filter(
@@ -99,7 +95,7 @@ class WorkspacePageQuery:
             .select_related("workspace", "owned_by")
             .prefetch_related("projects")
             .annotate(is_favorite=Exists(subquery))
-            .order_by("sort_order", "-updated_at")
+            .order_by("-updated_at", "-created_at", "sort_order")
         )
 
         return paginate(results_object=pages, cursor=cursor)

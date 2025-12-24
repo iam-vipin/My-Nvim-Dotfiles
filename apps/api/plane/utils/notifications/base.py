@@ -541,12 +541,54 @@ class BaseNotificationHandler(ABC):
         """Send an email notification"""
         pass
 
+    # ==================== Push Notification Methods ====================
+    def deduplicate_push_notification_details(self, notification_details: list) -> list:
+        """Deduplicate the notification details based on the id, workspace, project, triggered_by and receiver."""
+
+        if not notification_details:
+            return []
+
+        deduplicated_notification_details = {}
+
+        for notification in notification_details:
+            key = (
+                notification.get("workspace"),
+                notification.get("project"),
+                notification.get("triggered_by"),
+                notification.get("receiver"),
+                notification.get("entity_identifier"),
+            )
+
+            # Check if this is a comment notification
+            data = notification.get("data", {})
+            activity_data = data.get("issue_activity", {})
+            is_comment = activity_data.get("field") == "comment"
+
+            if not is_comment:
+                deduplicated_notification_details[key] = notification
+                continue
+
+            sender = notification.get("sender", "")
+            is_mentioned = sender.endswith(":mentioned")
+
+            if key not in deduplicated_notification_details:
+                deduplicated_notification_details[key] = notification
+            elif is_mentioned:
+                existing = deduplicated_notification_details[key]
+
+                existing_sender = existing.get("sender", "")
+                existing_is_mentioned = existing_sender.endswith(":mentioned")
+                if not existing_is_mentioned:
+                    deduplicated_notification_details[key] = notification
+
+        return list(deduplicated_notification_details.values())
+
     def send_push_notifications(self):
         """Send push notifications"""
         if self.payload.in_app_notifications:
             serialized_notifications = NotificationSerializer(self.payload.in_app_notifications, many=True).data
 
-            # converting the uuid to string
+            # Convert UUIDs to strings
             for notification in serialized_notifications:
                 if notification is not None:
                     for key in ["id", "workspace", "project", "receiver"]:
@@ -554,4 +596,9 @@ class BaseNotificationHandler(ABC):
                             notification[key] = str(notification[key])
                     if "triggered_by_details" in notification:
                         notification["triggered_by_details"]["id"] = str(notification["triggered_by_details"]["id"])
-                    issue_push_notifications.delay(notification)
+
+            # Deduplicate push notifications (prioritize mentions over subscriptions)
+            deduplicated_notifications = self.deduplicate_push_notification_details(serialized_notifications)
+
+            for notification in deduplicated_notifications:
+                issue_push_notifications.delay(notification)

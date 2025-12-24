@@ -25,7 +25,7 @@ from plane.graphql.helpers import (
     get_project_member,
     get_project_triage_states_async,
     get_triage_state_async,
-    get_workspace,
+    get_workspace_async,
     is_project_intakes_enabled_async,
     is_project_settings_enabled_by_settings_key_async,
 )
@@ -35,6 +35,7 @@ from plane.graphql.types.intake.base import (
     IntakeSettingsType,
     IntakeSourceType,
     IntakeWorkItemCreateInputType,
+    IntakeWorkItemStatusType,
     IntakeWorkItemType,
     IntakeWorkItemUpdateInputType,
 )
@@ -57,7 +58,7 @@ class IntakeWorkItemMutation:
         user_id = str(user.id)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -212,7 +213,7 @@ class IntakeWorkItemMutation:
         user_id = str(user.id)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -393,8 +394,11 @@ class IntakeWorkItemMutation:
 
     @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])])
     async def delete_intake_work_item(self, info: Info, slug: str, project: str, intake_work_item: str) -> bool:
+        user = info.context.user
+        user_id = str(user.id)
+
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
 
         # get the project
@@ -404,20 +408,57 @@ class IntakeWorkItemMutation:
         # check if the intake is enabled for the project
         await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
+        # get the intake work item
         intake_work_item = await get_intake_work_item_async(
             workspace_slug=workspace_slug,
             project_id=project_id,
             intake_work_item_id=intake_work_item,
         )
+        intake_work_item_created_by_id = str(intake_work_item.created_by_id)
 
-        if intake_work_item:
-            if intake_work_item.status in [-2, -1, 0, 2]:
-                work_item_id = str(intake_work_item.issue_id)
-                await sync_to_async(Issue.objects.filter(id=work_item_id).delete)()
-            await sync_to_async(intake_work_item.delete)()
+        # project member check
+        current_user_role = None
+        project_member = await get_project_member(
+            workspace_slug=workspace_slug,
+            project_id=project_id,
+            user_id=user_id,
+            raise_exception=False,
+        )
+        if not project_member:
+            project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+                user_id=user_id,
+                workspace_slug=workspace_slug,
+            )
+            teamspace_project_ids = project_teamspace_filter.teamspace_project_ids
+            if project_id not in teamspace_project_ids:
+                message = "You are not allowed to access this project"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+            current_user_role = Roles.MEMBER.value
         else:
+            current_user_role = project_member.role
+
+        if current_user_role in [Roles.MEMBER.value, Roles.GUEST.value]:
+            if intake_work_item_created_by_id != user_id:
+                message = "You are not allowed to delete this intake work item"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+
+        if not intake_work_item:
             message = "Intake work item not found"
             error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
             raise GraphQLError(message, extensions=error_extensions)
+
+        if intake_work_item.status not in [
+            IntakeWorkItemStatusType.PENDING.value,
+            IntakeWorkItemStatusType.SNOOZED.value,
+        ]:
+            message = "Intake work item is not in a deletable state"
+            error_extensions = {"code": "INTAKE_WORK_ITEM_NOT_DELETABLE", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+
+        work_item_id = str(intake_work_item.issue_id)
+        await sync_to_async(Issue.objects.filter(id=work_item_id).delete)()
+        await sync_to_async(intake_work_item.delete)()
 
         return True

@@ -16,6 +16,7 @@ RELATION_TYPE_MAP = {
     WorkItemRelationTypes.BLOCKED_BY.value: WorkItemRelationTypes.BLOCKED_BY.value,
     WorkItemRelationTypes.START_BEFORE.value: WorkItemRelationTypes.START_BEFORE.value,
     WorkItemRelationTypes.FINISH_BEFORE.value: WorkItemRelationTypes.FINISH_BEFORE.value,
+    WorkItemRelationTypes.IMPLEMENTS.value: WorkItemRelationTypes.IMPLEMENTED_BY.value,
 }
 
 

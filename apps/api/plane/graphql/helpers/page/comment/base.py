@@ -24,7 +24,7 @@ from plane.graphql.types.page.comment.base import (
 # Local Imports
 from .feature_flag import is_page_comment_feature_flagged
 from ...project import _get_project
-from ...workspace import _get_workspace
+from ...workspace import get_workspace
 
 
 # constructing page query
@@ -44,7 +44,7 @@ def page_comment_base_query(
     is_page_comment_feature_flagged(workspace_slug=workspace_slug, user_id=user_id)
 
     # validating workspace
-    workspace = _get_workspace(workspace_slug=workspace_slug)
+    workspace = get_workspace(slug=workspace_slug)
     workspace_slug = workspace.slug
 
     # validating project
@@ -333,7 +333,7 @@ def create_page_comment(
         is_page_comment_feature_flagged(workspace_slug=workspace_slug, user_id=user_id)
 
         # Get workspace
-        workspace = _get_workspace(workspace_slug=workspace_slug)
+        workspace = get_workspace(slug=workspace_slug)
         workspace_id = workspace.id
 
         # Comment data

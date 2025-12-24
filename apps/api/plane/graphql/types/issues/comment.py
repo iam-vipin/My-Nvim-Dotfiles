@@ -34,6 +34,9 @@ class IssueCommentActivityType:
     project: strawberry.ID
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
+    edited_at: Optional[datetime]
+    parent: Optional[str]
+    deleted_at: Optional[datetime]
 
     @strawberry.field
     def workspace(self) -> int:
@@ -56,6 +59,10 @@ class IssueCommentActivityType:
     @strawberry.field
     def issue(self) -> int:
         return self.issue_id
+
+    @strawberry.field
+    def parent(self) -> Optional[str]:
+        return self.parent_id if self.parent_id else None
 
     @strawberry.field
     def created_by(self) -> Optional[strawberry.ID]:

@@ -15,7 +15,7 @@ from plane.db.models import Issue
 from plane.graphql.types.workitem import WorkItemMentionType
 
 # Local Imports
-from .workspace import _get_workspace
+from .workspace import get_workspace
 
 
 # constructing work item mention query
@@ -25,7 +25,7 @@ def workitem_mention_base_query(
     user_id: Optional[str] = None,
 ) -> QuerySet:
     # validating workspace
-    workspace = _get_workspace(workspace_slug=workspace_slug)
+    workspace = get_workspace(slug=workspace_slug)
     workspace_id = workspace.id
 
     # base query for workitem

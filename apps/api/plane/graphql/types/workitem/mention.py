@@ -1,4 +1,5 @@
 # Python imports
+from datetime import datetime
 from typing import Optional
 
 # Third Party Imports
@@ -15,3 +16,5 @@ class WorkItemMentionType:
     project_identifier: str
     state_group: str
     state_name: str
+    archived_at: Optional[datetime] = None
+    is_epic: Optional[bool] = False

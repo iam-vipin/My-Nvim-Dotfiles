@@ -17,11 +17,16 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import Project, ProjectMember, UserFavorite
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
-from plane.graphql.helpers import project_member_filter_via_teamspaces_async
+from plane.graphql.helpers import (
+    build_teamspace_project_access_filter_async,
+    project_member_filter_via_teamspaces_async,
+)
+from plane.graphql.helpers.workspace import get_workspace_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.types.project import ProjectMemberType, ProjectType
+from plane.graphql.types.teamspace import TeamspaceProjectQueryPathEnum
 from plane.graphql.utils.paginator import paginate
 
 
@@ -32,17 +37,17 @@ class ProjectQuery:
         user = info.context.user
         user_id = str(user.id)
 
-        project_query = Project.objects.filter(workspace__slug=slug, archived_at__isnull=True)
+        workspace = await get_workspace_async(slug=slug)
+        workspace_id = str(workspace.id)
+        workspace_slug = workspace.slug
 
-        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+        project_query = Project.objects.filter(workspace_id=workspace_id, archived_at__isnull=True)
+
+        project_teamspace_filter = await build_teamspace_project_access_filter_async(
             user_id=user_id,
-            workspace_slug=slug,
-            related_field="id",
-            query={
-                "project_projectmember__member_id": user_id,
-                "project_projectmember__is_active": True,
-                "archived_at__isnull": True,
-            },
+            workspace_id=workspace_id,
+            workspace_slug=workspace_slug,
+            query_path=TeamspaceProjectQueryPathEnum.DIRECT,
         )
         if type == "joined":
             project_query = project_query.filter(project_teamspace_filter.query)

@@ -13,10 +13,10 @@ from strawberry.types import Info
 
 # Module imports
 from plane.db.models import Page, ProjectMember, WorkspaceMember
+from plane.graphql.helpers import get_workspace_async
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.pages import PageType
 from plane.graphql.utils.roles import Roles
-from plane.graphql.helpers import get_workspace
 
 
 @sync_to_async
@@ -59,7 +59,7 @@ class WorkspacePageMutation:
         access: int = 2,
         description_binary: Optional[str] = None,
     ) -> PageType:
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
 
         if description_binary is not None:
             description_binary = base64.b64decode(description_binary)

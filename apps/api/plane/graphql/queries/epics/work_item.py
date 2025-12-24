@@ -14,7 +14,7 @@ from plane.db.models import Issue
 from plane.graphql.helpers import (
     get_epic,
     get_project,
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
     project_member_filter_via_teamspaces_async,
@@ -46,7 +46,7 @@ class EpicWorkItemsQuery:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = str(workspace.slug)
         workspace_id = str(workspace.id)
 

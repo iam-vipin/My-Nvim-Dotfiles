@@ -1,10 +1,12 @@
 import type { TInstanceAuthenticationModes } from "@plane/types";
 import { getCoreAuthenticationModesMap } from "./core";
+import { getExtendedAuthenticationModesMap } from "./extended";
 import type { TGetAuthenticationModeProps } from "./types";
 
 export const useAuthenticationModes = (props: TGetAuthenticationModeProps): TInstanceAuthenticationModes[] => {
   // derived values
   const authenticationModes = getCoreAuthenticationModesMap(props);
+  const authenticationModesExtended = getExtendedAuthenticationModesMap(props);
 
   const availableAuthenticationModes: TInstanceAuthenticationModes[] = [
     authenticationModes["unique-codes"],
@@ -13,6 +15,9 @@ export const useAuthenticationModes = (props: TGetAuthenticationModeProps): TIns
     authenticationModes["github"],
     authenticationModes["gitlab"],
     authenticationModes["gitea"],
+    authenticationModesExtended["oidc"],
+    authenticationModesExtended["saml"],
+    authenticationModesExtended["ldap"],
   ];
 
   return availableAuthenticationModes;

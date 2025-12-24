@@ -3,6 +3,8 @@ import os
 import uuid
 import requests
 from io import BytesIO
+import random
+import string
 
 # Django imports
 from django.utils import timezone
@@ -91,9 +93,9 @@ class Adapter:
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
         # Get configuration value
-        (ENABLE_SIGNUP,) = get_configuration_value([
-            {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}
-        ])
+        (ENABLE_SIGNUP,) = get_configuration_value(
+            [{"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}]
+        )
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
@@ -107,21 +109,27 @@ class Adapter:
         return True
 
     def get_avatar_download_headers(self):
+        if self.token_data and self.token_data.get("access_token") and self.provider in ["oidc", "saml"]:
+            return {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
         return {}
 
     def check_sync_enabled(self):
         """Check if sync is enabled for the provider"""
-        provider_config_map = {
+
+        provider_config_keys = {
             "google": "ENABLE_GOOGLE_SYNC",
             "github": "ENABLE_GITHUB_SYNC",
             "gitlab": "ENABLE_GITLAB_SYNC",
             "gitea": "ENABLE_GITEA_SYNC",
+            "oidc": "ENABLE_OIDC_IDP_SYNC",
+            "saml": "ENABLE_SAML_IDP_SYNC",
         }
-        config_key = provider_config_map.get(self.provider)
-        if config_key:
-            (enabled,) = get_configuration_value([{"key": config_key, "default": os.environ.get(config_key, "0")}])
-            return enabled == "1"
-        return False
+
+        config_key = provider_config_keys.get(self.provider)
+        if not config_key:
+            return False
+        (enabled_value,) = get_configuration_value([{"key": config_key, "default": os.environ.get(config_key, "0")}])
+        return enabled_value == "1"
 
     def download_and_upload_avatar(self, avatar_url, user):
         """
@@ -282,8 +290,10 @@ class Adapter:
 
         # Check if the user is present
         user = User.objects.filter(email=email).first()
+
         # Check if sign up case or login
-        is_signup = bool(user)
+        is_signup = not bool(user)
+
         # If user is not present, create a new user
         if not user:
             # New user
@@ -312,6 +322,13 @@ class Adapter:
             user.first_name = first_name if first_name else ""
             user.last_name = last_name if last_name else ""
 
+            # Get display name
+            display_name = self.user_data.get("user", {}).get("display_name")
+            # If display name is not provided, generate a random display name
+            if not display_name:
+                display_name = User.get_display_name(email)
+
+            user.display_name = display_name
             user.save()
 
             # Download and upload avatar

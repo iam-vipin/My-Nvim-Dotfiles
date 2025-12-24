@@ -2,6 +2,8 @@ from .formatters import BaseFormatter, CSVFormatter, JSONFormatter, XLSXFormatte
 from .exporter import DataExporter
 from .serializers import IssueExportSerializer
 
+from .extended.serailizers import ExtendedIssueExportSerializer as IssueExportSerializer
+
 __all__ = [
     # Formatters
     "BaseFormatter",

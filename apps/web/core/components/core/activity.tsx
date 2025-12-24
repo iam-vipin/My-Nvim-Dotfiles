@@ -5,8 +5,6 @@ import { useParams } from "next/navigation";
 // icons
 import {
   TagIcon,
-  CopyPlus,
-  Calendar,
   Link2Icon,
   Users2Icon,
   ArchiveIcon,
@@ -20,7 +18,9 @@ import {
 import {
   BlockedIcon,
   BlockerIcon,
+  CalendarLayoutIcon,
   CycleIcon,
+  DuplicatePropertyIcon,
   EpicIcon,
   IntakeIcon,
   ModuleIcon,
@@ -647,7 +647,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <CopyPlus size={12} className="text-secondary" />,
+    icon: <DuplicatePropertyIcon height={12} width={12} className="text-secondary" />,
   },
   state: {
     message: (activity, showIssue) => (
@@ -693,7 +693,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <CalendarLayoutIcon height={12} width={12} className="text-secondary" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -724,7 +724,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <CalendarLayoutIcon height={12} width={12} className="text-secondary" aria-hidden="true" />,
   },
   inbox: {
     message: (activity, showIssue) => (

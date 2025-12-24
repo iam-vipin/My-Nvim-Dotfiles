@@ -21,8 +21,10 @@ class IssueExportSerializer(IssueSerializer):
     assignees = serializers.SerializerMethodField()
     parent = serializers.SerializerMethodField()
     labels = serializers.SerializerMethodField()
-    cycles = serializers.SerializerMethodField()
-    modules = serializers.SerializerMethodField()
+    cycle_name = serializers.SerializerMethodField()
+    cycle_start_date = serializers.SerializerMethodField()
+    cycle_end_date = serializers.SerializerMethodField()
+    module_name = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     estimate = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
@@ -35,7 +37,6 @@ class IssueExportSerializer(IssueSerializer):
             "project_identifier",
             "parent",
             "identifier",
-            "sequence_id",
             "name",
             "state_name",
             "priority",
@@ -50,15 +51,16 @@ class IssueExportSerializer(IssueSerializer):
             "archived_at",
             "estimate",
             "labels",
-            "cycles",
-            "modules",
+            "cycle_name",
+            "cycle_start_date",
+            "cycle_end_date",
+            "module_name",
             "links",
             "relations",
             "comments",
             "sub_issues_count",
             "link_count",
             "attachment_count",
-            "is_draft",
         ]
 
     def get_identifier(self, obj):
@@ -83,11 +85,29 @@ class IssueExportSerializer(IssueSerializer):
             if il.deleted_at is None
         ]
 
-    def get_cycles(self, obj):
-        return [ic.cycle.name for ic in obj.issue_cycle.all()]
+    def get_cycle_name(self, obj):
+        """Return the cycle name (one-to-one relationship)."""
+        cycle_issue = obj.issue_cycle.first()
+        return cycle_issue.cycle.name if cycle_issue and cycle_issue.cycle else ""
 
-    def get_modules(self, obj):
-        return [im.module.name for im in obj.issue_module.all()]
+    def get_cycle_start_date(self, obj):
+        """Return the cycle start date."""
+        cycle_issue = obj.issue_cycle.first()
+        if cycle_issue and cycle_issue.cycle and cycle_issue.cycle.start_date:
+            return cycle_issue.cycle.start_date.strftime("%Y-%m-%d")
+        return ""
+
+    def get_cycle_end_date(self, obj):
+        """Return the cycle end date."""
+        cycle_issue = obj.issue_cycle.first()
+        if cycle_issue and cycle_issue.cycle and cycle_issue.cycle.end_date:
+            return cycle_issue.cycle.end_date.strftime("%Y-%m-%d")
+        return ""
+
+    def get_module_name(self, obj):
+        """Return the module name (one-to-one relationship)."""
+        module_issue = obj.issue_module.first()
+        return module_issue.module.name if module_issue and module_issue.module else ""
 
     def get_estimate(self, obj):
         """Return estimate point value."""
@@ -106,28 +126,20 @@ class IssueExportSerializer(IssueSerializer):
         ]
 
     def get_relations(self, obj):
-        """Return list of related issues."""
-        relations = []
+        """
+        Return list of related issues (outgoing only).
 
-        # Outgoing relations (this issue relates to others)
-        for rel in obj.issue_relation.all():
-            if rel.related_issue:
-                relations.append({
-                    "type": rel.relation_type if hasattr(rel, 'relation_type') else "related",
-                    "issue": f"{rel.related_issue.project.identifier}-{rel.related_issue.sequence_id}",
-                    "direction": "outgoing"
-                })
-
-        # Incoming relations (other issues relate to this one)
-        for rel in obj.issue_related.all():
-            if rel.issue:
-                relations.append({
-                    "type": rel.relation_type if hasattr(rel, 'relation_type') else "related",
-                    "issue": f"{rel.issue.project.identifier}-{rel.issue.sequence_id}",
-                    "direction": "incoming"
-                })
-
-        return relations
+        For exports, we only capture relations once from the source issue.
+        This avoids duplicate entries and reduces to a single prefetch query.
+        """
+        return [
+            {
+                "type": rel.relation_type,
+                "related_issue": f"{rel.related_issue.project.identifier}-{rel.related_issue.sequence_id}",
+            }
+            for rel in obj.issue_relation.all()
+            if rel.related_issue
+        ]
 
     def get_comments(self, obj):
         """Return list of comments with author and timestamp."""

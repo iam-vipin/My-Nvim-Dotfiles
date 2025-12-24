@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // assets
-import OIDCLogo from "@/app/assets/logos/oidc-logo.svg";
+import OIDCLogo from "@/app/assets/logos/oidc-logo.svg?url";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageHeader } from "@/components/common/page-header";

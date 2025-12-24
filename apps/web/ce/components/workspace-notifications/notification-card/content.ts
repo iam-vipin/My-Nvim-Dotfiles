@@ -1,5 +1,4 @@
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
-
 export const renderAdditionalAction = (notificationField: string, verb: string | undefined) => {
   const baseAction = !["comment", "archived_at"].includes(notificationField) ? verb : "";
   return `${baseAction} ${replaceUnderscoreIfSnakeCase(notificationField)}`;

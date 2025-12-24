@@ -394,4 +394,10 @@ export const filterActivityOnSelectedFilters = (
     return filters.some((filter) => shouldRenderActivity(activity, filter));
   });
 
+export const BASE_ACTIVITY_FILTER_TYPES = [
+  EActivityFilterType.ACTIVITY,
+  EActivityFilterType.STATE,
+  EActivityFilterType.ASSIGNEE,
+  EActivityFilterType.DEFAULT,
+];
 export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE

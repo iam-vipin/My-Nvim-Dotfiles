@@ -1,3 +1,4 @@
+import type { TNotificationContentMap } from "@/components/workspace-notifications/sidebar/notification-card/content";
 import { getPageName, replaceUnderscoreIfSnakeCase } from "@plane/utils";
 
 export const renderAdditionalAction = (notificationField: string, verb: string | undefined) => {
@@ -22,3 +23,5 @@ export const shouldShowConnector = (notificationField: string | undefined) =>
 
 export const shouldRender = (notificationField: string | undefined, verb: string | undefined) =>
   verb !== "deleted" || (verb === "deleted" && notificationField === "page");
+
+export const ADDITIONAL_NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {};

@@ -1,0 +1,29 @@
+{
+   "pages": [
+        "project_pages"
+    ],
+    "project_attributes": [
+        "project_states"
+    ],
+    "intakes": [
+        "intake_issues"
+    ],
+    "issues": [
+        "states"
+    ],
+    "issue_assignees": [
+        "users"
+    ],
+    "issue_activities": [
+        "users"
+    ],
+    "project_members": [
+        "users"
+    ],
+    "workspace_members": [
+        "users"
+    ],
+    "issue_relations": [
+        "issues"
+    ]
+}

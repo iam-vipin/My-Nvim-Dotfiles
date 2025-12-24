@@ -32,6 +32,7 @@ export type TCommentCardDisplayProps = {
   setIsEditing?: (isEditing: boolean) => void;
   renderFooter?: (ReactionsComponent: ReactNode | null) => ReactNode;
   renderQuickActions?: () => ReactNode;
+  renderHeader?: boolean;
 };
 
 export const CommentCardDisplay = observer(function CommentCardDisplay(props: TCommentCardDisplayProps) {
@@ -48,6 +49,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
     setIsEditing,
     renderFooter,
     renderQuickActions,
+    renderHeader = true,
   } = props;
   // states
   const [highlightClassName, setHighlightClassName] = useState("");
@@ -100,47 +102,51 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
   const shouldRenderReactions = hasReactions && !disabled;
 
   return (
-    <div id={commentBlockId} className="relative flex flex-col gap-2">
-      {showAccessSpecifier && (
-        <div className="absolute right-2.5 top-2.5 z-[1] text-tertiary">
-          {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
-            <Lock className="size-3" />
-          ) : (
-            <Globe2 className="size-3" />
+    <div id={commentBlockId} className="pb-2">
+      {renderHeader ? (
+        <>
+          {showAccessSpecifier && (
+            <div className="absolute right-2.5 top-2.5 z-[1] text-tertiary">
+              {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
+                <Lock className="size-3" />
+              ) : (
+                <Globe2 className="size-3" />
+              )}
+            </div>
           )}
-        </div>
-      )}
-      <div className="flex relative w-full gap-2 items-center mb-3">
-        <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
-        <div className="flex-1 flex flex-wrap items-center gap-1">
-          <div className="text-caption-sm-medium">{displayName}</div>
-          <div className="text-caption-sm-regular text-tertiary">
-            commented{" "}
-            <Tooltip
-              tooltipContent={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
-              position="bottom"
-            >
-              <span className="text-tertiary">
-                {calculateTimeAgo(comment.created_at)}
-                {comment.edited_at && " (edited)"}
-              </span>
-            </Tooltip>
+          <div className="flex relative w-full gap-2 items-center mb-3">
+            <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
+            <div className="flex-1 flex flex-wrap items-center gap-1">
+              <div className="text-caption-sm-medium">{displayName}</div>
+              <div className="text-caption-sm-regular text-tertiary">
+                commented{" "}
+                <Tooltip
+                  tooltipContent={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
+                  position="bottom"
+                >
+                  <span className="text-tertiary">
+                    {calculateTimeAgo(comment.created_at)}
+                    {comment.edited_at && " (edited)"}
+                  </span>
+                </Tooltip>
+              </div>
+            </div>
+            {!disabled && (
+              <div className="flex items-center gap-1 shrink-0">
+                <EmojiReactionPicker
+                  isOpen={isPickerOpen}
+                  handleToggle={setIsPickerOpen}
+                  onChange={handleEmojiSelect}
+                  disabled={disabled}
+                  label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
+                  placement="bottom-start"
+                />
+                {renderQuickActions ? renderQuickActions() : null}
+              </div>
+            )}
           </div>
-        </div>
-        {!disabled && (
-          <div className="flex items-center gap-1 shrink-0">
-            <EmojiReactionPicker
-              isOpen={isPickerOpen}
-              handleToggle={setIsPickerOpen}
-              onChange={handleEmojiSelect}
-              disabled={disabled}
-              label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
-              placement="bottom-start"
-            />
-            {renderQuickActions ? renderQuickActions() : null}
-          </div>
-        )}
-      </div>
+        </>
+      ) : null}
       {isEditing && setIsEditing ? (
         <CommentCardEditForm
           activityOperations={activityOperations}

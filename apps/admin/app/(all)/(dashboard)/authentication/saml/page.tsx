@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // assets
-import SAMLLogo from "@/app/assets/logos/saml-logo.svg";
+import SAMLLogo from "@/app/assets/logos/saml-logo.svg?url";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageHeader } from "@/components/common/page-header";

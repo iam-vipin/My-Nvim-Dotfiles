@@ -394,7 +394,6 @@ export const filterActivityOnSelectedFilters = (
     return filters.some((filter) => shouldRenderActivity(activity, filter));
   });
 
-
 export const BASE_ACTIVITY_FILTER_TYPES = [
   EActivityFilterType.ACTIVITY,
   EActivityFilterType.STATE,

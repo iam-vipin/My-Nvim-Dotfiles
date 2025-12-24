@@ -11,6 +11,8 @@ import type {
 } from "../types";
 import type { SlackAuthService } from "./auth.service";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export class SlackService {
   private client: AxiosInstance;
 
@@ -28,10 +30,22 @@ export class SlackService {
       },
     });
 
-    this.client.interceptors.response.use(async (request) => {
+    this.client.interceptors.response.use(async (currentResponse) => {
+      const originalRequest = currentResponse.config;
+      const responseData = currentResponse.data as { ok: boolean; error: string };
+
+      if (responseData.ok === false) {
+        console.log("Slack request error", {
+          error: responseData.error,
+          request: {
+            url: originalRequest.url,
+          },
+        });
+      }
+
       if (
-        (request.data.ok === false && request.data.error === "token_expired") ||
-        request.data.error === "invalid_auth"
+        responseData.ok === false &&
+        ["token_expired", "token_revoked", "invalid_auth"].includes(responseData.error)
       ) {
         const response = await authService.refreshToken(refresh_token);
 
@@ -41,12 +55,20 @@ export class SlackService {
           });
         }
 
+        console.log("Refreshed Slack token for user");
+
         await authCallback(response);
-        this.client.defaults.headers.Authorization = `Bearer ${response.access_token}`;
-        const resp = await this.client.request(request);
+
+        const newAuthHeader = `Bearer ${response.access_token}`;
+
+        this.client.defaults.headers.Authorization = newAuthHeader;
+
+        originalRequest.headers.Authorization = newAuthHeader;
+
+        const resp = await this.client.request(originalRequest);
         return resp;
       } else {
-        return request;
+        return currentResponse;
       }
     });
   }

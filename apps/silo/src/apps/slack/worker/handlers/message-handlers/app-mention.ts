@@ -4,7 +4,9 @@ import { logger } from "@plane/logger";
 import { getConnectionDetails } from "@/apps/slack/helpers/connection-details";
 import { getAccountConnectionBlocks } from "@/apps/slack/views/account-connection";
 import { env } from "@/env";
-import type { TAIInferenceResponse } from "./app-mention.types";
+import type { TAIInferenceResponse, AIResponse } from "./app-mention.types";
+import { AIResponseType } from "./app-mention.types";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export const handleAppMentionEvent = async (data: SlackEventPayload) => {
   logger.info("Handling app mention event", { data });
@@ -71,7 +73,8 @@ export const handleAppMentionEvent = async (data: SlackEventPayload) => {
     workspace_id: connectionDetails.workspaceConnection.workspace_id,
   });
 
-  await slackService.sendThreadMessage(data.event.channel, data.event.ts, mapAIResponseToSlackMessage(aiResponse));
+  const { message, unfurl } = mapAIResponseToSlackMessage(aiResponse);
+  await slackService.sendThreadMessage(data.event.channel, data.event.ts, message, {}, unfurl);
 
   await slackService.removeReaction(data.event.channel, data.event.ts, "eyes");
 };
@@ -120,7 +123,7 @@ const inferResponseFromPlaneAI = async (
     llm: "gpt-4.1",
   };
 
-  const response = await fetch(`${env.AI_SERVICE_BASE_URL}/api/v1/chat/slack/answer/`, {
+  const response = await fetch(`${env.AI_SERVICE_BASE_URL}/api/v1/chat/silo-app/answer/`, {
     method: "POST",
     body: JSON.stringify(aiRequest),
     headers: {
@@ -129,31 +132,227 @@ const inferResponseFromPlaneAI = async (
     },
   });
 
-  const data: TAIInferenceResponse = await response.json();
+  const data: TAIInferenceResponse = (await response.json()) as TAIInferenceResponse;
+
   logger.info("Response from Plane AI", { data });
   return data;
 };
 
-const mapAIResponseToSlackMessage = (aiResponse: TAIInferenceResponse): string => {
-  let responseText = aiResponse.response;
-  if (aiResponse.response_type === "actions") {
-    responseText = "";
-    for (const action of aiResponse.context?.actions || []) {
-      responseText += `${action.message} - ${action.entity.entity_url}\n`;
-    }
-  } else if (aiResponse.response_type === "clarification") {
-    responseText = "";
-    for (const question of aiResponse.clarification_data?.questions || []) {
-      responseText += `- ${question}\n`;
-    }
-    if (aiResponse.clarification_data?.disambiguation_options) {
-      responseText += "Some Suggestions:\n";
-      for (const option of (aiResponse.clarification_data?.disambiguation_options || []).slice(0, 3)) {
-        responseText += `- ${option.name} (${option.email})\n`;
+const mapAIResponseToSlackMessage = (
+  aiInferenceResponse: TAIInferenceResponse
+): { message: { text?: string; blocks?: any[] }; unfurl: boolean } => {
+  const responseData = aiInferenceResponse.response;
+
+  switch (aiInferenceResponse.response_type) {
+    case AIResponseType.ACTIONS:
+      return createActionBlocks(aiInferenceResponse);
+    case AIResponseType.CLARIFICATION:
+      return createClarificationBlocks(aiInferenceResponse);
+    case AIResponseType.RESPONSE:
+      return createResponseBlocks(aiInferenceResponse.response);
+    default:
+      return {
+        message: {
+          text: convertMarkdownToSlackFormat(responseData.text),
+        },
+        unfurl: false,
+      };
+  }
+};
+
+const createResponseBlocks = (
+  aiResponse: AIResponse
+): { message: { text?: string; blocks?: any[] }; unfurl: boolean } => {
+  const blocks: any[] = [];
+  if (aiResponse.entities == null || aiResponse.entities.length === 0) {
+    return {
+      message: {
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: aiResponse.text ?? "No results found",
+            },
+          },
+        ],
+      },
+      unfurl: false,
+    };
+  }
+  const headerText = aiResponse.text ?? "Here are the top results I found";
+
+  // Create bullet point list of entities
+  const entityList = aiResponse.entities
+    .map((entity) => `• *${entity.name}* - ${entity.properties.url ?? entity.properties.identifier}`)
+    .join("\n");
+
+  blocks.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `${headerText}\n\n${entityList}`,
+    },
+  });
+  return {
+    message: {
+      text: headerText,
+      blocks: blocks.length > 0 ? blocks : undefined,
+    },
+    unfurl: aiResponse.entities && aiResponse.entities.length <= 5,
+  };
+};
+
+const createActionBlocks = (
+  aiInferenceResponse: TAIInferenceResponse
+): { message: { text?: string; blocks?: any[] }; unfurl: boolean } => {
+  const blocks: any[] = [];
+  const actions = aiInferenceResponse.context?.actions || [];
+  const actionSummary = aiInferenceResponse.context?.action_summary;
+
+  // Check if there are any failed actions
+  const hasFailures = actions.some((action) => !action.success);
+  const hasSuccesses = actions.some((action) => action.success);
+
+  // Add summary header if there are multiple actions or mixed results
+  if (actionSummary && (actionSummary.total_planned > 1 || (hasFailures && hasSuccesses))) {
+    const summaryText = `*Action Summary:* ${actionSummary.completed} completed, ${actionSummary.failed} failed`;
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: summaryText,
+      },
+    });
+    blocks.push({
+      type: "divider",
+    });
+  }
+
+  // Process each action
+  for (const action of actions) {
+    if (!action.success) {
+      // Handle failed actions with subtle messaging
+      const actionDescription = `${action.action} ${action.artifact_type}`;
+
+      // Combine message into a single, softer block
+      const errorText = `Couldn't ${actionDescription}. An error occurred while processing your request.`;
+
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: errorText,
+        },
+      });
+
+      // Add divider between actions
+      if (action !== actions[actions.length - 1]) {
+        blocks.push({
+          type: "divider",
+        });
+      }
+    } else {
+      // Handle successful actions - only link the entity name, not the entire message
+      let actionDescription = action.message;
+      if (action.entity && action.entity.entity_name) {
+        const entityUrl = action.entity.entity_url;
+        // Replace the entity name in the message with a link
+        actionDescription += ` ${entityUrl}`;
+      }
+
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: actionDescription,
+        },
+      });
+
+      // Add divider between actions
+      if (action !== actions[actions.length - 1]) {
+        blocks.push({
+          type: "divider",
+        });
       }
     }
   }
-  return convertMarkdownToSlackFormat(responseText);
+
+  // Fallback text for notifications
+  const fallbackText = actions
+    .map((action) => (action.success ? action.message : `Failed to ${action.action} ${action.artifact_type}`))
+    .join("; ");
+
+  return {
+    message: {
+      text: fallbackText,
+      blocks: blocks.length > 0 ? blocks : undefined,
+    },
+    unfurl: true,
+  };
+};
+
+const createClarificationBlocks = (
+  aiInferenceResponse: TAIInferenceResponse
+): { message: { text?: string; blocks?: any[] }; unfurl: boolean } => {
+  const blocks: any[] = [];
+  const clarificationData = aiInferenceResponse.clarification_data;
+
+  // Add questions section
+  if (clarificationData?.questions && clarificationData.questions.length > 0) {
+    const questionsText =
+      clarificationData.questions.length > 1
+        ? clarificationData.questions.map((q, index) => `${index + 1}. ${q}`).join("\n")
+        : clarificationData.questions[0];
+
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*I need some clarification*\n\n${questionsText}`,
+      },
+    });
+  }
+
+  // Add suggestions if available
+  if (clarificationData?.disambiguation_options && clarificationData.disambiguation_options.length > 0) {
+    const suggestions = clarificationData.disambiguation_options.slice(0, 3);
+
+    // Add suggestions header
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "*Did you mean one of these?*",
+      },
+    });
+
+    // Add each suggestion as a formatted section
+    suggestions.forEach((option, index) => {
+      const displayName = option.name || option.display_name || option.title || "Unknown";
+      const identifier = option.email || option.identifier || option.id || "";
+      const optionType = option.type ? `\n_Type: ${option.type}_` : "";
+
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*${index + 1}.* ${displayName}${identifier ? ` ${identifier}` : ""}${optionType}`,
+        },
+      });
+    });
+  }
+
+  // Fallback text for notifications
+  const fallbackText = clarificationData?.questions?.join(" ") || "I need some clarification.";
+
+  return {
+    message: {
+      text: fallbackText,
+      blocks: blocks.length > 0 ? blocks : undefined,
+    },
+    unfurl: false,
+  };
 };
 
 const convertMarkdownToSlackFormat = (text: string): string => {

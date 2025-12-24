@@ -19,7 +19,7 @@ export type TCreateTeamspaceProjectFilterParams = TCreateProjectFilterParams;
 export const getTeamspaceProjectFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateTeamspaceProjectFilterParams> =>
   (params: TCreateTeamspaceProjectFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Teamspace Projects",
       ...params,

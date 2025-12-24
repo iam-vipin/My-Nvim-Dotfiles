@@ -2,6 +2,7 @@
 import type { IUserLite, TFilterProperty } from "@plane/types";
 import { EQUALITY_OPERATOR } from "@plane/types";
 // local imports
+import { getIsNullOperatorConfigEntry } from "../entries";
 import type { TCreateFilterConfig } from "../shared";
 import { createFilterConfig, createOperatorConfigEntry } from "../shared";
 import type { TCreateUserFilterParams, TCustomPropertyFilterParams } from "./shared";
@@ -29,5 +30,6 @@ export const getMemberPickerPropertyFilterConfig =
         createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });

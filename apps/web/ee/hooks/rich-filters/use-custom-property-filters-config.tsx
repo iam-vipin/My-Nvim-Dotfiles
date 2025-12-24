@@ -7,7 +7,6 @@ import type {
   IUserLite,
   TCustomPropertyFilterKey,
   TFilterConfig,
-  TFilterValue,
 } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import type { TCustomPropertyFilterParams, TFilterIconType } from "@plane/utils";
@@ -35,8 +34,8 @@ interface TUseCustomPropertyFiltersConfigProps {
 }
 
 interface TCustomPropertyFiltersConfig {
-  configs: Array<TFilterConfig<TCustomPropertyFilterKey, TFilterValue>>;
-  configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey, TFilterValue>>;
+  configs: Array<TFilterConfig<TCustomPropertyFilterKey>>;
+  configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey>>;
 }
 
 export const useCustomPropertyFiltersConfig = ({
@@ -48,8 +47,8 @@ export const useCustomPropertyFiltersConfig = ({
   operatorConfigs,
 }: TUseCustomPropertyFiltersConfigProps): TCustomPropertyFiltersConfig =>
   useMemo(() => {
-    const configs: Array<TFilterConfig<TCustomPropertyFilterKey, TFilterValue>> = [];
-    const configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey, TFilterValue>> = {};
+    const configs: Array<TFilterConfig<TCustomPropertyFilterKey>> = [];
+    const configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey>> = {};
 
     customProperties.forEach((property) => {
       if (!property.id) return;
@@ -63,7 +62,7 @@ export const useCustomPropertyFiltersConfig = ({
       const propertyTypeDetails = ISSUE_PROPERTY_TYPE_DETAILS[propertyTypeKey];
 
       // Generate config based on property type
-      let config: TFilterConfig<TCustomPropertyFilterKey, TFilterValue> | null = null;
+      let config: TFilterConfig<TCustomPropertyFilterKey> | null = null;
 
       const commonConfig: TCustomPropertyFilterParams<TFilterIconType> = {
         isEnabled,

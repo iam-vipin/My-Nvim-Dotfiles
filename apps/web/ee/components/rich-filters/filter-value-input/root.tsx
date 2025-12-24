@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type {
@@ -73,6 +72,12 @@ export const AdditionalFilterValueInput = observer(function AdditionalFilterValu
         onChange={(value) => onChange(value as SingleOrArray<V>)}
       />
     );
+  }
+
+  // With value filter input
+  if (filterFieldConfig?.type === FILTER_FIELD_TYPE.WITH_VALUE) {
+    // No input needed for "with value" filters—render nothing.
+    return <></>;
   }
 
   return <AdditionalFilterValueInputCE {...props} />;

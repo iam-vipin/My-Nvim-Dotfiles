@@ -2,6 +2,7 @@
 import type { TFilterProperty } from "@plane/types";
 import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
+import { getIsNullOperatorConfigEntry } from "../entries";
 import { getNumberConfig, getNumberRangeConfig } from "../extended";
 import type { TCreateFilterConfig } from "../shared";
 import { createFilterConfig, createOperatorConfigEntry } from "../shared";
@@ -45,5 +46,6 @@ export const getNumberPropertyFilterConfig =
         createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>
           getNumberRangeConfig(updatedParams)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });

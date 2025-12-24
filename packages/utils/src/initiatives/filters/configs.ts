@@ -9,6 +9,7 @@ import {
   getMultiSelectConfig,
   getMemberMultiSelectConfig,
   getSupportedDateOperators,
+  getIsNullOperatorConfigEntry,
 } from "../../rich-filters";
 
 // ------------ Initiative filter types ------------
@@ -39,7 +40,7 @@ export type TCreateInitiativeLabelsFilterParams = TCreateFilterConfigParams &
 export const getInitiativeLeadFilterConfig =
   <P extends string>(key: P) =>
   (params: TCreateInitiativeLeadFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Lead",
       icon: params.filterIcon,
@@ -48,6 +49,7 @@ export const getInitiativeLeadFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });
 
@@ -62,7 +64,7 @@ export const getInitiativeLeadFilterConfig =
 export const getInitiativeStatesFilterConfig =
   <P extends string>(key: P) =>
   (params: TCreateInitiativeStatesFilterParams) =>
-    createFilterConfig<P, TInitiativeStates>({
+    createFilterConfig<P>({
       id: key,
       label: "State",
       icon: params.filterIcon,
@@ -104,7 +106,7 @@ export const getInitiativeStatesFilterConfig =
 export const getInitiativeLabelsFilterConfig =
   <P extends string>(key: P) =>
   (params: TCreateInitiativeLabelsFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Labels",
       icon: params.filterIcon,
@@ -128,6 +130,7 @@ export const getInitiativeLabelsFilterConfig =
             }
           )
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });
 
@@ -142,7 +145,7 @@ export const getInitiativeLabelsFilterConfig =
 export const getInitiativeStartDateFilterConfig =
   <P extends TFilterProperty>(key: P) =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "Start date",
       icon: params.filterIcon,
@@ -160,7 +163,7 @@ export const getInitiativeStartDateFilterConfig =
 export const getInitiativeEndDateFilterConfig =
   <P extends TFilterProperty>(key: P) =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "End date",
       icon: params.filterIcon,

@@ -2,6 +2,7 @@
 import type { TFilterProperty } from "@plane/types";
 import { EQUALITY_OPERATOR } from "@plane/types";
 // local imports
+import { getIsNullOperatorConfigEntry } from "../entries";
 import { getTextConfig } from "../extended";
 import type { TCreateFilterConfig } from "../shared";
 import { createFilterConfig, createOperatorConfigEntry } from "../shared";
@@ -31,5 +32,6 @@ export const getTextPropertyFilterConfig =
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getTextConfig(updatedParams)),
         createOperatorConfigEntry(EQUALITY_OPERATOR.CONTAINS, params, (updatedParams) => getTextConfig(updatedParams)),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });

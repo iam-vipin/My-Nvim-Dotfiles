@@ -7,9 +7,9 @@ import {
   CycleGroupIcon,
   CycleIcon,
   ModuleIcon,
+  StatePropertyIcon,
   PriorityIcon,
   StateGroupIcon,
-  StatePropertyIcon,
   MembersPropertyIcon,
   LabelPropertyIcon,
   StartDatePropertyIcon,
@@ -22,7 +22,6 @@ import type {
   IState,
   IUserLite,
   TFilterConfig,
-  TFilterValue,
   IIssueLabel,
   IModule,
   IProject,
@@ -75,9 +74,9 @@ export type TUseWorkItemFiltersConfigProps = {
 
 export type TWorkItemFiltersConfig = {
   areAllConfigsInitialized: boolean;
-  configs: TFilterConfig<TWorkItemFilterProperty, TFilterValue>[];
+  configs: TFilterConfig<TWorkItemFilterProperty>[];
   configMap: {
-    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty, TFilterValue>;
+    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty>;
   };
   isFilterEnabled: (key: TWorkItemFilterProperty) => boolean;
   members: IUserLite[];

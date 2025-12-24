@@ -12,7 +12,7 @@ import type {
   IProject,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { EWorkItemTypeEntity } from "@plane/types";
+import { EWorkItemTypeEntity, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
 import {
   getMilestoneFilterConfig,
   getMilestoneIconProps,
@@ -63,6 +63,14 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const workItemFiltersConfig = useCoreWorkItemFiltersConfig(props);
   const { isFilterEnabled, members, areAllConfigsInitialized: areAllCoreConfigsInitialized } = workItemFiltersConfig;
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
+  const operatorConfigsWithoutIsNull = useMemo(() => {
+    return {
+      allowedOperators: new Set(
+        [...operatorConfigs.allowedOperators].filter((op) => op !== EXTENDED_EQUALITY_OPERATOR.ISNULL)
+      ),
+      allowNegative: operatorConfigs.allowNegative,
+    };
+  }, [operatorConfigs]);
   const workItemTypes: IIssueType[] | undefined = workItemTypeIds
     ? (workItemTypeIds
         .map((workItemTypeId) => getIssueTypeById(workItemTypeId))
@@ -212,9 +220,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         isEnabled: isFilterEnabled("name"),
         filterIcon: AlignLeft,
         propertyDisplayName: "Name",
-        ...operatorConfigs,
+        ...operatorConfigsWithoutIsNull,
       }),
-    [isFilterEnabled, operatorConfigs]
+    [isFilterEnabled, operatorConfigsWithoutIsNull]
   );
 
   // milestones filter config

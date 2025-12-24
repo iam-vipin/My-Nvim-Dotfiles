@@ -48,7 +48,7 @@ export const getWorkItemTypeMultiSelectConfig = (
 export const getWorkItemTypeFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateWorkItemTypeFilterParams> =>
   (params: TCreateWorkItemTypeFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig({
       id: key,
       label: "Type",
       ...params,

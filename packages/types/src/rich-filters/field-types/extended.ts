@@ -9,6 +9,7 @@ export const EXTENDED_FILTER_FIELD_TYPE = {
   TEXT: "text",
   NUMBER: "number",
   NUMBER_RANGE: "number_range",
+  WITH_VALUE: "with_value",
 } as const;
 
 // -------- BOOLEAN FILTER CONFIGURATIONS --------
@@ -68,6 +69,17 @@ export type TNumberRangeFilterFieldConfig<V extends TFilterValue> = TBaseNumberF
   defaultValue?: V[];
 };
 
+// -------- FILTER WITH VALUE CONFIGURATIONS --------
+
+/**
+ * Filter with value configuration - for filtering with a specific value.
+ * - value: The value to filter with
+ */
+export type TWithValueFilterFieldConfig<V extends TFilterValue> = TBaseFilterFieldConfig & {
+  type: typeof EXTENDED_FILTER_FIELD_TYPE.WITH_VALUE;
+  value: V;
+};
+
 // -------- UNION TYPES --------
 
 /**
@@ -77,4 +89,5 @@ export type TExtendedFilterFieldConfigs<V extends TFilterValue = TFilterValue> =
   | TTextFilterFieldConfig<V>
   | TBooleanFilterFieldConfig
   | TNumberFilterFieldConfig<V>
-  | TNumberRangeFilterFieldConfig<V>;
+  | TNumberRangeFilterFieldConfig<V>
+  | TWithValueFilterFieldConfig<V>;

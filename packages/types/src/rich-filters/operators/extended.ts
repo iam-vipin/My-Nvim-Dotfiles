@@ -11,6 +11,7 @@ export const EXTENDED_LOGICAL_OPERATOR = {
  */
 export const EXTENDED_EQUALITY_OPERATOR = {
   CONTAINS: "icontains",
+  ISNULL: "isnull",
 } as const;
 
 /**

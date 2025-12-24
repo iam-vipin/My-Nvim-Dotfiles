@@ -25,7 +25,7 @@ import type {
   TLogicalOperator,
   TSupportedOperators,
 } from "@plane/types";
-import { FILTER_NODE_TYPE } from "@plane/types";
+import { FILTER_FIELD_TYPE, FILTER_NODE_TYPE } from "@plane/types";
 // local imports
 import {
   deepCompareFilterExpressions,
@@ -110,7 +110,11 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
     isNegation: boolean
   ) => void;
   updateConditionOperator: (conditionId: string, operator: TSupportedOperators, isNegation: boolean) => void;
-  updateConditionValue: <V extends TFilterValue>(conditionId: string, value: SingleOrArray<V>) => void;
+  updateConditionValue: <V extends TFilterValue>(
+    conditionId: string,
+    value: SingleOrArray<V>,
+    forceUpdate?: boolean
+  ) => void;
   removeCondition: (conditionId: string) => void;
   // config actions
   clearFilters: () => Promise<void>;
@@ -430,6 +434,11 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
         this.expression = updatedExpression;
       }
 
+      if (newOperatorConfig?.type === FILTER_FIELD_TYPE.WITH_VALUE) {
+        this.updateConditionValue(conditionId, newOperatorConfig.value, true);
+        return;
+      }
+
       if (hasValidValue(conditionBeforeUpdate.value)) {
         this._notifyExpressionChange();
       }
@@ -440,9 +449,10 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
    * Updates the value of a condition in the filter expression with automatic optimization.
    * @param conditionId - The id of the condition to update.
    * @param value - The new value for the condition.
+   * @param forceUpdate - Whether to force the update even if the value is the same as the condition before update.
    */
   updateConditionValue: IFilterInstance<P, E>["updateConditionValue"] = action(
-    <V extends TFilterValue>(conditionId: string, value: SingleOrArray<V>) => {
+    <V extends TFilterValue>(conditionId: string, value: SingleOrArray<V>, forceUpdate: boolean = false) => {
       // If the expression is not valid, return
       if (!this.expression) return;
 
@@ -459,7 +469,7 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
       }
 
       // If the value is the same as the condition before update, return
-      if (isEqual(conditionBeforeUpdate.value, value)) {
+      if (!forceUpdate && isEqual(conditionBeforeUpdate.value, value)) {
         return;
       }
 

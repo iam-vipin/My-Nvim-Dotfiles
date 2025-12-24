@@ -3,6 +3,7 @@ import type { TFilterProperty, TIssuePropertyOption, TSupportedOperators } from 
 import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import { getMultiSelectConfig } from "../core";
+import { getIsNullOperatorConfigEntry } from "../entries";
 import type { TCreateFilterConfig } from "../shared";
 import { createFilterConfig, createOperatorConfigEntry } from "../shared";
 import type { TCustomPropertyFilterParams } from "./shared";
@@ -57,5 +58,6 @@ export const getDropdownPropertyFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getDropdownMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });

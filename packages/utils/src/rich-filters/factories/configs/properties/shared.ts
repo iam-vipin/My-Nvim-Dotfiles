@@ -3,6 +3,7 @@ import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } fro
 import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import { getDatePickerConfig, getDateRangePickerConfig, getMultiSelectConfig } from "../core";
+import { getIsNullOperatorConfigEntry } from "../entries";
 import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams, TFilterIconType } from "../shared";
 import { createOperatorConfigEntry } from "../shared";
 
@@ -41,7 +42,7 @@ export const getMemberMultiSelectConfig = (params: TCreateUserFilterParams, sing
 
 // ------------ Date Operators ------------
 
-export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap<Date> =>
+export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap =>
   new Map([
     createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getDatePickerConfig(updatedParams)),
     createOperatorConfigEntry(COMPARISON_OPERATOR.LESS_THAN, params, (updatedParams) =>
@@ -59,6 +60,7 @@ export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOpe
     createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>
       getDateRangePickerConfig(updatedParams)
     ),
+    getIsNullOperatorConfigEntry(params),
   ]);
 
 // ------------ Project filter ------------

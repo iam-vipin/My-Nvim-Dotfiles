@@ -1,5 +1,5 @@
 // plane imports
-import type { IMilestoneInstance, TFilterProperty, TMilestone, TSupportedOperators } from "@plane/types";
+import type { IMilestoneInstance, TFilterProperty, TSupportedOperators } from "@plane/types";
 import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
 import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
@@ -48,7 +48,7 @@ export const getMilestoneMultiSelectConfig = (
 export const getMilestoneFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateMilestoneFilterParams> =>
   (params: TCreateMilestoneFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Milestone",
       ...params,

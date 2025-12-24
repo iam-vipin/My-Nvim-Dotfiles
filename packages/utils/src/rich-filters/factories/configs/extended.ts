@@ -88,3 +88,23 @@ export const getTextConfig = <V extends TFilterValue = string>(config: TTextConf
     type: EXTENDED_FILTER_FIELD_TYPE.TEXT,
     ...config,
   });
+
+// ------------ With value filters ------------
+
+/**
+ * With value configuration
+ */
+export type TWithValueConfig<V extends TFilterValue> = TCreateFilterConfigParams & {
+  value: V;
+};
+
+/**
+ * Helper to get the with value config
+ * @param config - With value configuration
+ * @returns The with value config
+ */
+export const getWithValueConfig = <V extends TFilterValue>(config: TWithValueConfig<V>) =>
+  createFilterFieldConfig<typeof EXTENDED_FILTER_FIELD_TYPE.WITH_VALUE, V>({
+    type: EXTENDED_FILTER_FIELD_TYPE.WITH_VALUE,
+    ...config,
+  });

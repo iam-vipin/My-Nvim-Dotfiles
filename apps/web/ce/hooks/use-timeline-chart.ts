@@ -17,10 +17,10 @@ export const getTimelineStore = (
     return timelineStore.modulesTimeLineStore as IBaseTimelineStore;
   }
   if (timelineType === GANTT_TIMELINE_TYPE.PROJECT) {
-    return timelineStore.projectTimeLineStore;
+    return timelineStore.projectTimeLineStore as IBaseTimelineStore;
   }
   if (timelineType === GANTT_TIMELINE_TYPE.GROUPED) {
-    return timelineStore.groupedTimeLineStore;
+    return timelineStore.groupedTimeLineStore as IBaseTimelineStore;
   }
   throw new Error(`Unknown timeline type: ${timelineType}`);
 };

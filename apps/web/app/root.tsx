@@ -19,6 +19,8 @@ import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+// plane web imports
+import { TrialBanner } from "@/plane-web/components/license/banner/trial-banner";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
@@ -119,6 +121,8 @@ export default function Root() {
   return (
     <AppProvider>
       <div className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}>
+        {/* free trial banner */}
+        <TrialBanner />
         <main className="w-full h-full overflow-hidden relative">
           <Outlet />
         </main>

@@ -27,17 +27,35 @@ const setTableToFullWidth = (editor: Editor): void => {
 
     // Find the selected table
     const { tableNode, tablePos } = findSelectedTable(editor);
-    if (!tableNode) return;
+    if (!tableNode) {
+      return;
+    }
 
-    // Get content width from CSS variable
+    // Get content width from CSS variable or calculate from editor container
     const editorContainer = view.dom.closest(".editor-container");
-    if (!editorContainer) return;
+    if (!editorContainer) {
+      return;
+    }
 
     const contentWidthVar = getComputedStyle(editorContainer).getPropertyValue("--editor-content-width").trim();
-    if (!contentWidthVar) return;
 
-    const contentWidth = parseInt(contentWidthVar);
-    if (isNaN(contentWidth) || contentWidth <= 0) return;
+    let contentWidth: number;
+
+    // Check if CSS variable exists and is a pixel value (not percentage or empty)
+    if (contentWidthVar) {
+      contentWidth = parseInt(contentWidthVar);
+    } else {
+      // Fallback: use the actual container width minus padding
+      const containerWidth = editorContainer.clientWidth;
+      const computedStyle = getComputedStyle(editorContainer);
+      const paddingLeft = parseInt(computedStyle.paddingLeft) || 0;
+      const paddingRight = parseInt(computedStyle.paddingRight) || 0;
+      contentWidth = containerWidth - paddingLeft - paddingRight;
+    }
+
+    if (isNaN(contentWidth) || contentWidth <= 0) {
+      return;
+    }
 
     // Calculate equal width for each column
     const map = TableMap.get(tableNode);

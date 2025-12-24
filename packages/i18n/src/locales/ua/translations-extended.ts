@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Ім'я користувача",
+        placeholder: "Введіть ваше ім'я користувача",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Продовжити з {ldapProviderName}",
+        sub_header: "Введіть ваші облікові дані {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Пі Чат",
     initiatives: "Інішіативз",

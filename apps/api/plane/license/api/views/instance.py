@@ -52,6 +52,8 @@ class InstanceEndpoint(BaseAPIView):
             OIDC_PROVIDER_NAME,
             IS_SAML_ENABLED,
             SAML_PROVIDER_NAME,
+            IS_LDAP_ENABLED,
+            LDAP_PROVIDER_NAME,
             GITHUB_APP_NAME,
             IS_GITLAB_ENABLED,
             IS_GITEA_ENABLED,
@@ -100,6 +102,14 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "SAML_PROVIDER_NAME",
                     "default": os.environ.get("SAML_PROVIDER_NAME", ""),
+                },
+                {
+                    "key": "IS_LDAP_ENABLED",
+                    "default": os.environ.get("IS_LDAP_ENABLED", "0"),
+                },
+                {
+                    "key": "LDAP_PROVIDER_NAME",
+                    "default": os.environ.get("LDAP_PROVIDER_NAME", ""),
                 },
                 {
                     "key": "GITHUB_APP_NAME",
@@ -176,6 +186,8 @@ class InstanceEndpoint(BaseAPIView):
         data["oidc_provider_name"] = OIDC_PROVIDER_NAME
         data["is_saml_enabled"] = IS_SAML_ENABLED == "1"
         data["saml_provider_name"] = SAML_PROVIDER_NAME
+        data["is_ldap_enabled"] = IS_LDAP_ENABLED == "1"
+        data["ldap_provider_name"] = LDAP_PROVIDER_NAME
 
         # Github app name
         data["github_app_name"] = str(GITHUB_APP_NAME)

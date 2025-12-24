@@ -6,6 +6,8 @@ export interface IInstanceConfigExtended {
   oidc_provider_name: string | undefined;
   is_saml_enabled: boolean;
   saml_provider_name: string | undefined;
+  is_ldap_enabled: boolean;
+  ldap_provider_name: string | undefined;
   // feature flags
   payment_server_base_url?: string;
   prime_server_base_url?: string;

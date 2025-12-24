@@ -4,6 +4,7 @@ import { StoreContext } from "@/providers/store.provider";
 
 export enum E_FEATURE_FLAGS {
   OIDC_SAML_AUTH = "OIDC_SAML_AUTH",
+  LDAP_AUTH = "LDAP_AUTH",
 }
 
 export const useInstanceFlag = (flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean = false): boolean => {

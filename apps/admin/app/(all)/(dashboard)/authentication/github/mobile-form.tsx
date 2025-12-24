@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { Smartphone } from "lucide-react";
 // plane internal packages
@@ -35,7 +34,7 @@ export function GithubMobileForm() {
 
   return (
     <div className="flex flex-col rounded-lg overflow-hidden">
-      <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
+      <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
         <Smartphone className="w-3 h-3" />
         Mobile
       </div>

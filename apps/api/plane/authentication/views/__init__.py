@@ -21,7 +21,10 @@ from .app.saml import (
 
 from .app.signout import SignOutAuthEndpoint
 
+from .app.ldap import LDAPSignInAuthEndpoint
 
+
+# Space authentication exports
 from .space.email import SignInAuthSpaceEndpoint, SignUpAuthSpaceEndpoint
 
 from .space.github import GitHubCallbackSpaceEndpoint, GitHubOauthInitiateSpaceEndpoint

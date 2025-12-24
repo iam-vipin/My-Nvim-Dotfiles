@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "ユーザー名",
+        placeholder: "ユーザー名を入力してください",
+      },
+    },
+    ldap: {
+      header: {
+        label: "{ldapProviderName}で続行",
+        sub_header: "{ldapProviderName}の認証情報を入力してください",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "PIチャット",
     initiatives: "イニシアチブ",

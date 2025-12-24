@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Kullanıcı adı",
+        placeholder: "Kullanıcı adınızı girin",
+      },
+    },
+    ldap: {
+      header: {
+        label: "{ldapProviderName} ile devam et",
+        sub_header: "{ldapProviderName} kimlik bilgilerinizi girin",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Pay Çet",
     initiatives: "İnisiyetivs",

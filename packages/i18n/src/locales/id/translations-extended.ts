@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Nama pengguna",
+        placeholder: "Masukkan nama pengguna Anda",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Lanjutkan dengan {ldapProviderName}",
+        sub_header: "Masukkan kredensial {ldapProviderName} Anda",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Plane AI",
     initiatives: "Inisiatif",

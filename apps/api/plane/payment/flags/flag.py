@@ -106,3 +106,5 @@ class FeatureFlag(Enum):
 class AdminFeatureFlag(Enum):
     # OIDC SAML Auth
     OIDC_SAML_AUTH = "OIDC_SAML_AUTH"
+    # LDAP Auth
+    LDAP_AUTH = "LDAP_AUTH"

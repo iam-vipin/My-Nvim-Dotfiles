@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "用户名",
+        placeholder: "请输入您的用户名",
+      },
+    },
+    ldap: {
+      header: {
+        label: "使用 {ldapProviderName} 继续",
+        sub_header: "请输入您的 {ldapProviderName} 凭据",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "PI 聊天",
     initiatives: "计划",

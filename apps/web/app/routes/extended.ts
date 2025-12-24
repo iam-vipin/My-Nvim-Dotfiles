@@ -1,7 +1,18 @@
 import { layout, route } from "@react-router/dev/routes";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
+// helpers
+import { mergeRoutes } from "./helper";
+// cloud routes
+import { cloudRoutes } from "./cloud";
 
-export const extendedRoutes: RouteConfigEntry[] = [
+export const enterpriseRoutes: RouteConfigEntry[] = [
+  // ========================================================================
+  // USER MANAGEMENT ROUTES
+  // ========================================================================
+
+  // LDAP Auth
+  route("ldap", "./(home)/ldap/page.tsx"),
+
   // ========================================================================
   // ALL APP ROUTES
   // ========================================================================
@@ -596,3 +607,5 @@ export const extendedRoutes: RouteConfigEntry[] = [
   // → /:workspaceSlug/wiki/:path*
   route(":workspaceSlug/pages/*", "routes/redirects/extended/wiki.tsx"),
 ];
+
+export const extendedRoutes: RouteConfigEntry[] = mergeRoutes(enterpriseRoutes, cloudRoutes);

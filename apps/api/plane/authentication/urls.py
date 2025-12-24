@@ -31,6 +31,8 @@ from .views import (
     SAMLCallbackEndpoint,
     SAMLMetadataEndpoint,
     SAMLLogoutEndpoint,
+    # LDAP
+    LDAPSignInAuthEndpoint,
     # Space
     EmailCheckSpaceEndpoint,
     GitLabCallbackSpaceEndpoint,
@@ -187,6 +189,8 @@ urlpatterns = [
     path("saml/callback/", SAMLCallbackEndpoint.as_view(), name="saml"),
     path("saml/metadata/", SAMLMetadataEndpoint.as_view(), name="saml"),
     path("saml/logout/", SAMLLogoutEndpoint.as_view(), name="saml"),
+    # LDAP
+    path("ldap/", LDAPSignInAuthEndpoint.as_view(), name="ldap"),
     # mobile web view authentication
     path(
         "mobile/email-check/",

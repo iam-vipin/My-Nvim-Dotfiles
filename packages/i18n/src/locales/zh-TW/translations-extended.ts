@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "使用者名稱",
+        placeholder: "請輸入您的使用者名稱",
+      },
+    },
+    ldap: {
+      header: {
+        label: "使用 {ldapProviderName} 繼續",
+        sub_header: "請輸入您的 {ldapProviderName} 憑證",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "派聊天",
     initiatives: "計劃",

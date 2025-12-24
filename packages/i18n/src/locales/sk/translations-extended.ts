@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Používateľské meno",
+        placeholder: "Zadajte svoje používateľské meno",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Pokračovať s {ldapProviderName}",
+        sub_header: "Zadajte svoje prihlasovacie údaje {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Pí Čet",
     initiatives: "Iniciatívy",

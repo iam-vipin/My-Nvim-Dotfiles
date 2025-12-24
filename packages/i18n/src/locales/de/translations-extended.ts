@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Benutzername",
+        placeholder: "Geben Sie Ihren Benutzernamen ein",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Mit {ldapProviderName} fortfahren",
+        sub_header: "Geben Sie Ihre {ldapProviderName}-Anmeldedaten ein",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Pi Tschat",
     initiatives: "Initiativen",

@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Nume de utilizator",
+        placeholder: "Introduceți numele de utilizator",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Continuați cu {ldapProviderName}",
+        sub_header: "Introduceți datele de autentificare {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Plane AI",
     initiatives: "Inițiative",

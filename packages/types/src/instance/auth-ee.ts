@@ -1,4 +1,6 @@
-export type TInstanceEnterpriseAuthenticationMethodKeys = "IS_OIDC_ENABLED" | "IS_SAML_ENABLED";
+export type TExtendedInstanceAuthenticationModeKeys = "oidc" | "saml" | "ldap";
+
+export type TInstanceEnterpriseAuthenticationMethodKeys = "IS_OIDC_ENABLED" | "IS_SAML_ENABLED" | "IS_LDAP_ENABLED";
 
 export type TInstanceOIDCAuthenticationConfigurationKeys =
   | "OIDC_CLIENT_ID"
@@ -18,9 +20,19 @@ export type TInstanceSAMLAuthenticationConfigurationKeys =
   | "SAML_PROVIDER_NAME"
   | "ENABLE_SAML_IDP_SYNC";
 
+export type TInstanceLDAPAuthenticationConfigurationKeys =
+  | "LDAP_SERVER_URI"
+  | "LDAP_BIND_DN"
+  | "LDAP_BIND_PASSWORD"
+  | "LDAP_USER_SEARCH_BASE"
+  | "LDAP_USER_SEARCH_FILTER"
+  | "LDAP_USER_ATTRIBUTES"
+  | "LDAP_PROVIDER_NAME";
+
 export type TInstanceEnterpriseAuthenticationConfigurationKeys =
   | TInstanceOIDCAuthenticationConfigurationKeys
-  | TInstanceSAMLAuthenticationConfigurationKeys;
+  | TInstanceSAMLAuthenticationConfigurationKeys
+  | TInstanceLDAPAuthenticationConfigurationKeys;
 
 export type TInstanceEnterpriseAuthenticationKeys =
   | TInstanceEnterpriseAuthenticationMethodKeys

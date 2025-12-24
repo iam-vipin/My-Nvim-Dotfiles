@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Имя пользователя",
+        placeholder: "Введите ваше имя пользователя",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Продолжить с {ldapProviderName}",
+        sub_header: "Введите ваши учетные данные {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Пи Чат",
     initiatives: "Инициативы",

@@ -9,23 +9,33 @@ import (
 func GetInstanceLicenses(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		// Initialize the variables
-		var exists bool
+		var oidc_saml_auth bool
+		var ldap_auth bool
 
 		// Check if the product type is PRO or ONE on any of the licenses
 		record := db.Db.Model(&db.License{}).
-			Where("product_type IN ?", []string{"PRO", "ONE", "BUSINESS", "ENTERPRISE"}).Select("1").Limit(1).Find(&exists)
+			Where("product_type IN ?", []string{"PRO", "ONE", "BUSINESS", "ENTERPRISE"}).Select("1").Limit(1).Find(&oidc_saml_auth)
 
 		// If there is an error, return false
 		if record.Error != nil {
-			ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-				"values": false,
-			})
-			return nil
+			oidc_saml_auth = false
 		}
 
-		// If the product type is not PRO or ONE, return false
+		// Check if the product type is ENTERPRISE on any of the licenses
+		record = db.Db.Model(&db.License{}).
+			Where("product_type IN ?", []string{"ENTERPRISE"}).Select("1").Limit(1).Find(&ldap_auth)
+
+		// If there is an error, return false
+		if record.Error != nil {
+			ldap_auth = false
+		}
+
+		// Return the values
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": exists,
+			"values": map[string]bool{
+				"OIDC_SAML_AUTH": oidc_saml_auth,
+				"LDAP_AUTH":      ldap_auth,
+			},
 		})
 		return nil
 	}

@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "사용자 이름",
+        placeholder: "사용자 이름을 입력하세요",
+      },
+    },
+    ldap: {
+      header: {
+        label: "{ldapProviderName}로 계속",
+        sub_header: "{ldapProviderName} 자격 증명을 입력하세요",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "파이 챗",
     initiatives: "이니셔티브스",

@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -10,6 +9,9 @@ import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
+// plane admin imports
+import { UpgradeButton } from "@/plane-admin/components/common";
+import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 
 type Props = {
   disabled: boolean;
@@ -21,8 +23,13 @@ export const OIDCConfiguration = observer(function OIDCConfiguration(props: Prop
   // store
   const { formattedConfig } = useInstance();
   // derived values
+  const isOIDCEnabled = useInstanceFlag("OIDC_SAML_AUTH");
   const enableOIDCConfig = formattedConfig?.IS_OIDC_ENABLED ?? "";
   const isOIDCConfigured = !!formattedConfig?.OIDC_CLIENT_ID && !!formattedConfig?.OIDC_CLIENT_SECRET;
+
+  if (isOIDCEnabled === false) {
+    return <UpgradeButton level="workspace" />;
+  }
 
   return (
     <>
@@ -34,9 +41,8 @@ export const OIDCConfiguration = observer(function OIDCConfiguration(props: Prop
           <ToggleSwitch
             value={Boolean(parseInt(enableOIDCConfig))}
             onChange={() => {
-              Boolean(parseInt(enableOIDCConfig)) === true
-                ? updateConfig("IS_OIDC_ENABLED", "0")
-                : updateConfig("IS_OIDC_ENABLED", "1");
+              const newEnableOIDCConfig = Boolean(parseInt(enableOIDCConfig)) === true ? "0" : "1";
+              updateConfig("IS_OIDC_ENABLED", newEnableOIDCConfig);
             }}
             size="sm"
             disabled={disabled}
@@ -44,7 +50,7 @@ export const OIDCConfiguration = observer(function OIDCConfiguration(props: Prop
         </div>
       ) : (
         <Link href="/authentication/oidc" className={cn(getButtonStyling("secondary", "base"), "text-tertiary")}>
-          <Settings2 className="h-4 w-4 p-0.5 text-tertiary/80" />
+          <Settings2 className="h-4 w-4 p-0.5 text-tertiary" />
           Configure
         </Link>
       )}

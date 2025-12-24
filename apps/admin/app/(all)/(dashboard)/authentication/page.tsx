@@ -1,30 +1,33 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast } from "@plane/propel/toast";
 import type { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, resolveGeneralTheme } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
+import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+import { useAuthenticationModes } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store";
-// plane admin components
-import { AuthenticationModes } from "@/plane-admin/components/authentication";
 // types
 import type { Route } from "./+types/page";
 
 const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(_props: Route.ComponentProps) {
+  // theme
+  const { resolvedTheme: resolvedThemeAdmin } = useTheme();
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
-
-  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
-
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // derived values
   const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
+  const resolvedTheme = resolveGeneralTheme(resolvedThemeAdmin);
+
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   const updateConfig = async (key: TInstanceConfigurationKeys, value: string) => {
     setIsSubmitting(true);
@@ -57,6 +60,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
       });
   };
 
+  const authenticationModes = useAuthenticationModes({ disabled: isSubmitting, updateConfig, resolvedTheme });
   return (
     <PageWrapper
       header={{
@@ -93,7 +97,17 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
             </div>
           </div>
           <div className="text-lg font-medium pt-6">Available authentication modes</div>
-          <AuthenticationModes disabled={isSubmitting} updateConfig={updateConfig} />
+          {authenticationModes.map((method) => (
+            <AuthenticationMethodCard
+              key={method.key}
+              name={method.name}
+              description={method.description}
+              icon={method.icon}
+              config={method.config}
+              disabled={isSubmitting}
+              unavailable={method.unavailable}
+            />
+          ))}
         </div>
       ) : (
         <Loader className="space-y-10">

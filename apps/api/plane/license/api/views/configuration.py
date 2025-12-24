@@ -189,42 +189,51 @@ class AdminFeatureFlagEndpoint(BaseAPIView):
             response = requests.post(url, headers=headers)
             response.raise_for_status()
 
-            value = response.json().get("values", False)
+            values = response.json().get("values", {})
+            oidc_saml_auth = values.get("OIDC_SAML_AUTH", False)
+            ldap_auth = values.get("LDAP_AUTH", False)
+
             ## Check if the configuration is already initialized
-            (IS_OIDC_ENABLED, IS_SAML_ENABLED) = get_configuration_value(
-                [
-                    {
-                        "key": "IS_OIDC_ENABLED",
-                        "default": os.environ.get("IS_OIDC_ENABLED", "0"),
-                    },
-                    {
-                        "key": "IS_SAML_ENABLED",
-                        "default": os.environ.get("IS_SAML_ENABLED", "0"),
-                    },
-                ]
-            )
+            (IS_OIDC_ENABLED, IS_SAML_ENABLED, IS_LDAP_ENABLED) = get_configuration_value([
+                {
+                    "key": "IS_OIDC_ENABLED",
+                    "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_SAML_ENABLED",
+                    "default": os.environ.get("IS_SAML_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_LDAP_ENABLED",
+                    "default": os.environ.get("IS_LDAP_ENABLED", "0"),
+                },
+            ])
 
-            # If any of the configuration in enabled or the feature flag is enabled then return True
-            flag_value = value or IS_OIDC_ENABLED == "1" or IS_SAML_ENABLED == "1"
-
-            data = {flag.value: flag_value for flag in AdminFeatureFlag}
+            data = {
+                AdminFeatureFlag.OIDC_SAML_AUTH.value: oidc_saml_auth,
+                AdminFeatureFlag.LDAP_AUTH.value: ldap_auth,
+            }
             return Response(data, status=response.status_code)
         except requests.exceptions.RequestException:
             ## Check if the configuration is already initialized
-            (IS_OIDC_ENABLED, IS_SAML_ENABLED) = get_configuration_value(
-                [
-                    {
-                        "key": "IS_OIDC_ENABLED",
-                        "default": os.environ.get("IS_OIDC_ENABLED", "0"),
-                    },
-                    {
-                        "key": "IS_SAML_ENABLED",
-                        "default": os.environ.get("IS_SAML_ENABLED", "0"),
-                    },
-                ]
-            )
+            (IS_OIDC_ENABLED, IS_SAML_ENABLED, IS_LDAP_ENABLED) = get_configuration_value([
+                {
+                    "key": "IS_OIDC_ENABLED",
+                    "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_SAML_ENABLED",
+                    "default": os.environ.get("IS_SAML_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_LDAP_ENABLED",
+                    "default": os.environ.get("IS_LDAP_ENABLED", "0"),
+                },
+            ])
 
             # If any of the configuration in enabled or the feature flag is enabled then return True
-            flag_value = IS_OIDC_ENABLED == "1" or IS_SAML_ENABLED == "1"
-            data = {flag.value: flag_value for flag in AdminFeatureFlag}
+            data = {
+                AdminFeatureFlag.OIDC_SAML_AUTH.value: IS_OIDC_ENABLED == "1" or IS_SAML_ENABLED == "1",
+                AdminFeatureFlag.LDAP_AUTH.value: IS_LDAP_ENABLED == "1",
+            }
             return Response(data, status=status.HTTP_200_OK)

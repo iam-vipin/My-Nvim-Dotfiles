@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Uživatelské jméno",
+        placeholder: "Zadejte své uživatelské jméno",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Pokračovat s {ldapProviderName}",
+        sub_header: "Zadejte své přihlašovací údaje {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Plane AI",
     initiatives: "Iniciativy",

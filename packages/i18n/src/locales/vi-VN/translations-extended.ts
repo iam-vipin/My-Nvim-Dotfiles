@@ -1,4 +1,18 @@
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Tên người dùng",
+        placeholder: "Nhập tên người dùng của bạn",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Tiếp tục với {ldapProviderName}",
+        sub_header: "Nhập thông tin đăng nhập {ldapProviderName} của bạn",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Plane AI",
     initiatives: "Sáng kiến",

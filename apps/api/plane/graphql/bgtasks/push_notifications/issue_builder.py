@@ -237,7 +237,7 @@ class IssueNotificationBuilder:
 
         content = constructed_comment["content"] if constructed_comment and constructed_comment["content"] else None
         if content:
-            return f"{action} {f"'{content}'" if content else ''}"
+            return f"{action}" + f"' {content}'" if content else ""
         else:
             if self.new_value == "None" and self.old_value == "None":
                 return f"{action}"

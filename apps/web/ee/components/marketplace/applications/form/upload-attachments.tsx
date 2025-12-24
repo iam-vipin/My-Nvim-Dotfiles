@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import type { Accept } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { ImageUp, Plus, Loader as Spinner, Upload } from "lucide-react";
-import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EFileAssetType } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn, checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -158,82 +158,62 @@ export const UploadAppAttachments = observer(function UploadAppAttachments(props
           <input {...getInputProps()} />
         </div>
       )}
-      <Transition.Root show={isOpen} as={React.Fragment}>
-        <Dialog as="div" className="relative z-30" onClose={handleClose}>
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-backdrop transition-opacity" />
-          </Transition.Child>
-          <div className="fixed inset-0 z-30 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center px-4 text-center">
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-4 py-4 text-left shadow-raised-200 transition-all sm:max-w-xl">
-                <Dialog.Title as="h3" className="text-h6-medium text-primary">
-                  {t("workspace_settings.settings.applications.uploading_images", { count: newImages.length })}
-                </Dialog.Title>
-                <div className="mt-4">
-                  <div
-                    className={cn(
-                      "group relative w-full min-w-80 flex items-center cursor-pointer p-2 flex-wrap gap-2",
-                      {
-                        "border border-dashed border-subtle-1 rounded-lg": !isAnyNewImageAvailable,
-                        "border-danger-subtle": hasError,
-                      }
-                    )}
-                  >
-                    {isAnyNewImageAvailable ? (
-                      <>
-                        {newImages.map((image) => (
-                          <ImagePreview
-                            key={image.name}
-                            image={image}
-                            isURL={false}
-                            onRemove={() => handleImagePreviewRemove(image)}
-                          />
-                        ))}
-                      </>
-                    ) : (
-                      <div className="flex w-full items-center justify-center gap-2 text-center" {...getRootProps()}>
-                        <Upload className="size-5 text-tertiary" />
-                        <p className="text-body-xs-medium text-secondary group-hover:text-accent-primary">
-                          {isDragActive
-                            ? t("workspace_settings.settings.applications.drop_images_here")
-                            : t("workspace_settings.settings.applications.click_to_upload_images")}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  {fileRejections.length > 0 && (
-                    <p className="text-danger text-body-xs-regular mt-2">
-                      {t("workspace_settings.settings.applications.invalid_file_or_exceeds_size_limit", {
-                        size: maxFileSize,
-                      })}
-                    </p>
-                  )}
+      <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
+        <div className="px-4 py-4">
+          <h3 className="text-h6-medium text-primary">
+            {t("workspace_settings.settings.applications.uploading_images", { count: newImages.length })}
+          </h3>
+          <div className="mt-4">
+            <div
+              className={cn("group relative w-full min-w-80 flex items-center cursor-pointer p-2 flex-wrap gap-2", {
+                "border border-dashed border-subtle-1 rounded-lg": !isAnyNewImageAvailable,
+                "border-danger-subtle": hasError,
+              })}
+            >
+              {isAnyNewImageAvailable ? (
+                <>
+                  {newImages.map((image) => (
+                    <ImagePreview
+                      key={image.name}
+                      image={image}
+                      isURL={false}
+                      onRemove={() => handleImagePreviewRemove(image)}
+                    />
+                  ))}
+                </>
+              ) : (
+                <div className="flex w-full items-center justify-center gap-2 text-center" {...getRootProps()}>
+                  <Upload className="size-5 text-tertiary" />
+                  <p className="text-body-xs-medium text-secondary group-hover:text-accent-primary">
+                    {isDragActive
+                      ? t("workspace_settings.settings.applications.drop_images_here")
+                      : t("workspace_settings.settings.applications.click_to_upload_images")}
+                  </p>
                 </div>
-                <div className="mt-6 flex justify-end">
-                  <div className="flex gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
-                      {t("common.cancel")}
-                    </Button>
-                    <Button variant="primary" onClick={handleSubmit} disabled={!newImages.length} loading={isUploading}>
-                      {isUploading
-                        ? t("workspace_settings.settings.applications.uploading")
-                        : t("workspace_settings.settings.applications.upload_and_save")}
-                    </Button>
-                  </div>
-                </div>
-              </Dialog.Panel>
+              )}
+            </div>
+            {fileRejections.length > 0 && (
+              <p className="text-danger text-body-xs-regular mt-2">
+                {t("workspace_settings.settings.applications.invalid_file_or_exceeds_size_limit", {
+                  size: maxFileSize,
+                })}
+              </p>
+            )}
+          </div>
+          <div className="mt-6 flex justify-end">
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={handleClose}>
+                {t("common.cancel")}
+              </Button>
+              <Button variant="primary" onClick={handleSubmit} disabled={!newImages.length} loading={isUploading}>
+                {isUploading
+                  ? t("workspace_settings.settings.applications.uploading")
+                  : t("workspace_settings.settings.applications.upload_and_save")}
+              </Button>
             </div>
           </div>
-        </Dialog>
-      </Transition.Root>
+        </div>
+      </ModalCore>
     </div>
   );
 });

@@ -1,5 +1,5 @@
 // local imports
-import type { EInboxIssueSource } from "../../inbox";
+import type { EInboxIssueSource } from "../../intake";
 import type {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,

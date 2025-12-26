@@ -1,0 +1,52 @@
+import type { FC } from "react";
+import { useState } from "react";
+import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// plane web hooks
+import { useAsanaImporter } from "@/plane-web/hooks/store";
+
+export const OAuth = observer(function OAuth() {
+  // states
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // hooks
+  const {
+    auth: { oAuthInitiate },
+  } = useAsanaImporter();
+  const { t } = useTranslation();
+
+  const handleOAuthAuthentication = async () => {
+    setIsLoading(true);
+    try {
+      const response = await oAuthInitiate();
+      if (response) window.open(response);
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.toString() || "Something went wrong while authorizing Asana",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <section className="w-full overflow-y-auto">
+      <div className="relative flex items-center justify-between gap-3 pb-3.5">
+        <div>
+          <h3 className="text-18 font-medium">Asana to Plane {t("importers.migration_assistant")}</h3>
+          <p className="text-tertiary text-13">
+            {t("importers.migration_assistant_description", { serviceName: "Asana" })}
+          </p>
+        </div>
+        <div>
+          <Button onClick={handleOAuthAuthentication} loading={isLoading} disabled={isLoading}>
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Asana" })}
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+});

@@ -62,7 +62,7 @@ export function CreatePageModal(props: Props) {
     if (!workspaceSlug || !projectId) return;
 
     try {
-      const pageData = await createPage(pageFormData);
+      const pageData = await createPage?.(pageFormData);
       if (pageData) {
         captureSuccess({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.create,

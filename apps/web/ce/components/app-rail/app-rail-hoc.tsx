@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { PlaneNewIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
+import { isAppRailFeatureEnabled } from "@/plane-web/helpers/app-rail.helper";
 
 type WithDockItemsProps = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];
@@ -21,7 +22,7 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
         icon: <PlaneNewIcon className="size-5" />,
         href: `/${workspaceSlug}/`,
         isActive: isProjectsPath && !isNotificationsPath,
-        shouldRender: true,
+        shouldRender: isAppRailFeatureEnabled("projects"),
       },
     ];
 

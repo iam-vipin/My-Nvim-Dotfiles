@@ -1,13 +1,12 @@
 import { observer } from "mobx-react";
-
-import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
-import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { Copy, Pencil, Trash2, Link } from "lucide-react";
 // plane types
+import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ILinkDetails } from "@plane/types";
 // plane ui
-import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
+import { copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // helpers
 //
 // hooks
@@ -30,7 +29,8 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
   // platform os
   const { isMobile } = usePlatformOS();
 
-  const Icon = getIconForLink(link.url);
+  const faviconUrl: string | undefined = link.metadata?.favicon;
+  const linkTitle: string | undefined = link.metadata?.title;
 
   const copyToClipboard = (text: string) => {
     copyTextToClipboard(text).then(() =>
@@ -47,13 +47,20 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
       <div className="flex w-full items-start justify-between gap-2">
         <div className="flex items-start gap-2 truncate">
           <span className="py-1">
-            <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary shrink-0" />
+            {faviconUrl ? (
+              <img src={faviconUrl} alt="favicon" className="size-3 shrink-0" />
+            ) : (
+              <Link className="size-3 stroke-2 text-tertiary group-hover:text-primary shrink-0" />
+            )}
           </span>
-          <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
-              {link.title && link.title !== "" ? link.title : link.url}
-            </a>
-          </Tooltip>
+          <div className="flex flex-col gap-0.5 truncate">
+            <Tooltip tooltipContent={link.url} isMobile={isMobile}>
+              <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
+                {link.title && link.title !== "" ? link.title : link.url}
+              </a>
+            </Tooltip>
+            {linkTitle && linkTitle !== "" && <span className="text-placeholder text-11 truncate">{linkTitle}</span>}
+          </div>
         </div>
 
         <div className="z-1 flex shrink-0 items-center">
@@ -68,7 +75,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleEditLink();
               }}
             >
-              <EditIcon className="size-3 stroke-[1.5]" />
+              <Pencil className="size-3 stroke-[1.5]" />
             </button>
           )}
           <button
@@ -76,7 +83,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
             onClick={() => copyToClipboard(link.url)}
             className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
           >
-            <CopyIcon className="size-3 stroke-[1.5]" />
+            <Copy className="size-3 stroke-[1.5]" />
           </button>
           {isEditingAllowed && (
             <button
@@ -89,7 +96,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleDeleteLink();
               }}
             >
-              <TrashIcon className="size-3 stroke-[1.5]" />
+              <Trash2 className="size-3 stroke-[1.5]" />
             </button>
           )}
         </div>

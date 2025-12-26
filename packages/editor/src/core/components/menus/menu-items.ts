@@ -21,9 +21,14 @@ import {
   MinusSquare,
   Palette,
   AlignCenter,
+  MessageSquare,
+  LinkIcon,
+  Sigma,
+  SquareRadical,
+  FileCode2,
+  Paperclip,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { LinkIcon } from "@plane/propel/icons";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -48,9 +53,19 @@ import {
   toggleUnderline,
   unsetLinkEditor,
 } from "@/helpers/editor-commands";
+// plane editor imports
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import {
+  insertBlockMath,
+  insertExternalEmbed,
+  insertInlineMath,
+  insertAttachment,
+} from "@/plane-editor/helpers/editor-commands";
+// plane editor
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 // types
 import type { TCommandWithProps, TEditorCommands } from "@/types";
-import type { ISvgIcons } from "@plane/propel/icons";
+
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
 
@@ -58,7 +73,7 @@ export type EditorMenuItem<T extends TEditorCommands> = {
   key: T;
   name: string;
   command: commandFunction<T>;
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: LucideIcon;
   isActive: isActiveFunction<T>;
 };
 
@@ -249,6 +264,62 @@ export const TextAlignItem = (editor: Editor): EditorMenuItem<"text-align"> => (
   icon: AlignCenter,
 });
 
+export const CommentItem = (editor: Editor): EditorMenuItem<"comment"> => ({
+  key: "comment",
+  name: "Comment",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.COMMENTS),
+  command: (props) => {
+    if (!props) return;
+    editor.chain().focus().setComment(props.commentId).run();
+  },
+  icon: MessageSquare,
+});
+
+export const BlockEquationItem = (editor: Editor): EditorMenuItem<"block-equation"> => ({
+  key: "block-equation",
+  name: "Block equation",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.BLOCK_MATH),
+  command: (props) => {
+    if (!props) return;
+    insertBlockMath({ editor, latex: props.latex });
+  },
+  icon: Sigma,
+});
+
+export const InlineEquationItem = (editor: Editor): EditorMenuItem<"inline-equation"> => ({
+  key: "inline-equation",
+  name: "Inline equation",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.INLINE_MATH),
+  command: (props) => {
+    if (!props) return;
+    insertInlineMath({ editor, latex: props.latex });
+  },
+  icon: SquareRadical,
+});
+
+export const ExternalEmbedItem = (editor: Editor): EditorMenuItem<"external-embed"> => ({
+  key: "external-embed",
+  name: "External embed",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED),
+  command: (props) => {
+    if (!props) return;
+    insertExternalEmbed({
+      editor,
+      [EExternalEmbedAttributeNames.IS_RICH_CARD]: props[EExternalEmbedAttributeNames.IS_RICH_CARD],
+      [EExternalEmbedAttributeNames.SOURCE]: props[EExternalEmbedAttributeNames.SOURCE],
+    });
+  },
+  icon: FileCode2,
+});
+
+export const AttachmentItem = (editor: Editor): EditorMenuItem<"attachment"> => ({
+  key: "attachment",
+  name: "Attachment",
+  isActive: () => editor?.isActive(ADDITIONAL_EXTENSIONS.ATTACHMENT),
+  command: () => insertAttachment({ editor, event: "insert", pos: editor.state.selection.from }),
+  icon: Paperclip,
+});
+
 export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEditorCommands>[] => {
   if (!editor) return [];
 
@@ -271,10 +342,15 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     QuoteItem(editor),
     TableItem(editor),
     ImageItem(editor),
+    AttachmentItem(editor),
     HorizontalRuleItem(editor),
     LinkItem(editor),
     TextColorItem(editor),
     BackgroundColorItem(editor),
     TextAlignItem(editor),
+    CommentItem(editor),
+    BlockEquationItem(editor),
+    InlineEquationItem(editor),
+    ExternalEmbedItem(editor),
   ] as EditorMenuItem<TEditorCommands>[];
 };

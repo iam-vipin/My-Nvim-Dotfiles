@@ -1,7 +1,8 @@
 import { useMemo } from "react";
-// plane imports
+// constants
 import { IS_FAVORITE_MENU_OPEN, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
+import { useLocalStorage } from "@plane/hooks";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
@@ -11,16 +12,14 @@ import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
-// local storage
-import useLocalStorage from "./use-local-storage";
 
 export type TPageOperations = {
-  toggleLock: () => void;
+  toggleLock: ({ recursive }: { recursive?: boolean }) => void;
   toggleAccess: () => void;
   toggleFavorite: () => void;
   openInNewTab: () => void;
   copyLink: () => void;
-  duplicate: () => void;
+  duplicate: (realtimeEvents?: boolean) => void;
   toggleArchive: () => void;
 };
 
@@ -66,9 +65,22 @@ export const usePageOperations = (
           });
         });
       },
-      duplicate: async () => {
+      duplicate: async (realtimeEvents = true) => {
         try {
+          setToast({
+            id: "duplicating-page",
+            type: TOAST_TYPE.LOADING_TOAST,
+            title: "Duplicating page...",
+          });
           await duplicate();
+          if (realtimeEvents) return;
+          setTimeout(() => {
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Page duplicated successfully.",
+            });
+          }, 3000);
           captureSuccess({
             eventName: PROJECT_PAGE_TRACKER_EVENTS.duplicate,
             payload: {
@@ -76,16 +88,7 @@ export const usePageOperations = (
               state: "SUCCESS",
             },
           });
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Page duplicated successfully.",
-          });
-        } catch (error: any) {
-          captureError({
-            eventName: PROJECT_PAGE_TRACKER_EVENTS.duplicate,
-            error,
-          });
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -234,21 +237,21 @@ export const usePageOperations = (
             });
         }
       },
-      toggleLock: async () => {
+      toggleLock: async ({ recursive = false }: { recursive?: boolean } = {}) => {
         if (is_locked) {
           try {
-            await executeCollaborativeAction({ type: "sendMessageToServer", message: "unlock" });
+            await executeCollaborativeAction({ type: "sendMessageToServer", message: "unlock", recursive });
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Page unlocked successfully.",
+            });
             captureSuccess({
               eventName: PROJECT_PAGE_TRACKER_EVENTS.unlock,
               payload: {
                 id: page.id,
                 state: "SUCCESS",
               },
-            });
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Page unlocked successfully.",
             });
           } catch (error: any) {
             captureError({
@@ -263,18 +266,18 @@ export const usePageOperations = (
           }
         } else {
           try {
-            await executeCollaborativeAction({ type: "sendMessageToServer", message: "lock" });
+            await executeCollaborativeAction({ type: "sendMessageToServer", message: "lock", recursive });
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Page locked successfully.",
+            });
             captureSuccess({
               eventName: PROJECT_PAGE_TRACKER_EVENTS.lock,
               payload: {
                 id: page.id,
                 state: "SUCCESS",
               },
-            });
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Page locked successfully.",
             });
           } catch (error: any) {
             captureError({

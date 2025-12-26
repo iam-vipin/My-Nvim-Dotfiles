@@ -76,6 +76,7 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
 
       {/* quick actions dropdown */}
       <PageActions
+        realtimeEvents={false}
         optionsOrder={[
           "open-in-new-tab",
           "copy-link",

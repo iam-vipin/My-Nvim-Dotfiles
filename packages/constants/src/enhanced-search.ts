@@ -29,7 +29,7 @@ export type TSearchQueryResponse = {
 };
 
 export type TSearchFilter = {
-  key: TSearchFilterKeys;
+  key: ESearchFilterKeys;
   i18n_label: string;
 };
 

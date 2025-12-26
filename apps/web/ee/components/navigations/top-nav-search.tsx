@@ -11,6 +11,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
+import { Command } from "cmdk";
 
 export const TopNavSearch = observer(function TopNavSearch() {
   // states
@@ -56,16 +57,10 @@ export const TopNavSearch = observer(function TopNavSearch() {
       e.preventDefault();
       closePanel();
     }
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      router.push(`/${workspaceSlug}/search?q=${searchQuery}`);
-      closePanel();
-    }
   };
 
   return (
-    <div ref={containerRef} className="relative flex justify-center">
+    <Command ref={containerRef} className="relative flex justify-center">
       <div
         className={cn(
           "relative flex items-center transition-all duration-300 ease-in-out z-30",
@@ -114,6 +109,7 @@ export const TopNavSearch = observer(function TopNavSearch() {
           }
         )}
       >
+        <Command.Input value={searchQuery} hidden />
         {!searchQuery ? (
           <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
             <div className="w-24 h-24 bg-layer-1 rounded-full flex items-center justify-center">
@@ -137,6 +133,6 @@ export const TopNavSearch = observer(function TopNavSearch() {
           />
         )}
       </div>
-    </div>
+    </Command>
   );
 });

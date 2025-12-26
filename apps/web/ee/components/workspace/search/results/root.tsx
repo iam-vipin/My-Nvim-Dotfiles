@@ -1,19 +1,23 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { Command } from "cmdk";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Search, AlertCircle, Loader as Spinner } from "lucide-react";
+import { Search, AlertCircle, ArrowUp, ArrowDown } from "lucide-react";
 // plane imports
-import type { TSearchFilterKeys, TSearchQueryResponse, TSearchResultItem } from "@plane/constants";
-import { SEARCH_FILTERS, ESearchFilterKeys } from "@plane/constants";
+import type { TSearchQueryResponse, TSearchResultItem } from "@plane/constants";
+import { ESearchFilterKeys } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// helpers
-import { cn } from "@plane/utils";
+import { SearchIcon } from "@plane/propel/icons";
+// components
+import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // constants
 import { SearchItems } from "./search-item";
+import { SearchFilters } from "./search-filters";
 
 const workspaceService = new WorkspaceService();
 
@@ -33,8 +37,9 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
     props;
   // params
   const { workspaceSlug } = useParams();
+  const router = useAppRouter();
   // states
-  const [searchFilter, setSearchFilter] = useState<TSearchFilterKeys>(ESearchFilterKeys.ALL);
+  const [searchFilter, setSearchFilter] = useState<ESearchFilterKeys>(ESearchFilterKeys.ALL);
   const [searchResults, setSearchResults] = useState<TSearchQueryResponse>();
   const [error, setError] = useState<string | null>(null);
   // plane hooks
@@ -93,58 +98,18 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
       setIsSearching(false);
       return;
     }
-    debouncedSearchQuery(query);
+    void debouncedSearchQuery(query);
 
     return () => {
       debouncedSearchQuery.cancel();
     };
-  }, [query, debouncedSearchQuery, performSearch]);
+  }, [query, debouncedSearchQuery, performSearch, setFlattenedSearchResults, setIsSearching]);
 
   const filteredSearchResults = useMemo(() => {
     if (!flattenedSearchResults) return [];
     if (searchFilter === ESearchFilterKeys.ALL) return flattenedSearchResults;
     return searchResults?.[searchFilter] ?? [];
   }, [searchFilter, flattenedSearchResults, searchResults]);
-
-  const getSearchResultsCount = useCallback(
-    (filter: TSearchFilterKeys): number => {
-      if (!flattenedSearchResults) return 0;
-      if (filter === ESearchFilterKeys.ALL) return flattenedSearchResults.length;
-      return searchResults?.[filter]?.length ?? 0;
-    },
-    [flattenedSearchResults, searchResults]
-  );
-
-  const renderSearchFilters = () => (
-    <div className="shrink-0 flex gap-3 p-3 overflow-auto horizontal-scrollbar scrollbar-xs">
-      {SEARCH_FILTERS.map((filter) => (
-        <button
-          type="button"
-          key={filter.key}
-          onClick={() => setSearchFilter(filter.key)}
-          className={cn(
-            "shrink-0 flex w-fit items-center gap-2 text-11 font-medium rounded-md py-1.5 px-3 transition-all",
-            {
-              "text-secondary bg-layer-1": searchFilter !== filter.key,
-              "hover:bg-layer-1": searchFilter !== filter.key && !isSearching,
-              "text-accent-secondary bg-accent-primary/80/15": searchFilter === filter.key,
-              "cursor-not-allowed opacity-60": isSearching,
-            }
-          )}
-          disabled={searchFilter === filter.key || isSearching}
-        >
-          <span className="text-nowrap">{t(filter.i18n_label)}</span>
-          {isSearching && searchFilter === filter.key ? (
-            <Spinner className="size-3.5 animate-spin" />
-          ) : getSearchResultsCount(filter.key) > 0 ? (
-            <span className={cn("min-w-4 text-center", { "text-tertiary": searchFilter !== filter.key })}>
-              {getSearchResultsCount(filter.key)}
-            </span>
-          ) : null}
-        </button>
-      ))}
-    </div>
-  );
 
   const renderSearchResults = () => {
     if (error) {
@@ -171,30 +136,64 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
     }
 
     return (
-      <div className="transition-all duration-500 fade-in">
+      <Command.Group heading="Search results" className="transition-all duration-500 fade-in">
         {filteredSearchResults.map((entity) => (
-          <Link
+          <PowerKModalCommandItem
             key={entity.id}
-            href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
-            onClick={handleResultClick}
-            className="group rounded-md flex gap-2 p-3 text-13 text-primary transition-all items-center duration-300 ease-in-out hover:bg-layer-1 hover:px-3"
-          >
-            <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
-            <span className="flex-1 line-clamp-2">
-              {SearchItems[entity.entity_type || searchFilter]?.itemName({ ...entity, query })}
-            </span>
-          </Link>
+            value={`${entity.entity_type}-${entity.id}-${entity.name}`}
+            iconNode={SearchItems[entity.entity_type || searchFilter]?.icon(entity)}
+            label={SearchItems[entity.entity_type || searchFilter]?.itemName({ ...entity, query })}
+            onSelect={() => {
+              router.push(SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/");
+              handleResultClick?.();
+            }}
+          />
         ))}
-      </div>
+      </Command.Group>
     );
   };
 
   return (
-    <div className="size-full flex flex-col overflow-hidden py-2">
-      {renderSearchFilters()}
-      <div className="h-full flex-1 px-3 overflow-y-auto vertical-scrollbar scrollbar-sm pb-10">
+    <Command.List className="size-full flex flex-col overflow-hidden py-2">
+      <SearchFilters
+        flattenedSearchResults={flattenedSearchResults}
+        isSearching={isSearching}
+        searchFilter={searchFilter}
+        searchResults={searchResults}
+        updateSearchFilter={setSearchFilter}
+      />
+      <div className="h-full flex-1 overflow-y-auto vertical-scrollbar scrollbar-sm">
+        <Command.Group>
+          <PowerKModalCommandItem
+            value="navigate-to-search-page"
+            icon={SearchIcon}
+            label="Go to advanced search page"
+            onSelect={() => {
+              router.push(`/${workspaceSlug}/search?q=${query}`);
+            }}
+          />
+        </Command.Group>
         {renderSearchResults()}
       </div>
-    </div>
+      {filteredSearchResults.length !== 0 && (
+        <div className="pt-5 pb-2 px-3 flex items-center gap-2">
+          <p className="flex items-center gap-1 text-placeholder">
+            <span className="shrink-0 size-5 grid place-items-center rounded bg-layer-3 border border-subtle-1">
+              <ArrowUp className="size-3" />
+            </span>
+            <span className="shrink-0 size-5 grid place-items-center rounded bg-layer-3 border border-subtle-1">
+              <ArrowDown className="shrink-0 size-3" />
+            </span>
+            <span className="text-caption-md-medium">Select</span>
+          </p>
+          <p className="flex items-center gap-1 text-placeholder">
+            <span className="shrink-0 h-5 px-1 rounded bg-layer-3 text-11 font-medium flex items-center border border-subtle-1">
+              Enter
+            </span>
+            <span className="text-caption-md-medium">Open</span>
+          </p>
+        </div>
+      )}
+    </Command.List>
   );
 });

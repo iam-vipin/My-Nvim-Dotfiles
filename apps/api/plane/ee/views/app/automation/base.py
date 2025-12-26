@@ -53,6 +53,7 @@ class AutomationEndpoint(BaseAPIView):
                 ]
                 automation["average_run_time"] = sum(run_times) / len(run_times) if run_times else 0
 
+                automation["run_count"] = len(automation_runs)
                 automation["total_success_count"] = sum(
                     1 for run in automation_runs if run.get("status") == RunStatusChoices.SUCCESS.value
                 )
@@ -62,6 +63,7 @@ class AutomationEndpoint(BaseAPIView):
             else:
                 automation["last_run_status"] = None
                 automation["average_run_time"] = 0
+                automation["run_count"] = 0
                 automation["total_success_count"] = 0
                 automation["total_failed_count"] = 0
 

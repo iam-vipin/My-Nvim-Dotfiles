@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, List
 
 from django.db import transaction, connection
+from django.db.models import F
 from django.utils import timezone
 
 from plane.automations.registry import NodeRegistry, BaseAutomationNode
@@ -439,10 +440,11 @@ class AutomationExecutionEngine:
                             **self.get_entity_id_field(entity_type, entity_id),
                         )
 
-                        # Update automation run count and last run at
-                        automation.last_run_at = timezone.now()
-                        automation.run_count += 1
-                        automation.save(update_fields=["last_run_at", "run_count"])
+                        # Update automation run count and last run at atomically
+                        Automation.objects.filter(id=automation.id).update(
+                            run_count=F("run_count") + 1,
+                            last_run_at=timezone.now(),
+                        )
 
                         # Record automation run activity
                         try:

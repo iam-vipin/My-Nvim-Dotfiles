@@ -4,6 +4,7 @@ import type { Editor } from "@tiptap/react";
 import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { debounce } from "lodash-es";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { cn, CORE_EXTENSIONS } from "@plane/utils";
@@ -29,6 +30,8 @@ const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropd
   const [selectedIndex, setSelectedIndex] = useState(0);
   // refs
   const dropdownContainer = useRef<HTMLDivElement>(null);
+  const searchCallbackRef = useRef(searchCallback);
+  const debouncedSearchRef = useRef<ReturnType<typeof debounce> | null>(null);
 
   const selectItem = useCallback(
     (item: TEmbedItem) => {
@@ -99,11 +102,31 @@ const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropd
   }));
 
   useEffect(() => {
-    setItems(undefined);
-    searchCallback(query).then((data) => {
-      setItems(data);
-    });
-  }, [query, searchCallback]);
+    searchCallbackRef.current = searchCallback;
+  }, [searchCallback]);
+
+  useEffect(() => {
+    debouncedSearchRef.current = debounce(async (searchQuery: string) => {
+      setItems(undefined);
+      try {
+        const data = await searchCallbackRef.current(searchQuery);
+        setItems(data);
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+        setItems([]);
+      }
+    }, 300);
+
+    return () => {
+      debouncedSearchRef.current?.cancel();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (query !== undefined && query !== null) {
+      void debouncedSearchRef.current?.(query);
+    }
+  }, [query]);
 
   useOutsideClickDetector(dropdownContainer, onClose);
 

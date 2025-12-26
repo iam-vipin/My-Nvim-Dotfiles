@@ -13,6 +13,7 @@ import {
   ADDITIONAL_NOTIFICATION_CONTENT_MAP,
   renderAdditionalAction,
   renderAdditionalValue,
+  shouldRender,
   shouldShowConnector,
 } from "@/plane-web/components/workspace-notifications/notification-card/content";
 
@@ -201,7 +202,7 @@ export function NotificationContent({
     <>
       {renderTriggerName()}
       <span className="text-tertiary">{renderAction()} </span>
-      {verb !== "deleted" && (
+      {shouldRender(notificationField, verb) && (
         <>
           {showConnector && <span className="text-tertiary">to </span>}
           <span className="text-primary font-medium">{renderValue()}</span>

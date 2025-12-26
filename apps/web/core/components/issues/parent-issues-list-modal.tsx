@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
-import { Rocket } from "lucide-react";
+import { Search } from "lucide-react";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { generateWorkItemLink, getTabIndex } from "@plane/utils";
+import { getTabIndex } from "@plane/utils";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-search-modal-empty-state";
 // helpers
@@ -19,9 +18,9 @@ import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-searc
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
+import { ParentIssuesListItem } from "./parent-issues-list-item";
 
 type Props = {
   isOpen: boolean;
@@ -31,6 +30,7 @@ type Props = {
   projectId: string | undefined;
   issueId?: string;
   searchEpic?: boolean;
+  convertToWorkItem?: boolean;
 };
 
 // services
@@ -44,6 +44,7 @@ export function ParentIssuesListModal({
   projectId,
   issueId,
   searchEpic = false,
+  convertToWorkItem = false,
 }: Props) {
   // i18n
   const { t } = useTranslation();
@@ -76,14 +77,15 @@ export function ParentIssuesListModal({
         parent: searchEpic ? undefined : true,
         issue_id: issueId,
         workspace_search: false,
-        epic: searchEpic ? true : undefined,
+        epic: searchEpic && !convertToWorkItem ? true : undefined,
+        convert: convertToWorkItem ? true : undefined,
       })
       .then((res) => setIssues(res))
       .finally(() => {
         setIsSearching(false);
         setIsLoading(false);
       });
-  }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug]);
+  }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug, convertToWorkItem, searchEpic]);
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
@@ -95,7 +97,7 @@ export function ParentIssuesListModal({
         }}
       >
         <div className="relative m-1">
-          <SearchIcon
+          <Search
             className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
             aria-hidden="true"
           />
@@ -149,40 +151,7 @@ export function ParentIssuesListModal({
                         } ${selected ? "text-primary" : ""}`
                       }
                     >
-                      <div className="flex flex-grow items-center gap-2 truncate">
-                        <span
-                          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                          style={{
-                            backgroundColor: issue.state__color,
-                          }}
-                        />
-                        <span className="flex-shrink-0">
-                          <IssueIdentifier
-                            projectId={issue.project_id}
-                            issueTypeId={issue.type_id}
-                            projectIdentifier={issue.project__identifier}
-                            issueSequenceId={issue.sequence_id}
-                            size="xs"
-                            variant="secondary"
-                          />
-                        </span>{" "}
-                        <span className="truncate">{issue.name}</span>
-                      </div>
-                      <a
-                        href={generateWorkItemLink({
-                          workspaceSlug: workspaceSlug.toString(),
-                          projectId: issue?.project_id,
-                          issueId: issue?.id,
-                          projectIdentifier: issue.project__identifier,
-                          sequenceId: issue?.sequence_id,
-                        })}
-                        target="_blank"
-                        className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Rocket className="h-4 w-4" />
-                      </a>
+                      <ParentIssuesListItem workspaceSlug={workspaceSlug?.toString()} issue={issue} />
                     </Combobox.Option>
                   ))}
                 </ul>

@@ -4,9 +4,9 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
-import { ArrowLeft, List, Settings } from "lucide-react";
+import { ArrowLeft, Check, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
+import { ListLayoutIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import type { IJiraImporterForm } from "@plane/types";
 // assets
@@ -34,7 +34,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Import Data",
     key: "display-import-data",
-    icon: List,
+    icon: ListLayoutIcon,
   },
   {
     title: "Users",
@@ -44,7 +44,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Confirm",
     key: "import-confirmation",
-    icon: CheckIcon,
+    icon: Check,
   },
 ];
 

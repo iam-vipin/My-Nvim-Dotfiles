@@ -11,6 +11,7 @@ import { CollaborationProvider, useCollaboration } from "@/contexts/collaboratio
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
+import { DocumentEditorSideEffects } from "@/plane-editor/components/document-editor-side-effects";
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
@@ -37,6 +38,7 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
     dragDropEnabled = true,
     isTouchDevice,
     mentionHandler,
+    pageRestorationInProgress,
     onAssetChange,
     onChange,
     onEditorFocus,
@@ -92,7 +94,7 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
   // Show loader ONLY when cache is known empty and server hasn't synced yet
   const shouldShowSyncLoader = state.isCacheReady && !state.hasCachedContent && !state.isServerSynced;
   const shouldWaitForFallbackBinary = isFetchingFallbackBinary && !state.hasCachedContent && state.isServerDisconnected;
-  const isLoading = shouldShowSyncLoader || shouldWaitForFallbackBinary;
+  const isLoading = shouldShowSyncLoader || shouldWaitForFallbackBinary || pageRestorationInProgress;
 
   // Gate content rendering on isDocReady to prevent empty editor flash
   const showContentSkeleton = !state.isDocReady;
@@ -101,6 +103,12 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
 
   return (
     <>
+      <DocumentEditorSideEffects
+        editor={editor}
+        id={id}
+        updatePageProperties={updatePageProperties}
+        extendedEditorProps={extendedEditorProps}
+      />
       <div
         className={cn(
           "transition-opacity duration-200",
@@ -133,7 +141,7 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
 
 // Outer component that provides collaboration context
 function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
-  const { id, realtimeConfig, serverHandler, user } = props;
+  const { id, realtimeConfig, serverHandler, user, extendedDocumentEditorProps } = props;
 
   const token = useMemo(() => JSON.stringify(user), [user]);
 
@@ -143,6 +151,7 @@ function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
       serverUrl={realtimeConfig.url}
       authToken={token}
       onStateChange={serverHandler?.onStateChange}
+      shouldSendSyncedEvent={!extendedDocumentEditorProps?.isSelfHosted}
     >
       <CollaborativeDocumentEditorInner {...props} />
     </CollaborationProvider>

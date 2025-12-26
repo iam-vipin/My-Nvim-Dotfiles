@@ -15,7 +15,7 @@ import { createFilterConfig, getSupportedDateOperators } from "../../../rich-fil
 export const getStartDateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P>({
+    createFilterConfig({
       id: key,
       label: "Start date",
       ...params,
@@ -33,9 +33,9 @@ export const getStartDateFilterConfig =
 export const getTargetDateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P>({
+    createFilterConfig({
       id: key,
-      label: "Target date",
+      label: "Due date",
       ...params,
       icon: params.filterIcon,
       allowMultipleFilters: true,
@@ -51,7 +51,7 @@ export const getTargetDateFilterConfig =
 export const getCreatedAtFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P>({
+    createFilterConfig({
       id: key,
       label: "Created at",
       ...params,
@@ -69,7 +69,7 @@ export const getCreatedAtFilterConfig =
 export const getUpdatedAtFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P>({
+    createFilterConfig({
       id: key,
       label: "Updated at",
       ...params,

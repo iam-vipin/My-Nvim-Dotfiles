@@ -1038,7 +1038,14 @@ def update_milestone_issue_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
+
     milestone = Milestone.objects.filter(pk=requested_data.get("milestone_id")).first()
+    # old milestone
+    old_milestone = (
+        Milestone.objects.filter(pk=current_instance.get("milestone_id")).first()
+        if current_instance and current_instance.get("milestone_id")
+        else None
+    )
     issue = Issue.objects.filter(pk=issue_id).first()
     if issue:
         issue.updated_at = timezone.now()
@@ -1048,14 +1055,14 @@ def update_milestone_issue_activity(
             issue_id=issue_id,
             actor_id=actor_id,
             verb="updated",
-            old_value=milestone.title if milestone else "",
+            old_value=(old_milestone.title if old_milestone else ""),
             new_value=milestone.title if milestone else "",
             field="milestones",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"updated milestone from {milestone.title if milestone else ''} to {milestone.title if milestone else ''}",
-            old_identifier=requested_data.get("milestone_id"),
-            new_identifier=requested_data.get("milestone_id"),
+            comment=f"updated milestone from {old_milestone.title if old_milestone else ''} to {milestone.title if milestone else ''}",
+            old_identifier=old_milestone.id if old_milestone else None,
+            new_identifier=milestone.id if milestone else None,
             epoch=epoch,
         )
     )

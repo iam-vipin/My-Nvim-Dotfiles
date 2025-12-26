@@ -172,6 +172,8 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         if milestone_work_item and milestone_work_item.milestone_id == new_milestone.id:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
+        old_milestone_id = milestone_work_item.milestone_id if milestone_work_item else None
+
         # Delete old milestone association and log it
         if milestone_work_item:
             milestone_work_item.delete()
@@ -189,15 +191,13 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         # Log creation with NEW milestone info
         issue_activity.delay(
             type=(
-                "milestone_issue.activity.created"
-                if milestone_work_item is None
-                else "milestone_issue.activity.updated"
+                "milestone_issue.activity.created" if old_milestone_id is None else "milestone_issue.activity.updated"
             ),
             requested_data=json.dumps({"milestone_id": str(new_milestone.id)}),
             actor_id=str(request.user.id),
             issue_id=str(work_item_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"milestone_name": new_milestone.title}),
+            current_instance=(json.dumps({"milestone_id": str(old_milestone_id)}) if old_milestone_id else None),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),

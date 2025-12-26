@@ -8,9 +8,10 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProject, IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
+import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
+import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -97,11 +98,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
   return (
     <div>
       <div className="relative h-[118px] w-full ">
-        <img
-          src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
-          alt={project.name}
-          className="absolute left-0 top-0 h-full w-full object-cover"
-        />
+        <CoverImage src={project.cover_image_url} alt={project.name} className="absolute left-0 top-0 h-full w-full" />
         {isAdmin && (
           <div className="absolute right-4 top-4">
             <ImagePickerPopover

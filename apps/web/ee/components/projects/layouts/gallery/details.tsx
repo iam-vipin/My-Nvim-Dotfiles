@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
+import { observer } from "mobx-react";
+import React, { useState } from "react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -10,15 +10,15 @@ import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, FavoriteStar } from "@plane/ui";
-import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
+import { CoverImage } from "@/components/common/cover-image";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { TProject } from "@/plane-web/types/projects";
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 
 type Props = {
   project: TProject;
@@ -134,11 +134,10 @@ export const Details = observer(function Details(props: Props) {
     <div className="w-full rounded-t ">
       <div className="relative ">
         <div>
-          <img
-            src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
+          <CoverImage
+            src={project.cover_image_url}
             alt={project.name}
-            className="relative w-full rounded-t object-cover h-[120px]"
-            // ref={projectCardRef}
+            className="relative w-full rounded-t h-[120px]"
             draggable={false}
             onDrag={(e) => {
               e.preventDefault();

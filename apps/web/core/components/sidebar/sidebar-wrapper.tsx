@@ -50,6 +50,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
 
           <div className="flex items-center justify-between gap-2 px-2">
             <span className="text-16 text-primary font-medium pt-1">{title}</span>
+
             <div className="flex items-center gap-2">
               {title === "Projects" && (
                 <IconButton

@@ -19,4 +19,8 @@ export * from "./user-circle-icon";
 export * from "./user-icon";
 export * from "./user-square-icon";
 export * from "./workflows-icon";
+export * from "./eye-open-icon";
+export * from "./pencil-left-icon";
+export * from "./transfer-hop";
+export * from "./comment-icon";
 export * from "./label-filled-icon";

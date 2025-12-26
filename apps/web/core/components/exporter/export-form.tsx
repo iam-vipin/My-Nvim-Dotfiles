@@ -2,24 +2,24 @@ import { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// import { Info } from "lucide-react";
+import { Info } from "lucide-react";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
   EXPORTERS_LIST,
-  // ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
   WORKSPACE_SETTINGS_TRACKER_EVENTS,
   WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// import { Tooltip } from "@plane/propel/tooltip";
-// import { EIssuesStoreType } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
+import { EIssuesStoreType } from "@plane/types";
 import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
-// import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-// import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -37,15 +37,15 @@ type FormData = {
   filters: TWorkItemFilterExpression;
 };
 
-// const initialWorkItemFilters = {
-//   richFilters: {},
-//   displayFilters: {},
-//   displayProperties: {},
-//   kanbanFilters: {
-//     group_by: [],
-//     sub_group_by: [],
-//   },
-// };
+const initialWorkItemFilters = {
+  richFilters: {},
+  displayFilters: {},
+  displayProperties: {},
+  kanbanFilters: {
+    group_by: [],
+    sub_group_by: [],
+  },
+};
 
 const projectExportService = new ProjectExportService();
 
@@ -215,7 +215,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         </div>
       </div>
       {/* Rich Filters */}
-      {/* <div className="w-full">
+      <div className="w-full">
         <div className="flex items-center gap-2 mb-2">
           <div className="text-13 font-medium text-secondary leading-tight">{t("common.filters")}</div>
           <Tooltip
@@ -256,7 +256,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
             </WorkspaceLevelWorkItemFiltersHOC>
           )}
         />
-      </div> */}
+      </div>
       <div className="flex items-center justify-between">
         <Button
           variant="primary"

@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";

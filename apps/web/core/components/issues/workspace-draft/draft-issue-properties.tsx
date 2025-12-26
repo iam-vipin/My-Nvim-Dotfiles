@@ -161,7 +161,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
 
       <IssuePropertyLabels
         projectId={issue?.project_id || null}
-        value={issue?.label_ids || null}
+        value={issue?.label_ids || []}
         defaultOptions={defaultLabelOptions}
         onChange={handleLabel}
         renderByDefault={isMobile}

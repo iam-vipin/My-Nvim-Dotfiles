@@ -332,12 +332,12 @@ class PageExtendedViewSet(BaseViewSet):
 
     def lock(self, request, slug, project_id, page_id):
         action = request.data.get("action", "current-page")
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             project_pages__project_id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         page.is_locked = True
         page.save()
@@ -354,12 +354,12 @@ class PageExtendedViewSet(BaseViewSet):
 
     def unlock(self, request, slug, project_id, page_id):
         action = request.data.get("action", "current-page")
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             project_pages__project_id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         page.is_locked = False
         page.save()
@@ -377,12 +377,12 @@ class PageExtendedViewSet(BaseViewSet):
 
     def access(self, request, slug, project_id, page_id):
         access = request.data.get("access", 0)
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             project_pages__project_id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
         old_page_access = page.access
 
         # Only update access if the page owner is the requesting user
@@ -758,13 +758,13 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
     model = Page
 
     def retrieve(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, project_pages__project_id=project_id)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
-            .first()
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
-        if page is None:
-            return Response({"error": "Page not found"}, status=404)
         binary_data = page.description_binary
 
         def stream_data():
@@ -779,13 +779,14 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, page_id):
         page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, project_pages__project_id=project_id)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
-            .first()
+            Page.objects.get(
+                Q(owned_by=self.request.user) | Q(access=0),
+                pk=page_id,
+                workspace__slug=slug,
+                project_pages__project_id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
         )
-
-        if page is None:
-            return Response({"error": "Page not found"}, status=404)
 
         if page.is_locked:
             return Response(
@@ -837,8 +838,12 @@ class PageDuplicateExtendedEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):
-        page = Page.objects.get(id=page_id, workspace__slug=slug, project_pages__project_id=project_id)
-
+        page = Page.objects.get(
+            id=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)

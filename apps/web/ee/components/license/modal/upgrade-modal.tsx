@@ -141,7 +141,7 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
             )}
             {isTrialEnded && (
               <div className="relative flex justify-start items-center pb-4">
-                <div className="p-1 px-2 bg-danger-primary text-danger-primary text-11 rounded-full font-medium">
+                <div className="p-1 px-2 bg-danger-subtle text-danger-primary text-11 rounded-full font-medium">
                   Trial ended
                 </div>
               </div>

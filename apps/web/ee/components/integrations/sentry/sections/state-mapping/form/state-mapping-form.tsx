@@ -219,7 +219,7 @@ export function StateMappingFormContent({
 
           {/* States Error State */}
           {statesError && !statesLoading && (
-            <div className="col-span-full bg-red-50 border border-danger-subtle rounded-lg p-3">
+            <div className="col-span-full bg-danger-subtle border border-danger-subtle rounded-lg p-3">
               <div className="text-body-xs-medium text-danger-primary">Failed to load project states</div>
               <div className="text-caption-sm-regular text-danger-primary mt-1">
                 Please try selecting the project again

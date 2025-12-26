@@ -55,14 +55,14 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
               `}
               >
                 {/* Plane Logo */}
-                <PlaneLogo className="h-5 w-auto flex-shrink-0 text-accent-primary" />
+                <PlaneLogo className="h-5 w-auto shrink-0 text-accent-primary" />
 
                 {/* Project Info with Logo */}
                 <div className="flex items-center gap-1.5 flex-1 min-w-0">
                   {/* Project Logo */}
                   <div
                     className={`
-                    h-4 w-4 flex-shrink-0 bg-surface-1 rounded
+                    h-4 w-4 shrink-0 bg-surface-1 rounded
                     overflow-hidden flex items-center justify-center
                   `}
                   >
@@ -88,7 +88,7 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
             </div>
 
             {/* Arrow - with reduced margins */}
-            <div className="mx-2 flex-shrink-0">
+            <div className="mx-2 shrink-0">
               <div
                 className={`
                 w-8 h-8 rounded-full flex items-center justify-center
@@ -116,13 +116,13 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
               `}
               >
                 {/* Slack Logo */}
-                <div className="h-5 w-5 flex-shrink-0 relative">
+                <div className="h-5 w-5 shrink-0 relative">
                   <img src={SlackLogo} alt="Slack" className="w-full h-full object-cover" />
                 </div>
 
                 {/* Channel Info */}
                 <div className="flex items-center gap-1 flex-1 min-w-0">
-                  <Hash className="h-3.5 w-3.5 text-[#E01E5A] flex-shrink-0" />
+                  <Hash className="h-3.5 w-3.5 text-[#E01E5A] shrink-0" />
                   <span className="text-body-xs-medium text-primary truncate">{connection.entity_slug}</span>
                 </div>
               </div>
@@ -152,7 +152,7 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
               variant="secondary"
               className={`
                 h-7 w-7 rounded-md p-0
-                hover:bg-danger-primary hover:text-danger-primary
+                hover:bg-danger-subtle hover:text-danger-primary
                 transition-colors
               `}
               onClick={() => onDelete(connection)}

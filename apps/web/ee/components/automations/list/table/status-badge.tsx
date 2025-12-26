@@ -1,4 +1,3 @@
-import React from "react";
 // plane imports
 import { EAutomationRunStatus } from "@plane/types";
 import { cn, getAutomationRunStatusLabel } from "@plane/utils";
@@ -10,9 +9,9 @@ type TAutomationRunStatusBadgeProps = {
 };
 
 const variantStylesMap: Map<TAutomationRunStatusBadgeVariant, string> = new Map([
-  ["success", "bg-success-primary"],
+  ["success", "bg-success-subtle"],
   ["info", "bg-yellow-500/10"],
-  ["error", "bg-danger-primary"],
+  ["error", "bg-danger-subtle"],
   ["default", "bg-layer-1"],
 ]);
 

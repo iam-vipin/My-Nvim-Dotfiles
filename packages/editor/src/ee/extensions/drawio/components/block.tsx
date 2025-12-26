@@ -157,7 +157,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
   if (failedToLoadDiagram && isUploaded) {
     return (
       <div className="relative">
-        <div className="flex items-center justify-center p-4 border border-danger-subtle rounded-md bg-red-50">
+        <div className="flex items-center justify-center p-4 border border-danger-subtle rounded-md bg-danger-subtle">
           <span className="text-danger-primary">Failed to load diagram</span>
         </div>
       </div>

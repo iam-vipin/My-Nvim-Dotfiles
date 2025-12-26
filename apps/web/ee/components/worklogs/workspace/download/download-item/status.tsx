@@ -12,9 +12,9 @@ export function WorklogDownloadStatus(props: { status: TWorklogDownloadStatus | 
   return (
     <span
       className={cn(`rounded-sm px-2 py-0.5 text-11 capitalize`, {
-        "bg-success-primary text-success-primary": status === "completed",
+        "bg-success-subtle text-success-primary": status === "completed",
         "bg-yellow-500/20 text-yellow-500": ["processing", "queued"].includes(status),
-        "bg-danger-primary text-danger-primary": status === "failed",
+        "bg-danger-subtle text-danger-primary": status === "failed",
         "bg-gray-500/20 text-gray-500": loader,
       })}
     >

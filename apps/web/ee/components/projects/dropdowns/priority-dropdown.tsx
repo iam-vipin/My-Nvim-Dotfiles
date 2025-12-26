@@ -64,11 +64,11 @@ function BorderButton(props: ButtonProps) {
   const priorityDetails = PROJECT_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-danger-primary text-danger-primary border-danger-strong px-1",
-    high: "bg-orange-500/20 text-orange-950 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
-    low: "bg-accent-primary/20 text-accent-primary border-accent-strong",
-    none: "hover:bg-layer-1 border-subtle-1",
+    urgent: "bg-layer-2 border-priority-urgent px-1",
+    high: "bg-layer-2 border-priority-high",
+    medium: "bg-layer-2 border-priority-medium",
+    low: "bg-layer-2 border-priority-low",
+    none: "bg-layer-2 border-strong",
   };
 
   const { isMobile } = usePlatformOS();
@@ -88,7 +88,7 @@ function BorderButton(props: ButtonProps) {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-danger-primary border-danger-strong": priority === "urgent" && hideText && highlightUrgent,
+            "border-priority-urgent": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -98,8 +98,7 @@ function BorderButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-danger-primary p-0.5 rounded-sm border border-danger-strong":
-                  priority === "urgent" && !hideText && highlightUrgent,
+                "p-0.5 rounded-sm border border-priority-urgent": priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -144,11 +143,11 @@ function BackgroundButton(props: ButtonProps) {
   const priorityDetails = PROJECT_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-danger-primary text-danger-primary",
-    high: "bg-orange-500/20 text-orange-950",
-    medium: "bg-yellow-500/20 text-yellow-950",
-    low: "bg-blue-500/20 text-blue-950",
-    none: "bg-layer-1",
+    urgent: "bg-layer-2",
+    high: "bg-layer-2",
+    medium: "bg-layer-2",
+    low: "bg-layer-2",
+    none: "bg-layer-2",
   };
 
   const { isMobile } = usePlatformOS();
@@ -168,7 +167,7 @@ function BackgroundButton(props: ButtonProps) {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-danger-primary border-danger-strong": priority === "urgent" && hideText && highlightUrgent,
+            "border-priority-urgent": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -178,8 +177,7 @@ function BackgroundButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-danger-primary p-0.5 rounded-sm border border-danger-strong":
-                  priority === "urgent" && !hideText && highlightUrgent,
+                "p-0.5 rounded-sm border border-priority-urgent": priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -224,14 +222,6 @@ function TransparentButton(props: ButtonProps) {
 
   const priorityDetails = PROJECT_PRIORITIES.find((p) => p.key === priority);
 
-  const priorityClasses = {
-    urgent: "text-red-950",
-    high: "text-orange-950",
-    medium: "text-yellow-950",
-    low: "text-blue-950",
-    none: "hover:text-tertiary",
-  };
-
   const { isMobile } = usePlatformOS();
 
   return (
@@ -243,14 +233,13 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 hover:bg-layer-1",
-          priorityClasses[priority ?? "none"],
+          "h-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 hover:bg-layer-transparent-hover",
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-danger-primary border-danger-strong": priority === "urgent" && hideText && highlightUrgent,
-            "bg-layer-1": isActive,
+            "border-priority-urgent": priority === "urgent" && hideText && highlightUrgent,
+            "bg-layer-transparent-active": isActive,
           },
           className
         )}
@@ -260,8 +249,7 @@ function TransparentButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-danger-primary p-0.5 rounded-sm border border-danger-strong":
-                  priority === "urgent" && !hideText && highlightUrgent,
+                "p-0.5 rounded-sm border border-priority-urgent": priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -271,7 +259,7 @@ function TransparentButton(props: ButtonProps) {
                   // increase the icon size if text is hidden
                   "h-3.5 w-3.5": hideText,
                   // centre align the icons if text is hidden
-                  "translate-x-[0.0625rem]": hideText && priority === "high",
+                  "translate-x-px": hideText && priority === "high",
                   "translate-x-0.5": hideText && priority === "medium",
                   "translate-x-1": hideText && priority === "low",
                   // highlight the icon if priority is urgent
@@ -281,9 +269,9 @@ function TransparentButton(props: ButtonProps) {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.label ?? placeholder}</span>}
+        {!hideText && <span className="grow truncate">{priorityDetails?.label ?? placeholder}</span>}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>

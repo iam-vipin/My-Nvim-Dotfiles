@@ -163,12 +163,8 @@ export const AppConsent = observer(function AppConsent({
       <h1>{t("workspace_settings.settings.applications.app_consent_title", { app: application?.name })}</h1>
 
       {!application?.published_at && !application?.is_internal && (
-        <div className="flex-shrink-0">
-          <div
-            className={cn(
-              "relative flex  justify-start items-start gap-2 p-2 px-4 md:w-[636px] rounded-lg bg-danger-primary text-danger-primary"
-            )}
-          >
+        <div className="shrink-0">
+          <div className="relative flex justify-start items-start gap-2 p-2 px-4 md:w-[636px] rounded-lg bg-danger-subtle text-danger-primary">
             <CircleAlert className="size-4" />
             <div className="flex flex-col gap-1">
               <div className="text-13 font-semibold text-start">

@@ -81,7 +81,7 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
       </div>
       <div className="flex flex-shrink-0 items-center gap-8">
         {isSelfManaged && subscriptionDetail?.product === EProductSubscriptionEnum.ONE && (
-          <div className="cursor-default rounded-md bg-success-primary px-2 py-0.5 text-center text-11 font-medium text-success-primary outline-none leading-6">
+          <div className="cursor-default rounded-md bg-success-subtle px-2 py-0.5 text-center text-11 font-medium text-success-primary outline-none leading-6">
             Perpetual license
           </div>
         )}

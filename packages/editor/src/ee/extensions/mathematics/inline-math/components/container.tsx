@@ -24,7 +24,7 @@ export function InlineMathContainer({
 
   const variantClasses = {
     empty: `bg-layer-1 text-tertiary ${isEditable ? "hover:bg-layer-1-hover hover:text-secondary cursor-pointer" : "cursor-default"}`,
-    error: `bg-danger-primary text-danger-primary ${isEditable ? "hover:bg-danger-primary cursor-pointer" : "cursor-default"}`,
+    error: `bg-danger-subtle text-danger-primary ${isEditable ? "hover:bg-danger-subtle-hover cursor-pointer" : "cursor-default"}`,
     content: `${isEditable ? "hover:bg-layer-1-hover cursor-pointer" : "cursor-default"}`,
   };
 

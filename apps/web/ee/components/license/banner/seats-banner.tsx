@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
 // helpers
@@ -47,15 +46,15 @@ export const LicenseSeatsBanner = observer(function LicenseSeatsBanner() {
       : "primary";
 
   return (
-    <div className="flex-shrink-0">
+    <div className="shrink-0">
       <div
         className={cn(
           "relative flex justify-center items-center gap-2 p-2 px-4",
-          currentVariant === "primary" ? "bg-yellow-300/15 text-yellow-500" : "bg-danger-primary text-danger-primary"
+          currentVariant === "primary" ? "bg-yellow-300/15 text-yellow-500" : "bg-danger-subtle text-danger-primary"
         )}
       >
         <div className="text-13 font-medium text-center">{planMessages[currentPlanKey]}</div>
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <Button
             variant={currentVariant === "primary" ? "primary" : "error-outline"}
             onClick={() => togglePaidPlanModal(true)}

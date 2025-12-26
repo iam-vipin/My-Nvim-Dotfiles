@@ -58,7 +58,7 @@ export const AddSeatsAlertBanner = observer(function AddSeatsAlertBanner(props: 
   const alertMessage = isFreePlan ? addSeatMessageFree : addSeatMessagePaid;
 
   return (
-    <div className="flex flex-row items-center gap-5 justify-between p-5 bg-danger-primary rounded">
+    <div className="flex flex-row items-center gap-5 justify-between p-5 bg-danger-subtle rounded">
       <div className="font-normal text-13">{alertMessage}</div>
       <Button
         variant="primary"

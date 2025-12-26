@@ -26,12 +26,12 @@ export function IntegrationsMapping(props: TIntegrationsMappingProps) {
         <div className="flex-1 flex flex-col gap-2 md:flex-row md:items-center transition-all duration-300 ease-in-out pr-0 md:group-hover:pr-[70px]">
           {/* Connector */}
           <div className="flex w-full flex-1 min-w-0 items-center gap-2 bg-layer-1 py-2 px-3 rounded-lg border border-subtle shadow-sm transition-all duration-200 group-hover:border-subtle">
-            <img src={connectorLogo} alt="connector logo" className="h-5 w-5 flex-shrink-0 relative" />
+            <img src={connectorLogo} alt="connector logo" className="h-5 w-5 shrink-0 relative" />
             <span className="text-body-xs-medium text-primary truncate">{entityName}</span>
           </div>
 
           {/* Arrow */}
-          <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mx-auto bg-gradient-to-r from-layer-1 to-surface-2 border border-subtle shadow-sm transition-all duration-200 group-hover:shadow group-hover:border-accent-strong/30">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mx-auto bg-gradient-to-r from-layer-1 to-surface-2 border border-subtle shadow-sm transition-all duration-200 group-hover:shadow group-hover:border-accent-strong/30">
             {!bidirectionalSync ? (
               <ArrowRight className="h-4 w-4 text-tertiary md:rotate-0 rotate-90 group-hover:text-accent-primary transition-colors duration-300" />
             ) : (
@@ -41,9 +41,9 @@ export function IntegrationsMapping(props: TIntegrationsMappingProps) {
 
           {/* Project Side */}
           <div className="flex w-full flex-1 min-w-0 items-center gap-2 bg-layer-1 py-2 px-3 rounded-lg border border-subtle shadow-sm transition-all duration-200 group-hover:border-subtle">
-            <PlaneLogo className="h-5 w-auto flex-shrink-0 relative text-primary" />
+            <PlaneLogo className="h-5 w-auto shrink-0 relative text-primary" />
             <div className="flex items-center gap-1.5 flex-1 min-w-0">
-              <div className="h-4 w-4 flex-shrink-0 bg-surface-1 rounded-sm overflow-hidden flex items-center justify-center">
+              <div className="h-4 w-4 shrink-0 bg-surface-1 rounded-sm overflow-hidden flex items-center justify-center">
                 {project?.logo_props ? (
                   <Logo logo={project?.logo_props} size={12} />
                 ) : (
@@ -69,7 +69,7 @@ export function IntegrationsMapping(props: TIntegrationsMappingProps) {
           </Button>
           <Button
             variant="secondary"
-            className="h-7 w-7 rounded-md p-0 hover:bg-danger-primary hover:text-danger-primary transition-colors"
+            className="h-7 w-7 rounded-md p-0 hover:bg-danger-subtle hover:text-danger-primary transition-colors"
             onClick={handleDeleteOpen}
             data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >

@@ -19,10 +19,10 @@ export function AutomationDetailsSidebarActionFormHeaderButton(props: TProps) {
         <button
           type="button"
           className={cn(
-            "flex-shrink-0 size-4 rounded-sm grid place-items-center outline-none border-none text-tertiary transition-colors",
+            "shrink-0 size-4 rounded-sm grid place-items-center outline-none border-none text-tertiary transition-colors",
             {
               "hover:text-primary hover:bg-layer-1": variant === "default",
-              "hover:text-danger-primary hover:bg-danger-primary": variant === "destructive",
+              "hover:text-danger-primary hover:bg-danger-subtle": variant === "destructive",
               "hover:text-tertiary hover:bg-transparent cursor-not-allowed": isDisabled,
             }
           )}

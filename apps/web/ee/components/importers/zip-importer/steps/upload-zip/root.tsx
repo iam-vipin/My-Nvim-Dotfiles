@@ -280,7 +280,7 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
                   {t(`${driverType}_importer.upload.ready`)}
                 </span>
               ) : uploadState === UploadState.ERROR ? (
-                <span className="text-11 font-medium px-2.5 py-0.5 rounded-full bg-red-100 text-danger-primary flex items-center gap-1">
+                <span className="text-11 font-medium px-2.5 py-0.5 rounded-full bg-danger-subtle text-danger-primary flex items-center gap-1">
                   <AlertTriangle size={12} />
                   {t(`${driverType}_importer.upload.error`)}
                 </span>

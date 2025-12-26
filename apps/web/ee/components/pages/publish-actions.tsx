@@ -86,11 +86,11 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
       {isDeployed && (
         <a
           href={publishLink}
-          className="h-6 px-2 bg-success-primary text-success-primary rounded-sm text-11 font-medium flex items-center gap-1.5"
+          className="h-6 px-2 bg-success-subtle text-success-primary rounded-sm text-11 font-medium flex items-center gap-1.5"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+          <span className="flex-shrink-0 rounded-full size-1.5 bg-success-primary" />
           Live
         </a>
       )}

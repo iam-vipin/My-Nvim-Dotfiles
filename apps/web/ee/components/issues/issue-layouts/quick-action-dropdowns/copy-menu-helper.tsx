@@ -1,16 +1,17 @@
-import type { Copy } from "lucide-react";
+// plane imports
 import { WORK_ITEM_TRACKER_ELEMENTS_EXTENDED } from "@plane/constants";
+import type { ISvgIcons } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
-// lib
+// helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
+// lib
 import { store } from "@/lib/store-context";
-// hooks
 
 export interface CopyMenuHelperProps {
   baseItem: {
     key: string;
     title: string;
-    icon: typeof Copy;
+    icon: React.FC<ISvgIcons>;
     action: () => void;
     shouldRender: boolean;
   };

@@ -79,7 +79,7 @@ export const TeamspaceProgressSummary = observer(function TeamspaceProgressSumma
             icon={<span className={cn(ICON_CLASSNAME, "bg-layer-1")} />}
             value={
               <>
-                <div className={"flex-shrink-0 absolute -top-0.5 -right-0.5 size-1.5 bg-danger-primary rounded-full"} />
+                <div className={"shrink-0 absolute -top-0.5 -right-0.5 size-1.5 bg-danger-subtle rounded-full"} />
                 {teamspaceProgressSummary?.pending_issues}
               </>
             }

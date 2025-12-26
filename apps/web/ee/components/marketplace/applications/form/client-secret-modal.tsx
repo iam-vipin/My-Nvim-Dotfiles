@@ -44,7 +44,7 @@ export function GeneratedCredentialsModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={handleClose}>
       <div className="w-full p-5">
         <div className="flex items-center space-x-2">
-          <div className="bg-green-500 rounded-full p-2">
+          <div className="bg-success-primary rounded-full p-2">
             <CheckCircle className="h-4 w-4 text-on-color flex-shrink-0" />
           </div>
           <div className="space-y-1 text-wrap">

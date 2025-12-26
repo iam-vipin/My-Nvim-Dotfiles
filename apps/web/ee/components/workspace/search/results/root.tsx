@@ -114,7 +114,7 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
   const renderSearchResults = () => {
     if (error) {
       return (
-        <div className="flex items-center gap-2 text-13 text-danger-primary bg-red-50 p-3 rounded-md">
+        <div className="flex items-center gap-2 text-13 text-danger-primary bg-danger-subtle p-3 rounded-md">
           <AlertCircle className="h-4 w-4" />
           {t("common.search.error")}
         </div>

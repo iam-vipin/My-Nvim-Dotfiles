@@ -47,14 +47,14 @@ export const AutomationDetailsSidebarActivityRunHistoryItem = observer(
     if (!activityDetails) return null;
 
     return (
-      <Disclosure as="div" className="relative z-[4] w-full bg-surface-1 border border-subtle-1 rounded-lg p-3">
+      <Disclosure as="div" className="relative z-4 w-full bg-surface-1 border border-subtle-1 rounded-lg p-3">
         <Disclosure.Button type="button" className="w-full flex items-center justify-between gap-2 text-11 text-left">
           {({ open }) => (
             <>
               <div className="shrink-0 flex items-center gap-2">
                 <span
-                  className={cn("shrink-0 size-7 rounded-full text-white grid place-items-center", {
-                    "bg-green-500": runDetails?.status === "success",
+                  className={cn("shrink-0 size-7 rounded-full text-on-color grid place-items-center", {
+                    "bg-success-primary": runDetails?.status === "success",
                     "bg-orange-500": runDetails?.status === "failed",
                   })}
                 >

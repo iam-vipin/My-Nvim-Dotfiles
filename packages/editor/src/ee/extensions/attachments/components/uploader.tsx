@@ -190,10 +190,10 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
           "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
           "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && editor.isEditable && !isErrorState,
-          "text-danger-primary cursor-default": isErrorState,
-          "hover:text-danger-primary hover:bg-danger-primary": isErrorState && editor.isEditable,
-          "bg-danger-primary": isErrorState && selected,
-          "hover:bg-danger-primary": isErrorState && selected && editor.isEditable,
+          "text-danger-primary bg-danger-subtle cursor-default": isErrorState,
+          "hover:text-danger-primary hover:bg-danger-subtle-hover": isErrorState && editor.isEditable,
+          "bg-danger-subtle-selected": isErrorState && selected,
+          "hover:bg-danger-subtle-active": isErrorState && selected && editor.isEditable,
         }
       )}
       style={borderColor ? { borderColor } : undefined}

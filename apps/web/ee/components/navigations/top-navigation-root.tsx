@@ -69,7 +69,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
   return (
     <div
-      className={cn("desktop-header flex items-center min-h-10 w-full px-3.5 z-[27] transition-all duration-300", {
+      className={cn("desktop-header flex items-center min-h-10 w-full px-3.5 z-27 transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
@@ -96,7 +96,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                 <div className="relative">
                   <InboxIcon className="size-5" />
                   {totalNotifications > 0 && (
-                    <span className="absolute -top-0 -right-0 size-2 rounded-full bg-red-500" />
+                    <span className="absolute top-0 right-0 size-2 rounded-full bg-danger-primary" />
                   )}
                 </div>
               ),
@@ -112,7 +112,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                 className={cn(
                   "flex items-center gap-1.5 transition-colors h-8 py-1.5 px-1 rounded-md  hover:bg-layer-1 text-tertiary hover:text-secondary place-items-center w-full",
                   {
-                    "bg-accent-primary/10 !text-accent-secondary": isPiChatDrawerOpen,
+                    "bg-accent-primary/10 text-accent-secondary!": isPiChatDrawerOpen,
                   }
                 )}
                 onClick={() => togglePiChatDrawer()}

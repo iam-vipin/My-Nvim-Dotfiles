@@ -89,7 +89,7 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
       title: t("common.actions.delete"),
       icon: Trash2,
       shouldRender: recurringWorkItem.canCurrentUserDelete,
-      className: "text-danger",
+      className: "text-danger-primary",
     },
   ];
 

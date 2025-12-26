@@ -119,7 +119,7 @@ export const AppImageUploadModal = observer(function AppImageUploadModal(props: 
             <input {...getInputProps()} />
           </div>
           {fileRejections.length > 0 && (
-            <p className="text-red-500 text-13 mt-2">Invalid file or exceeds size limit (5 MB).</p>
+            <p className="text-danger-primary text-13 mt-2">Invalid file or exceeds size limit (5 MB).</p>
           )}
         </div>
         <div className="mt-6 flex justify-between">

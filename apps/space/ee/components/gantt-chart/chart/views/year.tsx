@@ -29,13 +29,13 @@ export const YearChartView = observer(function YearChartView(_props: any) {
                   >
                     <div
                       className={`flex-shrink-0 border-b py-1 text-center text-13 font-medium capitalize ${
-                        _item?.today ? `border-red-500 text-red-500` : `border-subtle-1`
+                        _item?.today ? `border-danger-strong text-danger-primary` : `border-subtle-1`
                       }`}
                     >
                       <div>{_item.title}</div>
                     </div>
                     <div className={`relative flex h-full w-full flex-1 justify-center`}>
-                      {_item?.today && <div className="absolute bottom-0 top-0 border border-red-500"> </div>}
+                      {_item?.today && <div className="absolute bottom-0 top-0 border border-danger-strong"> </div>}
                     </div>
                   </div>
                 ))}

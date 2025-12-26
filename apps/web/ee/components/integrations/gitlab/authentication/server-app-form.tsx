@@ -95,7 +95,7 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.base_url_description")}
           </div>
-          {errors.baseUrl && <p className="text-red-500 text-caption-sm-regular">{errors.baseUrl.message}</p>}
+          {errors.baseUrl && <p className="text-danger-primary text-caption-sm-regular">{errors.baseUrl.message}</p>}
         </div>
         <div>
           <div className="text-body-xs-regular text-tertiary">{t("gitlab_enterprise_integration.client_id_title")}</div>
@@ -111,7 +111,7 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.client_id_description")}
           </div>
-          {errors.clientId && <p className="text-red-500 text-caption-sm-regular">{errors.clientId.message}</p>}
+          {errors.clientId && <p className="text-danger-primary text-caption-sm-regular">{errors.clientId.message}</p>}
         </div>
         <div>
           <div className="text-body-xs-regular text-tertiary">
@@ -129,7 +129,9 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.client_secret_description")}
           </div>
-          {errors.clientSecret && <p className="text-red-500 text-caption-sm-regular">{errors.clientSecret.message}</p>}
+          {errors.clientSecret && (
+            <p className="text-danger-primary text-caption-sm-regular">{errors.clientSecret.message}</p>
+          )}
         </div>
 
         <div>
@@ -149,7 +151,7 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
             {t("gitlab_enterprise_integration.webhook_secret_description")}
           </div>
           {errors.webhookSecret && (
-            <p className="text-red-500 text-caption-sm-regular">{errors.webhookSecret.message}</p>
+            <p className="text-danger-primary text-caption-sm-regular">{errors.webhookSecret.message}</p>
           )}
         </div>
         <div className="flex justify-start gap-2 mt-10">

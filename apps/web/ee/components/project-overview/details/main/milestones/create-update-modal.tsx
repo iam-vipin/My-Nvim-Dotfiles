@@ -194,7 +194,7 @@ export function CreateUpdateMilestoneModal(props: Props) {
                   required: "Title is required",
                 }}
               />
-              {errors.title && <p className="text-caption-sm-medium text-danger">{errors.title.message}</p>}
+              {errors.title && <p className="text-caption-sm-medium text-danger-primary">{errors.title.message}</p>}
             </div>
             {/* Description */}
             <Controller

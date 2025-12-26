@@ -229,7 +229,7 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
             </div>
           </div>
           {isPasswordConfirmationErrorStatus && (
-            <span className="text-13 text-red-500">Passwords don&apos;t match</span>
+            <span className="text-13 text-danger-primary">Passwords don&apos;t match</span>
           )}
         </div>
       )}

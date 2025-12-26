@@ -217,7 +217,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
           {/* Audio Recorder Loader */}
           {SPEECH_LOADERS.includes(loader) && (
             <div className="flex gap-2 p-2 items-center">
-              <Disc className="size-3 text-red-500" strokeWidth={3} />
+              <Disc className="size-3 text-danger-primary" strokeWidth={3} />
               <span className="text-caption-md-medium text-secondary">Recording...</span>
             </div>
           )}

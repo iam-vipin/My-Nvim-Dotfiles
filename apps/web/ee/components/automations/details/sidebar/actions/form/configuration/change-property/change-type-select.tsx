@@ -61,7 +61,7 @@ export const ChangeTypeSelect = observer(function ChangeTypeSelect(props: TProps
         )}
       />
       {changeTypeError && typeof changeTypeError.message === "string" && (
-        <span className="text-11 font-medium text-red-500">{changeTypeError.message}</span>
+        <span className="text-11 font-medium text-danger-primary">{changeTypeError.message}</span>
       )}
     </div>
   );

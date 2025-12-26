@@ -191,7 +191,7 @@ export function IntakePublishForm({
           <div className="w-full">
             <div className="text-13 text-tertiary mb-1 font-medium">
               Name
-              <span className="ml-0.5 text-red-500">*</span>
+              <span className="ml-0.5 text-danger-primary">*</span>
             </div>
             <Controller
               control={control}
@@ -219,14 +219,16 @@ export function IntakePublishForm({
                 />
               )}
             />
-            {errors.username && <span className="text-11 text-red-500">{errors.username.message as string}</span>}
+            {errors.username && (
+              <span className="text-11 text-danger-primary">{errors.username.message as string}</span>
+            )}
           </div>
 
           {/* Email Field */}
           <div className="w-full">
             <div className="text-13 text-tertiary mb-1 font-medium">
               Email
-              <span className="ml-0.5 text-red-500">*</span>
+              <span className="ml-0.5 text-danger-primary">*</span>
             </div>
             <Controller
               control={control}
@@ -254,14 +256,14 @@ export function IntakePublishForm({
                 />
               )}
             />
-            {errors.email && <span className="text-11 text-red-500">{errors.email.message as string}</span>}
+            {errors.email && <span className="text-11 text-danger-primary">{errors.email.message as string}</span>}
           </div>
 
           {/* Title Field */}
           <div className="w-full">
             <div className="text-13 text-tertiary mb-1 font-medium">
               What&apos;s this work item about?
-              <span className="ml-0.5 text-red-500">*</span>
+              <span className="ml-0.5 text-danger-primary">*</span>
             </div>
             <Controller
               control={control}
@@ -289,7 +291,7 @@ export function IntakePublishForm({
                 />
               )}
             />
-            {errors.name && <span className="text-11 text-red-500">{errors.name.message as string}</span>}
+            {errors.name && <span className="text-11 text-danger-primary">{errors.name.message as string}</span>}
           </div>
 
           {/* Description Field */}

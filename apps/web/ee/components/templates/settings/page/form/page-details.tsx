@@ -112,7 +112,7 @@ export const PageTemplatePageDetails = observer(function PageTemplatePageDetails
           )}
         />
         {errors?.page?.name && typeof errors.page.name.message === "string" && (
-          <span className="text-caption-sm-medium text-danger">{errors.page.name.message}</span>
+          <span className="text-caption-sm-medium text-danger-primary">{errors.page.name.message}</span>
         )}
       </div>
       {/* Page Description */}

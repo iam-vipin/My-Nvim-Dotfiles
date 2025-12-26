@@ -216,7 +216,7 @@ html.todesktop .desktop-app-container {
 }
 
 html.todesktop .desktop-header {
-  background-color: rgb(var(--color-background-90));
+  @apply bg-surface-2;
   -webkit-app-region: drag;
 }
 
@@ -248,9 +248,9 @@ html.todesktop .desktop-header .desktop-header-actions {
     border-width: revert;
   }
   pre {
+    @apply bg-layer-1;
     width: 100%;
     overflow-x: auto;
-    background-color: rgb(var(--color-background-80));
     border-radius: 10px;
     padding: 20px;
     font-family: inherit;
@@ -263,7 +263,7 @@ html.todesktop .desktop-header .desktop-header-actions {
     position: absolute;
     height: 8px !important;
     width: 8px !important;
-    background: rgba(var(--color-border-400)) !important;
+    background: var(--border-color-strong-1) !important;
     border-radius: 50%;
     opacity: 0;
     pointer-events: none;
@@ -306,7 +306,7 @@ html.todesktop .desktop-header .desktop-header-actions {
     }
 
     &:not(.resizing) .dashboard-widget-item:not(.selected):not(.disabled) {
-      border-color: rgba(var(--color-border-400)) !important;
+      border-color: var(--border-color-strong-1) !important;
     }
   }
 
@@ -544,7 +544,7 @@ input[type="color"].custom-color-picker {
 
 @keyframes highlight {
   0% {
-    background-color: rgba(var(--color-background-90), 1);
+    background-color: var(--background-color-surface-2);
     border-radius: 4px;
   }
   100% {

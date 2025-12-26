@@ -40,7 +40,7 @@ export function SkipUserImport({
       </div>
 
       {userSkipToggle && (
-        <div className="text-13 text-red-500">
+        <div className="text-13 text-danger-primary">
           {t("importers.skip_user_import_description", { serviceName: importSourceName })}
         </div>
       )}

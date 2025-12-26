@@ -10,9 +10,9 @@ type TAutomationRunStatusBadgeProps = {
 };
 
 const variantStylesMap: Map<TAutomationRunStatusBadgeVariant, string> = new Map([
-  ["success", "bg-green-500/10"],
+  ["success", "bg-success-primary"],
   ["info", "bg-yellow-500/10"],
-  ["error", "bg-red-500/10"],
+  ["error", "bg-danger-primary"],
   ["default", "bg-layer-1"],
 ]);
 

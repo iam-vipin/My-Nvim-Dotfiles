@@ -77,7 +77,7 @@ export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
             {groupedArtifacts.successful.length > 0 && (
               <div className="flex flex-col relative items-start gap-2 border-l-2 border-subtle-1 pl-4 pb-4">
                 <div className="p-1 bg-layer-1 absolute top-0 -left-3 rounded-full flex items-center justify-center">
-                  <FilledCheck width={16} height={16} className="text-green-500" />
+                  <FilledCheck width={16} height={16} className="text-success-primary" />
                 </div>
                 <div className="text-body-sm-regular text-primary">
                   {summary.completed} successful {summary.completed > 1 ? "actions" : "action"}{" "}
@@ -116,7 +116,7 @@ export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
                         </div>
                       )}
                       {artifact.error && (
-                        <div className="rounded-md text-body-sm-regular text-red-600 whitespace-pre-line">
+                        <div className="rounded-md text-body-sm-regular text-danger-primary whitespace-pre-line">
                           {artifact.error}
                         </div>
                       )}

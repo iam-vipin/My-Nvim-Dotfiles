@@ -152,7 +152,7 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
               variant="secondary"
               className={`
                 h-7 w-7 rounded-md p-0
-                hover:bg-red-100/10 hover:text-red-500
+                hover:bg-danger-primary hover:text-danger-primary
                 transition-colors
               `}
               onClick={() => onDelete(connection)}

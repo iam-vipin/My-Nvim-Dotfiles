@@ -131,7 +131,7 @@ export const CustomerWorkItem = observer(function CustomerWorkItem(props: TProps
 
               {isEditable && (
                 <CustomMenu.MenuItem onClick={handleRemoveRelation}>
-                  <div className="flex items-center gap-2 text-red-500">
+                  <div className="flex items-center gap-2 text-danger-primary">
                     <CircleMinus className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>
                       {workItem.is_epic

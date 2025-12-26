@@ -150,7 +150,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
 
   if (!page && !isLoading)
     return (
-      <div className="flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-red-500 bg-red-500/10 border border-dashed border-red-500/20 transition-all duration-200 ease-in-out cursor-default">
+      <div className="flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-danger-primary bg-danger-primary border border-dashed border-danger-strong/20 transition-all duration-200 ease-in-out cursor-default">
         Error loading page
       </div>
     );

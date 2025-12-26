@@ -31,10 +31,10 @@ export const StatePill = observer(function StatePill(props: Props) {
     >
       <StateGroupIcon
         stateGroup={state?.group ?? "backlog"}
-        color={state?.color ?? "rgba(var(--color-text-300))"}
-        className="size-2 flex-shrink-0"
+        color={state?.color ?? "var(--text-color-tertiary)"}
+        className="size-2 shrink-0"
       />
-      <span className="flex-grow truncate text-left text-11 text-secondary">{state?.name ?? t("common.state")}</span>
+      <span className="grow truncate text-left text-11 text-secondary">{state?.name ?? t("common.state")}</span>
     </DropdownButton>
   );
 });

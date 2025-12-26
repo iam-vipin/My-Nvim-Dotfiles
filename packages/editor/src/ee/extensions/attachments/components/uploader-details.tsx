@@ -66,7 +66,7 @@ export function CustomAttachmentUploaderDetails(props: Props) {
     <div className="truncate">
       <p
         className={cn("not-prose text-13 truncate", {
-          "text-red-500": !fileBeingUploaded && fileUploadError,
+          "text-danger-primary": !fileBeingUploaded && fileUploadError,
         })}
       >
         {fileBeingUploaded

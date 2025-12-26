@@ -117,7 +117,7 @@ export function MobileAuthEmailValidationForm(props: TMobileAuthEmailValidationF
           <div
             className={cn(
               `relative flex items-center rounded-md bg-surface-1 border`,
-              !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-subtle`
+              !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-subtle`
             )}
             tabIndex={-1}
             onFocus={() => setIsFocused(true)}
@@ -146,7 +146,7 @@ export function MobileAuthEmailValidationForm(props: TMobileAuthEmailValidationF
             )}
           </div>
           {emailError?.email && !isFocused && (
-            <p className="flex items-center gap-1 text-11 text-red-600 px-0.5">
+            <p className="flex items-center gap-1 text-11 text-danger-primary px-0.5">
               <CircleAlert height={12} width={12} />
               {emailError.email}
             </p>

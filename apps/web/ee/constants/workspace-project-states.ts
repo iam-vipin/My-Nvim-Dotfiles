@@ -55,7 +55,7 @@ export const WORKSPACE_PROJECT_STATE_PRIORITY: {
 } = {
   urgent: {
     title: "Urgent",
-    colorClassName: "text-red-600",
+    colorClassName: "text-danger-primary",
     background: "#FAD7D5",
   },
   high: {

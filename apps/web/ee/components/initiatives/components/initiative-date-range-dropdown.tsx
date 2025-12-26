@@ -46,7 +46,7 @@ export const InitiativeDateRangeDropdown = observer(function InitiativeDateRange
       isClearable
       mergeDates
       buttonVariant={initiative.start_date || initiative.end_date ? "border-with-text" : "border-without-text"}
-      buttonClassName={shouldHighlightEndDate ? "text-danger" : ""}
+      buttonClassName={shouldHighlightEndDate ? "text-danger-primary" : ""}
       showTooltip
       renderPlaceholder={false}
       renderInPortal

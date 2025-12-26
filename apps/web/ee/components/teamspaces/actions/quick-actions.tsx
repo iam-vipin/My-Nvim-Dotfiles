@@ -79,7 +79,7 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
       title: "Delete",
       icon: Trash2,
       shouldRender: isEditingAllowed,
-      className: "text-danger",
+      className: "text-danger-primary",
     },
   ];
 

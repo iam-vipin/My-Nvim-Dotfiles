@@ -160,7 +160,7 @@ export const OptionValueSelect = observer(function OptionValueSelect(props: TOpt
         />
       )}
       {Boolean(error) && (
-        <span className="text-caption-md-medium text-danger">
+        <span className="text-caption-md-medium text-danger-primary">
           {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
         </span>
       )}

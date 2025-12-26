@@ -136,7 +136,7 @@ export function WorkItemBlueprintDetails<T extends FieldValues>(props: TWorkItem
           )}
         />
         {nameError && typeof nameError.message === "string" && (
-          <span className="text-caption-sm-medium text-danger">{nameError.message}</span>
+          <span className="text-caption-sm-medium text-danger-primary">{nameError.message}</span>
         )}
       </div>
       {/* Work Item Description */}

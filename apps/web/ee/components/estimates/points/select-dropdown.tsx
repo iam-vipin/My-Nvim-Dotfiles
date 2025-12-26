@@ -67,7 +67,7 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
           onClick={() => setIsDropdownOpen((prev) => !prev)}
           className={cn(
             "relative w-full rounded-sm border flex items-center gap-3 px-3 py-2",
-            error ? `border-red-500` : `border-subtle-1`
+            error ? `border-danger-strong` : `border-subtle-1`
           )}
         >
           <div className={cn(`w-full text-13 text-left`, !selectedValue ? "text-tertiary" : "text-primary")}>
@@ -79,7 +79,7 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
           {error && (
             <>
               <Tooltip tooltipContent={error} position="bottom">
-                <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden relative flex justify-center items-center text-red-500">
+                <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden relative flex justify-center items-center text-danger-primary">
                   <Info size={14} />
                 </div>
               </Tooltip>

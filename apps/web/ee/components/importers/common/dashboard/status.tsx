@@ -19,10 +19,10 @@ const STATUS_CLASSNAMES: { [key in TJobStatus]: string } = {
   [E_JOB_STATUS.PROGRESSING]: "text-yellow-500 border border-yellow-500 bg-yellow-500/10",
   [E_JOB_STATUS.TRANSFORMING]: "text-orange-500 border border-orange-500 bg-orange-500/10",
   [E_JOB_STATUS.TRANSFORMED]: "text-orange-500 border border-orange-500 bg-orange-500/10",
-  [E_JOB_STATUS.PUSHING]: "text-green-500 border border-green-500 bg-green-500/10",
-  [E_JOB_STATUS.FINISHED]: "text-green-500 border border-green-500 bg-green-500/10",
-  [E_JOB_STATUS.ERROR]: "text-red-500 border border-red-500 bg-red-500/10",
-  [E_JOB_STATUS.CANCELLED]: "text-red-500 border border-red-500 bg-red-500/10",
+  [E_JOB_STATUS.PUSHING]: "text-success-primary border border-success-strong bg-success-primary",
+  [E_JOB_STATUS.FINISHED]: "text-success-primary border border-success-strong bg-success-primary",
+  [E_JOB_STATUS.ERROR]: "text-danger-primary border border-danger-strong bg-danger-primary",
+  [E_JOB_STATUS.CANCELLED]: "text-danger-primary border border-danger-strong bg-danger-primary",
 };
 
 export const SyncJobStatus = observer(function SyncJobStatus(props: TSyncJobStatusProps) {

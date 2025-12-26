@@ -81,7 +81,7 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
         },
         {
           key: "pending",
-          fill: "rgba(var(--color-background-80))",
+          fill: "var(--background-color-layer-1)",
         },
       ];
     } else {

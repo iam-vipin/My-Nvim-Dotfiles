@@ -74,7 +74,7 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
       action: handelDeleteCustomer,
       title: t("customers.quick_actions.delete"),
       icon: Trash2,
-      className: "text-red-500",
+      className: "text-danger-primary",
       shouldRender: isAdmin,
     },
   ];

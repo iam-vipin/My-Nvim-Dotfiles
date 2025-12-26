@@ -128,7 +128,7 @@ export const ProjectDetails = observer(function ProjectDetails() {
           )}
         />
         {errors?.project?.name && typeof errors.project.name.message === "string" && (
-          <span className="text-caption-sm-medium text-danger">{errors.project.name.message}</span>
+          <span className="text-caption-sm-medium text-danger-primary">{errors.project.name.message}</span>
         )}
       </div>
 

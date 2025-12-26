@@ -280,7 +280,7 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
                   {t(`${driverType}_importer.upload.ready`)}
                 </span>
               ) : uploadState === UploadState.ERROR ? (
-                <span className="text-11 font-medium px-2.5 py-0.5 rounded-full bg-red-100 text-red-600 flex items-center gap-1">
+                <span className="text-11 font-medium px-2.5 py-0.5 rounded-full bg-red-100 text-danger-primary flex items-center gap-1">
                   <AlertTriangle size={12} />
                   {t(`${driverType}_importer.upload.error`)}
                 </span>
@@ -315,12 +315,12 @@ export const UploadZip = observer(function UploadZip({ driverType, serviceName }
 
           {uploadState === UploadState.ERROR && uploadError && (
             <div className="mt-4 text-11 bg-layer-1 p-4 rounded-md flex gap-3">
-              <div className="flex-shrink-0 text-red-500 mt-0.5">
+              <div className="flex-shrink-0 text-danger-primary mt-0.5">
                 <CircleAlert className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <div className="font-medium text-red-600 mb-1">Upload failed</div>
-                <div className="text-red-500">{uploadError}</div>
+                <div className="font-medium text-danger-primary mb-1">Upload failed</div>
+                <div className="text-danger-primary">{uploadError}</div>
               </div>
             </div>
           )}

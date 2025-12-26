@@ -66,7 +66,7 @@ const IssueForm = observer(function IssueForm(props: TProps) {
         <div className="md:col-span-3">
           <div className="text-13 text-tertiary mb-1 font-medium">
             {t("intake_forms.create.name")}
-            <span className="ml-0.5 text-red-500">*</span>
+            <span className="ml-0.5 text-danger-primary">*</span>
           </div>
           <Controller
             control={control}
@@ -91,12 +91,12 @@ const IssueForm = observer(function IssueForm(props: TProps) {
               />
             )}
           />
-          <span className="text-11 text-red-500 capitalize">{errors?.username?.message}</span>
+          <span className="text-11 text-danger-primary capitalize">{errors?.username?.message}</span>
         </div>
         <div className="md:col-span-3">
           <div className="text-13 text-tertiary mb-1 font-medium">
             {t("intake_forms.create.email")}
-            <span className="ml-0.5 text-red-500">*</span>
+            <span className="ml-0.5 text-danger-primary">*</span>
           </div>
           <Controller
             control={control}
@@ -121,13 +121,13 @@ const IssueForm = observer(function IssueForm(props: TProps) {
               />
             )}
           />
-          <span className="text-11 text-red-500 capitalize">{errors?.email?.message}</span>
+          <span className="text-11 text-danger-primary capitalize">{errors?.email?.message}</span>
         </div>
 
         <div className="md:col-span-3">
           <div className="text-13 text-tertiary mb-1 font-medium">
             {t("intake_forms.create.about")}
-            <span className="ml-0.5 text-red-500">*</span>
+            <span className="ml-0.5 text-danger-primary">*</span>
           </div>
           <Controller
             control={control}
@@ -152,7 +152,7 @@ const IssueForm = observer(function IssueForm(props: TProps) {
               />
             )}
           />
-          <span className="text-11 text-red-500 capitalize">{errors?.name?.message}</span>
+          <span className="text-11 text-danger-primary capitalize">{errors?.name?.message}</span>
         </div>
         <div className="md:col-span-3">
           <div className="text-13 text-tertiary mb-1 font-medium">{t("intake_forms.create.description")}</div>

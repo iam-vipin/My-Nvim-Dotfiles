@@ -69,7 +69,7 @@ export function IntegrationsMapping(props: TIntegrationsMappingProps) {
           </Button>
           <Button
             variant="secondary"
-            className="h-7 w-7 rounded-md p-0 hover:bg-red-100/10 hover:text-red-500 transition-colors"
+            className="h-7 w-7 rounded-md p-0 hover:bg-danger-primary hover:text-danger-primary transition-colors"
             onClick={handleDeleteOpen}
             data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >

@@ -89,7 +89,7 @@ export const CreateOrUpdateIssueTypeForm = observer(function CreateOrUpdateIssue
               />
               {errors?.name && (
                 <Tooltip tooltipContent={errors?.name} position="bottom">
-                  <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 flex justify-center items-center text-danger absolute top-1/2 -translate-y-1/2 right-0">
+                  <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 flex justify-center items-center text-danger-primary absolute top-1/2 -translate-y-1/2 right-0">
                     <Info size={14} />
                   </div>
                 </Tooltip>

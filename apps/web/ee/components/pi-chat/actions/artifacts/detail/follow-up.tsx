@@ -114,7 +114,7 @@ export const FollowUpDetail = observer(function FollowUpDetail(props: TProps) {
           {error ? (
             <FilledCross width={16} height={16} />
           ) : (
-            <FilledCheck width={16} height={16} className="text-green-500" />
+            <FilledCheck width={16} height={16} className="text-success-primary" />
           )}
           <div>{error || "All requested changes are done."}</div>
         </div>

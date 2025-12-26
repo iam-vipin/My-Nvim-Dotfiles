@@ -63,7 +63,7 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
       action: () => toggleDeleteRequestModal(requestId),
       title: "Delete",
       icon: Trash2,
-      className: "text-red-500",
+      className: "text-danger-primary",
       shouldRender: isAdmin,
     },
   ];

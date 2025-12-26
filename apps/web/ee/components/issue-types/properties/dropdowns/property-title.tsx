@@ -38,7 +38,7 @@ export const PropertyTitleDescriptionInput = observer(function PropertyTitleDesc
         required
         autoFocus
       />
-      {Boolean(error) && <span className="text-caption-xs-medium text-danger">{error}</span>}
+      {Boolean(error) && <span className="text-caption-xs-medium text-danger-primary">{error}</span>}
       <TextArea
         id="description"
         mode="true-transparent"

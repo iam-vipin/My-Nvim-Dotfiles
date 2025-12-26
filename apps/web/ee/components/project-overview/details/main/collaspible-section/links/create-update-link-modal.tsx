@@ -93,7 +93,7 @@ export const ProjectLinkCreateUpdateModal = observer(function ProjectLinkCreateU
                   />
                 )}
               />
-              {errors.url && <span className="text-11 text-red-500">URL is invalid</span>}
+              {errors.url && <span className="text-11 text-danger-primary">URL is invalid</span>}
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">

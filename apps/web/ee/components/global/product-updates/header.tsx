@@ -47,7 +47,7 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
   };
 
   return (
-    <div className="flex gap-2 mx-6 my-4 items-center justify-between flex-shrink-0">
+    <div className="flex gap-2 mx-6 my-4 items-center justify-between shrink-0">
       <div className="flex w-full items-center">
         <div className="flex gap-2 text-18 font-medium">What&apos;s new</div>
         {isUpdateAvailable ? (
@@ -81,7 +81,7 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
       </div>
       <div className="flex flex-shrink-0 items-center gap-8">
         {isSelfManaged && subscriptionDetail?.product === EProductSubscriptionEnum.ONE && (
-          <div className="cursor-default rounded-md bg-green-500/10 px-2 py-0.5 text-center text-11 font-medium text-green-500 outline-none leading-6">
+          <div className="cursor-default rounded-md bg-success-primary px-2 py-0.5 text-center text-11 font-medium text-success-primary outline-none leading-6">
             Perpetual license
           </div>
         )}

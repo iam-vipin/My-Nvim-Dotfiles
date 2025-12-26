@@ -32,7 +32,7 @@ export const TypeFormPropertiesListItem = observer(function TypeFormPropertiesLi
           )}
           {!property.is_required && (
             <Menu ellipsis>
-              <Menu.MenuItem onClick={handleRemove} className="flex items-center gap-2 text-red-500">
+              <Menu.MenuItem onClick={handleRemove} className="flex items-center gap-2 text-danger-primary">
                 <CloseIcon className="size-4" />
                 <span className="text-11">Remove property</span>
               </Menu.MenuItem>

@@ -97,7 +97,7 @@ export const TextValueInput = observer(function TextValueInput(props: TTextValue
             disabled={isDisabled}
           />
           {Boolean(error) && (
-            <span className="text-caption-md-medium text-danger">
+            <span className="text-caption-md-medium text-danger-primary">
               {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
             </span>
           )}
@@ -128,7 +128,7 @@ export const TextValueInput = observer(function TextValueInput(props: TTextValue
             disabled={isDisabled}
           />
           {Boolean(error) && (
-            <span className="text-caption-md-medium text-danger">
+            <span className="text-caption-md-medium text-danger-primary">
               {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
             </span>
           )}

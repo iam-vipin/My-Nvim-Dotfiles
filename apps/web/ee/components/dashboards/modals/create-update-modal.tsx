@@ -137,7 +137,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                   />
                 )}
               />
-              <span className="text-caption-xs text-red-500">{errors?.name?.message}</span>
+              <span className="text-caption-xs text-danger-primary">{errors?.name?.message}</span>
             </div>
             <div>
               <label className="inline-block mb-2 text-caption-md text-secondary font-medium">
@@ -163,7 +163,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                           className={cn(
                             "px-2 py-1.5 rounded-md border-[0.5px] border-subtle-1 text-left flex items-center gap-2 flex-wrap",
                             {
-                              "border-red-500": errors?.project_ids,
+                              "border-danger-strong": errors?.project_ids,
                             }
                           )}
                         >
@@ -195,7 +195,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                     />
                   )}
                 />
-                <span className="text-caption-xs text-red-500">{errors?.project_ids?.message}</span>
+                <span className="text-caption-xs text-danger-primary">{errors?.project_ids?.message}</span>
               </div>
             </div>
           </div>

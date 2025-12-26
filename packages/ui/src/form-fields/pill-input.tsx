@@ -128,7 +128,7 @@ export const PillInput = React.forwardRef(function PillInput(
             "rounded-sm border-none bg-transparent ring-0 transition-all focus-within:ring-1 focus-within:ring-accent-strong":
               mode === "transparent",
             "rounded-sm border-none bg-transparent ring-0": mode === "true-transparent",
-            "border-red-500": hasError,
+            "border-danger-strong": hasError,
             "px-1.5 py-1": inputSize === "xs",
             "px-3 py-2": inputSize === "sm",
             "p-3": inputSize === "md",

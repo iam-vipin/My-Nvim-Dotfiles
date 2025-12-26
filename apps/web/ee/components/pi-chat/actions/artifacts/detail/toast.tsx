@@ -23,7 +23,7 @@ export function Toast(props: { error: string | null; isSaving: boolean }) {
   } else {
     return (
       <div className="flex justify-center items-center gap-2">
-        <FilledCheck width={16} height={16} className="text-green-500" />
+        <FilledCheck width={16} height={16} className="text-success-primary" />
         <div>Saved</div>
       </div>
     );

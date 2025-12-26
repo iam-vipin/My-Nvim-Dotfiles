@@ -114,7 +114,7 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                           });
                           handleMemberLeaveOrRemove(member.id);
                         }}
-                        className={cn("flex items-center gap-2 text-danger")}
+                        className={cn("flex items-center gap-2 text-danger-primary")}
                         disabled={!isEditingAllowed}
                       >
                         <Trash2 className="h-3 w-3" />

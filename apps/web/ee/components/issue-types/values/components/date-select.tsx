@@ -72,7 +72,7 @@ export const DateValueSelect = observer(function DateValueSelect(props: TDateVal
         formatToken={displayFormat}
       />
       {Boolean(error) && (
-        <span className="text-caption-md-medium text-danger">
+        <span className="text-caption-md-medium text-danger-primary">
           {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
         </span>
       )}

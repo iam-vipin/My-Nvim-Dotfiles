@@ -92,7 +92,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.app_id_description")}
           </div>
-          {errors.appId && <p className="text-red-500 text-caption-sm-regular">{errors.appId.message}</p>}
+          {errors.appId && <p className="text-danger-primary text-caption-sm-regular">{errors.appId.message}</p>}
         </div>
         <div>
           <div className="text-body-xs-regular text-tertiary">{t("github_enterprise_integration.app_name_title")}</div>
@@ -108,7 +108,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.app_name_description")}
           </div>
-          {errors.appName && <p className="text-red-500 text-caption-sm-regular">{errors.appName.message}</p>}
+          {errors.appName && <p className="text-danger-primary text-caption-sm-regular">{errors.appName.message}</p>}
         </div>
         <div>
           <div className="text-body-xs-regular text-tertiary">{t("github_enterprise_integration.base_url_title")}</div>
@@ -130,7 +130,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.base_url_description")}
           </div>
-          {errors.baseUrl && <p className="text-red-500 text-caption-sm-regular">{errors.baseUrl.message}</p>}
+          {errors.baseUrl && <p className="text-danger-primary text-caption-sm-regular">{errors.baseUrl.message}</p>}
         </div>
         <div>
           <div className="text-body-xs-regular text-tertiary">{t("github_enterprise_integration.client_id_title")}</div>
@@ -146,7 +146,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.client_id_description")}
           </div>
-          {errors.clientId && <p className="text-red-500 text-caption-sm-regular">{errors.clientId.message}</p>}
+          {errors.clientId && <p className="text-danger-primary text-caption-sm-regular">{errors.clientId.message}</p>}
         </div>
         <div>
           <div className="text-body-xs-regular text-tertiary">
@@ -164,7 +164,9 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.client_secret_description")}
           </div>
-          {errors.clientSecret && <p className="text-red-500 text-caption-sm-regular">{errors.clientSecret.message}</p>}
+          {errors.clientSecret && (
+            <p className="text-danger-primary text-caption-sm-regular">{errors.clientSecret.message}</p>
+          )}
         </div>
 
         <div>
@@ -184,7 +186,7 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
             {t("github_enterprise_integration.webhook_secret_description")}
           </div>
           {errors.webhookSecret && (
-            <p className="text-red-500 text-caption-sm-regular">{errors.webhookSecret.message}</p>
+            <p className="text-danger-primary text-caption-sm-regular">{errors.webhookSecret.message}</p>
           )}
         </div>
         <div>
@@ -205,7 +207,9 @@ export const GithubEnterpriseServerAppForm = observer(function GithubEnterpriseS
           <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("github_enterprise_integration.private_key_description")}
           </div>
-          {errors.privateKey && <p className="text-red-500 text-caption-sm-regular">{errors.privateKey.message}</p>}
+          {errors.privateKey && (
+            <p className="text-danger-primary text-caption-sm-regular">{errors.privateKey.message}</p>
+          )}
         </div>
         <div className="flex justify-start gap-2 mt-10">
           <Button type="button" variant="secondary" onClick={handleClose}>

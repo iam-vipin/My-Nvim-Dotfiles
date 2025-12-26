@@ -127,7 +127,7 @@ export const TitleInput = observer(function TitleInput(props: TitleInputProps) {
           className={cn(
             "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-semibold outline-none ring-0",
             {
-              "ring-1 ring-red-400 mx-2.5": title?.length === 0,
+              "ring-1 ring-danger-strong mx-2.5": title?.length === 0,
             },
             className
           )}
@@ -147,11 +147,13 @@ export const TitleInput = observer(function TitleInput(props: TitleInputProps) {
             }
           )}
         >
-          <span className={`${title.length === 0 || title.length > 255 ? "text-red-500" : ""}`}>{title.length}</span>
+          <span className={`${title.length === 0 || title.length > 255 ? "text-danger-primary" : ""}`}>
+            {title.length}
+          </span>
           /255
         </div>
       </div>
-      {title?.length === 0 && <span className="text-13 font-medium text-red-500">Title is required</span>}
+      {title?.length === 0 && <span className="text-13 font-medium text-danger-primary">Title is required</span>}
     </div>
   );
 });

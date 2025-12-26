@@ -149,7 +149,7 @@ export function DefaultProperties(props: Props) {
       <div className="grid grid-cols-2 gap-2 space-y-1">
         <div className="space-y-1">
           <label htmlFor="name" className="text-13">
-            {t("customers.properties.default.customer_name.name")} <span className="text-red-500">*</span>
+            {t("customers.properties.default.customer_name.name")} <span className="text-danger-primary">*</span>
           </label>
           <Controller
             name="name"
@@ -176,11 +176,11 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors?.name?.message}</span>
+          <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
         </div>
         <div className="space-y-1">
           <label htmlFor="email" className="text-13">
-            {t("customers.properties.default.email.name")} <span className="text-red-500">*</span>
+            {t("customers.properties.default.email.name")} <span className="text-danger-primary">*</span>
           </label>
           <Controller
             name="email"
@@ -206,7 +206,7 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors.email?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.email?.message}</span>
         </div>
       </div>
       <div className="space-y-1">
@@ -270,7 +270,7 @@ export function DefaultProperties(props: Props) {
             />
           )}
         />
-        <span className="text-11 text-red-500">{errors.description_html?.message}</span>
+        <span className="text-11 text-danger-primary">{errors.description_html?.message}</span>
       </div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-4">
         <div className="space-y-1">
@@ -300,7 +300,7 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors.website_url?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.website_url?.message}</span>
         </div>
         <div className="space-y-1">
           <label htmlFor="domain" className="text-13">
@@ -323,7 +323,7 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors.domain?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.domain?.message}</span>
         </div>
         <div className="space-y-1">
           <label htmlFor="employees" className="text-13">
@@ -356,7 +356,7 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors.employees?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.employees?.message}</span>
         </div>
         <div className="space-y-1">
           <label htmlFor="stage" className="text-13">
@@ -385,7 +385,7 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors.stage?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.stage?.message}</span>
         </div>
         <div className="space-y-1">
           <label htmlFor="contract_status" className="text-13">
@@ -421,7 +421,7 @@ export function DefaultProperties(props: Props) {
               );
             }}
           />
-          <span className="text-11 text-red-500">{errors.contract_status?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.contract_status?.message}</span>
         </div>
         <div className="space-y-1">
           <label htmlFor="revenue" className="text-13">
@@ -450,7 +450,7 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors.revenue?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.revenue?.message}</span>
         </div>
       </div>
     </>

@@ -56,7 +56,7 @@ export function RichTextField<T extends FieldValues>(props: Props<T>) {
               `resize-none min-h-24 text-11 border-[0.5px] border-subtle-1 rounded-md px-3 py-2 resize-none text-13 bg-surface-1`,
               className,
               {
-                "border-red-500": Boolean(error),
+                "border-danger-strong": Boolean(error),
               }
             )}
             displayConfig={{ fontSize: "small-font" }}

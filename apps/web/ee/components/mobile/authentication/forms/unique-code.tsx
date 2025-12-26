@@ -136,13 +136,13 @@ export function MobileAuthUniqueCodeForm(props: TMobileAuthUniqueCodeForm) {
             value={formData.code}
             onChange={(e) => handleFormChange("code", e.target.value)}
             placeholder="gets-sets-flys"
-            className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
+            className="disable-autofill-style h-10 w-full border border-subtle bg-surface-1! pr-12 placeholder:text-placeholder"
             autoComplete="on"
             autoFocus
           />
         </div>
         <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
-          <p className="flex items-center gap-1 font-medium text-green-700">
+          <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
             Paste the code sent to your email
           </p>

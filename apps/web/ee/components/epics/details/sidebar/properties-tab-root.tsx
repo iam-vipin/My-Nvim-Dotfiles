@@ -200,7 +200,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={cn("w-full text-body-xs-regular", {
                 "text-placeholder": !epicDetails.target_date,
-                "text-red-500": shouldHighlightIssueDueDate(epicDetails.target_date, stateDetails?.group),
+                "text-danger-primary": shouldHighlightIssueDueDate(epicDetails.target_date, stateDetails?.group),
               })}
               hideIcon
               clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"

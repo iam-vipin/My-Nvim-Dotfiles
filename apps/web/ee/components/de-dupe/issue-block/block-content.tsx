@@ -33,7 +33,7 @@ export const DeDupeIssueBlockContent = observer(function DeDupeIssueBlockContent
           <div className="flex flex-shrink-0 items-center gap-2">
             <StateGroupIcon
               stateGroup={stateDetails?.group ?? "backlog"}
-              color={stateDetails?.color ?? "rgba(var(--color-text-300))"}
+              color={stateDetails?.color ?? "var(--text-color-tertiary)"}
               className="size-4 flex-shrink-0"
             />
             <span className="flex items-baseline">

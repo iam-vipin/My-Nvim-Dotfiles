@@ -210,7 +210,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
       {/* Controls overlay */}
       <div
         className={cn(
-          "absolute inset-x-0 bottom-0 bg-gradient-to-t from-alpha-black-1000 via-alpha-black-600 to-transparent p-3 transition-opacity duration-200",
+          "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 transition-opacity duration-200",
           showControls ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onMouseDown={handleContainerClick}
@@ -233,26 +233,23 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
                 transform: "translateX(-50%)",
               }}
             >
-              <div className="bg-alpha-black-1100 text-alpha-white-1200 text-11 px-2 py-1 rounded font-medium tabular-nums">
+              <div className="bg-black/90 text-white text-11 px-2 py-1 rounded font-medium tabular-nums">
                 {formatTime(hoverTime)}
               </div>
             </div>
           )}
           {/* Background */}
-          <div className="absolute inset-0 bg-alpha-white-500 rounded-full" />
+          <div className="absolute inset-0 bg-white/30 rounded-full" />
           {/* Buffered */}
           <div
-            className="absolute inset-y-0 left-0 bg-alpha-white-700 rounded-full"
+            className="absolute inset-y-0 left-0 bg-white/50 rounded-full"
             style={{ width: `${bufferedProgress}%` }}
           />
           {/* Progress */}
-          <div
-            className="absolute inset-y-0 left-0 bg-alpha-white-1200 rounded-full"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="absolute inset-y-0 left-0 bg-white rounded-full" style={{ width: `${progress}%` }} />
           {/* Thumb */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 size-3 bg-alpha-white-1200 rounded-full shadow-md opacity-0 group-hover/progress:opacity-100 transition-opacity"
+            className="absolute top-1/2 -translate-y-1/2 size-3 bg-white rounded-full shadow-md opacity-0 group-hover/progress:opacity-100 transition-opacity"
             style={{ left: `calc(${progress}% - 6px)` }}
           />
         </div>
@@ -264,7 +261,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
             <button
               type="button"
               onClick={togglePlay}
-              className="p-1.5 rounded hover:bg-alpha-white-400 text-alpha-white-1200 transition-colors"
+              className="p-1.5 rounded hover:bg-white/20 text-white transition-colors"
               title={isPlaying ? "Pause (K)" : "Play (K)"}
             >
               {isPlaying ? <Pause className="size-4" /> : <Play className="size-4" />}
@@ -273,7 +270,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
             <button
               type="button"
               onClick={seekBackward}
-              className="hidden sm:block p-1.5 rounded hover:bg-alpha-white-400 text-alpha-white-1200 transition-colors"
+              className="hidden sm:block p-1.5 rounded hover:bg-white/20 text-white transition-colors"
               title="Rewind 5s"
             >
               <Rewind className="size-4" />
@@ -282,7 +279,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
             <button
               type="button"
               onClick={seekForward}
-              className="hidden sm:block p-1.5 rounded hover:bg-alpha-white-400 text-alpha-white-1200 transition-colors"
+              className="hidden sm:block p-1.5 rounded hover:bg-white/20 text-white transition-colors"
               title="Forward 5s"
             >
               <FastForward className="size-4" />
@@ -292,7 +289,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
               <button
                 type="button"
                 onClick={toggleMute}
-                className="p-1.5 rounded hover:bg-alpha-white-400 text-alpha-white-1200 transition-colors"
+                className="p-1.5 rounded hover:bg-white/20 text-white transition-colors"
                 title={isMuted ? "Unmute (M)" : "Mute (M)"}
               >
                 {isMuted || volume === 0 ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
@@ -304,11 +301,11 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
                 step="0.1"
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
-                className="hidden sm:block w-0 opacity-0 group-hover/volume:w-16 group-hover/volume:opacity-100 transition-all duration-200 accent-alpha-white-1200 h-1 cursor-pointer"
+                className="hidden sm:block w-0 opacity-0 group-hover/volume:w-16 group-hover/volume:opacity-100 transition-all duration-200 accent-white h-1 cursor-pointer"
               />
             </div>
             {/* Time display */}
-            <span className="text-11 text-alpha-white-1200 ml-1 tabular-nums">
+            <span className="text-11 text-white ml-1 tabular-nums">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
@@ -319,7 +316,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
               <button
                 type="button"
                 onClick={() => setShowSpeedMenu(!showSpeedMenu)}
-                className="px-2 py-1 rounded hover:bg-alpha-white-400 text-alpha-white-1200 text-11 font-medium transition-colors"
+                className="px-2 py-1 rounded hover:bg-white/20 text-white text-11 font-medium transition-colors"
                 title="Playback speed"
               >
                 {playbackSpeed}x
@@ -347,7 +344,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
               <button
                 type="button"
                 onClick={togglePiP}
-                className="hidden sm:block p-1.5 rounded hover:bg-alpha-white-400 text-alpha-white-1200 transition-colors"
+                className="hidden sm:block p-1.5 rounded hover:bg-white/20 text-white transition-colors"
                 title="Picture in Picture (P)"
               >
                 {isPiP ? <PictureInPicture2 className="size-4" /> : <PictureInPicture className="size-4" />}
@@ -357,7 +354,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
             <button
               type="button"
               onClick={toggleFullscreen}
-              className="p-1.5 rounded hover:bg-alpha-white-400 text-alpha-white-1200 transition-colors"
+              className="p-1.5 rounded hover:bg-white/20 text-white transition-colors"
               title="Fullscreen (F)"
             >
               {isFullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
@@ -371,7 +368,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
           type="button"
           onClick={togglePlay}
           onMouseDown={handleContainerClick}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-12 sm:size-16 rounded-full bg-alpha-black-700 hover:bg-alpha-black-900 text-alpha-white-1200 flex items-center justify-center transition-colors"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-12 sm:size-16 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors"
         >
           <Play className="size-6 sm:size-8 ml-1" />
         </button>

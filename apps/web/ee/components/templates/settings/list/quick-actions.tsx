@@ -243,7 +243,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
         }
       },
       shouldRender: template.canCurrentUserUnpublishTemplate,
-      className: "text-danger",
+      className: "text-danger-primary",
     },
     {
       key: "delete",
@@ -259,7 +259,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       title: t("common.actions.delete"),
       icon: Trash2,
       shouldRender: template.canCurrentUserDeleteTemplate,
-      className: "text-danger",
+      className: "text-danger-primary",
     },
   ];
 

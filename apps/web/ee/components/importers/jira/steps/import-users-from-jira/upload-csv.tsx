@@ -34,7 +34,7 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
       message: t("file_upload.processing"),
     },
     error: {
-      className: "text-red-500",
+      className: "text-danger-primary",
       icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
       message: t("file_upload.invalid"),
     },
@@ -44,7 +44,7 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
       message: t("file_upload.missing_fields"),
     },
     success: {
-      className: "text-green-500",
+      className: "text-success-primary",
       icon: <CircleCheck className="flex-shrink-0 w-3.5 h-3.5" />,
       message: t("file_upload.success", { fileName: "CSV" }),
     },

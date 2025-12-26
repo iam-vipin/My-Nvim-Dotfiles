@@ -205,7 +205,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Trash2
-                    className="size-3 text-placeholder hover:text-red-500 cursor-pointer"
+                    className="size-3 text-placeholder hover:text-danger-primary cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsDeleteModalOpen(true);

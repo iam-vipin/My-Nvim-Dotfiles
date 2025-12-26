@@ -166,7 +166,7 @@ export const AppConsent = observer(function AppConsent({
         <div className="flex-shrink-0">
           <div
             className={cn(
-              "relative flex  justify-start items-start gap-2 p-2 px-4 md:w-[636px] rounded-lg bg-red-300/10 text-red-500"
+              "relative flex  justify-start items-start gap-2 p-2 px-4 md:w-[636px] rounded-lg bg-danger-primary text-danger-primary"
             )}
           >
             <CircleAlert className="size-4" />

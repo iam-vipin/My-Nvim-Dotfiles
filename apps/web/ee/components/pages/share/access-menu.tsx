@@ -63,7 +63,7 @@ export const AccessMenu = memo(function AccessMenu({
         );
       })}
       <CustomMenu.MenuItem onClick={onRemove}>
-        <div className="flex items-center gap-2 text-red-500">
+        <div className="flex items-center gap-2 text-danger-primary">
           <Trash2 className="size-3" />
           Remove
         </div>

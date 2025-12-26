@@ -72,7 +72,7 @@ export const ApplicationPublishModal = observer(function ApplicationPublishModal
               {...register("contact_email", { required: "Contact email is required" })}
               onChange={(e) => handleTextChange("contact_email", e.target.value)}
             />
-            {errors.contact_email && <p className="text-red-500 text-11">{errors.contact_email.message}</p>}
+            {errors.contact_email && <p className="text-danger-primary text-11">{errors.contact_email.message}</p>}
           </div>
         </div>
         <div className="flex justify-end space-x-2">

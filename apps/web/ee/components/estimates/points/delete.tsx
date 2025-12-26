@@ -124,7 +124,7 @@ export const EstimatePointDelete = observer(function EstimatePointDelete(props: 
         </div>
       ) : (
         <div
-          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-red-500"
+          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-danger-primary"
           onClick={handleDelete}
         >
           <Trash2 size={14} />

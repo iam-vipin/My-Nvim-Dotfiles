@@ -26,21 +26,21 @@ export function MobilePasswordStrengthMeter(props: TMobilePasswordStrengthMeter)
         return {
           bars: [`bg-red-500`, `bg-layer-1`, `bg-layer-1`],
           text: `Password length should me more than 8 characters`,
-          textColor: `text-red-500`,
+          textColor: `text-danger-primary`,
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID: {
         return {
           bars: [`bg-red-500`, `bg-layer-1`, `bg-layer-1`],
           text: `Password is weak`,
-          textColor: `text-red-500`,
+          textColor: `text-danger-primary`,
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_VALID: {
         return {
           bars: [`bg-green-500`, `bg-green-500`, `bg-green-500`],
           text: `Password is strong`,
-          textColor: `text-green-500`,
+          textColor: `text-success-primary`,
         };
       }
       default: {

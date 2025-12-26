@@ -108,7 +108,7 @@ export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintList
             )}
             {handleDelete && (
               <CustomMenu.MenuItem onClick={handleDelete}>
-                <div className="flex items-center gap-2 text-danger">
+                <div className="flex items-center gap-2 text-danger-primary">
                   <CircleMinus className="h-3.5 w-3.5" strokeWidth={2} />
                   <span>Delete</span>
                 </div>

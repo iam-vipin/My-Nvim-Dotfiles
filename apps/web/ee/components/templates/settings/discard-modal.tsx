@@ -20,7 +20,7 @@ export const DiscardModal = observer(function DiscardModal(props: Props) {
         <div className="flex gap-2 items-center mb-2">
           <span
             className={cn(
-              "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-danger-subtle text-danger"
+              "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-danger-subtle text-danger-primary"
             )}
           >
             <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />

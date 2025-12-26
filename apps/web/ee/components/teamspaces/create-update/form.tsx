@@ -131,7 +131,7 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
               tabIndex={1}
               autoFocus
             />
-            {errors.name && <div className="text-danger text-caption-xs-medium">{errors.name}</div>}
+            {errors.name && <div className="text-danger-primary text-caption-xs-medium">{errors.name}</div>}
           </div>
         </div>
         <RichTextEditor

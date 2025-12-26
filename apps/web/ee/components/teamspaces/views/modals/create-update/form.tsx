@@ -153,7 +153,7 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
                   />
                 )}
               />
-              <span className="text-caption-xs-medium text-danger">{errors?.name?.message?.toString()}</span>
+              <span className="text-caption-xs-medium text-danger-primary">{errors?.name?.message?.toString()}</span>
             </div>
           </div>
           <div>

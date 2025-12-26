@@ -23,7 +23,7 @@ export function NumberInput({ property, isPreview = false, required = false }: T
     <div className="w-full space-y-1">
       <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
         {property.display_name}
-        {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
+        {(required || property.is_required) && <span className="ml-0.5 text-danger-primary">*</span>}
       </label>
       <Controller
         control={control}
@@ -56,7 +56,7 @@ export function NumberInput({ property, isPreview = false, required = false }: T
           />
         )}
       />
-      {error && <span className="text-11 text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-danger-primary">{error.message as string}</span>}
     </div>
   );
 }

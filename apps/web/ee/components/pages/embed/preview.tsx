@@ -194,7 +194,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
                 className="absolute left-0 right-0 bottom-[50px] pointer-events-none h-20"
                 style={{
                   background:
-                    "linear-gradient(to bottom, rgba(var(--color-background-100),0) 0%, rgba(var(--color-background-100),0.95) 100%)",
+                    "linear-gradient(to bottom, --alpha(var(--background-color-surface-1) / 0%) 0%, --alpha(var(--background-color-surface-1) / 95%) 100%)",
                 }}
               />
             </div>

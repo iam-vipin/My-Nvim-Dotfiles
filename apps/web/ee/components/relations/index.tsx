@@ -29,7 +29,7 @@ export const ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationO
   blocked_by: {
     key: "blocked_by",
     i18n_label: "issue.relation.blocked_by",
-    className: "bg-red-500/20 text-red-700",
+    className: "bg-danger-primary text-red-700",
     icon: (size) => <CircleDot size={size} className="text-secondary" />,
     placeholder: "None",
   },
@@ -44,7 +44,7 @@ export const ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationO
     key: "start_before",
     i18n_label: "issue.relation.start_before",
     icon: (size: number) => <CircleDot size={size} />,
-    className: "bg-red-500/20 text-red-700",
+    className: "bg-danger-primary text-red-700",
     placeholder: "None",
   },
   start_after: {
@@ -58,7 +58,7 @@ export const ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationO
     key: "finish_before",
     i18n_label: "issue.relation.finish_before",
     icon: (size: number) => <CircleDot size={size} />,
-    className: "bg-red-500/20 text-red-700",
+    className: "bg-danger-primary text-red-700",
     placeholder: "None",
   },
   finish_after: {
@@ -72,7 +72,7 @@ export const ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationO
     key: "implements",
     i18n_label: "issue.relation.implements",
     icon: (size: number) => <ArrowRightToLine size={size} />,
-    className: "bg-red-500/20 text-red-700",
+    className: "bg-danger-primary text-red-700",
     placeholder: "None",
   },
   implemented_by: {

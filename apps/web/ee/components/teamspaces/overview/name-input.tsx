@@ -126,7 +126,7 @@ export const TeamNameInput = observer(function TeamNameInput(props: TeamNameInpu
         >
           <span
             className={cn({
-              "text-danger": name.length === 0 || name.length > 255,
+              "text-danger-primary": name.length === 0 || name.length > 255,
             })}
           >
             {name.length}
@@ -134,7 +134,7 @@ export const TeamNameInput = observer(function TeamNameInput(props: TeamNameInpu
           /255
         </div>
       </div>
-      {name?.length === 0 && <span className="text-body-xs-medium text-danger">Name is required</span>}
+      {name?.length === 0 && <span className="text-body-xs-medium text-danger-primary">Name is required</span>}
     </div>
   );
 });

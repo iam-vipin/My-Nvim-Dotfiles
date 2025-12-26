@@ -39,7 +39,7 @@ export const InstallationCard = observer(function InstallationCard(props: TInsta
       </div>
       <div className="flex-shrink-0 relative flex items-center gap-4">
         {isAppConnected ? (
-          <div className="text-body-xs-regular bg-green-500/20 text-green-600 px-3 py-1 rounded-md">
+          <div className="text-body-xs-regular bg-success-primary text-success-primary px-3 py-1 rounded-md">
             {t("common.connected")}
           </div>
         ) : isConnectionLoading ? (

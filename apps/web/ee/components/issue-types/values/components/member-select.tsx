@@ -115,7 +115,7 @@ export const MemberValueSelect = observer(function MemberValueSelect(props: TMem
         />
       )}
       {Boolean(error) && (
-        <span className="text-caption-md-medium text-danger">
+        <span className="text-caption-md-medium text-danger-primary">
           {error === "REQUIRED" ? t("common.errors.entity_required", { entity: propertyDetail.display_name }) : error}
         </span>
       )}

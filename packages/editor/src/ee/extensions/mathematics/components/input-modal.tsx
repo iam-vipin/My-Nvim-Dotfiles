@@ -99,7 +99,7 @@ export function MathInputModal({ latex, onSave, onClose, onPreview, nodeType }: 
       <div className="flex justify-between items-center pt-2">
         <div>
           {!isValidLatex ? (
-            <div className="text-red-400 flex items-center gap-1">
+            <div className="text-danger-primary flex items-center gap-1">
               <span className="text-14 shrink-0"> ⚠ </span>
               <span className="text-11"> Invalid syntax</span>
             </div>

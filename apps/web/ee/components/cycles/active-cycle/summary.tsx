@@ -114,8 +114,8 @@ const Summary = observer(function Summary(props: Props) {
         Breakdown of this cycle&rsquo;s {ESTIMATE_TYPE[estimateType]}
       </div>
       <div
-        className={cn("border-b border-subtle-1 w-full flex text-red-500 py-2", {
-          "text-green-500": !isBehind,
+        className={cn("border-b border-subtle-1 w-full flex text-danger-primary py-2", {
+          "text-success-primary": !isBehind,
         })}
       >
         {!data ? (

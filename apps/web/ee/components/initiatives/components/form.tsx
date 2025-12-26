@@ -171,7 +171,7 @@ export function CreateUpdateInitiativeForm(props: Props) {
               tabIndex={1}
               autoFocus
             />
-            {errors.name && <div className="text-red-500 text-11">{errors.name}</div>}
+            {errors.name && <div className="text-danger-primary text-11">{errors.name}</div>}
           </div>
         </div>
         <RichTextEditor

@@ -15,7 +15,7 @@ export function IssueEmbedUpgradeCard(props: any) {
         {props.node?.attrs?.project_identifier}-{props?.node?.attrs?.sequence_id}
       </h5>
       <div className="relative h-[71%]">
-        <div className="h-full backdrop-filter backdrop-blur-[30px] bg-layer-1 bg-opacity-30 flex items-center w-full justify-between gap-5 mt-2.5 pl-4 pr-5 py-3 max-md:max-w-full max-md:flex-wrap relative">
+        <div className="h-full backdrop-filter backdrop-blur-[30px] bg-layer-1/30 flex items-center w-full justify-between gap-5 mt-2.5 pl-4 pr-5 py-3 max-md:max-w-full max-md:flex-wrap relative">
           <div className="flex gap-2 items-center">
             <div className="rounded">
               <Crown className="m-2" size={16} color="#FFBA18" />

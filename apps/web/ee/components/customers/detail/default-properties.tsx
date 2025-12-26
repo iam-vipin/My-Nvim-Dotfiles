@@ -37,7 +37,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
           <span className="text-13 text-secondary">
-            {t("customers.properties.default.email.name")} <span className="text-red-500">*</span>
+            {t("customers.properties.default.email.name")} <span className="text-danger-primary">*</span>
           </span>
         </div>
         <div className="flex-grow">

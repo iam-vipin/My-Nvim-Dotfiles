@@ -17,7 +17,7 @@ export const ApplicationTileMenuItem = observer(function ApplicationTileMenuItem
       <div
         className={cn(
           "flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all rounded-sm hover:bg-layer-1",
-          isDanger ? " text-red-500" : " text-secondary"
+          isDanger ? " text-danger-primary" : " text-secondary"
         )}
         onClick={() => onClick && onClick()}
       >
@@ -25,7 +25,7 @@ export const ApplicationTileMenuItem = observer(function ApplicationTileMenuItem
         <div
           className={cn(
             "whitespace-nowrap text-body-xs-regular text-secondary",
-            isDanger ? "text-red-500" : "text-secondary"
+            isDanger ? "text-danger-primary" : "text-secondary"
           )}
         >
           {label}

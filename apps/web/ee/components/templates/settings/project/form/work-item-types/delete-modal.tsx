@@ -45,7 +45,11 @@ export const DeleteWorkItemTypeModal = observer(function DeleteWorkItemTypeModal
       className="py-5 px-6"
     >
       <div className="flex flex-col sm:flex-row items-start gap-4">
-        <span className={cn("flex-shrink-0 grid place-items-center rounded-full size-10 bg-danger-subtle text-danger")}>
+        <span
+          className={cn(
+            "flex-shrink-0 grid place-items-center rounded-full size-10 bg-danger-subtle text-danger-primary"
+          )}
+        >
           <AlertTriangle className="size-6" aria-hidden="true" />
         </span>
         <div className="py-1 text-center sm:text-left">

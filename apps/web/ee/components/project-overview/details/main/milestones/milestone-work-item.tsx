@@ -125,7 +125,7 @@ export const MilestoneWorkItem = observer(function MilestoneWorkItem(props: TPro
             </CustomMenu.MenuItem>
 
             <CustomMenu.MenuItem onClick={handleRemoveRelation}>
-              <div className="flex items-center gap-2 text-danger">
+              <div className="flex items-center gap-2 text-danger-primary">
                 <CircleMinus className="size-3.5" strokeWidth={2} />
                 <span>{isEpic ? "Remove epic" : "Remove work item"}</span>
               </div>

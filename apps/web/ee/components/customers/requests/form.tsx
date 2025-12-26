@@ -270,7 +270,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                       />
                     )}
                   />
-                  <span className="text-11 text-red-500">{errors?.name?.message}</span>
+                  <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
                 </div>
                 <Controller
                   name="description_html"

@@ -95,7 +95,7 @@ export const SourceCreateUpdateModal = observer(function SourceCreateUpdateModal
                   />
                 )}
               />
-              {errors.url && <span className="text-11 text-red-500">{errors.url.message}</span>}
+              {errors.url && <span className="text-11 text-danger-primary">{errors.url.message}</span>}
             </div>
           </div>
         </div>

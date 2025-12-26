@@ -146,7 +146,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
       },
       title: t("common.actions.delete"),
       icon: Trash2,
-      iconClassName: "text-danger",
+      iconClassName: "text-danger-primary",
     },
   ];
 

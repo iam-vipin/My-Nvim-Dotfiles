@@ -51,7 +51,7 @@ export const LicenseSeatsBanner = observer(function LicenseSeatsBanner() {
       <div
         className={cn(
           "relative flex justify-center items-center gap-2 p-2 px-4",
-          currentVariant === "primary" ? "bg-yellow-300/15 text-yellow-500" : "bg-red-500/10 text-red-500"
+          currentVariant === "primary" ? "bg-yellow-300/15 text-yellow-500" : "bg-danger-primary text-danger-primary"
         )}
       >
         <div className="text-13 font-medium text-center">{planMessages[currentPlanKey]}</div>

@@ -86,7 +86,7 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
       {isDeployed && (
         <a
           href={publishLink}
-          className="h-6 px-2 bg-green-500/20 text-green-500 rounded-sm text-11 font-medium flex items-center gap-1.5"
+          className="h-6 px-2 bg-success-primary text-success-primary rounded-sm text-11 font-medium flex items-center gap-1.5"
           target="_blank"
           rel="noopener noreferrer"
         >

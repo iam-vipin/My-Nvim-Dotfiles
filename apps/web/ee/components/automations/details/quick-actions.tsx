@@ -74,7 +74,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
       icon: Trash2,
       shouldRender: automation.canCurrentUserDelete,
       disabled: automation.isDeleteDisabled,
-      className: automation.isDeleteDisabled ? "text-placeholder cursor-not-allowed" : "text-red-500",
+      className: automation.isDeleteDisabled ? "text-placeholder cursor-not-allowed" : "text-danger-primary",
       tooltipContent: automation.isDeleteDisabled ? t("automations.delete.validation.enabled") : undefined,
     },
   ];

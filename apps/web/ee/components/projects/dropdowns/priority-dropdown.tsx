@@ -64,7 +64,7 @@ function BorderButton(props: ButtonProps) {
   const priorityDetails = PROJECT_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-red-600/10 text-red-600 border-red-600 px-1",
+    urgent: "bg-danger-primary text-danger-primary border-danger-strong px-1",
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-accent-primary/20 text-accent-primary border-accent-strong",
@@ -88,7 +88,7 @@ function BorderButton(props: ButtonProps) {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-600/10 border-red-600": priority === "urgent" && hideText && highlightUrgent,
+            "bg-danger-primary border-danger-strong": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -98,7 +98,7 @@ function BorderButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600/20 p-0.5 rounded-sm border border-red-600":
+                "bg-danger-primary p-0.5 rounded-sm border border-danger-strong":
                   priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
@@ -144,7 +144,7 @@ function BackgroundButton(props: ButtonProps) {
   const priorityDetails = PROJECT_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-red-600/20 text-red-600",
+    urgent: "bg-danger-primary text-danger-primary",
     high: "bg-orange-500/20 text-orange-950",
     medium: "bg-yellow-500/20 text-yellow-950",
     low: "bg-blue-500/20 text-blue-950",
@@ -168,7 +168,7 @@ function BackgroundButton(props: ButtonProps) {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-600/10 border-red-600": priority === "urgent" && hideText && highlightUrgent,
+            "bg-danger-primary border-danger-strong": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -178,7 +178,7 @@ function BackgroundButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600/20 p-0.5 rounded-sm border border-red-600":
+                "bg-danger-primary p-0.5 rounded-sm border border-danger-strong":
                   priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
@@ -249,7 +249,7 @@ function TransparentButton(props: ButtonProps) {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-600/10 border-red-600": priority === "urgent" && hideText && highlightUrgent,
+            "bg-danger-primary border-danger-strong": priority === "urgent" && hideText && highlightUrgent,
             "bg-layer-1": isActive,
           },
           className
@@ -260,7 +260,7 @@ function TransparentButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600/20 p-0.5 rounded-sm border border-red-600":
+                "bg-danger-primary p-0.5 rounded-sm border border-danger-strong":
                   priority === "urgent" && !hideText && highlightUrgent,
               })}
             >

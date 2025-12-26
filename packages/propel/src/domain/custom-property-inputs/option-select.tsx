@@ -29,7 +29,7 @@ export function OptionSelect({ property, options, isPreview = false, required = 
     <div className="w-full space-y-1">
       <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
         {property.display_name}
-        {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
+        {(required || property.is_required) && <span className="ml-0.5 text-danger-primary">*</span>}
       </label>
       <Controller
         control={control}
@@ -92,7 +92,7 @@ export function OptionSelect({ property, options, isPreview = false, required = 
                 disabled={isPreview}
                 className={cn("flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-14", {
                   "border-subtle-1 focus:ring-accent-strong": !error,
-                  "border-red-500 focus:ring-red-500": error,
+                  "border-danger-strong focus:ring-danger-strong": error,
                   "cursor-not-allowed opacity-60": isPreview,
                 })}
               >
@@ -129,7 +129,7 @@ export function OptionSelect({ property, options, isPreview = false, required = 
           );
         }}
       />
-      {error && <span className="text-11 text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-danger-primary">{error.message as string}</span>}
     </div>
   );
 }

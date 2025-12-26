@@ -82,7 +82,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
       title: "Remove",
       icon: CloseIcon,
       action: handleRemove,
-      className: "text-red-500",
+      className: "text-danger-primary",
     },
   ];
 
@@ -188,7 +188,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
                   <Input {...field} placeholder="Form title" className="w-full" hasError={Boolean(errors.name)} />
                 )}
               />
-              {errors.name && <p className="text-red-500 text-11">{errors.name.message}</p>}
+              {errors.name && <p className="text-danger-primary text-11">{errors.name.message}</p>}
             </div>
             <div className="spacey-1 w-[30%]">
               <label className="text-tertiary text-13 font-medium">Work item type</label>

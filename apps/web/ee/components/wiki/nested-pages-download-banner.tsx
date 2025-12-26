@@ -64,8 +64,8 @@ export const NestedPagesDownloadBanner = observer(function NestedPagesDownloadBa
   if (isNestedPagesEnabled || !isASubPage) return null;
 
   return (
-    <div className="flex items-center justify-between gap-4 py-3.5 px-4 bg-red-500/30">
-      <div className="flex items-center gap-2 text-red-500">
+    <div className="flex items-center justify-between gap-4 py-3.5 px-4 bg-danger-primary">
+      <div className="flex items-center gap-2 text-danger-primary">
         <CircleAlert className="shrink-0 size-4" />
         <p className="text-13 font-medium">{t("wiki.nested_pages_download_banner.title")}</p>
       </div>

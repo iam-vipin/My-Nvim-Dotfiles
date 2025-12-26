@@ -261,7 +261,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                       />
                     )}
                   />
-                  {errors.title && <span className="text-11 text-red-500">{errors.title.message}</span>}
+                  {errors.title && <span className="text-11 text-danger-primary">{errors.title.message}</span>}
                 </div>
               </div>
               {/* Cycle Duration */}
@@ -299,7 +299,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                       </span>
                     </div>
                     {errors.cycle_duration && (
-                      <span className="text-11 text-red-500">{errors.cycle_duration.message}</span>
+                      <span className="text-11 text-danger-primary">{errors.cycle_duration.message}</span>
                     )}
                   </div>
                 </div>
@@ -388,7 +388,9 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                         )}
                       />
                     </div>
-                    {errors.start_date && <span className="text-11 text-red-500">{errors.start_date.message}</span>}
+                    {errors.start_date && (
+                      <span className="text-11 text-danger-primary">{errors.start_date.message}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -428,7 +430,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
                       )}
                     />
                     {errors.number_of_cycles && (
-                      <span className="text-11 text-red-500">{errors.number_of_cycles.message}</span>
+                      <span className="text-11 text-danger-primary">{errors.number_of_cycles.message}</span>
                     )}
                   </div>
                 </div>

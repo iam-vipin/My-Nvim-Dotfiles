@@ -10,7 +10,7 @@ export function PageCommentTimestampDisplay({ timestamp, className = "", showRes
   return (
     <div className={cn("text-tertiary text-10 leading-3.5 overflow-hidden text-ellipsis whitespace-nowrap", className)}>
       {calculateTimeAgoShort(timestamp)}
-      {showResolved && <span className="ml-2 text-green-600">Resolved</span>}
+      {showResolved && <span className="ml-2 text-success-primary">Resolved</span>}
     </div>
   );
 }

@@ -84,7 +84,7 @@ export function ExternalEmbedInputView({ style: _style, setIsOpen, externalEmbed
     >
       <div className="flex flex-col items-start">
         {error ? (
-          <p className="text-red-500 text-11 my-1">
+          <p className="text-danger-primary text-11 my-1">
             Please enter a valid URL.
             {/* {t("externalEmbedComponent.error.not_valid_link")} */}
           </p>
@@ -99,7 +99,7 @@ export function ExternalEmbedInputView({ style: _style, setIsOpen, externalEmbed
           <Input
             ref={inputRef}
             className={cn("w-full min-w-[250px] focus:outline-none focus:ring-1", {
-              "border-red-500 focus:ring-red-500": error,
+              "border-danger-strong focus:ring-danger-strong": error,
               "border-subtle-1 focus:ring-accent-strong": !error,
             })}
             placeholder="Enter or paste a link"

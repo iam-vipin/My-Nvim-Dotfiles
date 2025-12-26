@@ -497,10 +497,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
               <AttributePill data={t("common.default")} />
             )}
             {issuePropertyData.is_active && (
-              <AttributePill data={t("common.active")} className="bg-success-subtle text-success" />
+              <AttributePill data={t("common.active")} className="bg-success-subtle text-success-primary" />
             )}
             {!issuePropertyData.is_active && (
-              <AttributePill data={t("common.disabled")} className="bg-danger-subtle text-danger" />
+              <AttributePill data={t("common.disabled")} className="bg-danger-subtle text-danger-primary" />
             )}
           </div>
           <div className="flex-shrink-0 border-l border-subtle-1 pl-2" onDoubleClick={(e) => e.stopPropagation()}>

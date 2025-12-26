@@ -108,7 +108,7 @@ function StateMappingItemComponent({ mapping, onEdit, onDelete }: StateMappingIt
             <Pencil className="w-3 h-3" />
           </button>
           <button
-            className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-red-500 hover:text-red-600"
+            className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-danger-primary hover:text-danger-primary"
             onClick={onDelete}
           >
             <Trash2 className="w-3 h-3" />

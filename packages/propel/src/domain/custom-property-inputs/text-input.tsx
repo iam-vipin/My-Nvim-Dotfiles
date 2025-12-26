@@ -25,7 +25,7 @@ export function TextInput({ property, isPreview = false, required = false }: TTe
     <div className="w-full space-y-1">
       <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
         {property.display_name}
-        {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
+        {(required || property.is_required) && <span className="ml-0.5 text-danger-primary">*</span>}
       </label>
       <Controller
         control={control}
@@ -45,7 +45,7 @@ export function TextInput({ property, isPreview = false, required = false }: TTe
                 "w-full px-3 py-2 rounded-md border bg-surface-1 text-13 placeholder-custom-text-400 focus:outline-none min-h-[100px] resize-none",
                 {
                   "border-subtle-1": !error,
-                  "border-red-500": error,
+                  "border-danger-strong": error,
                   "cursor-not-allowed opacity-60": isPreview,
                 }
               )}
@@ -66,7 +66,7 @@ export function TextInput({ property, isPreview = false, required = false }: TTe
           )
         }
       />
-      {error && <span className="text-11 text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-danger-primary">{error.message as string}</span>}
     </div>
   );
 }

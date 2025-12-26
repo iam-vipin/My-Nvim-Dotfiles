@@ -82,7 +82,7 @@ export const NumberValueInput = observer(function NumberValueInput(props: TNumbe
         hasError={Boolean(error)}
       />
       {Boolean(error) && (
-        <span className="text-caption-md-medium text-danger">
+        <span className="text-caption-md-medium text-danger-primary">
           {error === "REQUIRED" ? t("common.errors.entity_required", { entity: propertyDetail.display_name }) : error}
         </span>
       )}

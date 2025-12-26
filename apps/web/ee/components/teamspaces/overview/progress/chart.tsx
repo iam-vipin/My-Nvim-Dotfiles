@@ -28,7 +28,7 @@ const bars: TBarItem<EProgressDataKeys>[] = [
   {
     key: EProgressDataKeys.PENDING,
     label: "Pending",
-    fill: "rgba(var(--color-background-80), 0.8)",
+    fill: "--alpha(var(--background-color-layer-1) / 80%)",
     textClassName: "text-secondary",
     stackId: "bar-one",
   },

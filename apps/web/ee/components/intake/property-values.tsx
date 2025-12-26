@@ -20,7 +20,7 @@ function PropertyDetail({ property }: { property: Partial<TIssueProperty<EIssueP
       <span className="w-full cursor-default truncate">
         <span className="flex gap-0.5 items-center">
           <span className="truncate">{property.display_name ?? property.name ?? property.id ?? ""}</span>
-          {property.is_required && <span className="text-red-500">*</span>}
+          {property.is_required && <span className="text-danger-primary">*</span>}
           {property.description && (
             <Tooltip tooltipContent={property.description} position="right">
               <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 cursor-pointer" />

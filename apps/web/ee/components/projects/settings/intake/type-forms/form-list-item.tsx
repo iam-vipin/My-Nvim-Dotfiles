@@ -59,7 +59,7 @@ export const TypeFormListItem = observer(function TypeFormListItem(props: Props)
       title: "Remove",
       icon: CloseIcon,
       action: handleRemove,
-      className: "text-red-500",
+      className: "text-danger-primary",
     },
   ];
 

@@ -28,7 +28,7 @@ type TCreateUpdateInitiativeLabelInlineProps = {
 
 const defaultValues: Partial<TInitiativeLabel> = {
   name: "",
-  color: "rgb(var(--color-text-200))",
+  color: "var(--text-color-secondary)",
 };
 
 export const CreateUpdateInitiativeLabelInline = observer(
@@ -199,7 +199,7 @@ export const CreateUpdateInitiativeLabelInline = observer(
               {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
             </Button>
           </div>
-          {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-red-500">{errors.name?.message}</p>}
+          {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-danger-primary">{errors.name?.message}</p>}
         </>
       );
     }

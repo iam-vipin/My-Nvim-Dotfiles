@@ -68,7 +68,7 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
       <div
         className={cn(
           "relative w-full border rounded-sm flex items-center",
-          estimatePointError?.message ? `border-red-500` : `border-subtle-1`
+          estimatePointError?.message ? `border-danger-strong` : `border-subtle-1`
         )}
       >
         <EstimateInputRoot
@@ -79,7 +79,7 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
         {estimatePointError?.message && (
           <>
             <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
-              <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
+              <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-danger-primary">
                 <Info size={14} />
               </div>
             </Tooltip>

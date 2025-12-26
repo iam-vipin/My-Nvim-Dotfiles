@@ -24,12 +24,12 @@ export function FieldWrapper<T extends FieldValues>({
       {label && (
         <div className="text-11 text-primary font-medium gap-1">
           {label}
-          <span className="text-red-500">{validation?.required && <sup>*</sup>}</span>
+          <span className="text-danger-primary">{validation?.required && <sup>*</sup>}</span>
         </div>
       )}
       {description && <div className="text-11 text-tertiary">{description}</div>}
       {children}
-      {error && <p className="text-red-500 text-11">{error.message}</p>}
+      {error && <p className="text-danger-primary text-11">{error.message}</p>}
     </div>
   );
 }

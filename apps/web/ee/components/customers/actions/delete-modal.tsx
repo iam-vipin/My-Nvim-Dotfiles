@@ -77,8 +77,8 @@ export const DeleteCustomerModal = observer(function DeleteCustomerModal(props: 
     <ModalCore isOpen={isModalOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
       <form onSubmit={onSubmit} className="flex flex-col gap-6 p-6">
         <div className="flex w-full items-center justify-start gap-4">
-          <span className="place-items-center rounded-full bg-red-500/20 p-3">
-            <AlertTriangle className="size-6 text-red-600" aria-hidden="true" />
+          <span className="place-items-center rounded-full bg-danger-primary p-3">
+            <AlertTriangle className="size-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
             <h3 className="text-16 font-medium xl:text-18">

@@ -307,7 +307,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                           });
                           onAssetUpload?.(asset_id);
                           return asset_id;
-                        } catch (error) {
+                        } catch {
                           throw new Error("Asset upload failed. Please try again later.");
                         }
                       }}
@@ -321,7 +321,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                           });
                           onAssetUpload?.(asset_id);
                           return asset_id;
-                        } catch (error) {
+                        } catch {
                           throw new Error("Asset duplication failed. Please try again later.");
                         }
                       }}
@@ -383,7 +383,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
                 >
                   {t("customers.create.cancel")}
                 </Button>
-                <Button onClick={() => handleSubmit(onSubmit)} disabled={isSubmitting} size="lg">
+                <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="lg">
                   {isSubmitting
                     ? data?.id
                       ? t("customers.update.loading")

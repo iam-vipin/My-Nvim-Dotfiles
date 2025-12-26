@@ -177,7 +177,7 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
             key={entity.id}
             href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
             onClick={handleResultClick}
-            className="group rounded-md flex gap-2 p-3 text-13 text-primary transition-all duration-300 ease-in-out hover:bg-layer-1 hover:px-3"
+            className="group rounded-md flex gap-2 p-3 text-13 text-primary transition-all items-center duration-300 ease-in-out hover:bg-layer-1 hover:px-3"
           >
             <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
             <span className="flex-1 line-clamp-2">
@@ -192,7 +192,9 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
   return (
     <div className="size-full flex flex-col overflow-hidden py-2">
       {renderSearchFilters()}
-      <div className="h-full flex-1 px-3 overflow-y-auto vertical-scrollbar scrollbar-sm">{renderSearchResults()}</div>
+      <div className="h-full flex-1 px-3 overflow-y-auto vertical-scrollbar scrollbar-sm pb-10">
+        {renderSearchResults()}
+      </div>
     </div>
   );
 });

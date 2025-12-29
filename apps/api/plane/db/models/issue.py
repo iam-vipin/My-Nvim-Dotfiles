@@ -98,18 +98,11 @@ class IssueManager(ProjectManager):
         return (
             super()
             .get_queryset()
-            .filter(
-                models.Q(issue_intake__status=1)
-                | models.Q(issue_intake__status=-1)
-                | models.Q(issue_intake__status=2)
-                | models.Q(issue_intake__isnull=True)
-            )
-            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
-            .filter(deleted_at__isnull=True)
-            .filter(state__is_triage=False)
+            .exclude(state__group=StateGroup.TRIAGE.value)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
         )
 
 
@@ -118,18 +111,6 @@ class IssueAndEpicsManager(ProjectManager):
         return (
             super()
             .get_queryset()
-            .filter(
-                models.Q(
-                    issue_intake__status__in=[
-                        IntakeIssueStatus.ACCEPTED,
-                        IntakeIssueStatus.REJECTED,
-                        IntakeIssueStatus.DUPLICATE,
-                    ]
-                )
-                | models.Q(issue_intake__isnull=True)
-            )
-            .filter(deleted_at__isnull=True)
-            .filter(state__is_triage=False)
             .exclude(state__group=StateGroup.TRIAGE.value)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)

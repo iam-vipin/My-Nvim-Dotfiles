@@ -66,7 +66,7 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
           )}
         </div>
 
-        <Command>
+        <Command className="h-full overflow-hidden">
           <Command.Input value={searchQuery} hidden />
           <SearchResults
             query={searchQuery}

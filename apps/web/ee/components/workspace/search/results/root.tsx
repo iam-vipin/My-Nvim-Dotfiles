@@ -30,11 +30,19 @@ type TProps = {
   isSearching: boolean;
   setFlattenedSearchResults: (results: TSearchResultItem[]) => void;
   setIsSearching: (isSearching: boolean) => void;
+  renderAdvancedSearchButton?: boolean;
 };
 
 export const SearchResults = observer(function SearchResults(props: TProps) {
-  const { query, flattenedSearchResults, handleResultClick, setFlattenedSearchResults, isSearching, setIsSearching } =
-    props;
+  const {
+    query,
+    flattenedSearchResults,
+    handleResultClick,
+    setFlattenedSearchResults,
+    isSearching,
+    setIsSearching,
+    renderAdvancedSearchButton = true,
+  } = props;
   // params
   const { workspaceSlug } = useParams();
   const router = useAppRouter();
@@ -154,7 +162,7 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
   };
 
   return (
-    <Command.List className="size-full flex flex-col overflow-hidden py-2">
+    <Command.List className="size-full flex flex-col overflow-hidden py-2 [&_[cmdk-list-sizer]]:h-full [&_[cmdk-list-sizer]]:overflow-hidden [&_[cmdk-list-sizer]]:overflow-y-auto">
       <SearchFilters
         flattenedSearchResults={flattenedSearchResults}
         isSearching={isSearching}
@@ -163,16 +171,18 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
         updateSearchFilter={setSearchFilter}
       />
       <div className="h-full flex-1 overflow-y-auto vertical-scrollbar scrollbar-sm">
-        <Command.Group>
-          <PowerKModalCommandItem
-            value="navigate-to-search-page"
-            icon={SearchIcon}
-            label="Go to advanced search page"
-            onSelect={() => {
-              router.push(`/${workspaceSlug}/search?q=${query}`);
-            }}
-          />
-        </Command.Group>
+        {renderAdvancedSearchButton && (
+          <Command.Group>
+            <PowerKModalCommandItem
+              value="navigate-to-search-page"
+              icon={SearchIcon}
+              label="Go to advanced search page"
+              onSelect={() => {
+                router.push(`/${workspaceSlug}/search?q=${query}`);
+              }}
+            />
+          </Command.Group>
+        )}
         {renderSearchResults()}
       </div>
       {filteredSearchResults.length !== 0 && (

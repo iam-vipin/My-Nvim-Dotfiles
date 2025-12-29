@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
@@ -65,13 +66,17 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
           )}
         </div>
 
-        <SearchResults
-          query={searchQuery}
-          flattenedSearchResults={flattenedSearchResults}
-          setFlattenedSearchResults={setFlattenedSearchResults}
-          isSearching={isSearching}
-          setIsSearching={setIsSearching}
-        />
+        <Command>
+          <Command.Input value={searchQuery} hidden />
+          <SearchResults
+            query={searchQuery}
+            flattenedSearchResults={flattenedSearchResults}
+            setFlattenedSearchResults={setFlattenedSearchResults}
+            isSearching={isSearching}
+            setIsSearching={setIsSearching}
+            renderAdvancedSearchButton={false}
+          />
+        </Command>
       </div>
     </div>
   );

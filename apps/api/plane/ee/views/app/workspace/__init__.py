@@ -15,4 +15,6 @@ from .connection import WorkspaceConnectionView, WorkspaceUserConnectionView
 from .entity_connection import WorkspaceEntityConnectionView
 
 from .issue import WorkspaceIssueDetailEndpoint, WorkspaceIssueBulkUpdateDateEndpoint, WorkspaceIssueRetrieveEndpoint
+
+from .user_import import WorkspaceMembersImportEndpoint
 from .activity import WorkspaceMemberActivityEndpoint

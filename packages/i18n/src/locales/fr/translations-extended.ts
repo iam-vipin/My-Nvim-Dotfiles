@@ -931,6 +931,55 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Importer des membres depuis un CSV",
+      description:
+        "Téléchargez un CSV avec les colonnes : Email, Display Name, First Name, Last Name, Role (5, 15 ou 20)",
+      dropzone: {
+        active: "Déposez le fichier CSV ici",
+        inactive: "Glissez-déposez ou cliquez pour télécharger",
+        file_type: "Seuls les fichiers .csv sont pris en charge",
+      },
+      buttons: {
+        cancel: "Annuler",
+        import: "Importer",
+        try_again: "Réessayer",
+        close: "Fermer",
+        done: "Terminé",
+      },
+      progress: {
+        uploading: "Téléchargement...",
+        importing: "Importation...",
+      },
+      summary: {
+        title: {
+          failed: "Échec de l'importation",
+          complete: "Importation terminée",
+        },
+        message: {
+          seat_limit: "Impossible d'importer les membres en raison de restrictions de places.",
+          success: "{count} membre{plural} ajouté{plural} avec succès à l'espace de travail.",
+          no_imports: "Aucun membre n'a été importé depuis le fichier CSV.",
+        },
+        stats: {
+          successful: "Réussi",
+          failed: "Échoué",
+        },
+        download_errors: "Télécharger les erreurs",
+      },
+      toast: {
+        invalid_file: {
+          title: "Fichier invalide",
+          message: "Seuls les fichiers CSV sont pris en charge.",
+        },
+        import_failed: {
+          title: "Échec de l'importation",
+          message: "Une erreur s'est produite.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

@@ -895,6 +895,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "從CSV匯入成員",
+      description: "上傳包含以下欄位的CSV：Email, Display Name, First Name, Last Name, Role（5、15或20）",
+      dropzone: {
+        active: "將CSV檔案放在這裡",
+        inactive: "拖放或點擊上傳",
+        file_type: "僅支援.csv檔案",
+      },
+      buttons: {
+        cancel: "取消",
+        import: "匯入",
+        try_again: "重試",
+        close: "關閉",
+        done: "完成",
+      },
+      progress: {
+        uploading: "上傳中...",
+        importing: "匯入中...",
+      },
+      summary: {
+        title: {
+          failed: "匯入失敗",
+          complete: "匯入完成",
+        },
+        message: {
+          seat_limit: "由於席位限制，無法匯入成員。",
+          success: "成功將{count}名成員新增至工作區。",
+          no_imports: "未從CSV檔案匯入任何成員。",
+        },
+        stats: {
+          successful: "成功",
+          failed: "失敗",
+        },
+        download_errors: "下載錯誤",
+      },
+      toast: {
+        invalid_file: {
+          title: "無效檔案",
+          message: "僅支援CSV檔案。",
+        },
+        import_failed: {
+          title: "匯入失敗",
+          message: "發生錯誤。",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

@@ -913,6 +913,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Nhập thành viên từ CSV",
+      description: "Tải lên CSV với các cột: Email, Display Name, First Name, Last Name, Role (5, 15 hoặc 20)",
+      dropzone: {
+        active: "Thả tệp CSV vào đây",
+        inactive: "Kéo & thả hoặc nhấp để tải lên",
+        file_type: "Chỉ hỗ trợ tệp .csv",
+      },
+      buttons: {
+        cancel: "Hủy",
+        import: "Nhập",
+        try_again: "Thử lại",
+        close: "Đóng",
+        done: "Hoàn tất",
+      },
+      progress: {
+        uploading: "Đang tải lên...",
+        importing: "Đang nhập...",
+      },
+      summary: {
+        title: {
+          failed: "Nhập thất bại",
+          complete: "Nhập hoàn tất",
+        },
+        message: {
+          seat_limit: "Không thể nhập thành viên do hạn chế số ghế.",
+          success: "Đã thêm thành công {count} thành viên vào không gian làm việc.",
+          no_imports: "Không có thành viên nào được nhập từ tệp CSV.",
+        },
+        stats: {
+          successful: "Thành công",
+          failed: "Thất bại",
+        },
+        download_errors: "Tải xuống lỗi",
+      },
+      toast: {
+        invalid_file: {
+          title: "Tệp không hợp lệ",
+          message: "Chỉ hỗ trợ tệp CSV.",
+        },
+        import_failed: {
+          title: "Nhập thất bại",
+          message: "Đã xảy ra lỗi.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

@@ -921,6 +921,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "CSVからメンバーをインポート",
+      description: "次の列を含むCSVをアップロード：Email, Display Name, First Name, Last Name, Role（5、15、または20）",
+      dropzone: {
+        active: "CSVファイルをここにドロップ",
+        inactive: "ドラッグ＆ドロップまたはクリックしてアップロード",
+        file_type: ".csvファイルのみサポートされています",
+      },
+      buttons: {
+        cancel: "キャンセル",
+        import: "インポート",
+        try_again: "再試行",
+        close: "閉じる",
+        done: "完了",
+      },
+      progress: {
+        uploading: "アップロード中...",
+        importing: "インポート中...",
+      },
+      summary: {
+        title: {
+          failed: "インポート失敗",
+          complete: "インポート完了",
+        },
+        message: {
+          seat_limit: "シート制限によりメンバーをインポートできません。",
+          success: "{count}人のメンバーをワークスペースに追加しました。",
+          no_imports: "CSVファイルからメンバーがインポートされませんでした。",
+        },
+        stats: {
+          successful: "成功",
+          failed: "失敗",
+        },
+        download_errors: "エラーをダウンロード",
+      },
+      toast: {
+        invalid_file: {
+          title: "無効なファイル",
+          message: "CSVファイルのみサポートされています。",
+        },
+        import_failed: {
+          title: "インポート失敗",
+          message: "問題が発生しました。",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

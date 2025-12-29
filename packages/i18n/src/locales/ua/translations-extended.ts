@@ -927,6 +927,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Імпорт учасників з CSV",
+      description: "Завантажте CSV зі стовпцями: Email, Display Name, First Name, Last Name, Role (5, 15 або 20)",
+      dropzone: {
+        active: "Перетягніть CSV файл сюди",
+        inactive: "Перетягніть або натисніть для завантаження",
+        file_type: "Підтримуються лише файли .csv",
+      },
+      buttons: {
+        cancel: "Скасувати",
+        import: "Імпортувати",
+        try_again: "Спробувати знову",
+        close: "Закрити",
+        done: "Готово",
+      },
+      progress: {
+        uploading: "Завантаження...",
+        importing: "Імпорт...",
+      },
+      summary: {
+        title: {
+          failed: "Імпорт не вдався",
+          complete: "Імпорт завершено",
+        },
+        message: {
+          seat_limit: "Не вдалося імпортувати учасників через обмеження кількості місць.",
+          success: "Успішно додано {count} учасник{plural} до робочого простору.",
+          no_imports: "Учасники не були імпортовані з CSV файлу.",
+        },
+        stats: {
+          successful: "Успішно",
+          failed: "Не вдалося",
+        },
+        download_errors: "Завантажити помилки",
+      },
+      toast: {
+        invalid_file: {
+          title: "Недійсний файл",
+          message: "Підтримуються лише CSV файли.",
+        },
+        import_failed: {
+          title: "Імпорт не вдався",
+          message: "Щось пішло не так.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

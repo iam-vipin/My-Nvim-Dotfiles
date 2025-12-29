@@ -6,6 +6,7 @@ import type {
   TEditorWorkItemMention,
   TWorkspaceEpicsSearchParams,
   TSearchResults,
+  TWorkspaceMemberImportSummary,
 } from "@plane/types";
 // helpers
 // services
@@ -72,5 +73,13 @@ export class WorkspaceService extends CoreWorkspaceService {
 
   async retrieveWorkspaceWorkItem(workspaceSlug: string, workItemId: string): Promise<TEditorWorkItemMention> {
     return this.get(`/api/workspaces/${workspaceSlug}/issues/${workItemId}/`).then((response) => response?.data);
+  }
+
+  async importMembers(workspaceSlug: string, assetId: string): Promise<TWorkspaceMemberImportSummary> {
+    return this.post(`/api/workspaces/${workspaceSlug}/members-import/`, { asset_id: assetId })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 }

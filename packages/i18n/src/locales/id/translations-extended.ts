@@ -928,6 +928,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Impor anggota dari CSV",
+      description: "Unggah CSV dengan kolom: Email, Display Name, First Name, Last Name, Role (5, 15, atau 20)",
+      dropzone: {
+        active: "Letakkan file CSV di sini",
+        inactive: "Seret & lepas atau klik untuk mengunggah",
+        file_type: "Hanya file .csv yang didukung",
+      },
+      buttons: {
+        cancel: "Batal",
+        import: "Impor",
+        try_again: "Coba Lagi",
+        close: "Tutup",
+        done: "Selesai",
+      },
+      progress: {
+        uploading: "Mengunggah...",
+        importing: "Mengimpor...",
+      },
+      summary: {
+        title: {
+          failed: "Impor Gagal",
+          complete: "Impor Selesai",
+        },
+        message: {
+          seat_limit: "Tidak dapat mengimpor anggota karena pembatasan tempat duduk.",
+          success: "Berhasil menambahkan {count} anggota ke workspace.",
+          no_imports: "Tidak ada anggota yang diimpor dari file CSV.",
+        },
+        stats: {
+          successful: "Berhasil",
+          failed: "Gagal",
+        },
+        download_errors: "Unduh kesalahan",
+      },
+      toast: {
+        invalid_file: {
+          title: "File tidak valid",
+          message: "Hanya file CSV yang didukung.",
+        },
+        import_failed: {
+          title: "Impor gagal",
+          message: "Terjadi kesalahan.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

@@ -940,6 +940,55 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "CSV'den üye içe aktar",
+      description:
+        "Şu sütunları içeren bir CSV yükleyin: Email, Display Name, First Name, Last Name, Role (5, 15 veya 20)",
+      dropzone: {
+        active: "CSV dosyasını buraya bırakın",
+        inactive: "Sürükle bırak veya yüklemek için tıklayın",
+        file_type: "Yalnızca .csv dosyaları desteklenir",
+      },
+      buttons: {
+        cancel: "İptal",
+        import: "İçe Aktar",
+        try_again: "Tekrar Dene",
+        close: "Kapat",
+        done: "Tamamlandı",
+      },
+      progress: {
+        uploading: "Yükleniyor...",
+        importing: "İçe aktarılıyor...",
+      },
+      summary: {
+        title: {
+          failed: "İçe Aktarma Başarısız",
+          complete: "İçe Aktarma Tamamlandı",
+        },
+        message: {
+          seat_limit: "Koltuk sınırlamaları nedeniyle üyeler içe aktarılamıyor.",
+          success: "Çalışma alanına başarıyla {count} üye eklendi.",
+          no_imports: "CSV dosyasından hiçbir üye içe aktarılmadı.",
+        },
+        stats: {
+          successful: "Başarılı",
+          failed: "Başarısız",
+        },
+        download_errors: "Hataları indir",
+      },
+      toast: {
+        invalid_file: {
+          title: "Geçersiz dosya",
+          message: "Yalnızca CSV dosyaları desteklenir.",
+        },
+        import_failed: {
+          title: "İçe aktarma başarısız",
+          message: "Bir şeyler ters gitti.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

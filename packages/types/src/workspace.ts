@@ -333,6 +333,15 @@ export type TWorkspaceCredentialVerification = {
   isOAuthEnabled: boolean;
 };
 
+export type TWorkspaceMemberImportSummary = {
+  total_rows: number;
+  successful: number;
+  failed: number;
+  users_created: number;
+  workspace_members_created: number;
+  errors: Record<number, Record<string, string>> | Array<unknown>;
+};
+
 // Type for verification of both source and target credentials
 export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
   sourceTokenInvalid?: boolean;

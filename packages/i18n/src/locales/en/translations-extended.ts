@@ -1068,6 +1068,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Import Members from CSV",
+      description: "Upload a CSV with columns: Email, Display Name, First Name, Last Name, Role (5, 15, or 20)",
+      dropzone: {
+        active: "Drop CSV file here",
+        inactive: "Drag & drop or click to upload",
+        file_type: "Only .csv files supported",
+      },
+      buttons: {
+        cancel: "Cancel",
+        import: "Import",
+        try_again: "Try Again",
+        close: "Close",
+        done: "Done",
+      },
+      progress: {
+        uploading: "Uploading...",
+        importing: "Importing...",
+      },
+      summary: {
+        title: {
+          failed: "Import Failed",
+          complete: "Import Complete",
+        },
+        message: {
+          seat_limit: "Unable to import members due to seat limit restrictions.",
+          success: "Successfully added {count} member{plural} to the workspace.",
+          no_imports: "No members were imported from the CSV file.",
+        },
+        stats: {
+          successful: "Successful",
+          failed: "Failed",
+        },
+        download_errors: "Download errors",
+      },
+      toast: {
+        invalid_file: {
+          title: "Invalid file",
+          message: "Only CSV files are supported.",
+        },
+        import_failed: {
+          title: "Import failed",
+          message: "Something went wrong.",
+        },
+      },
+    },
+  },
   account_settings: {
     connections: {
       title: "Connections",

@@ -896,6 +896,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "从CSV导入成员",
+      description: "上传包含以下列的CSV：Email, Display Name, First Name, Last Name, Role（5、15或20）",
+      dropzone: {
+        active: "将CSV文件放在这里",
+        inactive: "拖放或点击上传",
+        file_type: "仅支持.csv文件",
+      },
+      buttons: {
+        cancel: "取消",
+        import: "导入",
+        try_again: "重试",
+        close: "关闭",
+        done: "完成",
+      },
+      progress: {
+        uploading: "上传中...",
+        importing: "导入中...",
+      },
+      summary: {
+        title: {
+          failed: "导入失败",
+          complete: "导入完成",
+        },
+        message: {
+          seat_limit: "由于席位限制，无法导入成员。",
+          success: "成功将{count}名成员添加到工作区。",
+          no_imports: "未从CSV文件导入任何成员。",
+        },
+        stats: {
+          successful: "成功",
+          failed: "失败",
+        },
+        download_errors: "下载错误",
+      },
+      toast: {
+        invalid_file: {
+          title: "无效文件",
+          message: "仅支持CSV文件。",
+        },
+        import_failed: {
+          title: "导入失败",
+          message: "出了些问题。",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

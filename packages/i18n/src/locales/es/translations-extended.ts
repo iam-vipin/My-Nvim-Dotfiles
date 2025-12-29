@@ -931,6 +931,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Importar miembros desde CSV",
+      description: "Sube un CSV con columnas: Email, Display Name, First Name, Last Name, Role (5, 15 o 20)",
+      dropzone: {
+        active: "Suelta el archivo CSV aquí",
+        inactive: "Arrastra y suelta o haz clic para subir",
+        file_type: "Solo se admiten archivos .csv",
+      },
+      buttons: {
+        cancel: "Cancelar",
+        import: "Importar",
+        try_again: "Intentar de nuevo",
+        close: "Cerrar",
+        done: "Hecho",
+      },
+      progress: {
+        uploading: "Subiendo...",
+        importing: "Importando...",
+      },
+      summary: {
+        title: {
+          failed: "Importación fallida",
+          complete: "Importación completada",
+        },
+        message: {
+          seat_limit: "No se pueden importar miembros debido a restricciones de límite de asientos.",
+          success: "{count} miembro{plural} agregado{plural} exitosamente al espacio de trabajo.",
+          no_imports: "No se importaron miembros desde el archivo CSV.",
+        },
+        stats: {
+          successful: "Exitoso",
+          failed: "Fallido",
+        },
+        download_errors: "Descargar errores",
+      },
+      toast: {
+        invalid_file: {
+          title: "Archivo inválido",
+          message: "Solo se admiten archivos CSV.",
+        },
+        import_failed: {
+          title: "Importación fallida",
+          message: "Algo salió mal.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

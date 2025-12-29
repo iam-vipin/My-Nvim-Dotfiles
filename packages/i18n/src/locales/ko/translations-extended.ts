@@ -916,6 +916,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "CSV에서 구성원 가져오기",
+      description: "다음 열이 포함된 CSV 업로드: Email, Display Name, First Name, Last Name, Role (5, 15 또는 20)",
+      dropzone: {
+        active: "CSV 파일을 여기에 놓으세요",
+        inactive: "드래그 앤 드롭 또는 클릭하여 업로드",
+        file_type: ".csv 파일만 지원됩니다",
+      },
+      buttons: {
+        cancel: "취소",
+        import: "가져오기",
+        try_again: "다시 시도",
+        close: "닫기",
+        done: "완료",
+      },
+      progress: {
+        uploading: "업로드 중...",
+        importing: "가져오는 중...",
+      },
+      summary: {
+        title: {
+          failed: "가져오기 실패",
+          complete: "가져오기 완료",
+        },
+        message: {
+          seat_limit: "시트 제한으로 인해 구성원을 가져올 수 없습니다.",
+          success: "{count}명의 구성원을 워크스페이스에 추가했습니다.",
+          no_imports: "CSV 파일에서 구성원을 가져오지 못했습니다.",
+        },
+        stats: {
+          successful: "성공",
+          failed: "실패",
+        },
+        download_errors: "오류 다운로드",
+      },
+      toast: {
+        invalid_file: {
+          title: "잘못된 파일",
+          message: "CSV 파일만 지원됩니다.",
+        },
+        import_failed: {
+          title: "가져오기 실패",
+          message: "문제가 발생했습니다.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

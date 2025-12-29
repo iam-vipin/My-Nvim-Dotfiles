@@ -920,6 +920,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Импорт участников из CSV",
+      description: "Загрузите CSV со столбцами: Email, Display Name, First Name, Last Name, Role (5, 15 или 20)",
+      dropzone: {
+        active: "Перетащите CSV файл сюда",
+        inactive: "Перетащите или нажмите для загрузки",
+        file_type: "Поддерживаются только файлы .csv",
+      },
+      buttons: {
+        cancel: "Отмена",
+        import: "Импортировать",
+        try_again: "Попробовать снова",
+        close: "Закрыть",
+        done: "Готово",
+      },
+      progress: {
+        uploading: "Загрузка...",
+        importing: "Импорт...",
+      },
+      summary: {
+        title: {
+          failed: "Импорт не удался",
+          complete: "Импорт завершен",
+        },
+        message: {
+          seat_limit: "Не удалось импортировать участников из-за ограничений количества мест.",
+          success: "Успешно добавлено {count} участник{plural} в рабочее пространство.",
+          no_imports: "Участники не были импортированы из CSV файла.",
+        },
+        stats: {
+          successful: "Успешно",
+          failed: "Не удалось",
+        },
+        download_errors: "Скачать ошибки",
+      },
+      toast: {
+        invalid_file: {
+          title: "Недопустимый файл",
+          message: "Поддерживаются только CSV файлы.",
+        },
+        import_failed: {
+          title: "Импорт не удался",
+          message: "Что-то пошло не так.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

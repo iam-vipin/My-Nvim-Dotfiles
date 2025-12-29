@@ -932,6 +932,54 @@ export default {
       },
     },
   },
+  workspace: {
+    members_import: {
+      title: "Importă membri din CSV",
+      description: "Încărcați un CSV cu coloane: Email, Display Name, First Name, Last Name, Role (5, 15 sau 20)",
+      dropzone: {
+        active: "Plasați fișierul CSV aici",
+        inactive: "Trageți și plasați sau faceți clic pentru a încărca",
+        file_type: "Sunt acceptate doar fișiere .csv",
+      },
+      buttons: {
+        cancel: "Anulare",
+        import: "Importă",
+        try_again: "Încearcă din nou",
+        close: "Închide",
+        done: "Gata",
+      },
+      progress: {
+        uploading: "Se încarcă...",
+        importing: "Se importă...",
+      },
+      summary: {
+        title: {
+          failed: "Import eșuat",
+          complete: "Import finalizat",
+        },
+        message: {
+          seat_limit: "Nu se pot importa membri din cauza restricțiilor de locuri.",
+          success: "{count} membr{plural} adăugat{plural} cu succes în spațiul de lucru.",
+          no_imports: "Nu au fost importați membri din fișierul CSV.",
+        },
+        stats: {
+          successful: "Reușit",
+          failed: "Eșuat",
+        },
+        download_errors: "Descarcă erori",
+      },
+      toast: {
+        invalid_file: {
+          title: "Fișier invalid",
+          message: "Sunt acceptate doar fișiere CSV.",
+        },
+        import_failed: {
+          title: "Import eșuat",
+          message: "Ceva nu a funcționat.",
+        },
+      },
+    },
+  },
   bulk_operations: {
     error_details: {
       invalid_archive_state_group: {

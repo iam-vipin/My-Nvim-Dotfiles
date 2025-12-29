@@ -3,10 +3,15 @@ import type { IMilestoneInstance, TFilterProperty, TSupportedOperators } from "@
 import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
 import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
-import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
+import {
+  createFilterConfig,
+  getMultiSelectConfig,
+  createOperatorConfigEntry,
+  getIsNullOperatorConfigEntry,
+} from "../../../rich-filters";
 
 /**
- * Work item type filter specific params
+ * Milestone filter specific params
  */
 export type TCreateMilestoneFilterParams = TCreateFilterConfigParams &
   IFilterIconConfig<IMilestoneInstance> & {
@@ -14,9 +19,9 @@ export type TCreateMilestoneFilterParams = TCreateFilterConfigParams &
   };
 
 /**
- * Helper to get the work item type multi select config
+ * Helper to get the milestone multi select config
  * @param params - The filter params
- * @returns The work item type multi select config
+ * @returns The milestone multi select config
  */
 export const getMilestoneMultiSelectConfig = (
   params: TCreateMilestoneFilterParams,
@@ -40,10 +45,10 @@ export const getMilestoneMultiSelectConfig = (
   );
 
 /**
- * Get the work item type filter config
+ * Get the milestone filter config
  * @template K - The filter key
  * @param key - The filter key to use
- * @returns A function that takes parameters and returns the work item type filter config
+ * @returns A function that takes parameters and returns the milestone filter config
  */
 export const getMilestoneFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateMilestoneFilterParams> =>
@@ -57,5 +62,6 @@ export const getMilestoneFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMilestoneMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });

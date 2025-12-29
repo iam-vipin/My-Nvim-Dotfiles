@@ -27,6 +27,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
     milestone_id = filters.UUIDFilter(method="filter_milestone_id")
     milestone_id__in = UUIDInFilter(method="filter_milestone_id_in", lookup_expr="in")
+    milestone_id__isnull = filters.BooleanFilter(method="filter_milestone_id_isnull", lookup_expr="isnull")
 
     customproperty_value = filters.CharFilter(method="filter_custom_property_value")
     customproperty_value__exact = filters.CharFilter(method="filter_custom_property_value_exact")
@@ -374,6 +375,13 @@ class ExtendedIssueFilterSet(IssueFilterSet):
             issue_milestone__deleted_at__isnull=True,
         )
 
+    def filter_milestone_id_isnull(self, queryset, name, value):
+        """Filter by milestone ID (is null), excluding soft deleted milestone associations"""
+        has_non_deleted_milestone = Q(issue_milestone__isnull=False, issue_milestone__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_milestone
+        else:
+            return has_non_deleted_milestone
 
 class InitiativeFilterSet(BaseFilterSet):
     lead = filters.UUIDFilter(field_name="lead")

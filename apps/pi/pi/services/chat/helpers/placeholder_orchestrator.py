@@ -26,6 +26,60 @@ from pi.services.chat.helpers.entity_inference import infer_selected_entity
 log = logger.getChild(__name__)
 
 
+def _format_validation_error(error_str: str) -> str:
+    """
+    Format Pydantic validation errors to show only essential information.
+
+    Converts verbose Pydantic validation traces like:
+        "3 validation errors for cycles_add_work_items
+        cycle_id
+          Field required [type=missing, input_value={...}, input_type=dict]
+          For further information visit https://errors.pydantic.dev/2.8/v/missing"
+
+    To concise user-friendly messages like:
+        "Missing required fields: cycle_id, issues, project_id"
+
+    Args:
+        error_str: The raw error string from Pydantic
+
+    Returns:
+        A concise, user-friendly error message
+    """
+
+    # Check if this is a Pydantic validation error
+    if "validation error" in error_str.lower():
+        # Extract field names from the error
+        missing_fields = []
+
+        # Pattern to match field names followed by "Field required"
+        # This handles multi-line format where field name is on its own line
+        lines = error_str.split("\n")
+        for i, line in enumerate(lines):
+            line = line.strip()
+            # Look for lines that contain "Field required"
+            if "Field required" in line and i > 0:
+                # The field name is typically on the previous line
+                prev_line = lines[i - 1].strip()
+                # Filter out lines that are parts of error messages
+                if prev_line and not prev_line.startswith("[") and not prev_line.startswith("For further"):
+                    missing_fields.append(prev_line)
+
+        if missing_fields:
+            # Remove duplicates while preserving order
+            unique_fields = list(dict.fromkeys(missing_fields))
+            return f"Missing required fields: {", ".join(unique_fields)}"
+
+    # For other validation errors, try to extract a meaningful summary
+    if "validation error" in error_str.lower():
+        # Extract the first line which usually has the summary
+        first_line = error_str.split("\n")[0]
+        # Return first 150 characters to keep it concise
+        return first_line[:150]
+
+    # For non-Pydantic errors, truncate to reasonable length
+    return error_str[:200] if len(error_str) > 200 else error_str
+
+
 # Pydantic models for structured extraction
 class ExtractedEntity(BaseModel):
     """Extracted entity information from execution context."""
@@ -124,17 +178,19 @@ class PlaceholderOrchestrator:
                     remaining.remove(action)
                 except Exception as e:
                     log.error(f"Failed to execute action {action.get("tool_name")}: {e}")
+                    # Format error message for user-friendly display
+                    formatted_error = _format_validation_error(str(e))
                     # Create failure result
                     failure_result = {
                         "tool_name": action.get("tool_name"),
-                        "result": f"❌ Failed to execute: {str(e)}",
+                        "result": f"❌ Failed to execute: {formatted_error}",
                         "entity_info": None,
                         "artifact_id": action.get("artifact_id"),
                         "sequence": len(self.results) + 1,
                         "artifact_type": action.get("entity_type"),
                         "executed_at": datetime.utcnow().isoformat(),
                         "success": False,
-                        "error": str(e),
+                        "error": formatted_error,
                     }
                     self.results.append(failure_result)
                     remaining.remove(action)

@@ -598,11 +598,16 @@ def get_entity_search_tools(method_executor, context):
 
     @tool
     async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
-        """Search for a work item by its unique identifier (e.g., 'WEB-821') and return its details.
-        Don't call this tool if the 'identifier' string is not in the format 'PROJECT-SEQUENCE'.
+        """Search for a work item by its unique identifier or UUID and return its details.
+
+        This tool accepts two formats:
+        1. PROJECT-SEQUENCE format (e.g., 'WEB-821', 'NEWDESIGNS-2')
+        2. UUID format (e.g., 'dd65d302-5714-49f3-af4f-2fe84d8010d0')
+
+        Use this tool when the user provides a work item identifier in either format.
 
         Args:
-            identifier: Work item identifier to search for (required, e.g., 'WEB-821')
+            identifier: Work item identifier to search for (required, e.g., 'WEB-821' or UUID)
             workspace_slug: Workspace slug (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided

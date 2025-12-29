@@ -813,6 +813,8 @@ Use retrieval tools to gather information, then plan the modifying actions based
 
 **ENTITY SEARCH FALLBACK AND DISAMBIGUATION RULES:**
 - **Lookup fallback**: If one of the search tools for a given entity type fails or returns "Invalid identifier format", immediately try the next search tool for that entity type with the same query
+    If the that too fails with an error, fallback to the structured_db_tool with an appropriate natural language query
+- **Tool failures → structured_db_tool**: If any retrieval tool (search_*, *_list, *_get, *_retrieve) fails with an error, immediately try `structured_db_tool` with an equivalent natural language query before asking for clarification
 - **Multiple matches**: If the search tool for a given entity type returns multiple candidates (users, work-items, etc.), call `ask_for_clarification` with:
   - `reason`: "Multiple matches found for [entity_type]"
   - `questions`: ["Which [entity] did you mean?"]
@@ -824,7 +826,6 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **MISSING PROJECT FOR PROJECT-SCOPED ENTITIES**: If you need a project list for scope selection or disambiguation:
   - **PREFER** `list_member_projects` to get active (unarchived, undeleted) projects the user is a member of
   - THEN call `ask_for_clarification` with `disambiguation_options` containing these filtered projects
-  - **AVOID** using `structured_db_tool` or `projects_list` for project selection - they may include archived projects
 - **No identical retries**: Do not call the same retrieval tool with the exact same parameters more than once. If it returns no/invalid results, proceed to the next fallback (within the same entity type) or ask for clarification.
   - **Do not loop the same call.**
 

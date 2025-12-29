@@ -70,6 +70,11 @@ class PlaneSDKAdapter:
 
         self.client = PlaneClient(base_url=base_url, access_token=access_token, api_key=api_key)
 
+        # Store for raw HTTP fallback when SDK Pydantic validation fails
+        self._base_url = base_url
+        self._access_token = access_token
+        self._api_key = api_key
+
     def _model_to_dict(self, model: Any) -> Union[Dict[str, Any], List[Any], Any]:
         """
         Convert Pydantic v2 models to plain dictionaries.
@@ -259,6 +264,8 @@ class PlaneSDKAdapter:
 
     def list_work_items(self, workspace_slug: str, project_id: str, **kwargs) -> Dict[str, Any]:
         """List work items; normalize pagination to existing shape."""
+        fields_param = kwargs.get("fields")
+
         try:
             params = None
             if kwargs:
@@ -270,7 +277,6 @@ class PlaneSDKAdapter:
                 expand = kwargs.get("expand")
                 external_id = kwargs.get("external_id")
                 external_source = kwargs.get("external_source")
-                fields = kwargs.get("fields")
 
                 params = WorkItemQueryParams(
                     per_page=per_page,
@@ -280,13 +286,17 @@ class PlaneSDKAdapter:
                     expand=expand,
                     external_id=external_id,
                     external_source=external_source,
-                    fields=fields,
+                    fields=fields_param,
                 )
 
+            # Try SDK call - this may fail with Pydantic validation error when using sparse fields
             response = self.client.work_items.list(workspace_slug=workspace_slug, project_id=project_id, params=params)
+
+            # Successfully got response, now convert to dict
             results = self._model_to_dict(getattr(response, "results", []))
             if not isinstance(results, list):
                 results = [results] if results else []
+
             return {
                 "results": results,
                 "count": len(results),
@@ -294,12 +304,73 @@ class PlaneSDKAdapter:
                 "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
+
         except HttpError as e:
-            log.error(f"Failed to list work items: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list work items (HTTP error): {e} ({getattr(e, "status_code", None)})")
             raise
+
         except Exception as e:
-            log.error(f"Failed to list work items: {str(e)}")
-            raise
+            # Check if this is a Pydantic validation error due to sparse fields
+            error_msg = str(e)
+            if "validation error" in error_msg.lower() and fields_param:
+                log.warning(f"Pydantic validation failed when using fields parameter '{fields_param}', attempting raw HTTP fallback: {e}")
+
+                # Fall back to raw HTTP request to bypass SDK's Pydantic validation
+                try:
+                    import httpx
+
+                    # Build query params
+                    query_params = {}
+                    if fields_param:
+                        query_params["fields"] = fields_param
+                    if kwargs.get("per_page"):
+                        query_params["per_page"] = kwargs["per_page"]
+                    if kwargs.get("page"):
+                        query_params["page"] = kwargs["page"]
+                    if kwargs.get("cursor"):
+                        query_params["cursor"] = kwargs["cursor"]
+                    if kwargs.get("order_by"):
+                        query_params["order_by"] = kwargs["order_by"]
+
+                    # Build URL using stored base_url
+                    url = f"{self._base_url}/api/v1/workspaces/{workspace_slug}/projects/{project_id}/work-items/"
+
+                    # Build auth headers using stored credentials
+                    headers = {}
+                    if self._access_token:
+                        headers["Authorization"] = f"Bearer {self._access_token}"
+                    elif self._api_key:
+                        headers["X-Api-Key"] = self._api_key
+
+                    # Make raw HTTP request
+                    http_client = httpx.Client(headers=headers, timeout=30.0)
+                    response = http_client.get(url, params=query_params)
+                    response.raise_for_status()
+                    data = response.json()
+                    http_client.close()
+
+                    # Extract results directly from JSON
+                    results = data.get("results", [])
+                    if not isinstance(results, list):
+                        results = []
+
+                    log.info(f"Raw HTTP fallback succeeded, retrieved {len(results)} work items with sparse fields")
+
+                    return {
+                        "results": results,
+                        "count": len(results),
+                        "total_results": data.get("total_count", len(results)),
+                        "next_cursor": str(data.get("next_page_number", "")) if data.get("next_page_number") else None,
+                        "prev_cursor": str(data.get("prev_page_number", "")) if data.get("prev_page_number") else None,
+                    }
+
+                except Exception as fallback_error:
+                    log.error(f"Raw HTTP fallback also failed: {fallback_error}")
+                    raise e  # Raise original error
+            else:
+                # Not a validation error or no fields param - raise original error
+                log.error(f"Failed to list work items: {str(e)}")
+                raise
 
     def delete_work_item(self, workspace_slug: str, project_id: str, issue_id: str) -> Dict[str, Any]:
         try:

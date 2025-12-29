@@ -231,14 +231,28 @@ async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> 
     """Load and validate artifacts for execution."""
     artifacts = await get_action_artifacts_by_ids(db, [a.artifact_id for a in request_data])
 
-    original_query = artifacts[0].data.get("planning_context", {}).get("original_query", "")
-    conversation_context = artifacts[0].data.get("planning_context", {}).get("conversation_context", {})
+    # Create artifact ID lookup map to ensure correct pairing regardless of database return order
+    artifact_map = {str(artifact.id): artifact for artifact in artifacts}
+
+    if not artifacts:
+        raise ValueError("No artifacts found for execution")
+
+    # Get planning context from first artifact (shared across all artifacts in the batch)
+    first_artifact = artifacts[0]
+    original_query = first_artifact.data.get("planning_context", {}).get("original_query", "")
+    conversation_context = first_artifact.data.get("planning_context", {}).get("conversation_context", {})
 
     # Extract workspace_slug from conversation_context for ID resolution
     workspace_slug = conversation_context.get("workspace_slug")
 
     planned_actions = []
-    for artifact, req_item in zip(artifacts, request_data):
+    for req_item in request_data:
+        # Match request item to its artifact by ID (critical for correct parameter extraction)
+        artifact = artifact_map.get(str(req_item.artifact_id))
+        if not artifact:
+            log.error(f"Artifact {req_item.artifact_id} not found in loaded artifacts - skipping")
+            continue
+
         entity_type = artifact.data.get("planning_data", {}).get("artifact_type", "")
         action = artifact.data.get("planning_data", {}).get("action", "")
 

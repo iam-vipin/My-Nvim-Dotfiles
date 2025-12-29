@@ -100,7 +100,7 @@ export const MilestoneWorkItem = observer(function MilestoneWorkItem(props: TPro
               />
             )}
           </div>
-          <span className="w-full truncate text-body-xs-regular text-primary">{workItem.name}</span>
+          <span className="flex-1 w-0 truncate text-body-xs-regular text-primary">{workItem.name}</span>
         </div>
         <div
           className="shrink-0 text-body-xs-regular"

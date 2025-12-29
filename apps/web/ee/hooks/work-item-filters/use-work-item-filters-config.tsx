@@ -219,7 +219,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       getTextPropertyFilterConfig<TWorkItemFilterProperty>("name")({
         isEnabled: isFilterEnabled("name"),
         filterIcon: AlignLeft,
-        propertyDisplayName: "Name",
+        propertyDisplayName: "Title",
         ...operatorConfigsWithoutIsNull,
       }),
     [isFilterEnabled, operatorConfigsWithoutIsNull]
@@ -244,11 +244,11 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     ...workItemFiltersConfig,
     areAllConfigsInitialized,
     configs: [
+      workItemNameFilterConfig,
       workItemTypeFilterConfig,
       teamspaceProjectFilterConfig,
       milestoneFilterConfig,
       ...workItemFiltersConfig.configs,
-      workItemNameFilterConfig,
       ...customPropertyConfigs.configs,
     ],
     configMap: {

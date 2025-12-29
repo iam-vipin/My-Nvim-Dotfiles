@@ -111,19 +111,17 @@ export const TopNavSearch = observer(function TopNavSearch() {
       >
         <Command.Input value={searchQuery} hidden />
         {!searchQuery ? (
-          <Command.List className="size-full">
-            <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
-              <div className="w-24 h-24 bg-layer-1 rounded-full flex items-center justify-center">
-                <Search className="w-14 h-14 text-placeholder/40" />
-              </div>
-              <div className="text-center space-y-2">
-                <div className="text-18 font-bold text-tertiary">Search your workspace</div>
-                <div className="text-13 text-tertiary max-w-[300px]">
-                  Start typing to search across work items, projects, cycles, modules and more
-                </div>
+          <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
+            <div className="w-24 h-24 bg-layer-1 rounded-full flex items-center justify-center">
+              <Search className="w-14 h-14 text-placeholder/40" />
+            </div>
+            <div className="text-center space-y-2">
+              <div className="text-18 font-bold text-tertiary">Search your workspace</div>
+              <div className="text-13 text-tertiary max-w-[300px]">
+                Start typing to search across work items, projects, cycles, modules and more
               </div>
             </div>
-          </Command.List>
+          </div>
         ) : (
           <SearchResults
             query={searchQuery}
@@ -132,6 +130,7 @@ export const TopNavSearch = observer(function TopNavSearch() {
             isSearching={isSearching}
             setFlattenedSearchResults={setFlattenedSearchResults}
             setIsSearching={setIsSearching}
+            renderAdvancedSearchButton
           />
         )}
       </div>

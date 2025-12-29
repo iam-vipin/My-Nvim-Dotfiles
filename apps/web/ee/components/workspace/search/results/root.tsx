@@ -172,13 +172,16 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
       />
       <div className="h-full flex-1 overflow-y-auto vertical-scrollbar scrollbar-sm">
         {renderAdvancedSearchButton && (
-          <Command.Group>
+          <Command.Group forceMount>
             <PowerKModalCommandItem
               value="navigate-to-search-page"
               icon={SearchIcon}
               label="Go to advanced search page"
+              forceMount
               onSelect={() => {
                 router.push(`/${workspaceSlug}/search?q=${query}`);
+                // close the command palette
+                handleResultClick?.();
               }}
             />
           </Command.Group>

@@ -97,5 +97,7 @@ export const useTimeLineRelationOptions = () => {
         start_after: undefined,
         finish_before: undefined,
         finish_after: undefined,
+        implements: undefined,
+        implemented_by: undefined,
       };
 };

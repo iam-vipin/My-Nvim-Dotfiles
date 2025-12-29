@@ -25,6 +25,14 @@ export const getRelationActivityContent = (activity: TIssueActivity | undefined)
       return activity.old_value === ""
         ? `marked this work item to finish after `
         : `removed the finish after relation from work item `;
+    case "implements":
+      return activity.old_value === ""
+        ? `marked this work item as implementing `
+        : `removed the implementing relation from work item `;
+    case "implemented_by":
+      return activity.old_value === ""
+        ? `marked this work item as implemented by `
+        : `removed the implemented by relation from work item `;
   }
 
   return;

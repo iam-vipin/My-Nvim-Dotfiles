@@ -279,7 +279,7 @@ export const useQuickActionsFactory = () => {
               {
                 key: "toggle-lock",
                 title: props.isLocked ? "Unlock" : "Lock",
-                icon: props.isLocked ? LockOpen : Lock,
+                icon: props.isLocked ? LockOpen : LockIcon,
                 action: handleToggleLock,
                 shouldRender: true,
               } as TContextMenuItem,

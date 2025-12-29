@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web
@@ -37,7 +37,7 @@ export const ProjectsSection = observer(function ProjectsSection(props: Props) {
             }}
             disabled={disabled}
           >
-            <Plus className="h-4 w-4" />
+            <PlusIcon className="h-4 w-4" />
           </button>
         )
       }

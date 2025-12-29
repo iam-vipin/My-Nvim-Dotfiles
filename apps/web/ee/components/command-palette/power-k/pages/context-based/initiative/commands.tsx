@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { LinkIcon, UserCircle2 } from "lucide-react";
+import { UserCircle2 } from "lucide-react";
+import { LinkIcon, InitiativeStateIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { InitiativeStateIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TInitiativeStates } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";

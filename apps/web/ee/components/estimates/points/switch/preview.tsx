@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Info, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
@@ -80,7 +81,7 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
           <>
             <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
               <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-danger-primary">
-                <Info size={14} />
+                <InfoIcon height={14} width={14} />
               </div>
             </Tooltip>
           </>

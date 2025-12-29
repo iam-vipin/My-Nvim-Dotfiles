@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Info, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -106,7 +107,7 @@ export const LinkTeamspaceToProjectModal = observer(function LinkTeamspaceToProj
           />
         </div>
         <div className="text-caption-sm-medium text-tertiary bg-accent-subtle py-2 px-4 flex items-center gap-1">
-          <Info className="flex-shrink-0 size-4" aria-hidden="true" />
+          <InfoIcon className="flex-shrink-0 size-4" aria-hidden="true" />
           {t("teamspace_projects.settings.link_teamspace.info.title")}{" "}
           <a
             href="https://docs.plane.so/core-concepts/workspaces/teamspaces"

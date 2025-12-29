@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -43,7 +43,7 @@ export function MovePageModalListItem(props: Props) {
             </span>
             <p className="text-13 truncate">{item.name}</p>
           </div>
-          {selected && <Check className="shrink-0 size-4 text-primary" />}
+          {selected && <CheckIcon className="shrink-0 size-4 text-primary" />}
         </>
       )}
     </Combobox.Option>

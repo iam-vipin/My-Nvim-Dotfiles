@@ -1,10 +1,9 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Check } from "lucide-react";
+import { CheckIcon, StateGroupIcon } from "@plane/propel/icons";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Spinner } from "@plane/ui";
 // ce imports
@@ -58,7 +57,7 @@ export const ChangeWorkItemStateList = observer(function ChangeWorkItemStateList
                     <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.MD} />
                     <p>{state.name}</p>
                   </div>
-                  <div>{isSelected && <Check className="h-3 w-3" />}</div>
+                  <div>{isSelected && <CheckIcon className="h-3 w-3" />}</div>
                 </Command.Item>
               </Tooltip>
             );

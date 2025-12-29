@@ -1,11 +1,10 @@
 import type { FC, ReactNode } from "react";
 import React from "react";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { NewTabIcon, CustomersIcon } from "@plane/propel/icons";
 import { CUSTOMER_CONTRACT_STATUS, CUSTOMER_STAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CustomersIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TCustomer } from "@plane/types";
 import { getFileURL, formatURLForDisplay } from "@plane/utils";
@@ -59,7 +58,7 @@ export function CustomerPreview(props: TProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <ExternalLink className="text-tertiary size-3" />
+                    <NewTabIcon className="text-tertiary size-3" />
                     <span className="truncate">{formatURLForDisplay(customer.website_url)}</span>
                   </Link>
                 )}

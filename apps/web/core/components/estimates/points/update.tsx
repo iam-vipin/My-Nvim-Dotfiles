@@ -1,10 +1,9 @@
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, CloseIcon } from "@plane/propel/icons";
+import { CheckIcon, CloseIcon, InfoIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
@@ -189,7 +188,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
               position="bottom"
             >
               <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-danger-primary">
-                <Info size={14} />
+                <InfoIcon width={14} height={14} />
               </div>
             </Tooltip>
           </>

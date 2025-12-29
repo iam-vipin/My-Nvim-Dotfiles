@@ -2,6 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 
+// icons
+import { ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import {
   EUserPermissions,

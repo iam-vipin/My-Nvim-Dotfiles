@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { Globe2, Lock } from "lucide-react";
+
+import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web hooks
 import { PROJECT_ACCESS } from "@/plane-web/constants/project";
@@ -50,7 +51,9 @@ export const FilterAccess = observer(function FilterAccess(props: TFilterAccess)
                 key={access.key}
                 isChecked={appliedFilters?.includes(access.key) ? true : false}
                 onClick={() => handleFilter(access.key)}
-                icon={access.key === "public" ? <Globe2 className={`h-3 w-3`} /> : <Lock className={`h-3 w-3`} />}
+                icon={
+                  access.key === "public" ? <GlobeIcon className={`h-3 w-3`} /> : <LockIcon className={`h-3 w-3`} />
+                }
                 title={access.label}
               />
             ))

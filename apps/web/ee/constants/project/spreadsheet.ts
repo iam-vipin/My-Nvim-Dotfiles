@@ -1,7 +1,7 @@
 import type { FC } from "react";
-import { CalendarDays, Link2, Signal, Paperclip } from "lucide-react";
+import { CalendarDays, Signal, Paperclip } from "lucide-react";
 // plane imports
-import { LayersIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import { LayersIcon, LinkIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 // plane web imports
 import { SpreadsheetIssueColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/issue-column";
@@ -65,7 +65,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     title: "Lead",
     ascendingOrderTitle: "Most",
     descendingOrderTitle: "Least",
-    icon: Link2,
+    icon: LinkIcon,
     Column: SpreadsheetLeadColumn,
     isSortingAllowed: false,
   },

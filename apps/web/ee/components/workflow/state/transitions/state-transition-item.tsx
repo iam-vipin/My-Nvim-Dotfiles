@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { MoveRight, Trash2 } from "lucide-react";
+import { MoveRight } from "lucide-react";
+import { TrashIcon, ApproverIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ApproverIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -204,7 +204,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                   />
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Trash2
+                  <TrashIcon
                     className="size-3 text-placeholder hover:text-danger-primary cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();

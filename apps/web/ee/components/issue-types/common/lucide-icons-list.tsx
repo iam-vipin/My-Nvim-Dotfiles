@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Check, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { DEFAULT_BACKGROUND_COLORS } from "@plane/constants";
 import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
@@ -96,7 +97,7 @@ export function LucideIconsList(props: TIconsListProps) {
                   }}
                 >
                   {curCol === selectedColor && (
-                    <Check className="absolute inset-0 m-auto text-on-color size-3" strokeWidth={3} />
+                    <CheckIcon className="absolute inset-0 m-auto text-on-color size-3" strokeWidth={3} />
                   )}
                 </span>
               </button>

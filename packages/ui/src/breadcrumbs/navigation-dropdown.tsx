@@ -1,4 +1,4 @@
-import { CheckIcon } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 import * as React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";

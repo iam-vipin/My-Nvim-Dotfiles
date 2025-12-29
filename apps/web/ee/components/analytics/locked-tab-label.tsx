@@ -1,5 +1,5 @@
 import React from "react";
-import { Lock } from "lucide-react";
+import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 
@@ -21,7 +21,7 @@ function LockedTabLabel({ label, t }: LockedTabLabelProps) {
       }
     >
       <div className="flex gap-2 justify-center items-center">
-        {label} <Lock size={10} />
+        {label} <LockIcon width={10} height={10} />
       </div>
     </Tooltip>
   );

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 
 type Props = {
   customButton?: React.ReactNode;
@@ -21,7 +21,7 @@ export const InitiativeActionButton = observer(function InitiativeActionButton(p
 
   return (
     <button type="button" onClick={handleOnClick} disabled={disabled}>
-      {customButton ? customButton : <Plus className="h-4 w-4" />}
+      {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
     </button>
   );
 });

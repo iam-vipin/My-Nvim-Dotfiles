@@ -1,16 +1,7 @@
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import {
-  ArchiveIcon,
-  ArchiveRestoreIcon,
-  Globe2,
-  LinkIcon,
-  Lock,
-  LockKeyhole,
-  LockKeyholeOpen,
-  Star,
-  StarOff,
-} from "lucide-react";
+import { ArchiveIcon, ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, Star, StarOff } from "lucide-react";
+import { GlobeIcon, LinkIcon, LockIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -110,7 +101,7 @@ export const useWikiAppPowerKPageContextBasedActions = (): TPowerKCommandConfig[
         access === EPageAccess.PUBLIC
           ? "power_k.contextual_actions.page.make_private"
           : "power_k.contextual_actions.page.make_public",
-      icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
+      icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
       group: "contextual",
       contextType: "page",
       type: "action",

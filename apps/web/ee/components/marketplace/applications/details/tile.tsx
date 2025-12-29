@@ -1,7 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, Crown, Info } from "lucide-react";
+import { ArrowRight, Crown } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { convertAppSlugToIntegrationKey } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
@@ -178,7 +179,7 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
                   }
                 >
                   <div className="flex gap-1.5 cursor-help shrink-0 items-center text-secondary">
-                    <Info size={12} />
+                    <InfoIcon height={12} width={12} />
                     <div className="text-body-xs-medium text-tertiary">{t("integrations.not_configured")}</div>
                   </div>
                 </Tooltip>

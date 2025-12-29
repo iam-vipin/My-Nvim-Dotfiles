@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { ExternalLink, Pencil } from "lucide-react";
+import { NewTabIcon, EditIcon } from "@plane/propel/icons";
 // ui
 import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { Input } from "@plane/ui";
@@ -83,12 +83,12 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
                 className="flex-shrink-0 rounded-sm bg-layer-1 hover:bg-surface-1"
                 onClick={(e) => e.stopPropagation()}
               >
-                <ExternalLink className="h-2.5 w-2.5 flex-shrink-0" />
+                <NewTabIcon className="h-2.5 w-2.5 flex-shrink-0" />
               </a>
             )}
 
             <button className="p-1 flex-shrink-0  text-placeholder">
-              <Pencil className="h-2.5 w-2.5 flex-shrink-0" />
+              <EditIcon className="h-2.5 w-2.5 flex-shrink-0" />
             </button>
           </div>
         )}

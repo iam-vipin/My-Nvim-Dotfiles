@@ -4,7 +4,8 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
-import { GripVertical, Pencil } from "lucide-react";
+import { GripVertical } from "lucide-react";
+import { EditIcon } from "@plane/propel/icons";
 import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DropIndicator } from "@plane/ui";
 // helpers
@@ -191,7 +192,7 @@ export const ProjectStateListItem = observer(function ProjectStateListItem(props
               onClick={() => setUpdateStateModal(true)}
               data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >
-              <Pencil className="w-3 h-3" />
+              <EditIcon className="w-3 h-3" />
             </button>
             <ProjectStateDelete workspaceSlug={workspaceSlug} totalStates={totalStates} state={state} />
           </div>

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -75,7 +75,7 @@ export const DuplicateWorkItemModal = observer(function DuplicateWorkItemModal(p
           <h3 className="text-14 text-primary">{t("issue.duplicate.modal.title")}</h3>
           {/* Call out */}
           <div className="flex  gap-2 rounded-md bg-layer-1 p-2">
-            <Info className="size-5 text-tertiary" />
+            <InfoIcon className="size-5 text-tertiary" />
             <p className="text-tertiary text-11">
               {serviceType === EIssueServiceType.EPICS ? (
                 <>

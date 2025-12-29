@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Copy, FilePlus2, ThumbsDown, ThumbsUp, Repeat2 } from "lucide-react";
+import { FilePlus2, ThumbsDown, ThumbsUp, Repeat2 } from "lucide-react";
+import { CopyIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -67,7 +68,12 @@ export const Feedback = observer(function Feedback(props: TProps) {
     <div className="flex gap-4">
       {/* Copy */}
       <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
-        <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-icon-secondary" />
+        <CopyIcon
+          height={16}
+          width={16}
+          onClick={handleCopyLink}
+          className="my-auto cursor-pointer text-icon-secondary"
+        />
       </Tooltip>
 
       {/* Good response */}

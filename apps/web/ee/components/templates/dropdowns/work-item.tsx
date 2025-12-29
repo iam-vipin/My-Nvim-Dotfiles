@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Plus, Shapes } from "lucide-react";
+import { Shapes } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -184,7 +185,7 @@ export const WorkItemTemplateDropdown = observer(function WorkItemTemplateDropdo
             onClick={redirectToCreateTemplatePage}
             data-ph-element={WORKITEM_TEMPLATE_TRACKER_ELEMENTS.CREATE_WORKITEM_MODAL_CREATE_BUTTON}
           >
-            <Plus className="size-3.5" />
+            <PlusIcon className="size-3.5" />
             {t("templates.dropdown.add.work_item")}
           </Button>
         ) : undefined

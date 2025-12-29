@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
+import { MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
+import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
@@ -211,7 +211,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
             <Button variant="secondary" size="lg" onClick={handleCopyText}>
-              <Link2 className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
+              <LinkIcon className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
             </Button>
           </Tooltip>
           {issue && (

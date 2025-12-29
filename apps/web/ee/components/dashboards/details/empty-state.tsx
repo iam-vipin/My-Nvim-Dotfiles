@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
@@ -70,7 +70,7 @@ export const DashboardsWidgetsListEmptyState = observer(function DashboardsWidge
             buttonClassName={getButtonStyling("secondary", "base")}
             buttonContent={
               <>
-                {!isAddingWidget && <Plus className="flex-shrink-0 size-3.5" />}
+                {!isAddingWidget && <PlusIcon className="flex-shrink-0 size-3.5" />}
                 {t(isAddingWidget ? "common.adding" : "dashboards.widget.common.add_widget")}
               </>
             }

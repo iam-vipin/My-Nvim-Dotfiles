@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { Link2, Pencil, Trash2 } from "lucide-react";
+import { LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -47,7 +47,7 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
     {
       key: "edit",
       title: "Edit",
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEdit,
       shouldRender: isAdmin,
     },
@@ -55,14 +55,14 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
       key: "copy-link",
       action: handleCopyLink,
       title: "Copy link",
-      icon: Link2,
+      icon: LinkIcon,
       iconClassName: "-rotate-45",
     },
     {
       key: "delete",
       action: () => toggleDeleteRequestModal(requestId),
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       className: "text-danger-primary",
       shouldRender: isAdmin,
     },

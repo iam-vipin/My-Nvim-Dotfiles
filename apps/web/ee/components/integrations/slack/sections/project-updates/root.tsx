@@ -2,7 +2,8 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus, AlertTriangle, RefreshCw, Hash } from "lucide-react";
+import { AlertTriangle, RefreshCw, Hash } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { SLACK_INTEGRATION_TRACKER_EVENTS, SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { E_SLACK_ENTITY_TYPE } from "@plane/etl/slack";
@@ -245,7 +246,7 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
             onClick={handleOpenCreateModal}
             data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CHANNEL_MAPPING_HEADER_ADD_BUTTON}
           >
-            <Plus className="h-5 w-5" />
+            <PlusIcon className="h-5 w-5" />
             <span className="sr-only">{t("slack_integration.project_updates.add_new_project_update")}</span>
           </Button>
         </div>

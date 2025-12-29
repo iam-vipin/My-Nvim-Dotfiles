@@ -1,10 +1,10 @@
 import { differenceInSeconds } from "date-fns/differenceInSeconds";
 import { observer } from "mobx-react";
-import { Check, CircleAlert, Clock, Dot } from "lucide-react";
+import { CircleAlert, Clock, Dot } from "lucide-react";
+import { CheckIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar } from "@plane/ui";
 import {
@@ -58,7 +58,11 @@ export const AutomationDetailsSidebarActivityRunHistoryItem = observer(
                     "bg-orange-500": runDetails?.status === "failed",
                   })}
                 >
-                  {runDetails?.status === "success" ? <Check className="size-4" /> : <CircleAlert className="size-4" />}
+                  {runDetails?.status === "success" ? (
+                    <CheckIcon className="size-4" />
+                  ) : (
+                    <CircleAlert className="size-4" />
+                  )}
                 </span>
                 <div>
                   <p className="font-semibold">

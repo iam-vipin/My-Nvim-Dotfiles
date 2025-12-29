@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Plus, Shapes } from "lucide-react";
+import { Shapes } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // ui
 import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -153,7 +154,7 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
             onClick={redirectToCreateTemplatePage}
             data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_PROJECT_MODAL_CREATE_BUTTON}
           >
-            <Plus className="size-3.5" />
+            <PlusIcon className="size-3.5" />
             {t("templates.dropdown.add.project")}
           </Button>
         ) : undefined

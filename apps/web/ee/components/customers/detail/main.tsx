@@ -2,7 +2,7 @@ import type { FC } from "react";
 import React, { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { NewTabIcon } from "@plane/propel/icons";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -176,7 +176,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
               target="_blank"
               rel="noopener noreferrer"
             >
-              <ExternalLink className="text-tertiary size-3" />
+              <NewTabIcon className="text-tertiary size-3" />
               {formatURLForDisplay(customer.website_url)}
             </Link>
           )}

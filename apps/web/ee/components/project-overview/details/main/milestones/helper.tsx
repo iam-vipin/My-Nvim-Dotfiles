@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { MILESTONE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -137,7 +138,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
         setIsCreateUpdateMilestoneModalOpen(true);
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
     },
     {
       key: "delete",
@@ -145,7 +146,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
         handleDeleteMilestone();
       },
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       iconClassName: "text-danger-primary",
     },
   ];

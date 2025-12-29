@@ -1,5 +1,6 @@
 //ui
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "@plane/constants";
 // i18n

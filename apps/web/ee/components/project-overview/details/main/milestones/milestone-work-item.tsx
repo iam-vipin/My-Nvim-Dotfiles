@@ -1,7 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
-import { CircleMinus, LinkIcon } from "lucide-react";
+import { CircleMinus } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";

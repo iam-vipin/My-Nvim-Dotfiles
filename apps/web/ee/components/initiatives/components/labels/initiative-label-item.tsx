@@ -1,7 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2 } from "lucide-react";
+
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import type { TInitiativeLabel } from "@plane/types";
 // components
@@ -31,7 +32,7 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
 
   const customMenuItems: IInitiativeCustomMenuItem[] = [
     {
-      CustomIcon: Pencil,
+      CustomIcon: EditIcon,
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
@@ -41,7 +42,7 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
       key: "edit_label",
     },
     {
-      CustomIcon: Trash2,
+      CustomIcon: TrashIcon,
       onClick: () => {
         handleLabelDelete(label);
       },

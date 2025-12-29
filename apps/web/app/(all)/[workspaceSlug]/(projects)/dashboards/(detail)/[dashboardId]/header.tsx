@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Eye, Pencil, Plus } from "lucide-react";
+import { Eye } from "lucide-react";
+import { EditIcon, PlusIcon, DashboardIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DashboardIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { EWidgetChartModels, EWidgetChartTypes, ICustomSearchSelectOption } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/propel/button";
@@ -114,7 +114,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
               buttonClassName={getButtonStyling("secondary", "base")}
               buttonContent={
                 <>
-                  {!isAddingWidget && <Plus className="flex-shrink-0 size-3.5" />}
+                  {!isAddingWidget && <PlusIcon className="flex-shrink-0 size-3.5" />}
                   {t(isAddingWidget ? "common.adding" : "dashboards.widget.common.add_widget")}
                 </>
               }
@@ -126,7 +126,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
             variant="primary"
             size="lg"
             onClick={() => toggleViewingMode?.()}
-            prependIcon={isViewModeEnabled ? <Pencil /> : <Eye />}
+            prependIcon={isViewModeEnabled ? <EditIcon className="size-3.5" /> : <Eye className="size-3.5" />}
             disabled={!canCurrentUserEditDashboard}
           >
             {t(isViewModeEnabled ? "common.edit" : "common.view")}

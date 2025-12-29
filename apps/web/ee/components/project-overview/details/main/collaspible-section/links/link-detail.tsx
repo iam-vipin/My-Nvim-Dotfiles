@@ -1,7 +1,8 @@
 import type { FC } from "react";
 // hooks
 import { observer } from "mobx-react";
-import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
+
+import { CopyIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -77,7 +78,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
                   toggleProjectLinkModal(true);
                 }}
               >
-                <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
               </button>
               <span
                 onClick={(e) => {
@@ -92,7 +93,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
                 }}
                 className="flex items-center justify-center p-1 hover:bg-layer-1"
               >
-                <Copy className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <CopyIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
               </span>
               <button
                 type="button"
@@ -103,7 +104,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
                   linkOperations.remove(linkDetail.id);
                 }}
               >
-                <Trash2 className="h-3 w-3" />
+                <TrashIcon className="h-3 w-3" />
               </button>
             </div>
           )}

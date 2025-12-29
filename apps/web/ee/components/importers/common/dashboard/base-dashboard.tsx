@@ -2,14 +2,14 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { CircleX, Info, Loader, RefreshCcw } from "lucide-react";
+import { CircleX, Loader, RefreshCcw } from "lucide-react";
+import { InfoIcon, ProjectIcon } from "@plane/propel/icons";
 import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import type { TJobStatus } from "@plane/etl/core";
 import { E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TImportJob, TLogoProps } from "@plane/types";
 import { ModalCore } from "@plane/ui";
@@ -275,7 +275,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
               ) : (
                 <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
                   <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
-                    <Info size={12} />
+                    <InfoIcon height={12} width={12} />
                     <div className="text-11">{t("importers.source_token_expired")}</div>
                   </div>
                 </Tooltip>

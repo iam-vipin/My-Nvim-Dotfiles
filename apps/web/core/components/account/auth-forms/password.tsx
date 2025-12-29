@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Eye, EyeOff, Info, XCircle } from "lucide-react";
+import { Eye, EyeOff, XCircle } from "lucide-react";
+import { InfoIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_EVENTS, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
@@ -124,9 +124,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
   return (
     <>
       {isBannerMessage && mode === EAuthModes.SIGN_UP && (
-        <div className="relative flex items-center p-2 rounded-md gap-2 border border-danger-strong/50 bg-danger-subtle">
-          <div className="w-4 h-4 shrink-0 relative flex justify-center items-center">
-            <Info size={16} className="text-danger-primary" />
+        <div className="relative flex items-center p-2 rounded-md gap-2 border border-danger-strong/50 bg-danger-primary">
+          <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
+            <InfoIcon height={16} width={16} className="text-danger-primary" />
           </div>
           <div className="w-full text-13 font-medium text-danger-primary">
             {t("auth.sign_up.errors.password.strength")}

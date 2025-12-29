@@ -1,8 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { CircleChevronDown, ToggleLeft, UsersRound, Hash, AlignLeft, Link2 } from "lucide-react";
+import { CircleChevronDown, ToggleLeft, UsersRound, Hash, AlignLeft } from "lucide-react";
 import type { ISvgIcons } from "@plane/propel/icons";
 // plane imports
-import { CalendarLayoutIcon } from "@plane/propel/icons";
+import { CalendarLayoutIcon, LinkIcon } from "@plane/propel/icons";
 import type { TIssuePropertyTypeIconKey } from "@plane/types";
 import { cn } from "@plane/utils";
 
@@ -13,7 +13,7 @@ export const CUSTOM_PROPERTY_ICON_MAP: Record<TIssuePropertyTypeIconKey, LucideI
   ToggleLeft: ToggleLeft,
   Calendar: CalendarLayoutIcon,
   UsersRound: UsersRound,
-  Link2: Link2,
+  Link2: LinkIcon,
 };
 
 type TPropertyTypeIconProps = {

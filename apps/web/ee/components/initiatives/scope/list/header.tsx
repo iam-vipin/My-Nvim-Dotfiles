@@ -1,4 +1,4 @@
-import { PlusIcon } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 

@@ -2,7 +2,8 @@ import type { FC, ReactNode } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { Edit, Key, Share, Trash2 } from "lucide-react";
+import { Edit, Key, Share } from "lucide-react";
+import { TrashIcon } from "@plane/propel/icons";
 
 // plane imports
 
@@ -108,7 +109,7 @@ export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuO
       type: "menu-item",
       label: "Delete",
       isActive: app.is_owned,
-      prependIcon: <Trash2 className="flex-shrink-0 h-3 w-3" />,
+      prependIcon: <TrashIcon className="flex-shrink-0 h-3 w-3" />,
       onClick: () => {
         toggleDeleteApplicationModal(true);
       },
@@ -118,7 +119,7 @@ export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuO
       type: "menu-item",
       label: "Uninstall",
       isActive: app.is_installed && allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE),
-      prependIcon: <Trash2 className="flex-shrink-0 h-3 w-3" />,
+      prependIcon: <TrashIcon className="flex-shrink-0 h-3 w-3" />,
       onClick: () => {
         toggleRevokeAccessModal(true);
       },

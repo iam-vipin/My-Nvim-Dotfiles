@@ -2,14 +2,13 @@ import type { FC } from "react";
 import React, { useRef, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { v4 } from "uuid";
-import { Plus } from "lucide-react";
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 // plane constants
 // plane i18n
 import { CUSTOMER_PROPERTY_TRACKER_ELEMENTS, CUSTOMER_PROPERTY_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { Button } from "@plane/propel/button";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import type { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
 // plane ui
 import { Collapsible } from "@plane/ui";
@@ -151,7 +150,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
                   }}
                   data-ph-element={CUSTOMER_PROPERTY_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON}
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <PlusIcon className="h-3.5 w-3.5" />
                   {t("customers.properties.add.primary_button")}
                 </Button>
               </div>

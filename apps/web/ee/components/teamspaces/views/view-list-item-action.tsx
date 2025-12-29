@@ -2,7 +2,8 @@ import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Earth, Lock } from "lucide-react";
+import { Earth } from "lucide-react";
+import { LockIcon } from "@plane/propel/icons";
 // plane imports
 import {
   EUserPermissionsLevel,
@@ -92,7 +93,7 @@ export const TeamspaceViewListItemAction = observer(function TeamspaceViewListIt
     <>
       <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === EViewAccess.PUBLIC ? "Public" : "Private"}>
-          {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+          {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <LockIcon className="h-4 w-4" />}
         </Tooltip>
       </div>
 

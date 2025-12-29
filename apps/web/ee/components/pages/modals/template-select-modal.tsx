@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Search, Shapes } from "lucide-react";
+import { Search, Shapes } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { getEditorContentWithReplacedAssets } from "@plane/editor";
@@ -138,7 +139,7 @@ export const TemplateSelectModal = observer(function TemplateSelectModal(props: 
           <div className="flex items-center gap-2 truncate">
             <span className="flex-shrink-0 size-4 grid place-items-center">
               {isTemplateSelected ? (
-                <Check className="size-4 text-primary" />
+                <CheckIcon className="size-4 text-primary" />
               ) : (
                 <Shapes className="size-4 text-primary" />
               )}

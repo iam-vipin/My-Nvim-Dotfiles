@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Trash } from "lucide-react";
+import { TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -85,7 +85,7 @@ export const RequestAttachmentsListItem = observer(function RequestAttachmentsLi
               }}
             >
               <div className="flex items-center gap-2">
-                <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                 <span>{t("common.actions.delete")}</span>
               </div>
             </CustomMenu.MenuItem>

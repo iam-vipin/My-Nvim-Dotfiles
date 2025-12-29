@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import React from "react";
 import { v4 } from "uuid";
-import { Plus } from "lucide-react";
+
+import { PlusIcon, BuildingsIcon } from "@plane/propel/icons";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane icons
 import { Button } from "@plane/propel/button";
-import { BuildingsIcon } from "@plane/propel/icons";
 // plane types
 import type { TCreationListModes } from "@plane/types";
 // plane ui
@@ -38,7 +38,7 @@ export function CustomerPropertiesEmptyState(props: TCustomerPropertiesEmptyStat
             handleCustomerPropertiesCreate("add", { key: v4(), ...defaultCustomProperty });
           }}
         >
-          <Plus className="h-3.5 w-3.5" />
+          <PlusIcon className="h-3.5 w-3.5" />
           {t("customers.properties.add.primary_button")}
         </Button>
       </div>

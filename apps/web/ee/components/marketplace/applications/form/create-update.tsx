@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Book, Camera, Check, ChevronDown } from "lucide-react";
+import { Book, Camera, ChevronDown } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { EApplicationAuthorizationGrantType, AUTHORIZATION_GRANT_TYPES_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -341,7 +342,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
               renderItem={(option) => (
                 <span className="flex items-center gap-1">
                   {AUTHORIZATION_GRANT_TYPES_MAP[option.value as EApplicationAuthorizationGrantType]}
-                  {option.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                  {option.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                 </span>
               )}
             />

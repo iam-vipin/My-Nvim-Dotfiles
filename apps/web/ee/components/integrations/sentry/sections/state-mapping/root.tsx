@@ -2,7 +2,8 @@ import type { FC } from "react";
 import { useState, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus, AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import type { TSentryConfig, TSentryStateMapping } from "@plane/etl/sentry";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -261,7 +262,7 @@ export const SentryStateMappingRoot = observer(function SentryStateMappingRoot({
             onClick={handleOpenCreateModal}
             disabled={availableProjects.length === 0}
           >
-            <Plus className="h-5 w-5" />
+            <PlusIcon className="h-5 w-5" />
             <span className="sr-only">{t("sentry_integration.state_mapping.add_new_state_mapping")}</span>
           </Button>
         </div>

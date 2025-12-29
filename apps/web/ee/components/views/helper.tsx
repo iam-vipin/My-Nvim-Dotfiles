@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { LockIcon } from "lucide-react";
+
+import { LockIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { LayoutSelection } from "@/components/issues/issue-layouts/filters";

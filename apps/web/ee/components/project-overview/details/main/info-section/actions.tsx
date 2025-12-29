@@ -1,4 +1,5 @@
-import { Link2, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 import { ProjectAttachmentActionButton } from "../collaspible-section/attachment/quick-action-button";
 
 type TProps = {
@@ -11,7 +12,7 @@ export function Actions(props: TProps) {
   return (
     <div className="text-14 font-medium flex gap-4 text-secondary my-auto">
       <button className="flex gap-1" onClick={() => toggleLinkModalOpen(true)}>
-        <Link2 className="rotate-[135deg] my-auto" size={16} />
+        <LinkIcon className="rotate-[135deg] my-auto" width={16} height={16} />
         <div>Add link</div>
       </button>
       <ProjectAttachmentActionButton

@@ -1,11 +1,10 @@
 import type { FC } from "react";
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import { Check, Info } from "lucide-react";
+import { CheckIcon, InfoIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Listbox, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";
@@ -80,7 +79,7 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
             <>
               <Tooltip tooltipContent={error} position="bottom">
                 <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden relative flex justify-center items-center text-danger-primary">
-                  <Info size={14} />
+                  <InfoIcon height={14} width={14} />
                 </div>
               </Tooltip>
             </>
@@ -114,7 +113,7 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
                 >
                   <div className="relative flex items-center text-wrap gap-2 px-1 py-0.5">
                     <div className="text-13 font-medium w-full line-clamp-1">None</div>
-                    {selectedOption === "none" && <Check size={12} />}
+                    {selectedOption === "none" && <CheckIcon height={12} width={12} />}
                   </div>
                 </Listbox.Option>
                 {options.map((option) => (
@@ -132,7 +131,7 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
                           ? convertMinutesToHoursMinutesString(Number(option.value))
                           : option.value}
                       </div>
-                      {selectedOption === option?.id && <Check size={12} />}
+                      {selectedOption === option?.id && <CheckIcon width={12} height={12} />}
                     </div>
                   </Listbox.Option>
                 ))}

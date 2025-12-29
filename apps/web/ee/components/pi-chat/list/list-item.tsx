@@ -2,7 +2,8 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Pencil, Star, Trash } from "lucide-react";
+import { Star } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -50,7 +51,7 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
     {
       key: "rename",
       title: t("edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: () => setIsEditModalOpen(true),
     },
     {
@@ -64,7 +65,7 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
       key: "delete",
       action: () => setIsDeleteModalOpen(true),
       title: t("delete"),
-      icon: Trash,
+      icon: TrashIcon,
     },
   ];
   return (

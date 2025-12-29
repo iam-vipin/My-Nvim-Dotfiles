@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Earth, EarthLock, Pencil, Trash2 } from "lucide-react";
+import { Earth, EarthLock } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import {
   ETemplateLevel,
@@ -216,7 +217,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
     {
       key: "edit",
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditTemplate,
       shouldRender: template.canCurrentUserEditTemplate,
     },
@@ -257,7 +258,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
         }
       },
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: template.canCurrentUserDeleteTemplate,
       className: "text-danger-primary",
     },

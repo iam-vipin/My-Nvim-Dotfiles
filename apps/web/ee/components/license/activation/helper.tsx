@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Copy } from "lucide-react";
+import { CopyIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
@@ -37,7 +37,7 @@ function CopyField(props: Props) {
         >
           <p className="text-11 font-medium text-secondary truncate pr-2">{value}</p>
           <Button variant="ghost" className="flex-shrink-0 p-1 h-auto">
-            <Copy className="size-4 text-secondary group-hover:text-primary" />
+            <CopyIcon className="size-4 text-secondary group-hover:text-primary" />
           </Button>
         </div>
       </div>

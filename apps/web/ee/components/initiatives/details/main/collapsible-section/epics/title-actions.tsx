@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import {
   EIssueFilterType,
@@ -101,7 +101,7 @@ export const EpicsTitleActions = observer(function EpicsTitleActions(props: TEpi
       {!disabled && (
         <div>
           <button type="button" onClick={() => toggleEpicModal()}>
-            <Plus className="h-4 w-4" />
+            <PlusIcon className="h-4 w-4" />
           </button>
         </div>
       )}

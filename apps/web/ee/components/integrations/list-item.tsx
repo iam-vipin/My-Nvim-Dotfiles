@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import Link from "next/link";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -63,7 +63,7 @@ export function IntegrationListItem(props: IntegrationListItemProps) {
           }
         >
           <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
-            <Info size={12} />
+            <InfoIcon height={12} width={12} />
             <div className="text-caption-sm-regular">{t("integrations.not_configured")}</div>
           </div>
         </Tooltip>

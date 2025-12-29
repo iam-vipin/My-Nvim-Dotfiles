@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -73,7 +73,7 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
                 <IconButton
                   variant="ghost"
                   size="sm"
-                  icon={Plus}
+                  icon={PlusIcon}
                   onClick={() => {
                     toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
                   }}

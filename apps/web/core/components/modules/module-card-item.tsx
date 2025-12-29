@@ -3,7 +3,8 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { Info, SquareUser } from "lucide-react";
+import { SquareUser } from "lucide-react";
+import { InfoIcon, WorkItemsIcon } from "@plane/propel/icons";
 // plane package imports
 import {
   MODULE_STATUS,
@@ -15,7 +16,6 @@ import {
   MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IModule } from "@plane/types";
@@ -220,7 +220,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   />
                 )}
                 <button onClick={openModuleOverview}>
-                  <Info className="h-4 w-4 text-placeholder" />
+                  <InfoIcon className="h-4 w-4 text-placeholder" />
                 </button>
               </div>
             </div>

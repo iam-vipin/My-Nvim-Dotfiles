@@ -2,10 +2,10 @@ import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { CircleX, Files, Link2 } from "lucide-react";
+import { CircleX, Files } from "lucide-react";
+import { LinkIcon, PageIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -69,7 +69,7 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
       key: "copy",
       action: () => handleCopyText(),
       title: "Copy link",
-      icon: () => <Link2 className="size-3 -rotate-45" />,
+      icon: () => <LinkIcon className="size-3 -rotate-45" />,
     },
     {
       key: "remove",

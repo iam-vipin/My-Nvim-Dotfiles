@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Check } from "lucide-react";
+
+import { CheckIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -70,7 +71,7 @@ export const StateOption = observer(function StateOption(props: TStateOptionProp
           {({ selected }) => (
             <div className={cn("flex justify-between w-full")}>
               <span className="flex-grow truncate">{option.content}</span>
-              {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+              {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
             </div>
           )}
         </Combobox.Option>

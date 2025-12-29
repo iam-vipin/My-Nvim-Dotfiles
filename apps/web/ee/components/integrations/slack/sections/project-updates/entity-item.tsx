@@ -1,8 +1,8 @@
-import { Hash, Pencil, Trash2, ArrowRight } from "lucide-react";
+import { Hash, ArrowRight } from "lucide-react";
+import { EditIcon, TrashIcon, PlaneLogo } from "@plane/propel/icons";
 import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PlaneLogo } from "@plane/propel/icons";
 import type { TWorkspaceEntityConnection } from "@plane/types";
 import SlackLogo from "@/app/assets/services/slack.png?url";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
@@ -146,7 +146,7 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
               `}
               onClick={() => onEdit(connection)}
             >
-              <Pencil className="h-3.5 w-3.5" />
+              <EditIcon className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="secondary"
@@ -157,7 +157,7 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
               `}
               onClick={() => onDelete(connection)}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <TrashIcon className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>

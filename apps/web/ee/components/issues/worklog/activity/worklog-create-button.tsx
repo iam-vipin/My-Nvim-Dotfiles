@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { Popover } from "@plane/ui";
 // helpers
@@ -33,7 +33,7 @@ export const IssueActivityWorklogCreateButton = observer(function IssueActivityW
       disabled={disabled}
       buttonClassName={cn("w-full outline-none", { "cursor-not-allowed": disabled })}
       button={
-        <Button variant="tertiary" prependIcon={<Plus />} className="border-0">
+        <Button variant="tertiary" prependIcon={<PlusIcon />} className="border-0">
           Log work
         </Button>
       }

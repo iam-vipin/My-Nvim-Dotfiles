@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Link2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
+import { LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -58,7 +59,7 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
     {
       key: "edit",
       title: t("customers.quick_actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditCustomer,
       shouldRender: isAdmin,
     },
@@ -66,14 +67,14 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
       key: "copy-link",
       action: handleCopyText,
       title: t("customers.quick_actions.copy_link"),
-      icon: Link2,
+      icon: LinkIcon,
       iconClassName: "-rotate-45",
     },
     {
       key: "delete",
       action: handelDeleteCustomer,
       title: t("customers.quick_actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       className: "text-danger-primary",
       shouldRender: isAdmin,
     },

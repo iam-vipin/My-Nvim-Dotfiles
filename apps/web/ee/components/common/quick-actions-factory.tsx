@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { StopCircle, Download, Lock, LockOpen, Pencil, Trash2 } from "lucide-react";
+import { StopCircle, Download, LockOpen } from "lucide-react";
+import { LockIcon, EditIcon, TrashIcon, CommentReplyIcon } from "@plane/propel/icons";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CommentReplyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -57,7 +57,7 @@ export const useQuickActionsFactory = () => {
     ): TContextMenuItem => ({
       key: "toggle-lock",
       title: opts.isLocked ? "Unlock" : "Lock",
-      icon: opts.isLocked ? LockOpen : Lock,
+      icon: opts.isLocked ? LockOpen : LockIcon,
       action: handler,
       shouldRender: opts.shouldRender,
     }),
@@ -479,7 +479,7 @@ export const useQuickActionsFactory = () => {
     createReplyEditMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "edit",
       title: coreFactory.createCommentEditMenuItem(handler, shouldRender).title,
-      icon: Pencil,
+      icon: EditIcon,
       action: handler,
       shouldRender,
     }),
@@ -487,7 +487,7 @@ export const useQuickActionsFactory = () => {
     createReplyDeleteMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "delete",
       title: coreFactory.createCommentDeleteMenuItem(handler, shouldRender).title,
-      icon: Trash2,
+      icon: TrashIcon,
       action: handler,
       shouldRender,
     }),

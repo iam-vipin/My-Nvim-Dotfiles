@@ -1,6 +1,13 @@
 import type { FC, ReactNode } from "react";
-import { AlignLeft, Link, Paperclip, Type } from "lucide-react";
-import { CalendarLayoutIcon, EpicIcon, InitiativeIcon, MembersPropertyIcon, ProjectIcon } from "@plane/propel/icons";
+import { AlignLeft, Paperclip, Type } from "lucide-react";
+import {
+  LinkIcon,
+  CalendarLayoutIcon,
+  EpicIcon,
+  InitiativeIcon,
+  MembersPropertyIcon,
+  ProjectIcon,
+} from "@plane/propel/icons";
 import type { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
 import type { TInitiativeActivity } from "@/plane-web/types/initiative";
@@ -144,15 +151,15 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     message: <>updated the end date.</>,
   }),
   link_created: () => ({
-    icon: Link,
+    icon: LinkIcon,
     message: <>created a link</>,
   }),
   link_updated: () => ({
-    icon: Link,
+    icon: LinkIcon,
     message: <>updated the link</>,
   }),
   link_deleted: () => ({
-    icon: Link,
+    icon: LinkIcon,
     message: <>deleted the link</>,
   }),
   attachment_created: () => ({

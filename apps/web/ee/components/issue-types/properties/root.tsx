@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { v4 } from "uuid";
-import { InfoIcon, Plus } from "lucide-react";
+import { InfoIcon, PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -206,7 +206,7 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
               }, 0);
             }}
           >
-            <Plus className="h-3.5 w-3.5" />
+            <PlusIcon className="h-3.5 w-3.5" />
             {t("work_item_types.settings.properties.add_button")}
           </Button>
         </div>

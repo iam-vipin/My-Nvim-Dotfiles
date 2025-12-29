@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import type { IWorkspace } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -40,7 +40,7 @@ export function WorkspaceList(props: TWorkspaceList) {
                 "absolute -right-1.5 top-0.5 -translate-y-1/2 size-3.5 bg-accent-primary rounded-full flex items-center justify-center"
               )}
             >
-              <Check className="text-on-color size-2.5 m-auto" />
+              <CheckIcon className="text-on-color size-2.5 m-auto" />
             </div>
           )}
         </div>

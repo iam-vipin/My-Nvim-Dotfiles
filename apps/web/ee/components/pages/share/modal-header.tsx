@@ -1,4 +1,4 @@
-import { Link2 } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 
 type TModalHeaderProps = {
@@ -13,7 +13,7 @@ export function ModalHeader({ pageTitle, copied, onCopyLink }: TModalHeaderProps
       <h3 className="text-lg font-medium text-primary truncate">Share {pageTitle}</h3>
       <Button
         variant="link"
-        prependIcon={<Link2 className="size-3.5 -rotate-45" />}
+        prependIcon={<LinkIcon className="size-3.5 -rotate-45" />}
         onClick={onCopyLink}
         className="shrink-0"
       >

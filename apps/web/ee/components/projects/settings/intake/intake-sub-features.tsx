@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
+import { CopyIcon, NewTabIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -178,13 +179,13 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                                 )}
                               >
                                 <span className="truncate flex-1 mr-4">{publishLink}</span>
-                                <Copy
+                                <CopyIcon
                                   className="text-placeholder w-[16px] cursor-pointer"
                                   onClick={() => copyToClipboard(publishLink)}
                                 />
                                 {feature.hasHyperlink && (
                                   <a href={publishLink} target="_blank" rel="noreferrer">
-                                    <ExternalLink className="text-placeholder w-[16px] cursor-pointer" />
+                                    <NewTabIcon className="text-placeholder w-[16px] cursor-pointer" />
                                   </a>
                                 )}
                               </div>

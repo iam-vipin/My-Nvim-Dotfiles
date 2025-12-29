@@ -2,10 +2,10 @@ import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
+import { MoveDiagonal, MoveRight } from "lucide-react";
+import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomSelect } from "@plane/ui";
@@ -124,7 +124,7 @@ export const InitiativePeekOverviewHeader = observer(function InitiativePeekOver
         <InitiativeOverviewHeaderActions />
         <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
           <button type="button" onClick={handleCopyText}>
-            <Link2 className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
+            <LinkIcon className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
       </div>

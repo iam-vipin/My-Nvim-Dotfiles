@@ -1,8 +1,8 @@
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import { Check } from "lucide-react";
+
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
-import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import { ERecurringWorkItemIntervalType } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -120,7 +120,7 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
                     {({ selected }) => (
                       <>
                         <span className="flex-grow truncate">{option.label}</span>
-                        {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                        {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                       </>
                     )}
                   </Combobox.Option>

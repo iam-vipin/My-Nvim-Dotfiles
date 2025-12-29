@@ -2,13 +2,13 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { Loader, RefreshCcw, ExternalLink } from "lucide-react";
+import { Loader, RefreshCcw } from "lucide-react";
+import { NewTabIcon, ProjectIcon } from "@plane/propel/icons";
 import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import type { TJobStatus } from "@plane/etl/core";
 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ProjectIcon } from "@plane/propel/icons";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
@@ -132,7 +132,7 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
-                                  <ExternalLink className="h-3 w-3 flex-shrink-0 text-accent-primary" />
+                                  <NewTabIcon className="h-3 w-3 flex-shrink-0 text-accent-primary" />
                                 </Link>
                               )}
                             </div>

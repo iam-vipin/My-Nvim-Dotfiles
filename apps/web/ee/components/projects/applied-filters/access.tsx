@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
-import { Globe2, Lock } from "lucide-react";
+
+import { GlobeIcon, LockIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
 import type { TProjectAccess } from "@/plane-web/types/workspace-project-filters";
 
 type Props = {
@@ -23,7 +23,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
         if (!accessDetails) return null;
         return (
           <div key={access} className="flex items-center gap-1 rounded-sm p-1 text-11 bg-layer-1">
-            {accessDetails.key === 0 ? <Globe2 className={`h-3 w-3`} /> : <Lock className={`h-3 w-3`} />}
+            {accessDetails.key === 0 ? <GlobeIcon className={`h-3 w-3`} /> : <LockIcon className={`h-3 w-3`} />}
             {t(accessDetails.i18n_label)}
             {editable && (
               <button

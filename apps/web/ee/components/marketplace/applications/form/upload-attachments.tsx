@@ -2,11 +2,11 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import type { Accept } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { ImageUp, Plus, Loader as Spinner, Upload } from "lucide-react";
+import { ImageUp, Loader as Spinner, Upload } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon, PlusIcon } from "@plane/propel/icons";
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -137,7 +137,7 @@ export const UploadAppAttachments = observer(function UploadAppAttachments(props
             />
           ))}
           <div className={cn(getButtonStyling("secondary", "base"), "mx-2 p-2")} {...getRootProps()}>
-            <Plus className="size-4" />
+            <PlusIcon className="size-4" />
             <input {...getInputProps()} />
           </div>
         </div>

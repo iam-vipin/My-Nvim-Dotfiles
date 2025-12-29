@@ -1,8 +1,8 @@
 import type { SetStateAction, Dispatch } from "react";
 import React, { useRef, useState } from "react";
-import { Check, LoaderCircle, MicIcon } from "lucide-react";
+import { LoaderCircle, MicIcon } from "lucide-react";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import type { TPiChatEditorRefApi } from "@plane/editor";
-import { CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
@@ -191,7 +191,7 @@ function AudioRecorder(props: TProps) {
           disabled={isSubmitting}
           onClick={() => stopRecording(true)}
         >
-          {isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <Check size={16} />}
+          {isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <CheckIcon width={16} height={16} />}
         </button>
       )}
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Info, SquareUser } from "lucide-react";
+import { SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import {
   MODULE_STATUS,
@@ -22,6 +22,7 @@ import {
   StartDatePropertyIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  InfoIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -478,7 +479,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                         ) : (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                              <InfoIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
                               <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
                             </div>
                             {isEditingAllowed && !isArchived && (

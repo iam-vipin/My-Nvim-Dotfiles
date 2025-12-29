@@ -1,10 +1,11 @@
 import type { MutableRefObject } from "react";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import type { TInitiativeLabel } from "@plane/types";
 import { CustomMenu, DragHandle } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -13,7 +14,7 @@ import { cn } from "@plane/utils";
 import { InitiativeLabelName } from "./initiative-label-name";
 
 export interface IInitiativeCustomMenuItem {
-  CustomIcon: LucideIcon;
+  CustomIcon: LucideIcon | React.FC<ISvgIcons>;
   onClick: (label: TInitiativeLabel) => void;
   isVisible: boolean;
   text: string;

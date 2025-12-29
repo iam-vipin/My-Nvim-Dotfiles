@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
-import { PlusIcon, BriefcaseIcon } from "lucide-react";
+import { BriefcaseIcon } from "lucide-react";
+import { PlusIcon, EpicIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EpicIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

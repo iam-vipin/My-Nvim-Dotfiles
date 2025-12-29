@@ -1,11 +1,10 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
+import { CheckIcon, InitiativeStateIcon } from "@plane/propel/icons";
 // plane imports
 import { INITIATIVE_STATES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
-import { InitiativeStateIcon } from "@plane/propel/icons";
 import type { TInitiativeStates } from "@plane/types";
 import { cn } from "@plane/utils";
 
@@ -131,7 +130,7 @@ export const InitiativeStateDropdown = observer(function InitiativeStateDropdown
               )}
             >
               <span className="flex-grow truncate">{option.content}</span>
-              {option.value === value && <Check className={cn(currentSize.icon, "flex-shrink-0")} />}
+              {option.value === value && <CheckIcon className={cn(currentSize.icon, "flex-shrink-0")} />}
             </Combobox.Option>
           ))}
         </Combobox.Options>

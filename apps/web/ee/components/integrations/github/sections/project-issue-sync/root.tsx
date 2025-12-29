@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { GITHUB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
@@ -114,7 +114,7 @@ export const ProjectIssueSyncRoot = observer(function ProjectIssueSyncRoot({
           onClick={() => setModalCreateOpen(true)}
           data-ph-element={GITHUB_INTEGRATION_TRACKER_ELEMENTS.REPOSITORY_MAPPING_HEADER_ADD_BUTTON}
         >
-          <Plus className="h-5 w-5" />
+          <PlusIcon className="h-5 w-5" />
         </Button>
       </div>
 

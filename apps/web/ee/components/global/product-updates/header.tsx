@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import { NewTabIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
@@ -61,7 +62,7 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
             rel="noreferrer noopener"
           >
             Update available
-            <ExternalLink className="h-3 w-3" strokeWidth={2} />
+            <NewTabIcon className="h-3 w-3" strokeWidth={2} />
           </a>
         ) : (
           <div

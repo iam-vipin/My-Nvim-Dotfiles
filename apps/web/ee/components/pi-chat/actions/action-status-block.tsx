@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useUserPermissions } from "@/hooks/store/user";
 import { revalidateProjectData } from "@/plane-web/helpers/swr.helper";
@@ -71,7 +71,7 @@ function ActionStatusBlock(props: TProps) {
     } else
       return (
         <div className="flex gap-2 text-placeholder text-13 mb-4">
-          <Info size={16} className="my-auto" />
+          <InfoIcon height={16} width={16} className="my-auto" />
           <div> {actions?.length} action(s) not executed </div>
         </div>
       );
@@ -79,7 +79,7 @@ function ActionStatusBlock(props: TProps) {
   if (action_summary && action_summary?.completed + action_summary?.failed !== actions?.length)
     return (
       <div className="flex gap-2 text-placeholder text-body-sm-regular mb-4">
-        <Info size={16} className="my-auto text-icon-tertiary" />
+        <InfoIcon height={16} width={16} className="my-auto text-icon-tertiary" />
         <div> {actions?.length} action(s) not executed </div>
       </div>
     );

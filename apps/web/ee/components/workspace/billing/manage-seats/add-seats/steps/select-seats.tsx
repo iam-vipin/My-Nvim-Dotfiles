@@ -1,5 +1,5 @@
 import React from "react";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // local imports
 import { ModalFooter } from "../modal-footer";
 import { NumberInputWithControls } from "../../common";
@@ -48,7 +48,7 @@ export function SelectSeatsStep(props: TSelectSeatsStepProps) {
             : "Get more Admins, Members, and Guests in this workspace."}
         </h5>
         <div className="flex items-center gap-1.5 text-body-sm-medium bg-accent-subtle text-accent-primary rounded-lg px-3 py-2">
-          <Info className="size-4" />
+          <InfoIcon className="size-4" />
           {subscriptionLevel === "instance"
             ? `Your ${planeName} plan, has ${purchasedSeats} seats for this instance.`
             : `Your current plan, ${planeName}
@@ -80,7 +80,7 @@ export function SelectSeatsStep(props: TSelectSeatsStepProps) {
         </div>
         {isSelfHosted && (
           <div className="flex gap-1 items-center text-caption-md-regular text-tertiary">
-            <Info className="size-3" />
+            <InfoIcon className="size-3" />
             Ensure you are online and connected until you see a confirmation on this screen.
           </div>
         )}

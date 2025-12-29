@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Lock } from "lucide-react";
+import { LockIcon } from "@plane/propel/icons";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -93,7 +93,7 @@ export const DashboardWidgetChartTypesDropdownOption = observer(function Dashboa
         />
         {isUpgradeNeeded && (
           <span className="absolute top-0.5 right-0.5 size-3.5 grid place-items-center rounded-sm bg-accent-primary text-accent-primary">
-            <Lock className="size-3" />
+            <LockIcon className="size-3" />
           </span>
         )}
       </button>

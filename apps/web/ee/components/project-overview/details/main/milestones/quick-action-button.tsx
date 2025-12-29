@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+
+import { PlusIcon } from "@plane/propel/icons";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import milestoneService from "@/plane-web/services/milestone.service";
@@ -20,7 +21,7 @@ export function MilestoneWorkItemActionButton(props: Props) {
   const workItemSearchCallBack = async (params: TProjectIssuesSearchParams) =>
     milestoneService.workItemsSearch(workspaceSlug, projectId, params);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGSVGElement, MouseEvent>) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
     setWorkItemsModal(true);
@@ -40,7 +41,7 @@ export function MilestoneWorkItemActionButton(props: Props) {
       {customButton ? (
         <div onClick={handleClick}>{customButton}</div>
       ) : (
-        <Plus className="size-4 text-secondary cursor-pointer" onClick={handleClick} />
+        <PlusIcon className="size-4 text-secondary cursor-pointer" onClick={handleClick} />
       )}
     </>
   );

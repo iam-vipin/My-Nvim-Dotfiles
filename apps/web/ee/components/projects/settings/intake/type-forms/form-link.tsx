@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
-import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
+import { CopyIcon, NewTabIcon } from "@plane/propel/icons";
 import { SPACE_BASE_URL, SPACE_BASE_PATH } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/propel/utils";
@@ -34,9 +35,9 @@ export const IntakeFormLink = observer(function IntakeFormLink(props: Props) {
         )}
       >
         <span className="truncate flex-1 mr-4">{publishLink}</span>
-        <Copy className="text-placeholder w-[16px] cursor-pointer" onClick={() => copyToClipboard(publishLink)} />
+        <CopyIcon className="text-placeholder w-[16px] cursor-pointer" onClick={() => copyToClipboard(publishLink)} />
         <a href={publishLink} target="_blank" rel="noreferrer">
-          <ExternalLink className="text-placeholder w-[16px] cursor-pointer" />
+          <NewTabIcon className="text-placeholder w-[16px] cursor-pointer" />
         </a>
       </div>
       <Button

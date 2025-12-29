@@ -1,6 +1,7 @@
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
-import { CircleMinus, PencilIcon } from "lucide-react";
+import { CircleMinus } from "lucide-react";
+import { EditIcon } from "@plane/propel/icons";
 // plane imports
 import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { EWorkItemTypeEntity, IIssueType, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
@@ -101,7 +102,7 @@ export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintList
             {handleEdit && (
               <CustomMenu.MenuItem onClick={handleEdit}>
                 <div className="flex items-center gap-2">
-                  <PencilIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                  <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
                   <span>Edit</span>
                 </div>
               </CustomMenu.MenuItem>

@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { NewTabIcon } from "@plane/propel/icons";
 import type { IURLComponents } from "@plane/utils";
 import { cn } from "@plane/utils";
 
@@ -48,7 +48,7 @@ export function TruncatedUrl({
       )}
       {showLinkIcon && (
         <span className="ml-1 inline-block">
-          <ExternalLink className="h-3 w-3 flex-shrink-0" />
+          <NewTabIcon className="h-3 w-3 flex-shrink-0" />
         </span>
       )}
     </a>

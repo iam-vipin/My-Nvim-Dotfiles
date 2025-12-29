@@ -11,9 +11,8 @@ import {
 import type { JSONContent } from "@tiptap/core";
 import type { Editor } from "@tiptap/react";
 import type { LucideIcon } from "lucide-react";
-import { Copy, Link2, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-// plane imports
+import { CopyIcon, TrashIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
@@ -189,46 +188,9 @@ export function BlockMenu(props: Props) {
     }
   }, [isOpen]);
 
-  const MENU_ITEMS: MenuItem[] = [
+  const MENU_ITEMS: BlockMenuOption[] = [
     {
-      icon: Link2,
-      key: "copy-link",
-      label: "Copy link",
-      isDisabled: disabledExtensions?.includes("copy-block-link"),
-      onClick: () => {
-        const { selection, tr } = editor.state;
-        const selectedNode = selection.content().content.firstChild;
-        let nodeId = selectedNode?.attrs?.[UniqueIDAttribute];
-        if (!nodeId) {
-          nodeId = generateUniqueID();
-          tr.setNodeMarkup(selection.from, undefined, {
-            ...selectedNode?.attrs,
-            [UniqueIDAttribute]: nodeId,
-          });
-        }
-        tr.setMeta("addToHistory", false);
-        editor.view.dispatch(tr);
-
-        let urlToCopy: string;
-        const currentPageUrl = window.location.href.split("#")[0];
-        const baseWorkItemUrl = originUrl;
-        if (baseWorkItemUrl) {
-          urlToCopy = nodeId ? `${baseWorkItemUrl}#${nodeId}` : baseWorkItemUrl;
-        } else {
-          urlToCopy = nodeId ? `${currentPageUrl}#${nodeId}` : currentPageUrl;
-        }
-
-        copyUrlToClipboard(urlToCopy).then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Link Copied!",
-            message: "Link copied to clipboard.",
-          });
-        });
-      },
-    },
-    {
-      icon: Trash2,
+      icon: TrashIcon,
       key: "delete",
       label: "Delete",
       onClick: (_e) => {
@@ -237,7 +199,7 @@ export function BlockMenu(props: Props) {
       },
     },
     {
-      icon: Copy,
+      icon: CopyIcon,
       key: "duplicate",
       label: "Duplicate",
       isDisabled:

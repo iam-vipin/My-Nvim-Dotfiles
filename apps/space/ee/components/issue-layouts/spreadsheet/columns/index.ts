@@ -1,17 +1,7 @@
 import type { FC } from "react";
-import {
-  CalendarCheck2,
-  CalendarClock,
-  CalendarDays,
-  LayersIcon,
-  Link2,
-  Paperclip,
-  Signal,
-  Tag,
-  Users,
-} from "lucide-react";
+import { CalendarCheck2, CalendarClock, CalendarDays, LayersIcon, Paperclip, Signal, Tag, Users } from "lucide-react";
+import { LinkIcon, CycleIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CycleIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import type { IIssueDisplayProperties } from "@plane/types";
 import type { IIssue } from "@/types/issue";
 import {
@@ -110,7 +100,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   link: {
     title: "Link",
-    icon: Link2,
+    icon: LinkIcon,
     Column: SpreadsheetLinkColumn,
   },
   attachment_count: {

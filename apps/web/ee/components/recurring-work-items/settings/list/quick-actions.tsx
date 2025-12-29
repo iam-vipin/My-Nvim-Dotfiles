@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Pencil, Trash2 } from "lucide-react";
+
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -79,7 +80,7 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
     {
       key: "edit",
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditRecurringWorkItem,
       shouldRender: recurringWorkItem.canCurrentUserEdit,
     },
@@ -87,7 +88,7 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
       key: "delete",
       action: () => setIsDeleteModalOpen(true),
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: recurringWorkItem.canCurrentUserDelete,
       className: "text-danger-primary",
     },

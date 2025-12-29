@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { ProjectUpdateDeleteModal } from "./delete-update-modal";
@@ -42,14 +43,14 @@ export function UpdateQuickActions(props: TProps) {
       >
         <CustomMenu.MenuItem onClick={() => operations.update()}>
           <button className="flex items-center justify-start gap-2">
-            <Pencil className="h-3.5 w-3.5 stroke-[1.5]" />
+            <EditIcon className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>Edit</span>
           </button>
         </CustomMenu.MenuItem>
 
         <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
           <button className="flex items-center justify-start gap-2">
-            <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
+            <TrashIcon className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>Delete</span>
           </button>
         </CustomMenu.MenuItem>

@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Toast as BaseToast } from "@base-ui-components/react/toast";
-import { AlertTriangle, CheckIcon, InfoIcon, XIcon } from "lucide-react";
-import { CloseIcon } from "../icons/actions/close-icon";
+import { AlertTriangle, InfoIcon, XIcon } from "lucide-react";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
+import { CheckIcon, CloseIcon } from "../icons";
 import { cn } from "../utils/classname";
 
 export enum TOAST_TYPE {

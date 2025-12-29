@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ExternalLink } from "lucide-react";
+import { NewTabIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
@@ -105,7 +105,7 @@ export const BusinessPlanCard = observer(function BusinessPlanCard(props: TBusin
             <Button
               variant="secondary"
               size="lg"
-              appendIcon={<ExternalLink />}
+              appendIcon={<NewTabIcon />}
               onClick={
                 !isSelfManaged && isInTrialPeriod
                   ? () => handleUpgrade(EProductSubscriptionEnum.BUSINESS)

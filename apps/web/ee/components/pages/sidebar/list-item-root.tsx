@@ -8,12 +8,12 @@ import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { Loader, Plus } from "lucide-react";
+import { Loader } from "lucide-react";
+import { PlusIcon, PageIcon } from "@plane/propel/icons";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PageIcon } from "@plane/propel/icons";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
@@ -407,7 +407,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
             data-prevent-progress
             disabled={isCreatingPage}
           >
-            {isCreatingPage ? <Loader className="size-3 animate-spin" /> : <Plus className="size-3" />}
+            {isCreatingPage ? <Loader className="size-3 animate-spin" /> : <PlusIcon className="size-3" />}
           </button>
         )}
       </div>

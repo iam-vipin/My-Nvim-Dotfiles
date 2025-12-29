@@ -1,10 +1,9 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Trash2 } from "lucide-react";
+import { TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
-import { ArchiveIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDeDupeIssue } from "@plane/types";
 import { Checkbox } from "@plane/ui";
@@ -152,7 +151,7 @@ export const DeDupeIssueBlockHeader = observer(function DeDupeIssueBlockHeader(p
                   toggleDeleteIssueModal(issue.id);
                 }}
               >
-                <Trash2 className="size-4 text-tertiary hover:text-secondary" />
+                <TrashIcon className="size-4 text-tertiary hover:text-secondary" />
               </button>
             </Tooltip>
           )}

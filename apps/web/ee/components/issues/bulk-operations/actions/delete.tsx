@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -60,7 +60,7 @@ export const BulkDeleteIssues = observer(function BulkDeleteIssues(props: Props)
                 })
           }
         >
-          <Trash2 className="size-4" />
+          <TrashIcon className="size-4" />
         </button>
       </Tooltip>
     </>

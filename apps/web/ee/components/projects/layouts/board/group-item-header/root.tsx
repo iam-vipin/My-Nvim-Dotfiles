@@ -2,7 +2,8 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Maximize2, Minimize2, Plus } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
@@ -97,7 +98,7 @@ export const ProjectBoardGroupItemHeader = observer(function ProjectBoardGroupIt
           onClick={() => setOpen(true)}
           className="cursor-pointer flex-shrink-0 w-5 h-5 rounded-sm hover:bg-layer-1 flex justify-center items-center overflow-hidden bg-layer-1"
         >
-          <Plus size={14} />
+          <PlusIcon width={14} height={14} />
         </div>
       </div>
     </>

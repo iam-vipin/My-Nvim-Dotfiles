@@ -1,5 +1,6 @@
 import type { FC } from "react";
-import { Loader, Plus } from "lucide-react";
+import { Loader } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -23,7 +24,7 @@ export function IssueWorklogPropertyButton(props: TIssueWorklogPropertyButton) {
         </div>
       ) : (
         <div className="transition-all flex-shrink-0 w-4 h-4 hidden group-hover:flex justify-center items-center text-placeholder">
-          <Plus size={14} />
+          <PlusIcon height={14} width={14} />
         </div>
       )}
     </div>

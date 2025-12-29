@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { Info, Minus } from "lucide-react";
+import { Minus } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -63,13 +64,13 @@ export const DashboardListItemActions = observer(function DashboardListItemActio
       </div>
       {/* <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
-          {access === 0 ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+          {access === 0 ? <Earth className="h-4 w-4" /> : <LockIcon className="h-4 w-4" />}
         </Tooltip>
       </div> */}
       {/* dashboard info */}
       <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
         <span className="size-4 grid place-items-center cursor-default">
-          <Info className="size-4 text-tertiary" />
+          <InfoIcon className="size-4 text-tertiary" />
         </span>
       </Tooltip>
       {/* vertical divider */}

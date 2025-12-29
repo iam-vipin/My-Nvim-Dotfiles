@@ -1,8 +1,7 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { EditIcon, TrashIcon, PlaneLogo } from "@plane/propel/icons";
 import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PlaneLogo } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
 
 type TProjectEntityItem = {
@@ -46,7 +45,7 @@ export function ProjectEntityItem(props: TProjectEntityItem) {
             onClick={handleEditOpen}
             data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >
-            <Pencil className="h-3.5 w-3.5" />
+            <EditIcon className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="secondary"
@@ -54,7 +53,7 @@ export function ProjectEntityItem(props: TProjectEntityItem) {
             onClick={handleDeleteOpen}
             data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <TrashIcon className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>

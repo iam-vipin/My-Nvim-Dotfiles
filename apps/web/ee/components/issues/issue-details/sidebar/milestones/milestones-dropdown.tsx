@@ -1,10 +1,9 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
+import { CheckIcon, MilestoneIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
-import { MilestoneIcon } from "@plane/propel/icons";
 import { cn, getMilestoneIconProps } from "@plane/utils";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
@@ -121,7 +120,7 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
             className="w-full truncate flex items-center justify-between gap-2 rounded-sm cursor-pointer select-none px-1 py-1.5 hover:bg-layer-1 data-[selected]:text-primary text-caption-sm-medium text-secondary"
           >
             <span className="grow truncate">{option.content}</span>
-            {option.value === (value || "none") && <Check className="size-4 shrink-0" />}
+            {option.value === (value || "none") && <CheckIcon className="size-4 shrink-0" />}
           </Combobox.Option>
         ))}
       </Combobox.Options>

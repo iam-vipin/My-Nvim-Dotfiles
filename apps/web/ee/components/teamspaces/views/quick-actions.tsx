@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+
+import { NewTabIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -61,26 +62,26 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
       key: "edit",
       action: () => setCreateUpdateViewModal(true),
       title: "Edit",
-      icon: Pencil,
+      icon: EditIcon,
       shouldRender: isOwner,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in new tab",
-      icon: ExternalLink,
+      icon: NewTabIcon,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy link",
-      icon: Link,
+      icon: LinkIcon,
     },
     {
       key: "delete",
       action: () => setDeleteViewModal(true),
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isOwner || isAdmin,
     },
   ];

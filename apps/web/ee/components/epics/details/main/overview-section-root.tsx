@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { useLocalStorage } from "@plane/hooks";
 import { EIssueServiceType } from "@plane/types";
 import { Tabs } from "@plane/ui";

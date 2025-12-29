@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import type { FieldPath, FieldValues, PathValue } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
-import { PlusIcon } from "lucide-react";
+
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { Button } from "@plane/propel/button";
 import type {

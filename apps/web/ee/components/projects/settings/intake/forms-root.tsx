@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Copy, ExternalLink, InfoIcon, LayersIcon, ListTodo, RefreshCcw } from "lucide-react";
+import { LayersIcon, ListTodo, RefreshCcw } from "lucide-react";
+import { CopyIcon, NewTabIcon, InfoIcon } from "@plane/propel/icons";
 import { SPACE_BASE_URL, SPACE_BASE_PATH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -130,12 +131,12 @@ export function IntakeFormsRoot(props: Props) {
                       {anchor ? (
                         <div className="flex items-center text-13 rounded-md border-[0.5px] border-subtle-1 flex-1 py-1 px-2 gap-2 h-full truncate">
                           <span className="truncate flex-1 mr-4">{publishLink}</span>
-                          <Copy
+                          <CopyIcon
                             className="text-placeholder w-[16px] cursor-pointer"
                             onClick={() => copyToClipboard()}
                           />
                           <a href={publishLink} target="_blank" rel="noreferrer">
-                            <ExternalLink className="text-placeholder w-[16px] cursor-pointer" />
+                            <NewTabIcon className="text-placeholder w-[16px] cursor-pointer" />
                           </a>
                         </div>
                       ) : (
@@ -170,7 +171,7 @@ export function IntakeFormsRoot(props: Props) {
                           }}
                         >
                           <span>Manage forms</span>
-                          <ExternalLink className="size-3" />
+                          <NewTabIcon className="size-3" />
                         </Button>
                       ) : (
                         <Tooltip

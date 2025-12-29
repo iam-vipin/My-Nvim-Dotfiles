@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import useSWR from "swr";
-import { Check, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, EpicIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon, EpicIcon } from "@plane/propel/icons";
 import type { TWorkspaceEpicsSearchParams } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
@@ -233,7 +233,7 @@ export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
                             <>
                               <EpicIcon className="h-4 w-4 text-tertiary" />
                               <span className="flex-grow truncate">{option.name}</span>
-                              {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                              {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                             </>
                           )}
                         </Combobox.Option>

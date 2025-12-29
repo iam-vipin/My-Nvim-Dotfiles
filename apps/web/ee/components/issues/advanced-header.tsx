@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Circle, ExternalLink } from "lucide-react";
+import { Circle } from "lucide-react";
+import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -89,7 +89,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
           >
             <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("common.access.public")}
-            <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+            <NewTabIcon className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
         ) : (
           <></>

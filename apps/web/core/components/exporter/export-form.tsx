@@ -2,7 +2,7 @@ import { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
@@ -222,7 +222,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
             tooltipContent={
               <div className="max-w-[238px] flex gap-2">
                 <div className=" rounded-sm bg-layer-1 flex items-center justify-center p-1 h-5 aspect-square">
-                  <Info className="h-3 w-3" />
+                  <InfoIcon className="h-3 w-3" />
                 </div>
                 {t("workspace_settings.settings.exports.filters_info")}
               </div>
@@ -230,7 +230,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
             position="top"
           >
             <button type="button" className="flex items-center justify-center">
-              <Info className="h-3 w-3 text-tertiary" />
+              <InfoIcon className="h-3 w-3 text-tertiary" />
             </button>
           </Tooltip>
         </div>

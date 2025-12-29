@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { PencilIcon } from "lucide-react";
 // plane constants
 import {
   CUSTOMER_CONTRACT_STATUS,
@@ -12,7 +11,7 @@ import {
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { CustomersIcon } from "@plane/propel/icons";
+import { CustomersIcon, EditIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomerPayload } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
@@ -114,7 +113,7 @@ export function DefaultProperties(props: Props) {
           className="absolute -right-2 -top-1 p-1.5 rounded-full bg-surface-1 border border-subtle-1 cursor-pointer"
           onClick={handleOpenImagePicker}
         >
-          <PencilIcon className="size-2.5" />
+          <EditIcon className="size-2.5" />
         </div>
         <Controller
           name="logo_url"

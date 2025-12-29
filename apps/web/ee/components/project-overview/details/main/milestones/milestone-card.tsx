@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { LayersIcon, PlusIcon } from "lucide-react";
+import { LayersIcon } from "lucide-react";
+import { PlusIcon, MilestoneIcon } from "@plane/propel/icons";
 import { Card } from "@plane/propel/card";
-import { MilestoneIcon } from "@plane/propel/icons";
 import { Pill, EPillSize } from "@plane/propel/pill";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";

@@ -1,5 +1,6 @@
 import { Combobox } from "@headlessui/react";
-import { Check, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 import { useCallback, useMemo, useRef, useState } from "react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -113,7 +114,7 @@ export function SelectionConversionProjectsListModal(props: Props) {
                         </span>
                         <p className="text-13 truncate">{project.name}</p>
                       </div>
-                      {selected && <Check className="shrink-0 size-4 text-primary" />}
+                      {selected && <CheckIcon className="shrink-0 size-4 text-primary" />}
                     </>
                   )}
                 </Combobox.Option>

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
@@ -36,7 +36,7 @@ export const InitiativeLinksActionButton = observer(function InitiativeLinksActi
 
   return (
     <button type="button" onClick={handleOnClick} disabled={disabled} className={getVariantClassName()}>
-      {customButton ? customButton : <Plus className="h-4 w-4" />}
+      {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
     </button>
   );
 });

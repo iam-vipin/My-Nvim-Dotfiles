@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Copy } from "lucide-react";
+
+import { CopyIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -61,7 +62,7 @@ export const RegenerateClientSecret = observer(function RegenerateClientSecret(p
         >
           <span className={`truncate pr-2 text-primary`}>{application.id}</span>
           <Tooltip tooltipContent="Copy application id" isMobile={isMobile}>
-            <Copy className="h-4 w-4 text-placeholder flex-shrink-0" />
+            <CopyIcon className="h-4 w-4 text-placeholder flex-shrink-0" />
           </Tooltip>
         </button>
       </div>
@@ -74,7 +75,7 @@ export const RegenerateClientSecret = observer(function RegenerateClientSecret(p
         >
           <span className={`truncate pr-2 text-primary`}>{application.client_id}</span>
           <Tooltip tooltipContent="Copy client id" isMobile={isMobile}>
-            <Copy className="h-4 w-4 text-placeholder flex-shrink-0" />
+            <CopyIcon className="h-4 w-4 text-placeholder flex-shrink-0" />
           </Tooltip>
         </button>
       </div>

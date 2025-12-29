@@ -1,4 +1,5 @@
-import { CircleChevronRight, Trash2 } from "lucide-react";
+import { CircleChevronRight } from "lucide-react";
+import { TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -31,7 +32,7 @@ export function WidgetConfigSidebarHeader(props: Props) {
             onClick={handleDelete}
             className="size-4 grid place-items-center text-icon-secondary bg-layer-transparent hover:text-icon-danger transition-colors bg"
           >
-            <Trash2 className="size-3.5" />
+            <TrashIcon className="size-3.5" />
           </button>
         </Tooltip>
       </div>

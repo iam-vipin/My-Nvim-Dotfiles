@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Pencil, Trash2 } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -61,7 +61,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
         setCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
       shouldRender: automation.canCurrentUserEdit,
     },
     {
@@ -71,7 +71,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
         setIsDeleteModalOpen(true);
       },
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: automation.canCurrentUserDelete,
       disabled: automation.isDeleteDisabled,
       className: automation.isDeleteDisabled ? "text-placeholder cursor-not-allowed" : "text-danger-primary",

@@ -1,13 +1,13 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Loader, Plus } from "lucide-react";
+import { Loader } from "lucide-react";
+import { CheckIcon, PlusIcon, LabelPropertyIcon } from "@plane/propel/icons";
 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
-import { LabelPropertyIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TInitiativeLabel } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -196,7 +196,7 @@ export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown
                   )}
                 >
                   <span className="flex-grow truncate">{option.content}</span>
-                  {value.includes(option.value) && <Check className={cn(currentSize.icon, "flex-shrink-0")} />}
+                  {value.includes(option.value) && <CheckIcon className={cn(currentSize.icon, "flex-shrink-0")} />}
                 </Combobox.Option>
               ))
             ) : canCreateLabel && query ? (
@@ -206,7 +206,7 @@ export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown
                   query.length ? "cursor-pointer" : "cursor-default"
                 }`}
               >
-                <Plus className={cn(currentSize.icon, "flex-shrink-0")} />
+                <PlusIcon className={cn(currentSize.icon, "flex-shrink-0")} />
                 {query.length ? (
                   <>
                     Add <span className="text-primary">&quot;{query}&quot;</span> to labels

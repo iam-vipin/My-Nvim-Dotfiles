@@ -1,9 +1,9 @@
 import React from "react";
-import { Check } from "lucide-react";
+
+import { CheckIcon, ChevronDownIcon } from "../../icons";
 import { Controller, useFormContext } from "react-hook-form";
 import type { EIssuePropertyType, TIssueProperty, TIssuePropertyOption } from "@plane/types";
 import { Combobox } from "../../combobox";
-import { ChevronDownIcon } from "../../icons";
 import { cn } from "../../utils";
 
 type TOptionSelectProps = {
@@ -116,7 +116,7 @@ export function OptionSelect({ property, options, isPreview = false, required = 
                   const isSelected = selectedOptionIds.includes(option.id);
                   return (
                     <Combobox.Option key={option.id} value={option.id} className="w-full flex items-center gap-2">
-                      {isSelected && <Check className="h-4 w-4 text-secondary" aria-hidden="true" />}
+                      {isSelected && <CheckIcon className="h-4 w-4 text-secondary" aria-hidden="true" />}
                       <span className="truncate">{option.name}</span>
                     </Combobox.Option>
                   );

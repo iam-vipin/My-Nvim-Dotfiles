@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { CircleMinus, LinkIcon } from "lucide-react";
+import { CircleMinus } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 // plane imports
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";

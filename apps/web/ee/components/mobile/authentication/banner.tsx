@@ -1,9 +1,9 @@
 import type { FC } from "react";
-import { Info } from "lucide-react";
+
+import { InfoIcon, CloseIcon } from "@plane/propel/icons";
 import type { TMobileAuthErrorInfo } from "@plane/constants";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
 
 type TMobileAuthBanner = {
   bannerData: TMobileAuthErrorInfo | undefined;
@@ -23,7 +23,7 @@ export function MobileAuthBanner(props: TMobileAuthBanner) {
       className="relative flex items-center p-2 rounded-md gap-2 border border-accent-strong/50 bg-accent-primary/10"
     >
       <div className="size-4 flex-shrink-0 grid place-items-center">
-        <Info size={16} className="text-accent-primary" />
+        <InfoIcon height={16} width={16} className="text-accent-primary" />
       </div>
       <p className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</p>
       <button

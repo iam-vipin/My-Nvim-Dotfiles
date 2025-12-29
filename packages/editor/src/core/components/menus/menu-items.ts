@@ -22,13 +22,13 @@ import {
   Palette,
   AlignCenter,
   MessageSquare,
-  LinkIcon,
   Sigma,
   SquareRadical,
   FileCode2,
   Paperclip,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -65,7 +65,7 @@ import {
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 // types
 import type { TCommandWithProps, TEditorCommands } from "@/types";
-
+import type { ISvgIcons } from "@plane/propel/icons";
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
 
@@ -73,7 +73,7 @@ export type EditorMenuItem<T extends TEditorCommands> = {
   key: T;
   name: string;
   command: commandFunction<T>;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   isActive: isActiveFunction<T>;
 };
 

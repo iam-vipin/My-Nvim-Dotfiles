@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { PlusIcon } from "lucide-react";
+
+import { PlusIcon, LayersIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
-import { LayersIcon } from "@plane/propel/icons";
 // components
 import { Loader } from "@plane/ui";
 import { useIntakeTypeForms } from "@/plane-web/hooks/store/use-intake-type-forms";

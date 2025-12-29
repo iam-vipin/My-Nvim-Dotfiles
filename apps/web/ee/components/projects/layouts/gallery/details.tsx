@@ -1,11 +1,11 @@
-import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings } from "lucide-react";
 import { observer } from "mobx-react";
 import React, { useState } from "react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { LockIcon, TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -107,7 +107,7 @@ export const Details = observer(function Details(props: Props) {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isArchived && isOwner,
     },
     {
@@ -225,7 +225,7 @@ export const Details = observer(function Details(props: Props) {
             </div>
             <span className="flex items-center gap-1.5">
               <p className="text-11 font-medium ">{project.identifier} </p>
-              {project.network === 0 && <Lock className="h-2.5 w-2.5  " />}
+              {project.network === 0 && <LockIcon className="h-2.5 w-2.5  " />}
             </span>
           </div>
         </div>

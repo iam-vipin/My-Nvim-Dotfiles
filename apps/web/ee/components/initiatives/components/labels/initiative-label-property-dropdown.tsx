@@ -2,14 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Loader, Search } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TInitiativeLabel } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
@@ -275,7 +275,7 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
                           {option.content}
                           {selected && (
                             <div className="flex-shrink-0">
-                              <Check className={`h-3.5 w-3.5`} />
+                              <CheckIcon className={`h-3.5 w-3.5`} />
                             </div>
                           )}
                         </>

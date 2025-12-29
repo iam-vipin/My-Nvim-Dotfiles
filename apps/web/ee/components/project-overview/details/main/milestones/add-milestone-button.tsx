@@ -1,5 +1,5 @@
-import { Plus } from "lucide-react";
 // plane imports
+import { PlusIcon } from "@plane/propel/icons";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 
@@ -10,7 +10,7 @@ type Props = {
 export function AddMilestoneButton(props: Props) {
   const { toggleModal, variant = "default" } = props;
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGSVGElement, MouseEvent>) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
     toggleModal();
@@ -26,7 +26,7 @@ export function AddMilestoneButton(props: Props) {
           Create
         </div>
       ) : (
-        <Plus className="h-4 w-4" onClick={handleClick} />
+        <PlusIcon className="h-4 w-4" onClick={handleClick} />
       )}
     </>
   );

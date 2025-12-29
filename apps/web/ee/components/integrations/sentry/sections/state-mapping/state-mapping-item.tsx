@@ -1,8 +1,8 @@
 import React, { memo } from "react";
-import { ArrowRight, Pencil, Trash2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { EditIcon, TrashIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { TSentryStateMapping } from "@plane/etl/sentry";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { StateGroupIcon } from "@plane/propel/icons";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -105,13 +105,13 @@ function StateMappingItemComponent({ mapping, onEdit, onDelete }: StateMappingIt
             className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-secondary hover:text-primary"
             onClick={onEdit}
           >
-            <Pencil className="w-3 h-3" />
+            <EditIcon className="w-3 h-3" />
           </button>
           <button
             className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-danger-primary hover:text-danger-primary"
             onClick={onDelete}
           >
-            <Trash2 className="w-3 h-3" />
+            <TrashIcon className="w-3 h-3" />
           </button>
         </div>
       </div>

@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
-import { Pencil, PlusIcon, Trash2 } from "lucide-react";
+
+import { EditIcon, PlusIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -78,7 +79,7 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
   const customMenuItems: ICustomMenuItem[] = useMemo(
     () => [
       {
-        CustomIcon: Pencil,
+        CustomIcon: EditIcon,
         onClick: (label: IIssueLabel) => {
           setLabelToUpdate(label);
           setShowUpdateLabelForm(true);
@@ -89,7 +90,7 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
         key: "edit_label",
       },
       {
-        CustomIcon: Trash2,
+        CustomIcon: TrashIcon,
         onClick: handleLabelDelete,
         isVisible: true,
         text: "Delete label",

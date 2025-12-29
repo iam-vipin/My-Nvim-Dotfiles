@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { InfoIcon, TriangleAlert } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
+import { TriangleAlert } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type {

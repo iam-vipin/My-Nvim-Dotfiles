@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
+import { PlusIcon } from "@plane/propel/icons";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -66,7 +67,7 @@ export const ProjectUpdates = observer(function ProjectUpdates() {
             className="flex text-accent-primary text-13 font-medium rounded-sm w-fit py-1 px-2"
             onClick={() => setShowInput(true)}
           >
-            <Plus size={15} className="my-auto mr-1" />
+            <PlusIcon width={15} height={15} className="my-auto mr-1" />
             <div>Add update</div>
           </button>
           <ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Link2, Sidebar } from "lucide-react";
+import { Sidebar } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
@@ -61,7 +62,7 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
         })}
       />
 
-      <IconButton variant="tertiary" size="lg" icon={Link2} onClick={handleCopyText} />
+      <IconButton variant="tertiary" size="lg" icon={LinkIcon} onClick={handleCopyText} />
 
       <TeamQuickActions
         teamspaceId={teamspaceId?.toString()}

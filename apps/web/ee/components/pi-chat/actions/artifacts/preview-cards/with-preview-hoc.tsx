@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { EditIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -55,7 +55,7 @@ const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewH
               "opacity-0 group-hover:opacity-100 transition-all duration-300"
             )}
           >
-            <Pencil className="size-3" />
+            <EditIcon className="size-3" />
             <div className="text-caption-sm-regular">{!isEmpty(updatedArtifact) ? "Edited" : "Edit"}</div>
           </div>
         )}

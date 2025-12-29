@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Info } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { LockIcon } from "@plane/propel/icons";
+import { LockIcon, InfoIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EFileAssetType } from "@plane/types";
@@ -361,7 +360,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 className="text-13"
                 position="right-start"
               >
-                <Info className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
+                <InfoIcon className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
             <span className="text-11 text-danger-primary">

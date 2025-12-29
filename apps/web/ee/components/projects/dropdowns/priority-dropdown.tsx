@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { Check, Search, SignalHigh } from "lucide-react";
+import { Search, SignalHigh } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { ChevronDownIcon, PriorityIcon } from "@plane/propel/icons";
@@ -451,7 +452,7 @@ export function PriorityDropdown(props: Props) {
                     {({ selected }) => (
                       <>
                         <span className="flex-grow truncate">{option.content}</span>
-                        {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                        {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                       </>
                     )}
                   </Combobox.Option>

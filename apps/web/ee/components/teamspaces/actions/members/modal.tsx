@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
+import { PlusIcon, ChevronDownIcon, CloseIcon } from "@plane/propel/icons";
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { ChevronDownIcon, CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
@@ -223,7 +223,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
           className="flex items-center gap-1.5 bg-transparent py-2 pr-3 text-body-xs-medium text-accent-primary outline-accent-strong"
           onClick={() => setMemberIdsToInvite([...memberIdsToInvite, ""])}
         >
-          <Plus className="h-4 w-4" />
+          <PlusIcon className="h-4 w-4" />
           Add another
         </button>
         <div className="flex items-center gap-2">

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Pencil, RotateCw, Trash2 } from "lucide-react";
+import { RotateCw } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TContextMenuItem } from "@plane/ui";
@@ -34,7 +35,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
     () => [
       {
         key: "edit",
-        icon: Pencil,
+        icon: EditIcon,
         title: "Edit",
         action: () => {
           if (!widget.id) return;
@@ -51,7 +52,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
       },
       {
         key: "delete",
-        icon: Trash2,
+        icon: TrashIcon,
         title: "Delete",
         action: () => {
           if (!widget.id) return;
@@ -104,7 +105,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
                 toggleEditWidget?.(widget.id);
               }}
             >
-              <Pencil className="size-3.5" />
+              <EditIcon className="size-3.5" />
             </button>
           </Tooltip>
         )}

@@ -1,11 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { LoaderCircle, Plus } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Disclosure } from "@headlessui/react";
 // constants
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-import { ChevronRightIcon } from "@plane/propel/icons";
 // utils
 import { cn } from "@plane/utils";
 // types
@@ -50,7 +50,7 @@ export const SectionHeader = React.memo(function SectionHeader({
             {isCreatingPage === sectionType ? (
               <LoaderCircle className="size-3.5 animate-spin" />
             ) : (
-              <Plus className="size-3.5" />
+              <PlusIcon className="size-3.5" />
             )}
           </button>
         )}

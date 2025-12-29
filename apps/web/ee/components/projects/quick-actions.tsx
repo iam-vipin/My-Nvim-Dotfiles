@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings, Trash2 } from "lucide-react";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { ArchiveRestoreIcon, MoreHorizontal, Settings } from "lucide-react";
+import { LinkIcon, TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
 // plane imports
@@ -64,7 +64,7 @@ export function QuickActions(props: Props) {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isArchived && isOwner,
     },
     {

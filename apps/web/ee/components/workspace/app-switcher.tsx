@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckIcon, Grip } from "lucide-react";
+import { Grip } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";

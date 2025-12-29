@@ -1,13 +1,12 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Lock } from "lucide-react";
+import { LockIcon, TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
 import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, EIssueLayoutTypes } from "@plane/types";
@@ -177,7 +176,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
         {view?.access === EViewAccess.PRIVATE ? (
           <div className="cursor-default text-tertiary">
             <Tooltip tooltipContent={"Private"}>
-              <Lock className="h-4 w-4" />
+              <LockIcon className="h-4 w-4" />
             </Tooltip>
           </div>
         ) : (

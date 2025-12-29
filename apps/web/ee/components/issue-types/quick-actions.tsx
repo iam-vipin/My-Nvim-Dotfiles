@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2 } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -48,7 +48,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
         onEditIssueTypeIdChange(issueTypeId);
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
     },
     {
       key: "delete",
@@ -62,7 +62,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
       tooltipContent: issueTypeDetail?.is_default
         ? t("work_item_types.settings.cant_delete_default_message")
         : undefined,
-      icon: Trash2,
+      icon: TrashIcon,
       disabled: issueTypeDetail?.is_default,
     },
   ];

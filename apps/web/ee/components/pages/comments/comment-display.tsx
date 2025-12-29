@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, Pencil, Trash2 } from "lucide-react";
+import { CircleCheck } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import type { JSONContent } from "@plane/types";
@@ -127,14 +128,14 @@ export const PageCommentDisplay = observer(function PageCommentDisplay({
         key: "edit",
         action: () => setIsEditing(true),
         title: "Edit",
-        icon: Pencil,
+        icon: EditIcon,
         shouldRender: canEditComment && !isEditing,
       },
       {
         key: "delete",
         action: () => setDeleteCommentModal(true),
         title: "Delete",
-        icon: Trash2,
+        icon: TrashIcon,
         shouldRender: canDeleteComment,
       },
     ],

@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";
+import { useParams } from "next/navigation";
+import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -79,21 +81,21 @@ export const PageActions = observer(function PageActions(props: Props) {
           pageOperations.toggleAccess();
         },
         title: access === EPageAccess.PUBLIC ? "Make private" : isProjectPage ? "Make public" : "Open to workspace",
-        icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
+        icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
       },
       {
         key: "open-in-new-tab",
         action: pageOperations.openInNewTab,
         title: "Open in new tab",
-        icon: ExternalLink,
+        icon: NewTabIcon,
         shouldRender: true,
       },
       {
         key: "copy-link",
         action: pageOperations.copyLink,
         title: "Copy link",
-        icon: Link,
+        icon: LinkIcon,
         shouldRender: true,
       },
       {
@@ -105,7 +107,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           pageOperations.duplicate(realtimeEvents);
         },
         title: "Make a copy",
-        icon: Copy,
+        icon: CopyIcon,
         shouldRender: canCurrentUserDuplicatePage,
       },
       {
@@ -117,7 +119,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           setDeletePageModal(true);
         },
         title: "Delete",
-        icon: Trash2,
+        icon: TrashIcon,
         shouldRender: canCurrentUserDeletePage && !!archived_at,
       },
     ],

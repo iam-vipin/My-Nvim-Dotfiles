@@ -1,9 +1,8 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { PencilIcon } from "lucide-react";
 // plane imports
-import { CustomersIcon } from "@plane/propel/icons";
+import { CustomersIcon, EditIcon } from "@plane/propel/icons";
 import { Input } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 
@@ -21,7 +20,7 @@ export const CustomerLogoInput = observer(function CustomerLogoInput(props: TPro
     <div className="rounded-md border-subtle-1 p-1 relative group cursor-pointer" onClick={() => handleOpenLogoInput()}>
       <Input className="hidden" type="file" onChange={onLogoUpload} maxLength={1} ref={logoInputRef} />
       <div className="absolute -right-1 -top-1 p-1.5 rounded-full bg-surface-1 border border-subtle-1 hidden group-hover:inline">
-        <PencilIcon className="size-2.5" />
+        <EditIcon className="size-2.5" />
       </div>
       {logo_url || logo ? (
         <div className="bg-surface-1 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-subtle-1">

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { CustomerRequestSearch } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 

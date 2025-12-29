@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
+
+import { InfoIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IState } from "@plane/types";
 import { Collapsible, ToggleSwitch } from "@plane/ui";
@@ -88,7 +88,7 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
                   <span className="text-11 text-placeholder font-medium">
                     {isDefaultState ? (
                       <Tooltip position="left" tooltipContent={t("workflows.workflow_states.default_state")}>
-                        <Info className="flex-shrink-0 size-4 text-placeholder hover:text-tertiary cursor-help" />
+                        <InfoIcon className="flex-shrink-0 size-4 text-placeholder hover:text-tertiary cursor-help" />
                       </Tooltip>
                     ) : (
                       <>{t("workflows.workflow_states.work_item_creation")}</>

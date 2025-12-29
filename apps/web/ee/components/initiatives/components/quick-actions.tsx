@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, LinkIcon, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { NewTabIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -65,7 +66,7 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
     {
       key: "edit",
       title: t("edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditCycle,
       shouldRender: !disabled,
     },
@@ -73,7 +74,7 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: t("open_in_new_tab"),
-      icon: ExternalLink,
+      icon: NewTabIcon,
     },
     {
       key: "copy-link",
@@ -85,7 +86,7 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
       key: "delete",
       action: handleDeleteCycle,
       title: t("delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: !disabled && isOwnerOrAdmin,
     },
   ];

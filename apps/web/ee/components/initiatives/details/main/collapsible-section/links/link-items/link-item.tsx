@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { CopyIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
@@ -84,7 +84,7 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
             }}
             className="relative grid place-items-center rounded-sm p-1 text-placeholder outline-none group-hover:text-secondary cursor-pointer hover:bg-layer-1"
           >
-            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+            <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
           </button>
           <CustomMenu
             ellipsis
@@ -99,7 +99,7 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
                 toggleInitiativeLinkModal(true);
               }}
             >
-              <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
+              <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
               {t("edit")}
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
@@ -108,7 +108,7 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
                 linkOperations.remove(link.id);
               }}
             >
-              <Trash2 className="h-3 w-3" />
+              <TrashIcon className="h-3 w-3" />
               {t("delete")}
             </CustomMenu.MenuItem>
           </CustomMenu>

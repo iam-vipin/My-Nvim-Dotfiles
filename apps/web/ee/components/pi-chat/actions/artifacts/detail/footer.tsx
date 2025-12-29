@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { ExternalLink, Info } from "lucide-react";
+import { NewTabIcon, InfoIcon } from "@plane/propel/icons";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -45,7 +45,7 @@ export const PiChatArtifactsFooter = observer(function PiChatArtifactsFooter(pro
                   )}
                   href={artifactsData.entity_url}
                 >
-                  <ExternalLink className="size-3 flex-shrink-0" />
+                  <NewTabIcon className="size-3 flex-shrink-0" />
                   <div>Open {artifactsData.artifact_type}</div>
                 </a>
               )}
@@ -82,7 +82,7 @@ export const PiChatArtifactsFooter = observer(function PiChatArtifactsFooter(pro
       ) : (
         EDITABLE_ARTIFACT_TYPES.includes(artifactsData.artifact_type) && (
           <div className="flex justify-center bg-layer-2 w-full shadow-2xl p-4 gap-2 border border-subtle">
-            <Info className="size-4 my-auto" />
+            <InfoIcon className="size-4 my-auto" />
             <div className="text-body-sm-medium text-primary">This artifact is no longer editable.</div>
           </div>
         )

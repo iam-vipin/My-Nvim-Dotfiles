@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+
+import { PlusIcon } from "@plane/propel/icons";
 // helpers
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
@@ -34,7 +35,7 @@ export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersBu
         <IconButton
           variant="secondary"
           size="base"
-          icon={Plus}
+          icon={PlusIcon}
           onClick={() => setIsAddMembersModalOpen(true)}
           data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.OVERVIEW_ADD_MEMBER_BUTTON}
           aria-label="Add member"
@@ -53,7 +54,7 @@ export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersBu
               "text-secondary transition-colors"
             )}
           >
-            <Plus className="size-5" strokeWidth={2} />
+            <PlusIcon className="size-5" strokeWidth={2} />
           </div>
           <span className="text-body-xs-medium text-placeholder group-hover:text-tertiary">Add new member</span>
         </button>

@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -92,7 +92,7 @@ export const IssuePropertyOptionItem = observer(function IssuePropertyOptionItem
       />
       {Boolean(error) && typeof error === "string" && (
         <Tooltip tooltipContent={t(error)} className="text-caption-md-regular" position="left">
-          <Info className="absolute right-1.5 h-3 w-3 stroke-danger hover:cursor-pointer" />
+          <InfoIcon className="absolute right-1.5 h-3 w-3 stroke-danger hover:cursor-pointer" />
         </Tooltip>
       )}
     </div>

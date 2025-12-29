@@ -1,16 +1,7 @@
 import type { FC, ReactNode } from "react";
+import { AlignLeft, ArrowRightLeft, Briefcase, CalendarDays, FileText, Network, Paperclip, Type } from "lucide-react";
 import {
-  AlignLeft,
-  ArrowRightLeft,
-  Briefcase,
-  CalendarDays,
-  FileText,
-  Link,
-  Network,
-  Paperclip,
-  Type,
-} from "lucide-react";
-import {
+  LinkIcon,
   CustomersIcon,
   EpicIcon,
   EstimatePropertyIcon,
@@ -218,7 +209,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   link_created: (activity: TIssueActivity) => ({
-    icon: Link,
+    icon: LinkIcon,
     message: (
       <>
         added{" "}
@@ -234,7 +225,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   link_updated: (activity: TIssueActivity) => ({
-    icon: Link,
+    icon: LinkIcon,
     message: (
       <>
         updated the{" "}
@@ -250,7 +241,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   link_deleted: (activity: TIssueActivity) => ({
-    icon: Link,
+    icon: LinkIcon,
     message: (
       <>
         removed this{" "}

@@ -1,4 +1,4 @@
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -41,7 +41,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
                   <div className="relative flex items-center gap-2 cursor-no-drop text-tertiary">
                     {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
                     <Tooltip tooltipContent={t("common.coming_soon")}>
-                      <Info size={12} />
+                      <InfoIcon width={12} height={12} />
                     </Tooltip>
                   </div>
                 ) : !isEnabled ? (

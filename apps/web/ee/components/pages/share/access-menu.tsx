@@ -1,12 +1,12 @@
 import { memo } from "react";
-import { Trash2, Eye, Pencil, Check, MessageSquareText } from "lucide-react";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { Eye, MessageSquareText } from "lucide-react";
+import { TrashIcon, EditIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
 const ACCESS_OPTIONS = [
   { value: "0", label: "View", icon: Eye },
   { value: "1", label: "Comment", icon: MessageSquareText },
-  { value: "2", label: "Edit", icon: Pencil },
+  { value: "2", label: "Edit", icon: EditIcon },
 ];
 
 type TAccessMenuProps = {
@@ -57,14 +57,14 @@ export const AccessMenu = memo(function AccessMenu({
                 <IconComponent className="size-3" />
                 can {option.label.toLowerCase()}
               </div>
-              {isSelected && <Check className="size-3" />}
+              {isSelected && <CheckIcon className="size-3" />}
             </div>
           </CustomMenu.MenuItem>
         );
       })}
       <CustomMenu.MenuItem onClick={onRemove}>
         <div className="flex items-center gap-2 text-danger-primary">
-          <Trash2 className="size-3" />
+          <TrashIcon className="size-3" />
           Remove
         </div>
       </CustomMenu.MenuItem>

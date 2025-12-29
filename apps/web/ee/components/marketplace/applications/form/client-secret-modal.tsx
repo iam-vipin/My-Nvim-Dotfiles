@@ -1,4 +1,5 @@
-import { CheckCircle, Copy } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+import { CopyIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -77,7 +78,7 @@ export function GeneratedCredentialsModal(props: Props) {
             >
               <span className={`truncate pr-2 text-primary`}>{clientId}</span>
               <Tooltip tooltipContent="Copy client id" isMobile={isMobile}>
-                <Copy className="h-4 w-4 text-placeholder flex-shrink-0" />
+                <CopyIcon className="h-4 w-4 text-placeholder flex-shrink-0" />
               </Tooltip>
             </button>
           </div>
@@ -90,7 +91,7 @@ export function GeneratedCredentialsModal(props: Props) {
               <div className="flex items-center space-x-2">
                 <button type="button" onClick={() => copyContent(clientSecret, "clientSecret")}>
                   <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
-                    <Copy className="h-4 w-4 text-placeholder flex-shrink-0" />
+                    <CopyIcon className="h-4 w-4 text-placeholder flex-shrink-0" />
                   </Tooltip>
                 </button>
                 <button

@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane imports
 import type { EIssuePropertyType, TIssueProperty, TIssuePropertyDisplayContext } from "@plane/types";

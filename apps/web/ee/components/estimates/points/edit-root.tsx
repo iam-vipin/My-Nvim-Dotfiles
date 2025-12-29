@@ -1,10 +1,9 @@
 import type { Dispatch, FC, SetStateAction } from "react";
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon, ChevronLeftIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronLeftIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TEstimatePointsObject, TEstimateTypeError, TEstimateUpdateStageKeys } from "@plane/types";
 import { Sortable } from "@plane/ui";
@@ -233,7 +232,7 @@ export const EstimatePointEditRoot = observer(function EstimatePointEditRoot(pro
           )}
 
         {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (
-          <Button variant="link" prependIcon={<Plus />} onClick={handleCreate}>
+          <Button variant="link" prependIcon={<PlusIcon />} onClick={handleCreate}>
             Add {estimate?.type}
           </Button>
         )}

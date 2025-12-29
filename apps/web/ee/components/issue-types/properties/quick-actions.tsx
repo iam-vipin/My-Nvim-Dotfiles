@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2 } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TOperationMode } from "@plane/types";
@@ -44,7 +44,7 @@ export const IssuePropertyQuickActions = observer(function IssuePropertyQuickAct
         onIssuePropertyOperationMode("update");
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
     },
     {
       key: "delete",
@@ -55,7 +55,7 @@ export const IssuePropertyQuickActions = observer(function IssuePropertyQuickAct
         setIsDeleteModalOpen(true);
       },
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
     },
   ];
 

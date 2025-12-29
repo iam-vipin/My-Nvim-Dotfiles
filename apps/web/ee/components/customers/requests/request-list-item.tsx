@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Database, PlusIcon } from "lucide-react";
+import { Database } from "lucide-react";
+import { PlusIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { WorkItemsIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CustomerService } from "@plane/services";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";

@@ -1,4 +1,5 @@
-import { Minus, Plus } from "lucide-react";
+import { Minus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { Input } from "@plane/ui";
 
@@ -64,7 +65,7 @@ export function NumberInputWithControls({
           disabled={isIncreaseDisabled}
           className="flex items-center justify-center size-8 bg-layer-3 rounded-r disabled:text-placeholder cursor-pointer select-none"
         >
-          <Plus className="size-4 text-primary" />
+          <PlusIcon className="size-4 text-primary" />
         </button>
       </div>
       {error && <p className="text-11 text-danger-primary">{error}</p>}

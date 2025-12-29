@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/react";
-import { Link, Code, Bookmark } from "lucide-react";
+import { Code, Bookmark } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { EExternalEmbedAttributeNames } from "@/types";
 import { insertExternalEmbed } from "../helpers/editor-commands";
@@ -39,7 +40,7 @@ export function EmbedLinkView(props: EmbedLinkViewProps) {
       {
         key: "url",
         title: "URL",
-        icon: Link,
+        icon: LinkIcon,
         action: handleUrl,
       },
       {

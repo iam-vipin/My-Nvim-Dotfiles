@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { ExternalLink, Globe2 } from "lucide-react";
+
+import { NewTabIcon, GlobeIcon } from "@plane/propel/icons";
 // plane imports
 import { SPACE_BASE_PATH, SPACE_BASE_URL, TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -202,7 +203,7 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <ExternalLink className="size-4" />
+                      <NewTabIcon className="size-4" />
                     </a>
                     <button
                       type="button"
@@ -259,7 +260,7 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
         {/* modal handlers */}
         <div className="relative flex items-center justify-between border-t border-subtle-1 px-5 py-4 mt-4">
           <div className="flex items-center gap-1 text-body-xs-regular text-placeholder">
-            <Globe2 className="size-3.5" />
+            <GlobeIcon className="size-3.5" />
             <div className="text-body-xs-regular">Anyone with the link can access</div>
           </div>
           {!isLoading && (

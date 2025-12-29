@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Trash2 } from "lucide-react";
+
+import { TrashIcon, LeadIcon } from "@plane/propel/icons";
 // ui
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { LeadIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Avatar, CustomMenu } from "@plane/ui";
 // helpers
@@ -117,7 +117,7 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                         className={cn("flex items-center gap-2 text-danger-primary")}
                         disabled={!isEditingAllowed}
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <TrashIcon className="h-3 w-3" />
                         <div>{currentUser?.id === member.id ? "Leave" : "Remove"}</div>
                       </CustomMenu.MenuItem>
                     </CustomMenu>

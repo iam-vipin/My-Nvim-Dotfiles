@@ -1,9 +1,9 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Link, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-// hooks
-import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
+// plane imports
+import { EpicIcon, ProjectIcon, LinkIcon } from "@plane/propel/icons";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { InitiativeActionButton } from "./action-button";
 import { InitiativeAttachmentActionButton } from "./attachment-button";
@@ -31,7 +31,7 @@ export const InitiativeInfoActionItems = observer(function InitiativeInfoActionI
         <InitiativeLinksActionButton
           customButton={
             <div className="flex items-center gap-1 p-2 text-secondary hover:text-primary border border-subtle rounded">
-              <Link className="size-3 flex-shrink-0 text-tertiary" strokeWidth={2} />
+              <LinkIcon className="size-3 flex-shrink-0 text-tertiary" strokeWidth={2} />
               <span className="text-13 font-medium">{t("add_link")}</span>
             </div>
           }

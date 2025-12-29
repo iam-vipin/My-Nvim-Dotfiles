@@ -2,12 +2,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
-import { Earth, Lock, Search } from "lucide-react";
+import { Earth, Search } from "lucide-react";
+import { LockIcon, CloseIcon, PageIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { CloseIcon, PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssuePage, TIssueServiceType } from "@plane/types";
 import { EPageAccess } from "@plane/types";
@@ -224,7 +224,11 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
                   </div>
                   {page.access != null && (
                     <div className="hidden flex-shrink-0 text-placeholder group-hover:flex">
-                      {page.access === EPageAccess.PUBLIC ? <Earth className="size-4" /> : <Lock className="size-4" />}
+                      {page.access === EPageAccess.PUBLIC ? (
+                        <Earth className="size-4" />
+                      ) : (
+                        <LockIcon className="size-4" />
+                      )}
                     </div>
                   )}
                 </Combobox.Option>

@@ -1,7 +1,8 @@
 import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Info, TrendingDown, TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { TCycleEstimateSystemAdvanced, TCycleProgress, TStateGroups } from "@plane/types";
@@ -209,7 +210,7 @@ const Summary = observer(function Summary(props: Props) {
       </div>
 
       <div className="text-11 text-tertiary font-medium flex pt-2 gap-2">
-        <Info className="text-11 mt-[2px]" size={12} />
+        <InfoIcon className="text-11 mt-[2px]" height={12} width={12} />
         <div className="flex flex-col space-y-2">
           {!data ? (
             <Loader.Item width="200px" height="20px" />

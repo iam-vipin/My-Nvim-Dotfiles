@@ -1,10 +1,9 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane ui
-import { DropdownIcon } from "@plane/propel/icons";
+import { DropdownIcon, PlusIcon } from "@plane/propel/icons";
 // plane web hooks
 import { cn } from "@plane/utils";
 import { useCustomers } from "@/plane-web/hooks/store";
@@ -49,7 +48,7 @@ export const RequestAttachmentCollapsibleTitle = observer(function RequestAttach
           customerId={customerId}
           disabled={disabled}
         >
-          <Plus className="h-4 w-4" />
+          <PlusIcon className="h-4 w-4" />
         </AddAttachmentButton>
       )}
     </>

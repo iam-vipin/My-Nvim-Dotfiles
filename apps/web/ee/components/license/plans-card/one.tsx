@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { ExternalLink } from "lucide-react";
+import { NewTabIcon } from "@plane/propel/icons";
 import { getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
@@ -32,7 +32,7 @@ export const OnePlanCard = observer(function OnePlanCard() {
             rel="noreferrer"
           >
             {"Manage your license"}
-            <ExternalLink className="h-3 w-3" strokeWidth={2} />
+            <NewTabIcon className="h-3 w-3" strokeWidth={2} />
           </a>
         </>
       }

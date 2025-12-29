@@ -1,10 +1,10 @@
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+
+import { PlusIcon, ChevronDownIcon } from "@plane/propel/icons";
 // helpers
 import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
 import {
@@ -72,7 +72,7 @@ export const ProjectStateGroupListItem = observer(function ProjectStateGroupList
           onClick={() => !createState && setCreateState(true)}
           data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
         >
-          <Plus className="w-4 h-4" />
+          <PlusIcon className="w-4 h-4" />
         </div>
       </div>
 

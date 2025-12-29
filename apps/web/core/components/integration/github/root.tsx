@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
-import { ArrowLeft, Check, Settings, UploadCloud } from "lucide-react";
-import { ListLayoutIcon, MembersPropertyIcon } from "@plane/propel/icons";
+import { ArrowLeft, Settings, UploadCloud } from "lucide-react";
+import { ListLayoutIcon, CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
@@ -70,7 +70,7 @@ const integrationWorkflowData = [
   {
     title: "Confirm",
     key: "import-confirm",
-    icon: Check,
+    icon: CheckIcon,
   },
 ];
 

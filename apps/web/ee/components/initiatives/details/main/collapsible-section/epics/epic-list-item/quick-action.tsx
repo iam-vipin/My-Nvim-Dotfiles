@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
-import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { LinkIcon, TrashIcon } from "@plane/propel/icons";
 // Plane
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -79,7 +80,7 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
           });
         }),
       title: t("common.remove"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: !disabled,
     },
   ];

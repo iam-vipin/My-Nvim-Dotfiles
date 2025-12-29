@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { ExternalLink, Globe2 } from "lucide-react";
+
+import { NewTabIcon, GlobeIcon } from "@plane/propel/icons";
 // plane imports
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -167,7 +168,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <ExternalLink className="size-4" />
+                      <NewTabIcon className="size-4" />
                     </a>
                     <button
                       type="button"
@@ -225,7 +226,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
         {/* modal handlers */}
         <div className="relative flex items-center justify-between border-t border-subtle-1 px-5 py-4 mt-4">
           <div className="flex items-center gap-1 text-13 text-placeholder">
-            <Globe2 className="size-3.5" />
+            <GlobeIcon className="size-3.5" />
             <div className="text-13">Anyone with the link can access</div>
           </div>
           {!isLoading && (

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EditIcon, LinkIcon, NewTabIcon, TrashIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -56,7 +57,7 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
     {
       key: "edit",
       title: "Edit",
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditTeam,
       shouldRender: !hideEdit && isEditingAllowed,
     },
@@ -64,20 +65,20 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in a new tab",
-      icon: ExternalLink,
+      icon: NewTabIcon,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy link to teamspace",
-      icon: Link2,
+      icon: LinkIcon,
       iconClassName: "-rotate-45",
     },
     {
       key: "delete",
       action: handleDeleteTeam,
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isEditingAllowed,
       className: "text-danger-primary",
     },

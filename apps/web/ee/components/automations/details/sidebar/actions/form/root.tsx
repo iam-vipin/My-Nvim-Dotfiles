@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Trash2 } from "lucide-react";
+import { TrashIcon } from "@plane/propel/icons";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
@@ -191,7 +191,7 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
                     isDeleteButtonDisabled ? t("automations.action.validation.delete_only_action") : undefined
                   }
                 >
-                  <Trash2 className="size-3.5" />
+                  <TrashIcon className="size-3.5" />
                 </AutomationDetailsSidebarActionFormHeaderButton>
               )
             }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Globe2 } from "lucide-react";
+import { NewTabIcon, GlobeIcon } from "@plane/propel/icons";
 // ui
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -99,7 +99,7 @@ export const PublishPageModal = observer(function PublishPageModal(props: Props)
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="size-4" />
+                  <NewTabIcon className="size-4" />
                 </a>
                 <Button size="lg" variant={"tertiary"} onClick={handleCopyLink}>
                   Copy link
@@ -121,7 +121,7 @@ export const PublishPageModal = observer(function PublishPageModal(props: Props)
       </div>
       <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle-1">
         <div className="flex items-center gap-1 text-13 text-placeholder">
-          <Globe2 className="size-3.5" />
+          <GlobeIcon className="size-3.5" />
           <p className="text-13">Anyone with the link can access</p>
         </div>
         <div className="flex items-center gap-2">

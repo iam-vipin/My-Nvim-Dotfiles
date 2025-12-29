@@ -1,10 +1,9 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 import { capitalize } from "lodash-es";
-import { Check } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TEstimateSystemKeys } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -52,7 +51,7 @@ export function EstimateSwitchDropdown(props: TProps) {
         <>
           <span className="flex-grow capitalize truncate">{option.value}</span>
           {option.disabled && <UpgradeBadge />}
-          {option.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+          {option.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
         </>
       )}
       inputPlaceholder={t("project_settings.estimates.select")}

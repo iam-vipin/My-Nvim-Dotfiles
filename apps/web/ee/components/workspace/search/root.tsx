@@ -27,15 +27,9 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
   }, [searchParams]);
 
   return (
-    <div
-      className={cn(
-        "h-full w-full flex flex-col items-center",
-        "transition-all duration-500 ease-out",
-        "px-4 sm:px-6 pt-4"
-      )}
-    >
-      <div className={cn("w-full relative transition-all duration-500 ease-out h-full", "max-w-full", "py-2 sm:px-2")}>
-        <div className="relative flex items-center group">
+    <div className="size-full flex flex-col items-center transition-all duration-500 ease-out px-4 sm:px-6 pt-4">
+      <div className="size-full flex flex-col relative transition-all duration-500 ease-out py-2 sm:px-2">
+        <div className="shrink-0 relative flex items-center group">
           <Input
             value={searchQuery}
             onChange={(e) => {
@@ -65,8 +59,7 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
             </div>
           )}
         </div>
-
-        <Command className="h-full overflow-hidden">
+        <Command className="size-full flex flex-col overflow-hidden">
           <Command.Input value={searchQuery} hidden />
           <SearchResults
             query={searchQuery}
@@ -74,7 +67,7 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
             setFlattenedSearchResults={setFlattenedSearchResults}
             isSearching={isSearching}
             setIsSearching={setIsSearching}
-            renderAdvancedSearchButton={false}
+            isAppSearchPage
           />
         </Command>
       </div>

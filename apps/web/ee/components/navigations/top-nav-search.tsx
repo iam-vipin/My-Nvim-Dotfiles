@@ -1,8 +1,7 @@
+import { Command } from "cmdk";
 import { useState, useEffect } from "react";
 import { SearchResults } from "ee/components/workspace/search/results/root";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
-import { useParams } from "react-router";
 import { Search } from "lucide-react";
 // plane imports
 import type { TSearchResultItem } from "@plane/constants";
@@ -11,16 +10,12 @@ import { cn } from "@plane/utils";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
-import { Command } from "cmdk";
 
 export const TopNavSearch = observer(function TopNavSearch() {
   // states
   const [searchQuery, setSearchQuery] = useState("");
   const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  // router hooks
-  const router = useRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { setTopNavSearchInputRef } = usePowerK();
   // expandable search hook
@@ -130,7 +125,6 @@ export const TopNavSearch = observer(function TopNavSearch() {
             isSearching={isSearching}
             setFlattenedSearchResults={setFlattenedSearchResults}
             setIsSearching={setIsSearching}
-            renderAdvancedSearchButton
           />
         )}
       </div>

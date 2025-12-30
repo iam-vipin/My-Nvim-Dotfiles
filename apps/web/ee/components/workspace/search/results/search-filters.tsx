@@ -9,6 +9,7 @@ import { cn } from "@plane/utils";
 
 type TProps = {
   flattenedSearchResults: TSearchResultItem[];
+  isAppSearchPage: boolean;
   isSearching: boolean;
   searchFilter: ESearchFilterKeys;
   searchResults: TSearchQueryResponse | undefined;
@@ -16,7 +17,8 @@ type TProps = {
 };
 
 export const SearchFilters = observer(function SearchResults(props: TProps) {
-  const { flattenedSearchResults, isSearching, searchFilter, searchResults, updateSearchFilter } = props;
+  const { flattenedSearchResults, isAppSearchPage, isSearching, searchFilter, searchResults, updateSearchFilter } =
+    props;
   // plane hooks
   const { t } = useTranslation();
 
@@ -30,7 +32,11 @@ export const SearchFilters = observer(function SearchResults(props: TProps) {
   );
 
   return (
-    <div className="shrink-0 flex gap-3 p-3 overflow-auto horizontal-scrollbar scrollbar-xs">
+    <div
+      className={cn("shrink-0 flex gap-3 overflow-auto horizontal-scrollbar scrollbar-xs", {
+        "px-3": !isAppSearchPage,
+      })}
+    >
       {SEARCH_FILTERS.map((filter) => (
         <button
           type="button"

@@ -9,6 +9,7 @@ import type { TSearchQueryResponse, TSearchResultItem } from "@plane/constants";
 import { ESearchFilterKeys } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { SearchIcon } from "@plane/propel/icons";
+import { cn } from "@plane/utils";
 // components
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
 // hooks
@@ -27,10 +28,10 @@ type TProps = {
   query: string;
   flattenedSearchResults: TSearchResultItem[];
   handleResultClick?: () => void;
+  isAppSearchPage?: boolean;
   isSearching: boolean;
   setFlattenedSearchResults: (results: TSearchResultItem[]) => void;
   setIsSearching: (isSearching: boolean) => void;
-  renderAdvancedSearchButton?: boolean;
 };
 
 export const SearchResults = observer(function SearchResults(props: TProps) {
@@ -39,9 +40,9 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
     flattenedSearchResults,
     handleResultClick,
     setFlattenedSearchResults,
+    isAppSearchPage = false,
     isSearching,
     setIsSearching,
-    renderAdvancedSearchButton = true,
   } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -144,7 +145,12 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
     }
 
     return (
-      <Command.Group heading="Search results" className="transition-all duration-500 fade-in">
+      <Command.Group
+        heading={isAppSearchPage ? undefined : "Search results"}
+        className={cn("transition-all duration-500 fade-in", {
+          "px-0!": isAppSearchPage,
+        })}
+      >
         {filteredSearchResults.map((entity) => (
           <PowerKModalCommandItem
             key={entity.id}
@@ -162,34 +168,37 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
   };
 
   return (
-    <Command.List className="size-full flex flex-col overflow-hidden py-2 [&_[cmdk-list-sizer]]:h-full [&_[cmdk-list-sizer]]:overflow-hidden [&_[cmdk-list-sizer]]:overflow-y-auto">
-      <SearchFilters
-        flattenedSearchResults={flattenedSearchResults}
-        isSearching={isSearching}
-        searchFilter={searchFilter}
-        searchResults={searchResults}
-        updateSearchFilter={setSearchFilter}
-      />
-      <div className="h-full flex-1 overflow-y-auto vertical-scrollbar scrollbar-sm">
-        {renderAdvancedSearchButton && (
-          <Command.Group forceMount>
-            <PowerKModalCommandItem
-              value="navigate-to-search-page"
-              icon={SearchIcon}
-              label="Go to advanced search page"
-              forceMount
-              onSelect={() => {
-                router.push(`/${workspaceSlug}/search?q=${query}`);
-                // close the command palette
-                handleResultClick?.();
-              }}
-            />
-          </Command.Group>
-        )}
-        {renderSearchResults()}
-      </div>
-      {filteredSearchResults.length !== 0 && (
-        <div className="pt-5 pb-2 px-3 flex items-center gap-2">
+    <div className="size-full flex flex-col overflow-hidden">
+      <Command.List className="size-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-sm py-2">
+        <SearchFilters
+          flattenedSearchResults={flattenedSearchResults}
+          isAppSearchPage={isAppSearchPage}
+          isSearching={isSearching}
+          searchFilter={searchFilter}
+          searchResults={searchResults}
+          updateSearchFilter={setSearchFilter}
+        />
+        <div className="shrink-0">
+          {!isAppSearchPage && (
+            <Command.Group forceMount>
+              <PowerKModalCommandItem
+                value="navigate-to-search-page"
+                icon={SearchIcon}
+                label="Go to advanced search page"
+                forceMount
+                onSelect={() => {
+                  router.push(`/${workspaceSlug}/search?q=${query}`);
+                  // close the command palette
+                  handleResultClick?.();
+                }}
+              />
+            </Command.Group>
+          )}
+          {renderSearchResults()}
+        </div>
+      </Command.List>
+      {!isAppSearchPage && filteredSearchResults.length !== 0 && (
+        <div className="shrink-0 pt-5 pb-2 px-3 flex items-center gap-2">
           <p className="flex items-center gap-1 text-placeholder">
             <span className="shrink-0 size-5 grid place-items-center rounded bg-layer-3 border border-subtle-1">
               <ArrowUp className="size-3" />
@@ -207,6 +216,6 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
           </p>
         </div>
       )}
-    </Command.List>
+    </div>
   );
 });

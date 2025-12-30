@@ -305,7 +305,6 @@ export default {
   drafts: "Koncepty",
   projects: "Projekty",
   views: "Pohledy",
-  workspace: "Pracovní prostor",
   archives: "Archivy",
   settings: "Nastavení",
   failed_to_move_favorite: "Přesunutí oblíbeného se nezdařilo",

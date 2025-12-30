@@ -308,7 +308,6 @@ export default {
   drafts: "Schițe",
   projects: "Proiecte",
   views: "Perspective",
-  workspace: "Spațiu de lucru",
   archives: "Arhive",
   settings: "Setări",
   failed_to_move_favorite: "Nu s-a putut muta favorita",

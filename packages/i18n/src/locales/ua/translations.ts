@@ -306,7 +306,6 @@ export default {
   drafts: "Чернетки",
   projects: "Проєкти",
   views: "Подання",
-  workspace: "Робочий простір",
   archives: "Архіви",
   settings: "Налаштування",
   failed_to_move_favorite: "Не вдалося перемістити обране",

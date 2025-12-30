@@ -46,7 +46,7 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
         className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-placeholder  text-13 font-semibold"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
-        <span>{t("workspace")}</span>
+        <span>{t("common.workspace")}</span>
       </Disclosure.Button>
       <CustomMenu
         customButton={

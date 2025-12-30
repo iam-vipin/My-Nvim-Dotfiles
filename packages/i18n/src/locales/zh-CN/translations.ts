@@ -297,7 +297,6 @@ export default {
   drafts: "草稿",
   projects: "项目",
   views: "视图",
-  workspace: "工作区",
   archives: "归档",
   settings: "设置",
   failed_to_move_favorite: "移动收藏失败",

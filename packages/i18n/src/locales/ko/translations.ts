@@ -300,7 +300,6 @@ export default {
   drafts: "초안",
   projects: "프로젝트",
   views: "보기",
-  workspace: "작업 공간",
   archives: "아카이브",
   settings: "설정",
   failed_to_move_favorite: "즐겨찾기 이동 실패",

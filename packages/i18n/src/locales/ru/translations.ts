@@ -305,7 +305,6 @@ export default {
   drafts: "Черновики",
   projects: "Проекты",
   views: "Представления",
-  workspace: "Рабочее пространство",
   archives: "Архивы",
   settings: "Настройки",
   failed_to_move_favorite: "Ошибка перемещения избранного",

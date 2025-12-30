@@ -308,7 +308,6 @@ export default {
   drafts: "Bozze",
   projects: "Progetti",
   views: "Visualizzazioni",
-  workspace: "Spazio di lavoro",
   archives: "Archivi",
   settings: "Impostazioni",
   failed_to_move_favorite: "Impossibile spostare il preferito",

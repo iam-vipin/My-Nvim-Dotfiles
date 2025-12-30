@@ -307,7 +307,6 @@ export default {
   drafts: "Draf",
   projects: "Proyek",
   views: "Tampilan",
-  workspace: "Ruang kerja",
   archives: "Arsip",
   settings: "Pengaturan",
   failed_to_move_favorite: "Gagal memindahkan favorit",

@@ -303,7 +303,6 @@ export default {
   drafts: "下書き",
   projects: "プロジェクト",
   views: "ビュー",
-  workspace: "ワークスペース",
   archives: "アーカイブ",
   settings: "設定",
   failed_to_move_favorite: "お気に入りの移動に失敗しました",

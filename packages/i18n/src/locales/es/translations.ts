@@ -312,7 +312,6 @@ export default {
   drafts: "Borradores",
   projects: "Proyectos",
   views: "Vistas",
-  workspace: "Espacio de trabajo",
   archives: "Archivos",
   settings: "Configuración",
   failed_to_move_favorite: "Error al mover favorito",

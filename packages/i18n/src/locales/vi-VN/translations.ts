@@ -306,7 +306,6 @@ export default {
   drafts: "Bản nháp",
   projects: "Dự án",
   views: "Chế độ xem",
-  workspace: "Không gian làm việc",
   archives: "Lưu trữ",
   settings: "Cài đặt",
   failed_to_move_favorite: "Không thể di chuyển mục yêu thích",

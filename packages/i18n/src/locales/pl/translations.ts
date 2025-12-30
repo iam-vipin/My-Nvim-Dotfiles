@@ -304,7 +304,6 @@ export default {
   drafts: "Szkice",
   projects: "Projekty",
   views: "Widoki",
-  workspace: "Przestrzeń robocza",
   archives: "Archiwa",
   settings: "Ustawienia",
   failed_to_move_favorite: "Nie udało się przenieść ulubionego",

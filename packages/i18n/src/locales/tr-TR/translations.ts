@@ -306,7 +306,6 @@ export default {
   drafts: "Taslaklar",
   projects: "Projeler",
   views: "Görünümler",
-  workspace: "Çalışma Alanı",
   archives: "Arşivler",
   settings: "Ayarlar",
   failed_to_move_favorite: "Favori taşınamadı",

@@ -296,7 +296,6 @@ export default {
   drafts: "草稿",
   projects: "專案",
   views: "檢視",
-  workspace: "工作區",
   archives: "封存",
   settings: "設定",
   failed_to_move_favorite: "無法移動我的最愛",

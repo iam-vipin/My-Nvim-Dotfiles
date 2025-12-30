@@ -309,7 +309,6 @@ export default {
   drafts: "Brouillons",
   projects: "Projets",
   views: "Vues",
-  workspace: "Espace de travail",
   archives: "Archives",
   settings: "Paramètres",
   failed_to_move_favorite: "Échec du déplacement du favori",

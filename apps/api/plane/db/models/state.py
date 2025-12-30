@@ -5,7 +5,8 @@ from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
-from plane.db.mixins import SoftDeletionManager
+from plane.db.models.project import ProjectManager
+
 
 class StateGroup(models.TextChoices):
     BACKLOG = "backlog", "Backlog"
@@ -58,14 +59,14 @@ DEFAULT_STATES = [
 ]
 
 
-class StateManager(SoftDeletionManager):
+class StateManager(ProjectManager):
     """Default manager - excludes triage states"""
 
     def get_queryset(self):
         return super().get_queryset().exclude(group=StateGroup.TRIAGE.value)
 
 
-class TriageStateManager(SoftDeletionManager):
+class TriageStateManager(ProjectManager):
     """Manager for triage states only"""
 
     def get_queryset(self):

@@ -1,7 +1,10 @@
-import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys, TInstanceEnterpriseAuthenticationMethodKeys } from "@plane/types";
 
 export type TGetAuthenticationModeProps = {
   disabled: boolean;
-  updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
+  updateConfig: (
+    key: TInstanceAuthenticationMethodKeys | TInstanceEnterpriseAuthenticationMethodKeys,
+    value: string
+  ) => void;
   resolvedTheme: string | undefined;
 };

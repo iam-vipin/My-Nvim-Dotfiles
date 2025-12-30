@@ -4,20 +4,22 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { EMPTY_OPERATOR_LABEL } from "@plane/constants";
 import type {
-  TSupportedOperators,
+  TAllAvailableOperatorsForDisplay,
   TFilterConfig,
   TFilterProperty,
   TFilterValue,
   TOperatorSpecificConfigs,
-  TAllAvailableOperatorsForDisplay,
+  TSupportedOperators,
 } from "@plane/types";
 import { FILTER_FIELD_TYPE } from "@plane/types";
 import {
-  getOperatorLabel,
-  isDateFilterType,
   getDateOperatorLabel,
-  isDateFilterOperator,
   getOperatorForPayload,
+  getOperatorLabel,
+  isDateFilterOperator,
+  isDateFilterType,
+  isNegativeOperator,
+  toNegativeOperator,
 } from "@plane/utils";
 
 type TOperatorOptionForDisplay = {
@@ -34,7 +36,7 @@ export interface IFilterConfig<P extends TFilterProperty> extends TFilterConfig<
     operator: TAllAvailableOperatorsForDisplay
   ) => TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs] | undefined;
   getLabelForOperator: (operator: TAllAvailableOperatorsForDisplay | undefined) => string;
-  getDisplayOperatorByValue: <T extends TSupportedOperators>(operator: T, value: TFilterValue) => T;
+  getDisplayOperatorByValue: <T extends TAllAvailableOperatorsForDisplay>(operator: T, value: TFilterValue) => T;
   getAllDisplayOperatorOptionsByValue: (value: TFilterValue) => TOperatorOptionForDisplay[];
   // actions
   mutate: (updates: Partial<TFilterConfig<P>>) => void;
@@ -117,7 +119,11 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
 
     const operatorConfig = this.getOperatorConfig(operator);
 
-    if (operatorConfig?.operatorLabel) {
+    if (operatorConfig?.allowNegative && isNegativeOperator(operator) && operatorConfig.negOperatorLabel) {
+      return operatorConfig.negOperatorLabel;
+    }
+
+    if (!isNegativeOperator(operator) && operatorConfig?.operatorLabel) {
       return operatorConfig.operatorLabel;
     }
 
@@ -136,6 +142,10 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
   getDisplayOperatorByValue: IFilterConfig<P>["getDisplayOperatorByValue"] = computedFn((operator, value) => {
     const operatorConfig = this.getOperatorConfig(operator);
     if (operatorConfig?.type === FILTER_FIELD_TYPE.MULTI_SELECT && (Array.isArray(value) ? value.length : 0) <= 1) {
+      if (isNegativeOperator(operator)) {
+        return toNegativeOperator(operatorConfig.singleValueOperator) as typeof operator;
+      }
+
       return operatorConfig.singleValueOperator as typeof operator;
     }
     return operator;
@@ -190,7 +200,20 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
   // ------------ private helpers ------------
 
   private _getAdditionalOperatorOptions = (
-    _operator: TSupportedOperators,
-    _value: TFilterValue
-  ): TOperatorOptionForDisplay | undefined => undefined;
+    operator: TSupportedOperators,
+    value: TFilterValue
+  ): TOperatorOptionForDisplay | undefined => {
+    const operatorConfig = this.getOperatorConfig(operator);
+    if (operatorConfig?.allowNegative) {
+      const negOperator = toNegativeOperator(operator);
+      const negOperatorDisplayOperator = this.getDisplayOperatorByValue(negOperator, value);
+      const negOperatorLabel = this.getLabelForOperator(negOperatorDisplayOperator);
+      return {
+        value: negOperator,
+        label: negOperatorLabel,
+      };
+    }
+
+    return undefined;
+  };
 }

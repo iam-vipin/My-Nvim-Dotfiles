@@ -1,18 +1,22 @@
 from django.urls import path
 
 from plane.api.views import (
-    IssueListCreateAPIEndpoint,
-    IssueDetailAPIEndpoint,
-    IssueLinkListCreateAPIEndpoint,
-    IssueLinkDetailAPIEndpoint,
-    IssueCommentListCreateAPIEndpoint,
-    IssueCommentDetailAPIEndpoint,
-    IssueActivityListAPIEndpoint,
     IssueActivityDetailAPIEndpoint,
-    IssueAttachmentListCreateAPIEndpoint,
+    IssueActivityListAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
-    WorkspaceIssueAPIEndpoint,
+    IssueAttachmentListCreateAPIEndpoint,
+    IssueAttachmentServerEndpoint,
+    IssueCommentDetailAPIEndpoint,
+    IssueCommentListCreateAPIEndpoint,
+    IssueDetailAPIEndpoint,
+    IssueLinkDetailAPIEndpoint,
+    IssueLinkListCreateAPIEndpoint,
+    IssueListCreateAPIEndpoint,
+    IssueRelationListCreateAPIEndpoint,
+    IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
+    WorkItemAdvancedSearchEndpoint,
+    WorkspaceIssueAPIEndpoint,
 )
 
 # Deprecated url patterns
@@ -77,6 +81,26 @@ old_url_patterns = [
         IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue-attachment",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/relations/",
+        IssueRelationListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="relation",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/relations/remove/",
+        IssueRelationRemoveAPIEndpoint.as_view(http_method_names=["post"]),
+        name="relation",
+    ),
 ]
 
 # New url patterns with work-items as the prefix
@@ -87,7 +111,7 @@ new_url_patterns = [
         name="work-item-search",
     ),
     path(
-        "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
+        "workspaces/<str:slug>/work-items/<str:project_identifier>-<int:issue_identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
         name="work-item-by-identifier",
     ),
@@ -141,6 +165,34 @@ new_url_patterns = [
         IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="work-item-attachment-detail",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="work-item-attachment-server",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/<uuid:pk>/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="work-item-attachment-server",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/",
+        IssueRelationListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-relation-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/remove/",
+        IssueRelationRemoveAPIEndpoint.as_view(http_method_names=["post"]),
+        name="work-item-relation-remove",
+    ),
 ]
 
-urlpatterns = old_url_patterns + new_url_patterns
+advanced_search_url_patterns = [
+    path(
+        "workspaces/<str:slug>/work-items/advanced-search/",
+        WorkItemAdvancedSearchEndpoint.as_view(http_method_names=["post"]),
+        name="work-item-advanced-search",
+    ),
+]
+
+urlpatterns = old_url_patterns + new_url_patterns + advanced_search_url_patterns

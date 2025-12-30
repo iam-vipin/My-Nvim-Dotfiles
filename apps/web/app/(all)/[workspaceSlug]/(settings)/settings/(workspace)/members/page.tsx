@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // types
 import {
+  E_FEATURE_FLAGS,
   EUserPermissions,
   EUserPermissionsLevel,
   MEMBER_TRACKER_ELEMENTS,
@@ -28,12 +29,18 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
-import { SendWorkspaceInvitationModal, MembersActivityButton } from "@/plane-web/components/workspace/members";
+import {
+  SendWorkspaceInvitationModal,
+  MembersImportModal,
+  MembersActivityButton,
+} from "@/plane-web/components/workspace/members";
 import type { Route } from "./+types/page";
+import { useFlag } from "@/plane-web/hooks/store";
 
 const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [importModal, setImportModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = params;
@@ -43,6 +50,8 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
   const { currentWorkspace, mutateWorkspaceMembersActivity } = useWorkspace();
+
+  const isMembersImportEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_MEMBERS_IMPORT, false);
   const { t } = useTranslation();
 
   // derived values
@@ -123,6 +132,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
+      <MembersImportModal isOpen={importModal} onClose={() => setImportModal(false)} workspaceSlug={workspaceSlug} />
       <section
         className={cn("w-full h-full", {
           "opacity-60": !canPerformWorkspaceMemberActions,
@@ -154,14 +164,21 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
             />
             <MembersActivityButton workspaceSlug={workspaceSlug} />
             {canPerformWorkspaceAdminActions && (
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => setInviteModal(true)}
-                data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
-              >
-                {t("workspace_settings.settings.members.add_member")}
-              </Button>
+              <>
+                {isMembersImportEnabled && (
+                  <Button variant="secondary" size="lg" onClick={() => setImportModal(true)}>
+                    Import
+                  </Button>
+                )}
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => setInviteModal(true)}
+                  data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
+                >
+                  {t("workspace_settings.settings.members.add_member")}
+                </Button>
+              </>
             )}
             <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
           </div>

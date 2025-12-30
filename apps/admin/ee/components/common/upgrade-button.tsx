@@ -1,0 +1,48 @@
+import React from "react";
+// plane internal packages
+import { WEB_BASE_URL } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { AlertModalCore } from "@plane/ui";
+
+type TAuthUpgradeButtonProps = {
+  level: "workspace" | "instance";
+};
+
+export function UpgradeButton(props: TAuthUpgradeButtonProps) {
+  const { level } = props;
+  // states
+  const [isActivationModalOpen, setIsActivationModalOpen] = React.useState(false);
+  // derived values
+  const redirectionLink = encodeURI(WEB_BASE_URL + "/");
+
+  const handleActivationModalSubmit = () => {
+    window.open(redirectionLink, "_blank");
+    setIsActivationModalOpen(false);
+  };
+
+  return (
+    <>
+      <AlertModalCore
+        variant="primary"
+        isOpen={isActivationModalOpen}
+        handleClose={() => setIsActivationModalOpen(false)}
+        handleSubmit={handleActivationModalSubmit}
+        isSubmitting={false}
+        title={level === "workspace" ? "Activate workspace" : "Activate instance"}
+        content={
+          level === "workspace"
+            ? "Activate any of your workspace to get this feature."
+            : "Activate your instance with an enterprise license to get this feature."
+        }
+        primaryButtonText={{
+          loading: "Redirecting",
+          default: "Go to Plane",
+        }}
+        secondaryButtonText="Close"
+      />
+      <Button variant="primary" size="sm" onClick={() => setIsActivationModalOpen(true)}>
+        Activate {level === "workspace" ? "workspace" : "instance"}
+      </Button>
+    </>
+  );
+}

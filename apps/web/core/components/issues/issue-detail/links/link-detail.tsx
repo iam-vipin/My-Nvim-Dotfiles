@@ -1,7 +1,8 @@
-import { NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { Pencil, Trash2, ExternalLink, Link } from "lucide-react";
+// plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
+import { copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -29,7 +30,8 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
-  const Icon = getIconForLink(linkDetail.url);
+  const faviconUrl: string | undefined = linkDetail.metadata?.favicon;
+  const linkTitle: string | undefined = linkDetail.metadata?.title;
 
   const toggleIssueLinkModal = (modalToggle: boolean) => {
     toggleIssueLinkModalStore(modalToggle);
@@ -54,16 +56,20 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         >
           <div className="flex items-start gap-2 truncate">
             <span className="py-1">
-              <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0" />
+              {faviconUrl ? (
+                <img src={faviconUrl} alt="favicon" className="size-3 flex-shrink-0" />
+              ) : (
+                <Link className="size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0" />
+              )}
             </span>
-            <Tooltip
-              tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              isMobile={isMobile}
-            >
-              <span className="truncate text-11">
-                {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              </span>
-            </Tooltip>
+            <div className="flex flex-col gap-0.5 truncate">
+              <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
+                <span className="truncate text-11">
+                  {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+                </span>
+              </Tooltip>
+              {linkTitle && linkTitle !== "" && <span className="text-placeholder text-11 truncate">{linkTitle}</span>}
+            </div>
           </div>
 
           {!isNotAllowed && (
@@ -77,7 +83,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
               </button>
               <a
                 href={linkDetail.url}
@@ -85,7 +91,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-layer-1"
               >
-                <NewTabIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <ExternalLink className="h-3 w-3 stroke-[1.5] text-secondary" />
               </a>
               <button
                 type="button"
@@ -96,7 +102,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   linkOperations.remove(linkDetail.id);
                 }}
               >
-                <TrashIcon className="h-3 w-3" />
+                <Trash2 className="h-3 w-3" />
               </button>
             </div>
           )}

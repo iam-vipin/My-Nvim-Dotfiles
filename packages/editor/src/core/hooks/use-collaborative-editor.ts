@@ -1,26 +1,18 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
-import type { Extensions } from "@tiptap/core";
 import Collaboration from "@tiptap/extension-collaboration";
-// react
-import type React from "react";
 import { useEffect, useMemo } from "react";
 // extensions
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
+import { useRealtimeEvents } from "@/hooks/use-realtime-events";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import type {
-  TCollaborativeEditorHookProps,
-  ICollaborativeDocumentEditorProps,
-  IEditorPropsExtended,
-  IEditorProps,
-  TEditorHookProps,
-  EditorTitleRefApi,
-} from "@/types";
+import type { TCollaborativeEditorHookProps, TEditorHookProps } from "@/types";
 // local imports
 import { useEditorNavigation } from "./use-editor-navigation";
+import type { TUseTitleEditorProps } from "./use-title-editor";
 import { useTitleEditor } from "./use-title-editor";
 
 type UseCollaborativeEditorArgs = Omit<TCollaborativeEditorHookProps, "realtimeConfig" | "serverHandler" | "user"> & {
@@ -60,6 +52,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
     updatePageProperties,
     user,
     actions,
+    extendedDocumentEditorProps,
   } = props;
 
   const { mainNavigationExtension, titleNavigationExtension, setMainEditor, setTitleEditor } = useEditorNavigation();
@@ -157,6 +150,14 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
 
   const editor = useEditor(editorConfig);
 
+  useRealtimeEvents({
+    editor,
+    provider,
+    id,
+    updatePageProperties,
+    signalForcedClose: actions.signalForcedClose,
+  });
+
   const titleExtensions = useMemo(
     () => [
       Collaboration.configure({
@@ -168,16 +169,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
     [provider, titleNavigationExtension]
   );
 
-  const titleEditorConfig = useMemo<{
-    id: string;
-    editable: boolean;
-    provider: HocuspocusProvider;
-    titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
-    updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
-    extensions: Extensions;
-    extendedEditorProps?: IEditorPropsExtended;
-    getEditorMetaData?: IEditorProps["getEditorMetaData"];
-  }>(
+  const titleEditorConfig = useMemo<TUseTitleEditorProps>(
     () => ({
       id,
       editable,
@@ -186,12 +178,21 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
       updatePageProperties,
       extensions: titleExtensions,
       extendedEditorProps,
-      getEditorMetaData,
+      onFocus: extendedDocumentEditorProps?.onTitleFocus,
     }),
-    [provider, id, editable, titleRef, updatePageProperties, titleExtensions, extendedEditorProps, getEditorMetaData]
+    [
+      provider,
+      id,
+      editable,
+      titleRef,
+      updatePageProperties,
+      titleExtensions,
+      extendedEditorProps,
+      extendedDocumentEditorProps?.onTitleFocus,
+    ]
   );
 
-  const titleEditor = useTitleEditor(titleEditorConfig as Parameters<typeof useTitleEditor>[0]);
+  const titleEditor = useTitleEditor(titleEditorConfig);
 
   useEffect(() => {
     if (editor && titleEditor) {

@@ -1,0 +1,30 @@
+import type { FC } from "react";
+import { observer } from "mobx-react";
+// plane imports
+import type { IState } from "@plane/types";
+// local imports
+import { WorkflowStateItem } from "./workflow-state-item";
+
+type TStateList = {
+  workspaceSlug: string;
+  projectId: string;
+  states: IState[];
+};
+
+export const WorkflowStateList = observer(function WorkflowStateList(props: TStateList) {
+  const { workspaceSlug, projectId, states } = props;
+
+  return (
+    <>
+      {states.map((state: IState) => (
+        <WorkflowStateItem
+          key={state?.name}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          totalStates={states.length || 0}
+          state={state}
+        />
+      ))}
+    </>
+  );
+});

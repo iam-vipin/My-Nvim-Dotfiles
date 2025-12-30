@@ -17,13 +17,31 @@ type Props = {
   onSelect: () => void;
   shortcut?: string;
   value?: string;
+  forceMount?: boolean;
 };
 
 export function PowerKModalCommandItem(props: Props) {
-  const { icon: Icon, iconNode, isDisabled, isSelected, keySequence, label, onSelect, shortcut, value } = props;
+  const {
+    icon: Icon,
+    iconNode,
+    isDisabled,
+    isSelected,
+    keySequence,
+    label,
+    onSelect,
+    shortcut,
+    value,
+    forceMount,
+  } = props;
 
   return (
-    <Command.Item value={value} onSelect={onSelect} className="focus:outline-none" disabled={isDisabled}>
+    <Command.Item
+      value={value}
+      onSelect={onSelect}
+      className="focus:outline-none"
+      disabled={isDisabled}
+      forceMount={forceMount}
+    >
       <div
         className={cn("flex items-center gap-2 text-secondary", {
           "opacity-70": isDisabled,

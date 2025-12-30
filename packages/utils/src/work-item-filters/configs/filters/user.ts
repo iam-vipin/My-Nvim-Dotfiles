@@ -3,7 +3,12 @@ import type { TFilterProperty } from "@plane/types";
 import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
 import type { TCreateFilterConfig, TCreateUserFilterParams } from "../../../rich-filters";
-import { createFilterConfig, createOperatorConfigEntry, getMemberMultiSelectConfig } from "../../../rich-filters";
+import {
+  createFilterConfig,
+  createOperatorConfigEntry,
+  getIsNullOperatorConfigEntry,
+  getMemberMultiSelectConfig,
+} from "../../../rich-filters";
 
 // ------------ Assignee filter ------------
 
@@ -30,6 +35,7 @@ export const getAssigneeFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });
 
@@ -58,6 +64,7 @@ export const getMentionFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });
 
@@ -114,5 +121,6 @@ export const getSubscriberFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });

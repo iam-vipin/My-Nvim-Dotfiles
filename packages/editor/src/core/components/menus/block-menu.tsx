@@ -8,16 +8,23 @@ import {
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
+import type { JSONContent } from "@tiptap/core";
 import type { Editor } from "@tiptap/react";
 import type { LucideIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CopyIcon, TrashIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { generateUniqueID, UniqueIDAttribute } from "@/extensions/unique-id/extension";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// hooks
+import { useBlockMenu } from "@/plane-editor/hooks/use-block-menu";
 // types
-import type { IEditorProps } from "@/types";
+import { EExternalEmbedAttributeNames } from "@/types";
+import type { IEditorProps, IEditorPropsExtended } from "@/types";
 // components
 import { getNodeOptions } from "./block-menu-options";
 
@@ -25,7 +32,7 @@ type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
-  workItemIdentifier?: IEditorProps["workItemIdentifier"];
+  originUrl?: IEditorPropsExtended["originUrl"];
 };
 export type BlockMenuOption = {
   icon: LucideIcon | React.FC<ISvgIcons>;
@@ -35,13 +42,52 @@ export type BlockMenuOption = {
   isDisabled?: boolean;
 };
 
+export type MenuItem = {
+  icon: LucideIcon | React.FC<ISvgIcons>;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
+};
+
+const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONContent | null | undefined => {
+  if (!node) return node;
+
+  const sanitizedNode: JSONContent = { ...node };
+
+  if (sanitizedNode.marks) {
+    const filteredMarks = sanitizedNode.marks.filter((mark) => mark.type !== ADDITIONAL_EXTENSIONS.COMMENTS);
+    if (filteredMarks.length > 0) {
+      sanitizedNode.marks = filteredMarks.map((mark) => ({ ...mark }));
+    } else {
+      delete sanitizedNode.marks;
+    }
+  }
+
+  if (sanitizedNode.content) {
+    sanitizedNode.content = sanitizedNode.content
+      .map((child) => stripCommentMarksFromJSON(child))
+      .filter((child): child is JSONContent => Boolean(child));
+  }
+
+  return sanitizedNode;
+};
+
 export function BlockMenu(props: Props) {
-  const { editor, workItemIdentifier } = props;
+  const { editor, flaggedExtensions, disabledExtensions, originUrl } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const virtualReferenceRef = useRef<{ getBoundingClientRect: () => DOMRect }>({
     getBoundingClientRect: () => new DOMRect(),
+  });
+  // const { t } = useTranslation();
+
+  const { menuItems: additionalMenuItems } = useBlockMenu({
+    editor,
+    flaggedExtensions: flaggedExtensions,
+    disabledExtensions: disabledExtensions,
+    onMenuClose: () => setIsOpen(false),
   });
 
   // Set up Floating UI with virtual reference element
@@ -158,29 +204,46 @@ export function BlockMenu(props: Props) {
       label: "Duplicate",
       isDisabled:
         editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
-        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
-      onClick: (_e) => {
+        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE) ||
+        editor.isActive(ADDITIONAL_EXTENSIONS.DRAWIO) ||
+        editor.isActive(ADDITIONAL_EXTENSIONS.PAGE_EMBED_COMPONENT),
+      onClick: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         try {
           const { state } = editor;
           const { selection } = state;
           const firstChild = selection.content().content.firstChild;
           const docSize = state.doc.content.size;
-
           if (!firstChild) {
             throw new Error("No content selected or content is not duplicable.");
           }
-
-          // Directly use selection.to as the insertion position
           const insertPos = selection.to;
-
-          // Ensure the insertion position is within the document's bounds
           if (insertPos < 0 || insertPos > docSize) {
             throw new Error("The insertion position is invalid or outside the document.");
           }
-
-          const contentToInsert = firstChild.toJSON();
-
-          // Insert the content at the calculated position
+          const contentToInsert = stripCommentMarksFromJSON(firstChild.toJSON() as JSONContent) as JSONContent;
+          if (contentToInsert.type === ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED) {
+            return editor
+              .chain()
+              .insertExternalEmbed({
+                [EExternalEmbedAttributeNames.IS_RICH_CARD]:
+                  contentToInsert.attrs?.[EExternalEmbedAttributeNames.IS_RICH_CARD],
+                [EExternalEmbedAttributeNames.SOURCE]: contentToInsert.attrs?.src,
+                pos: insertPos,
+              })
+              .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })
+              .run();
+          } else if (contentToInsert.type === ADDITIONAL_EXTENSIONS.BLOCK_MATH) {
+            return editor
+              .chain()
+              .setBlockMath({
+                latex: contentToInsert.attrs?.latex,
+                pos: insertPos,
+              })
+              .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })
+              .run();
+          }
           editor
             .chain()
             .insertContentAt(insertPos, contentToInsert, {
@@ -197,6 +260,8 @@ export function BlockMenu(props: Props) {
     },
     ...getNodeOptions(editor),
   ];
+
+  const ALL_MENU_ITEMS = [...additionalMenuItems, ...MENU_ITEMS];
 
   if (!isOpen) {
     return null;
@@ -222,7 +287,7 @@ export function BlockMenu(props: Props) {
         )}
         {...getFloatingProps()}
       >
-        {MENU_ITEMS.map((item) => {
+        {ALL_MENU_ITEMS.map((item) => {
           if (item.isDisabled) return null;
 
           return (
@@ -240,6 +305,7 @@ export function BlockMenu(props: Props) {
             >
               <item.icon className="h-3 w-3" />
               {item.label}
+              {/* {t(item.label)} */}
             </button>
           );
         })}

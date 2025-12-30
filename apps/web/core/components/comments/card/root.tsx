@@ -30,6 +30,7 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
     ends,
     showAccessSpecifier,
     showCopyLinkOption,
+    enableReplies = false,
     disabled = false,
     projectId,
   } = props;
@@ -65,6 +66,7 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
             showCopyLinkOption={showCopyLinkOption}
           />
         )}
+        enableReplies={enableReplies}
       />
     </CommentBlock>
   );

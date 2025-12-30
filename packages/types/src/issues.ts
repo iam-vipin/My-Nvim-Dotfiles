@@ -1,5 +1,6 @@
 import type { ICycle } from "./cycle";
 import type { TIssue } from "./issues/issue";
+import type { TLinkMetadata } from "./issues/issue_link";
 import type { IModule } from "./module";
 import type { IProjectLite } from "./project";
 import type { TStateGroups } from "./state";
@@ -43,7 +44,7 @@ export interface ILinkDetails {
   created_at: Date;
   created_by: string;
   id: string;
-  metadata: any;
+  metadata: TLinkMetadata;
   title: string;
   url: string;
 }
@@ -120,7 +121,8 @@ export type GroupByColumnTypes =
   | "labels"
   | "assignees"
   | "created_by"
-  | "team_project";
+  | "team_project"
+  | "milestone";
 
 export type TGetColumns = {
   isWorkspaceLevel?: boolean;

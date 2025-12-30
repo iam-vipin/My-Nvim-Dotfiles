@@ -8,7 +8,17 @@ import { EIssuesStoreType } from "@plane/types";
 import type { TIssueFilterPriorityObject } from "./common";
 import { ISSUE_DISPLAY_PROPERTIES_KEYS, SUB_ISSUES_DISPLAY_PROPERTIES_KEYS } from "./common";
 
+import {
+  ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
+  ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
+  EActivityFilterTypeEE,
+  shouldRenderActivity,
+  ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
+} from "./filter-extended";
 import type { TIssueLayout } from "./layout";
+
+// EE : Extended filters
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";
 
@@ -23,6 +33,7 @@ export enum EServerGroupByToFilterOptions {
   "target_date" = "target_date",
   "project_id" = "project",
   "created_by" = "created_by",
+  "milestone_id" = "milestone",
 }
 
 export enum EIssueFilterType {
@@ -105,7 +116,7 @@ export type TIssueFiltersToDisplayByPageType = {
 
 export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   profile_issues: {
-    filters: ["priority", "state_group", "label_id", "start_date", "target_date"],
+    filters: ["priority", "state_group", "label_id", "start_date", "target_date", ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS],
     layoutOptions: {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
@@ -145,6 +156,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "label_id",
       "start_date",
       "target_date",
+      "type_id",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {
@@ -172,6 +185,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "project_id",
       "start_date",
       "target_date",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       spreadsheet: {
@@ -195,6 +209,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
           values: [],
         },
       },
+      ...ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
     },
   },
   issues: {
@@ -210,12 +225,24 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "label_id",
       "start_date",
       "target_date",
+      "type_id",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+          group_by: [
+            "state",
+            "priority",
+            "cycle",
+            "module",
+            "labels",
+            "assignees",
+            "created_by",
+            ...ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
+            null,
+          ],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -227,7 +254,16 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by"],
+          group_by: [
+            "state",
+            "priority",
+            "cycle",
+            "module",
+            "labels",
+            "assignees",
+            "created_by",
+            ...ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
+          ],
           sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
@@ -272,7 +308,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
     },
   },
   sub_work_items: {
-    filters: ["priority", "state_id", "assignee_id", "start_date", "target_date"],
+    filters: ["priority", "state_id", "assignee_id", "start_date", "target_date", "type_id"],
     layoutOptions: {
       list: {
         display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
@@ -287,10 +323,12 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
   },
+  ...ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE, // EE: Additional issue display filters by page.
 };
 
 export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFilterPropertiesByPageType>> = {
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
+  [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.epics,
 };
 
 export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFilterOptions)[] = [
@@ -310,7 +348,7 @@ export enum EActivityFilterType {
   DEFAULT = "DEFAULT",
 }
 
-export type TActivityFilters = EActivityFilterType;
+export type TActivityFilters = EActivityFilterType | EActivityFilterTypeEE.WORKLOG; // EE: Worklog filter.
 
 export type TActivityFilterOptionsKey = Exclude<TActivityFilters, EActivityFilterType.DEFAULT>;
 
@@ -327,6 +365,9 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { l
   [EActivityFilterType.ASSIGNEE]: {
     labelTranslationKey: "common.assignee",
   },
+  [EActivityFilterTypeEE.WORKLOG]: {
+    labelTranslationKey: "common.worklogs",
+  }, // EE: Worklog filter.
 };
 
 export type TActivityFilterOption = {
@@ -341,6 +382,7 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.COMMENT,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
+  EActivityFilterTypeEE.WORKLOG, // EE: worklog filter.
 ];
 
 export const filterActivityOnSelectedFilters = (
@@ -349,10 +391,8 @@ export const filterActivityOnSelectedFilters = (
 ): TIssueActivityComment[] =>
   activity.filter((activity) => {
     if (activity.activity_type === EActivityFilterType.DEFAULT) return true;
-    return filters.includes(activity.activity_type as TActivityFilters);
+    return filters.some((filter) => shouldRenderActivity(activity, filter));
   });
-
-export const ENABLE_ISSUE_DEPENDENCIES = false;
 
 export const BASE_ACTIVITY_FILTER_TYPES = [
   EActivityFilterType.ACTIVITY,
@@ -360,3 +400,4 @@ export const BASE_ACTIVITY_FILTER_TYPES = [
   EActivityFilterType.ASSIGNEE,
   EActivityFilterType.DEFAULT,
 ];
+export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE

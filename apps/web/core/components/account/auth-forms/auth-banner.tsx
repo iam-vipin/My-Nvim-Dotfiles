@@ -1,7 +1,6 @@
-import { Info } from "lucide-react";
 // plane imports
+import { InfoIcon, CloseIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
 // helpers
 import type React from "react";
 
@@ -22,7 +21,7 @@ export function AuthBanner(props: TAuthBanner) {
       className="relative flex items-center p-2 rounded-md gap-2 border border-accent-strong/50 bg-accent-primary/10"
     >
       <div className="size-4 flex-shrink-0 grid place-items-center">
-        <Info size={16} className="text-accent-primary" />
+        <InfoIcon width={16} height={16} className="text-accent-primary" />
       </div>
       <p className="w-full text-13 font-medium text-accent-primary">{message}</p>
       <button

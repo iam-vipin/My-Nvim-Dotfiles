@@ -1,0 +1,16 @@
+import { Outlet } from "react-router";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+// local components
+import { TeamspaceProjectDetailHeader } from "./header";
+
+export default function TeamspaceProjectDetailLayout() {
+  return (
+    <>
+      <AppHeader header={<TeamspaceProjectDetailHeader />} />
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
+    </>
+  );
+}

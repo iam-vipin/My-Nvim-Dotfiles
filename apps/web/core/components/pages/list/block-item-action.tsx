@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
-import { Earth, Info, Minus } from "lucide-react";
+import { Earth, Minus } from "lucide-react";
 // plane imports
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-import { LockIcon } from "@plane/propel/icons";
+import { LockIcon, InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar, FavoriteStar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
@@ -55,7 +55,7 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
       {/* page info */}
       <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
         <span className="h-4 w-4 grid place-items-center cursor-default">
-          <Info className="h-4 w-4 text-tertiary" />
+          <InfoIcon className="h-4 w-4 text-tertiary" />
         </span>
       </Tooltip>
 
@@ -76,6 +76,7 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
 
       {/* quick actions dropdown */}
       <PageActions
+        realtimeEvents={false}
         optionsOrder={[
           "open-in-new-tab",
           "copy-link",

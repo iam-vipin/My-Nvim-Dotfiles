@@ -712,6 +712,11 @@ export default {
       worklogs: {
         title: "Nhật ký công việc",
       },
+      identity: {
+        title: "Danh tính",
+        heading: "Danh tính",
+        description: "Cấu hình miền của bạn và bật Đăng nhập một lần",
+      },
       project_states: {
         title: "Trạng thái dự án",
       },
@@ -3163,6 +3168,221 @@ export default {
         title: "Tự động hóa",
         description: "Tự động hóa là cách để tự động hóa các tác vụ trong dự án của bạn.",
         sub_description: "Lấy lại 80% thời gian quản trị của bạn khi sử dụng Tự động hóa.",
+      },
+    },
+  },
+  sso: {
+    header: "Danh tính",
+    description: "Cấu hình miền của bạn để truy cập các tính năng bảo mật bao gồm đăng nhập một lần.",
+    domain_management: {
+      header: "Quản lý miền",
+      verified_domains: {
+        header: "Miền đã xác minh",
+        description: "Xác minh quyền sở hữu miền email để bật đăng nhập một lần.",
+        button_text: "Thêm miền",
+        list: {
+          domain_name: "Tên miền",
+          status: "Trạng thái",
+          status_verified: "Đã xác minh",
+          status_failed: "Thất bại",
+          status_pending: "Đang chờ",
+        },
+        add_domain: {
+          title: "Thêm miền",
+          description: "Thêm miền của bạn để cấu hình SSO và xác minh nó.",
+          form: {
+            domain_label: "Miền",
+            domain_placeholder: "plane.so",
+            domain_required: "Miền là bắt buộc",
+            domain_invalid: "Nhập tên miền hợp lệ (ví dụ: plane.so)",
+          },
+          primary_button_text: "Thêm miền",
+          primary_button_loading_text: "Đang thêm",
+          toast: {
+            success_title: "Thành công!",
+            success_message: "Miền đã được thêm thành công. Vui lòng xác minh bằng cách thêm bản ghi DNS TXT.",
+            error_message: "Không thể thêm miền. Vui lòng thử lại.",
+          },
+        },
+        verify_domain: {
+          title: "Xác minh miền của bạn",
+          description: "Làm theo các bước sau để xác minh miền của bạn.",
+          instructions: {
+            step_1: "Đi tới cài đặt DNS cho máy chủ miền của bạn.",
+            step_2: "Tạo bản ghi TXT và dán mã xác minh.",
+            step_3: "Bản cập nhật này thường mất vài phút nhưng có thể mất tới 72 giờ để hoàn thành.",
+            step_4: 'Nhấp vào "Xác minh miền" để xác nhận sau khi bản ghi DNS của bạn được cập nhật.',
+          },
+          verification_code_label: "Mã xác minh",
+          verification_code_description: "Thêm bản ghi TXT này vào cài đặt DNS của bạn",
+          domain_label: "Miền",
+          primary_button_text: "Xác minh miền",
+          primary_button_loading_text: "Đang xác minh",
+          secondary_button_text: "Tôi sẽ làm sau",
+          toast: {
+            success_title: "Thành công!",
+            success_message: "Miền đã được xác minh thành công.",
+            error_message: "Không thể xác minh miền. Vui lòng thử lại.",
+          },
+        },
+        delete_domain: {
+          title: "Xóa miền",
+          description: {
+            prefix: "Bạn có chắc chắn muốn xóa",
+            suffix: "? Hành động này không thể hoàn tác.",
+          },
+          primary_button_text: "Xóa",
+          primary_button_loading_text: "Đang xóa",
+          secondary_button_text: "Hủy",
+          toast: {
+            success_title: "Thành công!",
+            success_message: "Miền đã được xóa thành công.",
+            error_message: "Không thể xóa miền. Vui lòng thử lại.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Đăng nhập một lần",
+      disabled_message: "Thêm miền đã xác minh để cấu hình SSO",
+      configure: {
+        create: "Cấu hình",
+        update: "Chỉnh sửa",
+      },
+      switch_alert_modal: {
+        title: "Chuyển phương thức SSO sang {newProviderShortName}?",
+        content:
+          "Bạn sắp bật {newProviderLongName} ({newProviderShortName}). Hành động này sẽ tự động tắt {activeProviderLongName} ({activeProviderShortName}). Người dùng cố gắng đăng nhập qua {activeProviderShortName} sẽ không thể truy cập nền tảng cho đến khi họ chuyển sang phương thức mới. Bạn có chắc chắn muốn tiếp tục?",
+        primary_button_text: "Chuyển",
+        primary_button_text_loading: "Đang chuyển",
+        secondary_button_text: "Hủy",
+      },
+      form_section: {
+        title: "Chi tiết do IdP cung cấp cho {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Đang lưu",
+        save_changes: "Lưu thay đổi",
+        configure_only: "Chỉ cấu hình",
+        configure_and_enable: "Cấu hình và bật",
+        default: "Lưu",
+      },
+      setup_details_section: {
+        title: "{workspaceName} chi tiết được cung cấp cho IdP của bạn",
+        button_text: "Lấy chi tiết thiết lập",
+      },
+      saml: {
+        header: "Bật SAML",
+        description: "Cấu hình nhà cung cấp danh tính SAML của bạn để bật đăng nhập một lần.",
+        configure: {
+          title: "Bật SAML",
+          description: "Xác minh quyền sở hữu miền email để truy cập các tính năng bảo mật bao gồm đăng nhập một lần.",
+          toast: {
+            success_title: "Thành công!",
+            create_success_message: "Nhà cung cấp SAML đã được tạo thành công.",
+            update_success_message: "Nhà cung cấp SAML đã được cập nhật thành công.",
+            error_title: "Lỗi!",
+            error_message: "Không thể lưu nhà cung cấp SAML. Vui lòng thử lại.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Chi tiết web",
+            entity_id: {
+              label: "ID thực thể | Đối tượng | Thông tin siêu dữ liệu",
+              description:
+                "Chúng tôi sẽ tạo phần siêu dữ liệu này xác định ứng dụng Plane này như một dịch vụ được ủy quyền trên IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL gọi lại",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+            },
+          },
+          mobile_details: {
+            header: "Chi tiết di động",
+            entity_id: {
+              label: "ID thực thể | Đối tượng | Thông tin siêu dữ liệu",
+              description:
+                "Chúng tôi sẽ tạo phần siêu dữ liệu này xác định ứng dụng Plane này như một dịch vụ được ủy quyền trên IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL gọi lại",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+            },
+          },
+          mapping_table: {
+            header: "Chi tiết ánh xạ",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Bật OIDC",
+        description: "Cấu hình nhà cung cấp danh tính OIDC của bạn để bật đăng nhập một lần.",
+        configure: {
+          title: "Bật OIDC",
+          description: "Xác minh quyền sở hữu miền email để truy cập các tính năng bảo mật bao gồm đăng nhập một lần.",
+          toast: {
+            success_title: "Thành công!",
+            create_success_message: "Nhà cung cấp OIDC đã được tạo thành công.",
+            update_success_message: "Nhà cung cấp OIDC đã được cập nhật thành công.",
+            error_title: "Lỗi!",
+            error_message: "Không thể lưu nhà cung cấp OIDC. Vui lòng thử lại.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Chi tiết web",
+            origin_url: {
+              label: "URL nguồn gốc",
+              description:
+                "Chúng tôi sẽ tạo điều này cho ứng dụng Plane này. Thêm điều này như một nguồn gốc đáng tin cậy vào trường tương ứng của IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL gọi lại",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+            },
+          },
+          mobile_details: {
+            header: "Chi tiết di động",
+            origin_url: {
+              label: "URL nguồn gốc",
+              description:
+                "Chúng tôi sẽ tạo điều này cho ứng dụng Plane này. Thêm điều này như một nguồn gốc đáng tin cậy vào trường tương ứng của IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL gọi lại",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+            },
+          },
+        },
       },
     },
   },

@@ -707,6 +707,11 @@ export default {
       worklogs: {
         title: "工作日志",
       },
+      identity: {
+        title: "身份",
+        heading: "身份",
+        description: "配置您的域名并启用单点登录",
+      },
       project_states: {
         title: "项目状态",
       },
@@ -3089,6 +3094,209 @@ export default {
         title: "自动化",
         description: "自动化是在您的项目中自动执行任务的方式。",
         sub_description: "使用自动化可以节省80%的管理时间。",
+      },
+    },
+  },
+  sso: {
+    header: "身份",
+    description: "配置您的域名以访问安全功能，包括单点登录。",
+    domain_management: {
+      header: "域名管理",
+      verified_domains: {
+        header: "已验证的域名",
+        description: "验证电子邮件域名的所有权以启用单点登录。",
+        button_text: "添加域名",
+        list: {
+          domain_name: "域名",
+          status: "状态",
+          status_verified: "已验证",
+          status_failed: "失败",
+          status_pending: "待处理",
+        },
+        add_domain: {
+          title: "添加域名",
+          description: "添加您的域名以配置 SSO 并验证它。",
+          form: {
+            domain_label: "域名",
+            domain_placeholder: "plane.so",
+            domain_required: "域名是必需的",
+            domain_invalid: "请输入有效的域名（例如 plane.so）",
+          },
+          primary_button_text: "添加域名",
+          primary_button_loading_text: "添加中",
+          toast: {
+            success_title: "成功！",
+            success_message: "域名已成功添加。请通过添加 DNS TXT 记录来验证它。",
+            error_message: "添加域名失败。请重试。",
+          },
+        },
+        verify_domain: {
+          title: "验证您的域名",
+          description: "按照以下步骤验证您的域名。",
+          instructions: {
+            step_1: "转到您的域名主机的 DNS 设置。",
+            step_2: "创建 TXT 记录并粘贴验证代码。",
+            step_3: "此更新通常需要几分钟，但可能需要长达 72 小时才能完成。",
+            step_4: "DNS 记录更新后，点击“验证域名”进行确认。",
+          },
+          verification_code_label: "验证代码",
+          verification_code_description: "将此 TXT 记录添加到您的 DNS 设置",
+          domain_label: "域名",
+          primary_button_text: "验证域名",
+          primary_button_loading_text: "验证中",
+          secondary_button_text: "稍后处理",
+          toast: {
+            success_title: "成功！",
+            success_message: "域名已成功验证。",
+            error_message: "验证域名失败。请重试。",
+          },
+        },
+        delete_domain: {
+          title: "删除域名",
+          description: {
+            prefix: "您确定要删除",
+            suffix: "吗？此操作无法撤销。",
+          },
+          primary_button_text: "删除",
+          primary_button_loading_text: "删除中",
+          secondary_button_text: "取消",
+          toast: {
+            success_title: "成功！",
+            success_message: "域名已成功删除。",
+            error_message: "删除域名失败。请重试。",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "单点登录",
+      disabled_message: "添加已验证的域名以配置 SSO",
+      configure: {
+        create: "配置",
+        update: "编辑",
+      },
+      switch_alert_modal: {
+        title: "将 SSO 方法切换到 {newProviderShortName}？",
+        content:
+          "您即将启用 {newProviderLongName}（{newProviderShortName}）。此操作将自动禁用 {activeProviderLongName}（{activeProviderShortName}）。尝试通过 {activeProviderShortName} 登录的用户将无法再访问平台，直到他们切换到新方法。您确定要继续吗？",
+        primary_button_text: "切换",
+        primary_button_text_loading: "切换中",
+        secondary_button_text: "取消",
+      },
+      form_section: {
+        title: "IdP 为 {workspaceName} 提供的详细信息",
+      },
+      form_action_buttons: {
+        saving: "保存中",
+        save_changes: "保存更改",
+        configure_only: "仅配置",
+        configure_and_enable: "配置并启用",
+        default: "保存",
+      },
+      setup_details_section: {
+        title: "{workspaceName} 为您的 IdP 提供的详细信息",
+        button_text: "获取设置详细信息",
+      },
+      saml: {
+        header: "启用 SAML",
+        description: "配置您的 SAML 身份提供商以启用单点登录。",
+        configure: {
+          title: "启用 SAML",
+          description: "验证电子邮件域名的所有权以访问安全功能，包括单点登录。",
+          toast: {
+            success_title: "成功！",
+            create_success_message: "SAML 提供商已成功创建。",
+            update_success_message: "SAML 提供商已成功更新。",
+            error_title: "错误！",
+            error_message: "保存 SAML 提供商失败。请重试。",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web 详细信息",
+            entity_id: {
+              label: "实体 ID | 受众 | 元数据信息",
+              description: "我们将生成这部分元数据，将 Plane 应用识别为 IdP 上的授权服务。",
+            },
+            callback_url: {
+              label: "回调 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
+            },
+            logout_url: {
+              label: "注销 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的注销重定向 URL 字段中。",
+            },
+          },
+          mobile_details: {
+            header: "移动端详细信息",
+            entity_id: {
+              label: "实体 ID | 受众 | 元数据信息",
+              description: "我们将生成这部分元数据，将 Plane 应用识别为 IdP 上的授权服务。",
+            },
+            callback_url: {
+              label: "回调 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
+            },
+            logout_url: {
+              label: "注销 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的注销重定向 URL 字段中。",
+            },
+          },
+          mapping_table: {
+            header: "映射详细信息",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "启用 OIDC",
+        description: "配置您的 OIDC 身份提供商以启用单点登录。",
+        configure: {
+          title: "启用 OIDC",
+          description: "验证电子邮件域名的所有权以访问安全功能，包括单点登录。",
+          toast: {
+            success_title: "成功！",
+            create_success_message: "OIDC 提供商已成功创建。",
+            update_success_message: "OIDC 提供商已成功更新。",
+            error_title: "错误！",
+            error_message: "保存 OIDC 提供商失败。请重试。",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web 详细信息",
+            origin_url: {
+              label: "源 URL",
+              description: "我们将为此 Plane 应用生成此内容。将其作为受信任的源添加到 IdP 的相应字段中。",
+            },
+            callback_url: {
+              label: "回调 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
+            },
+            logout_url: {
+              label: "注销 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的注销重定向 URL 字段中。",
+            },
+          },
+          mobile_details: {
+            header: "移动端详细信息",
+            origin_url: {
+              label: "源 URL",
+              description: "我们将为此 Plane 应用生成此内容。将其作为受信任的源添加到 IdP 的相应字段中。",
+            },
+            callback_url: {
+              label: "回调 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
+            },
+            logout_url: {
+              label: "注销 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的注销重定向 URL 字段中。",
+            },
+          },
+        },
       },
     },
   },

@@ -46,6 +46,15 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       },
       enabled: config?.is_ldap_enabled,
     },
+    {
+      id: "sso",
+      text: `${oauthActionText} with Single Sign-On`,
+      icon: <Key height={18} width={18} />,
+      onClick: () => {
+        void navigate("/sso");
+      },
+      enabled: config?.is_self_managed === false,
+    },
   ];
 
   return {

@@ -716,6 +716,11 @@ export default {
       worklogs: {
         title: "Рабочие журналы",
       },
+      identity: {
+        title: "Идентичность",
+        heading: "Идентичность",
+        description: "Настройте свой домен и включите единый вход",
+      },
       project_states: {
         title: "Состояния проектов",
       },
@@ -3210,6 +3215,215 @@ export default {
         title: "Автоматизации",
         description: "Автоматизации - это способ автоматизировать задачи в вашем проекте.",
         sub_description: "Верните 80% своего административного времени, используя Автоматизации.",
+      },
+    },
+  },
+  sso: {
+    header: "Идентичность",
+    description: "Настройте свой домен для доступа к функциям безопасности, включая единый вход.",
+    domain_management: {
+      header: "Управление доменами",
+      verified_domains: {
+        header: "Проверенные домены",
+        description: "Подтвердите право собственности на домен электронной почты, чтобы включить единый вход.",
+        button_text: "Добавить домен",
+        list: {
+          domain_name: "Имя домена",
+          status: "Статус",
+          status_verified: "Проверено",
+          status_failed: "Не удалось",
+          status_pending: "Ожидает",
+        },
+        add_domain: {
+          title: "Добавить домен",
+          description: "Добавьте свой домен для настройки SSO и его проверки.",
+          form: {
+            domain_label: "Домен",
+            domain_placeholder: "plane.so",
+            domain_required: "Домен обязателен",
+            domain_invalid: "Введите действительное имя домена (например, plane.so)",
+          },
+          primary_button_text: "Добавить домен",
+          primary_button_loading_text: "Добавление",
+          toast: {
+            success_title: "Успех!",
+            success_message: "Домен успешно добавлен. Пожалуйста, проверьте его, добавив запись DNS TXT.",
+            error_message: "Не удалось добавить домен. Пожалуйста, попробуйте снова.",
+          },
+        },
+        verify_domain: {
+          title: "Проверьте свой домен",
+          description: "Выполните следующие шаги, чтобы проверить свой домен.",
+          instructions: {
+            step_1: "Перейдите в настройки DNS для вашего хостинг-провайдера домена.",
+            step_2: "Создайте запись TXT и вставьте код проверки.",
+            step_3: "Это обновление обычно занимает несколько минут, но может занять до 72 часов.",
+            step_4: 'Нажмите "Проверить домен", чтобы подтвердить после обновления записи DNS.',
+          },
+          verification_code_label: "Код проверки",
+          verification_code_description: "Добавьте эту запись TXT в настройки DNS",
+          domain_label: "Домен",
+          primary_button_text: "Проверить домен",
+          primary_button_loading_text: "Проверка",
+          secondary_button_text: "Сделаю это позже",
+          toast: {
+            success_title: "Успех!",
+            success_message: "Домен успешно проверен.",
+            error_message: "Не удалось проверить домен. Пожалуйста, попробуйте снова.",
+          },
+        },
+        delete_domain: {
+          title: "Удалить домен",
+          description: {
+            prefix: "Вы уверены, что хотите удалить",
+            suffix: "? Это действие нельзя отменить.",
+          },
+          primary_button_text: "Удалить",
+          primary_button_loading_text: "Удаление",
+          secondary_button_text: "Отмена",
+          toast: {
+            success_title: "Успех!",
+            success_message: "Домен успешно удален.",
+            error_message: "Не удалось удалить домен. Пожалуйста, попробуйте снова.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Единый вход",
+      disabled_message: "Добавьте проверенный домен для настройки SSO",
+      configure: {
+        create: "Настроить",
+        update: "Редактировать",
+      },
+      switch_alert_modal: {
+        title: "Переключить метод SSO на {newProviderShortName}?",
+        content:
+          "Вы собираетесь включить {newProviderLongName} ({newProviderShortName}). Это действие автоматически отключит {activeProviderLongName} ({activeProviderShortName}). Пользователи, пытающиеся войти через {activeProviderShortName}, больше не смогут получить доступ к платформе, пока не переключатся на новый метод. Вы уверены, что хотите продолжить?",
+        primary_button_text: "Переключить",
+        primary_button_text_loading: "Переключение",
+        secondary_button_text: "Отмена",
+      },
+      form_section: {
+        title: "Детали, предоставленные IdP для {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Сохранение",
+        save_changes: "Сохранить изменения",
+        configure_only: "Только настройка",
+        configure_and_enable: "Настроить и включить",
+        default: "Сохранить",
+      },
+      setup_details_section: {
+        title: "{workspaceName} детали, предоставленные для вашего IdP",
+        button_text: "Получить детали настройки",
+      },
+      saml: {
+        header: "Включить SAML",
+        description: "Настройте своего поставщика удостоверений SAML для включения единого входа.",
+        configure: {
+          title: "Включить SAML",
+          description:
+            "Подтвердите право собственности на домен электронной почты для доступа к функциям безопасности, включая единый вход.",
+          toast: {
+            success_title: "Успех!",
+            create_success_message: "Поставщик SAML успешно создан.",
+            update_success_message: "Поставщик SAML успешно обновлен.",
+            error_title: "Ошибка!",
+            error_message: "Не удалось сохранить поставщика SAML. Пожалуйста, попробуйте снова.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Веб-детали",
+            entity_id: {
+              label: "ID сущности | Аудитория | Информация о метаданных",
+              description:
+                "Мы сгенерируем эту часть метаданных, которая идентифицирует это приложение Plane как авторизованный сервис в вашем IdP.",
+            },
+            callback_url: {
+              label: "URL обратного вызова",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления входа вашего IdP.",
+            },
+            logout_url: {
+              label: "URL выхода",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления выхода вашего IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Мобильные детали",
+            entity_id: {
+              label: "ID сущности | Аудитория | Информация о метаданных",
+              description:
+                "Мы сгенерируем эту часть метаданных, которая идентифицирует это приложение Plane как авторизованный сервис в вашем IdP.",
+            },
+            callback_url: {
+              label: "URL обратного вызова",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления входа вашего IdP.",
+            },
+            logout_url: {
+              label: "URL выхода",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления выхода вашего IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Детали сопоставления",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Включить OIDC",
+        description: "Настройте своего поставщика удостоверений OIDC для включения единого входа.",
+        configure: {
+          title: "Включить OIDC",
+          description:
+            "Подтвердите право собственности на домен электронной почты для доступа к функциям безопасности, включая единый вход.",
+          toast: {
+            success_title: "Успех!",
+            create_success_message: "Поставщик OIDC успешно создан.",
+            update_success_message: "Поставщик OIDC успешно обновлен.",
+            error_title: "Ошибка!",
+            error_message: "Не удалось сохранить поставщика OIDC. Пожалуйста, попробуйте снова.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Веб-детали",
+            origin_url: {
+              label: "URL источника",
+              description:
+                "Мы сгенерируем это для этого приложения Plane. Добавьте это как доверенный источник в соответствующее поле вашего IdP.",
+            },
+            callback_url: {
+              label: "URL обратного вызова",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления входа вашего IdP.",
+            },
+            logout_url: {
+              label: "URL выхода",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления выхода вашего IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Мобильные детали",
+            origin_url: {
+              label: "URL источника",
+              description:
+                "Мы сгенерируем это для этого приложения Plane. Добавьте это как доверенный источник в соответствующее поле вашего IdP.",
+            },
+            callback_url: {
+              label: "URL обратного вызова",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления входа вашего IdP.",
+            },
+            logout_url: {
+              label: "URL выхода",
+              description: "Мы сгенерируем это для вас. Добавьте это в поле URL перенаправления выхода вашего IdP.",
+            },
+          },
+        },
       },
     },
   },

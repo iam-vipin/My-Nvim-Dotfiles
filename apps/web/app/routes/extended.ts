@@ -13,6 +13,9 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
   // LDAP Auth
   route("ldap", "./(home)/ldap/page.tsx"),
 
+  // SSO Auth
+  route("sso", "./(home)/sso/page.tsx"),
+
   // ========================================================================
   // ALL APP ROUTES
   // ========================================================================
@@ -468,6 +471,29 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/(importers)/notion/page.tsx"
             ),
           ]),
+
+          // --------------------------------------------------------------------
+          // SINGLE SIGN-ON
+          // --------------------------------------------------------------------
+          layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/layout.tsx", [
+            route(
+              ":workspaceSlug/settings/identity",
+              "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/page.tsx"
+            ),
+            layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/layout.tsx", [
+              route(
+                ":workspaceSlug/settings/identity/oidc",
+                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/odic/page.tsx"
+              ),
+              route(
+                ":workspaceSlug/settings/identity/saml",
+                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/saml/page.tsx"
+              ),
+            ]),
+          ]),
+          // --------------------------------------------------------------------
+          // END: SINGLE SIGN-ON
+          // --------------------------------------------------------------------
         ]),
 
         // --------------------------------------------------------------------

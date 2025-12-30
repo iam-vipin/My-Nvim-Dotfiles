@@ -17,6 +17,12 @@ from plane.utils.color import get_random_color
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
 
 
+class WorkspaceRole(models.IntegerChoices):
+    ADMIN = 20, "Admin"
+    MEMBER = 15, "Member"
+    GUEST = 5, "Guest"
+
+
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
 

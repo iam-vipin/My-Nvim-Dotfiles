@@ -728,6 +728,11 @@ export default {
       worklogs: {
         title: "Registros de trabalho",
       },
+      identity: {
+        title: "Identidade",
+        heading: "Identidade",
+        description: "Configure seu domínio e habilite o Single sign-on",
+      },
       project_states: {
         title: "Estados do projeto",
       },
@@ -3209,6 +3214,223 @@ export default {
         title: "Automações",
         description: "Automações são uma forma de automatizar tarefas no seu projeto.",
         sub_description: "Recupere 80% do seu tempo administrativo quando usar Automações.",
+      },
+    },
+  },
+  sso: {
+    header: "Identidade",
+    description: "Configure seu domínio para acessar recursos de segurança, incluindo single sign-on.",
+    domain_management: {
+      header: "Gerenciamento de domínios",
+      verified_domains: {
+        header: "Domínios verificados",
+        description: "Verifique a propriedade de um domínio de e-mail para habilitar o single sign-on.",
+        button_text: "Adicionar domínio",
+        list: {
+          domain_name: "Nome do domínio",
+          status: "Status",
+          status_verified: "Verificado",
+          status_failed: "Falhou",
+          status_pending: "Pendente",
+        },
+        add_domain: {
+          title: "Adicionar domínio",
+          description: "Adicione seu domínio para configurar SSO e verificá-lo.",
+          form: {
+            domain_label: "Domínio",
+            domain_placeholder: "plane.so",
+            domain_required: "O domínio é obrigatório",
+            domain_invalid: "Digite um nome de domínio válido (ex: plane.so)",
+          },
+          primary_button_text: "Adicionar domínio",
+          primary_button_loading_text: "Adicionando",
+          toast: {
+            success_title: "Sucesso!",
+            success_message: "Domínio adicionado com sucesso. Por favor, verifique-o adicionando o registro DNS TXT.",
+            error_message: "Falha ao adicionar domínio. Por favor, tente novamente.",
+          },
+        },
+        verify_domain: {
+          title: "Verifique seu domínio",
+          description: "Siga estas etapas para verificar seu domínio.",
+          instructions: {
+            step_1: "Vá para as configurações DNS do seu host de domínio.",
+            step_2: "Crie um registro TXT e cole o código de verificação.",
+            step_3: "Esta atualização geralmente leva alguns minutos, mas pode levar até 72 horas para ser concluída.",
+            step_4: 'Clique em "Verificar domínio" para confirmar assim que seu registro DNS for atualizado.',
+          },
+          verification_code_label: "Código de verificação",
+          verification_code_description: "Adicione este registro TXT às suas configurações DNS",
+          domain_label: "Domínio",
+          primary_button_text: "Verificar domínio",
+          primary_button_loading_text: "Verificando",
+          secondary_button_text: "Vou fazer isso mais tarde",
+          toast: {
+            success_title: "Sucesso!",
+            success_message: "Domínio verificado com sucesso.",
+            error_message: "Falha ao verificar domínio. Por favor, tente novamente.",
+          },
+        },
+        delete_domain: {
+          title: "Excluir domínio",
+          description: {
+            prefix: "Tem certeza de que deseja excluir",
+            suffix: "? Esta ação não pode ser desfeita.",
+          },
+          primary_button_text: "Excluir",
+          primary_button_loading_text: "Excluindo",
+          secondary_button_text: "Cancelar",
+          toast: {
+            success_title: "Sucesso!",
+            success_message: "Domínio excluído com sucesso.",
+            error_message: "Falha ao excluir domínio. Por favor, tente novamente.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Single sign-on",
+      disabled_message: "Adicione um domínio verificado para configurar SSO",
+      configure: {
+        create: "Configurar",
+        update: "Editar",
+      },
+      switch_alert_modal: {
+        title: "Alternar método SSO para {newProviderShortName}?",
+        content:
+          "Você está prestes a habilitar {newProviderLongName} ({newProviderShortName}). Esta ação desabilitará automaticamente {activeProviderLongName} ({activeProviderShortName}). Usuários que tentarem fazer login via {activeProviderShortName} não poderão mais acessar a plataforma até que alternem para o novo método. Tem certeza de que deseja continuar?",
+        primary_button_text: "Alternar",
+        primary_button_text_loading: "Alternando",
+        secondary_button_text: "Cancelar",
+      },
+      form_section: {
+        title: "Detalhes fornecidos pelo IdP para {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Salvando",
+        save_changes: "Salvar alterações",
+        configure_only: "Apenas configurar",
+        configure_and_enable: "Configurar e habilitar",
+        default: "Salvar",
+      },
+      setup_details_section: {
+        title: "{workspaceName} detalhes fornecidos para seu IdP",
+        button_text: "Obter detalhes de configuração",
+      },
+      saml: {
+        header: "Habilitar SAML",
+        description: "Configure seu provedor de identidade SAML para habilitar single sign-on.",
+        configure: {
+          title: "Habilitar SAML",
+          description:
+            "Verifique a propriedade de um domínio de e-mail para acessar recursos de segurança, incluindo single sign-on.",
+          toast: {
+            success_title: "Sucesso!",
+            create_success_message: "Provedor SAML criado com sucesso.",
+            update_success_message: "Provedor SAML atualizado com sucesso.",
+            error_title: "Erro!",
+            error_message: "Falha ao salvar provedor SAML. Por favor, tente novamente.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Detalhes da web",
+            entity_id: {
+              label: "ID da entidade | Público | Informações de metadados",
+              description:
+                "Geraremos esta parte dos metadados que identifica este aplicativo Plane como um serviço autorizado em seu IdP.",
+            },
+            callback_url: {
+              label: "URL de callback",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de login do seu IdP.",
+            },
+            logout_url: {
+              label: "URL de logout",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de logout do seu IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Detalhes móveis",
+            entity_id: {
+              label: "ID da entidade | Público | Informações de metadados",
+              description:
+                "Geraremos esta parte dos metadados que identifica este aplicativo Plane como um serviço autorizado em seu IdP.",
+            },
+            callback_url: {
+              label: "URL de callback",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de login do seu IdP.",
+            },
+            logout_url: {
+              label: "URL de logout",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de logout do seu IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Detalhes de mapeamento",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Habilitar OIDC",
+        description: "Configure seu provedor de identidade OIDC para habilitar single sign-on.",
+        configure: {
+          title: "Habilitar OIDC",
+          description:
+            "Verifique a propriedade de um domínio de e-mail para acessar recursos de segurança, incluindo single sign-on.",
+          toast: {
+            success_title: "Sucesso!",
+            create_success_message: "Provedor OIDC criado com sucesso.",
+            update_success_message: "Provedor OIDC atualizado com sucesso.",
+            error_title: "Erro!",
+            error_message: "Falha ao salvar provedor OIDC. Por favor, tente novamente.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Detalhes da web",
+            origin_url: {
+              label: "URL de origem",
+              description:
+                "Geraremos isso para este aplicativo Plane. Adicione isso como uma origem confiável no campo correspondente do seu IdP.",
+            },
+            callback_url: {
+              label: "URL de callback",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de login do seu IdP.",
+            },
+            logout_url: {
+              label: "URL de logout",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de logout do seu IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Detalhes móveis",
+            origin_url: {
+              label: "URL de origem",
+              description:
+                "Geraremos isso para este aplicativo Plane. Adicione isso como uma origem confiável no campo correspondente do seu IdP.",
+            },
+            callback_url: {
+              label: "URL de callback",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de login do seu IdP.",
+            },
+            logout_url: {
+              label: "URL de logout",
+              description:
+                "Geraremos isso para você. Adicione isso no campo URL de redirecionamento de logout do seu IdP.",
+            },
+          },
+        },
       },
     },
   },

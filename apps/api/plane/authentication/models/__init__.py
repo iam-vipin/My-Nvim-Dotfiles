@@ -8,3 +8,9 @@ from .oauth import (
     WorkspaceAppInstallation,
     ApplicationCategory,
 )
+
+from .sso import (
+    Domain,
+    IdentityProvider,
+    IdentityProviderDomain,
+)

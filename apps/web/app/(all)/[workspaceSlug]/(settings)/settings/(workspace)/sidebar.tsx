@@ -40,6 +40,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<keyof typeof WORKSPACE_SETTINGS, L
   webhooks: Webhook,
   import: ArrowDownToLine,
   worklogs: Timer,
+  identity: Building,
   teamspaces: TeamsIcon,
   initiatives: InitiativeIcon,
   customers: CustomersIcon,

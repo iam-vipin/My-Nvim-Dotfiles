@@ -23,6 +23,13 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/worklogs/`,
   },
+  identity: {
+    key: "identity",
+    i18n_label: "workspace_settings.settings.identity.title",
+    href: `/settings/identity`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/identity/`,
+  },
   project_states: {
     key: "project_states",
     i18n_label: "workspace_settings.settings.project_states.title",

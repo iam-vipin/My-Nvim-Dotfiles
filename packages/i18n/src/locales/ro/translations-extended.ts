@@ -728,6 +728,11 @@ export default {
       worklogs: {
         title: "Jurnale de lucru",
       },
+      identity: {
+        title: "Identitate",
+        heading: "Identitate",
+        description: "Configurați domeniul dvs. și activați Single sign-on",
+      },
       project_states: {
         title: "Stări de proiect",
       },
@@ -3216,6 +3221,225 @@ export default {
         title: "Automatizări",
         description: "Automatizările sunt o modalitate de a automatiza sarcinile din proiectul tău.",
         sub_description: "Recuperează 80% din timpul tău administrativ când folosești Automatizările.",
+      },
+    },
+  },
+  sso: {
+    header: "Identitate",
+    description: "Configurați domeniul dvs. pentru a accesa funcțiile de securitate, inclusiv autentificarea unică.",
+    domain_management: {
+      header: "Gestionarea domeniilor",
+      verified_domains: {
+        header: "Domenii verificate",
+        description: "Verificați proprietatea unui domeniu de e-mail pentru a activa autentificarea unică.",
+        button_text: "Adăugați domeniu",
+        list: {
+          domain_name: "Numele domeniului",
+          status: "Stare",
+          status_verified: "Verificat",
+          status_failed: "Eșuat",
+          status_pending: "În așteptare",
+        },
+        add_domain: {
+          title: "Adăugați domeniu",
+          description: "Adăugați domeniul dvs. pentru a configura SSO și a-l verifica.",
+          form: {
+            domain_label: "Domeniu",
+            domain_placeholder: "plane.so",
+            domain_required: "Domeniul este obligatoriu",
+            domain_invalid: "Introduceți un nume de domeniu valid (ex. plane.so)",
+          },
+          primary_button_text: "Adăugați domeniu",
+          primary_button_loading_text: "Se adaugă",
+          toast: {
+            success_title: "Succes!",
+            success_message:
+              "Domeniul a fost adăugat cu succes. Vă rugăm să-l verificați adăugând înregistrarea DNS TXT.",
+            error_message: "Nu s-a putut adăuga domeniul. Vă rugăm să încercați din nou.",
+          },
+        },
+        verify_domain: {
+          title: "Verificați domeniul dvs.",
+          description: "Urmați acești pași pentru a vă verifica domeniul.",
+          instructions: {
+            step_1: "Accesați setările DNS pentru gazda domeniului dvs.",
+            step_2: "Creați o înregistrare TXT și lipiți codul de verificare.",
+            step_3: "Această actualizare durează de obicei câteva minute, dar poate dura până la 72 de ore.",
+            step_4:
+              'Faceți clic pe "Verificați domeniul" pentru a confirma odată ce înregistrarea DNS a fost actualizată.',
+          },
+          verification_code_label: "Cod de verificare",
+          verification_code_description: "Adăugați această înregistrare TXT la setările DNS",
+          domain_label: "Domeniu",
+          primary_button_text: "Verificați domeniul",
+          primary_button_loading_text: "Se verifică",
+          secondary_button_text: "O voi face mai târziu",
+          toast: {
+            success_title: "Succes!",
+            success_message: "Domeniul a fost verificat cu succes.",
+            error_message: "Nu s-a putut verifica domeniul. Vă rugăm să încercați din nou.",
+          },
+        },
+        delete_domain: {
+          title: "Ștergeți domeniul",
+          description: {
+            prefix: "Sigur doriți să ștergeți",
+            suffix: "? Această acțiune nu poate fi anulată.",
+          },
+          primary_button_text: "Șterge",
+          primary_button_loading_text: "Se șterge",
+          secondary_button_text: "Anulează",
+          toast: {
+            success_title: "Succes!",
+            success_message: "Domeniul a fost șters cu succes.",
+            error_message: "Nu s-a putut șterge domeniul. Vă rugăm să încercați din nou.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Autentificare unică",
+      disabled_message: "Adăugați un domeniu verificat pentru a configura SSO",
+      configure: {
+        create: "Configurați",
+        update: "Editați",
+      },
+      switch_alert_modal: {
+        title: "Comutați metoda SSO la {newProviderShortName}?",
+        content:
+          "Sunteți pe cale să activați {newProviderLongName} ({newProviderShortName}). Această acțiune va dezactiva automat {activeProviderLongName} ({activeProviderShortName}). Utilizatorii care încearcă să se conecteze prin {activeProviderShortName} nu vor mai putea accesa platforma până când nu trec la noua metodă. Sigur doriți să continuați?",
+        primary_button_text: "Comutați",
+        primary_button_text_loading: "Se comută",
+        secondary_button_text: "Anulează",
+      },
+      form_section: {
+        title: "Detalii furnizate de IdP pentru {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Se salvează",
+        save_changes: "Salvați modificările",
+        configure_only: "Doar configurare",
+        configure_and_enable: "Configurați și activați",
+        default: "Salvați",
+      },
+      setup_details_section: {
+        title: "{workspaceName} detalii furnizate pentru IdP-ul dvs.",
+        button_text: "Obțineți detalii de configurare",
+      },
+      saml: {
+        header: "Activați SAML",
+        description: "Configurați furnizorul dvs. de identitate SAML pentru a activa autentificarea unică.",
+        configure: {
+          title: "Activați SAML",
+          description:
+            "Verificați proprietatea unui domeniu de e-mail pentru a accesa funcțiile de securitate, inclusiv autentificarea unică.",
+          toast: {
+            success_title: "Succes!",
+            create_success_message: "Furnizorul SAML a fost creat cu succes.",
+            update_success_message: "Furnizorul SAML a fost actualizat cu succes.",
+            error_title: "Eroare!",
+            error_message: "Nu s-a putut salva furnizorul SAML. Vă rugăm să încercați din nou.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Detalii web",
+            entity_id: {
+              label: "ID entitate | Public | Informații metadate",
+              description:
+                "Vom genera această parte a metadatelor care identifică această aplicație Plane ca un serviciu autorizat pe IdP-ul dvs.",
+            },
+            callback_url: {
+              label: "URL callback",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
+            },
+            logout_url: {
+              label: "URL deconectare",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
+            },
+          },
+          mobile_details: {
+            header: "Detalii mobile",
+            entity_id: {
+              label: "ID entitate | Public | Informații metadate",
+              description:
+                "Vom genera această parte a metadatelor care identifică această aplicație Plane ca un serviciu autorizat pe IdP-ul dvs.",
+            },
+            callback_url: {
+              label: "URL callback",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
+            },
+            logout_url: {
+              label: "URL deconectare",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
+            },
+          },
+          mapping_table: {
+            header: "Detalii mapare",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Activați OIDC",
+        description: "Configurați furnizorul dvs. de identitate OIDC pentru a activa autentificarea unică.",
+        configure: {
+          title: "Activați OIDC",
+          description:
+            "Verificați proprietatea unui domeniu de e-mail pentru a accesa funcțiile de securitate, inclusiv autentificarea unică.",
+          toast: {
+            success_title: "Succes!",
+            create_success_message: "Furnizorul OIDC a fost creat cu succes.",
+            update_success_message: "Furnizorul OIDC a fost actualizat cu succes.",
+            error_title: "Eroare!",
+            error_message: "Nu s-a putut salva furnizorul OIDC. Vă rugăm să încercați din nou.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Detalii web",
+            origin_url: {
+              label: "URL origine",
+              description:
+                "Vom genera acest lucru pentru această aplicație Plane. Adăugați acest lucru ca origine de încredere în câmpul corespunzător al IdP-ului dvs.",
+            },
+            callback_url: {
+              label: "URL callback",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
+            },
+            logout_url: {
+              label: "URL deconectare",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
+            },
+          },
+          mobile_details: {
+            header: "Detalii mobile",
+            origin_url: {
+              label: "URL origine",
+              description:
+                "Vom genera acest lucru pentru această aplicație Plane. Adăugați acest lucru ca origine de încredere în câmpul corespunzător al IdP-ului dvs.",
+            },
+            callback_url: {
+              label: "URL callback",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
+            },
+            logout_url: {
+              label: "URL deconectare",
+              description:
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
+            },
+          },
+        },
       },
     },
   },

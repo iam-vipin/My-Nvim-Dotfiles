@@ -724,6 +724,11 @@ export default {
       worklogs: {
         title: "Logi pracy",
       },
+      identity: {
+        title: "Tożsamość",
+        heading: "Tożsamość",
+        description: "Skonfiguruj swoją domenę i włącz logowanie jednokrotne",
+      },
       project_states: {
         title: "Stany projektu",
       },
@@ -3194,6 +3199,216 @@ export default {
         title: "Automatyzacje",
         description: "Automatyzacje to sposób na automatyzację zadań w Twoim projekcie.",
         sub_description: "Odzyskaj 80% czasu administracyjnego, gdy używasz Automatyzacji.",
+      },
+    },
+  },
+  sso: {
+    header: "Tożsamość",
+    description:
+      "Skonfiguruj swoją domenę, aby uzyskać dostęp do funkcji bezpieczeństwa, w tym logowania jednokrotnego.",
+    domain_management: {
+      header: "Zarządzanie domenami",
+      verified_domains: {
+        header: "Zweryfikowane domeny",
+        description: "Zweryfikuj własność domeny e-mail, aby włączyć logowanie jednokrotne.",
+        button_text: "Dodaj domenę",
+        list: {
+          domain_name: "Nazwa domeny",
+          status: "Status",
+          status_verified: "Zweryfikowano",
+          status_failed: "Niepowodzenie",
+          status_pending: "Oczekujące",
+        },
+        add_domain: {
+          title: "Dodaj domenę",
+          description: "Dodaj swoją domenę, aby skonfigurować SSO i ją zweryfikować.",
+          form: {
+            domain_label: "Domena",
+            domain_placeholder: "plane.so",
+            domain_required: "Domena jest wymagana",
+            domain_invalid: "Wprowadź prawidłową nazwę domeny (np. plane.so)",
+          },
+          primary_button_text: "Dodaj domenę",
+          primary_button_loading_text: "Dodawanie",
+          toast: {
+            success_title: "Sukces!",
+            success_message: "Domena została pomyślnie dodana. Proszę zweryfikować ją, dodając rekord DNS TXT.",
+            error_message: "Nie udało się dodać domeny. Spróbuj ponownie.",
+          },
+        },
+        verify_domain: {
+          title: "Zweryfikuj swoją domenę",
+          description: "Wykonaj te kroki, aby zweryfikować swoją domenę.",
+          instructions: {
+            step_1: "Przejdź do ustawień DNS dla swojego hosta domeny.",
+            step_2: "Utwórz rekord TXT i wklej kod weryfikacyjny.",
+            step_3: "Ta aktualizacja zwykle trwa kilka minut, ale może zająć do 72 godzin.",
+            step_4: 'Kliknij "Zweryfikuj domenę", aby potwierdzić po zaktualizowaniu rekordu DNS.',
+          },
+          verification_code_label: "Kod weryfikacyjny",
+          verification_code_description: "Dodaj ten rekord TXT do ustawień DNS",
+          domain_label: "Domena",
+          primary_button_text: "Zweryfikuj domenę",
+          primary_button_loading_text: "Weryfikowanie",
+          secondary_button_text: "Zrobię to później",
+          toast: {
+            success_title: "Sukces!",
+            success_message: "Domena została pomyślnie zweryfikowana.",
+            error_message: "Nie udało się zweryfikować domeny. Spróbuj ponownie.",
+          },
+        },
+        delete_domain: {
+          title: "Usuń domenę",
+          description: {
+            prefix: "Czy na pewno chcesz usunąć",
+            suffix: "? Tej akcji nie można cofnąć.",
+          },
+          primary_button_text: "Usuń",
+          primary_button_loading_text: "Usuwanie",
+          secondary_button_text: "Anuluj",
+          toast: {
+            success_title: "Sukces!",
+            success_message: "Domena została pomyślnie usunięta.",
+            error_message: "Nie udało się usunąć domeny. Spróbuj ponownie.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Logowanie jednokrotne",
+      disabled_message: "Dodaj zweryfikowaną domenę, aby skonfigurować SSO",
+      configure: {
+        create: "Skonfiguruj",
+        update: "Edytuj",
+      },
+      switch_alert_modal: {
+        title: "Przełącz metodę SSO na {newProviderShortName}?",
+        content:
+          "Zamierzasz włączyć {newProviderLongName} ({newProviderShortName}). Ta akcja automatycznie wyłączy {activeProviderLongName} ({activeProviderShortName}). Użytkownicy próbujący zalogować się przez {activeProviderShortName} nie będą już mogli uzyskać dostępu do platformy, dopóki nie przełączą się na nową metodę. Czy na pewno chcesz kontynuować?",
+        primary_button_text: "Przełącz",
+        primary_button_text_loading: "Przełączanie",
+        secondary_button_text: "Anuluj",
+      },
+      form_section: {
+        title: "Szczegóły dostarczone przez IdP dla {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Zapisywanie",
+        save_changes: "Zapisz zmiany",
+        configure_only: "Tylko konfiguracja",
+        configure_and_enable: "Skonfiguruj i włącz",
+        default: "Zapisz",
+      },
+      setup_details_section: {
+        title: "{workspaceName} szczegóły dostarczone dla Twojego IdP",
+        button_text: "Pobierz szczegóły konfiguracji",
+      },
+      saml: {
+        header: "Włącz SAML",
+        description: "Skonfiguruj swojego dostawcę tożsamości SAML, aby włączyć logowanie jednokrotne.",
+        configure: {
+          title: "Włącz SAML",
+          description:
+            "Zweryfikuj własność domeny e-mail, aby uzyskać dostęp do funkcji bezpieczeństwa, w tym logowania jednokrotnego.",
+          toast: {
+            success_title: "Sukces!",
+            create_success_message: "Dostawca SAML został pomyślnie utworzony.",
+            update_success_message: "Dostawca SAML został pomyślnie zaktualizowany.",
+            error_title: "Błąd!",
+            error_message: "Nie udało się zapisać dostawcy SAML. Spróbuj ponownie.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Szczegóły internetowe",
+            entity_id: {
+              label: "Identyfikator jednostki | Odbiorcy | Informacje o metadanych",
+              description:
+                "Wygenerujemy tę część metadanych, która identyfikuje tę aplikację Plane jako autoryzowaną usługę w Twoim IdP.",
+            },
+            callback_url: {
+              label: "URL wywołania zwrotnego",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Szczegóły mobilne",
+            entity_id: {
+              label: "Identyfikator jednostki | Odbiorcy | Informacje o metadanych",
+              description:
+                "Wygenerujemy tę część metadanych, która identyfikuje tę aplikację Plane jako autoryzowaną usługę w Twoim IdP.",
+            },
+            callback_url: {
+              label: "URL wywołania zwrotnego",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Szczegóły mapowania",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Włącz OIDC",
+        description: "Skonfiguruj swojego dostawcę tożsamości OIDC, aby włączyć logowanie jednokrotne.",
+        configure: {
+          title: "Włącz OIDC",
+          description:
+            "Zweryfikuj własność domeny e-mail, aby uzyskać dostęp do funkcji bezpieczeństwa, w tym logowania jednokrotnego.",
+          toast: {
+            success_title: "Sukces!",
+            create_success_message: "Dostawca OIDC został pomyślnie utworzony.",
+            update_success_message: "Dostawca OIDC został pomyślnie zaktualizowany.",
+            error_title: "Błąd!",
+            error_message: "Nie udało się zapisać dostawcy OIDC. Spróbuj ponownie.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Szczegóły internetowe",
+            origin_url: {
+              label: "URL źródła",
+              description:
+                "Wygenerujemy to dla tej aplikacji Plane. Dodaj to jako zaufane źródło w odpowiednim polu Twojego IdP.",
+            },
+            callback_url: {
+              label: "URL wywołania zwrotnego",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Szczegóły mobilne",
+            origin_url: {
+              label: "URL źródła",
+              description:
+                "Wygenerujemy to dla tej aplikacji Plane. Dodaj to jako zaufane źródło w odpowiednim polu Twojego IdP.",
+            },
+            callback_url: {
+              label: "URL wywołania zwrotnego",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+            },
+          },
+        },
       },
     },
   },

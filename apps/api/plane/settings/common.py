@@ -30,7 +30,7 @@ AES_SALT = os.environ.get("AES_SALT", "aes-salt")
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Self-hosted mode
-IS_SELF_MANAGED = True
+IS_SELF_MANAGED = False
 
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")

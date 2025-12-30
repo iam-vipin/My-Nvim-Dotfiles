@@ -844,6 +844,11 @@ export default {
         heading: "Worklogs",
         description: "Download worklogs AKA timesheets for anyone in any project.",
       },
+      identity: {
+        title: "Identity",
+        heading: "Identity",
+        description: "Configure your domain and enable Single sign-on",
+      },
       project_states: {
         title: "Project states",
         heading: "See progress overview for all projects.",
@@ -3543,6 +3548,213 @@ export default {
     },
     nested_pages_download_banner: {
       title: "Nested pages require a paid plan. Upgrade to unlock.",
+    },
+  },
+  sso: {
+    header: "Identity",
+    description: "Configure your domain to access security features including single sign-on.",
+    domain_management: {
+      header: "Domain management",
+      verified_domains: {
+        header: "Verified domains",
+        description: "Verify the ownership of an email domain to enable single-sign on.",
+        button_text: "Add domain",
+        list: {
+          domain_name: "Domain name",
+          status: "Status",
+          status_verified: "Verified",
+          status_failed: "Failed",
+          status_pending: "Pending",
+        },
+        add_domain: {
+          title: "Add domain",
+          description: "Add your domain to configure SSO and verify it.",
+          form: {
+            domain_label: "Domain",
+            domain_placeholder: "plane.so",
+            domain_required: "Domain is required",
+            domain_invalid: "Enter a valid domain name (e.g., plane.so)",
+          },
+          primary_button_text: "Add domain",
+          primary_button_loading_text: "Adding",
+          toast: {
+            success_title: "Success!",
+            success_message: "Domain added successfully. Please verify it by adding the DNS TXT record.",
+            error_message: "Failed to add domain. Please try again.",
+          },
+        },
+        verify_domain: {
+          title: "Verify your domain",
+          description: "Follow these steps to verify your domain.",
+          instructions: {
+            step_1: "Go to the DNS settings for your domain host.",
+            step_2: "Create a TXT record and paste the verification code.",
+            step_3: "This update usually takes a few minutes but may take up to 72 hours to complete.",
+            step_4: 'Click "Verify domain" to confirm once your DNS record is updated.',
+          },
+          verification_code_label: "Verification code",
+          verification_code_description: "Add this TXT record to your DNS settings",
+          domain_label: "Domain",
+          primary_button_text: "Verify domain",
+          primary_button_loading_text: "Verifying",
+          secondary_button_text: "I'll do it later",
+          toast: {
+            success_title: "Success!",
+            success_message: "Domain verified successfully.",
+            error_message: "Failed to verify domain. Please try again.",
+          },
+        },
+        delete_domain: {
+          title: "Delete domain",
+          description: {
+            prefix: "Are you sure you want to delete",
+            suffix: "? This action cannot be undone.",
+          },
+          primary_button_text: "Delete",
+          primary_button_loading_text: "Deleting",
+          secondary_button_text: "Cancel",
+          toast: {
+            success_title: "Success!",
+            success_message: "Domain deleted successfully.",
+            error_message: "Failed to delete domain. Please try again.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Single sign-on",
+      disabled_message: "Add a verified domain to configure SSO",
+      configure: {
+        create: "Configure",
+        update: "Edit",
+      },
+      switch_alert_modal: {
+        title: "Switch SSO Method to {newProviderShortName}?",
+        content:
+          "You are about to enable {newProviderLongName} ({newProviderShortName}). This action will automatically disable {activeProviderLongName} ({activeProviderShortName}). Users attempting to sign in via {activeProviderShortName} will no longer be able to access the platform until they switch to the new method. Are you sure you want to proceed?",
+        primary_button_text: "Switch",
+        primary_button_text_loading: "Switching",
+        secondary_button_text: "Cancel",
+      },
+      form_section: {
+        title: "IdP-provided details for {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Saving",
+        save_changes: "Save changes",
+        configure_only: "Configure only",
+        configure_and_enable: "Configure and enable",
+        default: "Save",
+      },
+      setup_details_section: {
+        title: "{workspaceName} provided details for you IdP",
+        button_text: "Get setup details",
+      },
+      saml: {
+        header: "Enable SAML",
+        description: "Configure your SAML identity provider to enable single sign-on.",
+        configure: {
+          title: "Enable SAML",
+          description: "Verify the ownership of an email domain to access security features including single-sign on.",
+          toast: {
+            success_title: "Success!",
+            create_success_message: "SAML provider created successfully.",
+            update_success_message: "SAML provider updated successfully.",
+            error_title: "Error!",
+            error_message: "Failed to save SAML provider. Please try again.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web details",
+            entity_id: {
+              label: "Entity ID | Audience | Metadata information",
+              description:
+                "We will generate this bit of the metadata that identifies this Plane app as an authorized service on your IdP.",
+            },
+            callback_url: {
+              label: "Callback URL",
+              description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
+            },
+            logout_url: {
+              label: "Logout URL",
+              description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Mobile details",
+            entity_id: {
+              label: "Entity ID | Audience | Metadata information",
+              description:
+                "We will generate this bit of the metadata that identifies this Plane app as an authorized service on your IdP.",
+            },
+            callback_url: {
+              label: "Callback URL",
+              description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
+            },
+            logout_url: {
+              label: "Logout URL",
+              description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Mapping details",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Enable OIDC",
+        description: "Configure your OIDC identity provider to enable single sign-on.",
+        configure: {
+          title: "Enable OIDC",
+          description: "Verify the ownership of an email domain to access security features including single-sign on.",
+          toast: {
+            success_title: "Success!",
+            create_success_message: "OIDC provider created successfully.",
+            update_success_message: "OIDC provider updated successfully.",
+            error_title: "Error!",
+            error_message: "Failed to save OIDC provider. Please try again.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web details",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
+            },
+            callback_url: {
+              label: "Callback URL",
+              description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
+            },
+            logout_url: {
+              label: "Logout URL",
+              description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Mobile details",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
+            },
+            callback_url: {
+              label: "Callback URL",
+              description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
+            },
+            logout_url: {
+              label: "Logout URL",
+              description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
+            },
+          },
+        },
+      },
     },
   },
 };

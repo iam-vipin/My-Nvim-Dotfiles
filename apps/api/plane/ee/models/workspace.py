@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 
 # Module imports
 from plane.db.models.base import BaseModel
-from plane.db.models.workspace import WorkspaceBaseModel
+from plane.db.models.workspace import WorkspaceBaseModel, WorkspaceRole
 
 
 class WorkspaceFeature(BaseModel):

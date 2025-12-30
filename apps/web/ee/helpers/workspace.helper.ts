@@ -7,11 +7,15 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
   const isPiChatEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.PI_CHAT, false);
   const isEditorOPSEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.EDITOR_AI_OPS, false);
   const isPiDedupeEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.PI_DEDUPE, false);
+  // Cloud SSO is enabled if the instance is not self-managed (i.e cloud only)
+  const isCloudSSOEnabled = store.instance.config?.is_self_managed === false ? true : false;
   switch (settingKey) {
     case "applications":
       return isApplicationsEnabled;
     case "plane-intelligence":
       return isPiChatEnabled || isEditorOPSEnabled || isPiDedupeEnabled;
+    case "identity":
+      return isCloudSSOEnabled;
     default:
       return true;
   }

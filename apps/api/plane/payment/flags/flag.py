@@ -101,6 +101,8 @@ class FeatureFlag(Enum):
     WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM"
     # PI Chat
     PI_CHAT = "PI_CHAT"
+    # CLOUD_SSO
+    CLOUD_SSO = "CLOUD_SSO"
 
 
 class AdminFeatureFlag(Enum):

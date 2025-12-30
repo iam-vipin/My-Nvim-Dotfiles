@@ -20,10 +20,11 @@ type Props = {
   isMobile?: boolean;
   handleFormChange?: () => void;
   isClosable?: boolean;
+  handleTemplateSelect?: () => void;
 };
 
 function ProjectCreateHeader(props: Props) {
-  const { handleClose, isMobile = false, handleFormChange, isClosable = true } = props;
+  const { handleClose, isMobile = false, handleFormChange, isClosable = true, handleTemplateSelect } = props;
   const { watch, control, setValue } = useFormContext<IProject>();
   const { t } = useTranslation();
   // derived values
@@ -40,7 +41,7 @@ function ProjectCreateHeader(props: Props) {
         className="absolute left-0 top-0 h-full w-full rounded-lg"
       />
       <div className="absolute left-2.5 top-2.5">
-        <ProjectTemplateSelect handleModalClose={handleClose} />
+        <ProjectTemplateSelect onClick={handleTemplateSelect} />
       </div>
       {isClosable && (
         <div className="absolute right-2 top-2 p-2">
@@ -79,8 +80,8 @@ function ProjectCreateHeader(props: Props) {
               className="flex items-center justify-center"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-11 w-11 place-items-center rounded-md bg-layer-1">
-                  {value && <Logo logo={value} size={20} />}
+                <span className="grid h-11 w-11 place-items-center bg-layer-2 rounded-md border border-subtle">
+                  <Logo logo={value} size={20} />
                 </span>
               }
               onChange={(val: any) => {
@@ -105,7 +106,7 @@ function ProjectCreateHeader(props: Props) {
               }}
               defaultIconColor={value?.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
               defaultOpen={
-                value?.in_use && value?.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
+                value?.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
               }
             />
           )}

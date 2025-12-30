@@ -72,4 +72,5 @@ export * from "./workspace-extended";
 export * from "./workspace-notifications";
 export * from "./workspace-views";
 export * from "./base-layouts";
+export * from "./pagination";
 export * from "./milestone";

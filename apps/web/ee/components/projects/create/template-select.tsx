@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
@@ -6,7 +5,6 @@ import { Loader as Spinner } from "lucide-react";
 import { EUserPermissionsLevel, PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { cn } from "@plane/utils";
 // ce imports
 import type { TProjectTemplateSelect } from "@/ce/components/projects/create/template-select";
 // helpers
@@ -19,7 +17,7 @@ import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creati
 import { useFlag } from "@/plane-web/hooks/store";
 
 export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(props: TProjectTemplateSelect) {
-  const { disabled = false, size = "sm", placeholder, dropDownContainerClassName, handleModalClose } = props;
+  const { disabled = false } = props;
   // router
   const { workspaceSlug } = useParams();
   // plane hooks
@@ -39,13 +37,11 @@ export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(pro
   return (
     <>
       {isTemplatesEnabled && (
-        <div className={cn(dropDownContainerClassName)}>
+        <div>
           <ProjectTemplateDropdown
             workspaceSlug={workspaceSlug?.toString()}
             templateId={projectTemplateId}
             disabled={disabled}
-            size={size}
-            placeholder={placeholder ?? t("templates.dropdown.label.project")}
             customLabelContent={isApplyingTemplate && <Spinner className="size-4 animate-spin" />}
             handleTemplateChange={(templateId) => {
               captureClick({
@@ -56,7 +52,6 @@ export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(pro
               });
               setProjectTemplateId(templateId);
             }}
-            handleRedirection={handleModalClose}
             showCreateNewTemplate={hasWorkspaceAdminPermission}
           />
         </div>

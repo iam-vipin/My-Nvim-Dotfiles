@@ -296,7 +296,7 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
       <div className="p-3">
         <ProjectCreateHeader
           handleClose={handleClose}
-          handleFormChange={handleFormChange}
+          // handleFormChange={handleFormChange}
           isClosable={showActionButtons}
         />
         <form onSubmit={handleSubmit(onSubmit)} className="px-3">
@@ -304,8 +304,10 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
             <ProjectCommonAttributes
               setValue={setValue}
               isMobile={isMobile}
-              isChangeInIdentifierRequired={isChangeInIdentifierRequired}
-              setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+              shouldAutoSyncIdentifier={false}
+              setShouldAutoSyncIdentifier={() => {}}
+              // isChangeInIdentifierRequired={isChangeInIdentifierRequired}
+              // setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
               handleFormOnChange={handleFormChange}
             />
             <ProjectAttributes

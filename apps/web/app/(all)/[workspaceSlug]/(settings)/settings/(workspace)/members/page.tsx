@@ -49,7 +49,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, mutateWorkspaceMembersActivity } = useWorkspace();
 
   const isMembersImportEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_MEMBERS_IMPORT, false);
   const { t } = useTranslation();
@@ -64,6 +64,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
       await inviteMembersToWorkspace(workspaceSlug, data);
+      void mutateWorkspaceMembersActivity(workspaceSlug);
 
       setInviteModal(false);
 

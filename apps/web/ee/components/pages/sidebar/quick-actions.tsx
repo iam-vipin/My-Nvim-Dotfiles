@@ -3,14 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FilePlus2 } from "lucide-react";
 // plane imports
-import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage } from "@plane/types";
 import { EPageAccess } from "@plane/types";
 // ui
 import { SidebarAddButton } from "@/components/sidebar/add-button";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-store";
 
@@ -25,41 +23,27 @@ export const PagesAppSidebarQuickActions = observer(function PagesAppSidebarQuic
   const { t } = useTranslation();
   // handlers
   const handleCreatePage = async () => {
-    setIsCreatingPage(true);
-    const payload: Partial<TPage> = {
-      access: EPageAccess.PUBLIC,
-    };
-
-    await createPage(payload)
-      .then((res) => {
-        if (res?.id) {
-          captureSuccess({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-            payload: {
-              id: res?.id,
-              state: "SUCCESS",
-            },
-          });
-          const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
-          router.push(pageId);
-        }
-      })
-      .catch((err) => {
-        captureError({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-            error: err?.data?.error,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.data?.error || "Page could not be created. Please try again.",
-        });
-      })
-      .finally(() => setIsCreatingPage(false));
+    try {
+      setIsCreatingPage(true);
+      const payload: Partial<TPage> = {
+        access: EPageAccess.PUBLIC,
+      };
+      const res = await createPage(payload);
+      if (res?.id) {
+        const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
+        router.push(pageId);
+      }
+      setIsCreatingPage(false);
+    } catch (error: any) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.data?.error || "Page could not be created. Please try again.",
+      });
+      setIsCreatingPage(false);
+    }
   };
+
   return (
     <div className="flex items-center justify-between gap-2 cursor-pointer">
       <SidebarAddButton

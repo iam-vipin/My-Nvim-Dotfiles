@@ -7,8 +7,6 @@ import type { TOperationMode } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web imports
-import { captureClick } from "@/helpers/event-tracker.helper";
 // local imports
 import { DeleteConfirmationModal } from "./delete-confirmation-modal";
 
@@ -38,9 +36,6 @@ export const IssuePropertyQuickActions = observer(function IssuePropertyQuickAct
     {
       key: "edit",
       action: () => {
-        captureClick({
-          elementName: trackers?.quickActions?.button || "",
-        });
         onIssuePropertyOperationMode("update");
       },
       title: t("common.actions.edit"),
@@ -49,9 +44,6 @@ export const IssuePropertyQuickActions = observer(function IssuePropertyQuickAct
     {
       key: "delete",
       action: () => {
-        captureClick({
-          elementName: trackers?.quickActions?.button || "",
-        });
         setIsDeleteModalOpen(true);
       },
       title: t("common.actions.delete"),

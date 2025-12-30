@@ -1,16 +1,14 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Loader, RefreshCcw } from "lucide-react";
+// Plane imports
 import { NewTabIcon, ProjectIcon } from "@plane/propel/icons";
-import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import type { TJobStatus } from "@plane/etl/core";
-
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// plane web hooks
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
@@ -39,15 +37,8 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
   const handleJobsRefresh = async () => {
     try {
       await fetchJobs();
-      captureSuccess({
-        eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
-      });
     } catch (error) {
       console.error(`Error while refreshing ${serviceName} jobs`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
-        error: error as Error,
-      });
     }
   };
 
@@ -63,12 +54,7 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
           <div className="text-13 text-secondary">{t("importers.import_message", { serviceName })}</div>
         </div>
         <div className="flex-shrink-0 relative flex items-center gap-4">
-          <Button
-            onClick={handleDashboardView}
-            data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_IMPORT_BUTTON}
-          >
-            {t("importers.import")}
-          </Button>
+          <Button onClick={handleDashboardView}>{t("importers.import")}</Button>
         </div>
       </div>
       {/* migrations */}
@@ -84,7 +70,6 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
                 className="whitespace-nowrap border-none !px-1"
                 onClick={handleJobsRefresh}
                 disabled={loader === "re-fetch"}
-                data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_REFRESH_BUTTON}
               >
                 <div className="relative flex items-center gap-1.5 text-11">
                   {loader === "re-fetch" ? <Loader size={12} className="animate-spin" /> : <RefreshCcw size={12} />}

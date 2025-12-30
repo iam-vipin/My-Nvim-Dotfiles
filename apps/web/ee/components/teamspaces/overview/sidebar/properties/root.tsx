@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { Loader as Spinner, Users } from "lucide-react";
-import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { CycleIcon, WorkItemsIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -11,7 +10,6 @@ import { cn } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import type { Props } from "@/components/icons/types";
 // hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -63,45 +61,10 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
 
   const handleTeamspaceLeadChange = useCallback(
     (val: string | null) => {
-      captureClick({
-        elementName: TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_LEAD_DROPDOWN,
-      });
       if (val && val !== teamspace.lead_id) {
-        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val })
-          .then(() => {
-            captureSuccess({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_UPDATED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          })
-          .catch(() => {
-            captureError({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_UPDATED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          });
+        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val });
       } else {
-        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined })
-          .then(() => {
-            captureSuccess({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_REMOVED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          })
-          .catch(() => {
-            captureError({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_REMOVED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          });
+        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined });
       }
     },
     [teamspaceId, teamspace.lead_id, updateTeamspace, workspaceSlug]

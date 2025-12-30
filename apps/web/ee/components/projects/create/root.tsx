@@ -1,9 +1,7 @@
-import type { FC } from "react";
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
-
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -11,13 +9,11 @@ import { EFileAssetType } from "@plane/types";
 import type { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
 // types
 import type { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
-// constants
 import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 // hooks
 import { uploadCoverImage, getCoverImageType } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -33,7 +29,6 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import ProjectAttributes from "./attributes";
 import { ProjectCreateLoader } from "./loader";
 import { ProjectCreationProvider } from "./provider";
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 
 type TCreateProjectFormExtendedProps = TCreateProjectFormProps & {
   dataResetProperties?: ReadonlyArray<string | number | boolean | null | Partial<TProject> | undefined>;
@@ -208,13 +203,6 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
             members: membersPayload,
           });
         }
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-            id: res.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -229,13 +217,6 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
       })
       .catch((err) => {
         try {
-          captureError({
-            eventName: PROJECT_TRACKER_EVENTS.create,
-            payload: {
-              identifier: formData.identifier,
-            },
-          });
-
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err?.data ?? {};
 

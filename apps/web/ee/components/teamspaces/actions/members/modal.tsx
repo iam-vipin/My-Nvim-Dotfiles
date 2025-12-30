@@ -1,20 +1,16 @@
-import type { FC } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-
+// Plane imports
 import { PlusIcon, ChevronDownIcon, CloseIcon } from "@plane/propel/icons";
-import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-// ui
 import { Button } from "@plane/propel/button";
 import { Avatar, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -89,24 +85,12 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
           title: "Success!",
           message: `Team members added successfully.`,
         });
-        captureSuccess({
-          eventName: TEAMSPACE_TRACKER_EVENTS.MEMBER_ADDED,
-          payload: {
-            id: teamspaceId,
-          },
-        });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? `Failed to add team members. Please try again!`,
-        });
-        captureError({
-          eventName: TEAMSPACE_TRACKER_EVENTS.MEMBER_ADDED,
-          payload: {
-            id: teamspaceId,
-          },
         });
       })
       .finally(() => {

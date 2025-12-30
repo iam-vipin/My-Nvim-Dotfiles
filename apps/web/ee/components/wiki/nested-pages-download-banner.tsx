@@ -2,12 +2,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { CircleAlert } from "lucide-react";
 // plane imports
-import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Button } from "@plane/propel/button";
-// helpers
-import { captureView } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { usePageStore, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -56,9 +53,6 @@ export const NestedPagesDownloadBanner = observer(function NestedPagesDownloadBa
 
   const handlePaidPlanPurchaseModalOpen = () => {
     togglePaidPlanModal(true);
-    captureView({
-      elementName: LICENSE_TRACKER_ELEMENTS.NESTED_PAGE_DOWNLOAD_BANNER,
-    });
   };
 
   if (isNestedPagesEnabled || !isASubPage) return null;

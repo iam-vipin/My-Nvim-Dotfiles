@@ -1,9 +1,7 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader } from "lucide-react";
 // plane imports
-import { PROJECT_STATE_TRACKER_ELEMENTS, PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
 import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -11,7 +9,6 @@ import { AlertModalCore } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
@@ -42,12 +39,6 @@ export const ProjectStateDelete = observer(function ProjectStateDelete(props: TP
     setIsDelete(true);
     try {
       await removeProjectState(workspaceSlug, state.id);
-      captureSuccess({
-        eventName: PROJECT_STATE_TRACKER_EVENTS.delete,
-        payload: {
-          stateId: state.id,
-        },
-      });
       setIsDelete(false);
     } catch (error) {
       const errorStatus = error as { status: number; data: { error: string } };
@@ -65,12 +56,6 @@ export const ProjectStateDelete = observer(function ProjectStateDelete(props: TP
           message: "State could not be deleted. Please try again.",
         });
       }
-      captureError({
-        eventName: PROJECT_STATE_TRACKER_EVENTS.delete,
-        payload: {
-          stateId: state.id,
-        },
-      });
       setIsDelete(false);
     }
   };
@@ -97,7 +82,6 @@ export const ProjectStateDelete = observer(function ProjectStateDelete(props: TP
           isDeleteDisabled ? "bg-layer-1 text-secondary" : "text-danger-primary hover:bg-layer-1"
         )}
         disabled={isDeleteDisabled}
-        data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_LIST_DELETE_BUTTON}
         onClick={() => setIsDeleteModal(true)}
       >
         <Tooltip

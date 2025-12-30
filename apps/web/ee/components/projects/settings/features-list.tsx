@@ -1,9 +1,7 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useNavigate } from "react-router";
 import type { E_FEATURE_FLAGS } from "@plane/constants";
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -12,8 +10,6 @@ import type { IProject, TProjectFeaturesList } from "@plane/types";
 import { cn, joinUrlPath } from "@plane/utils";
 import { ProjectFeatureToggle } from "@/components/project/settings/helper";
 import { SettingsHeading } from "@/components/settings/heading";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -73,14 +69,10 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
     let settingsPayload = {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
-    const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload).then(() => {
-      captureSuccess({
-        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
-        payload: {
-          feature_key: featureKey,
-        },
-      });
-    });
+
+    // TODO: fix the type error
+    // eslint-disable-next-line promise/always-return
+    const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload).then(() => {});
 
     let updatePromise = updateProjectPromise;
 

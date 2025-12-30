@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -18,7 +18,6 @@ import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
@@ -138,25 +137,11 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
     await createPage(payload)
       .then((res) => {
         if (res?.id) {
-          captureSuccess({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-            payload: {
-              id: res?.id,
-              state: "SUCCESS",
-            },
-          });
           const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
           router.push(pageId);
         }
       })
       .catch((err) => {
-        captureError({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-            error: err?.data?.error,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

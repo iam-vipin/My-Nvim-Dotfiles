@@ -1,10 +1,7 @@
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/ui";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 
 type TProps = {
   nextButton?: {
@@ -40,7 +37,6 @@ export function AutomationDetailsSidebarActionButtons(props: TProps) {
             prependIcon={previousButton.renderIcon === false ? undefined : <ChevronLeftIcon className="size-5" />}
             disabled={previousButton.isDisabled}
             onClick={() => {
-              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_PREVIOUS_BUTTON });
               previousButton.onClick?.();
             }}
           >
@@ -54,7 +50,6 @@ export function AutomationDetailsSidebarActionButtons(props: TProps) {
             appendIcon={nextButton.renderIcon === false ? undefined : <ChevronRightIcon className="size-5" />}
             disabled={nextButton.isDisabled}
             onClick={() => {
-              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_NEXT_BUTTON });
               nextButton.onClick?.();
             }}
           >

@@ -4,7 +4,6 @@ import type { Flatfile } from "@flatfile/api";
 import { makeTheme, Space, useEvent, useFlatfile, Workbook } from "@flatfile/react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import type { FlatfileConfig } from "@plane/etl/flatfile";
 import { Button } from "@plane/propel/button";
@@ -12,7 +11,6 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TImportJob } from "@plane/types";
 import { Loader } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import DynamicFlatfileProvider from "@/plane-web/components/importers/flatfile/steps/configure-flatfile/provider";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // types
@@ -124,21 +122,8 @@ export const ConfigureFlatfileChild = observer(function ConfigureFlatfileChild()
       source: E_IMPORTER_KEYS.FLATFILE,
     };
     const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
-    captureSuccess({
-      eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-      payload: {
-        type: E_IMPORTER_KEYS.FLATFILE,
-        jobId: importerCreateJob?.id,
-      },
-    });
 
     if (!importerCreateJob?.id) {
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-        payload: {
-          type: E_IMPORTER_KEYS.FLATFILE,
-        },
-      });
       throw new Error("Failed to create job");
     }
 
@@ -148,21 +133,8 @@ export const ConfigureFlatfileChild = observer(function ConfigureFlatfileChild()
   const handleStartJob = async (jobId: string) => {
     try {
       await startJob(jobId);
-      captureSuccess({
-        eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
-        payload: {
-          type: E_IMPORTER_KEYS.FLATFILE,
-          jobId: jobId,
-        },
-      });
     } catch (error) {
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
-        error: error as Error,
-        payload: {
-          type: E_IMPORTER_KEYS.FLATFILE,
-        },
-      });
+      console.error("error", error);
     }
   };
 

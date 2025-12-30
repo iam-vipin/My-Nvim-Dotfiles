@@ -6,8 +6,6 @@ import useSWR from "swr";
 import {
   BUSINESS_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
-  LICENSE_TRACKER_ELEMENTS,
-  LICENSE_TRACKER_EVENTS,
   PRO_PLAN_FEATURES,
   SUBSCRIPTION_WEBPAGE_URLS,
   SUBSCRIPTION_WITH_TRIAL,
@@ -21,7 +19,6 @@ import { cn, getSubscriptionName } from "@plane/utils";
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
 import type { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
 // plane web imports
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/plane-web/services/payment.service";
 // local imports
@@ -72,48 +69,35 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
     (product: IPaymentProduct) => product?.type === EProductSubscriptionEnum.ENTERPRISE
   );
 
-  const handleStripeCheckout = ({ planVariant, productId, priceId }: TCheckoutParams) => {
-    captureClick({
-      elementName: LICENSE_TRACKER_ELEMENTS.MODAL_UPGRADE_BUTTON,
-    });
+  const handleStripeCheckout = async ({ planVariant, productId, priceId }: TCheckoutParams) => {
     if (!productId || !priceId) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Unable to get the product id or price id. Please try again.",
       });
-      captureError({
-        eventName: LICENSE_TRACKER_EVENTS.upgrade_product_or_price_not_found,
-      });
       return;
     }
     setUpgradeLoaderType(planVariant);
-    paymentService
-      .getCurrentWorkspacePaymentLink(workspaceSlug.toString(), {
+
+    try {
+      setUpgradeLoaderType(planVariant);
+      const response = await paymentService.getCurrentWorkspacePaymentLink(workspaceSlug.toString(), {
         price_id: priceId,
         product_id: productId,
-      })
-      .then((response) => {
-        if (response.url) {
-          window.open(response.url, "_blank");
-          captureSuccess({
-            eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
-          });
-        }
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? "Failed to generate payment link. Please try again.",
-        });
-        captureError({
-          eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
-        });
-      })
-      .finally(() => {
-        setUpgradeLoaderType(undefined);
       });
+      if (response.url) {
+        window.open(response.url, "_blank");
+      }
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to generate payment link. Please try again.",
+      });
+    } finally {
+      setUpgradeLoaderType(undefined);
+    }
   };
 
   const renderTrialButton = (

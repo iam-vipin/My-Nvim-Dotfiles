@@ -4,19 +4,10 @@ import { observer } from "mobx-react";
 import { Earth, EarthLock } from "lucide-react";
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import {
-  ETemplateLevel,
-  PAGE_TEMPLATE_TRACKER_EVENTS,
-  PAGE_TEMPLATE_TRACKER_ELEMENTS,
-  PROJECT_TEMPLATE_TRACKER_ELEMENTS,
-  PROJECT_TEMPLATE_TRACKER_EVENTS,
-  WORKITEM_TEMPLATE_TRACKER_ELEMENTS,
-  WORKITEM_TEMPLATE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TBaseTemplateWithData } from "@plane/types";
-import { ETemplateType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { AlertModalCore, ContextMenu, CustomMenu } from "@plane/ui";
 import {
@@ -25,8 +16,6 @@ import {
   getPublishTemplateSettingsPath,
   getTemplateTypeI18nName,
 } from "@plane/utils";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -58,30 +47,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
   const isAnyActionAllowed = template?.canCurrentUserEditTemplate || template?.canCurrentUserDeleteTemplate;
   if (!template || !isAnyActionAllowed) return null;
 
-  const getTrackerElement = (type: ETemplateType) => {
-    if (type === ETemplateType.PROJECT) {
-      return PROJECT_TEMPLATE_TRACKER_ELEMENTS;
-    }
-    if (type === ETemplateType.WORK_ITEM) {
-      return WORKITEM_TEMPLATE_TRACKER_ELEMENTS;
-    }
-    if (type === ETemplateType.PAGE) {
-      return PAGE_TEMPLATE_TRACKER_ELEMENTS;
-    }
-  };
-
-  const getTrackerEvent = (type: ETemplateType) => {
-    if (type === ETemplateType.PROJECT) {
-      return PROJECT_TEMPLATE_TRACKER_EVENTS;
-    }
-    if (type === ETemplateType.WORK_ITEM) {
-      return WORKITEM_TEMPLATE_TRACKER_EVENTS;
-    }
-    if (type === ETemplateType.PAGE) {
-      return PAGE_TEMPLATE_TRACKER_EVENTS;
-    }
-  };
-
   const handleEditTemplate = () => {
     const updateTemplatePath =
       getCreateUpdateTemplateSettingsPath({
@@ -94,12 +59,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       "?templateId=" +
       templateId;
     router.push(updateTemplatePath);
-    const trackerElement = getTrackerElement(template.template_type);
-    if (trackerElement) {
-      captureClick({
-        elementName: trackerElement.LIST_ITEM_EDIT_BUTTON,
-      });
-    }
   };
 
   const handlePublishTemplate = () => {
@@ -112,18 +71,11 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       templateId,
     });
     router.push(publishTemplatePath);
-    const trackerElement = getTrackerElement(template.template_type);
-    if (trackerElement) {
-      captureClick({
-        elementName: trackerElement.LIST_ITEM_PUBLISH_BUTTON,
-      });
-    }
   };
 
   const handleUnpublishTemplate = async () => {
     if (!template.id) return;
     setIsUnpublishLoading(true);
-    const trackerEvent = getTrackerEvent(template.template_type);
     await template
       .update({
         is_published: false,
@@ -137,14 +89,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
             templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
           }),
         });
-        if (trackerEvent) {
-          captureSuccess({
-            eventName: trackerEvent.UNPUBLISH,
-            payload: {
-              id: template.id,
-            },
-          });
-        }
       })
       .catch(() => {
         setToast({
@@ -155,14 +99,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
             templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
           }),
         });
-        if (trackerEvent) {
-          captureError({
-            eventName: trackerEvent.UNPUBLISH,
-            payload: {
-              id: template.id,
-            },
-          });
-        }
       })
       .finally(() => {
         setIsUnpublishModalOpen(false);
@@ -173,7 +109,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
   const handleTemplateDeletion = async () => {
     if (!workspaceSlug || !template.id) return;
     setIsDeleteLoading(true);
-    const trackerEvent = getTrackerEvent(template.template_type);
     await deleteTemplate(template.id)
       .then(() => {
         setToast({
@@ -184,14 +119,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
             templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
           }),
         });
-        if (trackerEvent) {
-          captureSuccess({
-            eventName: trackerEvent.DELETE,
-            payload: {
-              id: template.id,
-            },
-          });
-        }
       })
       .catch(() => {
         setToast({
@@ -199,14 +126,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
           title: t("templates.toasts.delete.error.title"),
           message: t("templates.toasts.delete.error.message"),
         });
-        if (trackerEvent) {
-          captureError({
-            eventName: trackerEvent.DELETE,
-            payload: {
-              id: template.id,
-            },
-          });
-        }
       })
       .finally(() => {
         setIsDeleteLoading(false);
@@ -236,12 +155,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       icon: EarthLock,
       action: () => {
         setIsUnpublishModalOpen(true);
-        const trackerElement = getTrackerElement(template.template_type);
-        if (trackerElement) {
-          captureClick({
-            elementName: trackerElement.LIST_ITEM_UNPUBLISH_BUTTON,
-          });
-        }
       },
       shouldRender: template.canCurrentUserUnpublishTemplate,
       className: "text-danger-primary",
@@ -250,12 +163,6 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       key: "delete",
       action: () => {
         setIsDeleteModalOpen(true);
-        const trackerElement = getTrackerElement(template.template_type);
-        if (trackerElement) {
-          captureClick({
-            elementName: trackerElement.LIST_ITEM_DELETE_BUTTON,
-          });
-        }
       },
       title: t("common.actions.delete"),
       icon: TrashIcon,

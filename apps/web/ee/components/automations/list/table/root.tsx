@@ -1,14 +1,10 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Table, TableBody, TableCell, TableHeader, TableRow, TableHead } from "@plane/propel/table";
 import { Avatar } from "@plane/ui";
 import { getFileURL, renderFormattedDate, formatDuration, cn } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // store hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
@@ -77,7 +73,6 @@ export const AutomationsTable = observer(function AutomationsTable(props: Automa
                     key={automation.id}
                     className="group hover:bg-layer-transparent-hover cursor-pointer border-b border-subtle transition-colors duration-75"
                     onClick={() => {
-                      captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.LIST_ITEM_ROW });
                       onAutomationClick?.(automation);
                     }}
                   >

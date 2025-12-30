@@ -3,14 +3,12 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { mutate } from "swr";
 // types
-import { PROJECT_ERROR_MESSAGES, CYCLE_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -49,12 +47,6 @@ export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycle
             title: "Success!",
             message: "Cycle deleted successfully.",
           });
-          captureSuccess({
-            eventName: CYCLE_TRACKER_EVENTS.delete,
-            payload: {
-              id: cycle.id,
-            },
-          });
 
           // NOTE: This operation is for enterprise edition only
           mutate("WORKSPACE_ACTIVE_CYCLES_LIST_EMPTY-WORKSPACE_100:0:0_100", (data: any) => {
@@ -76,13 +68,6 @@ export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycle
             title: t(currentError.i18n_title),
             type: TOAST_TYPE.ERROR,
             message: currentError.i18n_message && t(currentError.i18n_message),
-          });
-          captureError({
-            eventName: CYCLE_TRACKER_EVENTS.delete,
-            payload: {
-              id: cycle.id,
-            },
-            error: errors,
           });
         })
         .finally(() => handleClose());

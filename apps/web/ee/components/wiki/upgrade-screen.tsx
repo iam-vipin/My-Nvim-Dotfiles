@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { Tabs } from "@plane/propel/tabs";
@@ -17,8 +16,6 @@ import nestedPagesDarkImage from "@/app/assets/wiki-upgrade-flow/nested-pages-da
 import nestedPagesLightImage from "@/app/assets/wiki-upgrade-flow/nested-pages-light.png?url";
 import publishPagesDarkImage from "@/app/assets/wiki-upgrade-flow/publish-dark.png?url";
 import publishPagesLightImage from "@/app/assets/wiki-upgrade-flow/publish-light.png?url";
-// helpers
-import { captureView } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { EPageStoreType, usePageStore, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { WorkspacePageService } from "@/plane-web/services/page/workspace-page.service";
@@ -84,9 +81,6 @@ export const WikiUpgradeScreen = observer(function WikiUpgradeScreen(props: Prop
 
   const handlePaidPlanPurchaseModalOpen = () => {
     togglePaidPlanModal(true);
-    captureView({
-      elementName: LICENSE_TRACKER_ELEMENTS.WIKI_UPGRADE_SCREEN,
-    });
   };
 
   const handleDownloadData = () => {

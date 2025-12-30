@@ -1,20 +1,18 @@
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { GITLAB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TGitlabEntityConnection, TStateMap } from "@plane/types";
 import { E_STATE_MAP_KEYS } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
-// plane web helpers
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 
@@ -73,20 +71,9 @@ export const FormEdit = observer(function FormEdit(props: TFormEdit) {
         },
       };
       await updateEntityConnection(data.id, payload);
-
       handleModal(false);
-      captureSuccess({
-        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.update_entity_connection,
-        payload: {
-          entityConnectionId: data.id,
-        },
-      });
     } catch (error) {
       console.error("handleSubmit", error);
-      captureError({
-        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.update_entity_connection,
-        error: error as Error,
-      });
     } finally {
       setIsSubmitting(false);
     }

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TTeamspaceView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
@@ -14,7 +14,6 @@ import type {
   TSharedWorkItemFiltersHOCProps,
 } from "@/components/work-item-filters/filters-hoc/shared";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
@@ -158,24 +157,12 @@ export const TeamspaceLevelWorkItemFiltersHOC = observer(function TeamspaceLevel
             title: "Success!",
             message: "Your view has been updated successfully.",
           });
-          captureSuccess({
-            eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UPDATE,
-            payload: {
-              view_id: viewDetails.id,
-            },
-          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Your view could not be updated. Please try again.",
-          });
-          captureError({
-            eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UPDATE,
-            payload: {
-              view_id: viewDetails.id,
-            },
           });
         });
     },

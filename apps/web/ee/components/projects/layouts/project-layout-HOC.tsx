@@ -2,7 +2,7 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // assets
@@ -18,7 +18,6 @@ import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -85,9 +84,6 @@ export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props)
             title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
             description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
             onClick={() => {
-              captureClick({
-                elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON,
-              });
               toggleCreateProjectModal(true);
             }}
             disabled={!hasProjectMemberPermissions}

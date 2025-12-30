@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { WORKSPACE_PAGE_TRACKER_EVENTS, EPageAccess } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -16,8 +16,6 @@ import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { PageFiltersSelection } from "@/components/pages/list/filters";
 import { PageOrderByDropdown } from "@/components/pages/list/order-by";
 import { PageSearchInput } from "@/components/pages/list/search-input";
-// event tracker
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
@@ -52,24 +50,10 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
         const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
-        captureError({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-            error: err?.data?.error,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

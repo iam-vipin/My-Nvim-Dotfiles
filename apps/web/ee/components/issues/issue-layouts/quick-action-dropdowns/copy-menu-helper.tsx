@@ -1,9 +1,5 @@
-// plane imports
-import { WORK_ITEM_TRACKER_ELEMENTS_EXTENDED } from "@plane/constants";
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // lib
 import { store } from "@/lib/store-context";
 
@@ -34,9 +30,6 @@ export const createCopyMenuWithDuplication = (props: CopyMenuHelperProps): TCont
           key: "copy-in-same-project",
           title: "Copy in same project",
           action: () => {
-            captureClick({
-              elementName: WORK_ITEM_TRACKER_ELEMENTS_EXTENDED.COPY_IN_SAME_PROJECT,
-            });
             setCreateUpdateIssueModal(true);
           },
         },
@@ -44,9 +37,6 @@ export const createCopyMenuWithDuplication = (props: CopyMenuHelperProps): TCont
           key: "copy-in-different-project",
           title: "Copy in different project",
           action: () => {
-            captureClick({
-              elementName: WORK_ITEM_TRACKER_ELEMENTS_EXTENDED.COPY_IN_DIFFERENT_PROJECT,
-            });
             setDuplicateWorkItemModal(true);
           },
         },

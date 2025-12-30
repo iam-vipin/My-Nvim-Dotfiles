@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
-import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
@@ -12,7 +12,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
@@ -101,7 +100,6 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
               key={item.key}
               onClick={() => {
                 item.action();
-                captureClick({ elementName: CUSTOMER_TRACKER_ELEMENTS.QUICK_ACTIONS });
               }}
               className={cn(
                 "flex items-center gap-2",

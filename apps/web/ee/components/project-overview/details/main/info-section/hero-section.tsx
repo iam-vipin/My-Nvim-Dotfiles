@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_OVERVIEW_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProject, IWorkspace } from "@plane/types";
@@ -12,7 +12,6 @@ import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
 import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
@@ -49,12 +48,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: project.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -62,12 +55,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
         });
       })
       .catch((error) => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: project.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -80,9 +67,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
     const payload: Partial<IProject> = {
       logo_props: getValues<"logo_props">("logo_props"),
     };
-    captureClick({
-      elementName: PROJECT_OVERVIEW_TRACKER_ELEMENTS.HEADER_EMOJI_PICKER,
-    });
     handleUpdateChange(payload);
   };
 

@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { ERelationType } from "@plane/constants";
-import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
 import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { TTeamspaceDependencyWorkItem } from "@plane/types";
 import { Avatar, AvatarGroup } from "@plane/ui";
@@ -12,7 +11,6 @@ import { cn, getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list/list-item";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -73,13 +71,6 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
-        captureClick({
-          elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.WORK_ITEM_RELATION_LIST_ITEM,
-          context: {
-            id: issue.id,
-            type: type,
-          },
-        });
         handleIssuePeekOverview();
       }}
       className="w-full cursor-pointer"

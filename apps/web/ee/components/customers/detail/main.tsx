@@ -1,10 +1,8 @@
-import type { FC } from "react";
 import React, { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { NewTabIcon } from "@plane/propel/icons";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
@@ -14,8 +12,6 @@ import { Tabs } from "@plane/ui";
 import { formatURLForDisplay } from "@plane/utils";
 // components
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
@@ -120,26 +116,12 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
 
   const handleUpdateCustomer = async (data: Partial<TCustomerPayload>) => {
     await updateCustomer(workspaceSlug, customerId, data)
-      .then(() => {
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-        });
-      })
-      .catch((error) => {
+      .then(() => {})
+      .catch((_error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("customers.toasts.update.error.title"),
-          message: error.error || t("customers.toasts.update.error.message"),
-        });
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-          error: error as Error,
+          message: _error?.error || t("customers.toasts.update.error.message"),
         });
       });
   };

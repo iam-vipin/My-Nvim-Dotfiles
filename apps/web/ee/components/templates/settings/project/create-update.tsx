@@ -1,13 +1,14 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType, ETemplateType } from "@plane/types";
 import { getTemplateSettingsBasePath, getTemplateTypeI18nName, projectTemplateFormDataToData } from "@plane/utils";
+// helpers
 import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -122,24 +123,12 @@ export const CreateUpdateProjectTemplate = observer(function CreateUpdateProject
                 templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
               }),
             });
-            captureSuccess({
-              eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.UPDATE,
-              payload: {
-                id: template.id,
-              },
-            });
           })
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("templates.toasts.update.error.title"),
               message: t("templates.toasts.update.error.message"),
-            });
-            captureError({
-              eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.UPDATE,
-              payload: {
-                id: template.id,
-              },
             });
           });
       }
@@ -148,7 +137,7 @@ export const CreateUpdateProjectTemplate = observer(function CreateUpdateProject
         workspaceSlug,
         templateData: payload,
       })
-        .then((template) => {
+        .then(() => {
           router.push(templateSettingsPagePath);
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -158,21 +147,12 @@ export const CreateUpdateProjectTemplate = observer(function CreateUpdateProject
               templateType: t(getTemplateTypeI18nName(ETemplateType.PROJECT))?.toLowerCase(),
             }),
           });
-          captureSuccess({
-            eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.CREATE,
-            payload: {
-              id: template?.id,
-            },
-          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("templates.toasts.create.error.title"),
             message: t("templates.toasts.create.error.message"),
-          });
-          captureError({
-            eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.CREATE,
           });
         });
     }

@@ -8,8 +8,6 @@ import {
   EUserPermissionsLevel,
   EXPORTERS_LIST,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  WORKSPACE_SETTINGS_TRACKER_EVENTS,
-  WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -18,11 +16,13 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+// components
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+// services
 import { ProjectExportService } from "@/services/project/project-export.service";
 
 type Props = {
@@ -73,10 +73,10 @@ export const ExportForm = observer(function ExportForm(props: Props) {
   // derived values
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
   const isMember = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
-  const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
+  const wsProjectIdsWithCreatePermissions = projectsWithCreatePermissions
     ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
-  const options = wsProjectIdsWithCreatePermisisons?.map((projectId) => {
+  const options = wsProjectIdsWithCreatePermissions?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
 
     return {
@@ -105,12 +105,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         await projectExportService.csvExport(workspaceSlug, payload);
         mutateServices();
         setExportLoading(false);
-        captureSuccess({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-          payload: {
-            provider: formData.provider.provider,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
@@ -127,13 +121,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         });
       } catch (error) {
         setExportLoading(false);
-        captureError({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-          payload: {
-            provider: formData.provider.provider,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -258,12 +245,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         />
       </div>
       <div className="flex items-center justify-between">
-        <Button
-          variant="primary"
-          type="submit"
-          loading={exportLoading}
-          data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EXPORT_BUTTON}
-        >
+        <Button variant="primary" type="submit" loading={exportLoading}>
           {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
         </Button>
       </div>

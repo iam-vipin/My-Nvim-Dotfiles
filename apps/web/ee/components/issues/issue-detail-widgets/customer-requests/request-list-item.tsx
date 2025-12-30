@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Database } from "lucide-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
@@ -11,7 +10,6 @@ import { getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web imports
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { SourceItem, SourceCreateUpdateModal, RequestAttachmentsCollapsible } from "@/plane-web/components/customers";
 import { CustomerRequestQuickActions } from "@/plane-web/components/customers/actions";
@@ -53,13 +51,6 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
   const handleUpdateSource = (link: string) => {
     updateCustomerRequest(workspaceSlug, customerId, requestId, { link })
       .then(() => {
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-          payload: {
-            id: customerId,
-            request_id: requestId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("customers.requests.toasts.source.update.success.title"),
@@ -67,14 +58,6 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
         });
       })
       .catch((error) => {
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-          payload: {
-            id: customerId,
-            request_id: requestId,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("customers.requests.toasts.source.update.error.title"),

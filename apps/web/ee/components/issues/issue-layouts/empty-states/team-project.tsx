@@ -1,16 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  EUserPermissionsLevel,
-  TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS,
-  TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -38,28 +32,9 @@ export const TeamProjectWorkItemEmptyState = observer(function TeamProjectWorkIt
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleClearAllFilters = () => {
+  const handleClearAllFilters = async () => {
     if (!teamspaceProjectWorkItemFilter || !teamspaceId || !projectId) return;
-    teamspaceProjectWorkItemFilter
-      .clearFilters()
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.EMPTY_STATE_CLEAR_FILTERS,
-          payload: {
-            teamspace_id: teamspaceId,
-            project_id: projectId,
-          },
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.EMPTY_STATE_CLEAR_FILTERS,
-          payload: {
-            teamspace_id: teamspaceId,
-            project_id: projectId,
-          },
-        });
-      });
+    await teamspaceProjectWorkItemFilter.clearFilters();
   };
 
   if (!workspaceSlug || !teamspaceId || !projectId) return null;
@@ -75,9 +50,6 @@ export const TeamProjectWorkItemEmptyState = observer(function TeamProjectWorkIt
             {
               label: t("teamspace_work_items.empty_state.work_items_empty_filter.secondary_button.text"),
               onClick: () => {
-                captureClick({
-                  elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_CLEAR_FILTERS_BUTTON,
-                });
                 handleClearAllFilters();
               },
               disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceProjectWorkItemFilter,
@@ -94,9 +66,6 @@ export const TeamProjectWorkItemEmptyState = observer(function TeamProjectWorkIt
             {
               label: t("teamspace_work_items.empty_state.no_work_items.primary_button.text"),
               onClick: () => {
-                captureClick({
-                  elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WORK_ITEM_BUTTON,
-                });
                 toggleCreateIssueModal(true, EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, [projectId]);
               },
               disabled: !hasWorkspaceMemberLevelPermissions,

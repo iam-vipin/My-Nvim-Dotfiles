@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 // plane imports
-import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TeamsIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -12,7 +11,6 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
@@ -43,9 +41,6 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
 
   const toggleTeamsFeature = async () => {
     try {
-      captureClick({
-        elementName: TEAMSPACE_TRACKER_ELEMENTS.SETTINGS_PAGE_ENABLE_DISABLE_BUTTON,
-      });
       const payload = {
         [EWorkspaceFeatures.IS_TEAMSPACES_ENABLED]: !isTeamspacesFeatureEnabled,
       };
@@ -62,20 +57,8 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
         },
       });
       await toggleTeamsFeaturePromise;
-      captureSuccess({
-        eventName: isTeamspacesFeatureEnabled ? TEAMSPACE_TRACKER_EVENTS.DISABLE : TEAMSPACE_TRACKER_EVENTS.ENABLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-        },
-      });
     } catch (error) {
       console.error(error);
-      captureError({
-        eventName: isTeamspacesFeatureEnabled ? TEAMSPACE_TRACKER_EVENTS.DISABLE : TEAMSPACE_TRACKER_EVENTS.ENABLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-        },
-      });
     }
   };
 

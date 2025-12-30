@@ -1,13 +1,11 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { GITLAB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EModalWidth, Loader, ModalCore } from "@plane/ui";
 // plane web hooks
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGitlabIntegration } from "@/plane-web/hooks/store/integrations";
 import { GitlabEnterpriseServerAppForm } from "./server-app-form";
 
@@ -50,13 +48,6 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
       setIsConnectionSetup(true);
       const response = await connectWorkspaceConnection();
       if (response) window.open(response, "_self");
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: `GITLAB_ORGANIZATION${isEnterprise ? "_ENTERPRISE" : ""}`,
-          workspaceConnectionId,
-        },
-      });
     } catch (error) {
       console.error("connectWorkspaceConnection", error);
     } finally {
@@ -68,13 +59,6 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
     try {
       setIsConnectionSetup(true);
       await disconnectWorkspaceConnection();
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITLAB_ORGANIZATION",
-          workspaceConnectionId,
-        },
-      });
     } catch (error) {
       console.error("disconnectWorkspaceConnection", error);
     } finally {
@@ -141,7 +125,6 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
           className="flex-shrink-0"
           onClick={handleGitlabAuth}
           disabled={(isLoading && workspaceConnectionId) || isConnectionSetup || error}
-          data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_ORGANIZATION_BUTTON}
         >
           {(isLoading && workspaceConnectionId) || error
             ? "..."

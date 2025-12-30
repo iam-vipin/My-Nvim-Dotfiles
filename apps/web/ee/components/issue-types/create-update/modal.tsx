@@ -1,15 +1,12 @@
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssueType } from "@plane/types";
 import { EModalPosition, EModalWidth, getRandomIconName, ModalCore } from "@plane/ui";
 import { getRandomBackgroundColor } from "@plane/utils";
 // plane web imports
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { CreateOrUpdateIssueTypeForm } from "./form";
@@ -69,88 +66,64 @@ export const CreateOrUpdateIssueTypeModal = observer(function CreateOrUpdateIssu
 
   const handleCreateIssueType = async () => {
     if (!issueTypeFormData) return;
-    setIsSubmitting(true);
-    await createType(issueTypeFormData)
-      .then((res) => {
-        handleModalClearAndClose();
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("work_item_types.create.toast.success.title"),
-          message: t("work_item_types.create.toast.success.message"),
-        });
-        captureSuccess({
-          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.CREATE,
-          payload: {
-            work_item_type_id: res?.id,
-          },
-        });
-      })
-      .catch((error) => {
-        if (error.code === "ISSUE_TYPE_ALREADY_EXIST") {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("work_item_types.create.toast.error.title"),
-            message: t("work_item_types.create.toast.error.message.conflict", { name: issueTypeFormData?.name }),
-          });
-        } else {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("work_item_types.create.toast.error.title"),
-            message: t("work_item_types.create.toast.error.message.default"),
-          });
-        }
-        captureError({
-          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.CREATE,
-          error: error as Error,
-        });
-      })
-      .finally(() => {
-        setIsSubmitting(false);
+
+    try {
+      setIsSubmitting(true);
+      await createType(issueTypeFormData);
+      handleModalClearAndClose();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("work_item_types.create.toast.success.title"),
+        message: t("work_item_types.create.toast.success.message"),
       });
+      setIsSubmitting(false);
+    } catch (error: any) {
+      if (error?.code === "ISSUE_TYPE_ALREADY_EXIST") {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_types.create.toast.error.title"),
+          message: t("work_item_types.create.toast.error.message.conflict", { name: issueTypeFormData?.name }),
+        });
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_types.create.toast.error.title"),
+          message: t("work_item_types.create.toast.error.message.default"),
+        });
+      }
+      setIsSubmitting(false);
+    }
   };
 
   const handleUpdateIssueType = async () => {
     if (!issueTypeFormData) return;
 
-    setIsSubmitting(true);
-    await issueType
-      ?.updateType(issueTypeFormData)
-      .then(() => {
-        handleModalClearAndClose();
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("work_item_types.update.toast.success.title"),
-          message: t("work_item_types.update.toast.success.message", { name: issueTypeFormData?.name }),
-        });
-        captureSuccess({
-          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.UPDATE,
-          payload: {
-            work_item_type_id: issueTypeFormData?.id,
-          },
-        });
-      })
-      .catch((error) => {
-        if (error.code === "ISSUE_TYPE_ALREADY_EXIST") {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("work_item_types.update.toast.error.title"),
-            message: t("work_item_types.update.toast.error.message.conflict", { name: issueTypeFormData?.name }),
-          });
-        } else {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("work_item_types.update.toast.error.title"),
-            message: t("work_item_types.update.toast.error.message.default"),
-          });
-        }
-        captureError({
-          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.UPDATE,
-          error: error as Error,
-        });
-      })
-      .finally(() => {
-        setIsSubmitting(false);
+    try {
+      setIsSubmitting(true);
+      await issueType?.updateType(issueTypeFormData);
+      handleModalClearAndClose();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("work_item_types.update.toast.success.title"),
+        message: t("work_item_types.update.toast.success.message", { name: issueTypeFormData?.name }),
       });
+      setIsSubmitting(false);
+    } catch (error: any) {
+      if (error.code === "ISSUE_TYPE_ALREADY_EXIST") {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_types.update.toast.error.title"),
+          message: t("work_item_types.update.toast.error.message.conflict", { name: issueTypeFormData?.name }),
+        });
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_types.update.toast.error.title"),
+          message: t("work_item_types.update.toast.error.message.default"),
+        });
+      }
+      setIsSubmitting(false);
+    }
   };
 
   if (!isModalOpen) return null;

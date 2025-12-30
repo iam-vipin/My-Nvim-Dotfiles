@@ -9,16 +9,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { Loader } from "lucide-react";
-import { PlusIcon, PageIcon } from "@plane/propel/icons";
 import { Transition } from "@headlessui/react";
 // plane imports
+import { PlusIcon, PageIcon } from "@plane/propel/icons";
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -208,14 +206,6 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
 
         const newPage = await createPage(payload);
 
-        captureSuccess({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
-          payload: {
-            id: newPage?.id,
-            state: "SUCCESS",
-          },
-        });
-
         // Redirect to the newly created page
         if (newPage?.id) {
           // Get the new page instance which has the getRedirectionLink method
@@ -226,12 +216,6 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
           }
         }
       } catch (error) {
-        captureError({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
-          payload: {
-            state: "ERROR",
-          },
-        });
         console.error("Failed to create page:", error);
       } finally {
         setIsCreatingPage(false);

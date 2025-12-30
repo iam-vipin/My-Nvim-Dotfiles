@@ -3,17 +3,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-
-import { NewTabIcon, GlobeIcon } from "@plane/propel/icons";
 // plane imports
-import { SPACE_BASE_PATH, SPACE_BASE_URL, TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { NewTabIcon, GlobeIcon } from "@plane/propel/icons";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPublishViewSettings, TTeamspaceView } from "@plane/types";
 import { EModalWidth, Loader, ModalCore, ToggleSwitch } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // plane web hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
@@ -62,47 +60,21 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
 
   const handlePublishView = async (payload: TPublishViewSettings) => {
     if (!workspaceSlug || !view) return;
-    await publishView(workspaceSlug.toString(), teamspaceId, view.id, payload)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH,
-          payload: { id: view?.id },
-        });
-      })
-      .catch((err) => {
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH,
-          error: err,
-          payload: { id: view?.id },
-        });
-      });
+    await publishView(workspaceSlug.toString(), teamspaceId, view.id, payload);
   };
 
   const handleUpdatePublishSettings = async (payload: Partial<TPublishViewSettings>) => {
     if (!workspaceSlug || !view) return;
 
-    await updatePublishedView(workspaceSlug.toString(), teamspaceId, view.id, payload)
-      .then((res) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Publish settings updated successfully!",
-        });
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH_SETTINGS_UPDATE,
-          payload: { id: view?.id },
-        });
-
-        handleClose();
-        return res;
-      })
-      .catch((err) => {
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH_SETTINGS_UPDATE,
-          error: err,
-          payload: { id: view?.id },
-        });
+    await updatePublishedView(workspaceSlug.toString(), teamspaceId, view.id, payload).then((res) => {
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Publish settings updated successfully!",
       });
+      handleClose();
+      return res;
+    });
   };
 
   const handleUnPublishView = async () => {
@@ -111,21 +83,11 @@ export const PublishTeamspaceViewModal = observer(function PublishTeamspaceViewM
     setIsUnPublishing(true);
 
     await unPublishView(workspaceSlug.toString(), teamspaceId, view.id)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UNPUBLISH,
-          payload: { id: view?.id },
-        });
-      })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong while unpublishing the View.",
-        });
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UNPUBLISH,
-          payload: { id: view?.id },
         });
       })
       .finally(() => setIsUnPublishing(false));

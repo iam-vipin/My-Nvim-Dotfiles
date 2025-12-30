@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { mutate } from "swr";
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -35,13 +33,6 @@ export const DeleteCustomerRequestsModal = observer(function DeleteCustomerReque
     await deleteCustomerRequest(workspaceSlug.toString(), customerId, requestId, workItemId)
       .then(() => {
         handleClose();
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.delete_request,
-          payload: {
-            id: customerId,
-            request_id: requestId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -49,15 +40,7 @@ export const DeleteCustomerRequestsModal = observer(function DeleteCustomerReque
         });
         mutate(`WORK_ITEM_CUSTOMERS${workspaceSlug}_${workItemId}`);
       })
-      .catch((error) => {
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.delete_request,
-          payload: {
-            id: customerId,
-            request_id: requestId,
-          },
-          error: error as Error,
-        });
+      .catch((_error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

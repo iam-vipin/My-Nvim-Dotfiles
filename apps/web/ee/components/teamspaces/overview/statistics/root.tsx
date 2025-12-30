@@ -1,18 +1,15 @@
-import type { FC } from "react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TreeMapIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
@@ -96,35 +93,13 @@ export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot
     key: K,
     value: TStatisticsFilter[K]
   ) => {
-    captureClick({
-      elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.STATISTICS_FILTER_DROPDOWN,
-    });
-    await updateTeamspaceStatisticsFilter(workspaceSlug.toString(), teamspaceId, key, value)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_UPDATED,
-          payload: {
-            id: teamspaceId,
-            key,
-            value,
-          },
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "We couldn't update teamspace statistics filter. Please try again.",
-        });
-        captureError({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_UPDATED,
-          payload: {
-            id: teamspaceId,
-            key,
-            value,
-          },
-        });
+    await updateTeamspaceStatisticsFilter(workspaceSlug.toString(), teamspaceId, key, value).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "We couldn't update teamspace statistics filter. Please try again.",
       });
+    });
   };
 
   return (

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -10,7 +9,6 @@ import { cn } from "@plane/utils";
 // components
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
@@ -35,26 +33,10 @@ export const AddStateTransition = observer(function AddStateTransition(props: Pr
     setIsAdding(true);
     try {
       await addStateTransition(workspaceSlug, projectId, parentStateId, transitionStateId);
-      captureSuccess({
-        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_CREATED,
-        payload: {
-          project_id: projectId,
-          parent_state_id: parentStateId,
-          transition_state_id: transitionStateId,
-        },
-      });
       if (onTransitionAdd) {
         onTransitionAdd();
       }
-    } catch (error) {
-      captureError({
-        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_CREATED,
-        payload: {
-          project_id: projectId,
-          parent_state_id: parentStateId,
-        },
-        error: error as Error,
-      });
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.add_state_change_rule.error.title"),
@@ -74,7 +56,6 @@ export const AddStateTransition = observer(function AddStateTransition(props: Pr
             className={cn("text-11 px-2 py-1", {
               "cursor-pointer": !isAdding,
             })}
-            data-ph-element={WORKFLOW_TRACKER_ELEMENTS.CREATE_TRANSITION_BUTTON}
           >
             {isAdding ? (
               <div className="flex gap-1 items-center">

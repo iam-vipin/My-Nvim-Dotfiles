@@ -7,10 +7,7 @@ import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 import { getPageName } from "@plane/utils";
-// constants
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-// hooks
+// plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -49,12 +46,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
     setIsDeleting(true);
     await removePage({ pageId })
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         editorRef?.current?.findAndDeleteNode(
           { attribute: "entity_identifier", value: page.id ?? "" },
           "pageEmbedComponent"
@@ -72,12 +63,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
         }
       })
       .catch(() => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

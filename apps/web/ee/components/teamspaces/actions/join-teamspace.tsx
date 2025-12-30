@@ -2,21 +2,19 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 // plane web hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type TJoinTeamButtonProps = {
   teamspaceId: string;
-  trackerElement: string;
+  trackerElement?: string;
 };
 
 export const JoinTeamspaceButton = observer(function JoinTeamspaceButton(props: TJoinTeamButtonProps) {
-  const { teamspaceId, trackerElement } = props;
+  const { teamspaceId } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -41,27 +39,10 @@ export const JoinTeamspaceButton = observer(function JoinTeamspaceButton(props: 
         message: () => "Failed to join teamspace",
       },
     });
-    await joinTeamPromise
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_TRACKER_EVENTS.JOIN,
-          payload: {
-            id: teamspaceId,
-          },
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: TEAMSPACE_TRACKER_EVENTS.JOIN,
-          payload: {
-            id: teamspaceId,
-          },
-        });
-      })
-      .finally(() => {
-        setIsJoinTeamLoading(false);
-        setIsJoinTeamspaceModalOpen(false);
-      });
+    await joinTeamPromise.finally(() => {
+      setIsJoinTeamLoading(false);
+      setIsJoinTeamspaceModalOpen(false);
+    });
   };
 
   if (!teamspace) return null;
@@ -87,7 +68,7 @@ export const JoinTeamspaceButton = observer(function JoinTeamspaceButton(props: 
         handleSubmit={handleJoinTeam}
         isSubmitting={isJoinTeamLoading}
       />
-      <Button variant="secondary" onClick={() => setIsJoinTeamspaceModalOpen(true)} data-ph-element={trackerElement}>
+      <Button variant="secondary" onClick={() => setIsJoinTeamspaceModalOpen(true)}>
         Join teamspace
       </Button>
     </>

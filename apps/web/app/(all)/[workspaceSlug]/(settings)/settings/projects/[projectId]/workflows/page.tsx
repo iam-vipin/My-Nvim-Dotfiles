@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
@@ -13,7 +12,6 @@ import { PageHead } from "@/components/core/page-title";
 // hook
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -65,27 +63,7 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
     const featureState = !isWorkflowEnabled;
     const featureTogglePromise = toggleProjectFeatures(workspaceSlug, projectId, {
       is_workflow_enabled: featureState,
-    })
-      .then(() => {
-        captureSuccess({
-          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_ENABLED_DISABLED,
-          payload: {
-            project_id: projectId,
-            is_workflow_enabled: featureState,
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_ENABLED_DISABLED,
-          payload: {
-            project_id: projectId,
-            is_workflow_enabled: featureState,
-          },
-          error: error as Error,
-        });
-        throw error;
-      });
+    });
     setPromiseToast(featureTogglePromise, {
       loading: t("workflows.toasts.enable_disable.loading", {
         action: featureState ? t("common.enabling") : t("common.disabling"),
@@ -123,7 +101,6 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
                     value={!!isWorkflowEnabled}
                     onChange={handleEnableDisableWorkflow}
                     disabled={isLoading}
-                    data-ph-element={WORKFLOW_TRACKER_ELEMENTS.WORK_FLOW_ENABLE_DISABLE_BUTTON}
                   />
                   <WorkflowSettingsQuickActions projectId={projectId} workspaceSlug={workspaceSlug} />
                 </div>

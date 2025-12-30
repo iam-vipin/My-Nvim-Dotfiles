@@ -3,14 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
@@ -97,30 +95,13 @@ export const TeamspaceProgressRoot = observer(function TeamspaceProgressRoot(pro
   };
 
   const handleTeamspaceProgressFilterChange = async (payload: Partial<TWorkloadFilter>) => {
-    await updateTeamspaceProgressFilter(workspaceSlug.toString(), teamspaceId, payload)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.PROGRESS_FILTER_UPDATED,
-          payload: {
-            id: teamspaceId,
-            filter: payload,
-          },
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "We couldn't update teamspace progress filter. Please try again.",
-        });
-        captureError({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.PROGRESS_FILTER_UPDATED,
-          payload: {
-            id: teamspaceId,
-            filter: payload,
-          },
-        });
+    await updateTeamspaceProgressFilter(workspaceSlug.toString(), teamspaceId, payload).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "We couldn't update teamspace progress filter. Please try again.",
       });
+    });
   };
 
   return (

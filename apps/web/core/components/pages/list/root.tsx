@@ -23,8 +23,6 @@ import nameFilterDark from "@/app/assets/empty-state/wiki/name-filter-dark.svg?u
 import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg?url";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -124,23 +122,10 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -237,7 +222,6 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
               label: isCreatingPage ? t("creating") : t("project_page.empty_state.public.primary_button.text"),
               onClick: () => {
                 handleCreatePage();
-                captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
               },
               disabled: !canPerformEmptyStateActions || isCreatingPage,
               variant: "primary",
@@ -256,7 +240,6 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
               label: isCreatingPage ? t("creating") : t("project_page.empty_state.private.primary_button.text"),
               onClick: () => {
                 handleCreatePage();
-                captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
               },
               disabled: !canPerformEmptyStateActions || isCreatingPage,
               variant: "primary",
@@ -283,7 +266,6 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
             label: isCreatingPage ? t("creating") : t("project_page.empty_state.general.primary_button.text"),
             onClick: () => {
               handleCreatePage();
-              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
             },
             disabled: !hasProjectMemberLevelPermissions || isCreatingPage,
             variant: "primary",

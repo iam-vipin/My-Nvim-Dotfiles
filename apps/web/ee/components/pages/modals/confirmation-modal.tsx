@@ -3,8 +3,6 @@ import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import { AlertModalCore } from "@plane/ui";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // types
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -36,27 +34,13 @@ export const ConfirmationModal = observer(function ConfirmationModal(props: TCon
     setIsLoading(true);
     try {
       await action();
-      captureSuccess({
-        eventName,
-        payload: {
-          ...page,
-          state: "SUCCESS",
-        },
-      });
       handleClose();
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: successMessage,
       });
-    } catch (error) {
-      captureError({
-        eventName,
-        payload: {
-          ...page,
-          state: "FAILED",
-        },
-      });
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

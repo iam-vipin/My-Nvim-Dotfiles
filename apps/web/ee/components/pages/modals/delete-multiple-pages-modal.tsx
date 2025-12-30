@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-// constants
-import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
-// editor
+// plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { EmptyPageIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// ui
 import { AlertModalCore } from "@plane/ui";
-// helpers
 import { getPageName } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
@@ -48,28 +43,12 @@ export const DeleteMultiplePagesModal = observer(function DeleteMultiplePagesMod
       const deletePromises = pages.map(async (page) => {
         if (!page.id) return;
 
-        return removePage({ pageId: page.id })
-          .then(() => {
-            captureSuccess({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_delete,
-              payload: {
-                ...page,
-                state: "SUCCESS",
-              },
-            });
-
-            // Add to successfully deleted pages
-            successfullyDeletedPageIds.push(page.id as string);
-          })
-          .catch(() => {
-            captureError({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_delete,
-              payload: {
-                ...page,
-                state: "FAILED",
-              },
-            });
-          });
+        try {
+          await removePage({ pageId: page.id });
+          successfullyDeletedPageIds.push(page.id);
+        } catch (_error) {
+          console.error(_error);
+        }
       });
 
       // Wait for all delete operations to complete

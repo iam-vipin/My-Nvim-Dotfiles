@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -10,7 +9,6 @@ import type { IIssueType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { captureClick } from "@/helpers/event-tracker.helper";
 
 type Props = {
   issueTypeId: string;
@@ -42,9 +40,6 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
     {
       key: "edit",
       action: () => {
-        captureClick({
-          elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.PROPERTY_QUICK_ACTIONS,
-        });
         onEditIssueTypeIdChange(issueTypeId);
       },
       title: t("common.actions.edit"),
@@ -53,9 +48,6 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
     {
       key: "delete",
       action: () => {
-        captureClick({
-          elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.PROPERTY_QUICK_ACTIONS,
-        });
         onDeleteIssueTypeIdChange(issueTypeId);
       },
       title: t("common.actions.delete"),

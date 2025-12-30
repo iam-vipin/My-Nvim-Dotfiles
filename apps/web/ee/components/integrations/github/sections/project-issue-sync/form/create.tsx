@@ -1,14 +1,13 @@
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TGithubEntityConnection, TIssueStateMap } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SelectProject, SelectGithubRepository } from "@/plane-web/components/integrations/github/common";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
@@ -97,24 +96,12 @@ export const CreateProjectIssueSyncForm = observer(function CreateProjectIssueSy
         type: EGithubEntityConnectionType.PROJECT_ISSUE_SYNC,
       };
       await createEntity(payload);
-      captureSuccess({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.create_entity_connection,
-        payload: {
-          workspaceId: workspace?.id,
-        },
-      });
-
       setProjectMap(projectMapInit);
       setStateMap(stateMapInit);
       setAllowBidirectionalSync(true);
       handleModal(false);
     } catch (error) {
-      captureError({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.create_entity_connection,
-        payload: {
-          workspaceId: workspace?.id,
-        },
-      });
+      console.error("handleSubmit", error);
     } finally {
       setIsSubmitting(false);
     }

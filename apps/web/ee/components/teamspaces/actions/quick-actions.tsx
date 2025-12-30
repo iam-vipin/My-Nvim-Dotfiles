@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
-import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { EditIcon, LinkIcon, NewTabIcon, TrashIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -10,7 +9,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web constants
 import { DeleteTeamspaceModal } from "@/plane-web/components/teamspaces/actions/delete-modal";
@@ -88,9 +86,6 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
     ...item,
     action: () => {
       item.action();
-      captureClick({
-        elementName: TEAMSPACE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
     },
   }));
 
@@ -114,9 +109,6 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: trackerElement,
-                });
                 item.action();
               }}
               className={cn(

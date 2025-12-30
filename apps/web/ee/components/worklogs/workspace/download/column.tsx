@@ -1,8 +1,9 @@
 import { Download } from "lucide-react";
-import { WORKSPACE_WORKLOG_TRACKER_ELEMENTS, WORKSPACE_WORKLOG_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
-import { captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
+// plane web types
 import type { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
 
 type RowData = IWorklogDownload;
@@ -102,18 +103,7 @@ export const useExportColumns = () => {
           <>
             {rowData.status == "completed" ? (
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
-                <button
-                  className="w-full flex items-center gap-1 text-accent-primary font-medium"
-                  data-ph-element={WORKSPACE_WORKLOG_TRACKER_ELEMENTS.TABLE_DOWNLOAD_BUTTON}
-                  onClick={() => {
-                    captureSuccess({
-                      eventName: WORKSPACE_WORKLOG_TRACKER_EVENTS.DOWNLOAD_WORKLOG,
-                      payload: {
-                        worklogDownloadId: rowData.id,
-                      },
-                    });
-                  }}
-                >
+                <button className="w-full flex items-center gap-1 text-accent-primary font-medium">
                   <Download className="h-4 w-4" />
                   <div>Download</div>
                 </button>

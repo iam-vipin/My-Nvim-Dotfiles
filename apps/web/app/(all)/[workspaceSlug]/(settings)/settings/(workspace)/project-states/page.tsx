@@ -1,16 +1,14 @@
 import { observer } from "mobx-react";
 // plane imports
-import { PROJECT_GROUPING_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-// store hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
@@ -52,18 +50,8 @@ function WorklogsPage({ params }: Route.ComponentProps) {
         [EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED]: willEnableProjectGrouping,
       };
       await updateWorkspaceFeature(workspaceSlug, payload);
-      captureSuccess({
-        eventName: willEnableProjectGrouping
-          ? PROJECT_GROUPING_TRACKER_EVENTS.ENABLE
-          : PROJECT_GROUPING_TRACKER_EVENTS.DISABLE,
-      });
     } catch (error) {
       console.error(error);
-      captureError({
-        eventName: willEnableProjectGrouping
-          ? PROJECT_GROUPING_TRACKER_EVENTS.DISABLE
-          : PROJECT_GROUPING_TRACKER_EVENTS.ENABLE,
-      });
     }
   };
 

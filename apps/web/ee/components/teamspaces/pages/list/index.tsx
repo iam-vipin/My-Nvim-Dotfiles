@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import { EPageAccess, TEAMSPACE_PAGE_TRACKER_ELEMENTS, TEAMSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPageNavigationTabs, TPage, TPageDragPayload } from "@plane/types";
 // assets
@@ -21,8 +21,6 @@ import publicPageLight from "@/app/assets/empty-state/wiki/public-light.webp?url
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 // plane web hooks
@@ -114,23 +112,10 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
         const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
-        captureError({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            state: "ERROR",
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -201,7 +186,6 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
             text: isCreatingPage ? "Creating" : "Create public page",
             onClick: () => {
               handleCreatePage();
-              captureClick({ elementName: TEAMSPACE_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PAGE_BUTTON });
             },
             disabled: isCreatingPage,
           }}

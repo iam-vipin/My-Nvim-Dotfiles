@@ -1,9 +1,8 @@
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS, ETabIndices } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -11,7 +10,6 @@ import type { TCustomer, TCustomerPayload } from "@plane/types";
 // helpers
 import { cn, getChangedFields, getTabIndex } from "@plane/utils";
 // store
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components
 import { CustomerAdditionalProperties, DefaultProperties } from "@/plane-web/components/customers";
@@ -75,12 +73,6 @@ export function CustomerForm(props: TCustomerForms) {
           customerId: customer.id,
         });
       }
-      captureSuccess({
-        eventName: CUSTOMER_TRACKER_EVENTS.create_customer,
-        payload: {
-          id: customer.id,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("customers.toasts.create.success.title", { customer_name: customer.name }),
@@ -91,10 +83,6 @@ export function CustomerForm(props: TCustomerForms) {
       });
       toggleCreateCustomerModal();
     } catch (error: any) {
-      captureError({
-        eventName: CUSTOMER_TRACKER_EVENTS.create_customer,
-        error: error as Error,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("customers.toasts.create.error.title"),
@@ -114,12 +102,6 @@ export function CustomerForm(props: TCustomerForms) {
           customerId: customer.id,
         });
       }
-      captureSuccess({
-        eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-        payload: {
-          id: data.id,
-        },
-      });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -129,13 +111,6 @@ export function CustomerForm(props: TCustomerForms) {
 
       toggleCreateCustomerModal();
     } catch (error: any) {
-      captureError({
-        eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-        payload: {
-          id: data.id,
-        },
-        error: error as Error,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("customers.toasts.update.error.title"),

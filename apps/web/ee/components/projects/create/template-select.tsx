@@ -2,13 +2,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ce imports
 import type { TProjectTemplateSelect } from "@/ce/components/projects/create/template-select";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
@@ -44,12 +42,6 @@ export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(pro
             disabled={disabled}
             customLabelContent={isApplyingTemplate && <Spinner className="size-4 animate-spin" />}
             handleTemplateChange={(templateId) => {
-              captureClick({
-                elementName: PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_PROJECT_MODAL_TEMPLATE_OPTION,
-                context: {
-                  id: templateId,
-                },
-              });
               setProjectTemplateId(templateId);
             }}
             showCreateNewTemplate={hasWorkspaceAdminPermission}

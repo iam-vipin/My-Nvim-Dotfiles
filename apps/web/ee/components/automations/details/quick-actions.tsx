@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// icons
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -57,7 +53,6 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
     {
       key: "edit",
       action: () => {
-        captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_EDIT_BUTTON });
         setCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
       },
       title: t("common.actions.edit"),
@@ -67,7 +62,6 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
     {
       key: "delete",
       action: () => {
-        captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_DELETE_BUTTON });
         setIsDeleteModalOpen(true);
       },
       title: t("common.actions.delete"),
@@ -102,7 +96,6 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
                   <CustomMenu.MenuItem
                     key={item.key}
                     onClick={() => {
-                      captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_MENU });
                       item.action();
                     }}
                     className={cn(

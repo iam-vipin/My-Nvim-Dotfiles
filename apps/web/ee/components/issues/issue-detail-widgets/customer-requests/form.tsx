@@ -1,11 +1,9 @@
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { Database, Paperclip } from "lucide-react";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -13,8 +11,9 @@ import type { TCustomerRequest } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getChangedFields } from "@plane/utils";
+// components
 import { RichTextEditor } from "@/components/editor/rich-text";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
@@ -51,7 +50,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
   // states
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [link, setLink] = useState<string | undefined>();
-  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  const [_uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
 
   // refs
 
@@ -104,43 +103,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
         };
     const operation = data?.id
       ? updateCustomerRequest(workspaceSlug, customerId, data?.id, payload)
-          .then((response) => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-              payload: {
-                id: customerId,
-              },
-            });
-            return response;
-          })
-          .catch((error) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-              payload: {
-                id: customerId,
-              },
-              error: error as Error,
-            });
-          })
-      : createCustomerRequest(workspaceSlug, customerId, payload)
-          .then((response) => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
-              payload: {
-                id: customerId,
-              },
-            });
-            return response;
-          })
-          .catch((error: any) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
-              payload: {
-                id: customerId,
-                error: error as Error,
-              },
-            });
-          });
+      : createCustomerRequest(workspaceSlug, customerId, payload);
     setSubmitting(true);
     try {
       const response = await operation;
@@ -155,31 +118,13 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
       });
       // add work item to the customer while creating the request
       if (response?.id && !data?.id) {
-        await addWorkItemsToCustomer(workspaceSlug, customerId, [workItemId], response.id)
-          .then(() => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-              payload: {
-                id: customerId,
-                work_item_ids: [workItemId],
-              },
-            });
-          })
-          .catch((error) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-              payload: {
-                id: customerId,
-                work_item_ids: [workItemId],
-              },
-              error: error as Error,
-            });
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: t("customers.requests.toasts.work_item.add.error.title"),
-              message: error.error || t("customers.requests.toasts.work_item.add.error.message"),
-            });
+        await addWorkItemsToCustomer(workspaceSlug, customerId, [workItemId], response.id).catch((error) => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("customers.requests.toasts.work_item.add.error.title"),
+            message: error.error || t("customers.requests.toasts.work_item.add.error.message"),
           });
+        });
       }
       mutate(`WORK_ITEM_CUSTOMERS${workspaceSlug}_${workItemId}`);
       mutate(`WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}`);
@@ -300,7 +245,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                           });
                           onAssetUpload?.(asset_id);
                           return asset_id;
-                        } catch (error) {
+                        } catch (_error) {
                           throw new Error("Asset upload failed. Please try again later.");
                         }
                       }}
@@ -313,7 +258,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                             workspaceSlug,
                           });
                           return asset_id;
-                        } catch (error) {
+                        } catch (_error) {
                           throw new Error("Asset duplication failed. Please try again later.");
                         }
                       }}

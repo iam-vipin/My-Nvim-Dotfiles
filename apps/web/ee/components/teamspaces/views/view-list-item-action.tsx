@@ -1,23 +1,16 @@
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth } from "lucide-react";
-import { LockIcon } from "@plane/propel/icons";
 // plane imports
-import {
-  EUserPermissionsLevel,
-  TEAMSPACE_VIEW_TRACKER_ELEMENTS,
-  TEAMSPACE_VIEW_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TTeamspaceView } from "@plane/types";
 import { EUserWorkspaceRoles, EViewAccess } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -51,40 +44,12 @@ export const TeamspaceViewListItemAction = observer(function TeamspaceViewListIt
   // handlers
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !teamspaceId || !isFavoriteOperationAllowed) return;
-
-    addViewToFavorites(workspaceSlug.toString(), teamspaceId.toString(), view.id)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_FAVORITE,
-          payload: { id: view?.id },
-        });
-      })
-      .catch((err) => {
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_FAVORITE,
-          error: err,
-          payload: { id: view?.id },
-        });
-      });
+    addViewToFavorites(workspaceSlug.toString(), teamspaceId.toString(), view.id);
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !teamspaceId || !isFavoriteOperationAllowed) return;
-
-    removeViewFromFavorites(workspaceSlug.toString(), teamspaceId.toString(), view.id)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UNFAVORITE,
-          payload: { id: view?.id },
-        });
-      })
-      .catch((err) => {
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UNFAVORITE,
-          error: err,
-          payload: { id: view?.id },
-        });
-      });
+    removeViewFromFavorites(workspaceSlug.toString(), teamspaceId.toString(), view.id);
   };
 
   const ownedByDetails = view.owned_by ? getUserDetails(view.owned_by) : undefined;
@@ -105,9 +70,6 @@ export const TeamspaceViewListItemAction = observer(function TeamspaceViewListIt
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            captureClick({
-              elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.LIST_ITEM_FAVORITE_BUTTON,
-            });
             if (view.is_favorite) handleRemoveFromFavorites();
             else handleAddToFavorites();
           }}

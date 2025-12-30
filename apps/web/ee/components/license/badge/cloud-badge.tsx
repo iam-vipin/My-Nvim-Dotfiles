@@ -2,12 +2,10 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // plane imports
-import { LICENSE_TRACKER_EVENTS } from "@plane/constants";
 import { PlaneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // hooks
-import { captureView } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
@@ -41,16 +39,10 @@ export const CloudEditionBadge = observer(function CloudEditionBadge() {
 
   const handlePaidPlanPurchaseModalOpen = () => {
     togglePaidPlanModal(true);
-    captureView({
-      elementName: LICENSE_TRACKER_EVENTS.purchase_modal_opened,
-    });
   };
 
   const handlePaidPlanSuccessModalOpen = () => {
     handleSuccessModalToggle(true);
-    captureView({
-      elementName: LICENSE_TRACKER_EVENTS.success_modal_opened,
-    });
   };
 
   const renderButtonText = () => {

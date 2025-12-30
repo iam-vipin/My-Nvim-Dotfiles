@@ -1,21 +1,17 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { AlertTriangle, RefreshCw, Hash } from "lucide-react";
+// Plane imports
 import { PlusIcon } from "@plane/propel/icons";
-import { SLACK_INTEGRATION_TRACKER_EVENTS, SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { E_SLACK_ENTITY_TYPE } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TWorkspaceEntityConnection } from "@plane/types";
-// plane web components
-//  plane web hooks
 // plane web types
 import SlackLogo from "@/app/assets/services/slack.png?url";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
 import { MappingLoader } from "../../../ui";
 import { IntegrationsMapping } from "../../../ui/integrations-mapping";
@@ -113,12 +109,6 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
       };
 
       await updateProjectConnection(editConnection.id, updatedConnection);
-      captureSuccess({
-        eventName: SLACK_INTEGRATION_TRACKER_EVENTS.update_project_connection,
-        payload: {
-          connection_id: editConnection.id,
-        },
-      });
       setEditConnection(null);
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -143,24 +133,13 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
         };
 
         await createProjectConnection(entityConnection as TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>);
-        captureSuccess({
-          eventName: SLACK_INTEGRATION_TRACKER_EVENTS.create_project_connection,
-          payload: {
-            connection_id: connectionId,
-          },
-        });
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project connection created successfully",
         });
-      } catch (error) {
-        captureError({
-          eventName: SLACK_INTEGRATION_TRACKER_EVENTS.create_project_connection,
-          payload: {
-            connection_id: connectionId,
-          },
-        });
+      } catch (_error) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -174,19 +153,7 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
   const handleDelete = async (connection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>) => {
     try {
       await deleteProjectConnection(connection.id);
-      captureSuccess({
-        eventName: SLACK_INTEGRATION_TRACKER_EVENTS.delete_project_connection,
-        payload: {
-          connection_id: connection?.id,
-        },
-      });
-    } catch (error) {
-      captureError({
-        eventName: SLACK_INTEGRATION_TRACKER_EVENTS.delete_project_connection,
-        payload: {
-          connection_id: connection?.id,
-        },
-      });
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -240,12 +207,7 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
               {t("slack_integration.project_updates.description")}
             </div>
           </div>
-          <Button
-            variant="secondary"
-            className="h-8 w-8 rounded-sm p-0"
-            onClick={handleOpenCreateModal}
-            data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CHANNEL_MAPPING_HEADER_ADD_BUTTON}
-          >
+          <Button variant="secondary" className="h-8 w-8 rounded-sm p-0" onClick={handleOpenCreateModal}>
             <PlusIcon className="h-5 w-5" />
             <span className="sr-only">{t("slack_integration.project_updates.add_new_project_update")}</span>
           </Button>

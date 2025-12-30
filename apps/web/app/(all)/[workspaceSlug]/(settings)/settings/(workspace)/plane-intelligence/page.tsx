@@ -1,10 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import {
-  E_FEATURE_FLAGS,
-  PLANE_INTELLIGENCE_TRACKER_ELEMENTS,
-  PLANE_INTELLIGENCE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PiIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -16,7 +12,6 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
@@ -47,9 +42,6 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
 
   const toggleTeamsFeature = async () => {
     try {
-      captureClick({
-        elementName: PLANE_INTELLIGENCE_TRACKER_ELEMENTS.SETTINGS_PAGE_TOGGLE_BUTTON,
-      });
       const payload = {
         [EWorkspaceFeatures.IS_PI_ENABLED]: !isPlaneIntelligenceFeatureEnabled,
       };
@@ -66,22 +58,8 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
         },
       });
       await toggleTeamsFeaturePromise;
-      captureSuccess({
-        eventName: PLANE_INTELLIGENCE_TRACKER_EVENTS.TOGGLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-          type: isPlaneIntelligenceFeatureEnabled ? "disable" : "enable",
-        },
-      });
     } catch (error) {
       console.error(error);
-      captureError({
-        eventName: PLANE_INTELLIGENCE_TRACKER_EVENTS.TOGGLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-          type: isPlaneIntelligenceFeatureEnabled ? "disable" : "enable",
-        },
-      });
     }
   };
 

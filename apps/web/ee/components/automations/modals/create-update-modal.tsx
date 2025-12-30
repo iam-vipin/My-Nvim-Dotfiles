@@ -3,15 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TAutomation } from "@plane/types";
 import { EAutomationScope } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
-// helpers
-import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -56,7 +53,6 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
   const { t } = useTranslation();
 
   const handleClose = () => {
-    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.CREATE_UPDATE_MODAL_CANCEL_BUTTON });
     onClose();
   };
 
@@ -64,19 +60,10 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     if (!canCurrentUserCreateAutomation) return;
     try {
       const res = await createAutomation(workspaceSlug, projectId, payload);
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
-        payload: { id: res?.id },
-      });
       if (res?.redirectionLink) {
         router.push(res?.redirectionLink);
       }
     } catch (error: any) {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
-        error: error?.error || error?.message,
-        payload: { workspace_slug: workspaceSlug, project_id: projectId },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.create.error.title"),
@@ -90,16 +77,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     try {
       const automation = getAutomationById(data.id);
       await automation?.update(payload);
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
-        payload: { id: data.id },
-      });
     } catch (error: any) {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
-        error: error?.error || error?.message,
-        payload: { id: data.id },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.update.error.title"),
@@ -180,13 +158,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
           <Button variant="secondary" size="lg" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button
-            variant="primary"
-            size="lg"
-            type="submit"
-            loading={isSubmitting}
-            onClick={() => captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.CREATE_UPDATE_MODAL_SUBMIT_BUTTON })}
-          >
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {isEditing
               ? isSubmitting
                 ? t("common.updating")

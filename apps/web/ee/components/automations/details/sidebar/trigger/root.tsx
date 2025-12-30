@@ -3,12 +3,7 @@ import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { Zap } from "lucide-react";
 // plane imports
-import {
-  AUTOMATION_TRIGGER_SELECT_OPTIONS,
-  DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION,
-  AUTOMATION_TRACKER_ELEMENTS,
-  AUTOMATION_TRACKER_EVENTS,
-} from "@plane/constants";
+import { AUTOMATION_TRIGGER_SELECT_OPTIONS, DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownIcon } from "@plane/propel/icons";
 // helpers
@@ -20,7 +15,6 @@ import type {
 import { EAutomationSidebarTab } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, generateConditionPayload } from "@plane/utils";
-import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
@@ -86,16 +80,8 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
             },
           },
         });
-        captureSuccess({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_CREATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       } catch (error) {
         console.error("Failed to create trigger:", error);
-        captureError({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_CREATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       }
       return;
     }
@@ -106,16 +92,8 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
         await triggerNode.update({
           handler_name: selectedTriggerNodeHandlerName,
         });
-        captureSuccess({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_UPDATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       } catch (error) {
         console.error("Failed to update trigger handler:", error);
-        captureError({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_UPDATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       }
     }
   };
@@ -191,7 +169,6 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
           options={AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT}
           value={selectedTriggerNodeHandlerName}
           onChange={(value: TTriggerNodeHandlerName) => {
-            captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.TRIGGER_CONDITION_DROPDOWN });
             setSelectedTriggerNodeHandlerName(value);
           }}
           customButtonClassName="w-full"

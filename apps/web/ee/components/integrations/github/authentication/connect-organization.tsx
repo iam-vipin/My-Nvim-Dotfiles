@@ -1,13 +1,11 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { GITHUB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EModalWidth, ModalCore, Loader } from "@plane/ui";
 // plane web hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
 import { GithubEnterpriseServerAppForm } from "./server-app-form";
 
@@ -49,23 +47,9 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
     try {
       setIsConnectionSetup(true);
       const response = await connectWorkspaceConnection();
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "GITHUB_ORGANIZATION",
-          workspaceId,
-        },
-      });
       if (response) window.open(response, "_self");
     } catch (error) {
       console.error("connectWorkspaceConnection", error);
-      captureError({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "GITHUB_ORGANIZATION",
-          workspaceId,
-        },
-      });
     } finally {
       setIsConnectionSetup(false);
     }
@@ -75,22 +59,8 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
     try {
       setIsConnectionSetup(true);
       await disconnectWorkspaceConnection();
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITHUB_ORGANIZATION",
-          workspaceId,
-        },
-      });
     } catch (error) {
       console.error("disconnectWorkspaceConnection", error);
-      captureError({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITHUB_ORGANIZATION",
-          workspaceId,
-        },
-      });
     } finally {
       setIsConnectionSetup(false);
     }
@@ -155,7 +125,6 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
           className="flex-shrink-0"
           onClick={handleGithubAuth}
           disabled={(isLoading && workspaceConnectionId) || isConnectionSetup || error}
-          data-ph-element={GITHUB_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_ORGANIZATION_BUTTON}
         >
           {(isLoading && !workspaceConnectionId) || error
             ? "..."

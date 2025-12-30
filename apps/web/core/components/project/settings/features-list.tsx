@@ -1,14 +1,11 @@
 import { observer } from "mobx-react";
 // plane imports
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject, TProjectFeatures } from "@plane/types";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -50,14 +47,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
       updatePromises.push(toggleProjectFeatures(workspaceSlug, projectId, settingsPayload));
     }
 
-    const promises = Promise.all(updatePromises).then(() => {
-      captureSuccess({
-        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
-        payload: {
-          feature_key: featureKey,
-        },
-      });
-    });
+    const promises = Promise.all(updatePromises);
 
     setPromiseToast(promises, {
       loading: "Updating project feature...",
@@ -71,12 +61,6 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
       },
     });
     void updateProjectPromise.then(() => {
-      captureSuccess({
-        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
-        payload: {
-          feature_key: featureKey,
-        },
-      });
       return undefined;
     });
   };

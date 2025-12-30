@@ -1,15 +1,12 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TTeamspaceActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web constants
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teamspace";
 // plane web helpers
 import { getTeamspaceActivityKey } from "@/plane-web/helpers/teamspace-helper";
@@ -71,9 +68,6 @@ export const TeamsOverviewSidebarActivity = observer(function TeamsOverviewSideb
             <ActivitySortRoot
               sortOrder={teamspaceActivitySortOrder}
               toggleSort={() => {
-                captureClick({
-                  elementName: TEAMSPACE_UPDATES_TRACKER_ELEMENTS.SIDEBAR_ACTIVITY_SORT_BUTTON,
-                });
                 toggleTeamspaceActivitySortOrder();
               }}
             />

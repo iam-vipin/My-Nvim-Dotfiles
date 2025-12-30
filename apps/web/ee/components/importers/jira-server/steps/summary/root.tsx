@@ -1,8 +1,7 @@
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import type { TJobStatus } from "@plane/etl/core";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import type { JiraConfig } from "@plane/etl/jira";
@@ -11,7 +10,6 @@ import { Button } from "@plane/propel/button";
 import type { TImportJob } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
 import { useJiraServerImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
@@ -84,22 +82,8 @@ export const SummaryRoot = observer(function SummaryRoot() {
             status: E_JOB_STATUS.CREATED as TJobStatus,
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
-          captureSuccess({
-            eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-            payload: {
-              jobId: importerCreateJob?.id,
-              type: E_IMPORTER_KEYS.JIRA_SERVER,
-            },
-          });
           if (importerCreateJob && importerCreateJob?.id) {
             await startJob(importerCreateJob?.id);
-            captureSuccess({
-              eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
-              payload: {
-                jobId: importerCreateJob?.id,
-                type: E_IMPORTER_KEYS.JIRA_SERVER,
-              },
-            });
             handleDashboardView();
             // clearing the existing data in the context
             resetImporterData();
@@ -109,13 +93,6 @@ export const SummaryRoot = observer(function SummaryRoot() {
         }
       } catch (error) {
         console.error("error", error);
-        captureError({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-          error: error as Error,
-          payload: {
-            type: E_IMPORTER_KEYS.JIRA_SERVER,
-          },
-        });
       } finally {
         setCreateConfigLoader(false);
       }

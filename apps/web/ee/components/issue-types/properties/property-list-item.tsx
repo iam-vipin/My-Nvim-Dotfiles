@@ -17,8 +17,6 @@ import type {
 } from "@plane/types";
 import { EIssuePropertyType } from "@plane/types";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
 // local imports
@@ -188,14 +186,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
       options: optionsPayload,
     })
       .then(async (response) => {
-        if (trackers?.create?.eventName) {
-          captureSuccess({
-            eventName: trackers.create.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("work_item_types.settings.properties.toast.create.success.title"),
@@ -206,15 +196,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
         return response;
       })
       .catch((error) => {
-        if (trackers?.create?.eventName) {
-          captureError({
-            eventName: trackers.create.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-            error: error,
-          });
-        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("work_item_types.settings.properties.toast.create.error.title"),
@@ -265,14 +246,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
       options: optionsPayload,
     })
       .then(() => {
-        if (trackers?.update?.eventName) {
-          captureSuccess({
-            eventName: trackers.update.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         if (showToast)
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -283,15 +256,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
           });
       })
       .catch((error) => {
-        if (trackers?.update?.eventName) {
-          captureError({
-            eventName: trackers.update.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-            error: error,
-          });
-        }
         if (showToast)
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -326,14 +290,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     setIsSubmitting(true);
     await deleteProperty(propertyId)
       .then(() => {
-        if (trackers?.delete?.eventName) {
-          captureSuccess({
-            eventName: trackers.delete.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("work_item_types.settings.properties.toast.delete.success.title"),
@@ -343,14 +299,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
         });
       })
       .catch(() => {
-        if (trackers?.delete?.eventName) {
-          captureError({
-            eventName: trackers.delete.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("work_item_types.settings.properties.toast.delete.error.title"),

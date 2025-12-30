@@ -2,12 +2,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EPageAccess, TEAMSPACE_PAGE_TRACKER_ELEMENTS, TEAMSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-// components
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
@@ -39,25 +37,12 @@ export const TeamspacePagesListHeaderActions = observer(function TeamspacePagesL
       .then((res) => {
         const pageRedirectionLink = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
         router.push(pageRedirectionLink);
-        captureSuccess({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            id: res?.id,
-            teamspaceId,
-          },
-        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
-        });
-        captureError({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            teamspaceId,
-          },
         });
       })
       .finally(() => setIsCreatingPage(false));
@@ -68,13 +53,7 @@ export const TeamspacePagesListHeaderActions = observer(function TeamspacePagesL
   return (
     <>
       {isEditingAllowed && (
-        <Button
-          variant="primary"
-          onClick={handleCreatePage}
-          loading={isCreatingPage}
-          data-ph-element={TEAMSPACE_PAGE_TRACKER_ELEMENTS.HEADER_CREATE_PAGE_BUTTON}
-          size="lg"
-        >
+        <Button variant="primary" onClick={handleCreatePage} loading={isCreatingPage} size="lg">
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>
       )}

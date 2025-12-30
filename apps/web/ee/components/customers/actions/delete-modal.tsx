@@ -3,13 +3,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // ui
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useCustomers } from "@/plane-web/hooks/store";
 
@@ -42,26 +40,13 @@ export const DeleteCustomerModal = observer(function DeleteCustomerModal(props: 
           router.push(`/${workspaceSlug}/customers`);
         }
         handleClose();
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.delete_customer,
-          payload: {
-            id: customerId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Customer deleted successfully.",
         });
       })
-      .catch((error) => {
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.delete_customer,
-          payload: {
-            id: customerId,
-          },
-          error: error as Error,
-        });
+      .catch((_error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

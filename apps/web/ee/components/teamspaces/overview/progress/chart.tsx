@@ -3,14 +3,12 @@ import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
 import type { EProgressXAxisKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
-import { EProgressDataKeys, TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
+import { EProgressDataKeys } from "@plane/constants";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TBarItem, TChartData } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn, renderFormattedDateWithoutYear } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/plane-web/constants/teamspace";
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -82,9 +80,6 @@ export const TeamspaceProgressChart = observer(function TeamspaceProgressChart(p
           value={xAxisKey}
           options={progressXAxisOptions}
           onChange={(value) => {
-            captureClick({
-              elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.PROGRESS_FILTER_DROPDOWN,
-            });
             handleXAxisKeyChange(value as EProgressXAxisKeys);
           }}
           keyExtractor={(option) => option.data}

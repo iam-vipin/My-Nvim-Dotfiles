@@ -1,7 +1,7 @@
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -9,7 +9,6 @@ import type { TGithubEntityConnection, TStateMap } from "@plane/types";
 import { E_STATE_MAP_KEYS } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SelectProject } from "@/plane-web/components/integrations/github/common";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
@@ -86,22 +85,9 @@ export const EditPRStateMappingForm = observer(function EditPRStateMappingForm(p
         type: EGithubEntityConnectionType.PROJECT_PR_AUTOMATION,
       };
       await updateEntity(data.id, payload);
-      captureSuccess({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.update_entity_connection,
-        payload: {
-          id: data.id,
-        },
-      });
-
       handleModal(false);
     } catch (error) {
       console.error("handleSubmit", error);
-      captureError({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.update_entity_connection,
-        payload: {
-          id: data.id,
-        },
-      });
     } finally {
       setIsSubmitting(false);
     }

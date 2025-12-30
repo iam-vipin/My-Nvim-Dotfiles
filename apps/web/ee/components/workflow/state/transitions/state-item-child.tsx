@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-
-import { InfoIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
-import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
+import { InfoIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IState } from "@plane/types";
@@ -12,7 +10,6 @@ import { cn } from "@plane/utils";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { StateItemContent } from "./state-item-content";
@@ -46,21 +43,7 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
   const currentTransitionIds = Object.keys(currentTransitionMap ?? {});
 
   const handleToggleAllowWorkItemCreation = async () => {
-    await toggleAllowWorkItemCreationLogic(workspaceSlug, state.id)
-      .then(() => {
-        captureSuccess({
-          eventName: WORKFLOW_TRACKER_EVENTS.TOGGLE_WORK_ITEM_CREATION,
-          payload: {
-            project_id: projectId,
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: WORKFLOW_TRACKER_EVENTS.TOGGLE_WORK_ITEM_CREATION,
-          error: error as Error,
-        });
-      });
+    await toggleAllowWorkItemCreationLogic(workspaceSlug, state.id);
   };
 
   return (
@@ -101,7 +84,6 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
                       onChange={() => handleToggleAllowWorkItemCreation()}
                       label={t("workflows.workflow_states.work_item_creation")}
                       disabled={isDefaultState}
-                      data-ph-element={WORKFLOW_TRACKER_ELEMENTS.ADD_NEW_WORK_ITEMS_TOGGLE_BUTTON}
                     />
                   )}
                 </div>

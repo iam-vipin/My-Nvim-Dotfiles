@@ -1,12 +1,8 @@
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { ScrollArea } from "@plane/propel/scrollarea";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomer } from "@plane/types";
 // plane web imports
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SidebarWrapper } from "@/plane-web/components/common/layout/sidebar/sidebar-wrapper";
 import {
   CustomerAdditionalPropertyValuesUpdate,
@@ -32,27 +28,13 @@ export const CustomerDetailSidebar = observer(function CustomerDetailSidebar(pro
       _payload = { ...data, website_url: parsedUrl };
     }
     updateCustomer(workspaceSlug, customerId, _payload)
-      .then(() => {
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-        });
-      })
-      .catch((error: unknown) => {
+      .then(() => {})
+      .catch((error) => {
         const errorMessage = (error as { error?: string })?.error;
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: errorMessage || "Unable to update property.Try again!",
-        });
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-          error: error as Error,
         });
       });
   };

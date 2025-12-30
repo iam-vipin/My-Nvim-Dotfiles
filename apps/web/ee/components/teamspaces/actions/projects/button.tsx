@@ -4,14 +4,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon } from "lucide-react";
 // components
-import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
@@ -58,24 +56,12 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
           title: "Success!",
           message: `Teamspace projects updated successfully.`,
         });
-        captureSuccess({
-          eventName: TEAMSPACE_TRACKER_EVENTS.PROJECTS_UPDATED,
-          payload: {
-            id: teamspaceId,
-          },
-        });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? `Failed to update teamspace projects. Please try again!`,
-        });
-        captureError({
-          eventName: TEAMSPACE_TRACKER_EVENTS.PROJECTS_UPDATED,
-          payload: {
-            id: teamspaceId,
-          },
         });
       });
   };

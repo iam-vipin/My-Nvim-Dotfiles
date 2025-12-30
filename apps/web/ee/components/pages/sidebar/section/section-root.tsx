@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, memo, useRef, useState } from "react";
+import { useEffect, useMemo, memo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
@@ -6,11 +6,10 @@ import { Loader } from "lucide-react";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -112,22 +111,9 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
 
     try {
       const res = await createPage(payload);
-      captureSuccess({
-        eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-        payload: {
-          id: res?.id,
-          state: "SUCCESS",
-        },
-      });
       const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
       router.push(pageId);
     } catch (err: any) {
-      captureError({
-        eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-        payload: {
-          state: "ERROR",
-        },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

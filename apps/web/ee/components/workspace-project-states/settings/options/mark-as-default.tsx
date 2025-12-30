@@ -1,11 +1,8 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { PROJECT_STATE_TRACKER_ELEMENTS, PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
 import { cn } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 
 type TProjectStateMarksAsDefault = { workspaceSlug: string; stateId: string; isDefault: boolean };
@@ -26,20 +23,8 @@ export const ProjectStateMarksAsDefault = observer(function ProjectStateMarksAsD
     try {
       setIsLoading(false);
       await markAsDefault(workspaceSlug, stateId);
-      captureSuccess({
-        eventName: PROJECT_STATE_TRACKER_EVENTS.mark_as_default,
-        payload: {
-          stateId,
-        },
-      });
       setIsLoading(false);
     } catch (error) {
-      captureError({
-        eventName: PROJECT_STATE_TRACKER_EVENTS.mark_as_default,
-        payload: {
-          stateId,
-        },
-      });
       setIsLoading(false);
     }
   };
@@ -52,7 +37,6 @@ export const ProjectStateMarksAsDefault = observer(function ProjectStateMarksAsD
       )}
       disabled={isDefault || isLoading}
       onClick={handleMarkAsDefault}
-      data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_MARK_AS_DEFAULT_BUTTON}
     >
       {isLoading ? "Marking as default" : isDefault ? `Default` : `Mark as default`}
     </button>

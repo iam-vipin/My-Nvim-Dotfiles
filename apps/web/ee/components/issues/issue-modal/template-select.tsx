@@ -1,16 +1,13 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
 import type { TWorkItemTemplateSelect } from "@/ce/components/issues/issue-modal/template-select";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -68,12 +65,6 @@ export const WorkItemTemplateSelect = observer(function WorkItemTemplateSelect(p
                 placeholder={placeholder}
                 customLabelContent={isApplyingTemplate && <Spinner className="size-4 animate-spin" />}
                 handleTemplateChange={(templateId) => {
-                  captureClick({
-                    elementName: WORKITEM_TEMPLATE_TRACKER_ELEMENTS.CREATE_WORKITEM_MODAL_TEMPLATE_OPTION,
-                    context: {
-                      id: templateId,
-                    },
-                  });
                   setWorkItemTemplateId(templateId);
                   handleFormChange?.();
                 }}

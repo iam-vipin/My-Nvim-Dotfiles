@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { CircleX, Loader, RefreshCcw } from "lucide-react";
 import { InfoIcon, ProjectIcon } from "@plane/propel/icons";
-import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import type { TJobStatus } from "@plane/etl/core";
 import { E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +13,6 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { TImportJob, TLogoProps } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
 import { DashboardLoaderTable, IconFieldRender, SyncJobStatus } from "./";
@@ -139,22 +137,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
         await startJob(reRunJobId);
         await handleJobsRefresh();
         handleClose();
-        captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.RE_RUN,
-          payload: {
-            jobId: reRunJobId,
-          },
-        });
       }
     } catch (error) {
       console.error(`Error while re-running ${serviceName} job`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.RE_RUN,
-        error: error as Error,
-        payload: {
-          jobId: reRunJobId,
-        },
-      });
     } finally {
       setModalLoader(false);
     }
@@ -167,22 +152,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
         await cancelJob(cancelJobId);
         await handleJobsRefresh();
         handleClose();
-        captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.CANCEL,
-          payload: {
-            jobId: cancelJobId,
-          },
-        });
       }
     } catch (error) {
       console.error(`Error while cancelling ${serviceName} job`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.CANCEL,
-        error: error as Error,
-        payload: {
-          jobId: cancelJobId,
-        },
-      });
     } finally {
       setModalLoader(false);
     }
@@ -192,22 +164,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     try {
       if (currentAuth?.isAuthenticated) {
         await fetchJobs();
-        captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
-          payload: {
-            serviceName,
-          },
-        });
       }
     } catch (error) {
       console.error(`Error while refreshing ${serviceName} jobs`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
-        error: error as Error,
-        payload: {
-          serviceName,
-        },
-      });
     }
   };
 
@@ -216,21 +175,8 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
       setDeactivateLoader(true);
       await deactivateAuth();
       handleDashboardView();
-      captureSuccess({
-        eventName: IMPORTER_TRACKER_EVENTS.DEACTIVATE,
-        payload: {
-          serviceName,
-        },
-      });
     } catch (error) {
       console.error(`Error while deactivating ${serviceName} auth`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.DEACTIVATE,
-        error: error as Error,
-        payload: {
-          serviceName,
-        },
-      });
     } finally {
       setDeactivateLoader(false);
     }
@@ -260,18 +206,12 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                   onClick={handleDeactivateAuth}
                   className="bg-transparent"
                   disabled={deactivateLoader}
-                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_DEACTIVATE_BUTTON}
                 >
                   {deactivateLoader ? "Deactivating..." : "Deactivate"}
                 </Button>
               )}
               {!currentAuth?.sourceTokenInvalid ? (
-                <Button
-                  onClick={handleDashboardView}
-                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_IMPORT_BUTTON}
-                >
-                  {t("importers.import")}
-                </Button>
+                <Button onClick={handleDashboardView}>{t("importers.import")}</Button>
               ) : (
                 <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
                   <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
@@ -296,7 +236,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                   className="whitespace-nowrap border-none !px-1"
                   onClick={handleJobsRefresh}
                   disabled={loader === "re-fetch"}
-                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_REFRESH_BUTTON}
                 >
                   <div className="relative flex items-center gap-1.5 text-11">
                     {loader === "re-fetch" ? <Loader size={12} className="animate-spin" /> : <RefreshCcw size={12} />}
@@ -376,7 +315,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                                 prependIcon={<RefreshCcw className="w-3 h-3" />}
                                 onClick={() => handleRerunOpen(job.id)}
                                 disabled={isReRunDisabled(job)}
-                                data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_RE_RUN_BUTTON}
                               >
                                 {t("importers.re_run")}
                               </Button>
@@ -387,7 +325,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                                 prependIcon={<CircleX className="w-3 h-3" />}
                                 onClick={() => handleCancelOpen(job.id)}
                                 disabled={isCancelDisabled(job)}
-                                data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_CANCEL_BUTTON}
                               >
                                 {t("importers.cancel")}
                               </Button>

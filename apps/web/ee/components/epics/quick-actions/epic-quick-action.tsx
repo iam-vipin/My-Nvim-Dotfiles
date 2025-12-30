@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { Ellipsis } from "lucide-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EPIC_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -15,7 +15,6 @@ import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import type { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 // hooks
 import type { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -233,12 +232,6 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
                     onClick={() => {
-                      captureClick({
-                        elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
-                        context: {
-                          activeLayout,
-                        },
-                      });
                       nestedItem.action();
                     }}
                     className={cn(
@@ -274,12 +267,6 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
-                  context: {
-                    activeLayout,
-                  },
-                });
                 item.action();
               }}
               className={cn(

@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
-
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
-import { MILESTONE_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -11,7 +10,6 @@ import { CustomMenu, cn } from "@plane/ui";
 // helper
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { CreateUpdateMilestoneModal } from "./create-update-modal";
@@ -70,9 +68,6 @@ export const useMilestonesWorkItemOperations = (
       removeRelation: async (workspaceSlug: string, projectId: string, workItemId: string) => {
         try {
           return removeWorkItemFromMilestone(workspaceSlug, projectId, milestoneId, workItemId).then(() => {
-            captureSuccess({
-              eventName: MILESTONE_TRACKER_EVENTS.remove_work_items_from_milestone,
-            });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
@@ -80,12 +75,7 @@ export const useMilestonesWorkItemOperations = (
             });
             return;
           });
-        } catch (error) {
-          captureError({
-            eventName: MILESTONE_TRACKER_EVENTS.remove_work_items_from_milestone,
-
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",

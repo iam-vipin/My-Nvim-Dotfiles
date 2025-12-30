@@ -120,7 +120,6 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
             groupKey={groupKey}
             handleClose={() => setCreateState(false)}
             createStateCallback={stateOperationsCallbacks.createState}
-            shouldTrackEvents={shouldTrackEvents}
           />
         </div>
       )}

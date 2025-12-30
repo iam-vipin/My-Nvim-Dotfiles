@@ -1,13 +1,10 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IProject, TGithubEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
-// plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
@@ -47,21 +44,9 @@ export const PRStateMappingEntityItem = observer(function PRStateMappingEntityIt
     try {
       setDeleteLoader(true);
       await deleteEntity(entityConnection.id);
-      captureSuccess({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.delete_entity_connection,
-        payload: {
-          id: entityConnection.id,
-        },
-      });
       setDeleteModal(false);
     } catch (error) {
       console.error("handleDeleteModalSubmit", error);
-      captureError({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.delete_entity_connection,
-        payload: {
-          id: entityConnection.id,
-        },
-      });
     } finally {
       setDeleteLoader(false);
     }

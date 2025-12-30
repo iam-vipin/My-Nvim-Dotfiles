@@ -1,14 +1,11 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProjectView, TTeamspaceView } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { joinUrlPath } from "@plane/utils";
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
@@ -46,10 +43,6 @@ export const CreateUpdateTeamspaceViewModal = observer(function CreateUpdateTeam
     await createView(workspaceSlug, teamspaceId, payload)
       .then((view) => {
         router.push(joinUrlPath(workspaceSlug, "teamspaces", teamspaceId, "views", view.id));
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_CREATE,
-          payload: { id: view.id },
-        });
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -57,11 +50,7 @@ export const CreateUpdateTeamspaceViewModal = observer(function CreateUpdateTeam
           message: "View created successfully.",
         });
       })
-      .catch((error) => {
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_CREATE,
-          error: error,
-        });
+      .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -75,18 +64,9 @@ export const CreateUpdateTeamspaceViewModal = observer(function CreateUpdateTeam
       .then((viewDetails) => {
         mutateFilters(workspaceSlug, viewDetails.id, viewDetails);
         resetExpression(EIssuesStoreType.TEAM_VIEW, viewDetails.id, viewDetails.rich_filters);
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UPDATE,
-          payload: { id: data?.id },
-        });
         handleClose();
       })
       .catch((err) => {
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UPDATE,
-          error: err,
-          payload: { id: data?.id },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

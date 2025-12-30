@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -12,7 +11,6 @@ import type {
   TChangePropertyActionFormConfig,
 } from "@plane/types";
 import { EActionNodeHandlerName, EAutomationNodeType } from "@plane/types";
-import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 import type { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
@@ -111,17 +109,9 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
         handler_name: data.handler_name,
         config: validConfig,
       });
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_CREATED,
-        payload: { id: automationId, handler_name: data.handler_name },
-      });
       setIsActionFormOpen(false);
+      setIsCreatingUpdatingAction(false);
     } catch {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_CREATED,
-        payload: { id: automationId, handler_name: data.handler_name },
-      });
-    } finally {
       setIsCreatingUpdatingAction(false);
     }
   };
@@ -143,16 +133,8 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
         handler_name: data.handler_name,
         config: validConfig,
       });
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_UPDATED,
-        payload: { id: automationId, handler_name: data.handler_name },
-      });
+      setIsCreatingUpdatingAction(false);
     } catch {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_UPDATED,
-        payload: { id: automationId, handler_name: data.handler_name },
-      });
-    } finally {
       setIsCreatingUpdatingAction(false);
     }
   };
@@ -161,16 +143,8 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
     if (!selectedActionToDelete) return;
     try {
       await automation?.deleteAction(selectedActionToDelete);
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_DELETED,
-        payload: { id: automationId, action_id: selectedActionToDelete },
-      });
+      setSelectedActionToDelete(null);
     } catch {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_DELETED,
-        payload: { id: automationId, action_id: selectedActionToDelete },
-      });
-    } finally {
       setSelectedActionToDelete(null);
     }
   };
@@ -221,7 +195,6 @@ export const AutomationDetailsSidebarActionRoot = observer(function AutomationDe
             <Button
               variant="secondary"
               onClick={() => {
-                captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.ADD_ACTION_BUTTON });
                 openActionForm(actionFormRef.current);
               }}
               loading={isCreatingUpdatingAction}

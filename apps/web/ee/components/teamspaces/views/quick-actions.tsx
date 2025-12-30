@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-
 import { NewTabIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TTeamspaceView } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -11,7 +10,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
@@ -91,9 +89,6 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
   const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
     ...item,
     action: () => {
-      captureClick({
-        elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
       item.action();
     },
   }));
@@ -128,9 +123,6 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.LIST_ITEM_QUICK_ACTIONS,
-                });
                 item.action();
               }}
               className={cn(

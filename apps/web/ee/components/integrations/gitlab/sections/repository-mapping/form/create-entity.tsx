@@ -1,13 +1,12 @@
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { GITLAB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TGitlabEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { EntityForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
@@ -50,20 +49,10 @@ export const EntityFormCreate = observer(function EntityFormCreate(props: TEntit
         project_id: projectMap.projectId,
       };
       await createEntityConnection(payload);
-
       setProjectMap(projectMapInit);
-
       handleModal(false);
-      captureSuccess({
-        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.add_gitlab_project,
-        payload,
-      });
     } catch (error) {
       console.error("handleSubmit", error);
-      captureError({
-        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.add_gitlab_project,
-        error: error as Error,
-      });
     } finally {
       setIsSubmitting(false);
     }

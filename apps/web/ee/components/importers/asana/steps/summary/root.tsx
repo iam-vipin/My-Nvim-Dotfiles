@@ -1,18 +1,14 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// ui
 // silo
-import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
-import type { AsanaConfig, AsanaSection } from "@plane/etl/asana";
+import type { AsanaConfig } from "@plane/etl/asana";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TImportJob } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useAsanaImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -83,22 +79,8 @@ export const SummaryRoot = observer(function SummaryRoot() {
             source: E_IMPORTER_KEYS.ASANA,
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
-          captureSuccess({
-            eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-            payload: {
-              jobId: importerCreateJob?.id,
-              type: E_IMPORTER_KEYS.ASANA,
-            },
-          });
           if (importerCreateJob && importerCreateJob?.id) {
             await startJob(importerCreateJob?.id);
-            captureSuccess({
-              eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
-              payload: {
-                jobId: importerCreateJob?.id,
-                type: E_IMPORTER_KEYS.ASANA,
-              },
-            });
             handleDashboardView();
             // clearing the existing data in the context
             resetImporterData();
@@ -108,13 +90,6 @@ export const SummaryRoot = observer(function SummaryRoot() {
         }
       } catch (error) {
         console.error("error", error);
-        captureError({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-          error: error as Error,
-          payload: {
-            type: E_IMPORTER_KEYS.ASANA,
-          },
-        });
       } finally {
         setCreateConfigLoader(false);
       }

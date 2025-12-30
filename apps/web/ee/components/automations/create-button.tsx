@@ -1,10 +1,7 @@
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TButtonVariant } from "@plane/propel/button";
 import { Button } from "@plane/propel/button";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -25,7 +22,6 @@ export function CreateAutomationButton(props: TProps) {
     <Button
       variant={variant}
       onClick={() => {
-        captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.HEADER_CREATE_BUTTON });
         setCreateUpdateModalConfig({ isOpen: true, payload: null });
       }}
     >

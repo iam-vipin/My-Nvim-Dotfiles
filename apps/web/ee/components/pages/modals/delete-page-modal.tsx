@@ -2,12 +2,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -40,13 +38,6 @@ export const WikiDeletePageModal = observer(function WikiDeletePageModal(props: 
     setIsDeleting(true);
     await removePage({ pageId: page.id, shouldSync: true })
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            ...page,
-            state: "SUCCESS",
-          },
-        });
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -56,13 +47,6 @@ export const WikiDeletePageModal = observer(function WikiDeletePageModal(props: 
         router.back();
       })
       .catch(() => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            ...page,
-            state: "FAILED",
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

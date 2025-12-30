@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { mutate } from "swr";
-// types
-import { CYCLE_TRACKER_EVENTS, E_FEATURE_FLAGS } from "@plane/constants";
+// Plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
-// ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// hooks
 import { renderFormattedPayloadDate } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
 import useKeypress from "@/hooks/use-keypress";
@@ -66,22 +64,12 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.create,
-          payload: {
-            id: res.id,
-          },
-        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? "Error in creating cycle. Please try again.",
-        });
-        captureError({
-          eventName: CYCLE_TRACKER_EVENTS.create,
-          error: err,
         });
       });
   };
@@ -92,12 +80,6 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then((res) => {
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.update,
-          payload: {
-            id: res.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -109,10 +91,6 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? "Error in updating cycle. Please try again.",
-        });
-        captureError({
-          eventName: CYCLE_TRACKER_EVENTS.update,
-          error: err,
         });
       });
   };

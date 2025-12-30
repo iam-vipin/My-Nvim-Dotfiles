@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 // plane imports
-import { INITIATIVE_TRACKER_EVENTS, INITIATIVES_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -12,7 +11,6 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -45,9 +43,6 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
 
   const toggleInitiativesFeature = async () => {
     try {
-      captureClick({
-        elementName: INITIATIVES_TRACKER_ELEMENTS.SETTINGS_PAGE_ENABLE_DISABLE_BUTTON,
-      });
       const payload = {
         [EWorkspaceFeatures.IS_INITIATIVES_ENABLED]: !isInitiativesFeatureEnabled,
       };
@@ -65,21 +60,8 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
         },
       });
       await toggleInitiativesFeaturePromise;
-      captureSuccess({
-        eventName: INITIATIVE_TRACKER_EVENTS.TOGGLE,
-        payload: {
-          value: !isInitiativesFeatureEnabled,
-        },
-      });
     } catch (error) {
       console.error(error);
-      captureError({
-        eventName: INITIATIVE_TRACKER_EVENTS.TOGGLE,
-        error: error as Error,
-        payload: {
-          value: !isInitiativesFeatureEnabled,
-        },
-      });
     }
   };
 

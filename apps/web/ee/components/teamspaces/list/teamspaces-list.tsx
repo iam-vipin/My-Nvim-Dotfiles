@@ -13,7 +13,6 @@ import nameFilterLight from "@/app/assets/empty-state/project/name-filter-light.
 // components
 import { ListLayout } from "@/components/core/list/list-root";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
@@ -58,7 +57,6 @@ export const TeamspacesList = observer(function TeamspacesList(props: TTeamspace
           {
             label: t("workspace_empty_state.teamspaces.cta_primary"),
             onClick: () => {
-              captureClick({ elementName: TEAMSPACE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON });
               toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
             },
             disabled: !hasWorkspaceAdminLevelPermissions,

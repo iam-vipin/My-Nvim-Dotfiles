@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 // plane imports
-import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -76,34 +74,8 @@ export const useSectionDragAndDrop = (
 
           try {
             await droppedPageDetails.update(updateData);
-            captureSuccess({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
-              payload: {
-                id: droppedPageDetails.id,
-                state: "SUCCESS",
-                updated: {
-                  from_access: droppedPageDetails.access,
-                  to_access: newAccess,
-                  from_parent: droppedPageDetails.parent_id,
-                  to_parent: null,
-                },
-              },
-            });
           } catch (error) {
             console.error("Failed to update page:", error);
-            captureError({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
-              payload: {
-                id: droppedPageDetails.id,
-                state: "ERROR",
-                updated: {
-                  from_access: droppedPageDetails.access,
-                  to_access: newAccess,
-                  from_parent: droppedPageDetails.parent_id,
-                  to_parent: null,
-                },
-              },
-            });
           }
         },
         canDrop: ({ source }) => {

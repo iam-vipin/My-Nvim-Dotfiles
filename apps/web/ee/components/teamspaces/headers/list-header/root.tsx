@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TeamsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -9,7 +9,6 @@ import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -53,9 +52,6 @@ export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader
           {hasAdminLevelPermissions && (
             <Button
               onClick={() => {
-                captureClick({
-                  elementName: TEAMSPACE_TRACKER_ELEMENTS.LIST_HEADER_ADD_BUTTON,
-                });
                 toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
               }}
               className="items-center gap-1"

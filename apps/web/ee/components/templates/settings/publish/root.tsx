@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
@@ -11,8 +11,6 @@ import {
   getTemplateSettingsBasePath,
   getTemplateTypeI18nName,
 } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -69,24 +67,12 @@ export const PublishTemplate = observer(function PublishTemplate<T extends TBase
             templateType: t(getTemplateTypeI18nName(templateInstance.template_type))?.toLowerCase(),
           }),
         });
-        captureSuccess({
-          eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.PUBLISH,
-          payload: {
-            id: templateInstance.id,
-          },
-        });
       } catch (error) {
         console.error("Template update failed:", error);
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("templates.toasts.update.error.title"),
           message: t("templates.toasts.update.error.message"),
-        });
-        captureError({
-          eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.PUBLISH,
-          payload: {
-            id: templateInstance.id,
-          },
         });
       }
     },

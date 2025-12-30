@@ -5,10 +5,9 @@ import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
 import type { TUserConnection } from "@plane/constants";
-import { INTEGRATION_TRACKER_EVENTS, USER_CONNECTION_PROVIDERS, E_INTEGRATION_KEYS } from "@plane/constants";
+import { USER_CONNECTION_PROVIDERS, E_INTEGRATION_KEYS } from "@plane/constants";
 import type { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 
@@ -115,23 +114,9 @@ export const ConnectionMapper = observer(function ConnectionMapper(props: {
         user.data?.id,
         true
       );
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "GITHUB_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
       if (response) window.open(response, "_self");
     } else if (source === E_INTEGRATION_KEYS.SLACK) {
       const response = await connectUser(selectedWorkspace.id, selectedWorkspace.slug, true);
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "SLACK_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
       if (response) window.open(response, "_self");
     } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
       const response = await connectGithubEnterpriseUserCredential(
@@ -147,22 +132,8 @@ export const ConnectionMapper = observer(function ConnectionMapper(props: {
   const handleDisconnection = async (source: TUserConnection) => {
     if (source === E_INTEGRATION_KEYS.GITHUB) {
       await disconnectGithubUserCredential(selectedWorkspace.id, user.data?.id);
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITHUB_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
     } else if (source === E_INTEGRATION_KEYS.SLACK) {
       await disconnectUser(selectedWorkspace.id);
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "SLACK_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
     } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
       await disconnectGithubEnterpriseUserCredential(selectedWorkspace.id, user.data?.id);
     }

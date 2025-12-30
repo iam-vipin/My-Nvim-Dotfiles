@@ -1,20 +1,13 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  EIssueFilterType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS,
-  TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 
@@ -36,20 +29,7 @@ export const TeamHeaderFilters = observer(function TeamHeaderFilters(props: Prop
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !teamspaceId) return;
-      captureClick({
-        elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_UPDATE_LAYOUT_BUTTON,
-      });
-      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout })
-        .then(() => {
-          captureSuccess({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.LAYOUT_UPDATE,
-          });
-        })
-        .catch(() => {
-          captureError({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.LAYOUT_UPDATE,
-          });
-        });
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, teamspaceId, updateFilters]
   );
@@ -57,20 +37,7 @@ export const TeamHeaderFilters = observer(function TeamHeaderFilters(props: Prop
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !teamspaceId) return;
-      captureClick({
-        elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_UPDATE_DISPLAY_FILTER_BUTTON,
-      });
-      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter)
-        .then(() => {
-          captureSuccess({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_FILTER_UPDATE,
-          });
-        })
-        .catch(() => {
-          captureError({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_FILTER_UPDATE,
-          });
-        });
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [workspaceSlug, teamspaceId, updateFilters]
   );
@@ -78,20 +45,7 @@ export const TeamHeaderFilters = observer(function TeamHeaderFilters(props: Prop
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !teamspaceId) return;
-      captureClick({
-        elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_UPDATE_DISPLAY_PROPERTY_BUTTON,
-      });
-      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_PROPERTIES, property)
-        .then(() => {
-          captureSuccess({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_PROPERTY_UPDATE,
-          });
-        })
-        .catch(() => {
-          captureError({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_PROPERTY_UPDATE,
-          });
-        });
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
     [workspaceSlug, teamspaceId, updateFilters]
   );

@@ -1,11 +1,9 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane web imports
 import { SettingsHeading } from "@/components/settings/heading";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { CreateOrUpdateIssueTypeModal } from "./create-update/modal";
@@ -69,9 +67,6 @@ export const IssueTypesRoot = observer(function IssueTypesRoot(props: TIssueType
         button={{
           label: t("work_item_types.create.button"),
           onClick: () => {
-            captureClick({
-              elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_CREATE_WORK_ITEM_TYPE_BUTTON,
-            });
             setIsModalOpen(true);
           },
         }}

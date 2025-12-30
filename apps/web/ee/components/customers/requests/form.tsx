@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Database, Paperclip } from "lucide-react";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { LayersIcon } from "@plane/propel/icons";
@@ -16,7 +15,6 @@ import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { RichTextEditor } from "@/components/editor/rich-text";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
@@ -52,7 +50,7 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
   const [selectedWorkItemIds, setSelectedWorkItemIds] = useState<string[]>([]);
   const [link, setLink] = useState<string | undefined>();
   // TODO: workspace uploads
-  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  const [_uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
 
   // refs
 
@@ -119,46 +117,13 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
     }
 
     const operation = data.id
-      ? updateCustomerRequest(workspaceSlug, customerId, data.id, payload)
-          .then((response) => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-              payload: {
-                id: customerId,
-                request_id: data.id,
-              },
-            });
-            return response;
-          })
-          .catch((error) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-              payload: {
-                id: customerId,
-                request_id: data.id,
-              },
-              error: error as Error,
-            });
-          })
-      : createCustomerRequest(workspaceSlug, customerId, payload)
-          .then((response) => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
-              payload: {
-                id: customerId,
-              },
-            });
-            return response;
-          })
-          .catch((error) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
-              payload: {
-                id: customerId,
-              },
-              error: error as Error,
-            });
-          });
+      ? updateCustomerRequest(workspaceSlug, customerId, data.id, payload).then((response) => {
+          return response;
+        })
+      : createCustomerRequest(workspaceSlug, customerId, payload).then((response) => {
+          return response;
+        });
+
     setSubmitting(true);
     try {
       const response = await operation;
@@ -174,25 +139,9 @@ export const CustomerRequestForm = observer(function CustomerRequestForm(props: 
       if (response?.id && workItemIds.length) {
         await addWorkItemsToCustomer(workspaceSlug, customerId, workItemIds, response.id)
           .then(() => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-              payload: {
-                id: customerId,
-                request_id: response.id,
-                work_item_ids: workItemIds,
-              },
-            });
             return;
           })
           .catch((error: any) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-              payload: {
-                id: customerId,
-                request_id: response.id,
-              },
-              error: error as Error,
-            });
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("customers.requests.toasts.work_item.add.error.title"),

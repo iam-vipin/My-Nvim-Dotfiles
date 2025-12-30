@@ -1,12 +1,9 @@
 import { observer } from "mobx-react";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import { EAutomationSidebarTab } from "@plane/types";
 import { getSidebarHeaderI18nTitle } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
@@ -39,7 +36,6 @@ export const AutomationDetailsSidebarHeader = observer(function AutomationDetail
           type="button"
           className="shrink-0 size-5 grid place-items-center text-secondary hover:text-primary transition-colors"
           onClick={() => {
-            captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_CLOSE_BUTTON });
             sidebarHelper?.setSelectedSidebarConfig({ tab: null, mode: null });
           }}
         >

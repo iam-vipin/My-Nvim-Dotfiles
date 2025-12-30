@@ -1,8 +1,7 @@
-import { Info } from "lucide-react";
 // plane constants
 import type { TAdminAuthErrorInfo } from "@plane/constants";
 // icons
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, InfoIcon } from "@plane/propel/icons";
 
 type TAuthBanner = {
   bannerData: TAdminAuthErrorInfo | undefined;
@@ -16,7 +15,7 @@ export function AuthBanner(props: TAuthBanner) {
   return (
     <div className="relative flex items-center p-2 rounded-md gap-2 border border-accent-strong/50 bg-accent-primary/10">
       <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
-        <Info size={16} className="text-accent-primary" />
+        <InfoIcon width={16} height={16} className="text-accent-primary" />
       </div>
       <div className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</div>
       <div

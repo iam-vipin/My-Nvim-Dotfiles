@@ -13,6 +13,7 @@ import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
@@ -103,6 +104,9 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
         issue_id,
       }),
   });
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -161,7 +165,9 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
             containerClassName={cn(containerClassName, "relative", {
               "p-2": !editable,
             })}
-            extendedEditorProps={{}}
+            extendedEditorProps={{
+              isSmoothCursorEnabled: is_smooth_cursor_enabled,
+            }}
             editorClassName={editorClassName}
             {...rest}
           />

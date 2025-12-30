@@ -2,8 +2,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
-import { Info } from "lucide-react";
-import { CheckIcon } from "@plane/propel/icons";
+import { CheckIcon, InfoIcon } from "@plane/propel/icons";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
@@ -89,7 +88,7 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
           onClick={openModuleOverview}
           className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
         >
-          <Info className="h-4 w-4 text-placeholder" />
+          <InfoIcon className="h-4 w-4 text-placeholder" />
         </button>
       }
       actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}

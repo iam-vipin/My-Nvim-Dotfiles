@@ -50,9 +50,9 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         <div className="flex items-center gap-2">
           <div className="flex-shrink-0">
             {!currentUser?.avatar_url || currentUser?.avatar_url === "" ? (
-              <div className="h-8 w-8 rounded-full">
-                <CircleUserRound className="h-full w-full text-secondary" />
-              </div>
+              <span className="relative flex size-8 items-center justify-center rounded-full bg-[#028375] capitalize text-on-color text-13">
+                {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
+              </span>
             ) : (
               <div className="relative h-8 w-8 overflow-hidden">
                 <img

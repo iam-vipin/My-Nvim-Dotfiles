@@ -1,10 +1,10 @@
 # Python imports
 import uuid
+import logging
 
 # Django import
 from django.http import HttpResponseRedirect
 from django.views import View
-
 
 # Module imports
 from plane.authentication.provider.oauth.google import GoogleOAuthProvider
@@ -18,6 +18,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.path_validator import get_safe_redirect_url
+
+logger = logging.getLogger("plane.authentication")
 
 
 class GoogleOauthInitiateEndpoint(View):
@@ -61,6 +63,13 @@ class GoogleCallbackEndpoint(View):
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):
+            logger.warning(
+                "State mismatch in Google callback",
+                extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
+                    "error_message": "GOOGLE_OAUTH_PROVIDER_ERROR",
+                },
+            )
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
                 error_message="GOOGLE_OAUTH_PROVIDER_ERROR",
@@ -71,6 +80,13 @@ class GoogleCallbackEndpoint(View):
             )
             return HttpResponseRedirect(url)
         if not code:
+            logger.warning(
+                "Code not found in Google callback",
+                extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
+                    "error_message": "GOOGLE_OAUTH_PROVIDER_ERROR",
+                },
+            )
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
                 error_message="GOOGLE_OAUTH_PROVIDER_ERROR",

@@ -1,0 +1,44 @@
+import { observer } from "mobx-react";
+import { EUserWorkspaceRoles } from "@plane/types";
+// plane imports
+// component
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";
+import { useFlag } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
+
+function WorklogsPage({ params }: Route.ComponentProps) {
+  // router
+  const { workspaceSlug } = params;
+  // store hooks
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { currentWorkspace } = useWorkspace();
+  const isFeatureEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
+
+  // derived values
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Worklogs` : undefined;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
+  if (!currentWorkspace) return <></>;
+
+  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
+
+  return (
+    <SettingsContentWrapper size={isFeatureEnabled ? "lg" : "md"}>
+      <PageHead title={pageTitle} />
+      <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="ISSUE_WORKLOG" fallback={<WorkspaceWorklogsUpgrade />}>
+        <WorkspaceWorklogRoot workspaceSlug={workspaceSlug} workspaceId={currentWorkspace.id} />
+      </WithFeatureFlagHOC>
+    </SettingsContentWrapper>
+  );
+}
+
+export default observer(WorklogsPage);

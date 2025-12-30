@@ -11,15 +11,20 @@ from django.utils import timezone
 from django.db.models import Q
 from django import apps
 
+# Third party imports
+
 # Module imports
 from plane.utils.html_processor import strip_tags
-from plane.db.mixins import SoftDeletionManager
+from plane.db.models.project import ProjectManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
 from .description import Description
 from plane.db.mixins import ChangeTrackerMixin
 from .state import StateGroup
+
+# ee imports
+from plane.db.models.intake import IntakeIssueStatus
 
 
 def get_default_properties():
@@ -74,6 +79,7 @@ def get_default_display_properties():
         "due_date": True,
         "estimate": True,
         "key": True,
+        "issue_type": True,
         "labels": True,
         "link": True,
         "priority": True,
@@ -81,11 +87,26 @@ def get_default_display_properties():
         "state": True,
         "sub_issue_count": True,
         "updated_on": True,
+        "customer_count": True,
+        "customer_request_count": True,
     }
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
-class IssueManager(SoftDeletionManager):
+class IssueManager(ProjectManager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .exclude(state__group=StateGroup.TRIAGE.value)
+            .exclude(archived_at__isnull=False)
+            .exclude(project__archived_at__isnull=False)
+            .exclude(is_draft=True)
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
+        )
+
+
+class IssueAndEpicsManager(ProjectManager):
     def get_queryset(self):
         return (
             super()
@@ -164,6 +185,17 @@ class Issue(ProjectBaseModel):
     )
 
     issue_objects = IssueManager()
+    issue_and_epics_objects = IssueAndEpicsManager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Store original values of semantic fields for change tracking
+        # Only set if fields are not deferred to avoid unnecessary DB queries
+        deferred_fields = self.get_deferred_fields()
+        self._original_name = self.name if "name" not in deferred_fields else None
+        self._original_description_stripped = (
+            self.description_stripped if "description_stripped" not in deferred_fields else None
+        )
 
     class Meta:
         verbose_name = "Issue"
@@ -355,6 +387,7 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
+
 class IssueLink(ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
@@ -459,10 +492,14 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
     external_id = models.CharField(max_length=255, blank=True, null=True)
     edited_at = models.DateTimeField(null=True, blank=True)
     parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="parent_issue_comment"
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="parent_issue_comment",  # TODO (Dheeraj): The related_name should be changed to replies
     )
 
-    TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html"]
+    TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html", "access"]
 
     def save(self, *args, **kwargs):
         """
@@ -474,6 +511,16 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
 
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
         is_creating = self._state.adding
+
+        # Get the parent comment access and set it for the child
+        if self.parent_id:
+            parent_comment = IssueComment.objects.get(id=self.parent_id)
+            self.access = parent_comment.access
+
+        # set the child comments access only if the parent comment access is changed
+        if self.has_changed("access"):
+            # Get all the child comments and set it's access to the parent's access
+            IssueComment.objects.filter(parent_id=self.id).update(access=self.access)
 
         # Prepare description defaults
         description_defaults = {
@@ -488,11 +535,11 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
 
         with transaction.atomic():
             super(IssueComment, self).save(*args, **kwargs)
-
             if is_creating or not self.description_id:
                 # Create new description for new comment
                 description = Description.objects.create(**description_defaults)
                 self.description_id = description.id
+
                 super(IssueComment, self).save(update_fields=["description_id"])
             else:
                 field_mapping = {
@@ -514,6 +561,11 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
                     Description.objects.filter(pk=self.description_id).update(
                         **changed_fields, updated_by_id=self.updated_by_id, updated_at=self.updated_at
                     )
+        # trigger the agent run comment task if comment is created by a user
+        if is_creating and not self.actor.is_bot:
+            from plane.agents.bgtasks.agent_run_user_comment_task import handle_agent_run_user_comment_task
+
+            handle_agent_run_user_comment_task.delay(self.id)
 
     class Meta:
         verbose_name = "Issue Comment"

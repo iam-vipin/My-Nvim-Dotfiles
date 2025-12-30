@@ -1,0 +1,167 @@
+import logging
+from celery import shared_task
+from django.db import transaction, connection
+
+from plane.db.models import Issue, IssueRelation
+from plane.ee.models.job import ImportJob
+
+logger = logging.getLogger("plane.worker")
+
+
+@shared_task
+def bulk_update_issue_relations_task_v2(
+    payload: dict, job_id: str, project_id: str, user_id: str | None = None, slug: str | None = None, **kwargs
+):
+    """
+    Bulk update issue relationships (parent, blocking, duplicate, etc)
+    Cycles and modules are handled separately in import_issues task
+
+    Args:
+        payload: Dictionary containing:
+            - relations_batch: List of relation data
+            - workspace_id: Workspace ID
+            - source: Import source
+        job_id: Import job ID
+        project_id: Project ID
+        user_id: User ID
+        slug: Workspace slug
+    """
+    # Extract data from payload
+    relations_batch = payload.get("relations_batch", [])
+    workspace_id = payload.get("workspace_id")
+    source = payload.get("source")
+
+    logger.info(f"Processing {len(relations_batch)} issue relationships for job {job_id}")
+
+    if not relations_batch:
+        logger.warning(f"No relations in batch for job {job_id}")
+        return
+
+    if not user_id:
+        job = ImportJob.objects.get(id=job_id)
+        user_id = job.initiator_id
+
+    # Collect all external IDs
+    all_issue_external_ids = set()
+
+    for relation_data in relations_batch:
+        all_issue_external_ids.add(relation_data["external_id"])
+
+        relationships = relation_data.get("relationships", {})
+        if relationships.get("parent"):
+            all_issue_external_ids.add(relationships["parent"])
+        for blocking_id in relationships.get("blocking", []):
+            all_issue_external_ids.add(blocking_id)
+        for blocked_id in relationships.get("is_blocked_by", []):
+            all_issue_external_ids.add(blocked_id)
+        for related_id in relationships.get("relates_to", []):
+            all_issue_external_ids.add(related_id)
+        if relationships.get("duplicate_of"):
+            all_issue_external_ids.add(relationships["duplicate_of"])
+
+    # Query all issues from database
+    issues = Issue.objects.filter(
+        external_id__in=all_issue_external_ids,
+        external_source=source,
+        workspace_id=workspace_id,
+    ).only("external_id", "id")
+
+    issue_map = {issue.external_id: issue.id for issue in issues}
+
+    # Prepare batch operations
+    issue_relations = []
+    parent_updates = []
+
+    for relation_data in relations_batch:
+        external_id = relation_data["external_id"]
+        issue_id = issue_map.get(external_id)
+
+        if not issue_id:
+            logger.warning(f"Issue {external_id} not found in database")
+            continue
+
+        relationships = relation_data.get("relationships", {})
+
+        # Parent relationship
+        if relationships.get("parent"):
+            parent_id = issue_map.get(relationships["parent"])
+            if parent_id:
+                parent_updates.append((issue_id, parent_id))
+
+        # Blocking relationships
+        for related_external_id in relationships.get("blocking", []):
+            related_id = issue_map.get(related_external_id)
+            if related_id:
+                issue_relations.append(
+                    IssueRelation(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        issue_id=issue_id,
+                        related_issue_id=related_id,
+                        relation_type="blocks",
+                        created_by_id=user_id,
+                    )
+                )
+
+        # Blocked by relationships
+        for related_external_id in relationships.get("is_blocked_by", []):
+            related_id = issue_map.get(related_external_id)
+            if related_id:
+                issue_relations.append(
+                    IssueRelation(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        issue_id=issue_id,
+                        related_issue_id=related_id,
+                        relation_type="blocked_by",
+                        created_by_id=user_id,
+                    )
+                )
+
+        # Related to relationships
+        for related_external_id in relationships.get("relates_to", []):
+            related_id = issue_map.get(related_external_id)
+            if related_id:
+                issue_relations.append(
+                    IssueRelation(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        issue_id=issue_id,
+                        related_issue_id=related_id,
+                        relation_type="relates_to",
+                        created_by_id=user_id,
+                    )
+                )
+
+        # Duplicate of relationship
+        if relationships.get("duplicate_of"):
+            related_id = issue_map.get(relationships["duplicate_of"])
+            if related_id:
+                issue_relations.append(
+                    IssueRelation(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        issue_id=issue_id,
+                        related_issue_id=related_id,
+                        relation_type="duplicate",
+                        created_by_id=user_id,
+                    )
+                )
+
+    # Bulk create in transaction
+    with transaction.atomic():
+        with connection.cursor() as cur:
+            cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
+
+            # Create relationships
+            if issue_relations:
+                IssueRelation.objects.bulk_create(issue_relations, ignore_conflicts=True)
+                logger.info(f"Created {len(issue_relations)} issue relations")
+
+            # Update parent relationships
+            for issue_id, parent_id in parent_updates:
+                Issue.objects.filter(id=issue_id).update(parent_id=parent_id, updated_by_id=user_id)
+            if parent_updates:
+                logger.info(f"Updated {len(parent_updates)} parent relations")
+
+    logger.info(f"Completed processing relationships for job {job_id}")

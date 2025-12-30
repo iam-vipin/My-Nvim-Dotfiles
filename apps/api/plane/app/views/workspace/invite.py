@@ -1,6 +1,6 @@
 # Python imports
 from datetime import datetime
-
+import uuid
 import jwt
 
 # Django imports
@@ -27,7 +27,10 @@ from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInv
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
 from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
+from plane.payment.utils.member_payment_count import workspace_member_check
+from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):
@@ -78,6 +81,20 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                     "error": "Some users are already member of workspace",
                     "workspace_users": WorkSpaceMemberSerializer(workspace_members, many=True).data,
                 },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get current existing workspace invitations where accepted is False
+        allowed, _, _ = workspace_member_check(
+            slug=slug,
+            requested_invite_list=emails,
+            requested_role=False,
+            current_role=False,
+        )
+
+        if not allowed:
+            return Response(
+                {"error": "Reached seat limit - Upgrade to add more members"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -135,11 +152,50 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 },
             )
 
+        for email in emails:
+            workspace_members_activity.delay(
+                type="workspace_member.activity.invited",
+                requested_data={"email": email.get("email").strip().lower()},
+                current_instance=None,
+                actor_id=request.user.id,
+                workspace_id=workspace.id,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+            )
+
         return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, slug, pk):
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
+        # Check if the role is being updated
+        if "role" in request.data:
+            allowed, _, _ = workspace_member_check(
+                slug=slug,
+                requested_role=request.data["role"],
+                current_role=workspace_member_invite.role,
+                requested_invite_list=[],
+            )
+            if not allowed:
+                return Response(
+                    {"error": "You cannot change the role the user as it will exceed the purchased limit"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        return super().partial_update(request, slug, pk)
 
     def destroy(self, request, slug, pk):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         workspace_member_invite.delete()
+
+        workspace_members_activity.delay(
+            type="workspace_member.activity.invitation_deleted",
+            requested_data={"email": workspace_member_invite.email},
+            current_instance=None,
+            actor_id=request.user.id,
+            workspace_id=workspace_member_invite.workspace.id,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -215,6 +271,9 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Delete the invitation
                     workspace_invite.delete()
 
+                # sync workspace members
+                member_sync_task.delay(slug)
+
                 return Response(
                     {"message": "Workspace Invitation Accepted"},
                     status=status.HTTP_200_OK,
@@ -254,6 +313,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             pk__in=invitations, email=request.user.email
         ).order_by("-created_at")
 
+        workspace_members_to_create = []
         # If the user is already a member of workspace and was deactivated then activate the user
         for invitation in workspace_invitations:
             invalidate_cache_directly(
@@ -262,6 +322,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
                 request=request,
                 multiple=True,
             )
+
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
                 is_active=True, role=invitation.role
@@ -281,19 +342,34 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
                 },
             )
 
-        # Bulk create the user for all the workspaces
-        WorkspaceMember.objects.bulk_create(
-            [
+            # Bulk create the user for all the workspaces
+            workspace_members_to_create.append(
                 WorkspaceMember(
                     workspace=invitation.workspace,
                     member=request.user,
                     role=invitation.role,
                     created_by=request.user,
                 )
-                for invitation in workspace_invitations
-            ],
+            )
+
+        WorkspaceMember.objects.bulk_create(
+            workspace_members_to_create,
             ignore_conflicts=True,
         )
+
+        # Sync workspace members
+        [member_sync_task.delay(invitation.workspace.slug) for invitation in workspace_invitations]
+
+        for invitation in workspace_invitations:
+            workspace_members_activity.delay(
+                type="workspace_member.activity.joined",
+                requested_data=None,
+                current_instance=None,
+                actor_id=request.user.id,
+                workspace_id=invitation.workspace.id,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+            )
 
         # Delete joined workspace invites
         workspace_invitations.delete()

@@ -10,8 +10,13 @@ import base64
 import ipaddress
 from typing import Dict, Any
 from typing import Optional
-from plane.db.models import IssueLink
+from plane.db.models import IssueLink, ModuleLink
 from plane.utils.exception_logger import log_exception
+from plane.ee.models import InitiativeLink, ProjectLink
+from typing import Literal
+
+
+# Django imports
 
 logger = logging.getLogger("plane.worker")
 
@@ -191,15 +196,20 @@ def fetch_and_encode_favicon(
         }
 
 
+LINK_MODEL_MAPPER = {
+    "initiative": InitiativeLink,
+    "project": ProjectLink,
+    "module": ModuleLink,
+    "issue": IssueLink,
+}
+
+
 @shared_task
-def crawl_work_item_link_title(id: str, url: str) -> None:
+def crawl_work_item_link_title(id: str, url: str, entity: Literal[*LINK_MODEL_MAPPER.keys()]) -> None:
     meta_data = crawl_work_item_link_title_and_favicon(url)
 
-    try:
-        issue_link = IssueLink.objects.get(id=id)
-    except IssueLink.DoesNotExist:
-        logger.warning(f"IssueLink not found for the id {id} and the url {url}")
-        return
+    model = LINK_MODEL_MAPPER.get(entity).objects.get(id=id)
 
-    issue_link.metadata = meta_data
-    issue_link.save()
+    model.metadata = meta_data
+
+    model.save()

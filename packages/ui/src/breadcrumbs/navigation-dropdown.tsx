@@ -1,4 +1,4 @@
-import { CheckIcon } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 import * as React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
@@ -99,9 +99,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
         return (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               if (item.key === selectedItemKey) return;
               item.action();
             }}

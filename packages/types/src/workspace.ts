@@ -1,10 +1,13 @@
 import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
 import type { TUserPermissions } from "./enums";
+import type { EProductSubscriptionEnum } from "./payment";
 import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
 import type { TLoginMediums } from "./instance";
 import type { IWorkspaceViewProps } from "./view-props";
+// extended imports
+import type { TWorkspaceExtendedResultEntities } from "./workspace-extended";
 
 export enum EUserWorkspaceRoles {
   ADMIN = 20,
@@ -26,6 +29,8 @@ export interface IWorkspace {
   readonly updated_by: string;
   organization_size: string;
   total_projects?: number;
+  current_plan?: EProductSubscriptionEnum;
+  is_on_trial?: boolean;
   role: number;
   timezone: string;
 }
@@ -101,6 +106,7 @@ export interface IWorkspaceMemberMe {
   view_props: IWorkspaceViewProps;
   workspace: string;
   draft_issue_count: number;
+  active_cycles_count: number;
 }
 
 export interface ILastActiveWorkspaceDetails {
@@ -155,7 +161,7 @@ export interface IWorkspaceSearchResults {
     module: IWorkspaceDefaultSearchResult[];
     issue_view: IWorkspaceDefaultSearchResult[];
     page: IWorkspacePageSearchResult[];
-  };
+  } & TWorkspaceExtendedResultEntities;
 }
 
 export interface IProductUpdateResponse {
@@ -260,3 +266,106 @@ export enum ECreateOrJoinWorkspaceViews {
   WORKSPACE_CREATE = "WORKSPACE_CREATE",
   WORKSPACE_JOIN = "WORKSPACE_JOIN",
 }
+
+export type TWorkspaceConnection<TConnectionConfig = object, TConnectionData = object> = {
+  id: string;
+  workspace_id: string;
+  workspace_slug: string;
+  credential_id: string;
+  target_hostname?: string | null;
+  source_hostname?: string | null;
+  connection_type: string;
+  connection_id: string;
+  connection_data: TConnectionData;
+  connection_slug?: string | null;
+  scopes: string[];
+  config: TConnectionConfig;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type TWorkspaceUserConnection = TWorkspaceConnection & {
+  isUserConnected: boolean;
+};
+
+export type TWorkspaceEntityConnection<TConnectionConfig = object> = {
+  id: string;
+  type: string | null;
+  workspace_connection_id: string;
+  workspace_id: string;
+  workspace_slug: string;
+  project_id?: string | null;
+  issue_id?: string | null;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  entity_slug?: string | null;
+  entity_data: object;
+  config: TConnectionConfig;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type TWorkspaceCredential = {
+  id: string;
+  source: string;
+  workspace_id: string;
+  user_id: string;
+  source_identifier?: string | null;
+  source_authorization_type?: string | null;
+  source_auth_email?: string | null;
+  source_access_token?: string | null;
+  source_refresh_token?: string | null;
+  source_hostname?: string | null;
+  target_identifier?: string | null;
+  target_authorization_type?: string | null;
+  target_access_token?: string | null;
+  target_refresh_token?: string | null;
+  target_hostname?: string | null;
+  is_pat?: boolean | false;
+  is_active?: boolean | false;
+  created_at?: string;
+  updated_at?: string;
+};
+
+// Type for verification of both target credentials
+export type TWorkspaceCredentialVerification = {
+  isAuthenticated: boolean;
+  isOAuthEnabled: boolean;
+};
+
+export type TWorkspaceMemberImportSummary = {
+  total_rows: number;
+  successful: number;
+  failed: number;
+  users_created: number;
+  workspace_members_created: number;
+  errors: Record<number, Record<string, string>> | Array<unknown>;
+};
+
+// Type for verification of both source and target credentials
+export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
+  sourceTokenInvalid?: boolean;
+};
+
+export type TWorkspaceEpicsSearchParams = {
+  initiative_id?: string;
+};
+
+export type TWorkspaceSearchResultItem = {
+  id: string;
+  label: string;
+  entity_name: string;
+  entity_identifier: string;
+  target: string;
+  redirect_uri: string;
+  name?: string;
+  project__identifier?: string | null;
+  sequence_id?: string | null;
+  title: string;
+  subTitle: string | undefined;
+  type_id: string | null;
+  project_id: string;
+};
+export type TSearchResults = {
+  [key: string]: Partial<TWorkspaceSearchResultItem>[] | undefined;
+};

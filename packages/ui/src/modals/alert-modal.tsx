@@ -1,5 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { AlertTriangle, Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { AlertTriangle } from "lucide-react";
 import React from "react";
 // components
 import type { TButtonVariant } from "@plane/propel/button";
@@ -31,9 +33,9 @@ type Props = {
   customIcon?: React.ReactNode;
 };
 
-const VARIANT_ICONS: Record<TModalVariant, LucideIcon> = {
+const VARIANT_ICONS: Record<TModalVariant, LucideIcon | React.FC<ISvgIcons>> = {
   danger: AlertTriangle,
-  primary: Info,
+  primary: InfoIcon,
 };
 
 const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {

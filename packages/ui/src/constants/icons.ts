@@ -28,7 +28,6 @@ import {
   BookOpen,
   Box,
   Briefcase,
-  Calendar,
   Camera,
   CameraOff,
   Cast,
@@ -118,7 +117,6 @@ import {
   Layout,
   LifeBuoy,
   Linkedin,
-  List,
   Loader,
   LogIn,
   LogOut,
@@ -155,6 +153,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  CalendarLayoutIcon,
+  ListLayoutIcon,
 } from "@plane/propel/icons";
 
 export const MATERIAL_ICONS_LIST = [
@@ -793,7 +793,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "BookOpen", element: BookOpen },
   { name: "Box", element: Box },
   { name: "Briefcase", element: Briefcase },
-  { name: "Calendar", element: Calendar },
+  { name: "CalendarLayoutIcon", element: CalendarLayoutIcon },
   { name: "Camera", element: Camera },
   { name: "CameraOff", element: CameraOff },
   { name: "Cast", element: Cast },
@@ -894,7 +894,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Link", element: LinkIcon },
   { name: "Link2", element: LinkIcon },
   { name: "Linkedin", element: Linkedin },
-  { name: "List", element: List },
+  { name: "ListLayoutIcon", element: ListLayoutIcon },
   { name: "Loader", element: Loader },
   { name: "Lock", element: LockIcon },
   { name: "LogIn", element: LogIn },

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
-import { ArrowLeft, List, Settings, UploadCloud } from "lucide-react";
-import { CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
+import { ArrowLeft, Settings, UploadCloud } from "lucide-react";
+import { ListLayoutIcon, CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
@@ -61,7 +61,7 @@ const integrationWorkflowData = [
     key: "import-data",
     icon: UploadCloud,
   },
-  { title: "Work item", key: "repo-details", icon: List },
+  { title: "Work item", key: "repo-details", icon: ListLayoutIcon },
   {
     title: "Users",
     key: "import-users",

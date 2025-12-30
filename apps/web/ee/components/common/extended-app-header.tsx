@@ -16,7 +16,7 @@ export const ExtendedAppHeader = observer(function ExtendedAppHeader(props: { he
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
   // derived values
-  const shouldShowSidebarToggleButton = projectPreferences.navigationMode === "accordion" || (!projectId && !workItem);
+  const shouldShowSidebarToggleButton = projectPreferences.navigationMode === "ACCORDION" || (!projectId && !workItem);
 
   return (
     <>

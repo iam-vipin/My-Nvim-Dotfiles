@@ -123,6 +123,16 @@ def slug_validator(value):
         raise ValidationError("Slug is not valid")
 
 
+def get_default_product_tour():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
+    }
+
+
 class Workspace(BaseModel):
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
 
@@ -383,6 +393,7 @@ class WorkspaceUserProperties(BaseModel):
         choices=NavigationControlPreference.choices,
         default=NavigationControlPreference.ACCORDION,
     )
+    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]

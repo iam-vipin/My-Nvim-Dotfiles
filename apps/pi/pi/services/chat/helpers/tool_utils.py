@@ -546,7 +546,7 @@ You have access to a special tool: `provide_final_answer_for_app`
 
 **HOW TO USE:**
 Call `provide_final_answer_for_app` with:
-1. **text_response**: Your comprehensive natural language answer (be detailed and well-formatted)
+1. **text_response**: Your comprehensive natural language answer in PLAIN TEXT ONLY (absolutely NO markdown formatting - no bold, italic, headers, lists, etc.)
 2. **entities**: List of relevant entities from the retrieval results
 
 **Entity format for each item:**
@@ -566,7 +566,7 @@ NOTE: Do NOT include 'url' in properties - URLs are added automatically by the s
 **Example:**
 ```
 provide_final_answer_for_app(
-    text_response="You have 3 high priority work items assigned to you:\n1. Fix login bug (PROJ-123) - In Progress\n2. Update documentation (PROJ-124) - Todo\n3. Refactor API (PROJ-125) - In Progress",
+    text_response="You have 3 high priority work items assigned to you:\nFix login bug (PROJ-123) - In Progress\nUpdate documentation (PROJ-124) - Todo\nRefactor API (PROJ-125) - In Progress",
     entities=[
         {
             "type": "workitem",
@@ -608,7 +608,7 @@ provide_final_answer_for_app(
 **This will be formatted as:**
 ```json
 {
-  "text": "You have 3 high priority work items... (PROJ-123) - In Progress...",
+  "text": "You have 3 high priority work items assigned to you:\nFix login bug (PROJ-123) - In Progress\nUpdate documentation (PROJ-124) - Todo\nRefactor API (PROJ-125) - In Progress",
   "entities": [{"type": "workitem", "name": "Fix login bug", "properties": {"url": "https://...", "identifier": "PROJ-123", ...}}]
 }
 ```
@@ -662,19 +662,24 @@ Note: The system uses absence of tool_calls as the signal to stop and deliver yo
 work_tree_instructions_app_response = f"""
 **IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
 1. Use retrieval/search tools to gather the requested information
-2. Provide a detailed, elaborate, and neatly formatted answer in the 'text' field in the provide_final_answer_for_app tool based on the retrieved data. Do NOT be brief.
+2. Provide a detailed, and elaborate answer in PLAIN TEXT ONLY in the 'text' field in the provide_final_answer_for_app tool based on the retrieved data. Do NOT be brief.
 3. Do NOT plan any modifying actions - just return tool_calls for retrieval, then call provide_final_answer_for_app
-4. **Formatting Requirements**:
-    While formatting the answer in the 'text' field in the provide_final_answer_for_app tool, use the following rules:
+4. **Formatting Requirements - CRITICAL FOR EXTERNAL APP (e.g., Slack) RENDERING**:
+    While generating the answer in the 'text' field in the provide_final_answer_for_app tool, use the following rules:
+    - **ABSOLUTELY NO MARKDOWN FORMATTING**: Do not use **bold**, *italic*, headers, or any markdown syntax
+    - **NO STRUCTURED LISTS**: Do not use numbered lists (1. 2. 3.) or bullet points (- * •)
+    - **NO MARKDOWN LINKS**: Do not create markdown links like [text](url) in the text field
+    - **NO TABLES, CODE BLOCKS, OR SPECIAL CHARACTERS**: Just plain text with newlines
+    - Use simple line breaks (\n) to separate items instead of numbered/bulleted lists
     - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
     - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
-    - **CRITICAL: DO NOT create markdown links like [text](url) in the text field**
-    - **URLs are added programmatically to entity properties - you must NOT include them**
+    - URLs are added programmatically to entity properties - you must NOT include them in text
     - You can reference entities by identifier (e.g., "PROJ-123") but NOT as markdown links
     - Use plain text references only: "Fix login bug (PROJ-123)" not "[PROJ-123](url)"
     - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
     - Never reveal sensitive info: passwords, API keys, table names, SQL queries
-    - Never ever use tables, because the external app will not be able to parse any content other than text.
+    - The external app (e.g., Slack) will receive this as plain text - any markdown will render as literal characters, not formatted text.
+
 5. The requirement for an elaborate answer doesn't apply to modification requests - those require action planning followed by a very brief summary.
 
 {app_response_instructions}

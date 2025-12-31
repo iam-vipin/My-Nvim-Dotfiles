@@ -56,10 +56,19 @@ from .helpers.tool_utils import tool_name_shown_to_user
 log = logger.getChild(__name__)
 
 
-async def _inject_urls_into_entities(entities: list[Dict[str, Any]], pending_urls: list[Dict[str, str]]) -> list[Dict[str, Any]]:
+async def _inject_urls_into_entities(entities: Any, pending_urls: list[Dict[str, str]]) -> list[Dict[str, Any]]:
     """Inject URLs into entities by matching IDs (app source only)"""
+
+    # Tool args can be model-provided; be defensive about types.
     if not entities:
-        return entities
+        return []
+    if isinstance(entities, str):
+        try:
+            entities = json.loads(entities)
+        except Exception:
+            return []
+    if not isinstance(entities, list):
+        return []
 
     # Create lookup from pending URLs if available
     url_map = {url_info["id"]: url_info["url"] for url_info in pending_urls} if pending_urls else {}
@@ -105,14 +114,21 @@ async def _inject_urls_into_entities(entities: list[Dict[str, Any]], pending_url
     # Inject URLs
     enriched = []
     for entity in entities:
-        entity_copy = entity.copy()
-        entity_copy["properties"] = entity.get("properties", {}).copy()
+        try:
+            if not isinstance(entity, dict):
+                continue
+            entity_copy = entity.copy()
+            entity_copy["properties"] = entity.get("properties", {}).copy()
 
-        entity_id = entity_copy["properties"].get("id")
-        if entity_id and entity_id in url_map:
-            entity_copy["properties"]["url"] = url_map[entity_id]
+            entity_id = entity_copy["properties"].get("id")
+            if entity_id and entity_id in url_map:
+                entity_copy["properties"]["url"] = url_map[entity_id]
 
-        enriched.append(entity_copy)
+            enriched.append(entity_copy)
+        except Exception as e:
+            log.error(f"Failed to process entity {entity}: {e}")
+            # Continue processing other entities
+            continue
 
     return enriched
 
@@ -539,15 +555,40 @@ async def execute_tools_for_build_mode(
                 elif tool_name == "provide_final_answer_for_app":
                     log.info(f"ChatID: {chat_id} - App response tool called, formatting structured output")
 
-                    # Extract structured response from tool arguments
-                    text_response = tool_args.get("text_response", "")
-                    entities = tool_args.get("entities", [])
+                    # Validate + normalize tool args (tool args are ultimately model-provided).
+                    text_response = ""
+                    entities: list[Dict[str, Any]] = []
+                    try:
+                        from pydantic import ValidationError
+
+                        from pi.services.actions.tools.app_response import AppResponseSchema
+
+                        validated = AppResponseSchema.model_validate(tool_args)
+                        payload = validated.model_dump()
+                        text_response = str(payload.get("text_response") or "")
+                        entities_raw = payload.get("entities") or []
+                        entities = entities_raw if isinstance(entities_raw, list) else []
+                    except (ValidationError, Exception) as e:
+                        log.warning(f"ChatID: {chat_id} - App response args validation failed; falling back. Error: {e}")
+                        text_response = str(tool_args.get("text_response", "") or "")
+                        entities_raw = tool_args.get("entities", [])
+                        if isinstance(entities_raw, str):
+                            try:
+                                entities_raw = json.loads(entities_raw)
+                                log.info(f"ChatID: {chat_id} - Parsed entities from JSON string (fallback)")
+                            except Exception as parse_err:
+                                log.error(f"ChatID: {chat_id} - Failed to parse entities JSON (fallback): {parse_err}")
+                                entities_raw = []
+                        entities = entities_raw if isinstance(entities_raw, list) else []
 
                     # **NEW: Inject URLs programmatically for app source**
                     if source == "app" and chatbot_instance and hasattr(chatbot_instance, "pending_entity_urls"):
-                        enriched_entities = await _inject_urls_into_entities(entities=entities, pending_urls=chatbot_instance.pending_entity_urls)
-                        log.info(f"ChatID: {chat_id} - Enriched {len(enriched_entities)} entities with URLs")
-                        chatbot_instance.pending_entity_urls = []  # Clear after use
+                        try:
+                            enriched_entities = await _inject_urls_into_entities(entities=entities, pending_urls=chatbot_instance.pending_entity_urls)
+                            log.info(f"ChatID: {chat_id} - Enriched {len(enriched_entities)} entities with URLs")
+                        finally:
+                            # Clear after use even if enrichment fails to avoid stale URL carryover.
+                            chatbot_instance.pending_entity_urls = []
                     else:
                         enriched_entities = entities
 
@@ -566,7 +607,7 @@ async def execute_tools_for_build_mode(
                             "step_type": FlowStepType.TOOL,
                             "tool_name": "provide_final_answer_for_app",
                             "content": text_response[:500],  # Truncate for storage
-                            "execution_data": {"entity_count": len(entities)},
+                            "execution_data": {"entity_count": len(enriched_entities) if isinstance(enriched_entities, list) else 0},
                             "is_planned": False,
                             "is_executed": True,
                             "execution_success": ExecutionStatus.SUCCESS,
@@ -1015,9 +1056,17 @@ async def execute_tools_for_build_mode(
     except Exception:
         # Log full traceback for diagnosis
         log.error(f"ChatID: {chat_id} - Error in action execution", exc_info=True)
-        # Emit user-friendly error and final response so caller can persist
+        # Emit structured error for app integrations to detect and handle
         error_msg = "An unexpected error occurred. Please try again later."
+        error_payload = {
+            "error": True,
+            "message": error_msg,
+            "error_type": "execution_error",
+        }
         try:
+            # Emit error block for app integrations
+            yield f"πspecial error blockπ: {json.dumps(error_payload)}"
+            # Also yield plain text for backward compatibility
             yield error_msg
             yield f"__FINAL_RESPONSE__{error_msg}"
         except Exception:

@@ -181,9 +181,9 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
     final_response = ""
     actions_data = {}
     clarification_data = {}
+    error_data = {}
     formatted_context: dict[str, Any] = {}
     response_type = "response"
-
     # listen to all the stream chunks, join the chunks and return the complete response
     # as json object
     async with get_streaming_db_session() as stream_db:
@@ -202,8 +202,23 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
             elif chunk.startswith("πspecial clarification blockπ: "):
                 response_type = "clarification"
                 clarification_data = json.loads(chunk.replace("πspecial clarification blockπ: ", ""))
+            elif chunk.startswith("πspecial error blockπ: "):
+                response_type = "error"
+                error_data = json.loads(chunk.replace("πspecial error blockπ: ", ""))
 
             final_response += chunk
+
+    # Handle error responses
+    if response_type == "error":
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": True,
+                "message": error_data.get("message", "An unexpected error occurred. Please try again later."),
+                "error_type": error_data.get("error_type", "execution_error"),
+                "response_type": "error",
+            },
+        )
 
     if actions_data:
         # Validate required fields before creating ActionBatchExecutionRequest
@@ -272,7 +287,7 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
             parsed_response = json.loads(final_response)
         except (json.JSONDecodeError, TypeError):
             # If not valid JSON, keep as string (backward compatible)
-            parsed_response = final_response
+            parsed_response = {"text": final_response, "entities": []}
 
     return JSONResponse(
         status_code=200,

@@ -60,7 +60,6 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
           )}
         </div>
         <Command className="size-full flex flex-col overflow-hidden">
-          <Command.Input value={searchQuery} hidden />
           <SearchResults
             query={searchQuery}
             flattenedSearchResults={flattenedSearchResults}

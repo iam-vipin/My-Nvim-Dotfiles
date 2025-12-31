@@ -104,7 +104,6 @@ export const TopNavSearch = observer(function TopNavSearch() {
           }
         )}
       >
-        <Command.Input value={searchQuery} hidden />
         {!searchQuery ? (
           <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
             <div className="w-24 h-24 bg-layer-1 rounded-full flex items-center justify-center">

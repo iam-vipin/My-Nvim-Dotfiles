@@ -181,7 +181,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               </Disclosure.Button>
               <div className="flex items-center gap-1">
                 {isAuthorizedUser && (
-                  <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
+                  <Tooltip tooltipHeading="" tooltipContent={t("create_project")}>
                     <IconButton
                       variant="ghost"
                       size="sm"

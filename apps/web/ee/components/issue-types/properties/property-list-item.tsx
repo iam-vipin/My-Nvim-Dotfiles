@@ -431,7 +431,7 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
             {issuePropertyData.description && (
               <Tooltip tooltipContent={issuePropertyData.description} position="right">
                 <span className="flex-shrink-0">
-                  <InfoIcon className="size-3 stroke-black cursor-help outline-none" stroke="black" />
+                  <InfoIcon className="size-3 text-secondary cursor-help outline-none" />
                 </span>
               </Tooltip>
             )}

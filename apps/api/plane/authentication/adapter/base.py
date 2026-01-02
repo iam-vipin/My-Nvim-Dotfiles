@@ -276,7 +276,7 @@ class Adapter:
             user.avatar_asset = avatar_asset
         # If avatar upload fails, set the avatar to the original URL
         else:
-            user.avatar = avatar
+            user.avatar = avatar if avatar else ""
 
         user.save()
         return user

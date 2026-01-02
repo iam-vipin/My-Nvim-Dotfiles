@@ -251,7 +251,7 @@ class OIDCOAuthCloudProvider(OIDCOAuthProvider):
                 "is_password_autoset": True,
             },
         }
-        super().set_user_data(user_data)
+        OauthAdapter.set_user_data(self, user_data)
 
     def authenticate(self):
         # Check if the workspace has a sso provider configured

@@ -58,14 +58,6 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
                     error_code=AUTHENTICATION_ERROR_CODES["OIDC_CONFIGURATION_INCOMPLETE"],
                     error_message="OIDC_CONFIGURATION_INCOMPLETE",
                 )
-            # Check if already a OIDC provider is configured for the workspace
-            if IdentityProvider.objects.filter(
-                workspace=self.context.get("workspace"), provider=IdentityProvider.OIDC
-            ).exists():
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["OIDC_ALREADY_CONFIGURED"],
-                    error_message="OIDC_ALREADY_CONFIGURED",
-                )
 
             # Validate the URLs
             if not is_valid_url(attrs.get("authorize_url")):
@@ -92,10 +84,10 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
 
         elif attrs.get("provider") == IdentityProvider.SAML:
             if not attrs.get("entity_id") or not attrs.get("sso_url") or not attrs.get("certificate"):
-                raise serializers.ValidationError(
-                    "SAML configuration is incomplete. Entity ID, SSO URL and Certificate are required."
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["SAML_CONFIGURATION_INCOMPLETE"],
+                    error_message="SAML_CONFIGURATION_INCOMPLETE",
                 )
-
             # Validate the URLs
             if not is_valid_url(attrs.get("sso_url")):
                 raise serializers.ValidationError("SSO URL is not a valid URL")
@@ -108,6 +100,24 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         identity_provider = IdentityProvider.objects.create(**validated_data)
+
+        if validated_data.get("provider") == IdentityProvider.OIDC:
+            if IdentityProvider.objects.filter(
+                workspace=self.context.get("workspace"), provider=IdentityProvider.OIDC
+            ).exists():
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["OIDC_ALREADY_CONFIGURED"],
+                    error_message="OIDC_ALREADY_CONFIGURED",
+                )
+
+        if validated_data.get("provider") == IdentityProvider.SAML:
+            if IdentityProvider.objects.filter(
+                workspace=self.context.get("workspace"), provider=IdentityProvider.SAML
+            ).exists():
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["SAML_ALREADY_CONFIGURED"],
+                    error_message="SAML_ALREADY_CONFIGURED",
+                )
 
         # Create the identity provider domains
         IdentityProviderDomain.objects.bulk_create(

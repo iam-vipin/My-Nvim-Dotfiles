@@ -102,5 +102,7 @@ class SSOAuthInitiateEndpoint(View):
                 )
         except AuthenticationException as e:
             params = e.get_error_dict()
-            url = get_safe_redirect_url(base_url=base_host(request=request), params=params, next_path=next_path)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request) + "/sso", params=params, next_path=next_path
+            )
             return HttpResponseRedirect(url)

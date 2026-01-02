@@ -29,6 +29,7 @@ def email_validator(email: str, request: Optional[Request | HttpRequest] = None)
     try:
         # Check if the email is valid
         validate_email(email)
+        return True, True
     except ValidationError:
         # If the email is not valid, return false
         return False, False

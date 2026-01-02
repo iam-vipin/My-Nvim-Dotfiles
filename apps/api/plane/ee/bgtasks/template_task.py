@@ -445,7 +445,16 @@ def create_issue_property_values(
         template_property_id = str(property.get("id"))
         actual_property_id = workitem_property_map.get(template_property_id)
         if actual_property_id:
-            converted_properties[actual_property_id] = property.get("values", [])
+            if property.get("property_type") == PropertyTypeEnum.OPTION:
+                values = property.get("values", [])
+                converted_values = []
+                for value in values:
+                    new_option_id = workitem_property_option_map.get(str(value))
+                    if new_option_id:
+                        converted_values.append(new_option_id)
+                converted_properties[actual_property_id] = converted_values
+            else:
+                converted_properties[actual_property_id] = property.get("values", [])
 
     # Validate the data
     property_validators(

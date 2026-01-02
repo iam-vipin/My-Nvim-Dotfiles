@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports
@@ -24,7 +23,7 @@ export const WorkItemModalAdditionalProperties = observer(function WorkItemModal
   // form context
   const { watch } = useFormContext<TIssue>();
   // modal context
-  const { getActiveAdditionalPropertiesLength } = useIssueModal();
+  const { workItemTemplateId, getActiveAdditionalPropertiesLength } = useIssueModal();
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
     projectId: projectId,
     workspaceSlug: workspaceSlug,
@@ -48,6 +47,7 @@ export const WorkItemModalAdditionalProperties = observer(function WorkItemModal
           issueTypeId={watch("type_id")}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
+          shouldLoadDefaultValues={!workItemTemplateId} // Skip loading default values when template is applied (preloaded in provider)
         />
       )}
       <TemplateSubWorkitemsList />

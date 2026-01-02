@@ -1,5 +1,7 @@
 import { useMemo } from "react";
+import { isEmpty } from "lodash-es";
 // plane imports
+import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -20,7 +22,7 @@ export function OIDCSetupModal(props: TOIDCSetupModalProps) {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const originURL = typeof window !== "undefined" ? window.location.origin : "";
+  const baseURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
   const workspaceId = currentWorkspace?.id;
 
   // Generate service details URLs
@@ -28,44 +30,44 @@ export function OIDCSetupModal(props: TOIDCSetupModalProps) {
     () => [
       {
         label: t("sso.providers.oidc.setup_modal.web_details.origin_url.label"),
-        value: `${originURL}/auth/sso/oidc/`,
+        value: `${baseURL}/auth/sso/oidc/`,
         description: t("sso.providers.oidc.setup_modal.web_details.origin_url.description"),
       },
       {
         label: t("sso.providers.oidc.setup_modal.web_details.callback_url.label"),
-        value: workspaceId ? `${originURL}/auth/sso/oidc/callback/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/sso/oidc/callback/${workspaceId}/` : "",
         description: t("sso.providers.oidc.setup_modal.web_details.callback_url.description"),
       },
       {
         label: t("sso.providers.oidc.setup_modal.web_details.logout_url.label"),
-        value: workspaceId ? `${originURL}/auth/sso/oidc/logout/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/sso/oidc/logout/${workspaceId}/` : "",
         description: t("sso.providers.oidc.setup_modal.web_details.logout_url.description"),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workspaceId, originURL]
+    [workspaceId, baseURL]
   );
 
   const mobileDetails = useMemo(
     () => [
       {
         label: t("sso.providers.oidc.setup_modal.mobile_details.origin_url.label"),
-        value: `${originURL}/auth/mobile/oidc/`,
+        value: `${baseURL}/auth/mobile/oidc/`,
         description: t("sso.providers.oidc.setup_modal.mobile_details.origin_url.description"),
       },
       {
         label: t("sso.providers.oidc.setup_modal.mobile_details.callback_url.label"),
-        value: workspaceId ? `${originURL}/auth/mobile/oidc/callback/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/mobile/oidc/callback/${workspaceId}/` : "",
         description: t("sso.providers.oidc.setup_modal.mobile_details.callback_url.description"),
       },
       {
         label: t("sso.providers.oidc.setup_modal.mobile_details.logout_url.label"),
-        value: workspaceId ? `${originURL}/auth/mobile/oidc/logout/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/mobile/oidc/logout/${workspaceId}/` : "",
         description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workspaceId, originURL]
+    [workspaceId, baseURL]
   );
 
   const tabs = useMemo(

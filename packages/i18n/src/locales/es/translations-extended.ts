@@ -3267,14 +3267,19 @@ export default {
           title: "Verifica tu dominio",
           description: "Sigue estos pasos para verificar tu dominio.",
           instructions: {
+            label: "Instrucciones",
             step_1: "Ve a la configuración DNS de tu proveedor de dominio.",
-            step_2: "Crea un registro TXT y pega el código de verificación.",
+            step_2: {
+              part_1: "Crea un",
+              part_2: "registro TXT",
+              part_3: "y pega el valor completo del registro proporcionado a continuación.",
+            },
             step_3:
               "Esta actualización generalmente toma unos minutos, pero puede tardar hasta 72 horas en completarse.",
             step_4: 'Haz clic en "Verificar dominio" para confirmar una vez que tu registro DNS esté actualizado.',
           },
-          verification_code_label: "Código de verificación",
-          verification_code_description: "Agrega este registro TXT a tu configuración DNS",
+          verification_code_label: "Valor del registro TXT",
+          verification_code_description: "Agrega este registro a tu configuración DNS",
           domain_label: "Dominio",
           primary_button_text: "Verificar dominio",
           primary_button_loading_text: "Verificando",

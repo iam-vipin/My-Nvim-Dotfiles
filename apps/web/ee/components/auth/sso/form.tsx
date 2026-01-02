@@ -11,6 +11,7 @@ import { Input, Spinner } from "@plane/ui";
 import { AuthService } from "@/services/auth.service";
 
 type TSSOFormProps = {
+  emailParam: string | null;
   nextPath: string | null;
   onBack: () => void;
 };
@@ -19,21 +20,17 @@ type TSSOFormValues = {
   email: string;
 };
 
-const defaultValues: TSSOFormValues = {
-  email: "",
-};
-
 const authService = new AuthService();
 
 export const SSOForm = observer(function SSOForm(props: TSSOFormProps) {
-  const { nextPath, onBack } = props;
+  const { emailParam, nextPath, onBack } = props;
   // plane imports
   const { t } = useTranslation();
   // ref
   const formRef = useRef<HTMLFormElement>(null);
   // states
   const [csrfPromise, setCsrfPromise] = useState<Promise<{ csrf_token: string }> | undefined>(undefined);
-  const [ssoFormData, setSsoFormData] = useState<TSSOFormValues>({ ...defaultValues });
+  const [ssoFormData, setSsoFormData] = useState<TSSOFormValues>({ email: emailParam || "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormChange = (key: keyof TSSOFormValues, value: string) =>

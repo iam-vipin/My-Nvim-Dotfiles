@@ -3271,14 +3271,19 @@ export default {
           title: "Verifizieren Sie Ihre Domain",
           description: "Befolgen Sie diese Schritte, um Ihre Domain zu verifizieren.",
           instructions: {
+            label: "Anweisungen",
             step_1: "Gehen Sie zu den DNS-Einstellungen für Ihren Domain-Host.",
-            step_2: "Erstellen Sie einen TXT-Eintrag und fügen Sie den Verifizierungscode ein.",
+            step_2: {
+              part_1: "Erstellen Sie einen",
+              part_2: "TXT-Eintrag",
+              part_3: "und fügen Sie den vollständigen Eintragswert ein, der unten bereitgestellt wird.",
+            },
             step_3: "Diese Aktualisierung dauert normalerweise einige Minuten, kann aber bis zu 72 Stunden dauern.",
             step_4:
               'Klicken Sie auf "Domain verifizieren", um zu bestätigen, sobald Ihr DNS-Eintrag aktualisiert wurde.',
           },
-          verification_code_label: "Verifizierungscode",
-          verification_code_description: "Fügen Sie diesen TXT-Eintrag zu Ihren DNS-Einstellungen hinzu",
+          verification_code_label: "Wert des TXT-Eintrags",
+          verification_code_description: "Fügen Sie diesen Eintrag zu Ihren DNS-Einstellungen hinzu",
           domain_label: "Domain",
           primary_button_text: "Domain verifizieren",
           primary_button_loading_text: "Verifizieren",

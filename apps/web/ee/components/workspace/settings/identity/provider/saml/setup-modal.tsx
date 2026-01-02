@@ -1,5 +1,7 @@
 import { useMemo } from "react";
+import { isEmpty } from "lodash-es";
 // plane imports
+import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -21,7 +23,7 @@ export function SAMLSetupModal(props: TSAMLSetupModalProps) {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const originURL = typeof window !== "undefined" ? window.location.origin : "";
+  const baseURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
   const workspaceId = currentWorkspace?.id;
 
   // Generate service details URLs
@@ -29,44 +31,44 @@ export function SAMLSetupModal(props: TSAMLSetupModalProps) {
     () => [
       {
         label: t("sso.providers.saml.setup_modal.web_details.entity_id.label"),
-        value: workspaceId ? `${originURL}/auth/sso/saml/metadata/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/sso/saml/metadata/${workspaceId}/` : "",
         description: t("sso.providers.saml.setup_modal.web_details.entity_id.description"),
       },
       {
         label: t("sso.providers.saml.setup_modal.web_details.callback_url.label"),
-        value: workspaceId ? `${originURL}/auth/sso/saml/callback/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/sso/saml/callback/${workspaceId}/` : "",
         description: t("sso.providers.saml.setup_modal.web_details.callback_url.description"),
       },
       {
         label: t("sso.providers.saml.setup_modal.web_details.logout_url.label"),
-        value: workspaceId ? `${originURL}/auth/sso/saml/logout/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/sso/saml/logout/${workspaceId}/` : "",
         description: t("sso.providers.saml.setup_modal.web_details.logout_url.description"),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workspaceId, originURL]
+    [workspaceId, baseURL]
   );
 
   const mobileDetails = useMemo(
     () => [
       {
         label: t("sso.providers.saml.setup_modal.mobile_details.entity_id.label"),
-        value: workspaceId ? `${originURL}/auth/mobile/saml/metadata/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/mobile/saml/metadata/${workspaceId}/` : "",
         description: t("sso.providers.saml.setup_modal.mobile_details.entity_id.description"),
       },
       {
         label: t("sso.providers.saml.setup_modal.mobile_details.callback_url.label"),
-        value: workspaceId ? `${originURL}/auth/mobile/saml/callback/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/mobile/saml/callback/${workspaceId}/` : "",
         description: t("sso.providers.saml.setup_modal.mobile_details.callback_url.description"),
       },
       {
         label: t("sso.providers.saml.setup_modal.mobile_details.logout_url.label"),
-        value: workspaceId ? `${originURL}/auth/mobile/saml/logout/${workspaceId}/` : "",
+        value: workspaceId ? `${baseURL}/auth/mobile/saml/logout/${workspaceId}/` : "",
         description: t("sso.providers.saml.setup_modal.mobile_details.logout_url.description"),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workspaceId, originURL]
+    [workspaceId, baseURL]
   );
 
   const tabs = useMemo(

@@ -58,21 +58,28 @@ export function VerifyDomainForm(props: TVerifyDomainForm) {
       />
       <div className="space-y-4 py-5">
         <NumberedInstructions
+          label={t("sso.domain_management.verified_domains.verify_domain.instructions.label")}
           instructions={[
             t("sso.domain_management.verified_domains.verify_domain.instructions.step_1"),
-            t("sso.domain_management.verified_domains.verify_domain.instructions.step_2"),
+            <>
+              {t("sso.domain_management.verified_domains.verify_domain.instructions.step_2.part_1")}{" "}
+              <span className="font-semibold">
+                {t("sso.domain_management.verified_domains.verify_domain.instructions.step_2.part_2")}
+              </span>{" "}
+              {t("sso.domain_management.verified_domains.verify_domain.instructions.step_2.part_3")}
+            </>,
             t("sso.domain_management.verified_domains.verify_domain.instructions.step_3"),
             t("sso.domain_management.verified_domains.verify_domain.instructions.step_4"),
           ]}
         />
         <CopyableField
+          label={t("sso.domain_management.verified_domains.verify_domain.domain_label")}
+          value={domain.domain}
+        />
+        <CopyableField
           label={t("sso.domain_management.verified_domains.verify_domain.verification_code_label")}
           value={domain.verification_token}
           description={t("sso.domain_management.verified_domains.verify_domain.verification_code_description")}
-        />
-        <CopyableField
-          label={t("sso.domain_management.verified_domains.verify_domain.domain_label")}
-          value={domain.domain}
         />
       </div>
       <ModalFormFooter

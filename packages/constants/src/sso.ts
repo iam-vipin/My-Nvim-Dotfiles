@@ -6,6 +6,7 @@
 export const SSO_ERROR_CODES = {
   // Domain errors
   DOMAIN_REQUIRED: "5200",
+  DOMAIN_NOT_CONFIGURED: "5201",
   DOMAIN_NOT_FOUND: "5205",
   DOMAIN_NOT_VERIFIED: "5210",
   DOMAIN_VERIFICATION_FAILED: "5215",
@@ -32,6 +33,7 @@ export type TSSOErrorCodes = (typeof SSO_ERROR_CODES)[keyof typeof SSO_ERROR_COD
  */
 export const SSO_ERROR_MESSAGES: Record<TSSOErrorCodes, string> = {
   [SSO_ERROR_CODES.DOMAIN_REQUIRED]: "Domain name is required",
+  [SSO_ERROR_CODES.DOMAIN_NOT_CONFIGURED]: "This email is not configured for SSO. Contact your administrator.",
   [SSO_ERROR_CODES.DOMAIN_NOT_FOUND]: "Domain not found",
   [SSO_ERROR_CODES.DOMAIN_NOT_VERIFIED]: "Domain is not verified",
   [SSO_ERROR_CODES.DOMAIN_VERIFICATION_FAILED]: "Domain verification failed. Please check your DNS records.",

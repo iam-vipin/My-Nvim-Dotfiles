@@ -3262,14 +3262,19 @@ export default {
           title: "Verificați domeniul dvs.",
           description: "Urmați acești pași pentru a vă verifica domeniul.",
           instructions: {
+            label: "Instrucțiuni",
             step_1: "Accesați setările DNS pentru gazda domeniului dvs.",
-            step_2: "Creați o înregistrare TXT și lipiți codul de verificare.",
+            step_2: {
+              part_1: "Creați o",
+              part_2: "înregistrare TXT",
+              part_3: "și lipiți valoarea completă a înregistrării furnizate mai jos.",
+            },
             step_3: "Această actualizare durează de obicei câteva minute, dar poate dura până la 72 de ore.",
             step_4:
               'Faceți clic pe "Verificați domeniul" pentru a confirma odată ce înregistrarea DNS a fost actualizată.',
           },
-          verification_code_label: "Cod de verificare",
-          verification_code_description: "Adăugați această înregistrare TXT la setările DNS",
+          verification_code_label: "Valoarea înregistrării TXT",
+          verification_code_description: "Adăugați această înregistrare la setările DNS",
           domain_label: "Domeniu",
           primary_button_text: "Verificați domeniul",
           primary_button_loading_text: "Se verifică",

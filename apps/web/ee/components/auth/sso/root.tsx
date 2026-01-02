@@ -19,6 +19,7 @@ export const SSORoot = observer(function SSORoot() {
   // query params
   const nextPath = searchParams.get("next_path");
   const errorCode = searchParams.get("error_code");
+  const email = searchParams.get("email");
   // states
   const [errorInfo, setErrorInfo] = useState<string | undefined>(undefined);
 
@@ -34,7 +35,7 @@ export const SSORoot = observer(function SSORoot() {
       <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
         {errorInfo && <AuthBanner message={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}
         <AuthHeaderBase header="Continue with SSO." subHeader="Enter your SSO credentials." />
-        <SSOForm nextPath={nextPath} onBack={() => void navigate("/")} />
+        <SSOForm nextPath={nextPath} onBack={() => void navigate("/")} emailParam={email} />
         <TermsAndConditions authType={EAuthModes.SIGN_IN} />
       </div>
     </div>

@@ -3255,14 +3255,19 @@ export default {
           title: "Verifica il tuo dominio",
           description: "Segui questi passaggi per verificare il tuo dominio.",
           instructions: {
+            label: "Istruzioni",
             step_1: "Vai alle impostazioni DNS per il tuo host di dominio.",
-            step_2: "Crea un record TXT e incolla il codice di verifica.",
+            step_2: {
+              part_1: "Crea un",
+              part_2: "record TXT",
+              part_3: "e incolla il valore completo del record fornito di seguito.",
+            },
             step_3:
               "Questo aggiornamento di solito richiede alcuni minuti ma può richiedere fino a 72 ore per essere completato.",
             step_4: 'Clicca su "Verifica dominio" per confermare una volta che il tuo record DNS è stato aggiornato.',
           },
-          verification_code_label: "Codice di verifica",
-          verification_code_description: "Aggiungi questo record TXT alle tue impostazioni DNS",
+          verification_code_label: "Valore del record TXT",
+          verification_code_description: "Aggiungi questo record alle tue impostazioni DNS",
           domain_label: "Dominio",
           primary_button_text: "Verifica dominio",
           primary_button_loading_text: "Verifica in corso",

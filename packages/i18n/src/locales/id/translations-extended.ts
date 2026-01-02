@@ -3228,14 +3228,19 @@ export default {
           title: "Verifikasi domain Anda",
           description: "Ikuti langkah-langkah ini untuk memverifikasi domain Anda.",
           instructions: {
+            label: "Instruksi",
             step_1: "Buka pengaturan DNS untuk host domain Anda.",
-            step_2: "Buat catatan TXT dan tempelkan kode verifikasi.",
+            step_2: {
+              part_1: "Buat sebuah",
+              part_2: "catatan TXT",
+              part_3: "dan tempelkan nilai catatan lengkap yang disediakan di bawah ini.",
+            },
             step_3:
               "Pembaruan ini biasanya memakan waktu beberapa menit tetapi dapat memakan waktu hingga 72 jam untuk diselesaikan.",
             step_4: 'Klik "Verifikasi domain" untuk mengonfirmasi setelah catatan DNS Anda diperbarui.',
           },
-          verification_code_label: "Kode verifikasi",
-          verification_code_description: "Tambahkan catatan TXT ini ke pengaturan DNS Anda",
+          verification_code_label: "Nilai catatan TXT",
+          verification_code_description: "Tambahkan catatan ini ke pengaturan DNS Anda",
           domain_label: "Domain",
           primary_button_text: "Verifikasi domain",
           primary_button_loading_text: "Memverifikasi",

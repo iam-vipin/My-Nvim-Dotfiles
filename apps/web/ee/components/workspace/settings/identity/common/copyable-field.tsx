@@ -41,7 +41,7 @@ export function CopyableField({ label, value, description }: TCopyableFieldProps
           <Copy className="size-4 text-secondary" />
         </div>
       </button>
-      {description && <p className="text-body-xs-regular text-placeholder">{description}</p>}
+      {description && <p className="text-body-xs-regular text-tertiary">{description}</p>}
     </div>
   );
 }

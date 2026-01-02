@@ -159,6 +159,7 @@ export class ProjectStore implements IProjectStore {
           is_epic_enabled: template.template_data.is_epic_enabled,
           is_issue_type_enabled: template.template_data.is_issue_type_enabled,
           is_time_tracking_enabled: template.template_data.is_time_tracking_enabled,
+          is_milestone_enabled: template.template_data.is_milestone_enabled,
           is_workflow_enabled: template.template_data.is_workflow_enabled,
           project_id: response.id,
         });

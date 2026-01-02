@@ -71,6 +71,7 @@ export const buildProjectTemplateBlueprint = (
     intake_view: project.intake_view,
     intake_settings: project.intake_settings,
     is_time_tracking_enabled: project.is_time_tracking_enabled,
+    is_milestone_enabled: project.is_milestone_enabled,
     is_issue_type_enabled: project.is_issue_type_enabled,
     is_project_updates_enabled: project.is_project_updates_enabled,
     is_epic_enabled: project.is_epic_enabled,

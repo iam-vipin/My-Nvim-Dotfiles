@@ -66,6 +66,7 @@ export type TProjectTemplateData = Pick<
   is_project_updates_enabled: boolean;
   is_epic_enabled: boolean;
   is_workflow_enabled: boolean;
+  is_milestone_enabled: boolean;
   // project grouping
   priority?: TProjectPriority;
   project_state: CompleteOrEmpty<TProjectStateBlueprint>;
@@ -112,6 +113,7 @@ export type TProjectTemplateFormData = Pick<
   | "is_project_updates_enabled"
   | "is_epic_enabled"
   | "is_workflow_enabled"
+  | "is_milestone_enabled"
 > &
   Pick<
     TProject,

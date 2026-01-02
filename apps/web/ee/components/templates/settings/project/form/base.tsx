@@ -119,6 +119,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
     is_project_updates_enabled: false,
     is_epic_enabled: false,
     is_workflow_enabled: false,
+    is_milestone_enabled: false,
   },
 };
 

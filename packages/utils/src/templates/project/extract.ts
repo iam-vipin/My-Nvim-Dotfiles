@@ -85,6 +85,7 @@ export const extractProjectTemplateFormData = async (
     intake_view: projectData.intake_view,
     intake_settings: projectData.intake_settings,
     is_time_tracking_enabled: projectData.is_time_tracking_enabled,
+    is_milestone_enabled: projectData.is_milestone_enabled,
     is_issue_type_enabled: projectData.is_issue_type_enabled,
     is_project_updates_enabled: projectData.is_project_updates_enabled,
     is_epic_enabled: projectData.is_epic_enabled,

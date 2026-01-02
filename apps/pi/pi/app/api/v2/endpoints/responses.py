@@ -103,7 +103,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
     chatbot = PlaneChatBot(llm=data.llm, token=access_token)
 
     final_response = ""
-    actions_data = {}
+    actions_data_list = []
     clarification_data = {}
     formatted_context = {}
     response_type = "response"
@@ -120,41 +120,53 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
                 continue
             if chunk.startswith("πspecial actions blockπ: "):
                 response_type = "actions"
-                actions_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
+                action_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
+                actions_data_list.append(action_data)
             elif chunk.startswith("πspecial clarification blockπ: "):
                 response_type = "clarification"
                 clarification_data = json.loads(chunk.replace("πspecial clarification blockπ: ", ""))
             final_response += chunk
 
-    if actions_data:
+    if actions_data_list:
         # Validate required fields before creating ActionBatchExecutionRequest
         workspace_id = data.workspace_id
         chat_id = data.chat_id
-        message_id_raw = actions_data.get("message_id")
-        artifact_id_raw = actions_data.get("artifact_id")
         user_id = data.user_id
 
-        if not workspace_id or not chat_id or not message_id_raw or not artifact_id_raw or not user_id:
-            return JSONResponse(
-                status_code=400,
-                content={"detail": "Missing required fields: workspace_id, chat_id, message_id, artifact_id, or user_id"},
-            )
+        # Convert all action blocks to ArtifactData objects
+        artifact_data_objects = []
+        message_id = None
 
-        # Convert message_id to UUID if it's a string
-        if isinstance(message_id_raw, str):
-            message_id = UUID(message_id_raw)
-        elif isinstance(message_id_raw, UUID):
-            message_id = message_id_raw
-        else:
-            return JSONResponse(status_code=400, content={"detail": "Invalid message_id format"})
+        for actions_data in actions_data_list:
+            message_id_raw = actions_data.get("message_id")
+            artifact_id_raw = actions_data.get("artifact_id")
 
-        # Convert artifact_id to UUID if it's a string
-        if isinstance(artifact_id_raw, str):
-            artifact_id = UUID(artifact_id_raw)
-        elif isinstance(artifact_id_raw, UUID):
-            artifact_id = artifact_id_raw
-        else:
-            return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
+            if not workspace_id or not chat_id or not message_id_raw or not artifact_id_raw or not user_id:
+                return JSONResponse(
+                    status_code=400,
+                    content={"detail": "Missing required fields: workspace_id, chat_id, message_id, artifact_id, or user_id"},
+                )
+
+            # Convert message_id to UUID if it's a string
+            if isinstance(message_id_raw, str):
+                current_message_id = UUID(message_id_raw)
+            elif isinstance(message_id_raw, UUID):
+                current_message_id = message_id_raw
+            else:
+                return JSONResponse(status_code=400, content={"detail": "Invalid message_id format"})
+
+            if message_id is None:
+                message_id = current_message_id
+
+            # Convert artifact_id to UUID if it's a string
+            if isinstance(artifact_id_raw, str):
+                artifact_id = UUID(artifact_id_raw)
+            elif isinstance(artifact_id_raw, UUID):
+                artifact_id = artifact_id_raw
+            else:
+                return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
+
+            artifact_data_objects.append(ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data))
 
         # Execute batch actions using the service
         service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
@@ -164,7 +176,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
                 workspace_id=workspace_id,
                 chat_id=chat_id,
                 message_id=message_id,
-                artifact_data=[ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data)],
+                artifact_data=artifact_data_objects,
                 access_token=access_token,
             ),
             user_id,
@@ -190,7 +202,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
         status_code=200,
         content={
             "response": final_response,
-            "actions_data": actions_data,
+            "actions_data": actions_data_list,
             "context": formatted_context,
             "response_type": response_type,
             "clarification_data": clarification_data,

@@ -59,6 +59,7 @@ class WorkSpaceAdminPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
+        # TODO (Dheeraj): This role filter doesn't make sense.
         return WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=view.workspace_slug,

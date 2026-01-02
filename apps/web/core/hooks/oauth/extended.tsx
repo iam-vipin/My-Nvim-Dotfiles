@@ -16,8 +16,6 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
   // store hooks
   const { config } = useInstance();
   // derived values
-  const isOAuthEnabled =
-    (config && (config?.is_oidc_enabled || config?.is_saml_enabled || config?.is_ldap_enabled)) || false;
   const oAuthOptions: TOAuthOption[] = [
     {
       id: "oidc",
@@ -42,7 +40,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       text: `${oauthActionText} with ${config?.ldap_provider_name ? config.ldap_provider_name : "LDAP"}`,
       icon: <Key height={18} width={18} />,
       onClick: () => {
-        navigate("/ldap");
+        void navigate("/ldap");
       },
       enabled: config?.is_ldap_enabled,
     },
@@ -56,6 +54,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       enabled: config?.is_self_managed === false,
     },
   ];
+  const isOAuthEnabled = oAuthOptions.some((option) => option.enabled);
 
   return {
     isOAuthEnabled,

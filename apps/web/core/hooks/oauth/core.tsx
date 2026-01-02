@@ -21,14 +21,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { config } = useInstance();
-  // derived values
-  const isOAuthEnabled =
-    (config &&
-      (config?.is_google_enabled ||
-        config?.is_github_enabled ||
-        config?.is_gitlab_enabled ||
-        config?.is_gitea_enabled)) ||
-    false;
+  // derived options
   const oAuthOptions: TOAuthOption[] = [
     {
       id: "google",
@@ -74,6 +67,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       enabled: config?.is_gitea_enabled,
     },
   ];
+  const isOAuthEnabled = oAuthOptions.some((option) => option.enabled);
 
   return {
     isOAuthEnabled,

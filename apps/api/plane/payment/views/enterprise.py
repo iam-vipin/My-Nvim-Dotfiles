@@ -6,7 +6,7 @@ import json
 
 # Django imports
 from django.conf import settings
-from django.db.models import F
+from django.db.models import F, Value
 from django.core.files.base import ContentFile
 
 # Third party imports
@@ -53,20 +53,19 @@ class EnterpriseLicenseActivateEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Get all active workspace members
-            workspace_members = (
-                WorkspaceMember.objects.filter(is_active=True, member__is_bot=False)
+            users = (
+                User.objects.filter(is_active=True, is_bot=False)
                 .annotate(
-                    user_email=F("member__email"),
-                    user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_email=F("email"),
+                    user_id=F("id"),
+                    user_role=Value(20),
                 )
                 .values("user_email", "user_id", "user_role")
             )
 
             # Convert user_id to string
-            for member in workspace_members:
-                member["user_id"] = str(member["user_id"])
+            for user in users:
+                user["user_id"] = str(user["user_id"])
 
             if settings.PAYMENT_SERVER_BASE_URL:
                 # Send request to payment server to activate the license
@@ -78,7 +77,7 @@ class EnterpriseLicenseActivateEndpoint(BaseAPIView):
                     },
                     json={
                         "license_key": license_key,
-                        "members_list": list(workspace_members),
+                        "members_list": list(users),
                     },
                 )
                 response.raise_for_status()

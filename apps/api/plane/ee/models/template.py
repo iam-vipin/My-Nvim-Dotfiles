@@ -415,6 +415,7 @@ class ProjectTemplate(BaseModel):
     is_project_updates_enabled = models.BooleanField(default=False)
     is_epic_enabled = models.BooleanField(default=False)
     is_workflow_enabled = models.BooleanField(default=False)
+    is_milestone_enabled = models.BooleanField(default=False)
 
     TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)

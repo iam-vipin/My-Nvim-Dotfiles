@@ -40,6 +40,7 @@ export type VerticalStackAssetType =
   | "page"
   | "project"
   | "server-error"
+  | "stickies"
   | "teamspace"
   | "view"
   | "work-item";

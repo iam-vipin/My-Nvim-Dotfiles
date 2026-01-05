@@ -18,9 +18,10 @@ export default {
         "Notieren Sie eine Idee, erfassen Sie einen Aha-Moment oder halten Sie einen Geistesblitz fest. Fügen Sie einen Haftnotiz hinzu, um zu beginnen.",
     },
     stickies: {
-      title:
-        "Notieren Sie eine Idee, erfassen Sie einen Aha-Moment oder halten Sie einen Geistesblitz fest. Fügen Sie einen Haftnotiz hinzu, um zu beginnen.",
-      cta_primary: "Haftnotiz hinzufügen",
+      title: "Ideen sofort festhalten",
+      description: "Erstellen Sie Haftnotizen für schnelle Notizen und Aufgaben und behalten Sie sie überall bei sich.",
+      cta_primary: "Erste Haftnotiz erstellen",
+      cta_secondary: "Dokumentation",
     },
     active_cycles: {
       title: "Keine aktiven Zyklen",

@@ -17,8 +17,10 @@ export default {
       title: "Catat ide, tangkap inspirasi, atau rekam pemikiran. Tambahkan catatan untuk memulai.",
     },
     stickies: {
-      title: "Catat ide, tangkap inspirasi, atau rekam pemikiran. Tambahkan catatan untuk memulai.",
-      cta_primary: "Tambahkan catatan",
+      title: "Tangkap ide secara instan",
+      description: "Buat catatan untuk catatan cepat dan daftar tugas, dan bawa bersama Anda ke mana pun Anda pergi.",
+      cta_primary: "Buat catatan pertama",
+      cta_secondary: "Dokumentasi",
     },
     active_cycles: {
       title: "Tidak ada siklus aktif",

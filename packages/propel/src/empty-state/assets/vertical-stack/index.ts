@@ -15,6 +15,7 @@ export * from "./no-access";
 export * from "./page";
 export * from "./project";
 export * from "./server-error";
+export * from "./stickies";
 export * from "./teamspace";
 export * from "./view";
 export * from "./work-item";

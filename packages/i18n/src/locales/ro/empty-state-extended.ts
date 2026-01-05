@@ -18,9 +18,10 @@ export default {
         "Notați o idee, capturați un moment de inspirație sau înregistrați o idee genială. Adăugați un notă pentru a începe.",
     },
     stickies: {
-      title:
-        "Notați o idee, capturați un moment de inspirație sau înregistrați o idee genială. Adăugați un notă pentru a începe.",
-      cta_primary: "Adăugați notă",
+      title: "Capturați idei instantaneu",
+      description: "Creați note pentru notițe rapide și sarcini, și păstrați-le cu dvs. oriunde mergeți.",
+      cta_primary: "Creați prima notă",
+      cta_secondary: "Documentație",
     },
     active_cycles: {
       title: "Niciun ciclu activ",

@@ -16,6 +16,7 @@ import {
   PageVerticalStackIllustration,
   ProjectVerticalStackIllustration,
   ServerErrorVerticalStackIllustration,
+  StickiesVerticalStackIllustration,
   TeamspaceVerticalStackIllustration,
   ViewVerticalStackIllustration,
   WorkItemVerticalStackIllustration,
@@ -89,6 +90,10 @@ export const VerticalStackAssetsMap = [
   {
     asset: <ServerErrorVerticalStackIllustration />,
     title: "ServerErrorVerticalStackIllustration",
+  },
+  {
+    asset: <StickiesVerticalStackIllustration />,
+    title: "StickiesVerticalStackIllustration",
   },
   {
     asset: <TeamspaceVerticalStackIllustration />,

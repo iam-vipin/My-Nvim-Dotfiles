@@ -17,8 +17,11 @@ export default {
       title: "Zapisz pomysł, uchwć moment olśnienia lub nagraj falę mózgową. Dodaj notatkę, aby rozpocząć.",
     },
     stickies: {
-      title: "Zapisz pomysł, uchwć moment olśnienia lub nagraj falę mózgową. Dodaj notatkę, aby rozpocząć.",
-      cta_primary: "Dodaj notatkę",
+      title: "Przechwytuj pomysły natychmiast",
+      description:
+        "Twórz notatki na szybkie notatki i zadania do zrobienia i zabieraj je ze sobą, dokądkolwiek się udasz.",
+      cta_primary: "Utwórz pierwszą notatkę",
+      cta_secondary: "Dokumentacja",
     },
     active_cycles: {
       title: "Brak aktywnych cykli",

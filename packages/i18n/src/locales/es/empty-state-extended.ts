@@ -18,9 +18,11 @@ export default {
         "Anota una idea, captura un descubrimiento o registra una lluvia de ideas. Agrega una nota adhesiva para comenzar.",
     },
     stickies: {
-      title:
-        "Anota una idea, captura un descubrimiento o registra una lluvia de ideas. Agrega una nota adhesiva para comenzar.",
-      cta_primary: "Agregar nota adhesiva",
+      title: "Captura ideas al instante",
+      description:
+        "Crea notas adhesivas para notas rápidas y tareas pendientes, y mantenlas contigo dondequiera que vayas.",
+      cta_primary: "Crear primera nota adhesiva",
+      cta_secondary: "Documentación",
     },
     active_cycles: {
       title: "No hay ciclos activos",

@@ -17,8 +17,11 @@ export default {
       title: "Notez une idée, capturez un aha, ou enregistrez une idée géniale. Ajoutez un pense-bête pour commencer.",
     },
     stickies: {
-      title: "Notez une idée, capturez un aha, ou enregistrez une idée géniale. Ajoutez un pense-bête pour commencer.",
-      cta_primary: "Ajouter un pense-bête",
+      title: "Capturez les idées instantanément",
+      description:
+        "Créez des pense-bêtes pour des notes rapides et des tâches à faire, et gardez-les avec vous où que vous alliez.",
+      cta_primary: "Créer le premier pense-bête",
+      cta_secondary: "Documentation",
     },
     active_cycles: {
       title: "Aucun cycle actif",

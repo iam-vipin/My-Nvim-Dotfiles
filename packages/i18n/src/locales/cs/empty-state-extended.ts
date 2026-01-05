@@ -17,8 +17,10 @@ export default {
       title: "Poznamenejte si nápad, zachyťte aha moment nebo zaznamenejte náhlý nápad. Přidejte poznámku a začněte.",
     },
     stickies: {
-      title: "Poznamenejte si nápad, zachyťte aha moment nebo zaznamenejte náhlý nápad. Přidejte poznámku a začněte.",
-      cta_primary: "Přidat poznámku",
+      title: "Zachyťte nápady okamžitě",
+      description: "Vytvářejte poznámky pro rychlé poznámky a úkoly a mějte je u sebe, kamkoli jdete.",
+      cta_primary: "Vytvořit první poznámku",
+      cta_secondary: "Dokumentace",
     },
     active_cycles: {
       title: "Žádné aktivní cykly",

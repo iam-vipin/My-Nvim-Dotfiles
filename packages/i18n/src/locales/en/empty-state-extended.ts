@@ -17,8 +17,10 @@ export default {
       title: "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
     },
     stickies: {
-      title: "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
-      cta_primary: "Add sticky",
+      title: "Capture ideas instantly",
+      description: "Create stickies for quick notes and to-dos, and keep them with you wherever you go.",
+      cta_primary: "Create first sticky",
+      cta_secondary: "Documentation",
     },
     active_cycles: {
       title: "No active cycles",

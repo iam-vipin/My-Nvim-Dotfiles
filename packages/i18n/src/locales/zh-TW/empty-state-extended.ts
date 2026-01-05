@@ -17,8 +17,10 @@ export default {
       title: "記下想法、捕捉靈光一現或記錄思維火花。新增便籤開始。",
     },
     stickies: {
-      title: "記下想法、捕捉靈光一現或記錄思維火花。新增便籤開始。",
-      cta_primary: "新增便籤",
+      title: "即時捕捉想法",
+      description: "建立便籤記錄快速筆記和待辦事項,並隨身攜帶它們無論您走到哪裡。",
+      cta_primary: "建立第一個便籤",
+      cta_secondary: "文件",
     },
     active_cycles: {
       title: "無活躍週期",

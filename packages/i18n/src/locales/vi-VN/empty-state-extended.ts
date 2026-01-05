@@ -18,8 +18,11 @@ export default {
       title: "Ghi lại một ý tưởng, ghi lại khoảnh khắc sáng tạo hoặc ghi lại ý nghĩ. Thêm ghi chú dán để bắt đầu.",
     },
     stickies: {
-      title: "Ghi lại một ý tưởng, ghi lại khoảnh khắc sáng tạo hoặc ghi lại ý nghĩ. Thêm ghi chú dán để bắt đầu.",
-      cta_primary: "Thêm ghi chú dán",
+      title: "Ghi lại ý tưởng ngay lập tức",
+      description:
+        "Tạo ghi chú dán cho các ghi chú nhanh và việc cần làm, và mang chúng theo bên mình mọi nơi bạn đến.",
+      cta_primary: "Tạo ghi chú dán đầu tiên",
+      cta_secondary: "Tài liệu",
     },
     active_cycles: {
       title: "Không có chu kỳ hoạt động",

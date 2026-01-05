@@ -18,9 +18,10 @@ export default {
         "Anote uma ideia, capture um momento de inspiração ou registre um lampejo. Adicione um adesivo para começar.",
     },
     stickies: {
-      title:
-        "Anote uma ideia, capture um momento de inspiração ou registre um lampejo. Adicione um adesivo para começar.",
-      cta_primary: "Adicionar adesivo",
+      title: "Capture ideias instantaneamente",
+      description: "Crie adesivos para notas rápidas e tarefas pendentes, e mantenha-os com você onde quer que vá.",
+      cta_primary: "Criar primeiro adesivo",
+      cta_secondary: "Documentação",
     },
     active_cycles: {
       title: "Nenhum ciclo ativo",

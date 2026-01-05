@@ -19,9 +19,11 @@ export default {
         "Bir fikir yazın, bir aha anını yakalayın veya bir beyin dalgasını kaydedin. Başlamak için yapışkan not ekleyin.",
     },
     stickies: {
-      title:
-        "Bir fikir yazın, bir aha anını yakalayın veya bir beyin dalgasını kaydedin. Başlamak için yapışkan not ekleyin.",
-      cta_primary: "Yapışkan not ekle",
+      title: "Fikirleri anında yakalayın",
+      description:
+        "Hızlı notlar ve yapılacaklar için yapışkan notlar oluşturun ve onları nereye giderseniz gidin yanınızda taşıyın.",
+      cta_primary: "İlk yapışkan notu oluştur",
+      cta_secondary: "Belgeler",
     },
     active_cycles: {
       title: "Aktif döngü yok",

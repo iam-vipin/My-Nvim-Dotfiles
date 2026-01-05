@@ -17,8 +17,10 @@ export default {
       title: "아이디어를 적고, 영감을 포착하거나, 번뜩이는 생각을 기록하세요. 스티커를 추가하여 시작하세요.",
     },
     stickies: {
-      title: "아이디어를 적고, 영감을 포착하거나, 번뜩이는 생각을 기록하세요. 스티커를 추가하여 시작하세요.",
-      cta_primary: "스티커 추가",
+      title: "아이디어를 즉시 캡처",
+      description: "빠른 메모와 할 일을 위한 스티커를 만들고 어디를 가든 함께 가지고 다니세요.",
+      cta_primary: "첫 번째 스티커 만들기",
+      cta_secondary: "문서",
     },
     active_cycles: {
       title: "활성 사이클 없음",

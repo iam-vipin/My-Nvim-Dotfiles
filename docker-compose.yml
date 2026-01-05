@@ -1,21 +1,7 @@
-x-silo-env: &silo-env
-  environment:
-    - PORT=3000
-    - BATCH_SIZE=${BATCH_SIZE:-60}
-    - MQ_PREFETCH_COUNT=${MQ_PREFETCH_COUNT:-5}
-    - APP_BASE_URL=${APP_BASE_URL:-http://web:3000}
-    - SILO_API_BASE_URL=${SILO_API_BASE_URL:-http://localhost:5050}
-    - DB_URL=${DB_URL:-postgresql://plane:plane@plane-db/silo}
-    - AMQP_URL=${AMQP_URL:-amqp://guest:guest@plane-mq:5672/}
-    - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
-    - JIRA_CLIENT_ID=${JIRA_CLIENT_ID:-""}
-    - JIRA_CLIENT_SECRET=${JIRA_CLIENT_SECRET:-""}
-    - LINEAR_CLIENT_ID=${LINEAR_CLIENT_ID:-""}
-    - LINEAR_CLIENT_SECRET=${LINEAR_CLIENT_SECRET:-""}
-
 services:
   web:
-    container_name: web
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile.web
@@ -26,7 +12,8 @@ services:
       - api
 
   admin:
-    container_name: admin
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: ./apps/admin/Dockerfile.admin
@@ -38,7 +25,8 @@ services:
       - web
 
   space:
-    container_name: space
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: ./apps/space/Dockerfile.space
@@ -50,44 +38,45 @@ services:
       - web
 
   live:
-    container_name: live
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: ./live/Dockerfile.live
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: node live/dist/server.js
+    depends_on:
+      - plane-db
+      - plane-redis
+      - plane-mq
 
   silo:
-    <<: *silo-env
-    container_name: silo
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: ./silo/Dockerfile.silo
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: >
-      /bin/sh -c "
-        npm --prefix ./silo run db:migrate
-        node silo/start.js
-      "
     depends_on:
       plane-mq:
         condition: service_healthy
 
-  # monitor:
-  #   container_name: monitor
-  #   build:
-  #     context: .
-  #     dockerfile: ./monitor/Dockerfile
-  #     args:
-  #       DOCKER_BUILDKIT: 1
-  #   restart: always
+  monitor:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./monitor/Dockerfile
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
 
   api:
-    container_name: api
+    env_file:
+      - ./apps/api/.env
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -95,23 +84,11 @@ services:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/docker-entrypoint-api-ee.sh
-    env_file:
-      - ./apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
 
-  mongodb:
-    image: "mongo"
-    restart: unless-stopped
-    volumes:
-      - "mongodb_data:/data/db"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-plane}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-plane}
-
   worker:
-    container_name: bgworker
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -125,9 +102,9 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   beat-worker:
-    container_name: beatworker
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -141,9 +118,9 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   migrator:
-    container_name: plane-migrator
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -158,7 +135,6 @@ services:
       - plane-redis
 
   plane-db:
-    container_name: plane-db
     image: postgres:15.7-alpine
     restart: always
     command: >
@@ -185,14 +161,14 @@ services:
       start_period: 10s
 
   plane-redis:
-    container_name: plane-redis
     image: valkey/valkey:7.2.11-alpine
     restart: always
+    env_file:
+      - .env
     volumes:
       - redisdata:/data
 
   plane-mq:
-    container_name: plane-mq
     image: rabbitmq:management
     restart: always
     ports:
@@ -212,7 +188,6 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   plane-minio:
-    container_name: plane-minio
     image: minio/minio
     restart: always
     command: server /export --console-address ":9090"
@@ -224,10 +199,9 @@ services:
 
   # Comment this if you already have a reverse proxy running
   proxy:
-    container_name: proxy
     build:
       context: ./apps/proxy
-      dockerfile: Dockerfile.ce
+      dockerfile: Dockerfile.ee
     restart: always
     ports:
       - ${LISTEN_HTTP_PORT}:80

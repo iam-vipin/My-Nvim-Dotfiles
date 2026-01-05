@@ -1,7 +1,9 @@
 services:
-  redis:
+  plane-redis:
     image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
+    env_file:
+      - .env
     networks:
       - dev_env
     volumes:
@@ -9,7 +11,7 @@ services:
     ports:
       - "6379:6379"
 
-  mq:
+  plane-mq:
     image: rabbitmq:3.13.6-management-alpine
     restart: unless-stopped
     networks:
@@ -25,7 +27,7 @@ services:
     ports:
       - 5672:5672
 
-  minio:
+  plane-minio:
     image: minio/minio
     restart: unless-stopped
     networks:
@@ -50,7 +52,7 @@ services:
       - "9000:9000"
       - "9090:9090"
 
-  db:
+  plane-db:
     image: postgres:15.7-alpine
     restart: unless-stopped
     networks:
@@ -80,9 +82,9 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - db
-      - redis
-      - mq
+      - plane-db
+      - plane-redis
+      - plane-mq
     ports:
       - "8000:8000"
 
@@ -102,8 +104,8 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - db
-      - redis
+      - plane-db
+      - plane-redis
 
   beat-worker:
     build:
@@ -121,8 +123,8 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - db
-      - redis
+      - plane-db
+      - plane-redis
 
   migrator:
     build:
@@ -139,8 +141,8 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - db
-      - redis
+      - plane-db
+      - plane-redis
 
   outbox-poller:
     build:
@@ -157,8 +159,8 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - db
-      - mq
+      - plane-db
+      - plane-mq
 
   automation-consumer:
     build:
@@ -175,8 +177,8 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - db
-      - mq
+      - plane-db
+      - plane-mq
 
 volumes:
   redisdata:

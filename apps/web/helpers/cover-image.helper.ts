@@ -78,7 +78,7 @@ export const DEFAULT_COVER_IMAGE_URL = STATIC_COVER_IMAGES.IMAGE_1;
  */
 const STATIC_COVER_IMAGES_SET = new Set<string>(Object.values(STATIC_COVER_IMAGES));
 
-export type TCoverImageType = "local_static" | "uploaded_asset";
+export type TCoverImageType = "local_static" | "uploaded_asset" | "unsplash";
 
 export type TCoverImageResult = {
   needsUpload: boolean;
@@ -108,6 +108,9 @@ export const getCoverImageType = (imageUrl: string): TCoverImageType => {
   // Check against the explicit set of static images
   if (isStaticCoverImage(imageUrl)) return "local_static";
 
+  // Check if it's an Unsplash image
+  if (imageUrl.includes("unsplash.com")) return "unsplash";
+
   if (imageUrl.startsWith("http")) return "uploaded_asset";
 
   return "uploaded_asset";
@@ -117,6 +120,7 @@ export const getCoverImageType = (imageUrl: string): TCoverImageType => {
  * Gets the correct display URL for a cover image
  * - Local static images: returned as-is (served from assets folder)
  * - Uploaded assets: processed through getFileURL (adds backend URL)
+ * - Unsplash images: returned as-is (external URL)
  */
 export function getCoverImageDisplayURL(imageUrl: string | null | undefined, fallbackUrl: string): string;
 export function getCoverImageDisplayURL(imageUrl: string | null | undefined, fallbackUrl: null): string | null;
@@ -130,7 +134,7 @@ export function getCoverImageDisplayURL(
 
   const imageType = getCoverImageType(imageUrl);
 
-  if (imageType === "local_static") {
+  if (imageType === "local_static" || imageType === "unsplash") {
     return imageUrl;
   }
 
@@ -143,6 +147,7 @@ export function getCoverImageDisplayURL(
 
 /**
  * Analyzes cover image change and determines what action to take
+ * Merged with isUnsplashImage logic - now detects unsplash images as a separate type
  */
 export const analyzeCoverImageChange = (
   currentImage: string | null | undefined,
@@ -158,17 +163,25 @@ export const analyzeCoverImageChange = (
     };
   }
 
-  const imageType = getCoverImageType(newImage ?? "");
+  if (!newImage) {
+    return {
+      needsUpload: false,
+      imageType: "uploaded_asset",
+      shouldUpdate: true,
+    };
+  }
+
+  const imageType = getCoverImageType(newImage);
 
   return {
-    needsUpload: imageType === "local_static",
+    needsUpload: imageType === "local_static" || imageType === "unsplash",
     imageType,
     shouldUpdate: hasChanged,
   };
 };
 
 /**
- * Uploads a local static image to S3
+ * Downloads an image from URL and uploads it to the server
  */
 export const uploadCoverImage = async (
   imageUrl: string,
@@ -181,53 +194,36 @@ export const uploadCoverImage = async (
 ): Promise<string> => {
   const { workspaceSlug, entityIdentifier, entityType, isUserAsset = false } = uploadConfig;
 
-  // Fetch the local image
   const response = await fetch(imageUrl);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch image: ${response.statusText}`);
-  }
+  if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
 
   const blob = await response.blob();
+  if (!blob.type.startsWith("image/")) throw new Error("Invalid file type");
 
-  // Validate it's actually an image
-  if (!blob.type.startsWith("image/")) {
-    throw new Error("Invalid file type. Please select an image.");
-  }
-
-  const fileName = imageUrl.split("/").pop() || "cover.jpg";
+  const fileName = imageUrl.split("/").pop()?.split("?")[0] || "image.jpg";
   const file = new File([blob], fileName, { type: blob.type });
 
-  // Upload based on context
   if (isUserAsset) {
     const uploadResult = await fileService.uploadUserAsset(
-      {
-        entity_identifier: entityIdentifier,
-        entity_type: entityType,
-      },
-      file
-    );
-    return uploadResult.asset_url;
-  } else {
-    if (!workspaceSlug) {
-      throw new Error("Workspace slug is required for workspace asset upload");
-    }
-
-    const uploadResult = await fileService.uploadWorkspaceAsset(
-      workspaceSlug,
-      {
-        entity_identifier: entityIdentifier,
-        entity_type: entityType,
-      },
+      { entity_identifier: entityIdentifier, entity_type: entityType },
       file
     );
     return uploadResult.asset_url;
   }
+
+  if (!workspaceSlug) throw new Error("Workspace slug is required for workspace asset upload");
+
+  const uploadResult = await fileService.uploadWorkspaceAsset(
+    workspaceSlug,
+    { entity_identifier: entityIdentifier, entity_type: entityType },
+    file
+  );
+
+  return uploadResult.asset_url;
 };
 
 /**
  * Main utility to handle cover image changes with upload
- * Returns the payload fields that should be updated
  */
 export const handleCoverImageChange = async (
   currentImage: string | null | undefined,
@@ -238,46 +234,20 @@ export const handleCoverImageChange = async (
     entityType: EFileAssetType;
     isUserAsset?: boolean;
   }
-): Promise<TCoverImagePayload | null> => {
+): Promise<TCoverImagePayload | undefined> => {
   const analysis = analyzeCoverImageChange(currentImage, newImage);
+  if (!analysis.shouldUpdate) return;
 
-  // No change detected
-  if (!analysis.shouldUpdate) {
-    return null;
-  }
-
-  // Image removed
   if (!newImage) {
-    return {
-      cover_image: null,
-      cover_image_url: null,
-      cover_image_asset: null,
-    };
+    return { cover_image: null, cover_image_url: null, cover_image_asset: null };
   }
 
-  // Local static image - needs upload
   if (analysis.needsUpload) {
-    const uploadedUrl = await uploadCoverImage(newImage, uploadConfig);
-
-    // For BOTH user assets AND project assets:
-    // The backend auto-links when entity_identifier is set correctly
-    // For project assets: auto-linked server-side, no payload needed
-    // For user assets: return URL for immediate UI feedback
-
-    if (uploadConfig.isUserAsset) {
-      return {
-        cover_image: uploadedUrl,
-      };
-    } else {
-      return null;
-    }
+    await uploadCoverImage(newImage, uploadConfig);
+    return;
   }
 
-  // External/uploaded asset (e.g., Unsplash URL, pre-uploaded asset)
-  // Return the URL to be saved in the backend
-  return {
-    cover_image: newImage,
-  };
+  return;
 };
 
 /**

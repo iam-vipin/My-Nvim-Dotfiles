@@ -15,7 +15,7 @@ class WorkItemPageLiteSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description_stripped",
+            "description_html",
             "created_at",
             "updated_at",
             "created_by",

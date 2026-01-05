@@ -37,7 +37,7 @@ export const GROUPED_WORKSPACE_SETTINGS = {
     WORKSPACE_SETTINGS["import"],
     WORKSPACE_SETTINGS["export"],
     WORKSPACE_SETTINGS["worklogs"],
-    WORKSPACE_SETTINGS["identity"],
+    // WORKSPACE_SETTINGS["identity"], // TODO: Enable it back once production testing is complete
   ],
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [
     WORKSPACE_SETTINGS["project_states"],

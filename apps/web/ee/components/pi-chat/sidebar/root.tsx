@@ -37,7 +37,7 @@ export const PiSidebar = observer(function PiSidebar() {
   return (
     <SidebarWrapper
       title="Plane AI"
-      quickActions={<Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} />}
+      quickActions={<Toolbar searchQuery={searchQuery} isFullScreen updateSearchQuery={updateSearchQuery} />}
     >
       {/* Favorites */}
       {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} />}

@@ -13,10 +13,12 @@ type Props = {
   searchQuery: string;
   updateSearchQuery: (value: string) => void;
   isProjectLevel?: boolean;
+  isFullScreen?: boolean;
+  onClick?: () => void;
 };
 
 export const Toolbar = observer(function Toolbar(props: Props) {
-  const { searchQuery, updateSearchQuery, isProjectLevel = false } = props;
+  const { searchQuery, updateSearchQuery, isProjectLevel = false, isFullScreen = false, onClick } = props;
   const { workspaceSlug } = useParams();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,18 +35,34 @@ export const Toolbar = observer(function Toolbar(props: Props) {
   return (
     <div className="flex items-center justify-between gap-2 h-8 w-full">
       {/* New */}
-      <Link
-        href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/`}
-        className={cn(
-          "flex items-center px-2 text-tertiary justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-subtle-1 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
-          {
-            "w-full justify-start": !isSearchOpen,
-          }
-        )}
-      >
-        <SquarePen className="shrink-0 size-4" />
-        {!isSearchOpen && <span className="text-h6-medium text-nowrap">New chat</span>}
-      </Link>
+      {isFullScreen ? (
+        <Link
+          href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/`}
+          className={cn(
+            "flex items-center px-2 text-tertiary justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-subtle-1 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
+            {
+              "w-full justify-start": !isSearchOpen,
+            }
+          )}
+        >
+          <SquarePen className="shrink-0 size-4" />
+          {!isSearchOpen && <span className="text-h6-medium text-nowrap">New chat</span>}
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className={cn(
+            "flex items-center px-2 text-tertiary justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-subtle-1 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
+            {
+              "w-full justify-start": !isSearchOpen,
+            }
+          )}
+          onClick={onClick}
+        >
+          <SquarePen className="shrink-0 size-4" />
+          {!isSearchOpen && <span className="text-h6-medium text-nowrap">New chat</span>}
+        </button>
+      )}
       {/* Search */}
       <div className="flex items-center flex-1">
         {!isSearchOpen && (

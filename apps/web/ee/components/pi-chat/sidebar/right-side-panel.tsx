@@ -24,7 +24,7 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
   // router
   const { workspaceSlug } = useParams();
   // store
-  const { activeChatId, geUserThreadsByWorkspaceId, isLoadingThreads } = usePiChat();
+  const { activeChatId, geUserThreadsByWorkspaceId, isLoadingThreads, initPiChat } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = workspaceSlug && getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const userThreads = geUserThreadsByWorkspaceId(workspaceId?.toString());
@@ -61,7 +61,16 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
       </div>
 
       {/* Toolbar */}
-      <Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} isProjectLevel />
+      <Toolbar
+        searchQuery={searchQuery}
+        updateSearchQuery={updateSearchQuery}
+        isProjectLevel
+        isFullScreen={isFullScreen}
+        onClick={() => {
+          initPiChat?.();
+          toggleSidePanel(false);
+        }}
+      />
       {/* History */}
       <div className="flex-1 overflow-y-auto">
         <RecentChats

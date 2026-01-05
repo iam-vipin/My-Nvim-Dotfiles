@@ -44,14 +44,14 @@ export function MentionsDropdownSection(props: Props) {
               id={`${type}-${index}`}
               onClick={() => onClick(index)}
               className={cn(
-                "gap-1 rounded-sm p-1 my-1 cursor-pointer hover:bg-layer-1/50 text-body-sm-regular text-primary space-x-1 flex",
+                "gap-1 rounded-sm p-1 my-1 cursor-pointer hover:bg-layer-1-hover text-body-xs-regular text-primary space-x-1 flex",
                 {
-                  "bg-layer-1/50": selectedItemIndex === index && isSectionSelected,
+                  "bg-layer-1-selected": selectedItemIndex === index && isSectionSelected,
                 }
               )}
             >
               <span className="my-auto"> {item.icon}</span>
-              <span className="truncate h-[16px]">{item.title}</span>
+              <span className="truncate">{item.title}</span>
             </div>
           ))}
         </Disclosure.Panel>

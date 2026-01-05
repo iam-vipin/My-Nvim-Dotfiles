@@ -41,7 +41,7 @@ export const Templates = observer(function Templates(props: TProps) {
           </Loader>
         </div>
       ) : (
-        <div className="flex flex-col m-auto justify-center rounded-b-xl overflow-hidden">
+        <div className="flex flex-col m-auto justify-center rounded-b-2xl overflow-hidden">
           {instance?.is_authorized &&
             instance?.templates?.map((prompt: TTemplate, index: number) => (
               <button

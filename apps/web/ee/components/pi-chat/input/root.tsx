@@ -235,25 +235,25 @@ export const InputBox = observer(function InputBox(props: TProps) {
 
   if (!workspaceId) return;
   return (
-    <>
+    <div className="my-auto">
+      {isNewChat && !onlyInput && (
+        <div className="flex flex-col gap-2.5 mb-6">
+          <div className={cn("text-center text-h3-medium text-primary", { "text-h3-semibold": !isFullScreen })}>
+            What can I do for you?
+          </div>
+        </div>
+      )}
       <form
         className={cn(
-          "bg-surface-1 flex flex-col px-2 md:px-0 rounded-xl w-full my-auto",
+          "bg-layer-1 flex flex-col px-2 md:px-0 rounded-2xl w-full ",
           {
             "absolute bottom-[32px] left-0": !isNewChat,
           },
           className
         )}
       >
-        {isNewChat && !onlyInput && (
-          <div className="flex flex-col gap-2.5 mb-6">
-            <div className={cn("text-center text-h3-medium text-primary", { "text-h3-semibold": !isFullScreen })}>
-              What can I do for you?
-            </div>
-          </div>
-        )}
         <div
-          className={cn("rounded-xl transition-[max-height] duration-100", {
+          className={cn("rounded-2xl transition-[max-height] duration-100", {
             "bg-layer-1": onlyInput,
           })}
         >
@@ -279,7 +279,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
             {(isUploading: boolean, open: () => void) => (
               <div
                 className={cn(
-                  "bg-surface-1 rounded-xl p-3 flex flex-col gap-1 shadow-raised-100 border border-subtle-1 justify-between h-fit",
+                  "bg-layer-2 rounded-2xl p-3 flex flex-col gap-1 shadow-raised-100 border border-subtle-1 justify-between h-fit",
                   {
                     "min-h-[120px]": !SPEECH_LOADERS.includes(loader),
                   }
@@ -409,6 +409,6 @@ export const InputBox = observer(function InputBox(props: TProps) {
       >
         <div className="mx-auto max-w-[400px]">Plane AI can make mistakes, please double-check responses. </div>
       </div>
-    </>
+    </div>
   );
 });

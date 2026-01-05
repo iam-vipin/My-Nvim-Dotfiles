@@ -170,7 +170,7 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
           tabIndex: 0,
           "aria-label": "Drop files here to upload",
           className: cn(
-            "relative w-full rounded-t-xl border border-transparent text-sm transition-colors focus:outline-none",
+            "relative w-full rounded-t-2xl border border-transparent text-sm transition-colors focus:outline-none",
             {
               "border-dashed border-accent-strong bg-accent-primary/10": isDragging,
               "bg-layer-1": showBg,
@@ -180,7 +180,7 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
       >
         <input {...getInputProps()} />
         {isDragging && (
-          <div className="w-full h-full bg-layer-1 z-30 absolute top-0 left-0 rounded-xl overflow-hidden">
+          <div className="w-full h-full bg-layer-1 z-30 absolute top-0 left-0 rounded-2xl overflow-hidden">
             <div className="flex items-center justify-center gap-4 h-full bg-accent-primary/10">
               {fileIcon}
               <span className="text-14 text-accent-primary">Drop any files here to add to chat</span>

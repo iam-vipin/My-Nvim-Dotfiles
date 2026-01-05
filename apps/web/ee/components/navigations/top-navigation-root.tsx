@@ -110,15 +110,15 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
             <Tooltip tooltipContent="Ask AI" position="bottom">
               <button
                 className={cn(
-                  "flex items-center gap-1.5 transition-colors h-8 py-1.5 px-1 rounded-md  hover:bg-layer-1 text-tertiary hover:text-secondary place-items-center w-full",
+                  "flex items-center gap-1.5 transition-colors h-8 py-1.5 px-1 rounded-md  bg-layer-1 text-primary hover:bg-layer-1-hover place-items-center w-full",
                   {
-                    "bg-accent-primary/10 text-accent-secondary!": isPiChatDrawerOpen,
+                    "bg-layer-1-active": isPiChatDrawerOpen,
                   }
                 )}
                 onClick={() => togglePiChatDrawer()}
                 data-prevent-outside-click
               >
-                <span className="shrink-0 size-5 grid place-items-center">
+                <span className="shrink-0 size-5 grid place-items-center text-icon-secondary">
                   {isPiChatDrawerOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}
                 </span>
                 <span className="text-13 leading-normal font-medium pr-1">AI assistant</span>

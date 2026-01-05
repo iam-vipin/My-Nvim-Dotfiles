@@ -12,9 +12,13 @@ const useExtendedSidebarOutsideClickDetector = (
       if (ref.current && !ref.current.contains(event.target)) {
         // check for the closest element with attribute name data-prevent-outside-click
         const preventOutsideClickElement = event.target.closest("[data-prevent-outside-click]");
-        // if the closest element with attribute name data-prevent-outside-click is found, return
+        // if the closest element with attribute name data-prevent-outside-click is found
         if (preventOutsideClickElement) {
-          return;
+          // Only prevent the callback if the ref is NOT inside the same prevent-outside-click container.
+          // This allows normal outside click detection for elements within the same container
+          if (!preventOutsideClickElement.contains(ref.current)) {
+            return;
+          }
         }
         // check if the click target is the current issue element or its children
         let targetElement: HTMLElement | null = event.target;

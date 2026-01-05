@@ -86,7 +86,6 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
           "rounded-lg border border-subtle-1 h-full max-w-[400px]",
           isOpen ? "translate-x-0 w-[400px] mr-2" : "px-0 translate-x-[100%] w-0 border-none"
         )}
-        data-prevent-outside-click
       >
         <PiChatLayout isFullScreen={false} isProjectLevel isOpen={isOpen}>
           <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel contextData={contextData} />

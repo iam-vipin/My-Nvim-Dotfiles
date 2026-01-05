@@ -29,7 +29,7 @@ export const useWorkItemData = (artifactId: string): Partial<TIssue> => {
         target_date: properties?.target_date?.name || null,
         assignee_ids: properties?.assignees?.map((a: { id: string }) => a.id) || [],
         label_ids: properties?.labels?.map((l: { id: string }) => l.id) || [],
-        type_id: null,
+        type_id: properties?.type_id?.id || null,
         estimate_point: null,
         parent_id: null,
         cycle_id: null,

@@ -3,6 +3,7 @@ import { ArrowUpRight, Hash, Timer } from "lucide-react";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon, EpicIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import type { TArtifact } from "@/plane-web/types";
+import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon", className?: string) => {
   switch (type) {
@@ -60,7 +61,13 @@ export function PreviewBlock(props: {
     >
       <div className="flex items-center gap-2 justify-between w-full">
         <div className="flex gap-2 items-center">
-          <div>{getIcon(type, "", "text")}</div>
+          <div>
+            {(type === "workitem" || type === "epic") && data?.parameters?.properties?.type_id?.id ? (
+              <IssueTypeIdentifier issueTypeId={data?.parameters?.properties?.type_id?.id} />
+            ) : (
+              getIcon(type, "", "text")
+            )}
+          </div>
           {(type === "workitem" || type === "project" || type === "comment") && data && (
             <div className="text-13 font-medium text-tertiary">
               {data.issue_identifier || data.project_identifier || data.parameters?.project?.identifier}

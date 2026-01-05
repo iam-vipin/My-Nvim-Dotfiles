@@ -12,6 +12,7 @@ import { ReadonlyPriority } from "@/components/readonly/priority";
 import { ReadonlyState } from "@/components/readonly/state";
 import { useWorkItemData } from "../useArtifactData";
 import { WithPreviewHOC } from "./with-preview-hoc";
+import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 type TProps = {
   artifactId: string;
   isEpic?: boolean;
@@ -27,7 +28,9 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
         {/* header */}
         <div className="flex gap-2 items-center overflow-hidden w-full">
           {/* issue type icon */}
-          {isEpic ? (
+          {data.type_id ? (
+            <IssueTypeIdentifier issueTypeId={data.type_id} />
+          ) : isEpic ? (
             <EpicIcon className="size-4 rounded-sm text-secondary flex-shrink-0" />
           ) : (
             <LayersIcon className="size-4 rounded-sm flex-shrink-0" />

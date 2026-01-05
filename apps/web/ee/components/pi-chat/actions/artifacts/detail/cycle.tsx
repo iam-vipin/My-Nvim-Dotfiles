@@ -51,22 +51,24 @@ export const CycleDetail = observer(function CycleDetail(props: TCycleDetailProp
   };
   return (
     <>
-      <Card className="relative max-w-[700px] rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-hidden">
-        <CycleForm
-          onChange={onChange}
-          status
-          projectId={projectId ?? ""}
-          setActiveProject={() => {}}
-          data={updatedData}
-          isMobile={isMobile}
-          showActionButtons={false}
-        />
-        <div
-          className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
-            hidden: data.is_editable,
-          })}
-        />
-      </Card>
+      <div className="w-full overflow-scroll h-full m-auto flex flex-col justify-center items-center mb-[100px]">
+        <Card className="relative max-w-[700px] rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-scroll">
+          <CycleForm
+            onChange={onChange}
+            status
+            projectId={projectId ?? ""}
+            setActiveProject={() => {}}
+            data={updatedData}
+            isMobile={isMobile}
+            showActionButtons={false}
+          />
+          <div
+            className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
+              hidden: data.is_editable,
+            })}
+          />
+        </Card>
+      </div>
       <PiChatArtifactsFooter
         artifactsData={data}
         workspaceSlug={workspaceSlug}

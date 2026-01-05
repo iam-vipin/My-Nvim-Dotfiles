@@ -73,16 +73,18 @@ export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemD
   return (
     <>
       {projectId && (
-        <Card className="relative max-w-[700px] rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-hidden">
-          <IssueModalProvider>
-            <IssueFormRoot {...commonIssueModalProps} key={data.artifact_id} />
-          </IssueModalProvider>
-          <div
-            className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
-              hidden: data.is_editable,
-            })}
-          />
-        </Card>
+        <div className="overflow-scroll h-full m-auto flex flex-col justify-center items-center mb-[100px]">
+          <Card className="relative max-w-[700px] rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-scroll">
+            <IssueModalProvider>
+              <IssueFormRoot {...commonIssueModalProps} key={data.artifact_id} />
+            </IssueModalProvider>
+            <div
+              className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {
+                hidden: data.is_editable,
+              })}
+            />
+          </Card>
+        </div>
       )}
       <PiChatArtifactsFooter
         artifactsData={data}

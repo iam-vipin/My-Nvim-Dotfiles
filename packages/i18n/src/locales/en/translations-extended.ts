@@ -3523,6 +3523,9 @@ export default {
     search_menu: {
       go_to_advanced_search: "Go to advanced search",
     },
+    miscellaneous_actions: {
+      open_ai_assistant: "Open AI assistant",
+    },
   },
   wiki: {
     upgrade_flow: {

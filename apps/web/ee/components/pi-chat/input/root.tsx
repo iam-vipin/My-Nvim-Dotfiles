@@ -60,6 +60,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     isPiTyping,
     isLoading: isChatLoading,
     isNewChat,
+    initPiChat,
     getAnswer,
     searchCallback,
     createNewChat,
@@ -99,6 +100,8 @@ export const InputBox = observer(function InputBox(props: TProps) {
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
   const editorRef = useRef<TPiChatEditorRefApi>(null);
+  const lastKeyRef = useRef<string>("");
+  const timeoutRef = useRef<number | null>(null);
 
   useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
     revalidateOnFocus: false,
@@ -190,6 +193,46 @@ export const InputBox = observer(function InputBox(props: TProps) {
     }
   }, [contextData, isEditorReady, addContext]);
 
+  useEffect(() => {
+    const handleKeySequence = (e: KeyboardEvent) => {
+      // Clear previous timeout
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+      }
+
+      if (e.key === "Shift") {
+        lastKeyRef.current = "Shift";
+        // Reset after 1 second
+        timeoutRef.current = window.setTimeout(() => {
+          lastKeyRef.current = "";
+        }, 1000);
+        return;
+      }
+
+      if (lastKeyRef.current === "Shift" && (e.key === "a" || e.key === "b" || e.key === "n")) {
+        e.preventDefault();
+        if (e.key === "n") {
+          if (isFullScreen) {
+            router.push(joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat"));
+          } else {
+            void initPiChat();
+          }
+        } else {
+          setAiMode(e.key === "a" ? "ask" : "build");
+        }
+        editorRef.current?.focus("end");
+      }
+
+      lastKeyRef.current = "";
+    };
+
+    document.addEventListener("keydown", handleKeySequence);
+    return () => {
+      document.removeEventListener("keydown", handleKeySequence);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    };
+  }, [setAiMode, isFullScreen, isProjectLevel, router, initPiChat, workspaceSlug]);
+
   if (!workspaceId) return;
   return (
     <>
@@ -277,7 +320,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
                   onEditorReady={() => setIsEditorReady(true)}
                   ref={editorRef}
                 />
-                <div className="flex w-full gap-3 justify-between">
+                <div className="flex items-center w-full gap-3 justify-between">
                   {/* Focus */}
                   {!SPEECH_LOADERS.includes(loader) && <AiMode aiMode={aiMode} setAiMode={setAiMode} />}
                   <div className="flex items-center w-full justify-end gap-2">

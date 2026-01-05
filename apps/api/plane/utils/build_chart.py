@@ -79,17 +79,19 @@ def process_grouped_data(
 
     for item in data:
         key = item["key"]
-        if key not in response:
-            response[key] = {
-                "key": key if key else "none",
+        # Normalize falsy keys to uppercase "None" for consistency with group_key
+        normalized_key = str(key) if key is not None else "None"
+        if normalized_key not in response:
+            response[normalized_key] = {
+                "key": normalized_key,
                 "name": (item.get("display_name", key) if item.get("display_name", key) else "None"),
                 "count": 0,
             }
-        group_key = str(item["group_key"]) if item["group_key"] else "none"
+        group_key = str(item["group_key"]) if item["group_key"] is not None else "None"
         schema[group_key] = item.get("group_name", item["group_key"])
         schema[group_key] = schema[group_key] if schema[group_key] else "None"
-        response[key][group_key] = response[key].get(group_key, 0) + item["count"]
-        response[key]["count"] += item["count"]
+        response[normalized_key][group_key] = response[normalized_key].get(group_key, 0) + item["count"]
+        response[normalized_key]["count"] += item["count"]
 
     return list(response.values()), schema
 

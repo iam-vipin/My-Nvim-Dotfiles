@@ -17,7 +17,7 @@ from django.db.models import (
     QuerySet,
     Aggregate,
 )
-from django.db.models.functions import Cast, TruncDay, TruncWeek, TruncMonth, TruncYear
+from django.db.models.functions import Cast, TruncDay, TruncWeek, TruncMonth, TruncYear, Coalesce
 from django.db import models
 
 from plane.ee.models import Widget
@@ -58,7 +58,7 @@ def get_x_axis_field() -> Dict[str, Tuple[str, str, Optional[Dict[str, Any]]]]:
             "assignees__display_name",
             {"issue_assignee__deleted_at__isnull": True},
         ),
-        "ESTIMATE_POINTS": ("estimate_point__value", "estimate_point__key", None),
+        "ESTIMATE_POINTS": ("estimate_point__key", "estimate_point__value", None),
         "CYCLES": (
             "issue_cycle__cycle_id",
             "issue_cycle__cycle__name",
@@ -89,17 +89,27 @@ def process_grouped_data(
 
     for item in data:
         key = item["key"]
-        if key not in response:
-            response[key] = {
-                "key": key if key else "none",
-                "name": (item.get("display_name", key) if item.get("display_name", key) else "None"),
+        project_id_for_ordering = item.get("project_id_for_ordering")
+        response_key = (project_id_for_ordering, key) if project_id_for_ordering is not None else key
+
+        estimate_type = item.get("estimate_type")
+        display_name = item.get("display_name", key) if item.get("display_name", key) else "None"
+
+        # Format display_name if estimate type is "time"
+        if estimate_type == "time":
+            display_name = format_time_estimate(display_name) if display_name else "None"
+
+        if response_key not in response:
+            response[response_key] = {
+                "key": key if key else "None",
+                "name": display_name,
                 "count": 0,
             }
-        group_key = str(item["group_key"]) if item["group_key"] else "none"
+        group_key = str(item["group_key"]) if item["group_key"] is not None else "None"
         schema[group_key] = item.get("group_name", item["group_key"])
         schema[group_key] = schema[group_key] if schema[group_key] else "None"
-        response[key][group_key] = response[key].get(group_key, 0) + item["count"]
-        response[key]["count"] += item["count"]
+        response[response_key][group_key] = response[response_key].get(group_key, 0) + item["count"]
+        response[response_key]["count"] += item["count"]
 
     return list(response.values()), schema
 
@@ -146,6 +156,47 @@ def fill_missing_dates(response: List[Dict[str, Any]], start_date: date, end_dat
     response.sort(key=lambda x: x["key"])
 
 
+def format_time_estimate(value: Union[str, int, float]) -> str:
+    """
+    Convert numeric minutes to "Xh Ym" format.
+    Handles: numeric minutes (int/float), string numbers.
+    Returns formatted string like "1h 2m" or "None" if invalid.
+
+    Examples:
+        - 62 -> "1h 2m"
+        - 90 -> "1h 30m"
+        - 30 -> "30m"
+        - 120 -> "2h"
+    """
+
+    try:
+        # Convert to float to handle both int and string inputs
+        minutes = float(value)
+
+        # Handle zero or negative values
+        if minutes <= 0:
+            return "0m"
+
+        # Calculate hours and remaining minutes
+        hours = int(minutes // 60)
+        remaining_minutes = int(minutes % 60)
+
+        # Build the formatted string
+        parts = []
+        if hours > 0:
+            parts.append(f"{hours}h")
+        if remaining_minutes > 0:
+            parts.append(f"{remaining_minutes}m")
+
+        # If both are zero (shouldn't happen due to check above, but just in case)
+        if not parts:
+            return "0m"
+
+        return " ".join(parts)
+    except (ValueError, TypeError):
+        return "None"
+
+
 def build_number_chart_response(
     queryset: QuerySet[Issue],
     y_axis_filter: Dict[str, Any],
@@ -164,17 +215,46 @@ def build_grouped_chart_response(
     group_name_field: str,
     aggregate_func: Aggregate,
 ) -> Tuple[List[Dict[str, Any]], Dict[str, str]]:
-    data = (
-        queryset.annotate(
-            key=F(id_field),
-            group_key=F(group_field),
-            group_name=F(group_name_field),
-            display_name=F(name_field) if name_field else F(id_field),
+    display_field = F(name_field) if name_field else F(id_field)
+
+    # Check if id_field is estimate_point__key to handle estimate type
+    if id_field == "estimate_point__key":
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            group_key=Coalesce(Cast(F(group_field), CharField()), Value("None"), output_field=CharField()),
+            group_name=Coalesce(F(group_name_field), Value("None"), output_field=CharField()),
+            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+            estimate_type=F("estimate_point__estimate__type"),
         )
-        .values("key", "group_key", "group_name", "display_name")
-        .annotate(count=aggregate_func)
-        .order_by("-count")
-    )
+        # Set project_id to NULL for None values so they group together
+        # regardless of project (only for estimate_point__key)
+        queryset = queryset.annotate(
+            project_id_for_ordering=Case(
+                When(key="None", then=Value(None)),
+                default=F("project_id"),
+                output_field=models.UUIDField(null=True),
+            ),
+        )
+        data = (
+            queryset.values(
+                "project_id_for_ordering", "key", "group_key", "group_name", "display_name", "estimate_type"
+            )
+            .annotate(count=aggregate_func)
+            .order_by("project_id_for_ordering", "-count")
+        )
+    else:
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            group_key=Coalesce(Cast(F(group_field), CharField()), Value("None"), output_field=CharField()),
+            group_name=Coalesce(F(group_name_field), Value("None"), output_field=CharField()),
+            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+        )
+        # For non-estimate charts, don't include project_id_for_ordering to combine items across projects
+        data = (
+            queryset.values("key", "group_key", "group_name", "display_name")
+            .annotate(count=aggregate_func)
+            .order_by("-count")
+        )
     return process_grouped_data(data)
 
 
@@ -195,24 +275,60 @@ def build_simple_chart_response(
             output_field=models.CharField(),
         )
 
+    # perform this only when the id_field is estimate_point__key
+    if id_field == "estimate_point__key":
+        # Cast integer field to string before coalescing with "None"
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+            estimate_type=F("estimate_point__estimate__type"),
+        )
+        # Set project_id to NULL for None values so they group together
+        # (only for estimate_point__key)
+        queryset = queryset.annotate(
+            project_id_for_ordering=Case(
+                When(key="None", then=Value(None)),
+                default=F("project_id"),
+                output_field=models.UUIDField(null=True),
+            ),
+        )
+        data = (
+            queryset.values("project_id_for_ordering", "key", "display_name", "estimate_type")
+            .annotate(count=aggregate_func)
+            .order_by("project_id_for_ordering", "-count")
+        )
     else:
-        display_field = display_field
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+        )
+        # For non-estimate charts, don't include project_id_for_ordering to combine items across projects
+        data = queryset.values("key", "display_name").annotate(count=aggregate_func).order_by("key")
 
-    data = (
-        queryset.annotate(key=F(id_field), display_name=display_field)
-        .values("key", "display_name")
-        .annotate(count=aggregate_func)
-        .order_by("key")
-    )
+    result = []
+    for item in data:
+        estimate_type = item.get("estimate_type")
 
-    return [
-        {
-            "key": item["key"] if item["key"] else "None",
-            "name": item["display_name"] if item["display_name"] else "None",
-            "count": item["count"],
-        }
-        for item in data
-    ]
+        # Check if estimate type is "time" and format accordingly
+        if estimate_type == "time":
+            result.append(
+                {
+                    "key": item["key"] if item["key"] else "None",
+                    "name": format_time_estimate(item["display_name"]) if item["display_name"] else "None",
+                    "count": item["count"],
+                }
+            )
+            continue
+
+        result.append(
+            {
+                "key": item["key"] if item["key"] else "None",
+                "name": item["display_name"] if item["display_name"] else "None",
+                "count": item["count"],
+            }
+        )
+
+    return result
 
 
 def build_widget_chart(

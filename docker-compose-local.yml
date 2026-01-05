@@ -1,5 +1,5 @@
 services:
-  plane-redis:
+  redis:
     image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
     networks:
@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
 
-  plane-mq:
+  mq:
     image: rabbitmq:3.13.6-management-alpine
     restart: unless-stopped
     networks:
@@ -25,7 +25,7 @@ services:
     ports:
       - 5672:5672
 
-  plane-minio:
+  minio:
     image: minio/minio
     restart: unless-stopped
     networks:
@@ -50,7 +50,7 @@ services:
       - "9000:9000"
       - "9090:9090"
 
-  plane-db:
+  db:
     image: postgres:15.7-alpine
     restart: unless-stopped
     networks:
@@ -64,63 +64,6 @@ services:
       PGDATA: /var/lib/postgresql/data
     ports:
       - "5432:5432"
-
-  # web:
-  #   build:
-  #     context: .
-  #     dockerfile: ./web/Dockerfile.dev
-  #   restart: unless-stopped
-  #   networks:
-  #     - dev_env
-  #   volumes:
-  #     - ./web:/app/web
-  #   env_file:
-  #     - ./web/.env
-  #   depends_on:
-  #     - api
-  #     - worker
-
-  # space:
-  #   build:
-  #     context: .
-  #     dockerfile: ./space/Dockerfile.dev
-  #   restart: unless-stopped
-  #   networks:
-  #     - dev_env
-  #   volumes:
-  #     - ./space:/app/space
-  #   depends_on:
-  #     - api
-  #     - worker
-  #     - web
-
-  # admin:
-  #   build:
-  #     context: .
-  #     dockerfile: ./admin/Dockerfile.dev
-  #   restart: unless-stopped
-  #   networks:
-  #     - dev_env
-  #   volumes:
-  #     - ./admin:/app/admin
-  #   depends_on:
-  #     - api
-  #     - worker
-  #     - web
-
-  # live:
-  #   build:
-  #     context: .
-  #     dockerfile: ./live/Dockerfile.dev
-  #   restart: unless-stopped
-  #   networks:
-  #     - dev_env
-  #   volumes:
-  #     - ./live:/app/live
-  #   depends_on:
-  #     - api
-  #     - worker
-  #     - web
 
   api:
     build:
@@ -137,9 +80,9 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
-      - plane-redis
-      - plane-mq
+      - db
+      - redis
+      - mq
     ports:
       - "8000:8000"
 
@@ -159,8 +102,8 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - plane-db
-      - plane-redis
+      - db
+      - redis
 
   beat-worker:
     build:
@@ -178,8 +121,8 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - plane-db
-      - plane-redis
+      - db
+      - redis
 
   migrator:
     build:
@@ -196,29 +139,44 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
-      - plane-redis
+      - db
+      - redis
 
-  # proxy:
-  #   build:
-  #     context: ./apps/proxy
-  #     dockerfile: Dockerfile.ce
-  #   restart: unless-stopped
-  #   networks:
-  #     - dev_env
-  #   ports:
-  #     - ${LISTEN_HTTP_PORT}:80
-  #     - ${LISTEN_HTTPS_PORT}:443
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-  #     BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
-  #   depends_on:
-  #     - api
-  #     - web
-  #     - space
-  #     - admin
+  outbox-poller:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    networks:
+      - dev_env
+    volumes:
+      - ./apps/api:/code
+    command: ./bin/docker-entrypoint-outbox-poller.sh --settings=plane.settings.local
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - db
+      - mq
+
+  automation-consumer:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    networks:
+      - dev_env
+    volumes:
+      - ./apps/api:/code
+    command: ./bin/docker-entrypoint-automation-consumer.sh
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - db
+      - mq
 
 volumes:
   redisdata:

@@ -14,7 +14,8 @@ from pi import logger
 
 # Import MENTION_TAGS from settings to avoid circular import
 from pi import settings
-from pi.services.retrievers.pg_store.message import create_message_mentions
+
+# from pi.services.retrievers.pg_store.message import create_message_mentions
 
 MENTION_TAGS = settings.chat.MENTION_TAGS
 log = logger.getChild(__name__)
@@ -61,6 +62,8 @@ async def parse_query(
         - links: List of URLs found in anchor tags
     """
     parsed = _parse_query_internal(query)
+
+    from pi.services.retrievers.pg_store.message import create_message_mentions
 
     # Store mentions in database if message_id, workspace_id, and db are provided
     if message_id and workspace_id and db and parsed.mentions:

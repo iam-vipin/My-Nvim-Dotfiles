@@ -37,6 +37,7 @@ from pi.app.models.enums import UserTypeChoices
 from pi.app.models.message import MessageFlowStep
 from pi.app.schemas.chat import ActionBatchExecutionRequest
 from pi.app.schemas.chat import ArtifactData
+from pi.app.schemas.chat import ChatAuthCheckResponse
 from pi.app.schemas.chat import ChatFeedback
 from pi.app.schemas.chat import ChatInitializationRequest
 from pi.app.schemas.chat import ChatInitResponse
@@ -47,6 +48,8 @@ from pi.app.schemas.chat import DeleteChatRequest
 from pi.app.schemas.chat import FavoriteChatRequest
 from pi.app.schemas.chat import GetThreadsPaginatedResponse
 from pi.app.schemas.chat import ModelsResponse
+from pi.app.schemas.chat import PresetQuestionsRequest
+from pi.app.schemas.chat import PresetQuestionsResponse
 from pi.app.schemas.chat import RenameChatRequest
 from pi.app.schemas.chat import TitleRequest
 from pi.app.schemas.chat import UnfavoriteChatRequest
@@ -161,6 +164,134 @@ async def chat_start(
     except Exception as e:
         log.error(f"Error in chat start: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Failed to initialize chat"})
+
+
+@router.get("/start/auth-check/", response_model=ChatAuthCheckResponse)
+async def chat_auth_check(
+    workspace_id: UUID = Query(..., description="Workspace ID to check authorization for"),
+    db: AsyncSession = Depends(get_async_session),
+    session: str = Depends(cookie_schema),
+):
+    """
+    Check user authentication and OAuth authorization status.
+    This is the first endpoint to call when initializing a chat session.
+
+    Usage: GET /api/v1/chat/start/auth-check/?workspace_id=<uuid>
+
+    Returns:
+        - is_authorized: true if user has valid OAuth token for workspace
+        - oauth_url: OAuth authorization URL if not authorized (null if authorized)
+    """
+    try:
+        # Validate session
+        auth = await is_valid_session(session)
+        if not auth.user:
+            return JSONResponse(status_code=422, content={"detail": "Invalid User"})
+        user_id = auth.user.id
+    except Exception as e:
+        log.error(f"Error validating session: {e!s}")
+        return JSONResponse(status_code=422, content={"detail": "Invalid Session"})
+
+    try:
+        oauth_service = PlaneOAuthService()
+
+        # Check if user has valid OAuth token for workspace
+        access_token = await oauth_service.get_valid_token(db=db, user_id=user_id, workspace_id=workspace_id)
+
+        if access_token:
+            # User is authorized
+            return ChatAuthCheckResponse(is_authorized=True, oauth_url=None)
+        else:
+            # User is not authorized - return OAuth URL
+            from pi.services.actions.oauth_url_encoder import OAuthUrlEncoder
+
+            redirect = urlparse(settings.plane_api.OAUTH_REDIRECT_URI)
+            base_url = f"{redirect.scheme}://{redirect.netloc}"
+
+            # Include BASE_PATH if configured
+            base_path = settings.plane_api.BASE_PATH or ""
+            if base_path and not base_path.startswith("/"):
+                base_path = f"/{base_path}"
+            base_path = base_path.rstrip("/")
+
+            # Build OAuth parameters (only user_id and workspace_id)
+            oauth_params = {
+                "user_id": str(user_id),
+                "workspace_id": str(workspace_id),
+            }
+
+            # Generate clean, encrypted OAuth URL
+            oauth_encoder = OAuthUrlEncoder()
+            oauth_url = oauth_encoder.generate_clean_oauth_url(f"{base_url}{base_path}", oauth_params)
+
+            return ChatAuthCheckResponse(is_authorized=False, oauth_url=oauth_url)
+
+    except Exception as e:
+        log.error(f"Error in auth check: {e!s}")
+        return JSONResponse(status_code=500, content={"detail": "Failed to check authorization"})
+
+
+@router.post("/start/set-prompts/", response_model=PresetQuestionsResponse)
+async def get_preset_questions(
+    data: PresetQuestionsRequest,
+    session: str = Depends(cookie_schema),
+):
+    """
+    Get contextual preset questions based on chat mode and entity context.
+    Call this endpoint after successful auth check to get relevant preset questions.
+
+    Usage: POST /api/v1/chat/start/set-prompts/
+
+    Request body:
+        - workspace_id: Workspace ID
+        - mode: "ask" or "build"
+        - entity_type: Optional focus entity type (workspace, project, cycle, module, etc.)
+        - entity_id: Optional focus entity ID
+        - project_id: Optional project ID
+
+    Returns:
+        - templates: List of contextual preset questions/templates
+    """
+    try:
+        # Validate session
+        auth = await is_valid_session(session)
+        if not auth.user:
+            return JSONResponse(status_code=422, content={"detail": "Invalid User"})
+    except Exception as e:
+        log.error(f"Error validating session: {e!s}")
+        return JSONResponse(status_code=422, content={"detail": "Invalid Session"})
+
+    try:
+        # TODO: Replace with actual context-aware preset question generation
+        # For now, return dummy questions based on mode and context
+        # dummy_templates = [
+        #     {"text": f"Sample question for {data.chat_mode} mode in workspace {data.workspace_id}", "type": "general"},
+        #     {"text": "What are my recent issues?", "type": "issues"},
+        #     {"text": "Show me project updates", "type": "projects"},
+        # ]
+
+        # # Add context-specific questions if entity info is provided
+        # if data.entity_type and data.entity_id:
+        #     dummy_templates.append({
+        #         "text": f"What's happening in this {data.entity_type}?",
+        #         "type": data.entity_type,
+        #     })
+
+        # if data.project_id:
+        #     dummy_templates.append({
+        #         "text": "Show me tasks in this project",
+        #         "type": "projects",
+        #     })
+
+        preset_questions = tiles_factory(
+            entity_type=data.entity_type, entity_id=data.entity_id, mode=data.mode, workspace_id=data.workspace_id, project_id=data.project_id
+        )
+
+        return PresetQuestionsResponse(templates=preset_questions)
+
+    except Exception as e:
+        log.error(f"Error getting preset questions: {e!s}")
+        return JSONResponse(status_code=500, content={"detail": "Failed to get preset questions"})
 
 
 @router.post("/silo-app/answer/")
@@ -294,7 +425,7 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
         formatted_context = result
 
     # Parse JSON response for proper API format (avoid double-encoded JSON string)
-    parsed_response = final_response
+    parsed_response: Union[str, Dict[str, Any]] = final_response
     if response_type == "response" and final_response:
         try:
             # Try to parse as JSON for structured app responses

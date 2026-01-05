@@ -26,7 +26,7 @@ class AppResponseSchema(BaseModel):
     """Structured response schema for external app integrations."""
 
     text_response: str = Field(
-        description="Natural language answer in PLAIN TEXT ONLY (no markdown, no bold/italic, no numbered lists, no bullet points - just plain text with newlines)"
+        description="Natural language answer in PLAIN TEXT ONLY (no markdown, no bold/italic, no numbered lists, no bullet points - just plain text with newlines)"  # noqa: E501
     )
     entities: List[EntityInfo] = Field(
         default_factory=list,

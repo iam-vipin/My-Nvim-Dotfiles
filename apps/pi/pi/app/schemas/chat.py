@@ -111,11 +111,14 @@ class ChatType(Enum):
     PAGES = "pages"
     MODULES = "modules"
     CYCLES = "cycles"
+    INITIATIVES = "initiatives"
+    WORKSPACES = "workspaces"
 
 
 class ChatSuggestion(BaseModel):
     text: str | None = None
     type: ChatType
+    mode: Literal["ask", "build"] = "ask"
     id: list[UUID4]
 
 
@@ -252,3 +255,26 @@ class ChatInitResponse(BaseModel):
     is_authorized: bool = Field(description="Whether user has valid authorization for workspace")
     templates: List[Any] = Field(default_factory=list, description="Chat suggestion templates")
     oauth_url: Optional[str] = Field(None, description="OAuth authorization URL if not authorized")
+
+
+class ChatAuthCheckResponse(BaseModel):
+    """Response for auth check - OAuth status only, no templates"""
+
+    is_authorized: bool = Field(description="Whether user has valid authorization for workspace")
+    oauth_url: Optional[str] = Field(None, description="OAuth authorization URL if not authorized")
+
+
+class PresetQuestionsRequest(BaseModel):
+    """Request schema for getting contextual preset questions"""
+
+    workspace_id: UUID4 = Field(description="Workspace ID")
+    mode: Literal["ask", "build"] = Field(description="Chat mode: ask or build")
+    entity_type: Optional[str] = Field(None, description="Type of focus entity (workspace, project, cycle, module, etc.)")
+    entity_id: Optional[UUID4] = Field(None, description="ID of the focus entity")
+    project_id: Optional[UUID4] = Field(None, description="Project ID if applicable")
+
+
+class PresetQuestionsResponse(BaseModel):
+    """Response with contextual preset questions/templates"""
+
+    templates: List[Any] = Field(default_factory=list, description="Contextual chat suggestion templates")

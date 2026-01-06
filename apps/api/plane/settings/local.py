@@ -125,5 +125,10 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.webhook": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
     },
 }

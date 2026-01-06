@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "plane.silo",
     "plane.event_stream",
     "plane.agents",
+    "plane.webhook",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -340,6 +341,8 @@ CELERY_IMPORTS = (
     "plane.silo.bgtasks.bulk_update_issue_relations_task_v2",
     # event stream tasks
     "plane.event_stream.bgtasks.outbox_cleaner",
+    # webhook tasks
+    "plane.webhook.bgtasks.webhook_task",
     # agents tasks
     "plane.agents.bgtasks.agent_run_agent_assigned_task",
     "plane.agents.bgtasks.agent_run_user_comment_task",

@@ -27,7 +27,8 @@ WORKDIR /app
 RUN apk add --no-cache \
     "libpq" \
     "libxslt" \
-    "xmlsec"
+    "xmlsec" \
+    "openldap-dev"
 
 
 COPY --from=node /usr/lib /usr/lib

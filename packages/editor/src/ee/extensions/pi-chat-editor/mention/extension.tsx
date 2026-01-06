@@ -15,7 +15,7 @@ import { renderPiChatEditorMentionsDropdown } from "./utils";
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     [PI_CHAT_EXTENSIONS.MENTION]: {
-      addChatContext: (attributes: PiChatEditorMentionAttributes) => ReturnType;
+      addChatContext: (attributes: PiChatEditorMentionAttributes, trailingText?: string) => ReturnType;
     };
   }
 }
@@ -63,16 +63,21 @@ export function PiChatEditorMentionExtension(props: Props) {
     addCommands() {
       return {
         addChatContext:
-          (attributes: PiChatEditorMentionAttributes) =>
+          (attributes: PiChatEditorMentionAttributes, trailingText?: string) =>
           ({ editor, chain }) => {
-            const currentHTML = editor.getHTML();
-            const isEmpty = !currentHTML || currentHTML === "<p></p>" || currentHTML.trim() === "";
-
             // Helper to create mention content with optional trailing text
             const createMentionContent = (trailingText = "") => [
               { type: this.name, attrs: attributes },
               { type: "text", text: trailingText ? ` ${trailingText}` : " " },
             ];
+
+            // If explicit trailing text is provided, use it directly
+            if (trailingText !== undefined) {
+              return chain().clearContent().insertContent(createMentionContent(trailingText)).focus().run();
+            }
+
+            const currentHTML = editor.getHTML();
+            const isEmpty = !currentHTML || currentHTML === "<p></p>" || currentHTML.trim() === "";
 
             // Case 1: Empty query - insert mention directly
             if (isEmpty) {

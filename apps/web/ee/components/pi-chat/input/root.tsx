@@ -26,7 +26,7 @@ import { DndWrapper } from "./dnd-wrapper";
 import { FocusFilter } from "./focus-filter";
 import { AiMode } from "./mode";
 import { AttachmentActionButton } from "./quick-action-button";
-import { Templates } from "../conversation/new-conversation";
+import { ContextualTemplates } from "../conversation/contextual-templates";
 
 type TEditCommands = {
   getHTML: () => string;
@@ -81,7 +81,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const [projectIdentifier] = workItem?.split("-") ?? [];
   const projectDetails = getProjectByIdentifier(projectIdentifier);
-  const projectIdToUse = projectDetails?.id || projectId || "";
+  const projectIdToUse = projectDetails?.id || projectId;
   const chatFocus = getChatFocus(activeChatId);
   const chatMode = getChatMode(activeChatId || "");
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
@@ -113,16 +113,42 @@ export const InputBox = observer(function InputBox(props: TProps) {
     editorCommands.current = command;
   };
 
-  const addContext = useCallback((): void => {
-    if (!contextData) return;
+  const addContext = useCallback(
+    (trailingText?: string): void => {
+      if (!contextData) {
+        editorRef.current?.clearEditor();
+        return;
+      }
 
-    editorRef.current?.addChatContext({
-      id: uuidv4(),
-      label: contextData.subTitle || contextData.title || "",
-      entity_identifier: contextData.id,
-      target: contextData.type,
-    });
-  }, [contextData]);
+      editorRef.current?.addChatContext(
+        {
+          id: uuidv4(),
+          label: contextData.subTitle || contextData.title || "",
+          entity_identifier: contextData.id,
+          target: contextData.type,
+        },
+        trailingText
+      );
+    },
+    [contextData]
+  );
+
+  const handleUseTemplate = useCallback(
+    (query: string) => {
+      if (contextData) {
+        addContext(query);
+        setTimeout(() => {
+          void handleSubmit();
+        }, 0);
+      } else {
+        const formattedQuery = `<p>${query}</p>`;
+        editorRef.current?.clearEditor();
+        editorRef.current?.setEditorValue(formattedQuery);
+        void handleSubmit(undefined, formattedQuery);
+      }
+    },
+    [contextData]
+  );
 
   const handleSubmit = useEvent(async (e?: React.FormEvent, queryArg?: string) => {
     e?.preventDefault();
@@ -171,6 +197,15 @@ export const InputBox = observer(function InputBox(props: TProps) {
     const response = await searchCallback(workspaceSlug?.toString() || "", query, focus);
     return formatSearchQuery(response);
   });
+
+  const templateProps = {
+    isFullScreen,
+    mode: aiMode,
+    projectId: projectIdToUse,
+    entityId: contextData?.id,
+    entityType: contextData?.type,
+    onClick: handleUseTemplate,
+  };
 
   useEffect(() => {
     if (chatFocus) {
@@ -235,23 +270,28 @@ export const InputBox = observer(function InputBox(props: TProps) {
 
   if (!workspaceId) return;
   return (
-    <div className="my-auto">
-      {isNewChat && !onlyInput && (
-        <div className="flex flex-col gap-2.5 mb-6">
-          <div className={cn("text-center text-h3-medium text-primary", { "text-h3-semibold": !isFullScreen })}>
-            What can I do for you?
-          </div>
+    <>
+      {isNewChat && !onlyInput && !isFullScreen && (
+        <div className="flex flex-col gap-4 mt-4 w-full">
+          <div className={cn("text-start text-h4-regular text-primary")}>What can I do for you?</div>
+          <ContextualTemplates {...templateProps} />
         </div>
       )}
+
       <form
         className={cn(
-          "bg-layer-1 flex flex-col px-2 md:px-0 rounded-2xl w-full ",
+          "flex flex-col px-2 md:px-0 rounded-2xl w-full my-auto",
           {
-            "absolute bottom-[32px] left-0": !isNewChat,
+            "absolute bottom-[32px] left-0": !isNewChat || !isFullScreen,
           },
           className
         )}
       >
+        {isNewChat && !onlyInput && isFullScreen && (
+          <div className="flex flex-col gap-2.5 mb-6">
+            <div className={cn("text-center text-h3-medium text-primary")}>What can I do for you?</div>
+          </div>
+        )}
         <div
           className={cn("rounded-2xl transition-[max-height] duration-100", {
             "bg-layer-1": onlyInput,
@@ -274,7 +314,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
             mode={aiMode}
             createNewChat={createNewChat}
             focus={focus}
-            showBg={isNewChat && !onlyInput}
+            showBg={isNewChat && !onlyInput && isFullScreen}
           >
             {(isUploading: boolean, open: () => void) => (
               <div
@@ -391,16 +431,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
             )}
           </DndWrapper>
         </div>
-        {isNewChat && !onlyInput && (
-          <Templates
-            onClick={(query: string) => {
-              const formattedQuery = `<p>${query}</p>`;
-              editorRef.current?.clearEditor();
-              editorRef.current?.setEditorValue(formattedQuery);
-              void handleSubmit(undefined, formattedQuery);
-            }}
-          />
-        )}
+        {isNewChat && !onlyInput && isFullScreen && <ContextualTemplates {...templateProps} />}
       </form>
       <div
         className={cn("w-full text-caption-sm-regular text-disabled pt-2 text-center bg-surface-1 h-[32px]", {
@@ -409,6 +440,6 @@ export const InputBox = observer(function InputBox(props: TProps) {
       >
         <div className="mx-auto max-w-[400px]">Plane AI can make mistakes, please double-check responses. </div>
       </div>
-    </div>
+    </>
   );
 });

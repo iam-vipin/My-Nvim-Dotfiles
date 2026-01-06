@@ -25,6 +25,7 @@ import type {
   TSSEActionsEvent,
   TSSETitleResponse,
   TPiChatDrawerOpen,
+  TTemplate,
 } from "@/plane-web/types";
 import { PI_CHAT_ASSISTANT_KEY, ESource, EExecutionStatus } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
@@ -127,6 +128,13 @@ export interface IPiChatStore {
   ) => Promise<{
     page_url: string;
   }>;
+  fetchPrompts: (
+    workspaceId: string,
+    mode: string,
+    projectId: string | undefined,
+    entityId: string | undefined,
+    entityType: string | undefined
+  ) => Promise<{ templates: TTemplate[] }>;
 }
 
 export class PiChatStore implements IPiChatStore {
@@ -203,6 +211,7 @@ export class PiChatStore implements IPiChatStore {
       convertToPage: action,
       abortStream: action,
       updateStorage: action,
+      fetchPrompts: action,
     });
 
     //services
@@ -244,7 +253,7 @@ export class PiChatStore implements IPiChatStore {
     if (!workspaceId) return [];
     return (
       this.projectThreads
-        .filter((chatId) => this.chatMap[chatId].workspace_id === workspaceId)
+        .filter((chatId) => this.chatMap[chatId]?.workspace_id === workspaceId)
         .map((chatId) => this.chatMap[chatId]) || []
     );
   });
@@ -431,6 +440,23 @@ export class PiChatStore implements IPiChatStore {
   getInstance = async (workspaceId: string): Promise<TInstanceResponse> => {
     const response = await this.piChatService.getInstance(workspaceId);
     this.isWorkspaceAuthorized = response.is_authorized;
+    return response;
+  };
+
+  fetchPrompts = async (
+    workspaceId: string,
+    mode: string,
+    projectId: string | undefined,
+    entityId: string | undefined,
+    entityType: string | undefined
+  ): Promise<{ templates: TTemplate[] }> => {
+    const response = await this.piChatService.fetchPrompts({
+      workspace_id: workspaceId,
+      mode: mode,
+      project_id: projectId,
+      entity_id: entityId,
+      entity_type: entityType,
+    });
     return response;
   };
 

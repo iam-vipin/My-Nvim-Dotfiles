@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
@@ -26,11 +26,12 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
   // router
   const { workspaceSlug } = useParams();
   const { t } = useTranslation();
+  const router = useRouter();
   // states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // hooks
-  const { favoriteChat, unfavoriteChat } = usePiChat();
+  const { favoriteChat, unfavoriteChat, activeChatId } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
@@ -76,6 +77,11 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
         isOpen={isDeleteModalOpen}
         chatTitle={thread.title || ""}
         handleClose={() => setIsDeleteModalOpen(false)}
+        onDelete={() => {
+          if (activeChatId === thread.chat_id) {
+            router.push(`/${workspaceSlug}/pi-chat`);
+          }
+        }}
       />
       <ModalCore
         isOpen={isEditModalOpen}

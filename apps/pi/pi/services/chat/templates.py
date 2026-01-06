@@ -43,7 +43,8 @@ WORKSPACE_TEMPLATES: List[Dict[str, Any]] = [
     ## Multi-tool call queries. Will be used in the future.
     # {"text": "Summarize the latest updates for the last work item assigned to me",
     # "type": ChatType.ISSUES, "category": "work_items", "mode": "ask"},
-    # {"text": "Summarize the latest updates for the most recent ten work items assigned to me with Urgent or High priority",
+    # {
+    #     "text": "Summarize the latest updates for the most recent ten work items assigned to me with Urgent or High priority",
     #     "type": ChatType.ISSUES,
     #     "category": "work_items",
     #     "mode": "ask",

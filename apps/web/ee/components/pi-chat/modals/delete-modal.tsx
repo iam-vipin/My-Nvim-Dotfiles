@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -8,20 +7,19 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 interface IChatDelete {
   chatId: string;
   workspaceSlug: string;
-  chatTitle: string;
+  chatTitle?: string;
   isOpen: boolean;
   handleClose: () => void;
+  onDelete: () => void;
 }
 
 export const ChatDeleteModal = observer(function ChatDeleteModal(props: IChatDelete) {
-  const { chatId, workspaceSlug, isOpen, chatTitle, handleClose } = props;
+  const { chatId, workspaceSlug, isOpen, chatTitle, handleClose, onDelete } = props;
 
   // states
   const [loader, setLoader] = useState(false);
   // hooks
   const { deleteChat } = usePiChat();
-  const { chatId: activeChatId } = useParams();
-  const router = useRouter();
 
   const formSubmit = async () => {
     setLoader(true);
@@ -39,9 +37,7 @@ export const ChatDeleteModal = observer(function ChatDeleteModal(props: IChatDel
         message: "Something went wrong please try again later.",
       });
     }
-    if (activeChatId === chatId) {
-      router.push(`/${workspaceSlug}/pi-chat`);
-    }
+    onDelete();
     setLoader(false);
     handleClose();
   };
@@ -55,9 +51,9 @@ export const ChatDeleteModal = observer(function ChatDeleteModal(props: IChatDel
       title="Delete chat"
       content={
         <>
-          Are you sure you want to delete the chat{' "'}
-          <span className="break-words font-medium text-primary">{chatTitle}</span>
-          {'"'}? All of the data related to the chat will be permanently removed. This action cannot be undone.
+          Are you sure you want to delete the chat
+          <span className="break-words font-medium text-primary">{chatTitle}</span>? All of the data related to the chat
+          will be permanently removed. This action cannot be undone.
         </>
       }
     />

@@ -9,13 +9,18 @@ import { UnauthorizedView } from "../unauthorized";
 import type { TTemplate } from "@/plane-web/types";
 
 type TProps = {
+  isFullScreen: boolean;
+  mode: string;
+  projectId: string | undefined;
+  entityId: string | undefined;
+  entityType: string | undefined;
   onClick: (query: string) => void;
 };
-export const Templates = observer(function Templates(props: TProps) {
-  const { onClick } = props;
+export const ContextualTemplates = observer(function ContextualTemplates(props: TProps) {
+  const { isFullScreen, mode, projectId, entityId, entityType, onClick } = props;
   // store hooks
   const { workspaceSlug } = useParams();
-  const { getInstance, isPiTyping } = usePiChat();
+  const { getInstance, isPiTyping, fetchPrompts } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id;
   // SWR
@@ -28,22 +33,25 @@ export const Templates = observer(function Templates(props: TProps) {
       errorRetryCount: 0,
     }
   );
+  const { data, isLoading: isLoadingPrompts } = useSWR(
+    workspaceId ? `PI_PRESET_TEMPLATES_${workspaceId}_${mode}_${projectId}_${entityId}_${entityType}` : null,
+    workspaceId ? () => fetchPrompts(workspaceId, mode, projectId, entityId, entityType) : null
+  );
   if (!isLoading && !instance?.is_authorized) return <UnauthorizedView />;
   return (
     <div>
-      {/* Templates */}
-      {isLoading ? (
-        <div className="flex gap-4 flex-wrap justify-center">
-          <Loader className="flex flex-wrap m-auto justify-center gap-6">
-            <Loader.Item width="250px" height="90px" />
-            <Loader.Item width="250px" height="90px" />
-            <Loader.Item width="250px" height="90px" />
-          </Loader>
-        </div>
+      {isLoading || isLoadingPrompts ? (
+        <Loader className="flex flex-wrap m-auto justify-center w-full rounded-xl overflow-hidden">
+          <Loader.Item width="100%" height="90px" />
+        </Loader>
       ) : (
-        <div className="flex flex-col m-auto justify-center rounded-b-2xl overflow-hidden">
+        <div
+          className={cn("flex flex-col m-auto justify-center rounded-b-xl overflow-hidden", {
+            "rounded-xl": !isFullScreen,
+          })}
+        >
           {instance?.is_authorized &&
-            instance?.templates?.map((prompt: TTemplate, index: number) => (
+            data?.templates?.map((prompt: TTemplate, index: number) => (
               <button
                 key={index}
                 className={cn("bg-layer-1 flex w-full px-3 py-2 hover:bg-layer-1-hover")}
@@ -53,7 +61,7 @@ export const Templates = observer(function Templates(props: TProps) {
                 }}
                 disabled={isPiTyping}
               >
-                <span className="text-left text-body-xs-regular text-secondary break-words line-clamp-2">
+                <span className="text-left text-body-sm-regular text-primary break-words line-clamp-2">
                   {prompt.text}
                 </span>
               </button>

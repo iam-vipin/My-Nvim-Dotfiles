@@ -19,6 +19,7 @@ import type {
   TFollowUpResponse,
   TUpdatedArtifact,
   TPiAttachment,
+  TTemplate,
 } from "../types";
 
 type TChatHistoryResponse = {
@@ -119,11 +120,26 @@ export class PiChatService extends APIService {
 
   // fetch instance
   async getInstance(workspaceId: string): Promise<TInstanceResponse> {
-    return this.get(`/api/v1/chat/start/`, {
+    return this.get(`/api/v1/chat/start/auth-check/`, {
       params: {
         workspace_id: workspaceId,
       },
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get preset templates
+  async fetchPrompts(data: {
+    workspace_id: string;
+    mode: string;
+    project_id: string | undefined;
+    entity_id: string | undefined;
+    entity_type: string | undefined;
+  }): Promise<{ templates: TTemplate[] }> {
+    return this.post(`/api/v1/chat/start/set-prompts/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

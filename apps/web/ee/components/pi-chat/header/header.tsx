@@ -1,18 +1,19 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { PanelLeft, SquarePen } from "lucide-react";
+import { History, SquarePen } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { HomeIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Breadcrumbs, Button, Header as HeaderUI } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Breadcrumbs, Header as HeaderUI } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppHeader } from "@/components/core/app-header";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { BetaBadge } from "../../common/beta";
 import { ModelsDropdown } from "./models-dropdown";
+import { AiSidecarQuickActions } from "./quick-actions";
+import { IconButton } from "@plane/propel/icon-button";
 
 type THeaderProps = {
   isProjectLevel?: boolean;
@@ -21,9 +22,6 @@ type THeaderProps = {
   isSidePanelOpen: boolean;
   toggleSidePanel: (value: boolean) => void;
 };
-
-const buttonClass =
-  "w-auto p-2 rounded-lg text-secondary grid place-items-center border-[0.5px] border-strong bg-layer-2 hover:shadow-sm hover:text-tertiary";
 export const Header = observer(function Header(props: THeaderProps) {
   const router = useRouter();
   const { workspaceSlug } = useParams();
@@ -72,34 +70,31 @@ export const Header = observer(function Header(props: THeaderProps) {
                 <>
                   {!isFullScreen ? (
                     <Tooltip tooltipContent="Start a new chat" position="left">
-                      <button
-                        className="border border-subtle rounded-md shadow-raised-100 px-2 py-[0.5px] h-7 text-secondary"
-                        onClick={() => initPiChat()}
-                      >
-                        <SquarePen className="flex-shrink-0 size-3.5" />
-                      </button>
+                      <IconButton size="lg" variant={"tertiary"} icon={SquarePen} onClick={() => initPiChat()} />
                     </Tooltip>
                   ) : (
                     <Tooltip tooltipContent="Start a new chat" position="bottom">
                       <Link
                         href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
                         tabIndex={-1}
-                        className="border border-subtle rounded-md shadow-raised-100 px-2 py-[0.5px] h-7 text-secondary flex items-center justify-center"
+                        className="bg-layer-1 rounded-md px-2 py-[0.5px] h-7 text-icon-tertiary flex items-center justify-center hover:bg-layer-1-hover"
                       >
-                        <SquarePen className="flex-shrink-0 size-3.5" />
+                        <SquarePen className="flex-shrink-0 size-4" />
                       </Link>
                     </Tooltip>
                   )}
                   {!isSidePanelOpen && (
                     <Tooltip tooltipContent="History" position="bottom">
-                      <button
-                        type="button"
-                        className="border border-subtle rounded-md shadow-raised-100 px-2 py-[0.5px] h-7 text-secondary"
-                        onClick={() => toggleSidePanel(true)}
-                      >
-                        <PanelLeft className="size-3.5" />
-                      </button>
+                      <IconButton size="lg" variant={"tertiary"} icon={History} onClick={() => toggleSidePanel(true)} />
                     </Tooltip>
+                  )}
+
+                  {!isFullScreen && (
+                    <AiSidecarQuickActions
+                      workspaceSlug={workspaceSlug}
+                      chatId={activeChatId}
+                      initPiChat={initPiChat}
+                    />
                   )}
                 </>
               </div>

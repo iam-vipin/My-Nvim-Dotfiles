@@ -81,5 +81,5 @@ export type ICollaborativeDocumentEditorPropsExtended = {
 };
 
 export type TPiChatEditorApi = {
-  addChatContext: (attributes: PiChatEditorMentionAttributes) => boolean;
+  addChatContext: (attributes: PiChatEditorMentionAttributes, trailingText?: string) => boolean;
 };

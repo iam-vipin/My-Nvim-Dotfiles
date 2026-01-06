@@ -13,6 +13,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { ChatDeleteModal } from "../modals/delete-modal";
 import { EditForm } from "../modals/edit-form";
+import { useRouter } from "next/navigation";
 
 type TProps = {
   isActive: boolean;
@@ -38,6 +39,7 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
     isFullScreen = false,
     onClickItem,
   } = props;
+  const router = useRouter();
   // state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -90,6 +92,14 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
         workspaceSlug={workspaceSlug?.toString() || ""}
         isOpen={isDeleteModalOpen}
         chatTitle={title || ""}
+        onDelete={() => {
+          if (!isActive) return;
+          if (!isFullScreen) {
+            initPiChat();
+          } else {
+            router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`);
+          }
+        }}
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       {/* Edit Modal */}

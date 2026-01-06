@@ -125,9 +125,9 @@ function PiChatEditor(props: PiChatEditorProps) {
           user_mentions: [],
         }),
       }),
-      addChatContext: (attributes: PiChatEditorMentionAttributes) => {
+      addChatContext: (attributes: PiChatEditorMentionAttributes, trailingText?: string) => {
         if (!editor) return false;
-        return editor.commands.addChatContext(attributes);
+        return editor.commands.addChatContext(attributes, trailingText);
       },
     }),
     [editor]

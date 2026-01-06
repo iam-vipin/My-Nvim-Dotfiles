@@ -29,37 +29,41 @@ export const AppSearchRoot = observer(function AppSearchRoot() {
   return (
     <div className="size-full flex flex-col items-center transition-all duration-500 ease-out px-4 sm:px-6 pt-4">
       <div className="size-full flex flex-col relative transition-all duration-500 ease-out py-2 sm:px-2">
-        <div className="shrink-0 relative flex items-center group">
-          <Input
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              if (e.target.value) setIsSearching(true);
-            }}
-            className={cn(
-              "shadow-sm px-10 w-full rounded-lg border-subtle-1 bg-surface-1 ring-0 transition-all duration-200 focus:ring-2 focus:ring-accent-strong/30 focus:border-accent-strong placeholder:text-placeholder h-10"
-            )}
-            placeholder="Search everything in your workspace"
-            autoFocus
-          />
-          <div className="absolute left-2.5">
-            <Search
-              className={cn("transition-colors duration-200", "text-placeholder group-hover:text-tertiary", "w-4 h-4")}
+        <Command className="size-full flex flex-col overflow-hidden">
+          <div className="shrink-0 relative flex items-center group">
+            <Input
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                if (e.target.value) setIsSearching(true);
+              }}
+              className={cn(
+                "shadow-raised-100 px-10 w-full rounded-lg border-subtle-1 bg-surface-1 transition-all duration-200 focus:border-accent-strong placeholder:text-placeholder h-10"
+              )}
+              placeholder="Search everything in your workspace"
+              autoFocus
             />
-          </div>
-          {searchQuery && (
-            <div className="absolute right-2.5">
-              <CloseIcon
-                className="w-4 h-4 text-placeholder hover:text-primary cursor-pointer transition-colors duration-200"
-                onClick={() => {
-                  setSearchQuery("");
-                  setFlattenedSearchResults([]);
-                }}
+            <div className="absolute left-2.5">
+              <Search
+                className={cn(
+                  "transition-colors duration-200",
+                  "text-placeholder group-hover:text-tertiary",
+                  "w-4 h-4"
+                )}
               />
             </div>
-          )}
-        </div>
-        <Command className="size-full flex flex-col overflow-hidden">
+            {searchQuery && (
+              <div className="absolute right-2.5">
+                <CloseIcon
+                  className="w-4 h-4 text-placeholder hover:text-primary cursor-pointer transition-colors duration-200"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setFlattenedSearchResults([]);
+                  }}
+                />
+              </div>
+            )}
+          </div>
           <SearchResults
             query={searchQuery}
             flattenedSearchResults={flattenedSearchResults}

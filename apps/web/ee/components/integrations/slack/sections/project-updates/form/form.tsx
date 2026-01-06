@@ -1,7 +1,7 @@
-import type { FC } from "react";
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import type { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import { E_SLACK_PROJECT_UPDATES_EVENTS } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -15,7 +15,12 @@ import { SlackProjectChannelForm } from "./channel-map";
  */
 export interface ProjectUpdatesFormProps {
   modal: boolean;
-  handleSubmit: (projectId: string, channelId: string, channelName: string) => Promise<void>;
+  handleSubmit: (
+    projectId: string,
+    channelId: string,
+    channelName: string,
+    events: E_SLACK_PROJECT_UPDATES_EVENTS[]
+  ) => Promise<void>;
   projectConnection?: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>;
   handleModal: (modal: boolean) => void;
 }
@@ -24,7 +29,7 @@ export interface SlackProjectNotificationMap {
   projectId?: string;
   channelId?: string;
   channelName?: string;
-  events: string[];
+  events: E_SLACK_PROJECT_UPDATES_EVENTS[];
 }
 
 /**
@@ -45,7 +50,7 @@ function ProjectUpdatesForm({
     projectId: projectConnection?.project_id || undefined,
     channelId: projectConnection?.entity_id || undefined,
     channelName: projectConnection?.entity_slug || undefined,
-    events: projectConnection?.config?.events || [],
+    events: projectConnection?.config?.subscribedEvents || [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
   });
 
   // Update form data when projectConnection changes (important for edit mode)
@@ -55,7 +60,7 @@ function ProjectUpdatesForm({
         projectId: projectConnection.project_id || undefined,
         channelId: projectConnection.entity_id || undefined,
         channelName: projectConnection.entity_slug || undefined,
-        events: projectConnection.config?.events || [],
+        events: projectConnection.config?.subscribedEvents || [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
       });
     }
   }, [projectConnection]);
@@ -69,7 +74,7 @@ function ProjectUpdatesForm({
           projectId: undefined,
           channelId: undefined,
           channelName: undefined,
-          events: [],
+          events: [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
         });
       }
     }
@@ -113,7 +118,7 @@ function ProjectUpdatesForm({
     if (!formData.projectId || !formData.channelId || !formData.channelName) return;
 
     try {
-      await handleSubmitProp(formData.projectId, formData.channelId, formData.channelName);
+      await handleSubmitProp(formData.projectId, formData.channelId, formData.channelName, formData.events);
       handleModal(false);
     } catch (error) {
       setToast({
@@ -131,7 +136,7 @@ function ProjectUpdatesForm({
       projectId: projectConnection?.project_id || undefined,
       channelId: projectConnection?.entity_id || undefined,
       channelName: projectConnection?.entity_slug || undefined,
-      events: projectConnection?.config?.events || [],
+      events: projectConnection?.config?.subscribedEvents || [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
     });
 
     handleModal(false);

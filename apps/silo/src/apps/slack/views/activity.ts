@@ -11,6 +11,7 @@ import type { ActivityForSlack } from "../types/types";
 
 type ActivityProps = {
   // Activites to showcase in the linkback
+  header?: string;
   activities: ActivityForSlack[];
 
   // Details for creating the link for the `View in Plane` button
@@ -23,12 +24,12 @@ type ActivityProps = {
 };
 
 export const createActivityLinkback = (activity: ActivityProps) => {
-  const { activities, workspaceSlug, projectId, issueId, userMap } = activity;
+  const { header, activities, workspaceSlug, projectId, issueId, userMap } = activity;
 
   const blocks: any[] = [];
   const planeToSlackUserMap = invertStringMap(userMap);
 
-  const title = "*Work Item Updated*\n\n";
+  const title = `*${header ?? "Work Item Updated"}*\n\n`;
 
   /*
    * At this point, we are debouncing on the activities, and we'll get a group

@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { AlertTriangle, RefreshCw, Hash } from "lucide-react";
-// Plane imports
-import { PlusIcon } from "@plane/propel/icons";
+import { AlertTriangle, RefreshCw, Hash, Plus } from "lucide-react";
+import { SLACK_INTEGRATION_TRACKER_EVENTS, SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
-import { E_SLACK_ENTITY_TYPE } from "@plane/etl/slack";
+import { E_SLACK_ENTITY_TYPE, E_SLACK_PROJECT_UPDATES_EVENTS } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -98,7 +97,12 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
   };
 
   // Handle form submission (creates new or updates existing)
-  const handleSubmit = async (projectId: string, channelId: string, channelName: string) => {
+  const handleSubmit = async (
+    projectId: string,
+    channelId: string,
+    channelName: string,
+    events: E_SLACK_PROJECT_UPDATES_EVENTS[]
+  ) => {
     if (editConnection) {
       // Update existing connection
       const updatedConnection = {
@@ -106,6 +110,9 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
         project_id: projectId,
         entity_id: channelId,
         entity_slug: channelName,
+        config: {
+          subscribedEvents: events,
+        },
       };
 
       await updateProjectConnection(editConnection.id, updatedConnection);
@@ -128,7 +135,7 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
           workspace_slug: workspaceSlug!,
           entity_data: {},
           config: {
-            events: [],
+            subscribedEvents: events,
           },
         };
 
@@ -207,8 +214,13 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
               {t("slack_integration.project_updates.description")}
             </div>
           </div>
-          <Button variant="secondary" className="h-8 w-8 rounded-sm p-0" onClick={handleOpenCreateModal}>
-            <PlusIcon className="h-5 w-5" />
+          <Button
+            variant="secondary"
+            className="h-8 w-8 rounded-sm p-0"
+            onClick={handleOpenCreateModal}
+            data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CHANNEL_MAPPING_HEADER_ADD_BUTTON}
+          >
+            <Plus className="h-5 w-5" />
             <span className="sr-only">{t("slack_integration.project_updates.add_new_project_update")}</span>
           </Button>
         </div>

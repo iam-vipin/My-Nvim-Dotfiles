@@ -373,12 +373,14 @@ const createCommentBlock = (
   } = blockFormationCtx;
   const workItemHyperlink = createSlackHyperlinkMarkdown(displayText, url);
 
+  const commentDmAlertText = getCommentDmAlertText(workspaceSlug, actorDisplayName, workItemHyperlink);
   const commentBlocks = createCommentLinkback({
     blockFormationCtx,
     workItemHyperlink,
     projectId: alert.project_id,
     issueId: alert.issue_id,
     createdBy: alert.payload.created_by,
+    header: commentDmAlertText,
   });
 
   return {

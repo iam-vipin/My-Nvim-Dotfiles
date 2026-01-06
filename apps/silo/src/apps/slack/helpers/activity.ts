@@ -191,6 +191,15 @@ export const getIssueDescriptionDmAlertText = (
 ) =>
   `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> mentioned you in the description of work item ${workItemHyperlink}`;
 
+export const getCommentProjectUpdateText = (
+  workspaceSlug: string,
+  actorDisplayName: string,
+  workItemIdentifier: string,
+  workItemUrl: string
+) => {
+  return `A comment was created by <${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> on Work Item  <${workItemUrl}|${workItemIdentifier}>`;
+};
+
 export const isValidIssueUpdateActivity = (payload: PlaneWebhookPayloadBase<ExIssue | ExIssueComment>) =>
   payload.activity.field &&
   !payload.activity.field.includes("_id") &&

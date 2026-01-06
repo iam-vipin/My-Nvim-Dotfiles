@@ -237,9 +237,21 @@ export const handleIssueCommentViewSubmission = async (
       });
 
       if (thread_ts) {
-        await slackService.sendEphemeralMessage(user, `Comment successfully added to issue.`, channel, thread_ts);
+        const response = await slackService.sendEphemeralMessage(
+          data.user.id,
+          `Comment successfully added to work item.`,
+          channel,
+          thread_ts
+        );
+
+        logger.info("Added comment success message for message", response);
       } else {
-        await slackService.sendThreadMessage(channel, message_ts, `Comment successfully added to issue.`);
+        const response = await slackService.sendThreadMessage(
+          channel,
+          message_ts,
+          `Comment successfully added to work item.`
+        );
+        logger.info("Added comment success message for message", response);
       }
     }
   } catch (error: any) {

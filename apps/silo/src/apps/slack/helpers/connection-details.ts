@@ -278,24 +278,36 @@ const getSlackConnectionServices = async (
   };
 };
 
-export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload, planeUserId: string | null) => {
+export const getConnectionDetailsForIssue = async (
+  payload: PlaneWebhookPayload,
+  planeUserId: string | null,
+  requireEntityConnection: boolean = true
+) => {
   const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: payload.workspace,
     project_id: payload.project,
     issue_id: payload.id,
   });
 
-  if (!entityConnection) {
+  if (!entityConnection && requireEntityConnection) {
     logger.info(`[SLACK] Entity connection not found for issue ${payload.id}`);
     return;
   }
 
-  const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
-    entityConnection.workspace_connection_id
-  );
+  const workspaceConnectionId = entityConnection?.workspace_connection_id;
+
+  // If no entity connection, try to get workspace connection from workspace_id
+  const workspaceConnection = workspaceConnectionId
+    ? await apiClient.workspaceConnection.getWorkspaceConnection(workspaceConnectionId)
+    : await integrationConnectionHelper.getWorkspaceConnection({
+        workspace_id: payload.workspace,
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+      });
 
   if (!workspaceConnection) {
-    logger.info(`[SLACK] Workspace connection not found for entity connection ${entityConnection.id}`);
+    logger.info(
+      `[SLACK] Workspace connection not found ${entityConnection ? `for entity connection ${entityConnection.id}` : `for workspace ${payload.workspace}`}`
+    );
     return;
   }
 
@@ -307,13 +319,15 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
   );
 
   if (!services) {
-    logger.info(`[SLACK] Services not found for entity connection ${entityConnection.id}`);
+    logger.info(
+      `[SLACK] Services not found ${entityConnection ? `for entity connection ${entityConnection.id}` : `for workspace ${payload.workspace}`}`
+    );
     return;
   }
 
   return {
     workspaceConnection,
-    entityConnection,
+    entityConnection: entityConnection || undefined,
     ...services,
   };
 };

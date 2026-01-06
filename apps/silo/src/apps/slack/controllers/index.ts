@@ -965,7 +965,13 @@ export default class SlackController {
             entity_type: E_INTEGRATION_KEYS.SLACK,
           });
 
-          if (!entityConnection) {
+          const [projectEntityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+            workspace_id: workspace,
+            project_id: project,
+            entity_type: E_SLACK_ENTITY_TYPE.SLACK_PROJECT_UPDATES,
+          });
+
+          if (!entityConnection && !projectEntityConnection) {
             return res.sendStatus(200);
           }
 

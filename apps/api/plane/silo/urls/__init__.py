@@ -10,8 +10,21 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # add all the url patterns in this folder
-from .application_secret import urlpatterns as application_secret
+# from .application_secret import urlpatterns as application_secret_urls
+from .asset import urlpatterns as asset_urls
+from .credential import urlpatterns as credential_urls
+from .connection import urlpatterns as connection_urls
+from .entity_connection import urlpatterns as entity_connection_urls
+from .importer import urlpatterns as importer_urls
+from .importer_report import urlpatterns as importer_report_urls
+from .page import urlpatterns as page_urls
 
 urlpatterns = [
-    *application_secret,
+    *asset_urls,
+    *credential_urls,
+    *connection_urls,
+    *entity_connection_urls,
+    *importer_urls,
+    *importer_report_urls,
+    *page_urls,
 ]

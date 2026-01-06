@@ -11,6 +11,7 @@
 
 from rest_framework.response import Response
 from rest_framework import status
+from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
 from plane.api.views.base import BaseViewSet
 from plane.api.serializers import TeamspaceSerializer, ProjectSerializer, UserLiteSerializer
@@ -18,12 +19,7 @@ from plane.ee.models import Teamspace, TeamspaceProject, TeamspaceMember
 from plane.db.models import Workspace, Project, User
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.api.permissions import TeamspaceFeatureFlagPermission
-
-
-# OpenAPI imports
 from plane.utils.openapi.decorators import teamspace_docs, teamspace_entity_docs
-
-from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 from plane.utils.openapi import (
     TEAMSPACE_EXAMPLE,
     create_paginated_response,

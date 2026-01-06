@@ -40,7 +40,7 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
-from .base import BaseAPIView
+from plane.api.views.base import BaseAPIView
 from plane.utils.host import base_host
 from plane.api.serializers import (
     ProjectSerializer,

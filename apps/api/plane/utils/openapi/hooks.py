@@ -30,7 +30,7 @@ def preprocess_filter_api_v1_paths(endpoints):
     Filter OpenAPI endpoints to only include /api/v1/ paths, exclude PUT methods,
     and exclude views that inherit from BaseServiceAPIView.
     """
-    from plane.ee.views.api.base import BaseServiceAPIView
+    from plane.silo.views.base import BaseServiceAPIView
 
     filtered = []
     for path, path_regex, method, callback in endpoints:

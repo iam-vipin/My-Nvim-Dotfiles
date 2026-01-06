@@ -17,6 +17,7 @@ from plane.api.views import (
     GenericAssetEndpoint,
 )
 
+
 urlpatterns = [
     path(
         "assets/user-assets/",

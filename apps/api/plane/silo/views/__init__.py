@@ -10,3 +10,10 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # add all the views in this folder
+from .asset import ImportAssetEndpoint
+from .credential import WorkspaceCredentialAPIView, VerifyWorkspaceCredentialAPIView
+from .connection import WorkspaceConnectionAPIView, WorkspaceUserConnectionAPIView
+from .entity_connection import WorkspaceEntityConnectionAPIView
+from .importer import ImportJobAPIView
+from .importer_report import ImportReportAPIView, ImportReportCountIncrementAPIView
+from .page import WikiBulkOperationAPIView, ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView

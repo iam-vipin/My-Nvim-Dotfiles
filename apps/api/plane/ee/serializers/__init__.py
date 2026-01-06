@@ -164,12 +164,8 @@ from .app.workspace.entity_connection import WorkspaceEntityConnectionSerializer
 from .app.cycle_schedule import AutomatedCycleSerializer
 
 # api
-from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
-from .api.workspace.credential import WorkspaceCredentialAPISerializer
-from .api.workspace.connection import WorkspaceConnectionAPISerializer
-from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer
+
 from .app.workspace.workspace_member import WorkspaceMemberActivitySerializer
-from .api.worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
 
 # mobile app endpoints serializers
 from .app.mobile import (

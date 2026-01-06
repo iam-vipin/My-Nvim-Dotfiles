@@ -10,12 +10,36 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from django.urls import path
-from plane.api.views.workspace import WorkspaceFeatureAPIEndpoint
 
-urlpatterns = [
+from plane.api.views import (
+    WorkspaceFeatureAPIEndpoint,
+    WorkspacePageDetailAPIEndpoint,
+    WorkspacePageAPIEndpoint,
+)
+
+workspace_patterns = [
     path(
         "workspaces/<str:slug>/features/",
         WorkspaceFeatureAPIEndpoint.as_view(),
         name="workspace-features",
     ),
+]
+
+workspace_page_patterns = [
+    path(
+        "workspaces/<str:slug>/pages/",
+        WorkspacePageAPIEndpoint.as_view(),
+        name="workspace-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/",
+        WorkspacePageDetailAPIEndpoint.as_view(),
+        name="workspace-page-detail",
+    ),
+]
+
+
+urlpatterns = [
+    *workspace_patterns,
+    *workspace_page_patterns,
 ]

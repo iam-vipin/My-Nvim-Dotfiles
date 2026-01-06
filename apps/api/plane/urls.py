@@ -34,6 +34,7 @@ urlpatterns = [
     path("api/v1/", include("plane.api.urls")),
     path("auth/", include("plane.authentication.urls")),
     path("api/payments/", include("plane.payment.urls")),
+    path("api/silo/", include("plane.silo.urls")),
     path("", include("plane.web.urls")),
     path("graphql/", include("plane.graphql.urls")),
     path("auth/o/", include(("plane.authentication.oauth_urls", "oauth2_provider"))),

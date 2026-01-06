@@ -82,3 +82,17 @@ from .work_item_search import (
     WorkItemAdvancedSearchRequestSerializer,
     WorkItemAdvancedSearchResponseSerializer,
 )
+
+from .epic import EpicSerializer
+
+from .worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
+from .page import PageAPISerializer, PageCreateAPISerializer, PageDetailAPISerializer
+from .work_item_property import (
+    IssuePropertyAPISerializer,
+    IssuePropertyOptionAPISerializer,
+    IssuePropertyValueAPISerializer,
+    IssuePropertyValueAPIDetailSerializer,
+    IssuePropertyActivityAPISerializer,
+    WorkItemPropertyValueRequestSerializer,
+    WorkItemPropertyValueResponseSerializer,
+)

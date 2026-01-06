@@ -5,8 +5,9 @@
   "private": true,
   "files": [
     "base.json",
-    "nextjs.json",
+    "express.json",
+    "node-library.json",
     "react-library.json",
-    "node-library.json"
+    "react-router.json"
   ]
 }

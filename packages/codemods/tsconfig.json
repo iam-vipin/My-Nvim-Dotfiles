@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -8,6 +9,10 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  }
+    "noFallthroughCasesInSwitch": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

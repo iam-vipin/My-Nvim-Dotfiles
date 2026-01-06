@@ -3,11 +3,14 @@
   "version": "0.23.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.mjs",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -15,7 +18,7 @@
   ],
   "scripts": {
     "dev": "tsdown --watch",
-    "build": "tsdown --minify",
+    "build": "tsdown",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=272",
     "check:types": "tsc --noEmit",

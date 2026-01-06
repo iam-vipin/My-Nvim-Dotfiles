@@ -176,7 +176,9 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
           <div className="w-full flex gap-2 items-center px-6">
             <div className="text-body-sm-medium">{t("work_item_types.settings.properties.title")}</div>
             <Tooltip position="right" tooltipContent={t("work_item_types.settings.properties.tooltip")}>
-              <InfoIcon className="size-3.5 text-secondary cursor-help outline-none" />
+              <span>
+                <InfoIcon className="size-3.5 text-secondary cursor-help outline-none" />
+              </span>
             </Tooltip>
           </div>
           <IssuePropertyList

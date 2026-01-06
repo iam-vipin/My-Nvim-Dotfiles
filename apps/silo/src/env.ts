@@ -40,7 +40,7 @@ const envSchema = z.object({
     .default("")
     .transform((str) => str.replace(/\/$/, "")),
   IS_MULTI_TENANT: z.string().default("0"),
-  SILO_BASE_PATH: z.string().default(""),
+  SILO_BASE_PATH: z.string().default("/silo"),
   WEBHOOK_SECRET: z.string().default("plane-silo"),
   MQ_PREFETCH_COUNT: z.string().default("5"),
   SILO_HMAC_SECRET_KEY: z.string().default(""),

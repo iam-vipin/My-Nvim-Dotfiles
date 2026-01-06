@@ -233,8 +233,8 @@ def build_grouped_chart_response(
         queryset = queryset.annotate(
             key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
             group_key=Coalesce(Cast(F(group_field), CharField()), Value("None"), output_field=CharField()),
-            group_name=Coalesce(F(group_name_field), Value("None"), output_field=CharField()),
-            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+            group_name=Coalesce(Cast(F(group_name_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
             estimate_type=F("estimate_point__estimate__type"),
         )
         # Set project_id to NULL for None values so they group together
@@ -257,8 +257,8 @@ def build_grouped_chart_response(
         queryset = queryset.annotate(
             key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
             group_key=Coalesce(Cast(F(group_field), CharField()), Value("None"), output_field=CharField()),
-            group_name=Coalesce(F(group_name_field), Value("None"), output_field=CharField()),
-            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+            group_name=Coalesce(Cast(F(group_name_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
         )
         # For non-estimate charts, don't include project_id_for_ordering to combine items across projects
         data = (
@@ -291,7 +291,7 @@ def build_simple_chart_response(
         # Cast integer field to string before coalescing with "None"
         queryset = queryset.annotate(
             key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
-            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
             estimate_type=F("estimate_point__estimate__type"),
         )
         # Set project_id to NULL for None values so they group together
@@ -311,7 +311,7 @@ def build_simple_chart_response(
     else:
         queryset = queryset.annotate(
             key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
-            display_name=Coalesce(display_field, Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
         )
         # For non-estimate charts, don't include project_id_for_ordering to combine items across projects
         data = queryset.values("key", "display_name").annotate(count=aggregate_func).order_by("key")

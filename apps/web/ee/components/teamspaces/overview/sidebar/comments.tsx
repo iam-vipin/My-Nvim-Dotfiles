@@ -35,8 +35,8 @@ export const TeamsOverviewSidebarComments = observer(function TeamsOverviewSideb
   const activityOperations = useCommentOperations(workspaceSlug, teamspaceId);
 
   return (
-    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden px-6">
-      <div className="py-2 flex flex-col gap-4">
+    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
+      <div className=" flex flex-col gap-4">
         <div className="flex gap-2 items-center justify-between">
           <span className="text-body-xs-semibold">Comments</span>
           <span className="flex items-center gap-2">

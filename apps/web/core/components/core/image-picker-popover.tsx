@@ -196,7 +196,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
             ref={imagePickerRef}
             className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem] p-2"
           >
-            <Tabs defaultValue={enabledTabs[0]?.key || "images"} className="flex h-full flex-col p-3">
+            <Tabs defaultValue={enabledTabs[0]?.key || "images"}>
               <Tabs.List className="flex rounded bg-layer-3 p-1">
                 {enabledTabs.map((tab) => (
                   <Tabs.Trigger key={tab.key} value={tab.key}>
@@ -207,7 +207,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
 
               <div className="mt-4 flex-1 overflow-auto">
                 {(unsplashImages || !unsplashError) && (
-                  <Tabs.Content value="unsplash" className={"flex flex-col gap-y-4"}>
+                  <Tabs.Content value="unsplash">
                     <div className="flex gap-x-2 items-center">
                       <Controller
                         control={control}

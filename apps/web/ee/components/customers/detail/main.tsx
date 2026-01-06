@@ -4,11 +4,11 @@ import Link from "next/link";
 import { NewTabIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tabs } from "@plane/propel/tabs";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { TCustomerPayload } from "@plane/types";
 // components
-import { Tabs } from "@plane/ui";
 import { formatURLForDisplay } from "@plane/utils";
 // components
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
@@ -181,15 +181,24 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           workspaceSlug={workspaceSlug}
         />
       </div>
-      <Tabs
-        tabs={CUSTOMER_TABS}
-        defaultTab="requests"
-        tabListClassName="w-36"
-        tabListContainerClassName="justify-between pb-4 pt-6"
-        tabClassName="px-2 py-1"
-        storeInLocalStorage={false}
-        actions={<></>}
-      />
+      <div className="mt-4">
+        <Tabs defaultValue={CUSTOMER_TABS[0].key}>
+          <Tabs.List>
+            {CUSTOMER_TABS.map((tab) => (
+              <Tabs.Trigger key={tab.key} value={tab.key} size="sm">
+                {tab.label}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+          <div className="mt-2">
+            {CUSTOMER_TABS.map((tab) => (
+              <Tabs.Content key={tab.key} value={tab.key}>
+                {tab.content}
+              </Tabs.Content>
+            ))}
+          </div>
+        </Tabs>
+      </div>
     </MainWrapper>
   );
 });

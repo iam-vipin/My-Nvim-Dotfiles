@@ -60,7 +60,7 @@ export const TeamsOverviewSidebarActivity = observer(function TeamsOverviewSideb
 
   return (
     <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
-      <div className="py-2 flex flex-col px-6">
+      <div className="flex flex-col">
         <div className="flex gap-2 items-center justify-between">
           <span className="text-body-xs-semibold">Activity</span>
           <span className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export const TeamsOverviewSidebarActivity = observer(function TeamsOverviewSideb
         </div>
       </div>
       <div className="flex-grow overflow-y-auto vertical-scrollbar scrollbar-sm">
-        <div className="space-y-3 px-6">
+        <div className="space-y-3">
           {teamActivitiesLoader === "init-loader" ? (
             <Loader className="space-y-3">
               <Loader.Item height="34px" width="100%" />

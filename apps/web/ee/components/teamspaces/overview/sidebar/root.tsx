@@ -4,8 +4,9 @@ import useSWR from "swr";
 import { Activity, UsersRound } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { CommentFillIcon, InfoFillIcon } from "@plane/propel/icons";
+import { Tabs } from "@plane/propel/tabs";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Tabs } from "@plane/ui";
+
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -108,14 +109,24 @@ export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props
       )}
       style={isTeamSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
     >
-      <Tabs
-        tabs={TEAM_OVERVIEW_SIDEBAR_TABS}
-        storageKey={`teamspace-overview-sidebar-${teamspaceId}`}
-        defaultTab="properties"
-        containerClassName="gap-4"
-        tabListContainerClassName="px-6"
-        tabPanelClassName="overflow-hidden"
-      />
+      <div className="px-4">
+        <Tabs defaultValue={TEAM_OVERVIEW_SIDEBAR_TABS[0].key}>
+          <Tabs.List>
+            {TEAM_OVERVIEW_SIDEBAR_TABS.map((tab) => (
+              <Tabs.Trigger key={tab.key} value={tab.key}>
+                {tab.icon && <tab.icon className="size-4" />}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+          <div className="mt-4">
+            {TEAM_OVERVIEW_SIDEBAR_TABS.map((tab) => (
+              <Tabs.Content key={tab.key} value={tab.key}>
+                {tab.content}
+              </Tabs.Content>
+            ))}
+          </div>
+        </Tabs>
+      </div>
     </div>
   );
 });

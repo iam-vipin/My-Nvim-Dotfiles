@@ -145,8 +145,8 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 px-6 divide-y divide-subtle">
-      <div className="py-2 flex flex-col">
+    <div className="relative flex flex-col gap-y-2 divide-y divide-custom-border-100">
+      <div className=" flex flex-col gap-2">
         <div className="flex gap-2 justify-between">
           <span className="text-body-xs-semibold">Properties</span>
           {teamspaceEntitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}

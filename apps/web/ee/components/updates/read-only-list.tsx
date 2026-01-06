@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Tab } from "@headlessui/react";
+import { Tabs } from "@plane/propel/tabs";
 import type { TUpdate, EUpdateStatus } from "@plane/types";
 import { EUpdateEntityType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -81,7 +81,7 @@ export const UpdateList = observer(function UpdateList(props: TUpdateList) {
   const projectsCount = updates?.project_updates?.length ?? 0;
   const epicsCount = updates?.epic_updates?.length ?? 0;
   const shouldRenderTabHeader = projectsCount > 0 && epicsCount > 0;
-  const defaultTabIndex = shouldRenderTabHeader ? 0 : projectsCount > 0 ? 0 : 1;
+  const defaultTab = shouldRenderTabHeader ? "project" : projectsCount > 0 ? "project" : "epic";
 
   if (isLoading) {
     return (
@@ -137,25 +137,10 @@ export const UpdateList = observer(function UpdateList(props: TUpdateList) {
       <div className="font-semibold text-14 capitalize text-secondary mb-2">
         {shouldRenderTabHeader ? "Updates" : projectsCount > 0 ? "Project updates" : "Epic updates"}
       </div>
-      <Tab.Group
-        onChange={(index) => {
-          handleTabChange(index === 0 ? "project" : "epic");
-        }}
-        defaultIndex={defaultTabIndex}
-      >
+      <Tabs defaultValue={defaultTab} onValueChange={(value) => handleTabChange(value as "project" | "epic")}>
         {shouldRenderTabHeader && (
-          <Tab.List className="relative border-[0.5px] border-subtle-1 rounded-sm bg-layer-1 p-[1px] flex w-fit">
-            <Tab
-              className={({ selected }) =>
-                cn(
-                  "relative z-[1] font-semibold text-11 rounded-sm text-placeholder focus:outline-none transition duration-500 px-2 py-1 ",
-                  {
-                    "text-secondary bg-surface-1": selected,
-                    "hover:text-tertiary": !selected,
-                  }
-                )
-              }
-            >
+          <Tabs.List>
+            <Tabs.Trigger value="project">
               <div className="flex items-center gap-2">
                 <div className="font-regular text-11 ">Project updates</div>
                 <div
@@ -166,18 +151,8 @@ export const UpdateList = observer(function UpdateList(props: TUpdateList) {
                   {projectsCount}
                 </div>
               </div>
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                cn(
-                  "relative z-[1] font-semibold text-11 rounded-[3px] text-placeholder focus:outline-none transition duration-500 px-2 py-1 ",
-                  {
-                    "text-secondary bg-surface-1": selected,
-                    "hover:text-tertiary": !selected,
-                  }
-                )
-              }
-            >
+            </Tabs.Trigger>
+            <Tabs.Trigger value="epic">
               <div className="flex items-center gap-2">
                 <div className="font-regular text-11 ">Epic updates</div>
                 <div
@@ -188,19 +163,17 @@ export const UpdateList = observer(function UpdateList(props: TUpdateList) {
                   {epicsCount}
                 </div>
               </div>
-            </Tab>
-          </Tab.List>
+            </Tabs.Trigger>
+          </Tabs.List>
         )}
 
-        <Tab.Panels>
-          <Tab.Panel>
-            <UpdateListTabs updates={updates?.project_updates} customTitle={customTitle} />
-          </Tab.Panel>
-          <Tab.Panel>
-            <UpdateListTabs updates={updates?.epic_updates} customTitle={customTitle} />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+        <Tabs.Content value="project">
+          <UpdateListTabs updates={updates?.project_updates} customTitle={customTitle} />
+        </Tabs.Content>
+        <Tabs.Content value="epic">
+          <UpdateListTabs updates={updates?.epic_updates} customTitle={customTitle} />
+        </Tabs.Content>
+      </Tabs>
     </div>
   );
 });

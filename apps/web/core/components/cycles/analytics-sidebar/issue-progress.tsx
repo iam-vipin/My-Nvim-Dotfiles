@@ -141,15 +141,12 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                             cycleId
                           )}
                           isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
-                          noBackground={false}
                           plotType={plotType}
-                          roundedTab={false}
                           selectedFilters={{
                             assignees: selectedAssignees,
                             labels: selectedLabels,
                             stateGroups: selectedStateGroups,
                           }}
-                          size="xs"
                           totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                         />
                       </div>

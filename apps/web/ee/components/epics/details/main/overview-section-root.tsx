@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "@plane/propel/icons";
 import { useLocalStorage } from "@plane/hooks";
+import { Tabs } from "@plane/propel/tabs";
 import { EIssueServiceType } from "@plane/types";
-import { Tabs } from "@plane/ui";
 // components
 import { RelationActionButton } from "@/components/issues/issue-detail-widgets/relations";
 // plane web
@@ -26,7 +26,7 @@ type Props = {
 export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props) {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
-  const { storedValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");
+  const { storedValue, setValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");
   const { toggleCreateUpdateRequestModal, isCustomersFeatureEnabled } = useCustomers();
 
   // Tabs
@@ -82,20 +82,27 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
     <OverviewSection title="Overview">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <Tabs
-            tabs={OVERVIEW_TABS}
-            storageKey={`epic-detail-overview-${epicId}`}
-            defaultTab="issues"
-            containerClassName=""
-            tabListClassName="w-36"
-            tabListContainerClassName="justify-between"
-            tabClassName="px-2 py-1"
-            actions={
+          <Tabs defaultValue={storedValue ?? OVERVIEW_TABS[0].key} onValueChange={setValue}>
+            <div className="flex items-center justify-between">
+              <Tabs.List className="w-fit">
+                {OVERVIEW_TABS.map((tab) => (
+                  <Tabs.Trigger key={tab.key} value={tab.key} size="sm">
+                    {tab.label}
+                  </Tabs.Trigger>
+                ))}
+              </Tabs.List>
               <div className="flex items-center justify-end gap-2">
                 {storedValue ? OVERVIEW_ACTIONS[storedValue] : <></>}
               </div>
-            }
-          />
+            </div>
+            <div className="mt-2">
+              {OVERVIEW_TABS.map((tab) => (
+                <Tabs.Content key={tab.key} value={tab.key}>
+                  {tab.content}
+                </Tabs.Content>
+              ))}
+            </div>
+          </Tabs>
         </div>
       </div>
       <EpicOverviewWidgetModals workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} />

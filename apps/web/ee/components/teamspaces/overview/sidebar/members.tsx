@@ -65,8 +65,8 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
   };
 
   return (
-    <div className="relative flex flex-col w-full h-full gap-y-2 pt-2 px-6">
-      <div className="flex items-center gap-1.5 text-body-xs-semibold">Members</div>
+    <div className="relative flex flex-col w-full h-full gap-y-2 ">
+      <div className="flex items-center gap-1.5 text-13 font-semibold">Members</div>
       <div className="flex-1 flex flex-col py-2 px-0.5 gap-x-2 gap-y-5 overflow-y-auto">
         <AddTeamspaceMembersButton teamspaceId={teamspace.id} variant="sidebar" isEditingAllowed={isEditingAllowed} />
         {members &&

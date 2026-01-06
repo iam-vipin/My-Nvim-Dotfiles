@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
+import { Tabs } from "@plane/propel/tabs";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { TModuleDistribution, TModuleEstimateDistribution, TModulePlotType } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
@@ -37,11 +37,8 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
     handleFiltersUpdate,
     isEditable = false,
     moduleId,
-    noBackground = false,
     plotType,
-    roundedTab = false,
     selectedFilters,
-    size = "sm",
     totalIssuesCount,
   } = props;
   // plane imports
@@ -51,8 +48,6 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
     `module-analytics-tab-${moduleId}`,
     "stat-assignees"
   );
-  // derived values
-  const currentTabIndex = (tab: string): number => PROGRESS_STATS.findIndex((stat) => stat.key === tab);
   const currentDistribution = distribution as TModuleDistribution;
   const currentEstimateDistribution = distribution as TModuleEstimateDistribution;
   const selectedAssigneeIds = toFilterArray(selectedFilters?.assignees?.value || []) as string[];
@@ -113,50 +108,32 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
 
   return (
     <div>
-      <Tab.Group defaultIndex={currentTabIndex(currentTab ? currentTab : "stat-assignees")}>
-        <Tab.List
-          as="div"
-          className={cn(
-            `flex w-full items-center justify-between gap-2 rounded-md p-1`,
-            roundedTab ? `rounded-3xl` : `rounded-md`,
-            noBackground ? `` : `bg-layer-2`,
-            size === "xs" ? `text-11` : `text-13`
-          )}
-        >
+      <Tabs defaultValue={currentTab ?? "stat-assignees"} onValueChange={(value) => setModuleTab(value)}>
+        <Tabs.List>
           {PROGRESS_STATS.map((stat) => (
-            <Tab
-              className={cn(
-                `p-1 w-full text-primary outline-none focus:outline-none cursor-pointer transition-all`,
-                roundedTab ? `rounded-3xl border border-subtle` : `rounded-sm`,
-                stat.key === currentTab
-                  ? "bg-layer-transparent-active text-secondary"
-                  : "text-placeholder hover:text-secondary"
-              )}
-              key={stat.key}
-              onClick={() => setModuleTab(stat.key)}
-            >
+            <Tabs.Trigger key={stat.key} value={stat.key}>
               {t(stat.i18n_title)}
-            </Tab>
+            </Tabs.Trigger>
           ))}
-        </Tab.List>
-        <Tab.Panels className="py-3 text-secondary">
-          <Tab.Panel key={"stat-assignees"}>
+        </Tabs.List>
+        <div className="py-3 text-custom-text-200">
+          <Tabs.Content value="stat-assignees">
             <AssigneeStatComponent
               distribution={distributionAssigneeData}
               handleAssigneeFiltersUpdate={handleAssigneeFiltersUpdate}
               isEditable={isEditable}
               selectedAssigneeIds={selectedAssigneeIds}
             />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-labels"}>
+          </Tabs.Content>
+          <Tabs.Content value="stat-labels">
             <LabelStatComponent
               distribution={distributionLabelData}
               handleLabelFiltersUpdate={handleLabelFiltersUpdate}
               isEditable={isEditable}
               selectedLabelIds={selectedLabelIds}
             />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-states"}>
+          </Tabs.Content>
+          <Tabs.Content value="stat-states">
             <StateGroupStatComponent
               distribution={distributionStateData}
               handleStateGroupFiltersUpdate={handleStateGroupFiltersUpdate}
@@ -164,9 +141,9 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
               selectedStateGroups={selectedStateGroups}
               totalIssuesCount={totalIssuesCount}
             />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+          </Tabs.Content>
+        </div>
+      </Tabs>
     </div>
   );
 });

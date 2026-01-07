@@ -97,8 +97,8 @@ export const useProjectData = (artifactId: string): Partial<TProject> => {
   const originalData = getArtifact(artifactId);
   const updatedData = getArtifactByVersion(artifactId, "updated") as Partial<TProject>;
   const parameters = originalData?.parameters;
-  const projectData = !isEmpty(updatedData as Partial<TProject>)
-    ? (updatedData as Partial<TProject>)
+  const projectData = !isEmpty(updatedData)
+    ? updatedData
     : {
         cover_image_url: parameters?.properties?.cover_image_url?.name,
         description: parameters?.description || "",

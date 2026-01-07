@@ -3387,14 +3387,14 @@ export default {
                 "Nous générerons cette partie des métadonnées qui identifie cette application Plane comme un service autorisé sur votre IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL d&apos;authentification unique",
               description:
                 "Nous générerons cela pour vous. Ajoutez cela dans le champ URL de redirection de connexion de votre IdP.",
             },
             logout_url: {
-              label: "URL de déconnexion",
+              label: "URL de déconnexion unique",
               description:
-                "Nous générerons cela pour vous. Ajoutez cela dans le champ URL de redirection de déconnexion de votre IdP.",
+                "Nous générerons cela pour vous. Ajoutez cela dans le champ URL de redirection de déconnexion unique de votre IdP.",
             },
           },
           mobile_details: {
@@ -3405,12 +3405,12 @@ export default {
                 "Nous générerons cette partie des métadonnées qui identifie cette application Plane comme un service autorisé sur votre IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL d&apos;authentification unique",
               description:
                 "Nous générerons cela pour vous. Ajoutez cela dans le champ URL de redirection de connexion de votre IdP.",
             },
             logout_url: {
-              label: "URL de déconnexion",
+              label: "URL de déconnexion unique",
               description:
                 "Nous générerons cela pour vous. Ajoutez cela dans le champ URL de redirection de déconnexion de votre IdP.",
             },
@@ -3448,7 +3448,7 @@ export default {
                 "Nous générerons cela pour cette application Plane. Ajoutez cela comme origine de confiance dans le champ correspondant de votre IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL de redirection",
               description:
                 "Nous générerons cela pour vous. Ajoutez cela dans le champ URL de redirection de connexion de votre IdP.",
             },
@@ -3466,7 +3466,7 @@ export default {
                 "Nous générerons cela pour cette application Plane. Ajoutez cela comme origine de confiance dans le champ correspondant de votre IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL de redirection",
               description:
                 "Nous générerons cela pour vous. Ajoutez cela dans le champ URL de redirection de connexion de votre IdP.",
             },

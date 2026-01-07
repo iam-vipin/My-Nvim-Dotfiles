@@ -3355,12 +3355,13 @@ export default {
                 "Vygenerujeme túto časť metadátov, ktorá identifikuje túto aplikáciu Plane ako autorizovanú službu na vašom IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL jednotného prihlásenia",
               description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
             },
             logout_url: {
-              label: "URL odhlásenia",
-              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania odhlásenia vášho IdP.",
+              label: "URL jednotného odhlásenia",
+              description:
+                "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania jednotného odhlásenia vášho IdP.",
             },
           },
           mobile_details: {
@@ -3371,11 +3372,11 @@ export default {
                 "Vygenerujeme túto časť metadátov, ktorá identifikuje túto aplikáciu Plane ako autorizovanú službu na vašom IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL jednotného prihlásenia",
               description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
             },
             logout_url: {
-              label: "URL odhlásenia",
+              label: "URL jednotného odhlásenia",
               description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania odhlásenia vášho IdP.",
             },
           },
@@ -3412,7 +3413,7 @@ export default {
                 "Vygenerujeme toto pre túto aplikáciu Plane. Pridajte toto ako dôveryhodný pôvod do zodpovedajúceho poľa vášho IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL presmerovania",
               description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
             },
             logout_url: {
@@ -3428,7 +3429,7 @@ export default {
                 "Vygenerujeme toto pre túto aplikáciu Plane. Pridajte toto ako dôveryhodný pôvod do zodpovedajúceho poľa vášho IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL presmerovania",
               description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
             },
             logout_url: {

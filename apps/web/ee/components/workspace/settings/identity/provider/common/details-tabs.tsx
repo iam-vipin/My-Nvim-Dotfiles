@@ -38,16 +38,22 @@ export function ProviderDetailsTabs<TKey extends string>(props: TProviderDetails
   return (
     <Tabs defaultValue={firstTabKey}>
       {hasMultipleTabs ? (
-        <Tabs.List>
+        <Tabs.List className="w-fit">
           {tabs.map((tab) => (
-            <Tabs.Trigger key={tab.key} value={tab.key}>
+            <Tabs.Trigger key={tab.key} value={tab.key} className="px-1.5">
               {tab.label}
             </Tabs.Trigger>
           ))}
         </Tabs.List>
       ) : null}
       {tabs.map((tab) => (
-        <Tabs.Content key={tab.key} value={tab.key}>
+        <Tabs.Content
+          key={tab.key}
+          value={tab.key}
+          className={cn({
+            "pt-4": hasMultipleTabs,
+          })}
+        >
           {tab.content}
         </Tabs.Content>
       ))}

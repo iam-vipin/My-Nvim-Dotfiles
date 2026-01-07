@@ -3377,14 +3377,14 @@ export default {
                 "Wir generieren diesen Teil der Metadaten, der diese Plane-App als autorisierten Dienst auf Ihrem IdP identifiziert.",
             },
             callback_url: {
-              label: "Callback-URL",
+              label: "URL für Single Sign-On",
               description:
                 "Wir generieren dies für Sie. Fügen Sie dies in das Feld für die Anmelde-Weiterleitungs-URL Ihres IdP ein.",
             },
             logout_url: {
-              label: "Abmelde-URL",
+              label: "URL für Single Logout",
               description:
-                "Wir generieren dies für Sie. Fügen Sie dies in das Feld für die Abmelde-Weiterleitungs-URL Ihres IdP ein.",
+                "Wir generieren dies für Sie. Fügen Sie dies in das Feld für die Single-Logout-Weiterleitungs-URL Ihres IdP ein.",
             },
           },
           mobile_details: {
@@ -3395,12 +3395,12 @@ export default {
                 "Wir generieren diesen Teil der Metadaten, der diese Plane-App als autorisierten Dienst auf Ihrem IdP identifiziert.",
             },
             callback_url: {
-              label: "Callback-URL",
+              label: "URL für Single Sign-On",
               description:
                 "Wir generieren dies für Sie. Fügen Sie dies in das Feld für die Anmelde-Weiterleitungs-URL Ihres IdP ein.",
             },
             logout_url: {
-              label: "Abmelde-URL",
+              label: "URL für Single Logout",
               description:
                 "Wir generieren dies für Sie. Fügen Sie dies in das Feld für die Abmelde-Weiterleitungs-URL Ihres IdP ein.",
             },
@@ -3438,7 +3438,7 @@ export default {
                 "Wir generieren dies für diese Plane-App. Fügen Sie dies als vertrauenswürdigen Ursprung in das entsprechende Feld Ihres IdP ein.",
             },
             callback_url: {
-              label: "Callback-URL",
+              label: "Weiterleitungs-URL",
               description:
                 "Wir generieren dies für Sie. Fügen Sie dies in das Feld für die Anmelde-Weiterleitungs-URL Ihres IdP ein.",
             },
@@ -3456,7 +3456,7 @@ export default {
                 "Wir generieren dies für diese Plane-App. Fügen Sie dies als vertrauenswürdigen Ursprung in das entsprechende Feld Ihres IdP ein.",
             },
             callback_url: {
-              label: "Callback-URL",
+              label: "Weiterleitungs-URL",
               description:
                 "Wir generieren dies für Sie. Fügen Sie dies in das Feld für die Anmelde-Weiterleitungs-URL Ihres IdP ein.",
             },

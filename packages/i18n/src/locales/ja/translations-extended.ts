@@ -3320,12 +3320,12 @@ export default {
               description: "このPlaneアプリをIdP上の認証済みサービスとして識別するメタデータのこの部分を生成します。",
             },
             callback_url: {
-              label: "コールバックURL",
+              label: "シングルサインオンURL",
               description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
             },
             logout_url: {
-              label: "ログアウトURL",
-              description: "これを生成します。IdPのログアウトリダイレクトURLフィールドに追加してください。",
+              label: "シングルログアウトURL",
+              description: "これを生成します。IdPのシングルログアウトリダイレクトURLフィールドに追加してください。",
             },
           },
           mobile_details: {
@@ -3335,11 +3335,11 @@ export default {
               description: "このPlaneアプリをIdP上の認証済みサービスとして識別するメタデータのこの部分を生成します。",
             },
             callback_url: {
-              label: "コールバックURL",
+              label: "シングルサインオンURL",
               description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
             },
             logout_url: {
-              label: "ログアウトURL",
+              label: "シングルログアウトURL",
               description: "これを生成します。IdPのログアウトリダイレクトURLフィールドに追加してください。",
             },
           },
@@ -3375,7 +3375,7 @@ export default {
                 "このPlaneアプリ用にこれを生成します。IdPの対応するフィールドに信頼できるオリジンとして追加してください。",
             },
             callback_url: {
-              label: "コールバックURL",
+              label: "リダイレクトURL",
               description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
             },
             logout_url: {
@@ -3391,7 +3391,7 @@ export default {
                 "このPlaneアプリ用にこれを生成します。IdPの対応するフィールドに信頼できるオリジンとして追加してください。",
             },
             callback_url: {
-              label: "コールバックURL",
+              label: "リダイレクトURL",
               description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
             },
             logout_url: {

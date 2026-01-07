@@ -127,7 +127,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "Callback_URI",
-      label: "Callback URI",
+      label: "SSO URL",
       url: `${originURL}/auth/saml/callback/`,
       description: (
         <>
@@ -139,7 +139,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "Logout_URI",
-      label: "Logout URI",
+      label: "SLO URL",
       url: `${originURL}/auth/saml/logout/`,
       description: (
         <>
@@ -161,7 +161,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "mobile_callback_uri",
-      label: "Callback URI",
+      label: "SSO URL",
       url: `${originURL}/auth/mobile/saml/callback/`,
       description: (
         <>
@@ -173,7 +173,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "mobile_logout_uri",
-      label: "Logout URI",
+      label: "SLO URL",
       url: `${originURL}/auth/mobile/saml/logout/`,
       description: (
         <>

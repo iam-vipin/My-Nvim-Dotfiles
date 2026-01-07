@@ -3335,14 +3335,14 @@ export default {
                 "Vygenerujeme tuto část metadat, která identifikuje tuto aplikaci Plane jako autorizovanou službu na vašem IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL jednotného přihlášení",
               description:
                 "Vygenerujeme toto za vás. Přidejte toto do pole URL pro přesměrování při přihlášení vašeho IdP.",
             },
             logout_url: {
-              label: "URL pro odhlášení",
+              label: "URL jednotného odhlášení",
               description:
-                "Vygenerujeme toto za vás. Přidejte toto do pole URL pro přesměrování při odhlášení vašeho IdP.",
+                "Vygenerujeme toto za vás. Přidejte toto do pole URL pro přesměrování při jednotném odhlášení vašeho IdP.",
             },
           },
           mobile_details: {
@@ -3353,12 +3353,12 @@ export default {
                 "Vygenerujeme tuto část metadat, která identifikuje tuto aplikaci Plane jako autorizovanou službu na vašem IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL jednotného přihlášení",
               description:
                 "Vygenerujeme toto za vás. Přidejte toto do pole URL pro přesměrování při přihlášení vašeho IdP.",
             },
             logout_url: {
-              label: "URL pro odhlášení",
+              label: "URL jednotného odhlášení",
               description:
                 "Vygenerujeme toto za vás. Přidejte toto do pole URL pro přesměrování při odhlášení vašeho IdP.",
             },
@@ -3396,7 +3396,7 @@ export default {
                 "Vygenerujeme toto pro tuto aplikaci Plane. Přidejte toto jako důvěryhodný zdroj do odpovídajícího pole vašeho IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL pro přesměrování",
               description:
                 "Vygenerujeme toto za vás. Přidejte toto do pole URL pro přesměrování při přihlášení vašeho IdP.",
             },
@@ -3414,7 +3414,7 @@ export default {
                 "Vygenerujeme toto pro tuto aplikaci Plane. Přidejte toto jako důvěryhodný zdroj do odpovídajícího pole vašeho IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL pro přesměrování",
               description:
                 "Vygenerujeme toto za vás. Přidejte toto do pole URL pro přesměrování při přihlášení vašeho IdP.",
             },

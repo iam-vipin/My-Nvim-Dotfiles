@@ -3297,12 +3297,12 @@ export default {
               description: "이 Plane 앱을 IdP의 승인된 서비스로 식별하는 메타데이터의 이 부분을 생성합니다.",
             },
             callback_url: {
-              label: "콜백 URL",
+              label: "단일 로그인 URL",
               description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
             },
             logout_url: {
-              label: "로그아웃 URL",
-              description: "이를 생성합니다. IdP의 로그아웃 리디렉션 URL 필드에 추가하세요.",
+              label: "단일 로그아웃 URL",
+              description: "이를 생성합니다. IdP의 단일 로그아웃 리디렉션 URL 필드에 추가하세요.",
             },
           },
           mobile_details: {
@@ -3312,11 +3312,11 @@ export default {
               description: "이 Plane 앱을 IdP의 승인된 서비스로 식별하는 메타데이터의 이 부분을 생성합니다.",
             },
             callback_url: {
-              label: "콜백 URL",
+              label: "단일 로그인 URL",
               description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
             },
             logout_url: {
-              label: "로그아웃 URL",
+              label: "단일 로그아웃 URL",
               description: "이를 생성합니다. IdP의 로그아웃 리디렉션 URL 필드에 추가하세요.",
             },
           },
@@ -3351,7 +3351,7 @@ export default {
               description: "이 Plane 앱에 대해 이를 생성합니다. IdP의 해당 필드에 신뢰할 수 있는 원본으로 추가하세요.",
             },
             callback_url: {
-              label: "콜백 URL",
+              label: "리디렉션 URL",
               description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
             },
             logout_url: {
@@ -3366,7 +3366,7 @@ export default {
               description: "이 Plane 앱에 대해 이를 생성합니다. IdP의 해당 필드에 신뢰할 수 있는 원본으로 추가하세요.",
             },
             callback_url: {
-              label: "콜백 URL",
+              label: "리디렉션 URL",
               description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
             },
             logout_url: {

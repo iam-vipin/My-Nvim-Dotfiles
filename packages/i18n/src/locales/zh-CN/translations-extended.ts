@@ -3237,12 +3237,12 @@ export default {
               description: "我们将生成这部分元数据，将 Plane 应用识别为 IdP 上的授权服务。",
             },
             callback_url: {
-              label: "回调 URL",
+              label: "单点登录 URL",
               description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
             },
             logout_url: {
-              label: "注销 URL",
-              description: "我们将为您生成此内容。将其添加到 IdP 的注销重定向 URL 字段中。",
+              label: "单点注销 URL",
+              description: "我们将为您生成此内容。将其添加到 IdP 的单点注销重定向 URL 字段中。",
             },
           },
           mobile_details: {
@@ -3252,11 +3252,11 @@ export default {
               description: "我们将生成这部分元数据，将 Plane 应用识别为 IdP 上的授权服务。",
             },
             callback_url: {
-              label: "回调 URL",
+              label: "单点登录 URL",
               description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
             },
             logout_url: {
-              label: "注销 URL",
+              label: "单点注销 URL",
               description: "我们将为您生成此内容。将其添加到 IdP 的注销重定向 URL 字段中。",
             },
           },
@@ -3291,7 +3291,7 @@ export default {
               description: "我们将为此 Plane 应用生成此内容。将其作为受信任的源添加到 IdP 的相应字段中。",
             },
             callback_url: {
-              label: "回调 URL",
+              label: "重定向 URL",
               description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
             },
             logout_url: {
@@ -3306,7 +3306,7 @@ export default {
               description: "我们将为此 Plane 应用生成此内容。将其作为受信任的源添加到 IdP 的相应字段中。",
             },
             callback_url: {
-              label: "回调 URL",
+              label: "重定向 URL",
               description: "我们将为您生成此内容。将其添加到 IdP 的登录重定向 URL 字段中。",
             },
             logout_url: {

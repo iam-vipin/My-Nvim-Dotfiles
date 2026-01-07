@@ -147,14 +147,14 @@ export function InstanceOIDCConfigForm(props: Props) {
   const OIDC_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URI",
-      label: "Origin URI",
+      label: "Origin URL",
       url: `${originURL}/auth/oidc/`,
       description:
         "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
     },
     {
       key: "Callback_URI",
-      label: "Callback URI",
+      label: "Redirect URL",
       url: `${originURL}/auth/oidc/callback/`,
       description: (
         <>
@@ -165,7 +165,7 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
     {
       key: "Logout_URI",
-      label: "Logout URI",
+      label: "Logout URL",
       url: `${originURL}/auth/oidc/logout/`,
       description: (
         <>
@@ -179,14 +179,14 @@ export function InstanceOIDCConfigForm(props: Props) {
   const OIDC_MOBILE_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "mobile_origin_uri",
-      label: "Origin URI",
+      label: "Origin URL",
       url: `${originURL}/auth/mobile/oidc/`,
       description:
         "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
     },
     {
       key: "mobile_callback_uri",
-      label: "Callback URI",
+      label: "Redirect URL",
       url: `${originURL}/auth/mobile/oidc/callback/`,
       description: (
         <>
@@ -197,7 +197,7 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
     {
       key: "mobile_logout_uri",
-      label: "Logout URI",
+      label: "Logout URL",
       url: `${originURL}/auth/mobile/oidc/logout/`,
       description: (
         <>

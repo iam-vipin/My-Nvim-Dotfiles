@@ -3333,14 +3333,14 @@ export default {
                 "Kami akan menghasilkan bagian metadata ini yang mengidentifikasi aplikasi Plane ini sebagai layanan yang diotorisasi di IdP Anda.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL masuk tunggal",
               description:
                 "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL logout tunggal",
               description:
-                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout IdP Anda.",
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout tunggal IdP Anda.",
             },
           },
           mobile_details: {
@@ -3351,12 +3351,12 @@ export default {
                 "Kami akan menghasilkan bagian metadata ini yang mengidentifikasi aplikasi Plane ini sebagai layanan yang diotorisasi di IdP Anda.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL masuk tunggal",
               description:
                 "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL logout tunggal",
               description:
                 "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout IdP Anda.",
             },
@@ -3393,12 +3393,12 @@ export default {
                 "Kami akan menghasilkan ini untuk aplikasi Plane ini. Tambahkan ini sebagai origin tepercaya di bidang yang sesuai di IdP Anda.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL pengalihan",
               description:
                 "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL logout",
               description:
                 "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout IdP Anda.",
             },
@@ -3411,12 +3411,12 @@ export default {
                 "Kami akan menghasilkan ini untuk aplikasi Plane ini. Tambahkan ini sebagai origin tepercaya di bidang yang sesuai di IdP Anda.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL pengalihan",
               description:
                 "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL logout",
               description:
                 "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout IdP Anda.",
             },

@@ -3368,14 +3368,14 @@ export default {
                 "Vom genera această parte a metadatelor care identifică această aplicație Plane ca un serviciu autorizat pe IdP-ul dvs.",
             },
             callback_url: {
-              label: "URL callback",
+              label: "URL autentificare unică",
               description:
                 "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
             },
             logout_url: {
-              label: "URL deconectare",
+              label: "URL deconectare unică",
               description:
-                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
+                "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare unică al IdP-ului dvs.",
             },
           },
           mobile_details: {
@@ -3386,12 +3386,12 @@ export default {
                 "Vom genera această parte a metadatelor care identifică această aplicație Plane ca un serviciu autorizat pe IdP-ul dvs.",
             },
             callback_url: {
-              label: "URL callback",
+              label: "URL autentificare unică",
               description:
                 "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
             },
             logout_url: {
-              label: "URL deconectare",
+              label: "URL deconectare unică",
               description:
                 "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
             },
@@ -3429,12 +3429,12 @@ export default {
                 "Vom genera acest lucru pentru această aplicație Plane. Adăugați acest lucru ca origine de încredere în câmpul corespunzător al IdP-ului dvs.",
             },
             callback_url: {
-              label: "URL callback",
+              label: "URL de redirecționare",
               description:
                 "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
             },
             logout_url: {
-              label: "URL deconectare",
+              label: "URL de deconectare",
               description:
                 "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
             },
@@ -3447,12 +3447,12 @@ export default {
                 "Vom genera acest lucru pentru această aplicație Plane. Adăugați acest lucru ca origine de încredere în câmpul corespunzător al IdP-ului dvs.",
             },
             callback_url: {
-              label: "URL callback",
+              label: "URL de redirecționare",
               description:
                 "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de conectare al IdP-ului dvs.",
             },
             logout_url: {
-              label: "URL deconectare",
+              label: "URL de deconectare",
               description:
                 "Vom genera acest lucru pentru dvs. Adăugați acest lucru în câmpul URL de redirecționare de deconectare al IdP-ului dvs.",
             },

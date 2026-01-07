@@ -3373,14 +3373,14 @@ export default {
                 "Generaremos esta parte de los metadatos que identifica esta aplicación Plane como un servicio autorizado en tu IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL de inicio de sesión único",
               description:
                 "Generaremos esto por ti. Agrega esto en el campo URL de redirección de inicio de sesión de tu IdP.",
             },
             logout_url: {
-              label: "URL de cierre de sesión",
+              label: "URL de cierre de sesión único",
               description:
-                "Generaremos esto por ti. Agrega esto en el campo URL de redirección de cierre de sesión de tu IdP.",
+                "Generaremos esto por ti. Agrega esto en el campo URL de redirección de cierre de sesión único de tu IdP.",
             },
           },
           mobile_details: {
@@ -3391,12 +3391,12 @@ export default {
                 "Generaremos esta parte de los metadatos que identifica esta aplicación Plane como un servicio autorizado en tu IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL de inicio de sesión único",
               description:
                 "Generaremos esto por ti. Agrega esto en el campo URL de redirección de inicio de sesión de tu IdP.",
             },
             logout_url: {
-              label: "URL de cierre de sesión",
+              label: "URL de cierre de sesión único",
               description:
                 "Generaremos esto por ti. Agrega esto en el campo URL de redirección de cierre de sesión de tu IdP.",
             },
@@ -3434,7 +3434,7 @@ export default {
                 "Generaremos esto para esta aplicación Plane. Agrega esto como un origen confiable en el campo correspondiente de tu IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL de redirección",
               description:
                 "Generaremos esto por ti. Agrega esto en el campo URL de redirección de inicio de sesión de tu IdP.",
             },
@@ -3452,7 +3452,7 @@ export default {
                 "Generaremos esto para esta aplicación Plane. Agrega esto como un origen confiable en el campo correspondiente de tu IdP.",
             },
             callback_url: {
-              label: "URL de callback",
+              label: "URL de redirección",
               description:
                 "Generaremos esto por ti. Agrega esto en el campo URL de redirección de inicio de sesión de tu IdP.",
             },

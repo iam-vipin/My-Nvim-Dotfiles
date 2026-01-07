@@ -3361,14 +3361,14 @@ export default {
                 "Genereremo questa parte dei metadati che identifica questa app Plane come un servizio autorizzato sul tuo IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL di accesso singolo",
               description:
                 "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL di logout singolo",
               description:
-                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout del tuo IdP.",
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout singolo del tuo IdP.",
             },
           },
           mobile_details: {
@@ -3379,12 +3379,12 @@ export default {
                 "Genereremo questa parte dei metadati che identifica questa app Plane come un servizio autorizzato sul tuo IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL di accesso singolo",
               description:
                 "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL di logout singolo",
               description:
                 "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout del tuo IdP.",
             },
@@ -3422,12 +3422,12 @@ export default {
                 "Genereremo questo per questa app Plane. Aggiungilo come origine attendibile nel campo corrispondente del tuo IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL di reindirizzamento",
               description:
                 "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL di logout",
               description:
                 "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout del tuo IdP.",
             },
@@ -3440,12 +3440,12 @@ export default {
                 "Genereremo questo per questa app Plane. Aggiungilo come origine attendibile nel campo corrispondente del tuo IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "URL di reindirizzamento",
               description:
                 "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "URL di logout",
               description:
                 "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout del tuo IdP.",
             },

@@ -3395,14 +3395,14 @@ export default {
                 "Bu Plane uygulamasını IdP&apos;nizde yetkili bir hizmet olarak tanımlayan meta verilerin bu bölümünü oluşturacağız.",
             },
             callback_url: {
-              label: "Geri çağırma URL&apos;si",
+              label: "Tek oturum açma URL&apos;si",
               description:
                 "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
             },
             logout_url: {
-              label: "Oturum kapatma URL&apos;si",
+              label: "Tek oturum kapatma URL&apos;si",
               description:
-                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum kapatma yönlendirme URL&apos;si alanına ekleyin.",
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin tek oturum kapatma yönlendirme URL&apos;si alanına ekleyin.",
             },
           },
           mobile_details: {
@@ -3413,12 +3413,12 @@ export default {
                 "Bu Plane uygulamasını IdP&apos;nizde yetkili bir hizmet olarak tanımlayan meta verilerin bu bölümünü oluşturacağız.",
             },
             callback_url: {
-              label: "Geri çağırma URL&apos;si",
+              label: "Tek oturum açma URL&apos;si",
               description:
                 "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
             },
             logout_url: {
-              label: "Oturum kapatma URL&apos;si",
+              label: "Tek oturum kapatma URL&apos;si",
               description:
                 "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum kapatma yönlendirme URL&apos;si alanına ekleyin.",
             },
@@ -3456,7 +3456,7 @@ export default {
                 "Bunu bu Plane uygulaması için oluşturacağız. Bunu IdP&apos;nizin ilgili alanına güvenilir bir kaynak olarak ekleyin.",
             },
             callback_url: {
-              label: "Geri çağırma URL&apos;si",
+              label: "Yönlendirme URL&apos;si",
               description:
                 "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
             },
@@ -3474,7 +3474,7 @@ export default {
                 "Bunu bu Plane uygulaması için oluşturacağız. Bunu IdP&apos;nizin ilgili alanına güvenilir bir kaynak olarak ekleyin.",
             },
             callback_url: {
-              label: "Geri çağırma URL&apos;si",
+              label: "Yönlendirme URL&apos;si",
               description:
                 "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
             },

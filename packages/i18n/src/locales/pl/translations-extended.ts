@@ -3345,12 +3345,13 @@ export default {
                 "Wygenerujemy tę część metadanych, która identyfikuje tę aplikację Plane jako autoryzowaną usługę w Twoim IdP.",
             },
             callback_url: {
-              label: "URL wywołania zwrotnego",
+              label: "URL logowania jednokrotnego",
               description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
             },
             logout_url: {
-              label: "URL wylogowania",
-              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+              label: "URL wylogowania jednokrotnego",
+              description:
+                "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania jednokrotnego Twojego IdP.",
             },
           },
           mobile_details: {
@@ -3361,11 +3362,11 @@ export default {
                 "Wygenerujemy tę część metadanych, która identyfikuje tę aplikację Plane jako autoryzowaną usługę w Twoim IdP.",
             },
             callback_url: {
-              label: "URL wywołania zwrotnego",
+              label: "URL logowania jednokrotnego",
               description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
             },
             logout_url: {
-              label: "URL wylogowania",
+              label: "URL wylogowania jednokrotnego",
               description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
             },
           },
@@ -3402,7 +3403,7 @@ export default {
                 "Wygenerujemy to dla tej aplikacji Plane. Dodaj to jako zaufane źródło w odpowiednim polu Twojego IdP.",
             },
             callback_url: {
-              label: "URL wywołania zwrotnego",
+              label: "URL przekierowania",
               description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
             },
             logout_url: {
@@ -3418,7 +3419,7 @@ export default {
                 "Wygenerujemy to dla tej aplikacji Plane. Dodaj to jako zaufane źródło w odpowiednim polu Twojego IdP.",
             },
             callback_url: {
-              label: "URL wywołania zwrotnego",
+              label: "URL przekierowania",
               description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
             },
             logout_url: {

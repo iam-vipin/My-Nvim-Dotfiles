@@ -3312,14 +3312,14 @@ export default {
                 "Chúng tôi sẽ tạo phần siêu dữ liệu này xác định ứng dụng Plane này như một dịch vụ được ủy quyền trên IdP của bạn.",
             },
             callback_url: {
-              label: "URL gọi lại",
+              label: "URL đăng nhập một lần",
               description:
                 "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
             },
             logout_url: {
-              label: "URL đăng xuất",
+              label: "URL đăng xuất một lần",
               description:
-                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất đơn của IdP của bạn.",
             },
           },
           mobile_details: {
@@ -3330,12 +3330,12 @@ export default {
                 "Chúng tôi sẽ tạo phần siêu dữ liệu này xác định ứng dụng Plane này như một dịch vụ được ủy quyền trên IdP của bạn.",
             },
             callback_url: {
-              label: "URL gọi lại",
+              label: "URL đăng nhập một lần",
               description:
                 "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
             },
             logout_url: {
-              label: "URL đăng xuất",
+              label: "URL đăng xuất một lần",
               description:
                 "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
             },
@@ -3372,7 +3372,7 @@ export default {
                 "Chúng tôi sẽ tạo điều này cho ứng dụng Plane này. Thêm điều này như một nguồn gốc đáng tin cậy vào trường tương ứng của IdP của bạn.",
             },
             callback_url: {
-              label: "URL gọi lại",
+              label: "URL chuyển hướng",
               description:
                 "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
             },
@@ -3390,7 +3390,7 @@ export default {
                 "Chúng tôi sẽ tạo điều này cho ứng dụng Plane này. Thêm điều này như một nguồn gốc đáng tin cậy vào trường tương ứng của IdP của bạn.",
             },
             callback_url: {
-              label: "URL gọi lại",
+              label: "URL chuyển hướng",
               description:
                 "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
             },

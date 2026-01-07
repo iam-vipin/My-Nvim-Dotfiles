@@ -3237,12 +3237,12 @@ export default {
               description: "我們將產生此部分中繼資料，將此 Plane 應用程式識別為您 IdP 上的授權服務。",
             },
             callback_url: {
-              label: "回呼 URL",
+              label: "單一登入 URL",
               description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
             },
             logout_url: {
-              label: "登出 URL",
-              description: "我們將為您產生此內容。將其新增到您 IdP 的登出重新導向 URL 欄位中。",
+              label: "單一登出 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的單一登出重新導向 URL 欄位中。",
             },
           },
           mobile_details: {
@@ -3252,11 +3252,11 @@ export default {
               description: "我們將產生此部分中繼資料，將此 Plane 應用程式識別為您 IdP 上的授權服務。",
             },
             callback_url: {
-              label: "回呼 URL",
+              label: "單一登入 URL",
               description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
             },
             logout_url: {
-              label: "登出 URL",
+              label: "單一登出 URL",
               description: "我們將為您產生此內容。將其新增到您 IdP 的登出重新導向 URL 欄位中。",
             },
           },
@@ -3291,7 +3291,7 @@ export default {
               description: "我們將為此 Plane 應用程式產生此內容。將其作為受信任的來源新增到您 IdP 的對應欄位中。",
             },
             callback_url: {
-              label: "回呼 URL",
+              label: "重新導向 URL",
               description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
             },
             logout_url: {
@@ -3306,7 +3306,7 @@ export default {
               description: "我們將為此 Plane 應用程式產生此內容。將其作為受信任的來源新增到您 IdP 的對應欄位中。",
             },
             callback_url: {
-              label: "回呼 URL",
+              label: "重新導向 URL",
               description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
             },
             logout_url: {

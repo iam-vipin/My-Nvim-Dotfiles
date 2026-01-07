@@ -3694,12 +3694,13 @@ export default {
                 "We will generate this bit of the metadata that identifies this Plane app as an authorized service on your IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "SSO URL",
               description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
             },
             logout_url: {
-              label: "Logout URL",
-              description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
+              label: "SLO URL",
+              description:
+                "We will generate this for you. Add this in the Single Logout redirect URL field of your IdP.",
             },
           },
           mobile_details: {
@@ -3710,11 +3711,11 @@ export default {
                 "We will generate this bit of the metadata that identifies this Plane app as an authorized service on your IdP.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "SSO URL",
               description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
             },
             logout_url: {
-              label: "Logout URL",
+              label: "SLO URL",
               description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
             },
           },
@@ -3750,7 +3751,7 @@ export default {
                 "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "Redirect URL",
               description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
             },
             logout_url: {
@@ -3766,7 +3767,7 @@ export default {
                 "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
             },
             callback_url: {
-              label: "Callback URL",
+              label: "Redirect URL",
               description: "We will generate this for you. Add this in the Sign-in redirect URL field of your IdP.",
             },
             logout_url: {

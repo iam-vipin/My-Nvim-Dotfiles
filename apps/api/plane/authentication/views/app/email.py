@@ -13,7 +13,6 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.views import View
 
 # Module imports
 from plane.authentication.provider.credentials.email import EmailProvider
@@ -28,9 +27,10 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.path_validator import get_safe_redirect_url
+from plane.authentication.rate_limit import RateLimitedView
 
 
-class SignInAuthEndpoint(View):
+class SignInAuthEndpoint(RateLimitedView):
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -139,7 +139,7 @@ class SignInAuthEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class SignUpAuthEndpoint(View):
+class SignUpAuthEndpoint(RateLimitedView):
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration

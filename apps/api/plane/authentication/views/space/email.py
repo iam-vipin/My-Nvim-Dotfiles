@@ -13,7 +13,6 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.views import View
 from django.utils.http import url_has_allowed_host_and_scheme
 
 # Module imports
@@ -27,9 +26,10 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
 )
 from plane.utils.path_validator import get_safe_redirect_url, validate_next_path, get_allowed_hosts
+from plane.authentication.rate_limit import RateLimitedView
 
 
-class SignInAuthSpaceEndpoint(View):
+class SignInAuthSpaceEndpoint(RateLimitedView):
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -114,7 +114,7 @@ class SignInAuthSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class SignUpAuthSpaceEndpoint(View):
+class SignUpAuthSpaceEndpoint(RateLimitedView):
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration

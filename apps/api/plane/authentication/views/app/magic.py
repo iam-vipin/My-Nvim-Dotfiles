@@ -12,7 +12,6 @@
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.views import View
 
 # Third party imports
 from rest_framework import status
@@ -33,14 +32,17 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.authentication.rate_limit import AuthenticationLimitedThrottle
 from plane.utils.path_validator import get_safe_redirect_url
+from plane.authentication.rate_limit import RateLimitedView
 
 
 class MagicGenerateEndpoint(APIView):
     permission_classes = [AllowAny]
 
-    throttle_classes = [AuthenticationThrottle]
+    throttle_classes = [
+        AuthenticationLimitedThrottle,
+    ]
 
     def post(self, request):
         # Check if instance is configured
@@ -65,7 +67,7 @@ class MagicGenerateEndpoint(APIView):
             return Response(params, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MagicSignInEndpoint(View):
+class MagicSignInEndpoint(RateLimitedView):
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
@@ -136,7 +138,7 @@ class MagicSignInEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class MagicSignUpEndpoint(View):
+class MagicSignUpEndpoint(RateLimitedView):
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()

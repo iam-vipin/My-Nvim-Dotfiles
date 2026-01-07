@@ -1,3 +1,4 @@
+
 # SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
 # SPDX-License-Identifier: LicenseRef-Plane-Commercial
 #
@@ -8,6 +9,8 @@
 #
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+# Standard library imports
+import os
 
 # Third party imports
 from typing import Optional, Any, Callable
@@ -18,6 +21,10 @@ from rest_framework.request import Request
 from django.http import HttpRequest, HttpResponse
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from django_ratelimit.core import get_usage
+from django.views import View
+from django.utils.decorators import method_decorator
+from django_ratelimit.decorators import ratelimit
+from django.http import HttpResponseRedirect
 
 # Module imports
 from plane.authentication.adapter.error import (
@@ -25,6 +32,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.ip_address import get_client_ip
+from plane.utils.path_validator import get_safe_redirect_url
+from plane.authentication.utils.host import base_host
 
 
 class AuthenticationThrottle(AnonRateThrottle):
@@ -175,3 +184,53 @@ def add_ratelimit_headers(
         response["X-RateLimit-Reset"] = str(int(reset))
 
     return response
+
+
+def authentication_limited_throttle_key(group: Optional[str], request: HttpRequest) -> str:
+    return get_client_ip(request)
+
+
+class AuthenticationLimitedThrottle(AnonRateThrottle):
+    """
+    Throttle for authentication endpoints that are limited to 10 requests per minute.
+    """
+
+    rate = "5/5m"
+    scope = "authentication_limited"
+
+    def get_cache_key(self, request: Request, view: Optional[Any] = None) -> Optional[str]:
+        return get_client_ip(request)
+
+
+class RateLimitedView(View):
+    """
+    View that is rate limited to 10 requests per minute.
+    """
+
+    rate_limit_rate = os.environ.get("AUTHENTICATION_RATE_LIMIT_RATE", "5/5m")
+    rate_limit_group = os.environ.get("AUTHENTICATION_RATE_LIMIT_GROUP", "authentication_limited")
+    rate_limit_key = authentication_limited_throttle_key
+
+    @method_decorator(
+        ratelimit(key=authentication_limited_throttle_key, rate=rate_limit_rate, block=False, group=rate_limit_group)
+    )
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        # Check if rate limited before proceeding
+        if getattr(request, "limited", False):
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
+                error_message="RATE_LIMIT_EXCEEDED",
+            )
+            next_path = request.POST.get("next_path")
+            if not next_path:
+                next_path = "/"
+            params = exc.get_error_dict()
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
+            )
+            return HttpResponseRedirect(url)
+
+        response = super().dispatch(request, *args, **kwargs)
+        return response

@@ -23,6 +23,7 @@ from plane.ee.views.app.project import (
     ProjectAttachmentV2Endpoint,
     ProjectReactionViewSet,
     ProjectActivityEndpoint,
+    ProjectMemberActivityEndpoint,
     ProjectTemplateUseEndpoint,
 )
 
@@ -93,6 +94,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/history/",
         ProjectActivityEndpoint.as_view(),
         name="project-activity",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/history/",
+        ProjectMemberActivityEndpoint.as_view(),
+        name="project-member-activity",
     ),
     # project attributes
     path(

@@ -14,6 +14,8 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { MemberListFiltersDropdown } from "./dropdowns/filters/member-list";
 import { ProjectMemberListItem } from "./member-list-item";
 import { SendProjectInvitationModal } from "./send-project-invitation-modal";
+// plane web components
+import { ProjectMembersActivityButton } from "@/plane-web/components/projects/members/members-activity-button";
 
 type TProjectMemberListProps = {
   projectId: string;
@@ -93,9 +95,11 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             handleUpdate={handleRoleFilterUpdate}
             memberType="project"
           />
+          {isAdmin && <ProjectMembersActivityButton workspaceSlug={workspaceSlug} projectId={projectId} />}
           {isAdmin && (
             <Button
               variant="primary"
+              size="lg"
               onClick={() => {
                 setInviteModal(true);
               }}

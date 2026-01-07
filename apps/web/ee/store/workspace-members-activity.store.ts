@@ -3,7 +3,9 @@ import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
-import type { TLoader, TWorkspaceBaseActivity } from "@plane/types";
+import type { TLoader } from "@plane/types";
+// plane web imports
+import type { TWorkspaceMemberActivity } from "@/plane-web/components/workspace/members/sidebar/activity/helper";
 // services
 import { WorkspaceMembersActivityService } from "@/plane-web/services/workspace-members-activity.service";
 // store
@@ -15,12 +17,12 @@ export interface IWorkspaceMembersActivityStore {
   // observables
   isActivitySidebarOpen: Map<string, boolean>;
   workspaceMembersActivityLoader: Map<string, TLoader>;
-  workspaceMembersActivityMap: Map<string, TWorkspaceBaseActivity[]>;
+  workspaceMembersActivityMap: Map<string, TWorkspaceMemberActivity[]>;
   workspaceMembersActivitySortOrder: E_SORT_ORDER | undefined;
   // computed functions
   getWorkspaceMembersActivitySidebarOpen: (workspaceSlug: string) => boolean;
   getWorkspaceMembersActivityLoader: (workspaceSlug: string) => TLoader;
-  getWorkspaceMembersActivity: (workspaceSlug: string) => TWorkspaceBaseActivity[] | undefined;
+  getWorkspaceMembersActivity: (workspaceSlug: string) => TWorkspaceMemberActivity[] | undefined;
   getWorkspaceMembersActivitySortOrder: () => E_SORT_ORDER;
   // helper actions
   toggleWorkspaceMembersActivitySortOrder: () => void;
@@ -33,7 +35,7 @@ export class WorkspaceMembersActivityStore implements IWorkspaceMembersActivityS
   // observables
   isActivitySidebarOpen: Map<string, boolean> = new Map();
   workspaceMembersActivityLoader: Map<string, TLoader> = new Map();
-  workspaceMembersActivityMap: Map<string, TWorkspaceBaseActivity[]> = new Map();
+  workspaceMembersActivityMap: Map<string, TWorkspaceMemberActivity[]> = new Map();
   workspaceMembersActivitySortOrder: IWorkspaceMembersActivityStore["workspaceMembersActivitySortOrder"] = undefined;
   // services
   workspaceMembersActivityService: WorkspaceMembersActivityService;
@@ -120,9 +122,9 @@ export class WorkspaceMembersActivityStore implements IWorkspaceMembersActivityS
    * @param newActivities
    */
   mergeActivities = (
-    currentActivities: TWorkspaceBaseActivity[],
-    newActivities: TWorkspaceBaseActivity[]
-  ): TWorkspaceBaseActivity[] => {
+    currentActivities: TWorkspaceMemberActivity[],
+    newActivities: TWorkspaceMemberActivity[]
+  ): TWorkspaceMemberActivity[] => {
     // Create a map for lookups of new activities
     const newActivitiesMap = new Map(newActivities.map((activity) => [activity.id, activity]));
 

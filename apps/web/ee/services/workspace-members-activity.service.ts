@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
-import type { TWorkspaceBaseActivity } from "@plane/types";
+// plane web imports
+import type { TWorkspaceMemberActivity } from "@/plane-web/components/workspace/members/sidebar/activity/helper";
 import { APIService } from "@/services/api.service";
 
 export class WorkspaceMembersActivityService extends APIService {
@@ -15,11 +16,11 @@ export class WorkspaceMembersActivityService extends APIService {
   async getWorkspaceMembersActivity(
     workspaceSlug: string,
     params: { created_at__gt?: string } & Record<string, unknown> = {}
-  ): Promise<TWorkspaceBaseActivity[]> {
+  ): Promise<TWorkspaceMemberActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/members/history/`, {
       params,
     })
-      .then((response) => response?.data as TWorkspaceBaseActivity[])
+      .then((response) => response?.data as TWorkspaceMemberActivity[])
       .catch((error: { response?: { data?: unknown } }) => {
         throw error?.response?.data;
       });

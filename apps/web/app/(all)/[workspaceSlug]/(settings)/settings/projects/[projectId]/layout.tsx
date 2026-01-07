@@ -7,10 +7,11 @@ import { SettingsMobileNav } from "@/components/settings/mobile";
 import { ProjectSettingsSidebar } from "@/components/settings/project/sidebar";
 // plane web imports
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+import { ProjectRightSidebar } from "@/plane-web/components/projects/right-sidebar";
 // types
 import type { Route } from "./+types/layout";
 
-function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
+const ProjectDetailSettingsLayout = observer(function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // router
   const pathname = usePathname();
@@ -24,10 +25,11 @@ function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
           <div className="w-full h-full overflow-y-scroll md:pt-page-y">
             <Outlet />
           </div>
+          <ProjectRightSidebar workspaceSlug={workspaceSlug} projectId={projectId} />
         </ProjectAuthWrapper>
       </div>
     </>
   );
-}
+});
 
-export default observer(ProjectDetailSettingsLayout);
+export default ProjectDetailSettingsLayout;

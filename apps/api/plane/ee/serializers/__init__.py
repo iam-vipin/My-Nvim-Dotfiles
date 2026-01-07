@@ -48,6 +48,7 @@ from .app.project import (
     ProjectReactionSerializer,
     ProjectFeatureSerializer,
     ProjectActivitySerializer,
+    ProjectMemberActivitySerializer,
 )
 
 from .app.initiative import (

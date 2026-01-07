@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useMember } from "@/hooks/store/use-member";
 // plane imports
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
@@ -41,7 +41,9 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
     updateSubscribedPlan,
     workspaceSlug,
   } = props;
-  const { mutateWorkspaceMembersActivity } = useWorkspace();
+  const {
+    workspace: { mutateWorkspaceMembersActivity },
+  } = useMember();
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("SELECT_SEATS");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);

@@ -20,3 +20,7 @@ from .base_validators import (
     validate_file,
 )
 from .identifiers import generate_short_id
+from .move_project_activities import (
+    move_project_activities_from_workspace_activities,
+    move_project_member_activities_from_workspace_activities,
+)

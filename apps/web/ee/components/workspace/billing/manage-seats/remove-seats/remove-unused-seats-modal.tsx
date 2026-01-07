@@ -4,7 +4,7 @@ import type { IWorkspaceProductSubscription } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // plane web imports
 import { PaymentService } from "@/plane-web/services/payment.service";
-import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useMember } from "@/hooks/store/use-member";
 
 const paymentService = new PaymentService();
 
@@ -20,7 +20,9 @@ export function RemoveUnusedSeatsModal(props: TRemoveUnusedSeatsProps) {
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   // store hooks
-  const { mutateWorkspaceMembersActivity } = useWorkspace();
+  const {
+    workspace: { mutateWorkspaceMembersActivity },
+  } = useMember();
 
   const handleSubmit = async () => {
     try {

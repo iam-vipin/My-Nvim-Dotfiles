@@ -41,9 +41,9 @@ from plane.ee.models import TeamspaceMember, TeamspaceProject, PageUser
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
-from plane.ee.bgtasks.project_activites_task import project_activity
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.ee.bgtasks.project_member_activities_tasks import project_member_activities
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -173,15 +173,14 @@ class ProjectMemberViewSet(BaseViewSet):
         ]
         # Serialize the project members
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
-        project_activity.delay(
-            type="project.activity.updated",
+
+        project_member_activities.delay(
+            type="project_member.activity.added",
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            current_instance=None,
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=None,
             epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         # Return the serialized data
@@ -359,8 +358,21 @@ class ProjectMemberViewSet(BaseViewSet):
 
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
+        current_instance = json.dumps(ProjectMemberSerializer(project_member).data, cls=DjangoJSONEncoder)
+        requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
+
         if serializer.is_valid():
             serializer.save()
+            project_member_activities.delay(
+                type="project_member.activity.update",
+                requested_data=requested_data,
+                current_instance=current_instance,
+                actor_id=str(request.user.id),
+                project_id=str(project_id),
+                project_member_id=str(project_member.id),
+                epoch=int(timezone.now().timestamp()),
+            )
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -403,15 +415,13 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace__slug=slug,
         ).delete()
 
-        project_activity.delay(
-            type="project.activity.updated",
-            requested_data=json.dumps({"members": []}),
+        project_member_activities.delay(
+            type="project_member.activity.removed",
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=json.dumps({"members": [str(project_member.member_id)], "removed": True}),
+            current_instance=json.dumps({"members": [str(project_member.member_id)]}),
+            requested_data=None,
             epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -453,15 +463,17 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace__slug=slug,
         ).delete()
 
-        project_activity.delay(
-            type="project.activity.updated",
-            requested_data=json.dumps({"members": []}),
+        project_member_activities.delay(
+            type="project_member.activity.left",
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=json.dumps({"members": [str(request.user.id)], "removed": False}),
+            current_instance=json.dumps(
+                {
+                    "members": [str(request.user.id)],
+                }
+            ),
+            requested_data=None,
             epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 

@@ -30,6 +30,8 @@ import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "@/plane-
 import { ProjectFilterStore, WorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
 import type { IWorkspaceWorklogStore, IWorkspaceWorklogDownloadStore } from "@/plane-web/store/workspace-worklog";
 import { WorkspaceWorklogStore, WorkspaceWorklogDownloadStore } from "@/plane-web/store/workspace-worklog";
+import type { IProjectMembersActivityStore } from "@/plane-web/store/project-members-activity.store";
+import { ProjectMembersActivityStore } from "@/plane-web/store/project-members-activity.store";
 // store
 import { CoreRootStore } from "@/store/root.store";
 import { EZipDriverType } from "../types/importers/zip-importer";
@@ -132,6 +134,7 @@ export class RootStore extends CoreRootStore {
   projectInbox: IProjectInboxStore;
   customersStore: ICustomersStore;
   customerPropertiesStore: ICustomerPropertiesStore;
+  projectMembersActivityStore: IProjectMembersActivityStore;
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
   // importers
@@ -197,6 +200,8 @@ export class RootStore extends CoreRootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.customersStore = new CustomerStore(this);
     this.customerPropertiesStore = new CustomerProperties(this);
+    // project members activity
+    this.projectMembersActivityStore = new ProjectMembersActivityStore(this);
     // project view
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
@@ -262,6 +267,8 @@ export class RootStore extends CoreRootStore {
     this.teamspaceRoot = new TeamspaceRootStore(this);
     this.customersStore = new CustomerStore(this);
     this.customerPropertiesStore = new CustomerProperties(this);
+    // project members activity
+    this.projectMembersActivityStore = new ProjectMembersActivityStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     // importers

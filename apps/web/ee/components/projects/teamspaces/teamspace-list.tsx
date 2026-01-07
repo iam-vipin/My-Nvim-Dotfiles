@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // plane imports
@@ -46,29 +46,29 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
   const hasPermissionToAddTeamspace = hasWorkspaceAdminPermission && hasProjectAdminPermission;
 
   const handleLinkTeamspaceToProject = async (teamspaceIds: string[]) => {
-    await addTeamspacesToProject(workspaceSlug, projectId, teamspaceIds)
-      .then(() => {
-        const totalTeamspaceCount = teamspaceIds.length;
-        const firstTeamspaceName = getTeamspaceById(teamspaceIds[0])?.name;
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("teamspace_projects.settings.toast.add_teamspace.success.title", {
-            count: totalTeamspaceCount,
-          }),
-          message: t("teamspace_projects.settings.toast.add_teamspace.success.description", {
-            firstTeamspaceName,
-            additionalCount: totalTeamspaceCount - 1,
-          }),
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("teamspace_projects.settings.toast.add_teamspace.error.title"),
-          message: t("teamspace_projects.settings.toast.add_teamspace.error.description"),
-        });
+    try {
+      await addTeamspacesToProject(workspaceSlug, projectId, teamspaceIds);
+
+      const totalTeamspaceCount = teamspaceIds.length;
+      const firstTeamspaceName = getTeamspaceById(teamspaceIds[0])?.name;
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("teamspace_projects.settings.toast.add_teamspace.success.title", {
+          count: totalTeamspaceCount,
+        }),
+        message: t("teamspace_projects.settings.toast.add_teamspace.success.description", {
+          firstTeamspaceName,
+          additionalCount: totalTeamspaceCount - 1,
+        }),
       });
+    } catch (error) {
+      console.error(error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("teamspace_projects.settings.toast.add_teamspace.error.title"),
+        message: t("teamspace_projects.settings.toast.add_teamspace.error.description"),
+      });
+    }
   };
 
   const renderHeader = () => (
@@ -86,12 +86,13 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
               className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular focus:outline-none placeholder:text-placeholder"
               placeholder={`${t("common.search.label")}`}
               value={searchQuery}
+              // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           {hasPermissionToAddTeamspace && (
-            <Button variant="primary" onClick={() => setIsAddTeamspaceModalOpen(true)}>
+            <Button variant="primary" size="lg" onClick={() => setIsAddTeamspaceModalOpen(true)}>
               {t("teamspace_projects.settings.primary_button.text")}
             </Button>
           )}

@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // types
-import {
-  E_FEATURE_FLAGS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  MEMBER_TRACKER_ELEMENTS,
-  MEMBER_TRACKER_EVENTS,
-} from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
@@ -47,7 +41,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
-  const { currentWorkspace, mutateWorkspaceMembersActivity } = useWorkspace();
+  const { currentWorkspace } = useWorkspace();
 
   const isMembersImportEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_MEMBERS_IMPORT, false);
   const { t } = useTranslation();
@@ -62,7 +56,6 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
       await inviteMembersToWorkspace(workspaceSlug, data);
-      void mutateWorkspaceMembersActivity(workspaceSlug);
 
       setInviteModal(false);
 

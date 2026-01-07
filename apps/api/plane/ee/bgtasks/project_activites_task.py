@@ -20,8 +20,8 @@ from celery import shared_task
 from django.utils import timezone
 
 # Module imports
-from plane.ee.models import WorkspaceActivity, ProjectReaction, ProjectState
-from plane.db.models import CommentReaction, IssueComment, Project, User, State, Label
+from plane.ee.models import ProjectActivity, ProjectReaction, ProjectState
+from plane.db.models import CommentReaction, IssueComment, Project, State, Label
 from plane.utils.exception_logger import log_exception
 
 
@@ -37,7 +37,7 @@ def track_name(
 ):
     if current_instance.get("name") != requested_data.get("name"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=current_instance.get("name"),
@@ -62,7 +62,7 @@ def track_description(
     epoch,
 ):
     if current_instance.get("description_html") != requested_data.get("description_html"):
-        last_activity = WorkspaceActivity.objects.filter(project_id=project_id).order_by("-created_at").first()
+        last_activity = ProjectActivity.objects.filter(project_id=project_id).order_by("-created_at").first()
         if (
             last_activity is not None
             and last_activity.field == "description_html"
@@ -72,7 +72,7 @@ def track_description(
             last_activity.save(update_fields=["created_at"])
         else:
             project_activities.append(
-                WorkspaceActivity(
+                ProjectActivity(
                     actor_id=actor_id,
                     verb="updated",
                     old_value=current_instance.get("description_html"),
@@ -98,7 +98,7 @@ def track_priority(
 ):
     if current_instance.get("priority") != requested_data.get("priority"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=current_instance.get("priority"),
@@ -131,7 +131,7 @@ def track_state(
             old_state = ProjectState.objects.filter(pk=current_instance.get("state_id")).first()
 
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=old_state.name if old_state else None,
@@ -159,7 +159,7 @@ def track_target_date(
 ):
     if current_instance.get("target_date") != requested_data.get("target_date"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
@@ -187,7 +187,7 @@ def track_start_date(
 ):
     if current_instance.get("start_date") != requested_data.get("start_date"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
@@ -222,7 +222,7 @@ def track_boolean_field(
     if old_value != new_value:
         status = "enabled" if new_value else "disabled"
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb=status,
                 old_value=old_value,
@@ -247,7 +247,7 @@ def track_network(
 ):
     if current_instance.get("network") != requested_data.get("network"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=current_instance.get("network"),
@@ -272,7 +272,7 @@ def track_archived_at(
 ):
     if current_instance.get("archived_at") != requested_data.get("archived_at"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="archived" if requested_data.get("archived_at") else "restored",
                 old_value=current_instance.get("archived_at"),
@@ -297,7 +297,7 @@ def track_identifier(
 ):
     if current_instance.get("identifier") != requested_data.get("identifier"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=current_instance.get("identifier"),
@@ -322,7 +322,7 @@ def track_timezone(
 ):
     if current_instance.get("timezone") != requested_data.get("timezone"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=current_instance.get("timezone"),
@@ -347,7 +347,7 @@ def track_lead(
 ):
     if current_instance.get("project_lead") != requested_data.get("project_lead"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 workspace_id=workspace_id,
                 verb="updated",
@@ -374,7 +374,7 @@ def track_deploy_board(
 ):
     if current_instance.get("deploy_board") != requested_data.get("deploy_board"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 workspace_id=workspace_id,
                 verb="published" if requested_data.get("deploy_board") else "unpublished",
@@ -386,56 +386,6 @@ def track_deploy_board(
                 old_identifier=current_instance.get("deploy_board"),
             )
         )
-
-
-def track_members(
-    requested_data,
-    current_instance,
-    project_id,
-    workspace_id,
-    actor_id,
-    project_activities,
-    epoch,
-):
-    if requested_data:
-        members = requested_data.get("members", [])
-        for member in members:
-            member = User.objects.get(id=member.get("member_id"))
-            project_activities.append(
-                WorkspaceActivity(
-                    actor_id=actor_id,
-                    verb="joined" if requested_data.get("joined", None) else "added",
-                    old_value=None,
-                    new_value=member.first_name + " " + member.last_name,
-                    field="members",
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    old_identifier=None,
-                    new_identifier=member.id,
-                    comment="joined the project" if requested_data.get("joined", None) else "added the member",
-                    epoch=epoch,
-                )
-            )
-
-    if current_instance:
-        members = current_instance.get("members", [])
-        for member in members:
-            member = User.objects.get(id=member)
-            project_activities.append(
-                WorkspaceActivity(
-                    actor_id=actor_id,
-                    verb="removed" if current_instance.get("removed") else "left",
-                    old_value=member.first_name + " " + member.last_name,
-                    new_value=None,
-                    field="members",
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    old_identifier=member.id,
-                    new_identifier=None,
-                    comment="removed the members" if current_instance.get("removed") else "left the project",
-                    epoch=epoch,
-                )
-            )
 
 
 def track_project_state(
@@ -450,7 +400,7 @@ def track_project_state(
     if requested_data.get("project_state"):
         new_state = State.objects.get(id=requested_data.get("project_state"))
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="created",
                 old_value="",
@@ -467,7 +417,7 @@ def track_project_state(
 
     if current_instance.get("project_state"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="deleted",
                 old_value=current_instance.get("state_name"),
@@ -495,7 +445,7 @@ def track_label(
     if requested_data.get("label"):
         new_label = Label.objects.get(id=requested_data.get("label"))
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="created",
                 old_value="",
@@ -512,7 +462,7 @@ def track_label(
 
     if current_instance.get("label"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="deleted",
                 old_value=current_instance.get("label_name"),
@@ -537,7 +487,7 @@ def create_project_activity(
     project_activities,
     epoch,
 ):
-    project_activity = WorkspaceActivity.objects.create(
+    project_activity = ProjectActivity.objects.create(
         project_id=project_id,
         workspace_id=workspace_id,
         comment="created the project",
@@ -571,7 +521,6 @@ def update_project_activity(
         "archived_at": track_archived_at,
         "project_lead": track_lead,
         "deploy_board": track_deploy_board,
-        "members": track_members,
         "project_state": track_project_state,
         "label": track_label,
     }
@@ -629,7 +578,7 @@ def delete_project_activity(
     epoch,
 ):
     project_activities.append(
-        WorkspaceActivity(
+        ProjectActivity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment="deleted the project",
@@ -654,7 +603,7 @@ def create_comment_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
-        WorkspaceActivity(
+        ProjectActivity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment="created a comment",
@@ -682,7 +631,7 @@ def update_comment_activity(
 
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated a comment",
@@ -709,7 +658,7 @@ def delete_comment_activity(
     epoch,
 ):
     project_activities.append(
-        WorkspaceActivity(
+        ProjectActivity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment="deleted the comment",
@@ -734,7 +683,7 @@ def create_link_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
-        WorkspaceActivity(
+        ProjectActivity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment="created a link",
@@ -762,7 +711,7 @@ def update_link_activity(
 
     if current_instance.get("url") != requested_data.get("url"):
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated a link",
@@ -790,7 +739,7 @@ def delete_link_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
-        WorkspaceActivity(
+        ProjectActivity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment="deleted the link",
@@ -817,7 +766,7 @@ def create_attachment_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
-        WorkspaceActivity(
+        ProjectActivity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment="created an attachment",
@@ -841,7 +790,7 @@ def delete_attachment_activity(
     epoch,
 ):
     project_activities.append(
-        WorkspaceActivity(
+        ProjectActivity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment="deleted the attachment",
@@ -875,7 +824,7 @@ def create_project_reaction_activity(
         )
         if project_reaction is not None:
             project_activities.append(
-                WorkspaceActivity(
+                ProjectActivity(
                     actor_id=actor_id,
                     verb="created",
                     old_value=None,
@@ -903,7 +852,7 @@ def delete_project_reaction_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance and current_instance.get("reaction") is not None:
         project_activities.append(
-            WorkspaceActivity(
+            ProjectActivity(
                 actor_id=actor_id,
                 verb="deleted",
                 old_value=current_instance.get("reaction"),
@@ -942,7 +891,7 @@ def create_comment_reaction_activity(
         comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
         if comment is not None and comment_reaction_id is not None and comment_id is not None:
             project_activities.append(
-                WorkspaceActivity(
+                ProjectActivity(
                     actor_id=actor_id,
                     verb="created",
                     old_value=None,
@@ -956,45 +905,6 @@ def create_comment_reaction_activity(
                     epoch=epoch,
                 )
             )
-
-
-# def delete_comment_reaction_activity(
-#     requested_data,
-#     current_instance,
-#     issue_id,
-#     project_id,
-#     workspace_id,
-#     actor_id,
-#     project_activities,
-#     epoch,
-# ):
-#     current_instance = (
-#         json.loads(current_instance) if current_instance is not None else None
-#     )
-#     if current_instance and current_instance.get("reaction") is not None:
-#         issue_id = (
-#             ProjectComment.objects.filter(
-#                 pk=current_instance.get("comment_id"), project_id=project_id
-#             )
-#             .values_list("issue_id", flat=True)
-#             .first()
-#         )
-#         if issue_id is not None:
-#             project_activities.append(
-#                 WorkspaceActivity(
-#                     actor_id=actor_id,
-#                     verb="deleted",
-#                     old_value=current_instance.get("reaction"),
-#                     new_value=None,
-#                     field="reaction",
-#                     project_id=project_id,
-#                     workspace_id=workspace_id,
-#                     comment="removed the reaction",
-#                     old_identifier=current_instance.get("identifier"),
-#                     new_identifier=None,
-#                     epoch=epoch,
-#                 )
-#             )
 
 
 # Receive message from room group
@@ -1032,7 +942,6 @@ def project_activity(
             "project_reaction.activity.created": create_project_reaction_activity,
             "project_reaction.activity.deleted": delete_project_reaction_activity,
             "comment_reaction.activity.created": create_comment_reaction_activity,
-            # "comment_reaction.activity.deleted": delete_comment_reaction_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)
@@ -1048,7 +957,7 @@ def project_activity(
             )
 
         # Save all the values to database
-        WorkspaceActivity.objects.bulk_create(project_activities)
+        ProjectActivity.objects.bulk_create(project_activities)
 
         return
     except Exception as e:

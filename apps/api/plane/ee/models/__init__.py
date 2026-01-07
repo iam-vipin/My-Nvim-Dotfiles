@@ -39,6 +39,8 @@ from .project import (
     ProjectReaction,
     ProjectCommentReaction,
     ProjectFeature,
+    ProjectActivity,
+    ProjectMemberActivity,
 )
 from .workspace import (
     WorkspaceFeature,

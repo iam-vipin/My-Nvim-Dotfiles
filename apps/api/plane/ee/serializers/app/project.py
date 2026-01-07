@@ -13,7 +13,7 @@
 from plane.app.serializers.base import BaseSerializer
 from plane.ee.models import ProjectAttribute, ProjectFeature
 from plane.db.models import FileAsset
-from plane.ee.models import ProjectLink, ProjectReaction, WorkspaceActivity
+from plane.ee.models import ProjectLink, ProjectReaction, ProjectActivity, ProjectMemberActivity
 from rest_framework import serializers
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
@@ -153,6 +153,15 @@ class ProjectActivitySerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
 
     class Meta:
-        model = WorkspaceActivity
+        model = ProjectActivity
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "actor", "deleted_at"]
+
+
+class ProjectMemberActivitySerializer(BaseSerializer):
+    project_member = serializers.UUIDField(read_only=True, source="project_member.member_id", allow_null=True)
+
+    class Meta:
+        model = ProjectMemberActivity
         fields = "__all__"
         read_only_fields = ["workspace", "project", "actor", "deleted_at"]

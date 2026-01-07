@@ -1,8 +1,8 @@
 import type { FC, ReactNode } from "react";
 import { LogOut, MailCheck, Mails, UserCog, MailX, Users, UserX, UserPlus, UserMinus } from "lucide-react";
-import type { IUserLite, TWorkspaceBaseActivity } from "@plane/types";
+import type { TWorkspaceBaseActivity } from "@plane/types";
 
-const WorkspaceMemberActivityType = {
+const WorkspaceMemberActivityTypes = {
   JOINED: "JOINED",
   REMOVED: "REMOVED",
   LEFT: "LEFT",
@@ -13,24 +13,24 @@ const WorkspaceMemberActivityType = {
   SEATS_REMOVED: "SEATS_REMOVED",
 } as const;
 
-type WorkspaceMemberActivityType = (typeof WorkspaceMemberActivityType)[keyof typeof WorkspaceMemberActivityType];
+export type TWorkspaceMemberActivityType = keyof typeof WorkspaceMemberActivityTypes;
 
-type WorkspaceMemberActivity = TWorkspaceBaseActivity & {
-  type?: WorkspaceMemberActivityType;
-  workspace_member_detail?: IUserLite | null;
+export type TWorkspaceMemberActivity = TWorkspaceBaseActivity & {
+  type: TWorkspaceMemberActivityType;
+  workspace_member: string | null;
 };
 
 const getUserName = (email: string = "") => (email && email.includes("@") ? email.split("@")[0] : email);
 
 export const getWorkspaceMemberActivityDetails = (
-  activity: TWorkspaceBaseActivity
+  activity: TWorkspaceMemberActivity,
+  memberName: string
 ): { icon: FC<{ className?: string }>; message: ReactNode } => {
-  const workspaceActivity = activity as WorkspaceMemberActivity;
-  const activityType = workspaceActivity.type;
+  const activityType = activity.type;
   const subject = activity.new_value || activity.old_value;
 
   switch (activityType) {
-    case WorkspaceMemberActivityType.INVITED: {
+    case WorkspaceMemberActivityTypes.INVITED: {
       const emailUsername = getUserName(subject);
       return {
         icon: Mails,
@@ -42,12 +42,12 @@ export const getWorkspaceMemberActivityDetails = (
         ),
       };
     }
-    case WorkspaceMemberActivityType.JOINED:
+    case WorkspaceMemberActivityTypes.JOINED:
       return {
         icon: MailCheck,
         message: <>has accepted the invitation.</>,
       };
-    case WorkspaceMemberActivityType.INVITATION_DELETED: {
+    case WorkspaceMemberActivityTypes.INVITATION_DELETED: {
       const emailUsername = getUserName(subject);
       return {
         icon: MailX,
@@ -60,7 +60,7 @@ export const getWorkspaceMemberActivityDetails = (
         ),
       };
     }
-    case WorkspaceMemberActivityType.REMOVED:
+    case WorkspaceMemberActivityTypes.REMOVED:
       return {
         icon: UserX,
         message: subject ? (
@@ -71,20 +71,20 @@ export const getWorkspaceMemberActivityDetails = (
           <>removed a member from the workspace.</>
         ),
       };
-    case WorkspaceMemberActivityType.LEFT:
+    case WorkspaceMemberActivityTypes.LEFT:
       return {
         icon: LogOut,
         message: <>left the workspace.</>,
       };
-    case WorkspaceMemberActivityType.ROLE_CHANGED: {
+    case WorkspaceMemberActivityTypes.ROLE_CHANGED: {
       const oldRole = activity.old_value || "Member";
       const newRole = activity.new_value || "Member";
-      const memberName = workspaceActivity.workspace_member_detail?.display_name;
+
       return {
         icon: UserCog,
         message: (
           <>
-            changed {memberName ? <span className="font-medium text-primary">{memberName}</span> : "member"}
+            changed {memberName ? <span className="font-medium text-primary">{memberName}</span> : "a member"}
             {"'s role from "}
             <span className="font-medium text-primary">{oldRole}</span>
             {" to "}
@@ -93,7 +93,7 @@ export const getWorkspaceMemberActivityDetails = (
         ),
       };
     }
-    case WorkspaceMemberActivityType.SEATS_ADDED: {
+    case WorkspaceMemberActivityTypes.SEATS_ADDED: {
       // Calculate the difference between new_value and old_value
       const seatsAdded =
         activity.new_value && activity.old_value
@@ -111,7 +111,7 @@ export const getWorkspaceMemberActivityDetails = (
         ),
       };
     }
-    case WorkspaceMemberActivityType.SEATS_REMOVED: {
+    case WorkspaceMemberActivityTypes.SEATS_REMOVED: {
       // old_value = purchased_seats, new_value = required_seats
       const seatsRemoved =
         activity.old_value && activity.new_value

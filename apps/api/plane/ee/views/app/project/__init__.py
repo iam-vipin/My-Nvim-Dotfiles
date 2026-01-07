@@ -15,5 +15,5 @@ from .base import ProjectAnalyticsEndpoint, ProjectAttributesEndpoint
 from .attachment import ProjectAttachmentV2Endpoint
 from .reaction import ProjectReactionViewSet
 from .base import WorkspaceProjectFeatureEndpoint, ProjectFeatureEndpoint
-from .activity import ProjectActivityEndpoint
+from .activity import ProjectActivityEndpoint, ProjectMemberActivityEndpoint
 from .template import ProjectTemplateUseEndpoint

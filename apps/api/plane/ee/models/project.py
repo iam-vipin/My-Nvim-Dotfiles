@@ -216,21 +216,12 @@ class ProjectCommentReaction(ProjectBaseModel):
         return f"{self.comment} {self.actor.email}"
 
 
-class ProjectMemberActivityModel(ProjectBaseModel):
+class ProjectMemberActivity(ProjectBaseModel):
     class ProjectMemberActivityType(models.TextChoices):
-        # Project
-        PROJECT_JOINED = "PROJECT_JOINED", "Project Joined"
-        PROJECT_LEFT = "PROJECT_LEFT", "Project Left"
-        PROJECT_INVITED = "PROJECT_INVITED", "Project Invited"
-        PROJECT_REMOVED = "PROJECT_REMOVED", "Project Removed"
-
-        # Team
-        TEAM_JOINED = "TEAM_JOINED", "Team Joined"
-        TEAM_LEFT = "TEAM_LEFT", "Team Left"
-        TEAM_INVITED = "TEAM_INVITED", "Team Invited"
-        TEAM_REMOVED = "TEAM_REMOVED", "Team Removed"
-
-        # Role
+        JOINED = "JOINED", "Joined"
+        ADDED = "ADDED", "Added"
+        LEFT = "LEFT", "Left"
+        REMOVED = "REMOVED", "Removed"
         ROLE_UPDATED = "ROLE_UPDATED", "Role Updated"
 
     actor = models.ForeignKey(
@@ -244,9 +235,11 @@ class ProjectMemberActivityModel(ProjectBaseModel):
         related_name="activities",
         null=True,
     )
-    type = models.CharField(max_length=255, default=ProjectMemberActivityType.PROJECT_JOINED)
+    type = models.CharField(max_length=25)
     old_value = models.TextField(blank=True, null=True)
     new_value = models.TextField(blank=True, null=True)
+    old_identifier = models.UUIDField(null=True)
+    new_identifier = models.UUIDField(null=True)
     epoch = models.FloatField(null=True)
 
     class Meta:
@@ -257,3 +250,29 @@ class ProjectMemberActivityModel(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.actor}"
+
+
+class ProjectActivity(ProjectBaseModel):
+    verb = models.CharField(max_length=255, verbose_name="Action", default="created")
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
+    comment = models.TextField(verbose_name="Comment", blank=True)
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="project_activities",
+    )
+    old_identifier = models.UUIDField(null=True)
+    new_identifier = models.UUIDField(null=True)
+    epoch = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Project Activity"
+        verbose_name_plural = "Project Activities"
+        db_table = "project_activities"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.verb}"

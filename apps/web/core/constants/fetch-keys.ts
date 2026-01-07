@@ -166,6 +166,8 @@ export const PROJECT_LABELS = (projectId: string, projectRole: EUserPermissions 
 export const PROJECT_MEMBERS = (projectId: string, projectRole: EUserPermissions | undefined) =>
   `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}_${projectRole}`;
 
+export const PROJECT_MEMBER_ACTIVITY = (projectId: string) => `PROJECT_MEMBER_ACTIVITY_${projectId.toUpperCase()}`;
+
 export const PROJECT_STATES = (projectId: string, projectRole: EUserPermissions | undefined) =>
   `PROJECT_STATES_${projectId.toString().toUpperCase()}_${projectRole}`;
 

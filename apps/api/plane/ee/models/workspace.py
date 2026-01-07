@@ -255,7 +255,7 @@ class WorkspaceMemberActivity(BaseModel):
         null=True,
         related_name="workspace_member_activities",
     )
-    type = models.CharField(max_length=255, default=WorkspaceMemberActivityType.JOINED)
+    type = models.CharField(max_length=255)
     workspace_member = models.ForeignKey(
         "db.WorkspaceMember", on_delete=models.CASCADE, related_name="activities", null=True, blank=True
     )

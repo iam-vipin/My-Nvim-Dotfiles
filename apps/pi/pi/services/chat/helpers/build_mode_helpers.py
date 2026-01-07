@@ -1019,13 +1019,20 @@ async def build_method_executor_and_context(
         "is_project_chat": is_project_chat,
     }
 
-    # Create method executor
-    if access_token and access_token.startswith("plane_api_"):
-        actions_executor = PlaneActionsExecutor(api_key=access_token, base_url=settings.plane_api.HOST)
+    # Create method executor only if we have a valid token
+    method_executor = None
+    if access_token:
+        # Create method executor with the available token
+        if access_token.startswith("plane_api_"):
+            actions_executor = PlaneActionsExecutor(api_key=access_token, base_url=settings.plane_api.HOST)
+        else:
+            actions_executor = PlaneActionsExecutor(access_token=access_token, base_url=settings.plane_api.HOST)
+        method_executor = MethodExecutor(actions_executor)
     else:
-        actions_executor = PlaneActionsExecutor(access_token=access_token, base_url=settings.plane_api.HOST)
-
-    method_executor = MethodExecutor(actions_executor)
+        # No token available - method_executor will be None
+        # This is acceptable for ask mode where tools may not need workspace API access
+        # (e.g., simple greetings, general questions without workspace data)
+        log.warning(f"ChatID: {chat_id} - No OAuth token available, method_executor will be None")
 
     return method_executor, context, final_workspace_slug or ""
 

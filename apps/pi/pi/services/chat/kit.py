@@ -1232,9 +1232,14 @@ Provide concise, relevant context from the attachment(s):"""
                 chat_id=chat_id,
                 db=db,
             )
-            project_tools = get_tools_for_category("projects", method_executor=method_executor, context=context) or []
-            project_tools = [t for t in project_tools if getattr(t, "name", "") in ["projects_retrieve"]]
-            retrieval_tools.extend(project_tools)
+            
+            # Only add project tools if method_executor is available (requires OAuth token)
+            if method_executor:
+                project_tools = get_tools_for_category("projects", method_executor=method_executor, context=context) or []
+                project_tools = [t for t in project_tools if getattr(t, "name", "") in ["projects_retrieve"]]
+                retrieval_tools.extend(project_tools)
+            else:
+                log.info(f"ChatID: {chat_id} - Skipping project tools (no OAuth token available)")
 
             return retrieval_tools + [clarification_tool] if clarification_tool else retrieval_tools
         else:

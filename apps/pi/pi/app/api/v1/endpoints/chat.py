@@ -35,8 +35,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.app.api.v1.dependencies import cookie_schema
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.v1.dependencies import get_current_user
 from pi.app.api.v1.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
@@ -116,7 +115,7 @@ BATCH_EXECUTION_ERRORS = {
 async def chat_start(
     workspace_id: UUID = Query(..., description="Workspace ID to check authorization for"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Start/Bootstrap Pi chat - first API call when starting a chat session.
@@ -127,17 +126,9 @@ async def chat_start(
     If authorized: returns is_authorized=true with full templates list
     If not authorized: returns is_authorized=false with empty templates list
     """
-    try:
-        # Validate session
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     try:
+        user_id = current_user.id
         oauth_service = PlaneOAuthService()
 
         # Check if user has valid OAuth token for workspace
@@ -583,16 +574,8 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
 
 
 @router.post("/get-answer/")
-async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+async def get_answer(data: ChatRequest, current_user=Depends(get_current_user)):
+    user_id = current_user.id
     data.user_id = user_id
 
     # Validate request data
@@ -744,13 +727,7 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
 
 
 @router.delete("/delete-chat/")
-async def delete_chat(data: DeleteChatRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+async def delete_chat(data: DeleteChatRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     result = await soft_delete_chat(chat_id=data.chat_id, db=db)
 
     # Schedule Celery task to mark chat as deleted in search index
@@ -765,17 +742,9 @@ async def delete_chat(data: DeleteChatRequest, db: AsyncSession = Depends(get_as
 async def handle_feedback(
     feedback_data: ChatFeedback,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
-    try:
-        # Get user_id from session
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     result = await update_message_feedback(
         chat_id=feedback_data.chat_id,
@@ -792,13 +761,7 @@ async def handle_feedback(
 
 
 @router.post("/generate-title/")
-async def get_title(data: TitleRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+async def get_title(data: TitleRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     if not data.chat_id:
         log.warning("Request missing chat_id")
         return JSONResponse(status_code=400, content={"detail": "chat_id is required"})
@@ -827,17 +790,10 @@ async def get_recent_user_threads(
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
     is_project_chat: Optional[bool] = False,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     results = await get_user_chat_threads(user_id=user_id, db=db, workspace_id=workspace_id, is_project_chat=is_project_chat, is_latest=True)
 
@@ -856,19 +812,11 @@ async def get_chat_history_object(
     chat_id: UUID4,
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         log.info(f"chat history retrieve request received for chat_id: {chat_id}")
         results: dict[str, Any] = await retrieve_chat_history(chat_id=chat_id, dialogue_object=True, db=db, user_id=user_id)
         error_type = results.get("error")
@@ -909,16 +857,9 @@ async def get_model_list(
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     if not workspace_slug:
         if workspace_id:
@@ -943,14 +884,8 @@ async def get_model_list(
 
 @router.get("/get-templates/", response_model=ChatSuggestionTemplate)
 async def get_chat_template_suggestion(
-    workspace_id: Optional[UUID4] = None, workspace_slug: Optional[str] = None, session: str = Depends(cookie_schema)
+    workspace_id: Optional[UUID4] = None, workspace_slug: Optional[str] = None, current_user=Depends(get_current_user)
 ):
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
     try:
         suggestions = tiles_factory()
         return ChatSuggestionTemplate(templates=suggestions)
@@ -960,16 +895,9 @@ async def get_chat_template_suggestion(
 
 
 @router.post("/initialize-chat/")
-async def initialize_chat(data: ChatInitializationRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
+async def initialize_chat(data: ChatInitializationRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     """Initialize a new chat and return the chat_id immediately."""
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     # Validate request data
     validation_error = validate_chat_initialization(data)
@@ -1003,13 +931,7 @@ async def initialize_chat(data: ChatInitializationRequest, db: AsyncSession = De
 
 
 @router.post("/favorite-chat/")
-async def favorite_user_chat(data: FavoriteChatRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+async def favorite_user_chat(data: FavoriteChatRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     result = await favorite_chat(chat_id=data.chat_id, db=db)
 
     status_code, content = result
@@ -1017,13 +939,7 @@ async def favorite_user_chat(data: FavoriteChatRequest, db: AsyncSession = Depen
 
 
 @router.post("/unfavorite-chat/")
-async def unfavorite_user_chat(data: UnfavoriteChatRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+async def unfavorite_user_chat(data: UnfavoriteChatRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     result = await unfavorite_chat(chat_id=data.chat_id, db=db)
 
     # The unfavorite_chat function always returns a tuple of (status_code, content)
@@ -1036,17 +952,9 @@ async def get_user_favorite_chats(
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     result = await get_favorite_chats(user_id=user_id, db=db, workspace_id=workspace_id)
 
@@ -1056,13 +964,7 @@ async def get_user_favorite_chats(
 
 
 @router.post("/rename-chat/")
-async def rename_chat(data: RenameChatRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+async def rename_chat(data: RenameChatRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     result = await rename_chat_title(chat_id=data.chat_id, new_title=data.title, db=db)
 
     # Schedule Celery task to update chat title in search index
@@ -1080,18 +982,11 @@ async def get_user_threads(
     is_project_chat: Optional[bool] = False,
     cursor: Optional[str] = None,
     per_page: int = Query(default=30, ge=1, le=100),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     """Get user chat threads with cursor-based pagination for web interface."""
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     results = await get_user_chat_threads_paginated(
         user_id=user_id, db=db, workspace_id=workspace_id, is_project_chat=is_project_chat, cursor=cursor, per_page=per_page
@@ -1113,20 +1008,13 @@ async def get_user_threads(
 
 
 @router.post("/queue-answer/")
-async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
+async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     """First phase of two-step streaming flow.
     Persists the ChatRequest payload and returns a one-time stream token.
     The token is simply the UUID of a freshly created *user* Message row so we
     don't need a new table.  The rest of the ChatRequest fields are stored in
     a MessageFlowStep (tool_name="QUEUE", step_order=0) until the client
     later redeems the token via /stream-answer/{token}."""
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     validation_error = validate_chat_request(data)
     if validation_error:
@@ -1220,7 +1108,7 @@ async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_s
 
 
 @router.get("/stream-answer/{token}")
-async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
+async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     """Second phase of two-step flow.
     Looks up the queued ChatRequest by token (message_id), deletes the queue
     entry, and then re-uses the existing /get-answer/ logic to start the SSE
@@ -1228,14 +1116,7 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
 
     Also handles REGENERATE when called with an existing user message ID
     (no QUEUE flow step present)."""
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception:
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+    user_id = current_user.id
     # Locate the queued flow step
     stmt = (
         select(MessageFlowStep)
@@ -1281,7 +1162,7 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
         # Stream new response (get_answer will call process_query_stream)
         #    When process_query_stream calls retrieve_chat_history,
         #    it will NOT see the old response because is_replaced=True
-        return await get_answer(data=queued_request, session=session)
+        return await get_answer(data=queued_request, current_user=current_user)
 
     else:
         # NORMAL FLOW: QUEUE flow step exists, this is first generation
@@ -1328,11 +1209,11 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
             log.warning(f"Failed to attach token_id to queued request context: {e!s}")
 
         # Delegate to existing get_answer for streaming
-        return await get_answer(data=queued_request, session=session)
+        return await get_answer(data=queued_request, current_user=current_user)
 
 
 @router.post("/execute-action/")
-async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession = Depends(get_async_session), session: str = Depends(cookie_schema)):
+async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession = Depends(get_async_session), current_user=Depends(get_current_user)):
     """Execute all planned actions in a message as a batch using LLM orchestration."""
 
     # EXECUTION STATUS TRACKING:
@@ -1345,15 +1226,13 @@ async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession 
 
     try:
         # Validate session and get user
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
+        user_id = current_user.id
 
         llm_model = await chosen_llm(db=db, message_id=request.message_id)
         # Use default model if none was found in the message
         chatbot = PlaneChatBot(llm_model or "gpt-4.1")
         build_mode_tool_executor = BuildModeToolExecutor(chatbot=chatbot, db=db)
-        result = await build_mode_tool_executor.execute(request, auth.user.id)
+        result = await build_mode_tool_executor.execute(request, user_id)
 
         # Check if service returned an error
         if result.get("error"):
@@ -1385,24 +1264,17 @@ async def search_chats(
     workspace_id: UUID4 = Query(..., description="Workspace ID to filter by"),
     is_project_chat: Optional[bool] = Query(False, description="Filter by project chat flag"),
     cursor: Optional[str] = Query(None, description="Cursor for pagination"),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     """Search chats by title and message content with cursor-based pagination."""
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     # Validate query parameters
     if not query or not query.strip():
         return JSONResponse(status_code=400, content={"detail": "Search query cannot be empty"})
 
     try:
+        user_id = current_user.id
         # Initialize search service
         search_service = ChatSearchService()
 

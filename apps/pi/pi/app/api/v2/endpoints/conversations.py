@@ -19,8 +19,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.v2.dependencies import get_current_user
 from pi.app.schemas.chat import GetThreadsPaginatedResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.retrievers.pg_store import get_user_chat_threads
@@ -35,7 +34,7 @@ async def list_conversations(
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
     is_project_chat: Optional[bool] = False,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     """
@@ -87,14 +86,7 @@ async def list_conversations(
             ]
         }
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     results = await get_user_chat_threads(
         user_id=user_id,
@@ -121,7 +113,7 @@ async def list_conversations_paginated(
     is_project_chat: Optional[bool] = False,
     cursor: Optional[str] = None,
     per_page: int = Query(default=30, ge=1, le=100),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     """
@@ -183,15 +175,7 @@ async def list_conversations_paginated(
         # Next page (use next_cursor from previous response)
         GET /api/v2/conversations/paginated/?per_page=20&cursor=eyJpZCI6MTIzfQ==
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
+    user_id = current_user.id
     results = await get_user_chat_threads_paginated(
         user_id=user_id,
         db=db,

@@ -34,8 +34,7 @@ from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
 from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.v2.dependencies import get_current_user
 from pi.app.api.v2.dependencies import validate_plane_token
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
@@ -222,7 +221,10 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
 
 
 @router.post("/")
-async def create_response_stream(data: ChatRequest, session: str = Depends(cookie_schema)):
+async def create_response_stream(
+    data: ChatRequest,
+    current_user=Depends(get_current_user),
+):
     """
     Create a streaming AI response to a user query.
 
@@ -252,14 +254,7 @@ async def create_response_stream(data: ChatRequest, session: str = Depends(cooki
         - error: Error messages
         - done: Stream completion
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     data.user_id = user_id
 
@@ -423,7 +418,7 @@ async def create_response_stream(data: ChatRequest, session: str = Depends(cooki
 async def queue_response(
     data: ChatRequest,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Queue a chat request and get a stream token for later streaming (Step 1 of 2).
@@ -477,13 +472,6 @@ async def queue_response(
         - For project chats, workspace_id is resolved from project_id
         - Deprecated V1 endpoint: POST /api/v1/chat/queue-answer/
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     validation_error = validate_chat_request(data)
     if validation_error:
@@ -588,7 +576,7 @@ async def queue_response(
 async def stream_response_by_token(
     token: UUID4 = Path(..., description="Stream token obtained from POST /api/v2/responses/queue"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Stream AI response using a previously queued token (Step 2 of 2).
@@ -642,13 +630,7 @@ async def stream_response_by_token(
         - Workspace details are resolved from project_id if needed
         - Deprecated V1 endpoint: GET /api/v1/chat/stream-answer/{token}
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception:
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     # Locate the queued flow step
     stmt = (
@@ -696,7 +678,7 @@ async def stream_response_by_token(
         # 6. Stream new response (create_response_stream will call process_query_stream)
         #    When process_query_stream calls retrieve_chat_history,
         #    it will NOT see the old response because is_replaced=True
-        return await create_response_stream(data=queued_request, session=session)
+        return await create_response_stream(data=queued_request, current_user=current_user)
 
     else:
         # NORMAL FLOW: QUEUE flow step exists, this is first generation
@@ -744,4 +726,4 @@ async def stream_response_by_token(
             log.warning(f"Failed to attach token_id to queued request context: {e!s}")
 
         # Delegate to existing create_response_stream for streaming
-        return await create_response_stream(data=queued_request, session=session)
+        return await create_response_stream(data=queued_request, current_user=current_user)

@@ -29,8 +29,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.v2.dependencies import get_current_user
 from pi.app.api.v2.helpers.plane_sql_queries import get_workspace_slug
 from pi.app.schemas.oauth import OAuthRevokeResponse
 from pi.app.schemas.oauth import OAuthStatusResponse
@@ -46,7 +45,7 @@ async def initiate_oauth(
     workspace_id: Optional[UUID4] = Query(None, description="Workspace UUID to authorize"),
     force_reset: bool = Query(False, description="Force reset of existing OAuth states"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Initiate OAuth authorization flow (browser-based).
@@ -95,14 +94,7 @@ async def initiate_oauth(
         - States expire after 10 minutes
         - One-time use (marked as used after callback)
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     oauth_service = PlaneOAuthService()
 
@@ -532,7 +524,7 @@ async def oauth_callback(
 @router.get("/")
 async def list_authorized_workspaces(
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     List all workspaces the user has authorized.
@@ -595,15 +587,7 @@ async def list_authorized_workspaces(
         - is_expired: Token has expired (re-auth needed)
     """
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         from sqlmodel import select
 
         from pi.app.models.oauth import PlaneOAuthToken
@@ -638,7 +622,7 @@ async def list_authorized_workspaces(
 async def get_oauth_status(
     workspace_id: UUID4 = Path(..., description="Workspace UUID to check authorization status"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Check OAuth authorization status for a specific workspace.
@@ -691,16 +675,9 @@ async def get_oauth_status(
         - Display authorization status
         - Gate OAuth-required features
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     try:
+        user_id = current_user.id
         oauth_service = PlaneOAuthService()
 
         # Check if user has valid token for workspace
@@ -746,7 +723,7 @@ async def get_oauth_status(
 async def revoke_oauth(
     workspace_id: UUID4 = Path(..., description="Workspace UUID to revoke authorization"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Revoke OAuth authorization for a specific workspace.
@@ -804,15 +781,7 @@ async def revoke_oauth(
         - Testing OAuth flows
     """
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         oauth_service = PlaneOAuthService()
 
         # Revoke token

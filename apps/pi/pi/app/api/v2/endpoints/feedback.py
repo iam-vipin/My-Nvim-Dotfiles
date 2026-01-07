@@ -15,8 +15,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.v2.dependencies import get_current_user
 from pi.app.schemas.chat import ChatFeedback
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.retrievers.pg_store import update_message_feedback
@@ -29,7 +28,7 @@ router = APIRouter()
 async def create_feedback(
     feedback_data: ChatFeedback,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Create feedback for a chat message.
@@ -58,15 +57,7 @@ async def create_feedback(
         - 404: Message not found
         - 500: Internal server error
     """
-    try:
-        # Get user_id from session
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     result = await update_message_feedback(
         chat_id=feedback_data.chat_id,

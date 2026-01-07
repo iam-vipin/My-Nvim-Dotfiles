@@ -21,8 +21,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v1.dependencies import cookie_schema
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.v1.dependencies import get_current_user
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.attachment import AttachmentCompleteRequest
 from pi.app.schemas.attachment import AttachmentDetailResponse
@@ -49,18 +48,11 @@ async def create_attachment_upload(
     workspace_id: str = Form(...),
     chat_id: str = Form(...),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Receive file, scan for security, then upload to S3 if safe"""
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-    try:
+        user_id = current_user.id
         # Read file into memory
         file_data = await file.read()
         file_size = len(file_data)
@@ -148,19 +140,12 @@ async def create_attachment_upload(
 async def complete_attachment_upload(
     data: AttachmentCompleteRequest,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Complete attachment upload - only for failed uploads or linking to messages"""
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     try:
+        user_id = current_user.id
         # Get attachment
         stmt = select(MessageAttachment).where(
             MessageAttachment.id == data.attachment_id,
@@ -231,19 +216,11 @@ async def get_attachment_url(
     attachment_id: str,
     chat_id: str,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Get pre-signed URLs (download & preview) for an attachment"""
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         # Convert string IDs to UUIDs
         attachment_uuid = uuid.UUID(attachment_id)
         chat_uuid = uuid.UUID(chat_id)
@@ -295,19 +272,11 @@ async def get_attachment_url(
 async def get_attachments_by_chat(
     chat_id: str,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Get all attachment objects for a chat"""
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         # Convert string ID to UUID
         chat_uuid = uuid.UUID(chat_id)
 

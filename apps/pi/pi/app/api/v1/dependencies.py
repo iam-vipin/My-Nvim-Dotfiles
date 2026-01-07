@@ -13,6 +13,7 @@ import asyncio
 from typing import Annotated
 
 import httpx
+from fastapi import Depends
 from fastapi import Header
 from fastapi import HTTPException
 from fastapi.security import APIKeyCookie
@@ -28,6 +29,7 @@ from pi import logger
 from pi import settings
 from pi.app.schemas.auth import AuthResponse
 from pi.app.schemas.auth import User
+from pi.core.context import set_current_user
 from pi.services.actions.plane_sdk_adapter import PlaneSDKAdapter
 
 log = logger.getChild("dependencies")
@@ -182,6 +184,10 @@ async def is_jwt_valid(token: str) -> AuthResponse:
 async def validate_jwt_token(credentials: HTTPAuthorizationCredentials | None) -> AuthResponse:
     """
     Validate JWT token from HTTPAuthorizationCredentials.
+
+    This also sets the user in the request context for automatic population
+    of created_by_id and updated_by_id audit fields in database models.
+
     Handles null checks and proper error handling.
     Raises HTTPException for compatibility with endpoint error handling.
     """
@@ -193,10 +199,20 @@ async def validate_jwt_token(credentials: HTTPAuthorizationCredentials | None) -
         log.error("Empty JWT token in credentials")
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Empty JWT token")
 
-    return await is_jwt_valid(credentials.credentials)
+    auth = await is_jwt_valid(credentials.credentials)
+    # Set user in context for audit field population
+    if auth.user:
+        set_current_user(auth.user)
+    return auth
 
 
 async def validate_plane_token(token_header: str) -> AuthResponse:
+    """
+    Validate Plane API token or access token.
+
+    This also sets the user in the request context for automatic population
+    of created_by_id and updated_by_id audit fields in database models.
+    """
     if not token_header:
         log.error("Missing or empty Plane token")
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Missing or invalid Plane token")
@@ -233,4 +249,26 @@ async def validate_plane_token(token_header: str) -> AuthResponse:
     if isinstance(user_id, str):
         user_id = UUIDType(user_id)
 
-    return AuthResponse(is_authenticated=True, user=User(id=user_id), plane_token=token)
+    user_obj = User(id=user_id)
+    # Set user in context for audit field population
+    set_current_user(user_obj)
+    return AuthResponse(is_authenticated=True, user=user_obj, plane_token=token)
+
+
+async def get_current_user(session: str = Depends(cookie_schema)) -> User:
+    """
+    Dependency to get the current authenticated user from session cookie.
+
+    This also sets the user in the request context for automatic population
+    of created_by_id and updated_by_id audit fields in database models.
+
+    Raises HTTPException if authentication fails.
+    Returns:
+        User object with authenticated user information.
+    """
+    auth = await is_valid_session(session)
+    if not auth.user:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid User")
+    # Set user in context for audit field population
+    set_current_user(auth.user)
+    return auth.user

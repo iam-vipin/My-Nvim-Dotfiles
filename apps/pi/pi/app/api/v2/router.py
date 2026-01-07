@@ -16,7 +16,6 @@ from pi.app.api.v2.endpoints import artifacts
 from pi.app.api.v2.endpoints import attachments
 from pi.app.api.v2.endpoints import chats
 from pi.app.api.v2.endpoints import conversations
-from pi.app.api.v2.endpoints import docs
 from pi.app.api.v2.endpoints import dupes
 from pi.app.api.v2.endpoints import feedback
 from pi.app.api.v2.endpoints import health
@@ -46,5 +45,4 @@ plane_v2_router.include_router(artifacts.router, prefix="/artifacts", tags=["art
 plane_v2_router.include_router(dupes.router, prefix="/dupes", tags=["dupes"])
 plane_v2_router.include_router(oauth.router, prefix="/oauth", tags=["oauth"])
 plane_v2_router.include_router(pages.router, prefix="/pages", tags=["pages"])
-plane_v2_router.include_router(docs.router, prefix="/docs", tags=["docs"])
 plane_v2_router.include_router(health.router, tags=["health"])

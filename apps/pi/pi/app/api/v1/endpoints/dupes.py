@@ -14,8 +14,7 @@ from fastapi import Depends
 from fastapi.responses import JSONResponse
 
 from pi import logger
-from pi.app.api.v1.dependencies import cookie_schema
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.v1.dependencies import get_current_user
 from pi.app.schemas.dupes import DupeSearchRequest
 from pi.app.schemas.dupes import NotDuplicateRequest
 from pi.services.dupes import dupes
@@ -28,11 +27,8 @@ log = logger.getChild("v1/dupes")
 
 
 @router.post("/issues/")
-async def get_duplicate_issues(data: DupeSearchRequest, session: str = Depends(cookie_schema)):
+async def get_duplicate_issues(data: DupeSearchRequest, current_user=Depends(get_current_user)):
     try:
-        user = await is_valid_session(session)
-        if not user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid session"})
         result = await dupes.get_dupes(data)
         return JSONResponse(content=result)
     except DuplicateNotFoundError as e:
@@ -43,11 +39,8 @@ async def get_duplicate_issues(data: DupeSearchRequest, session: str = Depends(c
 
 
 @router.post("/issues/feedback/")
-async def set_not_duplicate_issues(data: NotDuplicateRequest, session: str = Depends(cookie_schema)):
+async def set_not_duplicate_issues(data: NotDuplicateRequest, current_user=Depends(get_current_user)):
     try:
-        user = await is_valid_session(session)
-        if not user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid session"})
         result = await dupes.set_not_duplicate_issues(data)
         return JSONResponse(content=result)
 

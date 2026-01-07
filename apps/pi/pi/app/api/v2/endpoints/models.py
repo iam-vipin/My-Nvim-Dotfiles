@@ -18,8 +18,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.v2.dependencies import get_current_user
 from pi.app.schemas.chat import ModelsResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.chat.utils import resolve_workspace_slug
@@ -34,7 +33,7 @@ async def get_models(
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Get list of available AI models for a workspace.
@@ -56,14 +55,7 @@ async def get_models(
     Response Model:
         ModelsResponse containing list of model configurations
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     if not workspace_slug:
         if workspace_id:

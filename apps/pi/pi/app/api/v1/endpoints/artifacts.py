@@ -23,8 +23,7 @@ from fastapi.responses import JSONResponse
 from pydantic import UUID4
 
 from pi import logger
-from pi.app.api.v1.dependencies import cookie_schema
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.v1.dependencies import get_current_user
 from pi.app.schemas.artifact import ArtifactUpdateRequest
 from pi.app.schemas.artifact import ArtifactUpdateResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session
@@ -38,18 +37,10 @@ router = APIRouter()
 
 
 @router.get("/")
-async def get_action_artifacts(artifact_ids: List[UUID4], session: str = Depends(cookie_schema), db=Depends(get_async_session)):
+async def get_action_artifacts(artifact_ids: List[UUID4], current_user=Depends(get_current_user), db=Depends(get_async_session)):
     """
     Retrieve action artifacts by their IDs.
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"success": False, "detail": "Invalid User"})
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"success": False, "detail": "Invalid Session"})
-
     try:
         # Get the action artifacts
         artifacts = await get_action_artifacts_by_ids(db, artifact_ids)
@@ -87,17 +78,10 @@ async def get_action_artifacts(artifact_ids: List[UUID4], session: str = Depends
 
 
 @router.get("/chat/{chat_id}/")
-async def get_chat_artifacts(chat_id: UUID4, session: str = Depends(cookie_schema), db=Depends(get_async_session)):
+async def get_chat_artifacts(chat_id: UUID4, current_user=Depends(get_current_user), db=Depends(get_async_session)):
     """
     Retrieve all action artifacts for a specific chat.
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"success": False, "detail": "Invalid User"})
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"success": False, "detail": "Invalid Session"})
 
     try:
         # Get the action artifacts for the chat
@@ -126,14 +110,9 @@ async def get_chat_artifacts(chat_id: UUID4, session: str = Depends(cookie_schem
 
 
 @router.post("/{artifact_id}/followup/", response_model=ArtifactUpdateResponse)
-async def update_artifact_with_prompt(request: ArtifactUpdateRequest, session: str = Depends(cookie_schema), db=Depends(get_async_session)):
+async def update_artifact_with_prompt(request: ArtifactUpdateRequest, current_user=Depends(get_current_user), db=Depends(get_async_session)):
     try:
-        # Validate session
-        auth = await is_valid_session(session)
-        if not auth.user:
-            raise HTTPException(status_code=401, detail="Invalid User")
-
-        user_id = auth.user.id
+        user_id = current_user.id
 
         result = await handle_artifact_prompt_followup(
             db=db,

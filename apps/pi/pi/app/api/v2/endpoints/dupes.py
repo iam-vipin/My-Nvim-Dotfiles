@@ -16,8 +16,7 @@ from fastapi import Depends
 from fastapi.responses import JSONResponse
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.v2.dependencies import get_current_user
 from pi.app.schemas.dupes import DupeSearchRequest
 from pi.app.schemas.dupes import NotDuplicateRequest
 from pi.services.dupes import dupes
@@ -32,7 +31,7 @@ log = logger.getChild("v2.dupes")
 @router.post("/")
 async def search_duplicates(
     data: DupeSearchRequest,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Search for potential duplicate issues using vector similarity.
@@ -149,10 +148,6 @@ async def search_duplicates(
         - Related issue recommendations
     """
     try:
-        user = await is_valid_session(session)
-        if not user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid session"})
-
         result = await dupes.get_dupes(data)
         return JSONResponse(content=result)
 
@@ -172,7 +167,7 @@ async def search_duplicates(
 @router.post("/feedback")
 async def submit_duplicate_feedback(
     data: NotDuplicateRequest,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Submit feedback that two issues are not duplicates.
@@ -252,10 +247,6 @@ async def submit_duplicate_feedback(
         - Improves accuracy for similar cases
     """
     try:
-        user = await is_valid_session(session)
-        if not user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid session"})
-
         result = await dupes.set_not_duplicate_issues(data)
         return JSONResponse(content=result)
 

@@ -24,7 +24,7 @@ from strawberry.types import Info
 
 # Module imports
 from plane.db.models import (
-    IssueUserProperty,
+    ProjectUserProperty,
     Project,
     ProjectMember,
     State,
@@ -92,14 +92,18 @@ class ProjectMutation:
         # add the user as a admin of the project
         _ = await sync_to_async(ProjectMember.objects.create)(project=project, member=info.context.user, role=20)
         # creating the issue property for the user
-        _ = await sync_to_async(IssueUserProperty.objects.create)(project_id=project.id, user_id=info.context.user.id)
+        _ = await sync_to_async(ProjectUserProperty.objects.get_or_create)(
+            project_id=project.id, user_id=info.context.user.id
+        )
 
         # if lead was passed we can add the user as a lead
         if project_lead:
             # add the user as a admin of the project
             _ = await sync_to_async(ProjectMember.objects.create)(project=project, member_id=project_lead, role=20)
             # creating the issue property for the user
-            _ = await sync_to_async(IssueUserProperty.objects.create)(project_id=project.id, user_id=project_lead)
+            _ = await sync_to_async(ProjectUserProperty.objects.get_or_create)(
+                project_id=project.id, user_id=project_lead
+            )
 
         # Default states
 
@@ -225,7 +229,7 @@ class JoinProjectMutation:
             created_by=user,
         )
         # creating the issue property for the user
-        _ = await sync_to_async(IssueUserProperty.objects.create)(
+        _ = await sync_to_async(ProjectUserProperty.objects.get_or_create)(
             workspace=workspace, project=project, user=user, created_by=user
         )
 

@@ -59,6 +59,7 @@ from plane.db.models import (
     ProjectIssueType,
     ProjectMember,
     IssueSubscriber,
+    IssueDescriptionVersion,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -70,6 +71,7 @@ from plane.ee.serializers import (
     EpicUserPropertySerializer,
     IssueTypeSerializer,
 )
+from plane.app.serializers import IssueDescriptionVersionDetailSerializer
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
 )
@@ -78,10 +80,6 @@ from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.ee.utils.nested_issue_children import get_all_related_issues
 from plane.ee.utils.workflow import WorkflowStateManager
-from plane.app.views.issue.version import (
-    IssueDescriptionVersion,
-    IssueDescriptionVersionDetailSerializer,
-)
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.issue_description_version_task import issue_description_version_task

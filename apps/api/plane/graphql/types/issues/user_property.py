@@ -17,10 +17,10 @@ import strawberry_django
 from strawberry.scalars import JSON
 
 # Module Imports
-from plane.db.models import IssueUserProperty
+from plane.db.models import ProjectUserProperty
 
 
-@strawberry_django.type(IssueUserProperty)
+@strawberry_django.type(ProjectUserProperty)
 class IssueUserPropertyType:
     display_filters: JSON
     display_properties: JSON

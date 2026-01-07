@@ -75,12 +75,6 @@ export interface IProjectLite {
   logo_props: TLogoProps;
 }
 
-export type ProjectPreferences = {
-  pages: {
-    block_display: boolean;
-  };
-};
-
 export interface IProjectMap {
   [id: string]: IProject;
 }

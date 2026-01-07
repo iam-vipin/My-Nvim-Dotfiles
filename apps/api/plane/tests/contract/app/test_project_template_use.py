@@ -17,7 +17,7 @@ from rest_framework import status
 from plane.db.models import (
     Project,
     ProjectMember,
-    IssueUserProperty,
+    ProjectUserProperty,
     State,
     WorkspaceMember,
     User,
@@ -255,8 +255,8 @@ class TestProjectTemplateUseEndpoint:
         assert project_member.role == 20  # Administrator
         assert project_member.is_active is True
 
-        # Verify IssueUserProperty was created
-        assert IssueUserProperty.objects.filter(project=project, user=create_user).exists()
+        # Verify ProjectUserProperty was created
+        assert ProjectUserProperty.objects.filter(project=project, user=create_user).exists()
 
         # Verify states were created from template
         states = State.objects.filter(project=project)
@@ -574,10 +574,10 @@ class TestProjectTemplateUseEndpoint:
         project = Project.objects.get(name=project_data["name"])
         assert ProjectMember.objects.filter(project=project, role=20).count() == 2
 
-        # Verify both have IssueUserProperty
-        assert IssueUserProperty.objects.filter(project=project).count() == 2
-        assert IssueUserProperty.objects.filter(project=project, user=create_user).exists()
-        assert IssueUserProperty.objects.filter(project=project, user=project_lead).exists()
+        # Verify both have ProjectUserProperty
+        assert ProjectUserProperty.objects.filter(project=project).count() == 2
+        assert ProjectUserProperty.objects.filter(project=project, user=create_user).exists()
+        assert ProjectUserProperty.objects.filter(project=project, user=project_lead).exists()
 
     @patch("plane.ee.views.app.project.template.create_project_from_template.delay")
     @patch("plane.ee.views.app.project.template.model_activity.delay")

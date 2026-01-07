@@ -130,7 +130,7 @@ from .asset.silo import SiloAssetsEndpoint
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
-    IssueUserDisplayPropertyEndpoint,
+    ProjectUserDisplayPropertyEndpoint,
     BulkDeleteIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,

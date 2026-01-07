@@ -30,7 +30,7 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueType,
-    IssueUserProperty,
+    ProjectUserProperty,
 )
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
@@ -245,7 +245,7 @@ class IssueUserPropertyQuery:
         user = info.context.user
 
         def get_issue_user_property():
-            issue_properties, _ = IssueUserProperty.objects.get_or_create(
+            issue_properties, _ = ProjectUserProperty.objects.get_or_create(
                 workspace__slug=slug, project_id=project, user=user
             )
             return issue_properties

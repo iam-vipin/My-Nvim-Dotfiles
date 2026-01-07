@@ -39,7 +39,7 @@ from plane.db.models import (
     User,
     WorkspaceMember,
     Project,
-    IssueUserProperty,
+    ProjectUserProperty,
 )
 from plane.db.models.project import ProjectNetwork
 from plane.utils.host import base_host
@@ -176,9 +176,9 @@ class UserProjectInvitationsViewset(BaseViewSet):
             ignore_conflicts=True,
         )
 
-        IssueUserProperty.objects.bulk_create(
+        ProjectUserProperty.objects.bulk_create(
             [
-                IssueUserProperty(
+                ProjectUserProperty(
                     project_id=project_id,
                     user=request.user,
                     workspace=workspace,
@@ -252,6 +252,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                 if project_member is None:
                     # Create a Project Member
                     _ = ProjectMember.objects.create(
+                        project_id=project_id,
                         workspace_id=project_invite.workspace_id,
                         member=user,
                         role=project_invite.role,

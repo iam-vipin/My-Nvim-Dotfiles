@@ -19,7 +19,7 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module imports
-from plane.db.models import IssueSubscriber, IssueUserProperty
+from plane.db.models import IssueSubscriber, ProjectUserProperty
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.issues.user_property import IssueUserPropertyType
 from plane.graphql.utils.workflow import WorkflowStateManager
@@ -65,7 +65,7 @@ class IssueUserPropertyMutation:
         display_filters: JSON,
         display_properties: JSON,
     ) -> IssueUserPropertyType:
-        issue_properties = await sync_to_async(IssueUserProperty.objects.get)(
+        issue_properties = await sync_to_async(ProjectUserProperty.objects.get)(
             workspace__slug=slug, project_id=project, user=info.context.user
         )
         issue_properties.filters = filters

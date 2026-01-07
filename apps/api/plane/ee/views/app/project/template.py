@@ -32,7 +32,7 @@ from plane.db.models.asset import FileAsset
 from plane.ee.bgtasks.template_task import create_project_from_template
 from plane.db.models import (
     Workspace,
-    IssueUserProperty,
+    ProjectUserProperty,
     ProjectMember,
     State,
     UserFavorite,
@@ -230,8 +230,6 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                     member=request.user,
                     role=ROLE.ADMIN.value,
                 )
-                # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
                 if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
                     request.user.id
@@ -240,11 +238,6 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
                         role=20,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.data["id"],
-                        user_id=serializer.data["project_lead"],
                     )
 
                 # Get all states from templates

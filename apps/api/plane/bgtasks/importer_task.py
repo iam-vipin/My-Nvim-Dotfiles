@@ -29,7 +29,7 @@ from plane.db.models import (
     WorkspaceIntegration,
     Label,
     User,
-    IssueUserProperty,
+    ProjectUserProperty,
     UserNotificationPreference,
 )
 
@@ -123,9 +123,9 @@ def service_importer(service, importer_id):
                 ignore_conflicts=True,
             )
 
-            IssueUserProperty.objects.bulk_create(
+            ProjectUserProperty.objects.bulk_create(
                 [
-                    IssueUserProperty(
+                    ProjectUserProperty(
                         project_id=importer.project_id,
                         workspace_id=importer.workspace_id,
                         user=user,

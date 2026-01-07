@@ -64,6 +64,7 @@ class ChatKit(AttachmentMixin):
         # Use factory to create tracked tool LLM
         from pi.services.llm.llms import LLMConfig
         from pi.services.llm.llms import _create_anthropic_config
+        from pi.services.llm.llms import create_anthropic_llm
         from pi.services.llm.llms import create_openai_llm
 
         # Store original switch_llm value to determine if custom model was requested
@@ -177,7 +178,19 @@ class ChatKit(AttachmentMixin):
         elif switch_llm == "gpt-5-fast":
             pass
 
-        self.tool_llm = llms.LazyLLM(lambda: create_openai_llm(tool_config))
+        # Create tool LLM with appropriate factory (Anthropic vs OpenAI)
+        # Check if this is a direct Anthropic model (not LiteLLM proxy)
+        is_direct_anthropic = switch_llm in ["claude-sonnet-4-0", "claude-sonnet-4-5"] or tool_config.model in [
+            settings.llm_model.CLAUDE_SONNET_4_0,
+            settings.llm_model.CLAUDE_SONNET_4_5,
+        ]
+
+        if is_direct_anthropic:
+            # Use ChatAnthropic for direct Anthropic models (supports prompt caching)
+            self.tool_llm = llms.LazyLLM(lambda: create_anthropic_llm(tool_config))
+        else:
+            # Use ChatOpenAI for OpenAI and LiteLLM models
+            self.tool_llm = llms.LazyLLM(lambda: create_openai_llm(tool_config))
         self.issue_retriever = IssueRetriever(
             num_docs=settings.chat.NUM_SIMILAR_DOCS, chunk_similarity_threshold=settings.vector_db.ISSUE_VECTOR_SEARCH_CUTOFF
         )
@@ -1309,11 +1322,6 @@ Provide concise, relevant context from the attachment(s):"""
     async def title_generation(self, chat_history: list[str]) -> str:
         import time
 
-        title_prompt = title_generation_prompt
-
-        # Convert the chat history to a string format
-        history_str = "\n".join(chat_history)
-
         # Set tracking context for title generation
         if self._token_tracking_context:
             self.fast_llm.set_tracking_context(
@@ -1323,11 +1331,16 @@ Provide concise, relevant context from the attachment(s):"""
                 chat_id=self._token_tracking_context.get("chat_id"),
             )
 
+        # Format the chat history for the prompt
+        history_str = "\n".join(chat_history)
+
+        # Use the prompt template with formatted chat history
+        prompt_value = title_generation_prompt.format(chat_history=history_str)
+
         # Get title from LLM
-        title_llm_chain = title_prompt | self.fast_llm
         title_gen_start = time.time()
         log.info("Starting title generation LLM call")
-        llm_response = await title_llm_chain.ainvoke({"chat_history": history_str})
+        llm_response = await self.fast_llm.ainvoke(prompt_value)
         title_gen_elapsed = time.time() - title_gen_start
         log.info(f"Title generation LLM call completed in {title_gen_elapsed:.2f}s")
         title = llm_response.content if hasattr(llm_response, "content") else str(llm_response)

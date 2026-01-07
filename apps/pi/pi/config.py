@@ -193,7 +193,7 @@ class LLMConfig:
 
     OPENAI_API_KEY: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     CLAUDE_API_KEY: str = field(default_factory=lambda: os.getenv("CLAUDE_API_KEY", ""))
-    CLAUDE_BASE_URL: str = field(default_factory=lambda: os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com/v1"))
+    CLAUDE_BASE_URL: str = field(default_factory=lambda: os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com"))
     R1_URL_HOST: str = field(default_factory=lambda: os.getenv("R1_URL_HOST", "http://35.239.241.155:8000/v1"))
     R1_MODEL_NAME: str = field(default_factory=lambda: os.getenv("R1_MODEL_NAME", "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"))
     TESTED_FOR_WORKSPACE: list = field(

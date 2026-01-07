@@ -37,6 +37,8 @@ from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
 from pi.config import settings
 from pi.services.chat.helpers.flow_tracking import FlowStepCollector
+from pi.services.llm.cache_utils import create_claude_cached_system_message
+from pi.services.llm.cache_utils import should_enable_claude_caching
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.llms import get_sql_agent_llm
 from pi.services.schemas.chat import QueryFlowStore
@@ -191,23 +193,30 @@ async def select_relevant_tables(
     Args:
         messages: List of user messages containing the query
         focus_id: Column ID to ensure is present (project_id or workspace_id)
-        db: Database session for token tracking
+        db: Database session for tracking
         message_id: Message ID for tracking
 
     Returns:
         List containing the structured response with relevant tables
     """
-    updated_table_selection = (
-        TABLE_SELECTION
-        + f"- Ensure that the {focus_id} column is present in the selected tables. If it's not, examine relationships and add related tables as necessary.\n\n"  # noqa: E501
-        + "Please proceed with your analysis and table selection."
-    )
-
     # Prepare messages for the LLM
-    langchain_messages: List[Message] = [SystemMessage(content=updated_table_selection)]
+    # Enable prompt caching for Claude models - cache the static TABLE_SELECTION prompt
+    if should_enable_claude_caching(llm_model):
+        # Cache the large static table descriptions prompt
+        langchain_messages: List[Message] = [create_claude_cached_system_message(TABLE_SELECTION)]
+    else:
+        langchain_messages = [SystemMessage(content=TABLE_SELECTION)]
+
+    # Add the user query with the dynamic focus_id instruction
     for msg in messages:
         if isinstance(msg, HumanMessage):
-            langchain_messages.append(msg)
+            # Prepend the focus_id instruction to the user query
+            enhanced_content = (
+                f"**Additional Requirement:** Ensure that the {focus_id} column is present in the selected tables. "
+                f"If it's not, examine relationships and add related tables as necessary.\n\n"
+                f"**User Query:** {msg.content}"
+            )
+            langchain_messages.append(HumanMessage(content=enhanced_content))
 
     # Use error handler for table selection LLM call
     response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model=llm_model, chat_id=chat_id)
@@ -296,10 +305,22 @@ async def sql_generation(
 
     Note: For GPT-5, table selection uses gpt-5-fast to prevent token limits,
     but SQL generation uses the original model for maximum quality.
+
+    Caching Strategy: The modified_sql_generator contains both static content
+    (base SQL generator instructions) and dynamic content (table-specific descriptions).
+    For Claude models, we cache this entire prompt. While the cache hit rate won't be 100%,
+    queries that use the same set of tables will benefit from caching.
     """
 
     # Prepare messages for the LLM
-    langchain_messages: List[Message] = [SystemMessage(content=modified_sql_generator)]
+    # Enable prompt caching for Claude models
+    # Cache the full SQL generator prompt (including table-specific context)
+    # Cache hits occur when the same tables are queried in subsequent requests
+    if should_enable_claude_caching(llm_model):
+        langchain_messages: List[Message] = [create_claude_cached_system_message(modified_sql_generator)]
+    else:
+        langchain_messages = [SystemMessage(content=modified_sql_generator)]
+
     for msg in messages:
         if isinstance(msg, HumanMessage):
             langchain_messages.append(msg)

@@ -33,6 +33,9 @@ from pi.app.models.enums import MessageMetaStepType
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.chat.utils import get_current_timestamp_context
 from pi.services.chat.utils import reasoning_dict_maker
+from pi.services.llm.cache_utils import create_claude_cached_system_message
+from pi.services.llm.cache_utils import get_claude_bind_kwargs_with_cache
+from pi.services.llm.cache_utils import should_enable_claude_caching
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps as _upsert_message_flow_steps
 from pi.services.schemas.chat import ActionCategorySelection
 
@@ -67,7 +70,7 @@ from .helpers.tool_utils import tool_name_shown_to_user
 log = logger.getChild(__name__)
 
 
-async def _inject_urls_into_entities(entities: Any, pending_urls: list[Dict[str, str]]) -> list[Dict[str, Any]]:
+async def _inject_urls_into_entities(entities: list[Dict[str, Any]] | str, pending_urls: list[Dict[str, str]]) -> list[Dict[str, Any]]:
     """Inject URLs into entities by matching IDs (app source only)"""
 
     # Tool args can be model-provided; be defensive about types.
@@ -126,8 +129,9 @@ async def _inject_urls_into_entities(entities: Any, pending_urls: list[Dict[str,
     enriched = []
     for entity in entities:
         try:
+            # Runtime check needed because entities could be malformed from LLM
             if not isinstance(entity, dict):
-                continue
+                continue  # type: ignore[unreachable]
             entity_copy = entity.copy()
             entity_copy["properties"] = entity.get("properties", {}).copy()
 
@@ -357,9 +361,6 @@ async def execute_tools_for_build_mode(
             source=source,
         )
 
-        date_time_context = await get_current_timestamp_context(user_id)
-        method_prompt = f"{method_prompt}\n\n{date_time_context}"
-
         # Record the tool orchestration context (enhanced conversation history) before planning
         try:
             step_ctx, next_step_ctx = build_tool_orchestration_context_step(
@@ -395,17 +396,34 @@ async def execute_tools_for_build_mode(
         except Exception as e:
             log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
 
-        # Initialize messages for Phase 2 tool orchestration
-        messages = [SystemMessage(content=method_prompt), HumanMessage(content=combined_tool_query)]
+        # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (timestamp) content
+        # Get timestamp context but keep it separate from the static system prompt
+        date_time_context = await get_current_timestamp_context(user_id)
 
-        # log.info(f"ChatID: {chat_id} - Build mode LLM input - System Prompt:\n{"=" * 80}\n{method_prompt}\n{"=" * 80}")
-        # log.info(f"ChatID: {chat_id} - Build mode LLM input - User Message:\n{"=" * 80}\n{combined_tool_query}\n{"=" * 80}")
+        # Combine dynamic content (timestamp + user query) in the HumanMessage
+        user_message_content = f"{date_time_context}\n\nUser Intent: {combined_tool_query}"
 
         # Re-bind LLM with the full toolset (action methods + retrieval)
         # Some LangChain/OpenAI versions default to no tool calls if not specified.
         # deduplicate tools
         combined_tools = list({tool.name: tool for tool in combined_tools}.values())
-        llm_with_method_tools = chatbot_instance.tool_llm.bind_tools(combined_tools)
+
+        # Enable prompt caching for Claude models when binding tools
+        bind_kwargs = {}
+        if should_enable_claude_caching(chatbot_instance.switch_llm):
+            # For Claude with caching: mark tools for caching via cache_control
+            bind_kwargs = get_claude_bind_kwargs_with_cache()
+
+        llm_with_method_tools = chatbot_instance.tool_llm.bind_tools(combined_tools, **bind_kwargs)
+
+        # Initialize messages with cache control for Claude
+        if should_enable_claude_caching(chatbot_instance.switch_llm):
+            messages = [
+                create_claude_cached_system_message(method_prompt),
+                HumanMessage(content=user_message_content),
+            ]
+        else:
+            messages = [SystemMessage(content=method_prompt), HumanMessage(content=user_message_content)]
         # Set tracking context for method planning LLM calls
         llm_with_method_tools.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_METHOD_PLANNING, chat_id=str(chat_id))
 

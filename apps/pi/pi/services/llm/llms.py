@@ -22,6 +22,7 @@ from typing import Iterator
 from typing import Optional
 from uuid import UUID
 
+from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.runnables import Runnable
 from langchain_core.runnables import RunnableConfig
@@ -273,6 +274,65 @@ def create_openai_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
         return llm
 
 
+def create_anthropic_llm(config: LLMConfig, track_tokens: bool = True, **overrides: Any) -> Any:
+    """Create Anthropic chat model with prompt caching support.
+
+    Args:
+        config: LLM configuration
+        track_tokens: Whether to wrap the LLM with token tracking (default: True)
+        **overrides: Additional parameters to pass to ChatAnthropic
+
+    Returns:
+        TrackedLLM if track_tokens is True, otherwise ChatAnthropic
+    """
+    # Build parameters for ChatAnthropic
+    api_key: str = config.api_key or settings.llm_config.CLAUDE_API_KEY
+
+    anthropic_params: Dict[str, Any] = {
+        "model": config.model,
+        "temperature": config.temperature,
+        "anthropic_api_key": api_key,
+        "streaming": config.streaming,
+    }
+
+    # Set max_tokens if specified (ChatAnthropic uses max_tokens, not max_completion_tokens)
+    if config.max_completion_tokens:
+        anthropic_params["max_tokens"] = config.max_completion_tokens
+
+    # Handle overrides - convert max_completion_tokens to max_tokens if present
+    if "max_completion_tokens" in overrides:
+        anthropic_params["max_tokens"] = overrides.pop("max_completion_tokens")
+
+    # Add remaining overrides
+    anthropic_params.update(overrides)
+
+    # Override base URL if using custom endpoint (e.g., for proxy)
+    if config.base_url:
+        anthropic_params["anthropic_api_url"] = config.base_url
+
+    # Note: Prompt caching is enabled by adding cache_control to individual messages
+    # via additional_kwargs, not by passing a parameter to ChatAnthropic constructor.
+    # See: askmode_tool_executor.py for implementation.
+
+    # Enable stream_usage for streaming models to get token usage metadata
+    if config.streaming:
+        anthropic_params["stream_usage"] = True
+
+    llm = ChatAnthropic(**anthropic_params)
+
+    if track_tokens:
+        # Map model names to database-friendly tracking keys
+        tracking_model_key = config.model
+        if config.model == settings.llm_model.CLAUDE_SONNET_4_5:
+            tracking_model_key = "claude-sonnet-4-5"
+        elif config.model == settings.llm_model.CLAUDE_SONNET_4_0:
+            tracking_model_key = "claude-sonnet-4-0"
+
+        return TrackedLLM(llm, tracking_model_key)
+    else:
+        return llm
+
+
 # Pre-configured LLM instances
 _DEFAULT_CONFIGS = {
     "default": LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=False),
@@ -397,7 +457,7 @@ class LLMFactory:
     @classmethod
     def get_default_llm(cls, model_name: Optional[str] = None) -> Any:
         if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
         elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
@@ -409,7 +469,7 @@ class LLMFactory:
     @classmethod
     def get_stream_llm(cls, model_name: Optional[str] = None) -> Any:
         if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
         elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
@@ -421,7 +481,7 @@ class LLMFactory:
     @classmethod
     def get_decomposer_llm(cls, model_name: Optional[str] = None) -> Any:
         if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
         elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
@@ -433,7 +493,7 @@ class LLMFactory:
     @classmethod
     def get_fast_llm(cls, streaming: bool = False, model_name: Optional[str] = None) -> Any:
         if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
         elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
@@ -500,11 +560,13 @@ def get_chat_llm(llm_name: str) -> Any:
                 model=settings.llm_model.CLAUDE_SONNET_4_0,
                 streaming=True,
             )
+            return create_anthropic_llm(config)
         elif llm_name.lower() == "claude-sonnet-4-5":
             config = _create_anthropic_config(
                 model=settings.llm_model.CLAUDE_SONNET_4_5,
                 streaming=True,
             )
+            return create_anthropic_llm(config)
         else:
             # Fallback to default (GPT-4.1)
             config = LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=True)
@@ -549,7 +611,7 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
                 base_url=settings.llm_config.CLAUDE_BASE_URL,
                 api_key=settings.llm_config.CLAUDE_API_KEY,
             )
-            return create_openai_llm(
+            return create_anthropic_llm(
                 config,
                 max_completion_tokens=4096,
             )
@@ -561,7 +623,7 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
                 base_url=settings.llm_config.CLAUDE_BASE_URL,
                 api_key=settings.llm_config.CLAUDE_API_KEY,
             )
-            return create_openai_llm(config, max_completion_tokens=4096)
+            return create_anthropic_llm(config, max_completion_tokens=4096)
         elif model in ["gpt-5-standard", "gpt-5-fast"]:
             # GPT-5 doesn't support temperature or frequency_penalty
             # Don't use responses_api for SQL generation to avoid structured output formatting

@@ -621,15 +621,13 @@ async def construct_enhanced_prompt_and_context(
             else:
                 context_block += "\nSkip greetings and get straight to the point."
 
-        # Date/time context
+        # Date/time context - MOVED TO custom_prompt to avoid breaking cache
         dt_ctx = None
         try:
             if user_id:
                 dt_ctx = await get_current_timestamp_context(user_id)
         except Exception:
             dt_ctx = None
-        if dt_ctx:
-            custom_prompt += f"\n{dt_ctx}\n"
     except Exception:
         # Non-fatal; continue without context block if any error occurs
         pass
@@ -637,6 +635,10 @@ async def construct_enhanced_prompt_and_context(
     # CRITICAL: Inject clarification context if this is a follow-up to ask_for_clarification
     if user_meta and isinstance(user_meta, dict) and user_meta.get("clarification_context"):
         custom_prompt += build_clarification_context_block(user_meta.get("clarification_context"))
+
+    # Add timestamp context AFTER all other content (dynamic, goes in HumanMessage)
+    if dt_ctx:
+        custom_prompt += f"\n{dt_ctx}\n"
 
     return custom_prompt, context_block
 

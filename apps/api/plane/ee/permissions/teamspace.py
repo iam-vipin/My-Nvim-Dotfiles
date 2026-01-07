@@ -11,11 +11,9 @@
 
 # Third party imports
 from rest_framework.permissions import BasePermission
-from rest_framework.request import Request
 
 # Module imports
 from plane.ee.models import TeamspaceMember, TeamspaceProject
-from plane.ee.views.base import BaseAPIView, BaseViewSet
 
 
 class TeamspacePermission(BasePermission):
@@ -33,7 +31,7 @@ class TeamspaceMemberProjectPermission(BasePermission):
     Permission class for checking if the user is a member of the team space and has access to the project.
     """
 
-    def has_permission(self, request: Request, view: BaseAPIView | BaseViewSet):
+    def has_permission(self, request, view):
         # Check if the user is a member of the team space
         project_id = getattr(view, "project_id", None)
 

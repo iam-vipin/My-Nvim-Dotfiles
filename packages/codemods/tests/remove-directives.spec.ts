@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { describe, it, expect } from "vitest";
 import { applyTransform } from "@hypermod/utils";
 import * as transformer from "../remove-directives";
@@ -14,7 +27,7 @@ describe("remove-directives", () => {
         return <div>Hello, world!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -37,7 +50,7 @@ describe("remove-directives", () => {
         return db.query("SELECT * FROM users");
       };
       `,
-      { parser: "ts" },
+      { parser: "ts" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -60,7 +73,7 @@ describe("remove-directives", () => {
         return <div>Hello, world!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -73,9 +86,9 @@ describe("remove-directives", () => {
   });
 
   it("should remove multiple directives", async () => {
-      const result = await applyTransform(
-        transformer,
-        `
+    const result = await applyTransform(
+      transformer,
+      `
         "use client";
         "use strict";
         import React from "react";
@@ -84,10 +97,10 @@ describe("remove-directives", () => {
           return <div>Hello, world!</div>;
         };
         `,
-        { parser: "tsx" },
-      );
+      { parser: "tsx" }
+    );
 
-      expect(result).toMatchInlineSnapshot(`
+    expect(result).toMatchInlineSnapshot(`
         ""use strict";;
                 import React from "react";
 
@@ -95,7 +108,7 @@ describe("remove-directives", () => {
                   return <div>Hello, world!</div>;
                 };"
       `);
-    });
+  });
 
   it("should ignore directives inside functions", async () => {
     const result = await applyTransform(
@@ -108,7 +121,7 @@ describe("remove-directives", () => {
         return <div>Hello, world!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -120,9 +133,9 @@ describe("remove-directives", () => {
             };"
     `);
   });
-  
+
   it("should preserve comments", async () => {
-     const result = await applyTransform(
+    const result = await applyTransform(
       transformer,
       `
       // comment before
@@ -131,9 +144,9 @@ describe("remove-directives", () => {
       import React from "react";
       `,
       { parser: "tsx" }
-     );
-     
-     expect(result).toMatchInlineSnapshot(`
+    );
+
+    expect(result).toMatchInlineSnapshot(`
        "// comment before
              // comment after
              import React from "react";"
@@ -160,7 +173,7 @@ describe("remove-directives", () => {
         return <></>;
       }
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -195,7 +208,7 @@ describe("remove-directives", () => {
         return <div>Hello</div>;
       }
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -221,7 +234,7 @@ describe("remove-directives", () => {
         return db.query("SELECT * FROM users");
       };
       `,
-      { parser: "ts" },
+      { parser: "ts" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -260,7 +273,7 @@ describe("remove-directives", () => {
         return <></>;
       }
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -287,4 +300,3 @@ describe("remove-directives", () => {
     `);
   });
 });
-

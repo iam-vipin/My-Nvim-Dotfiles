@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('db', '0112_auto_20251124_0603'),
-        ('ee', '0057_issuetypeproperty_and_more'),
+        ('ee', '0058_projecttemplate_is_milestone_enabled'),
     ]
 
     operations = [

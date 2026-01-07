@@ -379,21 +379,8 @@ class EnterpriseSubscriptionProrationPreviewEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Fetch the workspace license - we are using the first workspace license
-            # This is because we are using the enterprise license for the instance
-            workspace_license = WorkspaceLicense.objects.first()
-            if not workspace_license:
-                return Response(
-                    {"error": "Workspace license not found"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Check if the workspace is on the free plan
-            if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE.value:
-                return Response(
-                    {"error": "Workspace is on the free plan"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            # Get the total users
+            user_count = User.objects.filter(is_active=True, is_bot=False).count()
 
             # Fetch the workspace subscription
             if settings.PAYMENT_SERVER_BASE_URL:
@@ -404,7 +391,7 @@ class EnterpriseSubscriptionProrationPreviewEndpoint(BaseAPIView):
                         "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
                     },
                     json={
-                        "quantity": (quantity + workspace_license.purchased_seats),
+                        "quantity": (quantity + user_count),
                     },
                 )
 

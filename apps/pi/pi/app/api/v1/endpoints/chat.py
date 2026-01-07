@@ -172,7 +172,7 @@ async def chat_start(
 async def chat_auth_check(
     workspace_id: UUID = Query(..., description="Workspace ID to check authorization for"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Check user authentication and OAuth authorization status.
@@ -184,17 +184,9 @@ async def chat_auth_check(
         - is_authorized: true if user has valid OAuth token for workspace
         - oauth_url: OAuth authorization URL if not authorized (null if authorized)
     """
-    try:
-        # Validate session
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=422, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=422, content={"detail": "Invalid Session"})
 
     try:
+        user_id = current_user.id
         oauth_service = PlaneOAuthService()
 
         # Check if user has valid OAuth token for workspace
@@ -236,7 +228,7 @@ async def chat_auth_check(
 @router.post("/start/set-prompts/", response_model=PresetQuestionsResponse)
 async def get_preset_questions(
     data: PresetQuestionsRequest,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Get contextual preset questions based on chat mode and entity context.
@@ -254,14 +246,6 @@ async def get_preset_questions(
     Returns:
         - templates: List of contextual preset questions/templates
     """
-    try:
-        # Validate session
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=422, content={"detail": "Invalid User"})
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=422, content={"detail": "Invalid Session"})
 
     try:
         # TODO: Replace with actual context-aware preset question generation

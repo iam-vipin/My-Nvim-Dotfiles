@@ -14,9 +14,8 @@
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { CircleMinus } from "lucide-react";
-import { EditIcon } from "@plane/propel/icons";
 // plane imports
-import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { EditIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { EWorkItemTypeEntity, IIssueType, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
 import { Avatar, AvatarGroup, CustomMenu } from "@plane/ui";
 import type { TProjectBlueprintDetails } from "@plane/utils";
@@ -71,13 +70,10 @@ export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintList
 
   return (
     <div
-      className={cn(
-        "group relative flex min-h-10 h-full w-full items-center gap-3 px-1.5 py-1 transition-all rounded",
-        {
-          "hover:bg-layer-transparent-hover cursor-pointer": allowEdit,
-          "cursor-not-allowed": !allowEdit,
-        }
-      )}
+      className={cn("group relative flex min-h-10 w-full items-center gap-3 px-1.5 py-1 transition-all rounded", {
+        "hover:bg-layer-transparent-hover cursor-pointer": allowEdit,
+        "cursor-not-allowed": !allowEdit,
+      })}
     >
       {projectDetails && (
         <div className={cn("flex-shrink-0", !allowEdit && "opacity-60")}>

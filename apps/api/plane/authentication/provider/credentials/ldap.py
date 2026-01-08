@@ -12,7 +12,9 @@
 # Python imports
 import os
 import ldap
+import logging
 from typing import Optional, Callable
+
 
 # Module imports
 from plane.authentication.adapter.credential import CredentialAdapter
@@ -22,6 +24,9 @@ from plane.authentication.adapter.error import (
 )
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
+
+
+logger = logging.getLogger("plane.authentication")
 
 
 class LDAPProvider(CredentialAdapter):
@@ -49,32 +54,34 @@ class LDAPProvider(CredentialAdapter):
             LDAP_USER_SEARCH_BASE,
             LDAP_USER_SEARCH_FILTER,
             LDAP_USER_ATTRIBUTES,
-        ) = get_configuration_value([
-            {
-                "key": "LDAP_SERVER_URI",
-                "default": os.environ.get("LDAP_SERVER_URI"),
-            },
-            {
-                "key": "LDAP_BIND_DN",
-                "default": os.environ.get("LDAP_BIND_DN"),
-            },
-            {
-                "key": "LDAP_BIND_PASSWORD",
-                "default": os.environ.get("LDAP_BIND_PASSWORD"),
-            },
-            {
-                "key": "LDAP_USER_SEARCH_BASE",
-                "default": os.environ.get("LDAP_USER_SEARCH_BASE"),
-            },
-            {
-                "key": "LDAP_USER_SEARCH_FILTER",
-                "default": os.environ.get("LDAP_USER_SEARCH_FILTER", "(uid={username})"),
-            },
-            {
-                "key": "LDAP_USER_ATTRIBUTES",
-                "default": os.environ.get("LDAP_USER_ATTRIBUTES", "mail,cn,givenName,sn"),
-            },
-        ])
+        ) = get_configuration_value(
+            [
+                {
+                    "key": "LDAP_SERVER_URI",
+                    "default": os.environ.get("LDAP_SERVER_URI"),
+                },
+                {
+                    "key": "LDAP_BIND_DN",
+                    "default": os.environ.get("LDAP_BIND_DN"),
+                },
+                {
+                    "key": "LDAP_BIND_PASSWORD",
+                    "default": os.environ.get("LDAP_BIND_PASSWORD"),
+                },
+                {
+                    "key": "LDAP_USER_SEARCH_BASE",
+                    "default": os.environ.get("LDAP_USER_SEARCH_BASE"),
+                },
+                {
+                    "key": "LDAP_USER_SEARCH_FILTER",
+                    "default": os.environ.get("LDAP_USER_SEARCH_FILTER", "(uid={username})"),
+                },
+                {
+                    "key": "LDAP_USER_ATTRIBUTES",
+                    "default": os.environ.get("LDAP_USER_ATTRIBUTES", "mail,cn,givenName,sn"),
+                },
+            ]
+        )
 
         # Check if LDAP is configured
         if not (LDAP_SERVER_URI and LDAP_BIND_DN and LDAP_BIND_PASSWORD and LDAP_USER_SEARCH_BASE):
@@ -99,10 +106,15 @@ class LDAPProvider(CredentialAdapter):
     def _connect_to_ldap(self):
         """Establish connection to LDAP server"""
         try:
-            # Initialize LDAP connection
+            # Set global options before initialization
             ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
+            ldap.set_option(ldap.OPT_REFERRALS, 0)
+
+            # Initialize LDAP connection
             conn = ldap.initialize(self.ldap_server_uri)
-            conn.protocol_version = ldap.VERSION3
+            conn.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
+            conn.set_option(ldap.OPT_REFERRALS, 0)
+            conn.set_option(ldap.OPT_NETWORK_TIMEOUT, 10.0)
             conn.simple_bind_s(self.ldap_bind_dn, self.ldap_bind_password)
             return conn
         except ldap.INVALID_CREDENTIALS:
@@ -128,17 +140,48 @@ class LDAPProvider(CredentialAdapter):
         """Search for user in LDAP directory"""
         try:
             search_filter = self.ldap_user_search_filter.format(username=username)
-            result = conn.search_s(
+
+            # Validate that search filter is not empty
+            if not search_filter or not search_filter.strip():
+                logger.error(
+                    "LDAP search filter is empty. Please set LDAP_USER_SEARCH_FILTER (e.g., '(cn={username})' for Authentik or '(uid={username})' for OpenLDAP)"
+                )
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["LDAP_SEARCH_ERROR"],
+                    error_message="LDAP_SEARCH_ERROR",
+                    payload=self.exception_payload,
+                )
+
+            logger.info(
+                f"LDAP Search - Base: {self.ldap_user_search_base}, Filter: {search_filter}, Attrs: {self.ldap_user_attributes}"
+            )
+
+            # Use search_ext_s with explicit parameters for better compatibility
+            result = conn.search_ext_s(
                 self.ldap_user_search_base,
                 ldap.SCOPE_SUBTREE,
                 search_filter,
                 self.ldap_user_attributes,
+                sizelimit=1,
             )
+
+            # Filter out referrals (entries with None as attributes)
+            result = [(dn, attrs) for dn, attrs in result if attrs is not None]
 
             if not result:
                 return None
 
             return result[0]  # Return first match (dn, attributes)
+        except ldap.OPERATIONS_ERROR as e:
+            logger.error(
+                f"LDAP OPERATIONS_ERROR - This often means the bind user lacks search permissions or the search base is incorrect. Error: {e}"
+            )
+            log_exception(e)
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["LDAP_SEARCH_ERROR"],
+                error_message="LDAP_SEARCH_ERROR",
+                payload=self.exception_payload,
+            )
         except Exception as e:
             log_exception(e)
             raise AuthenticationException(
@@ -227,16 +270,18 @@ class LDAPProvider(CredentialAdapter):
                     payload=self.exception_payload,
                 )
 
-            super().set_user_data({
-                "email": email,
-                "user": {
-                    "avatar": "",
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "provider_id": user_dn,
-                    "is_password_autoset": True,  # LDAP users don't use local passwords
-                },
-            })
+            super().set_user_data(
+                {
+                    "email": email,
+                    "user": {
+                        "avatar": "",
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "provider_id": user_dn,
+                        "is_password_autoset": True,  # LDAP users don't use local passwords
+                    },
+                }
+            )
             return
 
         finally:

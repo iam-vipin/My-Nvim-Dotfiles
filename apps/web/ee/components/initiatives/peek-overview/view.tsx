@@ -135,7 +135,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
                 disabled={disabled}
               />
               {/* content - reuse the exact same detail layout */}
-              <div className="flex h-full w-full overflow-hidden">
+              <div className="relative flex h-full w-full overflow-hidden">
                 <div className="h-full w-full overflow-y-auto">
                   <InitiativeMainContentRoot
                     editorRef={editorRef}

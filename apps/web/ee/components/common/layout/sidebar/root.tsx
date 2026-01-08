@@ -50,7 +50,7 @@ export function SidebarRoot(props: TSidebarRootProps) {
             </Tabs.Trigger>
           ))}
         </Tabs.List>
-        <div className="mt-4">
+        <div className="pt-4 flex-1 overflow-y-auto">
           {tabs.map((tab) => (
             <Tabs.Content key={tab.key} value={tab.key}>
               {tab.content}

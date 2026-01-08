@@ -26,7 +26,7 @@ type TLayoutRootProps = {
 export function LayoutRoot(props: TLayoutRootProps) {
   const { children, className = "", renderEmptyState, emptyStateComponent } = props;
   return (
-    <div className={cn("flex h-full w-full overflow-hidden", className)}>
+    <div className={cn("relative flex h-full w-full overflow-hidden", className)}>
       {renderEmptyState ? emptyStateComponent : children}
     </div>
   );

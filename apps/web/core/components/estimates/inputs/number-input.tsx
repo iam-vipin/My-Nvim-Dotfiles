@@ -32,6 +32,7 @@ export function EstimateNumberInput(props: TEstimateNumberInputProps) {
       placeholder={t("project_settings.estimates.create.enter_estimate_point")}
       autoFocus
       type="number"
+      step="any"
     />
   );
 }

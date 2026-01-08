@@ -16,7 +16,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { MoveDiagonal, MoveRight } from "lucide-react";
-import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon, CopyLinkIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -136,9 +137,7 @@ export const InitiativePeekOverviewHeader = observer(function InitiativePeekOver
       <div className="flex items-center gap-x-3.5">
         <InitiativeOverviewHeaderActions />
         <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
-          <button type="button" onClick={handleCopyText}>
-            <LinkIcon className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
-          </button>
+          <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
         </Tooltip>
       </div>
     </div>

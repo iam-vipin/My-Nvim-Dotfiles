@@ -15,9 +15,10 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
-import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { CopyLinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
@@ -36,7 +37,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import { ConvertWorkItemAction } from "../conversions";
 import { ProjectEpicQuickActions } from "../quick-actions/epic-quick-action";
-import { Button } from "@plane/propel/button";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -223,9 +223,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
             />
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
-            <Button variant="secondary" size="lg" onClick={handleCopyText}>
-              <LinkIcon className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
-            </Button>
+            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
           </Tooltip>
           {issue && (
             <div ref={parentRef} className="flex items-center gap-2">

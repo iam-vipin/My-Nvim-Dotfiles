@@ -27,7 +27,7 @@ from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.utils.encoding import DjangoUnicodeDecodeError, smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils import cache
+from django.core.cache import cache
 
 # Module imports
 from plane.bgtasks.forgot_password_task import forgot_password

@@ -1,4 +1,3 @@
-
 # SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
 # SPDX-License-Identifier: LicenseRef-Plane-Commercial
 #
@@ -200,6 +199,64 @@ class AuthenticationLimitedThrottle(AnonRateThrottle):
 
     def get_cache_key(self, request: Request, view: Optional[Any] = None) -> Optional[str]:
         return get_client_ip(request)
+
+    def parse_rate(self, rate):
+        """
+        Given the request rate string, return a two tuple of:
+        <allowed number of requests>, <period of time in seconds>
+        """
+        if rate is None:
+            return (None, None)
+
+        if "/" not in rate:
+            raise ValueError(f"Invalid rate format: {rate}")
+
+        parts = rate.split("/")
+
+        if len(parts) != 2:
+            raise ValueError(f"Invalid rate format: {rate}")
+
+        num, period = parts
+        num = num.strip()
+        period = period.strip().lower()
+
+        try:
+            num_requests = int(num)
+        except ValueError:
+            raise ValueError(f"Invalid rate format: {rate}")
+
+        if num_requests < 0:
+            raise ValueError(f"Request count cannot be negative: {num_requests}")
+
+        # Duration units in seconds
+        duration_units = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+
+        # Extract multiplier and unit from period (e.g. "5m" -> 5, "m")
+        multiplier = ""
+        unit = ""
+
+        for char in period:
+            if char.isdigit():
+                multiplier += char
+            else:
+                unit += char
+                break  # Stop at first non-digit
+
+        try:
+            multiplier = int(multiplier)
+        except ValueError:
+            raise ValueError(f"Invalid duration multiplier: {multiplier}")
+
+        if multiplier <= 0:
+            raise ValueError(f"Duration multiplier must be positive: {multiplier}")
+
+        if not unit or unit[0] not in duration_units:
+            raise ValueError(f"Invalid duration unit: {unit}")
+
+        duration = multiplier * duration_units[unit[0]]
+
+        # Return the number of requests and duration in seconds
+        return (num_requests, duration)
 
 
 class RateLimitedView(View):

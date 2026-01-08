@@ -37,7 +37,11 @@ const envSchema = z.object({
   REDIS_PORT: z.string().default("6379").transform(Number),
   REDIS_URL: z.string().optional(),
   // Iframely configuration
-  IFRAMELY_URL: z.string(),
+  IFRAMELY_URL: z.string().optional(),
+  // AMQP configuration
+  AMQP_URL: z.string().url("AMQP_URL must be a valid URL"),
+  EVENT_STREAM_EXCHANGE: z.string().default("plane.event_stream"),
+  PREFETCH_COUNT: z.string().default("10").transform(Number),
 });
 
 const validateEnv = () => {

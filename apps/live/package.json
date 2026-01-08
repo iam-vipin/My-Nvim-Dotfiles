@@ -6,7 +6,8 @@
   "main": "./dist/start.mjs",
   "module": "./dist/start.mjs",
   "exports": {
-    ".": "./dist/start.mjs",
+    "./consumer": "./dist/consumer.mjs",
+    "./start": "./dist/start.mjs",
     "./package.json": "./package.json"
   },
   "private": true,
@@ -14,6 +15,7 @@
   "scripts": {
     "build": "tsc --noEmit && tsdown",
     "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
+    "dev:consumer": "tsdown --watch --onSuccess \"node --env-file=.env ./dist/consumer.mjs\"",
     "start": "node --env-file=.env .",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=160",
     "check:types": "tsc --noEmit",
@@ -25,6 +27,8 @@
   "author": "Plane Software Inc.",
   "dependencies": {
     "@dotenvx/dotenvx": "catalog:",
+    "@effect/platform": "^0.94.0",
+    "@effect/platform-node": "^0.104.0",
     "@hocuspocus/extension-database": "2.15.2",
     "@hocuspocus/extension-logger": "2.15.2",
     "@hocuspocus/extension-redis": "2.15.2",
@@ -39,10 +43,12 @@
     "@sentry/profiling-node": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/html": "catalog:",
+    "amqplib": "^0.10.5",
     "axios": "catalog:",
     "compression": "1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "effect": "^3.19.14",
     "express": "catalog:",
     "express-ws": "^5.0.2",
     "hast": "^1.0.0",
@@ -64,6 +70,7 @@
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
+    "@types/amqplib": "^0.10.5",
     "@types/compression": "1.8.1",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",

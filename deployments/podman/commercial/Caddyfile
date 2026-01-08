@@ -10,6 +10,7 @@
 	reverse_proxy /api/* systemd-api:8000
 	reverse_proxy /graphql/* systemd-api:8000
 	reverse_proxy /auth/* systemd-api:8000
+	reverse_proxy /marketplace/* systemd-api:8000
 	reverse_proxy /static/* systemd-api:8000
 	reverse_proxy /live/* systemd-live:3000
 	reverse_proxy /silo/* systemd-silo:3000

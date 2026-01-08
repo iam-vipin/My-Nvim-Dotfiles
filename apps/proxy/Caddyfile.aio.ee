@@ -12,6 +12,9 @@
     handle /auth/* {
         reverse_proxy api:8000
     }
+	handle /marketplace/* {
+		reverse_proxy api:8000
+	}
 	handle /static/* {
 		reverse_proxy api:8000
 	}

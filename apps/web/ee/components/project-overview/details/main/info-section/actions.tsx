@@ -12,6 +12,7 @@
  */
 
 import { Paperclip } from "lucide-react";
+import { Button } from "@plane/propel/button";
 import { LinkIcon } from "@plane/propel/icons";
 import { ProjectAttachmentActionButton } from "../collaspible-section/attachment/quick-action-button";
 
@@ -24,18 +25,18 @@ export function Actions(props: TProps) {
   const { toggleLinkModalOpen, workspaceSlug, projectId } = props;
   return (
     <div className="text-14 font-medium flex gap-4 text-secondary my-auto">
-      <button className="flex gap-1" onClick={() => toggleLinkModalOpen(true)}>
-        <LinkIcon className="rotate-[135deg] my-auto" width={16} height={16} />
-        <div>Add link</div>
-      </button>
+      <Button variant="ghost" size="lg" onClick={() => toggleLinkModalOpen(true)}>
+        <LinkIcon className="flex-shrink-0 size-3.5" />
+        <span className="text-body-xs-medium">Add link</span>
+      </Button>
       <ProjectAttachmentActionButton
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
         customButton={
-          <button className="flex gap-1">
-            <Paperclip className="my-auto" size={16} />
-            <div>Attach</div>
-          </button>
+          <Button variant="ghost" size="lg">
+            <Paperclip className="flex-shrink-0 size-3.5" />
+            <span className="text-body-xs-medium">Attach</span>
+          </Button>
         }
       />
     </div>

@@ -81,7 +81,6 @@
     "react-popper": "^2.3.0",
     "react-resizable": "^3.0.5",
     "react-router": "catalog:",
-    "react-router-dom": "catalog:",
     "recharts": "^2.12.7",
     "remark-gfm": "^4.0.1",
     "serve": "14.2.5",

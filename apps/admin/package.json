@@ -47,7 +47,6 @@
     "react-dropzone": "^14.2.3",
     "react-hook-form": "7.51.5",
     "react-router": "catalog:",
-    "react-router-dom": "catalog:",
     "serve": "14.2.5",
     "swr": "catalog:",
     "uuid": "catalog:"

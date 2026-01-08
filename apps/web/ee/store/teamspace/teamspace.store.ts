@@ -458,14 +458,17 @@ export class TeamspaceStore implements ITeamspaceStore {
       this.loader = "mutation";
       // create teamspace
       const teamspace = await this.teamService.createTeamspace(workspaceSlug, data);
-      // add current user to the list of members and update the team members
+      // Update team members including current user and team lead
+      const membersToAdd = new Set(data.member_ids ?? []);
       const currentUserId = this.rootStore.user.data?.id;
-      await this.updateTeamspaceMembers(
-        workspaceSlug,
-        teamspace.id,
-        currentUserId ? uniq([...(data.member_ids ?? []), currentUserId]) : (data.member_ids ?? []),
-        false
-      );
+      const teamLeadId = data.lead_id;
+      if (currentUserId) {
+        membersToAdd.add(currentUserId);
+      }
+      if (teamLeadId) {
+        membersToAdd.add(teamLeadId);
+      }
+      await this.updateTeamspaceMembers(workspaceSlug, teamspace.id, Array.from(membersToAdd), false);
       // set teamspace map along with member_ids
       runInAction(() => {
         const teamspaceMemberIds = this.getTeamspaceMemberIdsFromMembersMap(teamspace.id);

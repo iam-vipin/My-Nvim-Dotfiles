@@ -349,10 +349,7 @@ func GetEnterpriseLicenseProrationPreview(api prime_api.IPrimeMonitorApi, key st
 			})
 		}
 
-		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"message": "Enterprise license proration preview",
-			"data":    data,
-		})
+		return ctx.Status(fiber.StatusOK).JSON(data)
 	}
 }
 

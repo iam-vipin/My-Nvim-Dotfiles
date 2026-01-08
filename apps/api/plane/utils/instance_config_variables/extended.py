@@ -111,6 +111,12 @@ saml_config_variables = [
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },
+    {
+        "key": "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT",
+        "value": "0",
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
 ]
 
 # ldap config

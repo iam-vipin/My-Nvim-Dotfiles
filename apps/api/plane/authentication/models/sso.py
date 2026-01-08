@@ -315,6 +315,9 @@ class IdentityProvider(BaseModel):
     sso_url = models.TextField(null=True, blank=True)
     slo_url = models.TextField(null=True, blank=True)
     certificate = models.TextField(null=True, blank=True)
+    # When True, removes RequestedAuthnContext from SAML AuthnRequest
+    # This fixes Azure AD error AADSTS75011 when users authenticate with MFA/certificates
+    disable_requested_authn_context = models.BooleanField(default=True)
 
     # provider type
     provider = models.CharField(choices=PROVIDER_CHOICES, max_length=255)

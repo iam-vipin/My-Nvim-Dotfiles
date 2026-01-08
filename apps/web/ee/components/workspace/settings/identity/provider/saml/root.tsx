@@ -45,6 +45,7 @@ type TSAMLFormData = {
   certificate: string;
   logout_url: string;
   is_enabled: boolean;
+  disable_requested_authn_context: boolean;
 };
 
 export function SAMLRoot(props: TSAMLRoot) {
@@ -70,6 +71,7 @@ export function SAMLRoot(props: TSAMLRoot) {
       certificate: samlProvider?.certificate || "",
       logout_url: samlProvider?.logout_url || "",
       is_enabled: samlProvider?.is_enabled ?? false,
+      disable_requested_authn_context: samlProvider?.disable_requested_authn_context ?? true,
     }),
     [samlProvider]
   );
@@ -196,6 +198,25 @@ export function SAMLRoot(props: TSAMLRoot) {
                 />
               );
             })}
+            {/* Toggle: Disable RequestedAuthnContext */}
+            <div className="flex items-center justify-between gap-4 pt-2">
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">
+                  Disable RequestedAuthnContext to allow any authentication method
+                </span>
+                <span className="text-xs text-custom-text-300">
+                  Enable this to fix Azure AD error AADSTS75011 when users authenticate with MFA, certificates, or other
+                  non-password methods
+                </span>
+              </div>
+              <Controller
+                control={control}
+                name="disable_requested_authn_context"
+                render={({ field: { value, onChange } }) => (
+                  <ToggleSwitch value={value} onChange={onChange} size="sm" />
+                )}
+              />
+            </div>
           </div>
           <ProviderFormActionButtons
             isEnabled={isEnabled}

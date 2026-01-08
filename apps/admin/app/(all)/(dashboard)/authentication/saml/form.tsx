@@ -59,6 +59,7 @@ export function InstanceSAMLConfigForm(props: Props) {
       SAML_CERTIFICATE: config["SAML_CERTIFICATE"],
       SAML_PROVIDER_NAME: config["SAML_PROVIDER_NAME"],
       ENABLE_SAML_IDP_SYNC: config["ENABLE_SAML_IDP_SYNC"],
+      SAML_DISABLE_REQUESTED_AUTHN_CONTEXT: config["SAML_DISABLE_REQUESTED_AUTHN_CONTEXT"] ?? "1",
     },
   });
 
@@ -112,10 +113,16 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
   ];
 
-  const SAML_FORM_SWITCH_FIELD: TControllerSwitchFormField<SAMLConfigFormValues> = {
-    name: "ENABLE_SAML_IDP_SYNC",
-    label: "IdP",
-  };
+  const SAML_FORM_SWITCH_FIELDS: TControllerSwitchFormField<SAMLConfigFormValues>[] = [
+    {
+      name: "ENABLE_SAML_IDP_SYNC",
+      label: "Refresh user attributes from IdP during sign in",
+    },
+    {
+      name: "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT",
+      label: "Disable RequestedAuthnContext to allow any authentication method",
+    },
+  ];
 
   const SAML_WEB_SERVICE_DETAILS: TCopyField[] = [
     {
@@ -202,6 +209,8 @@ export function InstanceSAMLConfigForm(props: Props) {
         SAML_CERTIFICATE: response.find((item) => item.key === "SAML_CERTIFICATE")?.value,
         SAML_PROVIDER_NAME: response.find((item) => item.key === "SAML_PROVIDER_NAME")?.value,
         ENABLE_SAML_IDP_SYNC: response.find((item) => item.key === "ENABLE_SAML_IDP_SYNC")?.value,
+        SAML_DISABLE_REQUESTED_AUTHN_CONTEXT:
+          response.find((item) => item.key === "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT")?.value ?? "1",
       });
     } catch (err) {
       console.error(err);
@@ -262,7 +271,9 @@ export function InstanceSAMLConfigForm(props: Props) {
                 IdP-generated certificate for signing this Plane app as an authorized service provider for your IdP
               </p>
             </div>
-            <ControllerSwitch control={control} field={SAML_FORM_SWITCH_FIELD} />
+            {SAML_FORM_SWITCH_FIELDS.map((field) => (
+              <ControllerSwitch key={field.name} control={control} field={field} />
+            ))}
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
                 <Button

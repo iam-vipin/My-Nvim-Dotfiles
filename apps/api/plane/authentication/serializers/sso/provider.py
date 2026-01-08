@@ -50,6 +50,7 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
             "sso_url",
             "certificate",
             "is_enabled",
+            "disable_requested_authn_context",
         ]
         read_only_fields = [
             "id",
@@ -110,8 +111,7 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        identity_provider = IdentityProvider.objects.create(**validated_data)
-
+        # Check if provider already exists BEFORE creating
         if validated_data.get("provider") == IdentityProvider.OIDC:
             if IdentityProvider.objects.filter(
                 workspace=self.context.get("workspace"), provider=IdentityProvider.OIDC
@@ -129,6 +129,9 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
                     error_code=AUTHENTICATION_ERROR_CODES["SAML_ALREADY_CONFIGURED"],
                     error_message="SAML_ALREADY_CONFIGURED",
                 )
+
+        # Create the identity provider after validation
+        identity_provider = IdentityProvider.objects.create(**validated_data)
 
         # Create the identity provider domains
         IdentityProviderDomain.objects.bulk_create(
@@ -150,7 +153,7 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
                 is_enabled=False
             )
 
-        super().update(instance, validated_data)
+        return super().update(instance, validated_data)
 
 
 class IdentityProviderSerializer(IdentityProviderCreateSerializer):
@@ -174,6 +177,7 @@ class IdentityProviderSerializer(IdentityProviderCreateSerializer):
             "logout_url",
             "entity_id",
             "is_enabled",
+            "disable_requested_authn_context",
             "domains",
         ]
         read_only_fields = [

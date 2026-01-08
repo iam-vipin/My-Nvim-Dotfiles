@@ -52,6 +52,7 @@ export type TIdentityProviderSAML = TBaseIdentityProvider & {
   entity_id: string;
   sso_url: string;
   certificate: string;
+  disable_requested_authn_context: boolean;
 };
 
 // Discriminated union - TypeScript narrows based on 'provider' field
@@ -78,7 +79,7 @@ export type TCreateOIDCProviderRequest = Pick<
 
 export type TCreateSAMLProviderRequest = Pick<
   TIdentityProviderSAML,
-  "entity_id" | "sso_url" | "certificate" | "logout_url" | "is_enabled" | "provider"
+  "entity_id" | "sso_url" | "certificate" | "logout_url" | "is_enabled" | "provider" | "disable_requested_authn_context"
 >;
 
 // Update types - partial, excluding provider (can't change provider type)

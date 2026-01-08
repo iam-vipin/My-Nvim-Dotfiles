@@ -47,22 +47,28 @@ class SAMLAdapter(Adapter):
         entity_uri: Optional[str] = None,
         redirect_uri: Optional[str] = None,
     ):
-        (SAML_ENTITY_ID, SAML_SSO_URL, SAML_LOGOUT_URL, SAML_CERTIFICATE) = get_configuration_value(
-            [
-                {
-                    "key": "SAML_ENTITY_ID",
-                    "default": os.environ.get("SAML_ENTITY_ID"),
-                },
-                {"key": "SAML_SSO_URL", "default": os.environ.get("SAML_SSO_URL")},
-                {
-                    "key": "SAML_LOGOUT_URL",
-                    "default": os.environ.get("SAML_LOGOUT_URL"),
-                },
-                {
-                    "key": "SAML_CERTIFICATE",
-                    "default": os.environ.get("SAML_CERTIFICATE"),
-                },
-            ]
+        (SAML_ENTITY_ID, SAML_SSO_URL, SAML_LOGOUT_URL, SAML_CERTIFICATE, SAML_DISABLE_REQUESTED_AUTHN_CONTEXT) = (
+            get_configuration_value(
+                [
+                    {
+                        "key": "SAML_ENTITY_ID",
+                        "default": os.environ.get("SAML_ENTITY_ID"),
+                    },
+                    {"key": "SAML_SSO_URL", "default": os.environ.get("SAML_SSO_URL")},
+                    {
+                        "key": "SAML_LOGOUT_URL",
+                        "default": os.environ.get("SAML_LOGOUT_URL"),
+                    },
+                    {
+                        "key": "SAML_CERTIFICATE",
+                        "default": os.environ.get("SAML_CERTIFICATE"),
+                    },
+                    {
+                        "key": "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT",
+                        "default": os.environ.get("SAML_DISABLE_REQUESTED_AUTHN_CONTEXT", "1"),
+                    },
+                ]
+            )
         )
 
         if not (SAML_ENTITY_ID and SAML_SSO_URL and SAML_CERTIFICATE):
@@ -73,6 +79,8 @@ class SAMLAdapter(Adapter):
 
         super().__init__(request, self.provider)
         req = self.prepare_saml_request(self.request)
+        # Parse the disable_requested_authn_context setting (defaults to True)
+        disable_authn_context = SAML_DISABLE_REQUESTED_AUTHN_CONTEXT == "1"
         saml_config = self.generate_saml_configuration(
             request=request,
             entity_id=SAML_ENTITY_ID,
@@ -81,6 +89,7 @@ class SAMLAdapter(Adapter):
             idp_certificate=SAML_CERTIFICATE,
             entity_uri=entity_uri,
             redirect_uri=redirect_uri,
+            disable_requested_authn_context=disable_authn_context,
         )
 
         # Generate configuration
@@ -97,6 +106,7 @@ class SAMLAdapter(Adapter):
         idp_certificate,
         entity_uri: Optional[str] = None,
         redirect_uri: Optional[str] = None,
+        disable_requested_authn_context: bool = True,
     ):
         if entity_uri is None:
             entity_uri = f"{request.scheme}://{request.get_host()}/auth/saml/metadata/"
@@ -104,7 +114,7 @@ class SAMLAdapter(Adapter):
         if redirect_uri is None:
             redirect_uri = f"{request.scheme}://{request.get_host()}/auth/saml/callback/"
 
-        return {
+        config = {
             "strict": True,
             "debug": settings.DEBUG,
             "sp": {
@@ -151,6 +161,14 @@ class SAMLAdapter(Adapter):
                 ],
             },
         }
+
+        if disable_requested_authn_context:
+            # Disable RequestedAuthnContext to allow any authentication method
+            # This fixes Azure AD error AADSTS75011 when users authenticate with
+            # MFA, certificates, or other non-password methods
+            config["security"] = {"requestedAuthnContext": False}
+
+        return config
 
     def prepare_saml_request(self, request):
         return {
@@ -262,6 +280,7 @@ class SAMLAuthCloudAdapter(Adapter):
             sso_url=identity_provider.sso_url,
             logout_url=identity_provider.logout_url,
             idp_certificate=identity_provider.certificate,
+            disable_requested_authn_context=identity_provider.disable_requested_authn_context,
         )
 
         # Generate configuration
@@ -269,8 +288,17 @@ class SAMLAuthCloudAdapter(Adapter):
         auth = OneLogin_Saml2_Auth(req, saml_config)
         self.auth = auth
 
-    def generate_saml_configuration(self, request, entity_id, workspace_id, sso_url, logout_url, idp_certificate):
-        return {
+    def generate_saml_configuration(
+        self,
+        request,
+        entity_id,
+        workspace_id,
+        sso_url,
+        logout_url,
+        idp_certificate,
+        disable_requested_authn_context: bool = True,
+    ):
+        config = {
             "strict": True,
             "debug": settings.DEBUG,
             "sp": {
@@ -317,6 +345,14 @@ class SAMLAuthCloudAdapter(Adapter):
                 ],
             },
         }
+
+        if disable_requested_authn_context:
+            # Disable RequestedAuthnContext to allow any authentication method
+            # This fixes Azure AD error AADSTS75011 when users authenticate with
+            # MFA, certificates, or other non-password methods
+            config["security"] = {"requestedAuthnContext": False}
+
+        return config
 
     def prepare_saml_request(self, request):
         return {

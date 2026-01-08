@@ -12,6 +12,7 @@
  */
 
 import React from "react";
+import { useNavigate } from "react-router";
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -23,13 +24,19 @@ type TAuthUpgradeButtonProps = {
 
 export function UpgradeButton(props: TAuthUpgradeButtonProps) {
   const { level } = props;
+  // hooks
+  const navigate = useNavigate();
   // states
   const [isActivationModalOpen, setIsActivationModalOpen] = React.useState(false);
   // derived values
   const redirectionLink = encodeURI(WEB_BASE_URL + "/");
 
   const handleActivationModalSubmit = () => {
-    window.open(redirectionLink, "_blank");
+    if (level === "instance") {
+      void navigate("/billing/");
+    } else {
+      window.open(redirectionLink, "_blank");
+    }
     setIsActivationModalOpen(false);
   };
 
@@ -49,7 +56,7 @@ export function UpgradeButton(props: TAuthUpgradeButtonProps) {
         }
         primaryButtonText={{
           loading: "Redirecting",
-          default: "Go to Plane",
+          default: "Go to Billing",
         }}
         secondaryButtonText="Close"
       />

@@ -263,7 +263,7 @@ export function InstanceSAMLConfigForm(props: Props) {
                     onChange={onChange}
                     hasError={Boolean(errors.SAML_CERTIFICATE)}
                     placeholder="---BEGIN CERTIFICATE---\n2yWn1gc7DhOFB9\nr0gbE+\n---END CERTIFICATE---"
-                    className="min-h-[102px] w-full rounded-md font-medium text-13"
+                    className="min-h-[102px] w-full rounded-md font-medium text-12"
                   />
                 )}
               />

@@ -34,7 +34,7 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <h4 className="text-sm text-custom-text-300">{label}</h4>
+      <h4 className="text-13 text-custom-text-300">{label}</h4>
       <div className="relative">
         <Controller
           control={control}

@@ -15,7 +15,7 @@ import { Controller } from "react-hook-form";
 import type { Control, ControllerRenderProps, FieldPath, FieldValues } from "react-hook-form";
 // plane imports
 import { Input } from "@plane/propel/input";
-import { Loader, TextArea } from "@plane/ui";
+import { Loader, TextArea, ToggleSwitch } from "@plane/ui";
 
 type TProviderFormField<T extends FieldValues> = {
   name: FieldPath<T>;
@@ -23,7 +23,7 @@ type TProviderFormField<T extends FieldValues> = {
   placeholder: string;
   description: string;
   required: boolean;
-  type?: "text" | "password" | "textarea";
+  type?: "text" | "password" | "textarea" | "toggle";
   control: Control<T>;
   errorMessage?: string;
   isInitializing: boolean;
@@ -34,6 +34,36 @@ export function ProviderFormField<T extends FieldValues>(props: TProviderFormFie
   const { name, label, placeholder, description, required, type, control, errorMessage, isInitializing, customRender } =
     props;
 
+  // Toggle fields use horizontal layout
+  if (type === "toggle") {
+    return (
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <span className="text-body-sm-medium text-primary">{label}</span>
+          <span className="text-body-xs-regular text-placeholder">{description}</span>
+        </div>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field: formField }) => {
+            if (isInitializing) {
+              return (
+                <Loader>
+                  <Loader.Item height="20px" width="44px" />
+                </Loader>
+              );
+            }
+            if (customRender) {
+              return <>{customRender(formField)}</>;
+            }
+            return <ToggleSwitch value={formField.value} onChange={formField.onChange} size="sm" />;
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Regular fields use vertical layout
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={name} className="text-body-sm-medium text-primary">

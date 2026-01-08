@@ -41,13 +41,13 @@ export const SAML_FORM_FIELDS = [
     required: true,
     type: "textarea" as const,
   },
-];
-
-export const SAML_TOGGLE_FIELDS = [
   {
     name: "disable_requested_authn_context" as const,
     label: "Disable RequestedAuthnContext to allow any authentication method",
+    placeholder: "",
     description:
       "Enable this to fix Azure AD error AADSTS75011 when users authenticate with MFA, certificates, or other non-password methods",
+    required: false,
+    type: "toggle" as const,
   },
 ];

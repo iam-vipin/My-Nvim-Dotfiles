@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  },
   "references": [
     { "path": "./packages/decorators" },
     { "path": "./packages/editor" },

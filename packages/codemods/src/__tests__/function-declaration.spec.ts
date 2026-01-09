@@ -485,7 +485,7 @@ export const MyObserverComponent = observer(() => {
         return () => <div>Hello</div>;
       }, [dep]);
       `,
-      { parser: "tsx", path: "file.tsx" }
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -509,7 +509,7 @@ export const MyObserverComponent = observer(() => {
         };
       }, []);
       `,
-      { parser: "tsx", path: "file.tsx" }
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`

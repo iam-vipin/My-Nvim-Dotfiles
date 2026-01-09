@@ -3,10 +3,10 @@
   "version": "1.2.0",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
-  "main": "./dist/start.mjs",
-  "module": "./dist/start.mjs",
+  "main": "./dist/start.js",
+  "module": "./dist/start.js",
   "exports": {
-    ".": "./dist/start.mjs",
+    ".": "./dist/start.js",
     "./package.json": "./package.json"
   },
   "private": true,

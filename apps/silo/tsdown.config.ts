@@ -8,4 +8,5 @@ export default defineConfig({
   sourcemap: true,
   exports: true,
   noExternal: [/^jira\.js/, /^bluebird$/],
+  platform: "node",
 });

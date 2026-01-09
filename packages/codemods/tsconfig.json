@@ -1,15 +1,6 @@
 {
+  "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
-    "composite": true,
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
     "rootDir": "src",
     "outDir": "dist"
   },

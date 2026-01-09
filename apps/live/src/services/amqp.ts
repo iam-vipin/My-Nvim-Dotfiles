@@ -1,4 +1,4 @@
-import { Effect, Schema, Ref, Queue, Schedule, Duration, Fiber, pipe, Option, Deferred, Runtime } from "effect";
+import { Effect, Schema, Ref, Queue, Schedule, Duration, Fiber, pipe, Option, Deferred, Runtime, Scope } from "effect";
 import amqplib from "amqplib";
 import type { Connection, Channel, ConsumeMessage } from "amqplib";
 import { ConfigService } from "./config";
@@ -43,7 +43,7 @@ type AmqpServiceShape = {
   readonly isConnected: Effect.Effect<boolean>;
   readonly subscribe: <E>(
     handler: (message: AmqpMessage) => Effect.Effect<void, E>
-  ) => Effect.Effect<Fiber.RuntimeFiber<void, AmqpConsumeError | E>, AmqpConnectionError>;
+  ) => Effect.Effect<Fiber.RuntimeFiber<void, AmqpConsumeError | E>, AmqpConnectionError, Scope.Scope>;
   readonly messages: Queue.Dequeue<AmqpMessage>;
 };
 
@@ -370,34 +370,32 @@ const makeAmqpService = Effect.gen(function* () {
     isConnected: Ref.get(stateRef).pipe(Effect.map((state) => state.connection !== null)),
 
     subscribe: <E>(handler: (message: AmqpMessage) => Effect.Effect<void, E>) =>
-      Effect.scoped(
-        Effect.gen(function* () {
-          const state = yield* Ref.get(stateRef);
-          if (!state.connection) {
-            return yield* Effect.fail(
-              new AmqpConnectionError({
-                message: "AMQP not connected",
-              })
-            );
-          }
-
-          // Use forkScoped so fiber is tied to caller's scope
-          const fiber = yield* Effect.forkScoped(
-            Effect.forever(
-              Effect.gen(function* () {
-                const message = yield* Queue.take(messageQueue);
-                yield* handler(message).pipe(
-                  Effect.catchAll((error) =>
-                    Effect.logError("AMQP: Handler error", { error }).pipe(Effect.flatMap(() => message.nack))
-                  )
-                );
-              })
-            )
+      Effect.gen(function* () {
+        const state = yield* Ref.get(stateRef);
+        if (!state.connection) {
+          return yield* Effect.fail(
+            new AmqpConnectionError({
+              message: "AMQP not connected",
+            })
           );
+        }
 
-          return fiber;
-        })
-      ),
+        // Use forkScoped so fiber is tied to caller's scope
+        const fiber = yield* Effect.forkScoped(
+          Effect.forever(
+            Effect.gen(function* () {
+              const message = yield* Queue.take(messageQueue);
+              yield* handler(message).pipe(
+                Effect.catchAll((error) =>
+                  Effect.logError("AMQP: Handler error", { error }).pipe(Effect.flatMap(() => message.nack))
+                )
+              );
+            })
+          )
+        );
+
+        return fiber;
+      }),
 
     messages: messageQueue,
   } satisfies AmqpServiceShape;

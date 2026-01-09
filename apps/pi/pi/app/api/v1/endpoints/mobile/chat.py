@@ -298,17 +298,20 @@ async def get_answer_stream_json(
     async def stream_response() -> AsyncGenerator[str, None]:
         token_id = None
         try:
+            # Open a short-lived session for the duration of the streaming work
             async with get_streaming_db_session() as stream_db:
-                # Heartbeat mechanism that only emits after 10s of inactivity
+                # Heartbeat mechanism that does not cancel the underlying generator
+                # Only emits heartbeat after 10s of inactivity (no chunks received)
                 heartbeat_stop = asyncio.Event()
                 heartbeat_task: Optional[asyncio.Task[None]] = None
 
                 async def heartbeat_emitter() -> None:
-                    """Sleep for 10s, then complete (heartbeat fires)."""
+                    """Sleep for 10s, then put heartbeat in queue if not stopped."""
                     with contextlib.suppress(asyncio.CancelledError):
                         await asyncio.sleep(10)
 
-                base_iter = chatbot.process_chat_stream(data, stream_db)
+                # Single unified call; internal routing happens in chat service
+                base_iter = chatbot.process_chat_stream(data, db=stream_db)
                 next_chunk_task: asyncio.Task[Union[str, Dict[str, Any]]] = asyncio.create_task(
                     cast(Coroutine[None, None, Union[str, Dict[str, Any]]], base_iter.__anext__())
                 )
@@ -334,7 +337,7 @@ async def get_answer_stream_json(
                             except StopAsyncIteration:
                                 break
                             except Exception as _e:
-                                log.error(f"Error reading mobile stream chunk: {_e!s}")
+                                log.error(f"Error reading stream chunk: {_e!s}")
                                 break
 
                             # Cancel and restart heartbeat timer since we got a chunk (activity detected)
@@ -350,18 +353,20 @@ async def get_answer_stream_json(
                                 yield normalized_error
                                 next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, Union[str, Dict[str, Any]]], base_iter.__anext__()))
                                 continue
-
-                            # Handle JSON dict chunks (reasoning blocks)
+                            # change point: "πspecial reasoning blockπ:
+                            # handle the new json string format of reasoning blocks. It is a json string with header and content.
+                            # add a condition to check if the chunk is a json string with header and content.
                             if isinstance(chunk, dict):
                                 if "chunk_type" in chunk and chunk["chunk_type"] == "reasoning":
-                                    payload = {"header": chunk.get("header", ""), "content": chunk.get("content", "")}
+                                    payload = {"header": chunk["header"], "content": chunk["content"]}
                                     yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
+                                    # for backward compatibility, we also need to yield the chunk as a string
+                                    # bwc_payload = {"reasoning": f"{chunk["header"]}\n\n{chunk["content"]}\n\n"}
+                                    # yield f"event: reasoning\ndata: {json.dumps(bwc_payload)}\n\n"
                                 else:
-                                    # Unknown dict type, send as delta
-                                    log.warning(f"ChatID: {data.chat_id} - Unknown dict chunk type: {chunk}")
-                                    payload = {"chunk": json.dumps(chunk)}
+                                    log.warning(f"ChatID: {data.chat_id} - Chunk is not a json string: {chunk}")
+                                    payload = {"chunk": chunk}
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                            # Handle special string markers
                             elif isinstance(chunk, str) and chunk.startswith("πspecial actions blockπ: "):
                                 actions_content = chunk.replace("πspecial actions blockπ: ", "")
                                 try:
@@ -375,20 +380,23 @@ async def get_answer_stream_json(
                                 clarification_content = chunk.replace("πspecial clarification blockπ: ", "")
                                 try:
                                     clarification_data = json.loads(clarification_content)
+                                    log.info(f"ChatID: {data.chat_id} - Clarification data received in the endpoint: {clarification_data}")
                                     formatted_text = format_clarification_as_text(clarification_data)
+                                    log.info(f"ChatID: {data.chat_id} - Clarification formatted text: {formatted_text}")
                                     payload = {"chunk": formatted_text}
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
                                 except json.JSONDecodeError:
                                     log.warning(f"Failed to parse clarification JSON: {clarification_content}")
-                                    payload = {"chunk": "I'm sorry, I can't understand your request in your workspace context. Can you be more specific?"}
+                                    payload = {
+                                        "chunk": "I'm sorry, I can't understand your request in your workspace context. Can you be more specific?"
+                                    }
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
                             else:
-                                # Regular text chunk
                                 payload = {"chunk": chunk}
                                 yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
 
                             # Prepare next iteration
-                            next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, Union[str, Dict[str, Any]]], base_iter.__anext__()))
+                            next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
                 finally:
                     heartbeat_stop.set()
                     if heartbeat_task and not heartbeat_task.done():
@@ -401,16 +409,15 @@ async def get_answer_stream_json(
                 token_id = data.context.get("token_id")
 
             # Emit CTA before done to ensure clients receive it
-            # # TODO: Uncomment when actions are supported in mobile
-            # yield sse_event("cta_available", {"type": "create_page"})
+            yield sse_event("cta_available", {"type": "create_page"})
             # Explicitly signal completion so EventSource clients don't interpret
             # the socket close as an error.
             yield sse_done()
         except asyncio.CancelledError:
-            # This is expected if the client disconnects
-            log.info("Mobile stream cancelled by client disconnect.")
+            # This is expected if the client disconnects, so log as info and let it propagate
+            log.info("Stream cancelled by client disconnect.")
         except Exception as e:
-            log.error(f"Error processing mobile stream request: {e!s}")
+            log.error(f"Error streaming response: {e!s}")
             # Emit SSE-compliant error and finalize
             yield sse_event("error", {"message": "An unexpected error occurred. Please try again"})
             yield sse_done()

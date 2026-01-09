@@ -351,7 +351,7 @@ class Adapter:
                     user.avatar = avatar
                 # If avatar upload fails, set the avatar to the original URL
                 else:
-                    user.avatar = avatar
+                    user.avatar = avatar if avatar else ""
 
             # Create profile
             Profile.objects.create(user=user)

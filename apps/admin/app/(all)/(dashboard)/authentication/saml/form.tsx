@@ -58,7 +58,7 @@ export function InstanceSAMLConfigForm(props: Props) {
       SAML_LOGOUT_URL: config["SAML_LOGOUT_URL"],
       SAML_CERTIFICATE: config["SAML_CERTIFICATE"],
       SAML_PROVIDER_NAME: config["SAML_PROVIDER_NAME"],
-      ENABLE_SAML_IDP_SYNC: config["ENABLE_SAML_IDP_SYNC"],
+      ENABLE_SAML_IDP_SYNC: config["ENABLE_SAML_IDP_SYNC"] || "0",
       SAML_DISABLE_REQUESTED_AUTHN_CONTEXT: config["SAML_DISABLE_REQUESTED_AUTHN_CONTEXT"] ?? "1",
     },
   });
@@ -248,7 +248,6 @@ export function InstanceSAMLConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
-
             <div className="flex flex-col gap-1">
               <h4 className="text-13">SAML certificate</h4>
               <Controller

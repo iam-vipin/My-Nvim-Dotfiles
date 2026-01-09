@@ -95,7 +95,8 @@ class OauthAdapter(Adapter):
             )
             response.raise_for_status()
             return response.json()
-        except requests.RequestException:
+        except requests.RequestException as e:
+            log_exception(e)
             code = self.authentication_error_code()
             logger.warning(
                 "Error getting user token",
@@ -116,7 +117,8 @@ class OauthAdapter(Adapter):
             )
             response.raise_for_status()
             return response.json()
-        except requests.RequestException:
+        except requests.RequestException as e:
+            log_exception(e)
             code = self.authentication_error_code()
             logger.warning(
                 "Error getting user response",

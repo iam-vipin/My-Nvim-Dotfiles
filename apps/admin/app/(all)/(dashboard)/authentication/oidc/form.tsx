@@ -58,7 +58,7 @@ export function InstanceOIDCConfigForm(props: Props) {
       OIDC_AUTHORIZE_URL: config["OIDC_AUTHORIZE_URL"],
       OIDC_LOGOUT_URL: config["OIDC_LOGOUT_URL"],
       OIDC_PROVIDER_NAME: config["OIDC_PROVIDER_NAME"],
-      ENABLE_OIDC_IDP_SYNC: config["ENABLE_OIDC_IDP_SYNC"],
+      ENABLE_OIDC_IDP_SYNC: config["ENABLE_OIDC_IDP_SYNC"] || "0",
     },
   });
 

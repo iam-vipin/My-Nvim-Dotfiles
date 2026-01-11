@@ -16,6 +16,7 @@ from django.conf import settings
 # Module imports
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
+from plane.authentication.utils.session_limit import enforce_session_limit
 
 
 def user_login(request, user, is_app=False, is_admin=False, is_space=False):
@@ -29,7 +30,12 @@ def user_login(request, user, is_app=False, is_admin=False, is_space=False):
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),
         "ip_address": get_client_ip(request=request),
         "domain": base_host(request=request, is_app=is_app, is_admin=is_admin, is_space=is_space),
+        "session_type": "web",
     }
     request.session["device_info"] = device_info
     request.session.save()
+
+    # Enforce concurrent session limit - remove oldest sessions if limit exceeded
+    enforce_session_limit(user, current_session_key=request.session.session_key)
+
     return

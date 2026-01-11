@@ -27,7 +27,7 @@ import { getPasswordStrength } from "@plane/utils";
 import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
 // constants
 // helpers
-import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
+import { EAuthModes, EAuthSteps, encodeEmailForUrl } from "@/helpers/authentication.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -94,7 +94,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         {isSMTPConfigured ? (
           <Link
             data-ph-element={AUTH_TRACKER_ELEMENTS.FORGOT_PASSWORD_FROM_SIGNIN}
-            href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
+            href={`/accounts/forgot-password?ctx=${encodeEmailForUrl(email)}`}
             className="text-11 font-medium text-accent-primary"
           >
             {t("auth.common.forgot_password")}

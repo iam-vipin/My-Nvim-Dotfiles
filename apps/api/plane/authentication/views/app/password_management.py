@@ -153,9 +153,10 @@ class ResetPasswordEndpoint(RateLimitedView):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
+                params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
                 url = urljoin(
                     base_host(request=request, is_app=True),
-                    "accounts/reset-password?" + urlencode(exc.get_error_dict()),
+                    "accounts/reset-password?" + urlencode(params),
                 )
                 return HttpResponseRedirect(url)
 
@@ -166,9 +167,23 @@ class ResetPasswordEndpoint(RateLimitedView):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
+                params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
                 url = urljoin(
                     base_host(request=request, is_app=True),
-                    "accounts/reset-password?" + urlencode(exc.get_error_dict()),
+                    "accounts/reset-password?" + urlencode(params),
+                )
+                return HttpResponseRedirect(url)
+
+            # Check if new password is the same as current password
+            if user.check_password(password):
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_SAME_AS_CURRENT"],
+                    error_message="PASSWORD_SAME_AS_CURRENT",
+                )
+                params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
+                url = urljoin(
+                    base_host(request=request, is_app=True),
+                    "accounts/reset-password?" + urlencode(params),
                 )
                 return HttpResponseRedirect(url)
 

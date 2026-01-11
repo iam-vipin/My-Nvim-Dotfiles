@@ -86,6 +86,15 @@ class ChangePasswordEndpoint(APIView):
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if new password is the same as current password
+        if user.check_password(new_password):
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_SAME_AS_CURRENT"],
+                error_message="PASSWORD_SAME_AS_CURRENT",
+                payload={"error": "New password cannot be the same as current password"},
+            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+
         # check the password score
         results = zxcvbn(new_password)
         if results["score"] < 3:

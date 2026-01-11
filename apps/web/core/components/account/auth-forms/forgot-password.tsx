@@ -23,6 +23,8 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
+// helpers
+import { decodeEmailFromUrl } from "@/helpers/authentication.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // services
@@ -45,7 +47,8 @@ const authService = new AuthService();
 export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
   // search params
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const encodedEmail = searchParams.get("ctx");
+  const email = decodeEmailFromUrl(encodedEmail);
   // plane hooks
   const { t } = useTranslation();
   // timer
@@ -59,7 +62,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
   } = useForm<TForgotPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
-      email: email?.toString() ?? "",
+      email: email ?? "",
     },
   });
 

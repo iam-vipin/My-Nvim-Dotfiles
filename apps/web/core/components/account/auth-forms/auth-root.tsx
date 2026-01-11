@@ -24,6 +24,7 @@ import {
   EAuthenticationErrorCodes,
   EErrorAlertType,
   authErrorHandler,
+  decodeEmailFromUrl,
 } from "@/helpers/authentication.helper";
 // hooks
 import { useOAuthConfig } from "@/hooks/oauth";
@@ -41,7 +42,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   //router
   const searchParams = useSearchParams();
   // query params
-  const emailParam = searchParams.get("email");
+  const encodedEmail = searchParams.get("ctx");
+  const emailParam = decodeEmailFromUrl(encodedEmail);
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
@@ -50,7 +52,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   // states
   const [authMode, setAuthMode] = useState<EAuthModes | undefined>(undefined);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
-  const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
+  const [email, setEmail] = useState(emailParam ?? "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   // derived values
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";

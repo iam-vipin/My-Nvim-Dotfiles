@@ -9,6 +9,8 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+import base64
+
 AUTHENTICATION_ERROR_CODES = {
     # Global
     "INSTANCE_NOT_CONFIGURED": 5000,
@@ -72,6 +74,7 @@ AUTHENTICATION_ERROR_CODES = {
     "INCORRECT_OLD_PASSWORD": 5135,
     "MISSING_PASSWORD": 5138,
     "INVALID_NEW_PASSWORD": 5140,
+    "PASSWORD_SAME_AS_CURRENT": 5142,
     # set password
     "PASSWORD_ALREADY_SET": 5145,
     # Admin
@@ -135,6 +138,11 @@ class AuthenticationException(Exception):
     def get_error_dict(self):
         error = {"error_code": self.error_code, "error_message": self.error_message}
         for key in self.payload:
-            error[key] = self.payload[key]
+            # Encode email as base64 and use 'ctx' as param name to avoid exposing PII in URLs
+            if key == "email" and self.payload[key]:
+                encoded_email = base64.b64encode(str(self.payload[key]).encode()).decode()
+                error["ctx"] = encoded_email
+            else:
+                error[key] = self.payload[key]
 
         return error

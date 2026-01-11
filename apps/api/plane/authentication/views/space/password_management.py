@@ -150,7 +150,8 @@ class ResetPasswordSpaceEndpoint(RateLimitedView):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
+                params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
                 return HttpResponseRedirect(url)
 
             # Check the password complexity
@@ -160,7 +161,8 @@ class ResetPasswordSpaceEndpoint(RateLimitedView):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
+                params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
                 return HttpResponseRedirect(url)
 
             # set_password also hashes the password that the user will get

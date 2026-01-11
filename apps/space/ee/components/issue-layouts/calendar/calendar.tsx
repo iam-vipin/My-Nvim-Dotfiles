@@ -14,13 +14,13 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane
+import { MONTHS_LIST } from "@plane/constants";
 import type { TGroupedIssues, TLoader, TPaginationData, ICalendarWeek } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 // plane web
-import { MONTHS_LIST } from "@/plane-web/constants/calendar";
 import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper";
 import useSize from "@/plane-web/hooks/use-window-size";
 import type { ICalendarStore } from "@/plane-web/store/issue_calendar_view.store";

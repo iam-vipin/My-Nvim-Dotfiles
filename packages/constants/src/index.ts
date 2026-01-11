@@ -16,6 +16,7 @@ export * from "./analytics";
 export * from "./application";
 export * from "./auth";
 export * from "./automation";
+export * from "./calendar";
 export * from "./chart";
 export * from "./customers";
 export * from "./cycle";

@@ -15,14 +15,13 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
+import { MONTHS_LIST } from "@plane/constants";
 import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
-//hooks
-// icons
-// constants
 import { getDate } from "@plane/utils";
-import { MONTHS_LIST } from "@/constants/calendar";
+// hooks
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+// store
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";

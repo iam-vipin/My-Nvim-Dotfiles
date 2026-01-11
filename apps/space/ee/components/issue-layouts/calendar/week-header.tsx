@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 // constants
-import { DAYS_LIST } from "@/plane-web/constants/calendar";
+import { DAYS_LIST } from "@plane/constants";
 
 type Props = {
   isLoading: boolean;
@@ -25,7 +25,7 @@ export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Pr
 
   return (
     <div
-      className={`relative sticky top-0 z-1 grid md:divide-x-[0.5px] divide-subtle-1 text-13 font-medium ${
+      className={`sticky top-0 z-1 grid md:divide-x-[0.5px] divide-subtle-1 text-13 font-medium ${
         showWeekends ? "grid-cols-7" : "grid-cols-5"
       }`}
     >

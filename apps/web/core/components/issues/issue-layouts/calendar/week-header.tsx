@@ -12,10 +12,10 @@
  */
 
 import { observer } from "mobx-react";
+// plane imports
 import { EStartOfTheWeek } from "@plane/types";
+import { DAYS_LIST } from "@plane/constants";
 import { getOrderedDays } from "@plane/utils";
-import { DAYS_LIST } from "@/constants/calendar";
-// helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
@@ -35,7 +35,7 @@ export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Pr
 
   return (
     <div
-      className={`relative sticky top-0 z-[1] grid md:divide-x-[0.5px] divide-subtle-1 text-13 font-medium ${
+      className={`sticky top-0 z-[1] grid md:divide-x-[0.5px] divide-subtle-1 text-13 font-medium ${
         showWeekends ? "grid-cols-7" : "grid-cols-5"
       }`}
     >

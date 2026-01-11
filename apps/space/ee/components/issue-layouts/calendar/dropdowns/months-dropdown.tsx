@@ -15,11 +15,12 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
+import { MONTHS_LIST } from "@plane/constants";
 import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
-//
-import { MONTHS_LIST } from "@/plane-web/constants/calendar";
+// plane web
 import { useCalendarView } from "@/plane-web/hooks/store";
 
 type Props = {

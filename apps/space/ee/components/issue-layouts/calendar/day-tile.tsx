@@ -13,15 +13,13 @@
 
 import { useRef } from "react";
 import { observer } from "mobx-react";
-// types
-import type { TGroupedIssues, TPaginationData, ICalendarDate } from "@plane/types";
 // plane imports
+import { MONTHS_LIST } from "@plane/constants";
+import type { TGroupedIssues, TPaginationData, ICalendarDate } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web
-import { MONTHS_LIST } from "@/plane-web/constants/calendar";
 import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper";
 import type { IIssue } from "@/types/issue";
-//
 import { CalendarIssueBlocks } from "./issue-blocks";
 
 type Props = {

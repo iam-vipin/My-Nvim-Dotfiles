@@ -196,7 +196,7 @@ export function calculateTimeAgoShort(date: string | number | Date | null): stri
   const diffInSeconds = (now.getTime() - parsedDate.getTime()) / 1000;
 
   if (diffInSeconds < 60) {
-    return `${Math.floor(diffInSeconds)}s`;
+    return `${Math.max(0, Math.floor(diffInSeconds))}s`;
   }
 
   const diffInMinutes = diffInSeconds / 60;

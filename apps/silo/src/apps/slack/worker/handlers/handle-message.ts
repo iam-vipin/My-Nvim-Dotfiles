@@ -110,6 +110,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
     const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const parser = getSlackContentParser({
+      slackService,
       userMap,
       teamDomain: workspaceConnection.connection_slug ?? "",
     });

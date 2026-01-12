@@ -16,6 +16,7 @@ import axios from "axios";
 import type {
   Message,
   SlackConversationHistoryResponse,
+  SlackConversationInfoResponse,
   SlackMessageResponse,
   SlackTokenRefreshResponse,
   SlackUserLookupByEmailResponse,
@@ -86,15 +87,27 @@ export class SlackService {
     });
   }
 
-  async ensureBotInChannel(channelId: string): Promise<boolean> {
+  async getConversationInfo(channelId: string): Promise<SlackConversationInfoResponse> {
+    // Check if bot is in channel
     try {
-      // Check if bot is in channel
       const response = await this.client.get("conversations.info", {
         params: { channel: channelId },
       });
 
+      return response.data as SlackConversationInfoResponse;
+    } catch (error) {
+      console.error("Error while getting conversation info", error);
+      throw error;
+    }
+  }
+
+  async ensureBotInChannel(channelId: string): Promise<boolean> {
+    try {
+      // Check if bot is in channel
+      const response = await this.getConversationInfo(channelId);
+
       // If we fail to ensure bot is in channel, make an attempt to join the channel
-      if (!response.data?.channel?.is_member) {
+      if (response.channel && response.channel.is_channel === true && response.channel.is_member === false) {
         // Join the channel if not a member
         await this.client.post("conversations.join", {
           channel: channelId,

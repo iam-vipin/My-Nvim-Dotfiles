@@ -33,6 +33,7 @@ import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { createReplyCommentModal } from "../../views/comments";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
+import type { PlaneUser } from "@plane/sdk";
 
 const shouldSkipActions = (data: TBlockActionPayload) => {
   const excludedActions = [E_MESSAGE_ACTION_TYPES.CONNECT_ACCOUNT];
@@ -591,17 +592,36 @@ async function handleAssignToMeButtonAction(data: TBlockActionPayload, details: 
   const { workspaceConnection, slackService, planeClient } = details;
 
   const user = await slackService.getUserInfo(data.user.id);
-  const issue = data.actions[0].value.split(".");
-  if (issue.length === 2) {
-    const projectId = issue[0];
-    const issueId = issue[1];
+  const identifier = data.actions[0].value.split(".");
+  if (identifier.length === 2) {
+    const projectId = identifier[0];
+    const issueId = identifier[1];
 
-    const planeMembers = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
+    const [issue, planeMembers] = await Promise.all([
+      planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId),
+      planeClient.users.list(workspaceConnection.workspace_slug, projectId),
+    ]);
+
     const member = planeMembers.find((member) => member.email === user?.user.profile.email);
 
     if (member) {
+      const assigneeIds = issue.assignees.map((assignee) => {
+        return typeof assignee === "string" ? assignee : (assignee as PlaneUser).id;
+      });
+
+      if (assigneeIds.includes(member.id)) {
+        await slackService.sendEphemeralMessage(
+          data.user.id,
+          `Work Item already *assigned* to you.`,
+          data.channel.id,
+          data.message?.thread_ts
+        );
+
+        return;
+      }
+
       await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
-        assignees: [member.id],
+        assignees: [...assigneeIds, member.id],
       });
 
       await slackService.sendEphemeralMessage(

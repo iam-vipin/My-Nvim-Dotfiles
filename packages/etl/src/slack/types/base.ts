@@ -474,7 +474,6 @@ export interface SlackTopicPurpose {
 export interface BaseConversation {
   id: string;
   created: number;
-  is_channel: boolean;
   is_group: boolean;
   is_im: boolean;
   is_archived?: boolean;
@@ -485,6 +484,7 @@ export interface BaseConversation {
 
 // Interface for channel/group conversations
 export interface ChannelGroupConversation extends BaseConversation {
+  is_channel: true;
   name: string;
   creator: string;
   unlinked?: number;
@@ -504,6 +504,7 @@ export interface ChannelGroupConversation extends BaseConversation {
 
 // Interface for direct message conversations
 export interface DirectMessageConversation extends BaseConversation {
+  is_channel: false;
   user: string;
   is_user_deleted: boolean;
 }

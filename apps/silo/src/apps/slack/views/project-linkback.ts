@@ -35,7 +35,7 @@ export const createProjectLinkback = (
     if (members.length > 0) {
       const memberText = members
         .slice(0, 2)
-        .map((member) => getUserMarkdown(planeToSlackUserMap, workspaceSlug, member.id))
+        .map((member) => getUserMarkdown(planeToSlackUserMap, workspaceSlug, member.id, member.display_name))
         .join(", ");
       const plusText = project.total_members > 2 ? ` and ${project.total_members - 2} more` : "";
       sectionContent += `\nMembers: *${memberText}${plusText}*`;
@@ -46,7 +46,7 @@ export const createProjectLinkback = (
   if (project.project_lead) {
     const lead = members.find((member) => member.id === project.project_lead);
     if (lead) {
-      sectionContent += `\nLead: *${getUserMarkdown(planeToSlackUserMap, workspaceSlug, project.project_lead)}*`;
+      sectionContent += `\nLead: *${getUserMarkdown(planeToSlackUserMap, workspaceSlug, lead.id, lead.display_name)}*`;
     }
   }
 

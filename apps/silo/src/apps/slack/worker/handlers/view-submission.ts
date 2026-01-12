@@ -231,6 +231,7 @@ export const handleIssueCommentViewSubmission = async (
 
       const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
       const parser = getSlackContentParser({
+        slackService,
         userMap,
         teamDomain: data.team.domain,
       });
@@ -366,6 +367,7 @@ export const handleCreateNewWorkItemViewSubmission = async (
     const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const parser = getSlackContentParser({
+      slackService,
       userMap,
       teamDomain: data.team.domain,
     });

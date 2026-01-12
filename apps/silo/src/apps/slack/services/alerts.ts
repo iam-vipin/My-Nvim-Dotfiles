@@ -140,6 +140,25 @@ const extractSlackDmAlertsFromIssue = (payload: PlaneWebhookPayloadBase<ExIssue>
       .filter((activity) => (payload.activity.actor?.id ? activity.actor_id !== payload.activity.actor?.id : true));
   }
 
+  // When it comes to creating work items directly, the field values come as null
+  if (!payload.activity.field) {
+    const assignees = payload.data.assignees || [];
+    const assigneeAlerts = assignees.map((assignee: { id: string } | string) => ({
+      actor_id: typeof assignee === "object" ? assignee.id : assignee,
+      type: ESlackDMAlertActivityType.ASSIGNEE,
+      action: ESlackDMAlertActivityAction.ADDED,
+    }));
+    const descriptionAlerts = extractUserMentionFromHtml(payload.data.description_html)
+      .map((userId) => ({
+        actor_id: userId,
+        type: ESlackDMAlertActivityType.WORK_ITEM_DESCRIPTION_MENTION,
+        action: ESlackDMAlertActivityAction.ADDED,
+      }))
+      .filter((activity) => (payload.activity.actor?.id ? activity.actor_id !== payload.activity.actor?.id : true));
+
+    return [...assigneeAlerts, ...descriptionAlerts];
+  }
+
   return [];
 };
 

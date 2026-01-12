@@ -128,7 +128,7 @@ export const createSlackLinkback = (
         type: "button",
         text: {
           type: "plain_text",
-          text: "Assign to me",
+          text: "Add me to assignees",
           emoji: true,
         },
         value: `${issue.project.id}.${issue.id}`,

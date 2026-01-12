@@ -1,3 +1,4 @@
+import type { SlackConversation } from "./base";
 /**
  * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
  * SPDX-License-Identifier: LicenseRef-Plane-Commercial
@@ -165,6 +166,11 @@ export type SlackUser = {
 export type SlackUserResponse = {
   ok: boolean;
   user: SlackUser;
+};
+
+export type SlackConversationInfoResponse = {
+  ok: boolean;
+  channel: SlackConversation;
 };
 
 export type TSlackConnectionData = {

@@ -86,9 +86,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <body suppressHydrationWarning>
         <div id="context-menu-portal" />
         <div id="editor-portal" />
-        <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
-          {children}
-        </ThemeProvider>
+        {children}
         <Scripts />
         {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
           <Script id="clarity-tracking">
@@ -132,15 +130,23 @@ export const meta: Route.MetaFunction = () => [
 
 export default function Root() {
   return (
-    <AppProvider>
-      <div className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}>
-        {/* free trial banner */}
-        <TrialBanner />
-        <main className="w-full h-full overflow-hidden relative">
-          <Outlet />
-        </main>
-      </div>
-    </AppProvider>
+    <ThemeProvider
+      attribute="data-theme"
+      themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
+      defaultTheme="system"
+    >
+      <AppProvider>
+        <div
+          className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}
+        >
+          {/* free trial banner */}
+          <TrialBanner />
+          <main className="w-full h-full overflow-hidden relative">
+            <Outlet />
+          </main>
+        </div>
+      </AppProvider>
+    </ThemeProvider>
   );
 }
 
@@ -151,9 +157,15 @@ export function HydrateFallback() {
   if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
 
   return (
-    <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
-      <LogoSpinner />
-    </div>
+    <ThemeProvider
+      attribute="data-theme"
+      themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
+      defaultTheme="system"
+    >
+      <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
+        <LogoSpinner />
+      </div>
+    </ThemeProvider>
   );
 }
 

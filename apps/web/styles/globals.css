@@ -216,11 +216,11 @@ html.todesktop .desktop-app-container {
 }
 
 html.todesktop .desktop-header {
-  @apply bg-surface-2;
   -webkit-app-region: drag;
 }
 
 html.todesktop .desktop-header button,
+html.todesktop .desktop-header a,
 html.todesktop .desktop-header .desktop-header-actions {
   -webkit-app-region: no-drag;
 }

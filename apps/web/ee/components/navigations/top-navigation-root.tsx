@@ -89,7 +89,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
       <div className="flex flex-1 shrink-0 items-center gap-1.5">
         {shouldShowAppSwitcher && <WorkspaceAppSwitcher />}
         {/* Workspace Menu */}
-        <div className="shrink-0 flex-1">
+        <div className="shrink-0">
           {!isDesktopApp && <WorkspaceMenuRoot variant="top-navigation" />}
           {isDesktopApp && <DesktopHeaderProvider />}
         </div>
@@ -99,7 +99,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         {isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}
       </div>
       {/* Additional Actions */}
-      <div className="desktop-header-actions shrink-0 flex-1 flex items-center gap-1 justify-end">
+      <div className="shrink-0 flex-1 flex items-center gap-1 justify-end">
         <Tooltip tooltipContent="Inbox" position="bottom">
           <AppSidebarItem
             variant="link"

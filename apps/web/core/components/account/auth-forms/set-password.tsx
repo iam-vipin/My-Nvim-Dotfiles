@@ -133,7 +133,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
               className="h-10 w-full border border-strong !bg-surface-1 pr-12 text-placeholder cursor-not-allowed"
-              autoComplete="on"
+              autoComplete="off"
               disabled
             />
           </div>
@@ -154,7 +154,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="on"
+              autoComplete="new-password"
               autoFocus
             />
             {showPassword.password ? (
@@ -185,6 +185,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
+              autoComplete="new-password"
             />
             {showPassword.retypePassword ? (
               <EyeOff

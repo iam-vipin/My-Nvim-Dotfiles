@@ -8,7 +8,6 @@ export interface PillInputProps extends Omit<React.InputHTMLAttributes<HTMLInput
   inputSize?: "xs" | "sm" | "md";
   hasError?: boolean;
   className?: string;
-  autoComplete?: "on" | "off";
   value: string[];
   onChange: (value: string[]) => void;
   pillClassName?: string;

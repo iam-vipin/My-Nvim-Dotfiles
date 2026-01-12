@@ -30,12 +30,12 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import get_current_user
+from pi.app.api.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
 from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
-from pi.app.api.v2.dependencies import get_current_user
-from pi.app.api.v2.dependencies import validate_plane_token
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
 from pi.app.models.message import MessageFlowStep

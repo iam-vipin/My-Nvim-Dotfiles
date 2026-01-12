@@ -48,6 +48,9 @@
   &.table-wrapper {
     --horizontal-offset: 0px;
   }
+  &:has(.editor-ai-block-node) {
+    --horizontal-offset: 0px;
+  }
 
   &::after {
     content: "";

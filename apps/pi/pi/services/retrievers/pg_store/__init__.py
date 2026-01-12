@@ -21,6 +21,7 @@ from .chat import soft_delete_chat
 from .chat import unfavorite_chat
 from .chat import upsert_chat
 from .chat import upsert_user_chat_preference
+from .feedback import create_feedback
 from .message import get_chat_messages
 from .message import get_tool_results_from_chat_history
 from .message import update_message_feedback
@@ -39,6 +40,7 @@ __all__ = [
     "get_user_chat_threads",
     "get_user_chat_threads_paginated",
     "update_message_feedback",
+    "create_feedback",
     "get_chat_messages",
     "upsert_message",
     "upsert_message_flow_steps",

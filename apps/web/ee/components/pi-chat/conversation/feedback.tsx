@@ -20,15 +20,15 @@ import { cn } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyTextToClipboard } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { EFeedback } from "@/plane-web/types";
 import { FeedbackModal } from "../input/feedback-modal";
+import { EAiFeedback } from "@plane/types";
 
 export type TProps = {
   answer: string;
   activeChatId: string;
   id: string;
   workspaceId: string | undefined;
-  feedback: EFeedback | undefined;
+  feedback: EAiFeedback | undefined;
   queryId: string | undefined;
   isLatest: boolean;
   handleConvertToPage?: () => void;
@@ -52,7 +52,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
       return;
     });
   };
-  const handleFeedback = async (feedback: EFeedback, feedbackMessage?: string) => {
+  const handleFeedback = async (feedback: EAiFeedback, feedbackMessage?: string) => {
     try {
       await sendFeedback(activeChatId, parseInt(id), feedback, workspaceId, feedbackMessage);
       setToast({
@@ -90,19 +90,19 @@ export const Feedback = observer(function Feedback(props: TProps) {
       </Tooltip>
 
       {/* Good response */}
-      {(!feedback || feedback === EFeedback.POSITIVE) && (
+      {(!feedback || feedback === EAiFeedback.POSITIVE) && (
         <Tooltip tooltipContent="Good response" position="bottom" className="mb-4">
           <button
             className={cn({
-              "cursor-default": feedback === EFeedback.POSITIVE,
+              "cursor-default": feedback === EAiFeedback.POSITIVE,
             })}
             onClick={() => {
-              if (!feedback) void handleFeedback(EFeedback.POSITIVE);
+              if (!feedback) void handleFeedback(EAiFeedback.POSITIVE);
             }}
           >
             <ThumbsUp
               size={16}
-              fill={feedback === EFeedback.POSITIVE ? "currentColor" : "none"}
+              fill={feedback === EAiFeedback.POSITIVE ? "currentColor" : "none"}
               className="my-auto text-icon-secondary transition-colors	"
             />
           </button>
@@ -110,17 +110,17 @@ export const Feedback = observer(function Feedback(props: TProps) {
       )}
 
       {/* Bad response */}
-      {(!feedback || feedback === EFeedback.NEGATIVE) && (
+      {(!feedback || feedback === EAiFeedback.NEGATIVE) && (
         <Tooltip tooltipContent="Bad response" position="bottom" className="mb-4">
           <button
             className={cn({
-              "!cursor-default": feedback === EFeedback.NEGATIVE,
+              "!cursor-default": feedback === EAiFeedback.NEGATIVE,
             })}
             onClick={() => !feedback && setIsFeedbackModalOpen(true)}
           >
             <ThumbsDown
               size={16}
-              fill={feedback === EFeedback.NEGATIVE ? "currentColor" : "none"}
+              fill={feedback === EAiFeedback.NEGATIVE ? "currentColor" : "none"}
               className="my-auto text-icon-secondary transition-colors	"
             />
           </button>
@@ -129,7 +129,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
       <FeedbackModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}
-        onSubmit={(feedbackMessage) => void handleFeedback(EFeedback.NEGATIVE, feedbackMessage)}
+        onSubmit={(feedbackMessage) => void handleFeedback(EAiFeedback.NEGATIVE, feedbackMessage)}
       />
 
       {/* Rewrite */}

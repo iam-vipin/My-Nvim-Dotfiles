@@ -1245,7 +1245,7 @@ Provide concise, relevant context from the attachment(s):"""
                 chat_id=chat_id,
                 db=db,
             )
-            
+
             # Only add project tools if method_executor is available (requires OAuth token)
             if method_executor:
                 project_tools = get_tools_for_category("projects", method_executor=method_executor, context=context) or []

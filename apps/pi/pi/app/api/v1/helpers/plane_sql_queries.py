@@ -2184,6 +2184,24 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
         return None
 
 
+async def get_page_content(page_id: str) -> Optional[Dict[str, Any]]:
+    query = """
+    SELECT
+        p.id,
+        p.name,
+        p.description_stripped,
+        p.description_html
+    FROM pages p
+    WHERE p.id = $1;
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (page_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching page details for {page_id}: {e}")
+        return None
+
+
 async def get_page_details_for_artifact(page_id: str) -> Optional[Dict[str, Any]]:
     """
     Get page details for artifact generation.

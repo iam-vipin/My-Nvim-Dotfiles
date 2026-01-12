@@ -40,6 +40,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorAIOpsEnabled =
     useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+  const isEditorAiBlocksEnabled = useFlag(workspaceSlug, "EDITOR_AI_BLOCKS");
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
@@ -82,6 +83,9 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   }
   if (!isEditorAIOpsEnabled) {
     document.disabled.add("ai");
+  }
+  if (!isEditorAiBlocksEnabled) {
+    document.disabled.add("ai-block");
   }
   if (!isCollaborationCursorEnabled) {
     document.disabled.add("collaboration-caret");

@@ -547,6 +547,16 @@ def get_chat_llm(llm_name: str) -> Any:
                 model="gpt-5.2",
                 streaming=True,
             )
+        elif llm_name.lower() == "gpt-5-mini":
+            config = LLMConfig(
+                model="gpt-5-mini",
+                streaming=True,
+            )
+        elif llm_name.lower() == "gpt-5-nano":
+            config = LLMConfig(
+                model="gpt-5-nano",
+                streaming=True,
+            )
         elif llm_name.lower() in ["claude-sonnet-4"]:
             config = LLMConfig(
                 model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,

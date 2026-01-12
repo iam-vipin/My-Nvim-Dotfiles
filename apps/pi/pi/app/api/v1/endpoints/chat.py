@@ -35,8 +35,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.app.api.v1.dependencies import get_current_user
-from pi.app.api.v1.dependencies import validate_plane_token
+from pi.app.api.dependencies import get_current_user
+from pi.app.api.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event

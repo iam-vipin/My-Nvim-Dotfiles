@@ -27,7 +27,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.artifact import ArtifactUpdateRequest
 from pi.app.schemas.artifact import ArtifactUpdateResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session

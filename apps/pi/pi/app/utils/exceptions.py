@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+
 class SQLGenerationError(Exception):
     def __init__(self, message: str):
         super().__init__(message)

@@ -1,3 +1,4 @@
+import type { Editor } from "@tiptap/core";
 import {
   ALargeSmall,
   CaseSensitive,
@@ -113,7 +114,7 @@ const fuzzySearch = (query: string, text: string): { match: boolean; score: numb
 
 export const getSlashCommandFilteredSections =
   (args: TExtensionProps) =>
-  ({ query }: { query: string }): TSlashCommandSection[] => {
+  ({ query, editor }: { query: string; editor: Editor }): TSlashCommandSection[] => {
     const { additionalOptions: externalAdditionalOptions, disabledExtensions, flaggedExtensions } = args;
     const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
       {
@@ -379,6 +380,8 @@ export const getSlashCommandFilteredSections =
     const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => {
       // Get items with fuzzy search scores
       const scoredItems = section.items
+        // Filter out items that should not be shown based on editor state
+        .filter((item) => !item.shouldShow || item.shouldShow(editor))
         .map((item) => {
           if (!query) return { item, score: 0, match: true };
 

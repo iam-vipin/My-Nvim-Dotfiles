@@ -21,7 +21,6 @@ import { WorkspaceService } from "@/plane-web/services";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type {
-  EFeedback,
   TAiModels,
   TChatHistory,
   TDialogue,
@@ -43,7 +42,7 @@ import type {
 import { PI_CHAT_ASSISTANT_KEY, ESource, EExecutionStatus } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
 import { PiChatAttachmentStore } from "./attachment.store";
-import type { TSearchResults } from "@plane/types";
+import type { TSearchResults, EAiFeedback } from "@plane/types";
 import { storage } from "@/lib/local-storage";
 
 export interface IPiChatStore {
@@ -93,7 +92,7 @@ export interface IPiChatStore {
   sendFeedback: (
     chatId: string,
     message_index: number,
-    feedback: EFeedback,
+    feedback: EAiFeedback,
     workspaceId?: string,
     feedbackMessage?: string
   ) => Promise<void>;
@@ -853,7 +852,7 @@ export class PiChatStore implements IPiChatStore {
   sendFeedback = async (
     chatId: string,
     message_index: number,
-    feedback: EFeedback,
+    feedback: EAiFeedback,
     workspaceId?: string,
     feedbackMessage?: string
   ) => {

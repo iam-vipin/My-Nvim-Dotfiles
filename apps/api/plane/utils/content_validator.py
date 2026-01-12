@@ -85,6 +85,7 @@ EE_CUSTOM_TAGS = {
     "inline-math-component",
     "block-math-component",
     "drawio-component",
+    "ai-block-component",
 }
 
 # Combine custom components and editor-specific nodes into a single set of tags
@@ -154,6 +155,7 @@ EE_ATTRIBUTES = {
     "block-math-component": {"latex", "id"},
     # drawio components (generic)
     "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode"},
+    "ai-block-component": {"data-id"},
 }
 
 # Merge nh3 defaults with all attributes used across our custom components

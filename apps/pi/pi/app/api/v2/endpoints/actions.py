@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 
 # from pi.services.chat.helpers.action_execution_helpers import execute_batch_actions
 # from pi.services.chat.helpers.action_execution_helpers import format_execution_response

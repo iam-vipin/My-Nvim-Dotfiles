@@ -22,6 +22,7 @@ import {
 // types
 import type { TExtensions } from "@/types";
 // local imports
+import { CustomAIBlockExtension } from "./ai-block/extension";
 import { CustomCollaborationCaret } from "./collaboration-caret";
 import { CommentsExtension } from "./comments";
 import { DrawioExtension } from "./drawio/extension";
@@ -242,6 +243,15 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         logoSpinner: extendedEditorProps?.logoSpinner,
       });
     },
+  },
+  {
+    // AI block extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("ai-block"),
+    getExtension: ({ extendedEditorProps }) =>
+      CustomAIBlockExtension({
+        aiBlockHandlers: extendedEditorProps?.aiBlockHandlers,
+        widgetCallback: extendedEditorProps?.widgetCallback,
+      }),
   },
 ];
 

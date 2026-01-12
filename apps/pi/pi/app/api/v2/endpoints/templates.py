@@ -17,7 +17,7 @@ from fastapi.responses import JSONResponse
 from pydantic import UUID4
 
 from pi import logger
-from pi.app.api.v2.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.chat import ChatSuggestionTemplate
 from pi.services.chat.templates import tiles_factory
 

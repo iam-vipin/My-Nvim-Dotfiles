@@ -19,8 +19,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
 from pi import settings
-from pi.app.api.v1.dependencies import is_jwt_valid
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.dependencies import is_jwt_valid
+from pi.app.api.dependencies import is_valid_session
 from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
 from pi.services.feature_flags import FeatureFlagContext
 from pi.services.feature_flags import feature_flag_service

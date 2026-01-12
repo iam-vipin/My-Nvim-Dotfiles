@@ -13,6 +13,7 @@
 
 export type TExtensions =
   | "ai"
+  | "ai-block"
   | "collaboration-caret"
   | "issue-embed"
   | "page-embed"

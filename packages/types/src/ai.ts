@@ -21,3 +21,69 @@ export interface IGptResponse {
   project_detail: IProjectLite;
   workspace_detail: IWorkspaceLite;
 }
+
+export enum EAiFeedback {
+  POSITIVE = "positive",
+  NEGATIVE = "negative",
+}
+
+export type TAIBlockType = {
+  key: string;
+  label: string;
+  description: string;
+  has_content: boolean;
+};
+
+export type TAIBlockRevisionType = {
+  key: string;
+  label: string;
+  description: string;
+};
+
+export type TAIBlockRevisionTypesResponse = {
+  types: TAIBlockRevisionType[];
+};
+
+export type TAIBlockTypesResponse = {
+  types: TAIBlockType[];
+};
+
+export type TAIBlockDetails = {
+  block_id?: string;
+  block_type: string;
+  content: string | null;
+  has_content: boolean;
+  feedback: EAiFeedback | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type TAIBlockGenerateInputPartial = {
+  block_id?: string;
+  block_type: string;
+  content?: string;
+};
+export type TAIBlockGenerateInput = TAIBlockGenerateInputPartial & {
+  entity_type: string;
+  entity_id: string | undefined;
+  workspace_id: string | undefined;
+  project_id: string | undefined;
+};
+export type TFeedback = {
+  usage_type: string;
+  usage_id: string;
+  feedback: EAiFeedback;
+  feedback_message?: string;
+};
+
+export type TAIBlockHandlers = {
+  generateBlockContent: (data: TAIBlockGenerateInputPartial) => Promise<TAIBlockDetails>;
+  revisionBlockContent: (data: { block_id: string; revision_type: string }) => Promise<{
+    success: boolean;
+    revised_content: string;
+  }>;
+  postFeedback: (data: TFeedback) => Promise<{
+    success: boolean;
+  }>;
+  saveDocument?: () => Promise<void>;
+};

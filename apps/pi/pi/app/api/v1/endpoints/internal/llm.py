@@ -19,7 +19,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v1.dependencies import verify_internal_secret_key
+from pi.app.api.dependencies import verify_internal_secret_key
 from pi.app.models.llm import LlmModel
 from pi.core.db.plane_pi.lifecycle import get_async_session
 

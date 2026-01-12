@@ -23,7 +23,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v1.dependencies import verify_internal_secret_key
+from pi.app.api.dependencies import verify_internal_secret_key
 from pi.app.models.workspace_vectorization import VectorizationStatus
 from pi.app.models.workspace_vectorization import WorkspaceVectorization
 from pi.celery_app import celery_app

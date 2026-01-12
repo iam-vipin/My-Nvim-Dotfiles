@@ -73,6 +73,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "ai-block"
   | "page-embed"
   | "attachment"
   | "emoji"

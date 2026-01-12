@@ -26,7 +26,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.attachment import AttachmentDetailResponse
 from pi.app.utils.attachments import allowed_attachment_types
@@ -500,82 +500,3 @@ async def get_attachment(
     except Exception as e:
         log.error(f"Error generating attachment URLs: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
-
-
-# @router.delete("/{attachment_id}")
-# async def delete_attachment(
-#     attachment_id: UUID4 = Path(..., description="UUID of the attachment to delete"),
-#     chat_id: UUID4 = Query(..., description="UUID of the chat"),
-#     db: AsyncSession = Depends(get_async_session),
-#     session: str = Depends(cookie_schema),
-# ):
-#     """
-#     Delete an attachment (soft delete).
-
-#     This endpoint performs a soft delete on an attachment, marking it as deleted
-#     without removing the actual file from S3. The attachment will no longer appear
-#     in chat attachment lists but the file remains for potential recovery.
-
-#     Args:
-#         attachment_id: UUID of the attachment to delete (path parameter)
-#         chat_id: UUID of the chat (query parameter for verification)
-#         db: Database session (injected)
-#         session: Session cookie for authentication (injected)
-
-#     Returns:
-#         JSON response with:
-#         - detail: Success message
-
-#     Status Codes:
-#         - 200: Attachment deleted successfully
-#         - 401: Invalid or missing authentication
-#         - 404: Attachment not found
-#         - 500: Internal server error
-
-#     Example Request:
-#         DELETE /api/v2/attachments/att-001?chat_id=xyz-789
-
-#     Example Response:
-#         {
-#             "detail": "Attachment deleted successfully"
-#         }
-
-#     Notes:
-#         - This is a soft delete (file remains in S3)
-#         - Deleted attachments don't appear in list endpoints
-#         - User must own the attachment
-#         - Deleted attachments can potentially be recovered
-#         - For hard delete, manual S3 cleanup is required
-#         - Deprecated V1 endpoint: DELETE /api/v1/attachments/delete-attachment/ (was commented out)
-#     """
-#     try:
-#         auth = await is_valid_session(session)
-#         if not auth.user:
-#             return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-#         user_id = auth.user.id
-#     except Exception as e:
-#         log.error(f"Error validating session: {e!s}")
-#         return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-#     try:
-#         # Get attachment
-#         stmt = select(MessageAttachment).where(
-#             MessageAttachment.id == attachment_id,
-#             MessageAttachment.chat_id == chat_id,
-#             MessageAttachment.user_id == user_id,
-#         )
-#         result = await db.execute(stmt)
-#         attachment = result.scalar_one_or_none()
-
-#         if not attachment:
-#             return JSONResponse(status_code=404, content={"detail": "Attachment not found"})
-
-#         # Soft delete
-#         attachment.soft_delete()
-#         await db.commit()
-
-#         return JSONResponse(content={"detail": "Attachment deleted successfully"})
-
-#     except Exception as e:
-#         log.error(f"Error deleting attachment: {e!s}")
-#         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})

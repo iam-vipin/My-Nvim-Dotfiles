@@ -96,6 +96,20 @@ PRICING_DATA = [
         "cached_text_input_price": 1.50,
     },
     {
+        "id": "23b1da39-603e-4963-bbe9-945576a33645",
+        "llm_model_id": llm_id_map["gpt-5-mini"],
+        "text_input_price": 0.25,
+        "text_output_price": 2,
+        "cached_text_input_price": 0.025,
+    },
+    {
+        "id": "07b6902b-2dae-4baf-b701-86cea826364d",
+        "llm_model_id": llm_id_map["gpt-5-nano"],
+        "text_input_price": 0.05,
+        "text_output_price": 0.4,
+        "cached_text_input_price": 0.005,
+    },
+    {
         "id": "b3b17125-1ef2-4bb1-8dda-d57c4575ef90",
         "llm_model_id": llm_id_map["claude-sonnet-4-5"],
         "text_input_price": 3.00,

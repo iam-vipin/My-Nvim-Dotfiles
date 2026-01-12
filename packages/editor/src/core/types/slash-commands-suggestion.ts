@@ -32,4 +32,6 @@ export type ISlashCommandItem = {
   iconContainerStyle?: CSSProperties;
   command: ({ editor, range }: CommandProps) => void;
   badge?: React.ReactNode;
+  /** Optional function to conditionally show/hide the item based on editor state */
+  shouldShow?: (editor: Editor) => boolean;
 };

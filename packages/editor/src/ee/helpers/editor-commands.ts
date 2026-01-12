@@ -88,3 +88,8 @@ export const insertExternalEmbed = ({
       .run();
   }
 };
+
+export const insertAIBlock = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).insertAIBlock().run();
+  else editor.chain().focus().insertAIBlock().run();
+};

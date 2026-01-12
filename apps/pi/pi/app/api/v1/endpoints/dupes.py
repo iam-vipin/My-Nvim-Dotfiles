@@ -14,7 +14,7 @@ from fastapi import Depends
 from fastapi.responses import JSONResponse
 
 from pi import logger
-from pi.app.api.v1.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.dupes import DupeSearchRequest
 from pi.app.schemas.dupes import NotDuplicateRequest
 from pi.services.dupes import dupes

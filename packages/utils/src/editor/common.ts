@@ -121,6 +121,7 @@ export enum ADDITIONAL_EXTENSIONS {
   EXTERNAL_EMBED = "externalEmbedComponent",
   PAGE_LINK_COMPONENT = "pageLinkComponent",
   DRAWIO = "drawIoComponent",
+  AI_BLOCK = "aiBlockComponent",
 }
 
 export enum PI_CHAT_EXTENSIONS {

@@ -21,7 +21,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v1.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.attachment import AttachmentCompleteRequest
 from pi.app.schemas.attachment import AttachmentDetailResponse
@@ -317,43 +317,3 @@ async def get_attachments_by_chat(
     except Exception as e:
         log.error(f"Error retrieving attachments for chat: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
-
-
-# @router.delete("/delete-attachment/")
-# async def delete_attachment(
-#     data: AttachmentDeleteRequest,
-#     db: AsyncSession = Depends(get_async_session),
-#     session: str = Depends(cookie_schema),
-# ):
-#     """Delete an attachment (soft delete)"""
-#     try:
-#         auth = await is_valid_session(session)
-#         if not auth.user:
-#             return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-#         user_id = auth.user.id
-#     except Exception as e:
-#         log.error(f"Error validating session: {e!s}")
-#         return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-#     try:
-#         # Get attachment
-#         stmt = select(MessageAttachment).where(
-#             MessageAttachment.id == data.attachment_id,
-#             MessageAttachment.chat_id == data.chat_id,
-#             MessageAttachment.user_id == user_id,
-#         )
-#         result = await db.execute(stmt)
-#         attachment = result.scalar_one_or_none()
-
-#         if not attachment:
-#             return JSONResponse(status_code=404, content={"detail": "Attachment not found"})
-
-#         # Soft delete
-#         attachment.soft_delete()
-#         await db.commit()
-
-#         return JSONResponse(content={"detail": "Attachment deleted successfully"})
-
-#     except Exception as e:
-#         log.error(f"Error deleting attachment: {e!s}")
-#         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})

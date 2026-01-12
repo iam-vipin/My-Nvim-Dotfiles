@@ -155,6 +155,17 @@ class ChatFeedback(BaseModel):
     workspace_slug: Optional[str] = None
 
 
+class AIFeatureFeedback(BaseModel):
+    """Feedback schema for AI-powered features (ai_block, floaty_ai, ask_ai, etc.)"""
+
+    usage_id: Optional[UUID4] = Field(None, description="ID of the AI feature instance (e.g., ai_block_id)")
+    entity_type: Optional[str] = Field(None, description="Type of entity where feature is used: 'page', 'wiki', etc.")
+    entity_id: Optional[UUID4] = Field(None, description="ID of the entity (e.g., page_id)")
+    feedback: FeedbackType = Field(..., description="positive or negative feedback")
+    feedback_message: Optional[str] = Field(None, description="Optional detailed feedback message")
+    workspace_id: UUID4 = Field(..., description="Workspace ID")
+
+
 class ModelInfo(BaseModel):
     id: str
     name: str

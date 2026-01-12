@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.chat import TitleRequest
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.chat.chat import PlaneChatBot

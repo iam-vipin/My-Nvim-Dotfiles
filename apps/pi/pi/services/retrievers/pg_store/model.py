@@ -18,6 +18,7 @@ from typing import Tuple
 from typing import Union
 from uuid import UUID
 
+from pydantic import UUID4
 from sqlalchemy import desc
 from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -25,6 +26,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.models import LlmModel
 from pi.app.models import LlmModelPricing
+from pi.app.models.llm import LlmModelUsageTracking
 from pi.config import settings
 from pi.core.db.fixtures.llms import LLMS_DATA
 
@@ -232,3 +234,71 @@ async def add_llm_pricing(
         await db.rollback()
         log.error(f"Error adding LLM pricing for model key {model_key}: {e}")
         return False, f"Error adding LLM pricing: {e}", None
+
+
+async def upsert_llm_model_usage_tracking(
+    db: AsyncSession,
+    entity_type: str,
+    entity_id: UUID4,
+    workspace_id: UUID4,
+    user_id: UUID4,
+    usage_type: Optional[str] = None,
+    usage_id: Optional[UUID4] = None,
+    llm_model_id: Optional[UUID4] = None,
+    input_text_tokens: Optional[int] = None,
+    input_text_price: Optional[float] = None,
+    output_text_tokens: Optional[int] = None,
+    output_text_price: Optional[float] = None,
+    cached_input_text_tokens: Optional[int] = None,
+    cached_input_text_price: Optional[float] = None,
+) -> Dict[str, Any]:
+    """
+    Create or update a Page AI tracking record using LlmModelUsageTracking.
+    Currently always creates a new record for each usage event.
+
+    Args:
+        db: Database session
+        entity_type: Type of entity (e.g., 'page', 'wiki')
+        entity_id: ID of the entity (page/wiki)
+        usage_type: Type of usage (e.g., 'ai_block')
+        usage_id: ID of the referenced entity (e.g., block_id)
+        workspace_id: Workspace ID
+        user_id: User ID
+        llm_model_id: ID of the LLM model used
+        input_text_tokens: Number of input tokens
+        input_text_price: Cost of input tokens
+        output_text_tokens: Number of output tokens
+        output_text_price: Cost of output tokens
+        cached_input_text_tokens: Number of cached input tokens
+        cached_input_text_price: Cost of cached input tokens
+
+    Returns:
+        Dictionary with success status and tracking object or error details
+    """
+    try:
+        tracking_record = LlmModelUsageTracking(
+            entity_type=entity_type,
+            entity_id=entity_id,
+            usage_type=usage_type,
+            usage_id=usage_id,
+            workspace_id=workspace_id,
+            user_id=user_id,
+            llm_model_id=llm_model_id,
+            input_text_tokens=input_text_tokens,
+            input_text_price=input_text_price,
+            output_text_tokens=output_text_tokens,
+            output_text_price=output_text_price,
+            cached_input_text_tokens=cached_input_text_tokens,
+            cached_input_text_price=cached_input_text_price,
+        )
+
+        db.add(tracking_record)
+        await db.commit()
+        await db.refresh(tracking_record)
+
+        return {"success": True, "tracking_record": tracking_record}
+
+    except Exception as e:
+        await db.rollback()
+        log.error(f"Error creating LLM model usage tracking record: {str(e)}")
+        return {"success": False, "error": str(e)}

@@ -21,7 +21,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.chat import ChatInitializationRequest
 from pi.app.utils import validate_chat_initialization
 from pi.app.utils.background_tasks import schedule_chat_deletion

@@ -309,6 +309,77 @@ class TokenTracker:
             log.error(f"Error tracking LLM usage: {e}")
             return {"message": "error", "error": str(e)}
 
+    async def track_entity_llm_usage(
+        self,
+        llm_response: Any,
+        model_key: str,
+        entity_type: str,
+        entity_id: UUID,
+        workspace_id: UUID,
+        user_id: UUID,
+        usage_type: Optional[str] = None,
+        usage_id: Optional[UUID] = None,
+    ) -> Dict[str, Any]:
+        """
+        Track LLM usage for entities (pages, wikis, etc.) and store in LlmModelUsageTracking table.
+
+        Args:
+            llm_response: The response from LLM invoke() call
+            model_key: The model key (e.g., "gpt-4o", "gpt-4.1")
+            entity_type: Type of entity (e.g., "page", "wiki")
+            entity_id: ID of the entity
+            workspace_id: Workspace ID
+            user_id: User ID
+            usage_type: Optional usage type (e.g., "ai_block", "summarize")
+            usage_id: Optional usage ID (e.g., block_id)
+
+        Returns:
+            Dictionary with tracking results
+        """
+        try:
+            # Import here to avoid circular dependency
+            from pi.services.retrievers.pg_store.model import upsert_llm_model_usage_tracking
+
+            # Extract token usage from response
+            token_usage = self.extract_token_usage(llm_response)
+            total_input_tokens = token_usage["input_tokens"]
+            output_tokens = token_usage["output_tokens"]
+            cached_input_tokens = token_usage["cached_input_tokens"]
+            non_cached_input_tokens = total_input_tokens - cached_input_tokens
+
+            # Get LLM model ID
+            llm_model_id = await get_llm_model_id_from_key(model_key, self.db)
+            if not llm_model_id:
+                log.error(f"Could not find LLM model ID for key: {model_key}")
+                return {"success": False, "error": f"LLM model not found: {model_key}"}
+
+            # Calculate token costs
+            costs = await self.calculate_token_costs(non_cached_input_tokens, output_tokens, cached_input_tokens, llm_model_id)
+
+            # Store in database
+            result = await upsert_llm_model_usage_tracking(
+                db=self.db,
+                entity_type=entity_type,
+                entity_id=entity_id,
+                usage_type=usage_type,
+                usage_id=usage_id,
+                workspace_id=workspace_id,
+                user_id=user_id,
+                llm_model_id=llm_model_id,
+                input_text_tokens=total_input_tokens,
+                input_text_price=costs["input_price"],
+                output_text_tokens=output_tokens,
+                output_text_price=costs["output_price"],
+                cached_input_text_tokens=cached_input_tokens,
+                cached_input_text_price=costs["cached_input_price"],
+            )
+
+            return result
+
+        except Exception as e:
+            log.error(f"Error tracking entity LLM usage: {e}")
+            return {"success": False, "error": str(e)}
+
 
 async def track_llm_call(
     llm_response: Any,

@@ -40,6 +40,7 @@ const generalSelectors = [
   ".page-embed-component",
   ".editor-mathematics-component",
   ".editor-drawio-component",
+  ".editor-ai-block-node",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -113,6 +114,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
       return elem;
     }
 
+    // Allow first-child paragraphs that are direct children of ProseMirror (document root)
     if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
       return elem;
     }

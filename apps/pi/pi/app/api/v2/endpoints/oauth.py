@@ -29,7 +29,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.app.api.v2.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.api.v2.helpers.plane_sql_queries import get_workspace_slug
 from pi.app.schemas.oauth import OAuthRevokeResponse
 from pi.app.schemas.oauth import OAuthStatusResponse

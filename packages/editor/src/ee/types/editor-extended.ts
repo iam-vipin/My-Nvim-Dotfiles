@@ -24,6 +24,7 @@ import type { MathematicsExtensionOptions } from "../extensions/mathematics/type
 import type { PiChatEditorMentionAttributes } from "../extensions/pi-chat-editor/mention/types";
 import type { TCommentConfig } from "./comments";
 import type { TEmbedConfig } from "./issue-embed";
+import type { CustomAIBlockExtensionProps } from "../extensions/ai-block/types";
 
 export type IEditorExtensionOptions = {
   [ADDITIONAL_EXTENSIONS.MATHEMATICS]?: Pick<MathematicsExtensionOptions, "onClick">;
@@ -49,7 +50,7 @@ export type IEditorPropsExtended = {
       projectsList: TPartialProject[];
     };
   };
-};
+} & CustomAIBlockExtensionProps;
 
 export type TExtendedEditorCommands =
   | "comment"

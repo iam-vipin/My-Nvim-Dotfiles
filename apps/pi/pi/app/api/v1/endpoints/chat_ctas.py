@@ -28,7 +28,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.app.api.v1.dependencies import get_current_user
+from pi.app.api.dependencies import get_current_user
 from pi.app.utils.markdown_to_html import md_to_html
 from pi.core.db.plane import PlaneDBPool
 from pi.core.db.plane_pi.lifecycle import get_async_session

@@ -23,12 +23,15 @@ from sqlalchemy import pool
 from pi.app.models import ActionArtifact  # noqa: F401
 from pi.app.models import ActionArtifactVersion  # noqa: F401
 from pi.app.models import Chat  # noqa: F401
+from pi.app.models import Feedback  # noqa: F401
+from pi.app.models import LlmModelUsageTracking  # noqa: F401
 from pi.app.models import Message  # noqa: F401
 from pi.app.models import MessageClarification  # noqa: F401
 from pi.app.models import MessageFeedback  # noqa: F401
 from pi.app.models import MessageFlowStep  # noqa: F401
 from pi.app.models import MessageMention  # noqa: F401
 from pi.app.models import MessageMeta  # noqa: F401
+from pi.app.models import PageAIBlock  # noqa: F401
 from pi.app.models import PlaneOAuthState  # noqa: F401
 from pi.app.models import PlaneOAuthToken  # noqa: F401
 from pi.app.models import Transcription  # noqa: F401

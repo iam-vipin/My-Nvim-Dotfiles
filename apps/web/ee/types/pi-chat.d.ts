@@ -1,9 +1,4 @@
-import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse, TPage } from "@plane/types";
-
-export enum EFeedback {
-  POSITIVE = "positive",
-  NEGATIVE = "negative",
-}
+import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse, TPage, EAiFeedback } from "@plane/types";
 
 export enum EChatType {
   THREAD = "threads",
@@ -51,7 +46,7 @@ export type TSearchQuery = {
 export type TFeedback = {
   chat_id: string;
   message_index: number;
-  feedback: EFeedback;
+  feedback: EAiFeedback;
   feedback_message?: string;
   workspace_id?: string;
 };
@@ -135,7 +130,7 @@ export type TDialogue = {
   query: string;
   answer?: string;
   llm?: string;
-  feedback?: EFeedback;
+  feedback?: EAiFeedback;
   current_tick?: string;
   reasoning?: string;
   isPiThinking: boolean;

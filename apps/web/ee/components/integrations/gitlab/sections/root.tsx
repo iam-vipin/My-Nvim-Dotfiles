@@ -15,15 +15,56 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { RepositoryMappingRoot } from "@/plane-web/components/integrations/gitlab";
+import { ProjectIssueSyncRoot } from "./project-issue-sync/root";
+import { useGitlabIntegration } from "@/plane-web/hooks/store/integrations/use-gitlab";
+import useSWR from "swr";
+import { MappingLoader } from "../../ui";
 
 interface IIntegrationRootProps {
   isEnterprise: boolean;
 }
 
 export const IntegrationRoot = observer(function IntegrationRoot({ isEnterprise }: IIntegrationRootProps) {
+  const {
+    workspace,
+    fetchProjects,
+    auth: { workspaceConnectionIds },
+    data: { fetchGitlabEntities },
+    entityConnection: { fetchEntityConnections },
+  } = useGitlabIntegration(isEnterprise);
+
+  const workspaceId = workspace?.id || undefined;
+  const workspaceSlug = workspace?.slug || undefined;
+  const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
+
+  const { isLoading: isGitlabEntitiesLoading } = useSWR(
+    workspaceConnectionId && workspaceId ? `INTEGRATION_GITLAB_ENTITIES_${workspaceId}_${workspaceConnectionId}` : null,
+    workspaceConnectionId && workspaceId ? async () => fetchGitlabEntities() : null,
+    { errorRetryCount: 0 }
+  );
+  // fetching plane projects
+  const { isLoading: isProjectsLoading } = useSWR(
+    workspaceSlug ? `INTEGRATION_PLANE_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug ? async () => fetchProjects(workspaceSlug) : null,
+    { errorRetryCount: 0 }
+  );
+
+  // fetching entity connections
+  const { isLoading: isEntitiesLoading } = useSWR(
+    workspaceId ? `INTEGRATION_ENTITY_CONNECTIONS_${workspaceId}` : null,
+    workspaceId ? async () => fetchEntityConnections() : null,
+    { errorRetryCount: 0 }
+  );
+
+  // Loading state with skeleton loader
+  if (isEntitiesLoading || isProjectsLoading || isGitlabEntitiesLoading) {
+    return <MappingLoader />;
+  }
+
   return (
-    <div className="relative">
-      <RepositoryMappingRoot isEnterprise={isEnterprise} />
+    <div className="relative space-y-4">
+      <RepositoryMappingRoot isEntitiesLoading={isEntitiesLoading} isEnterprise={isEnterprise} />
+      <ProjectIssueSyncRoot isEnterprise={isEnterprise} />
     </div>
   );
 });

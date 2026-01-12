@@ -1470,6 +1470,24 @@ export default {
     choose_entity: "Alege Entitatea",
     choose_project: "Alege Proiectul",
     link_plane_project: "Leagă proiectul Plane",
+    project_issue_sync: "Sincronizare probleme proiect",
+    project_issue_sync_description: "Sincronizează problemele din Gitlab în proiectul tău Plane",
+    project_issue_sync_empty_state: "Sincronizarea problemelor de proiect mapate va apărea aici",
+    configure_project_issue_sync_state: "Configurează starea sincronizării problemelor",
+    select_issue_sync_direction: "Selectează direcția de sincronizare a problemelor",
+    allow_bidirectional_sync:
+      "Bidirecțional - Sincronizează probleme și comentarii în ambele direcții între Gitlab și Plane",
+    allow_unidirectional_sync: "Unidirecțional - Sincronizează probleme și comentarii doar din Gitlab în Plane",
+    allow_unidirectional_sync_warning:
+      "Datele din Gitlab Issue vor înlocui datele din Elementul de lucru Plane legat (doar Gitlab → Plane)",
+    remove_project_issue_sync: "Elimină această sincronizare a problemelor de proiect",
+    remove_project_issue_sync_confirmation:
+      "Ești sigur că vrei să elimini această sincronizare a problemelor de proiect?",
+    ISSUE_OPEN: "Problemă deschisă",
+    ISSUE_CLOSED: "Problemă închisă",
+    save: "Salvează",
+    start_sync: "Începe sincronizarea",
+    choose_repository: "Alege depozitul...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",

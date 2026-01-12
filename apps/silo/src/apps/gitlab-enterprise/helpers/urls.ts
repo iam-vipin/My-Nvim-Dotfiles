@@ -24,3 +24,8 @@ export const getGitlabAuthCallbackURL = (glIntegrationKey: E_INTEGRATION_KEYS) =
   const provider = convertIntegrationKeyToProvider(glIntegrationKey);
   return encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + `/api/oauth/${provider}/auth/callback`);
 };
+
+export const getGitlabIssueSyncWebhookURL = (workspaceId: string, glIntegrationKey: E_INTEGRATION_KEYS) => {
+  const provider = convertIntegrationKeyToProvider(glIntegrationKey);
+  return `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/${provider}/webhook/issue-sync/${workspaceId}`;
+};

@@ -26,6 +26,7 @@ import { FlatfileMigrator } from "@/apps/flatfile/migrator/flatfile.migrator";
 import { GithubWebhookWorker } from "@/apps/github/workers";
 import { PlaneGithubWebhookWorker } from "@/apps/github/workers/plane";
 import { GitlabWebhookWorker } from "@/apps/gitlab";
+import { PlaneGitlabWebhookWorker } from "@/apps/gitlab/workers/plane";
 import {
   getJiraCloudImportOrchestrator,
   getJiraServerImportOrchestrator,
@@ -80,6 +81,8 @@ class WorkerFactory {
         return new GitlabWebhookWorker(mq, store);
       case "plane-github-webhook":
         return new PlaneGithubWebhookWorker(mq, store);
+      case "plane-gitlab-webhook":
+        return new PlaneGitlabWebhookWorker(mq, store);
       case "slack-interaction":
         return new SlackInteractionHandler(mq, store);
       case "plane-slack-webhook":

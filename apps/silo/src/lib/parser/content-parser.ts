@@ -44,10 +44,23 @@ export class ContentParser {
     this.postprocessExtensions = postprocessExtensions;
   }
 
-  private static readonly turndownService = new TurndownService({
+  private readonly turndownService = new TurndownService({
     headingStyle: "atx",
     codeBlockStyle: "fenced",
   });
+
+  /**
+   * Converts HTML to Markdown
+   * @param html - The HTML to convert
+   * @param srcPrefixWithPath - The prefix to add to the image src
+   * @returns The Markdown
+   */
+  toMarkdown(html: string, srcPrefixWithPath: string): string {
+    // First convert image components to standard HTML img tags
+    const standardHtml = this.replaceImageComponentsWithImgTags(html, srcPrefixWithPath);
+    // Use TurndownService to convert HTML to Markdown
+    return this.turndownService.turndown(standardHtml);
+  }
 
   /**
    * Converts GitHub's content (HTML/Markdown/Mixed) to Plane's HTML format
@@ -124,5 +137,38 @@ export class ContentParser {
     }
 
     return currentNode;
+  }
+
+  /**
+   * Replaces image-component tags with img tags
+   * @param html - The HTML to process
+   * @param srcPrefix - The prefix to add to the image src
+   * @returns The processed HTML
+   */
+  private replaceImageComponentsWithImgTags(html: string, srcPrefix: string): string {
+    const root = parse(html);
+    const imageComponents = root.querySelectorAll("image-component");
+
+    imageComponents.forEach((component) => {
+      // Extract all attributes
+      const src = component.getAttribute("src");
+      if (!src) return;
+
+      const width = component.getAttribute("width");
+      const height = component.getAttribute("height");
+      const aspectRatio = component.getAttribute("aspectratio");
+
+      // Create img tag with appropriate attributes
+      const img = new HTMLElement("img", {}, "");
+      img.setAttribute("src", `${srcPrefix}/${src}`);
+      if (width) img.setAttribute("width", width);
+      if (height) img.setAttribute("height", height);
+      if (aspectRatio) img.setAttribute("data-aspect-ratio", aspectRatio);
+
+      // Replace the image-component with the img tag
+      component.replaceWith(img);
+    });
+
+    return root.toString();
   }
 }

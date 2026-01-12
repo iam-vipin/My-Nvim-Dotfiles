@@ -27,3 +27,14 @@ export type TStateMapKeys = keyof typeof E_STATE_MAP_KEYS;
 export type TStateMap = {
   [key in TStateMapKeys]: IState | undefined;
 };
+
+// issue state map keys
+export enum E_ISSUE_STATE_MAP_KEYS {
+  ISSUE_OPEN = "ISSUE_OPEN",
+  ISSUE_CLOSED = "ISSUE_CLOSED",
+}
+export type TIssueStateMapKeys = keyof typeof E_ISSUE_STATE_MAP_KEYS;
+
+export type TIssueStateMap = {
+  [key in TIssueStateMapKeys]: IState | undefined;
+};

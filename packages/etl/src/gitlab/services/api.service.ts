@@ -13,7 +13,7 @@
 
 import type { AxiosInstance } from "axios";
 import axios from "axios";
-import type { GitlabUser } from "@/gitlab/types";
+import type { GitlabUser, GitlabIssue, GitlabNote, TGitlabProjectWebhook } from "@/gitlab/types";
 
 export class GitLabService {
   client: AxiosInstance;
@@ -138,28 +138,55 @@ export class GitLabService {
     return response.data;
   }
 
-  async createIssue(projectId: number, issue: { title: string; description: string }) {
+  async createIssue(
+    projectId: number,
+    issue: { title: string; description: string; labels?: string[] }
+  ): Promise<GitlabIssue> {
     const response = await this.client.post(`/projects/${projectId}/issues`, issue);
     return response.data;
   }
 
-  async updateIssue(projectId: number, issueId: number, issue: { title?: string; description?: string }) {
-    const response = await this.client.put(`/projects/${projectId}/issues/${issueId}`, issue);
-    return response.data;
-  }
-
-  async createIssueComment(projectId: number, issueId: number, body: string) {
-    const response = await this.client.post(`/projects/${projectId}/issues/${issueId}/notes`, { body });
-    return response.data;
-  }
-
-  async updateIssueComment(projectId: number, noteId: number, body: string) {
-    const response = await this.client.put(`/projects/${projectId}/issues/notes/${noteId}`, { body });
+  async updateIssue(
+    projectId: number,
+    issueIId: number,
+    issue: { title?: string; description?: string; labels?: string[] }
+  ): Promise<GitlabIssue> {
+    const response = await this.client.put(`/projects/${projectId}/issues/${issueIId}`, issue);
     return response.data;
   }
 
   async getIssues(projectId: number) {
     const response = await this.client.get(`/projects/${projectId}/issues`);
+    return response.data;
+  }
+
+  async getIssueById(issueId: number): Promise<GitlabIssue> {
+    const response = await this.client.get(`/issues/${issueId}`);
+    return response.data;
+  }
+
+  async getIssue(projectId: number, issueIId: number): Promise<GitlabIssue> {
+    const response = await this.client.get(`/projects/${projectId}/issues/${issueIId}`);
+    return response.data;
+  }
+
+  async createIssueComment(projectId: number, issueIId: number, body: string): Promise<GitlabNote> {
+    const response = await this.client.post(`/projects/${projectId}/issues/${issueIId}/notes`, { body });
+    return response.data;
+  }
+
+  async getIssueComment(projectId: number, issueIId: number, noteId: number): Promise<GitlabNote> {
+    const response = await this.client.get(`/projects/${projectId}/issues/${issueIId}/notes/${noteId}`);
+    return response.data;
+  }
+
+  async getIssueComments(projectId: number, issueIId: number): Promise<GitlabNote[]> {
+    const response = await this.client.get(`/projects/${projectId}/issues/${issueIId}/notes`);
+    return response.data;
+  }
+
+  async updateIssueComment(projectId: number, issueIId: number, noteId: number, body: string): Promise<GitlabNote> {
+    const response = await this.client.put(`/projects/${projectId}/issues/${issueIId}/notes/${noteId}`, { body });
     return response.data;
   }
 
@@ -173,21 +200,31 @@ export class GitLabService {
     return response.data;
   }
 
-  async addWebhookToProject(projectId: string, url: string, token: string) {
-    try {
-      const response = await this.client.post(`/projects/${projectId}/hooks`, {
-        url,
-        token,
-        push_events: true,
-        merge_requests_events: true,
-        pipeline_events: true,
-        tag_push_events: true,
-        issues_events: true,
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+  async getProjectWebhook(projectId: string, hookId: string): Promise<TGitlabProjectWebhook> {
+    const response = await this.client.get(`/projects/${projectId}/hooks/${hookId}`);
+    return response.data;
+  }
+
+  async updateProjectWebhook(
+    projectId: string,
+    hookId: string,
+    url: string,
+    webhookData: Partial<TGitlabProjectWebhook>
+  ) {
+    const response = await this.client.put(`/projects/${projectId}/hooks/${hookId}`, {
+      url,
+      ...webhookData,
+    });
+    return response.data;
+  }
+
+  async addWebhookToProject(projectId: string, url: string, token: string, events: Map<string, boolean>) {
+    const response = await this.client.post(`/projects/${projectId}/hooks`, {
+      url,
+      token,
+      ...Object.fromEntries(events),
+    });
+    return response.data;
   }
 
   /**

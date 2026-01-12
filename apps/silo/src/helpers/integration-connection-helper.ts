@@ -125,6 +125,7 @@ class IntegrationConnectionHelper {
     type,
     config,
     project_id,
+    issue_id,
   }: {
     workspace_id: string;
     workspace_connection_id: string;
@@ -135,11 +136,13 @@ class IntegrationConnectionHelper {
     type?: string;
     config?: object;
     project_id?: string;
+    issue_id?: string;
   }): Promise<TWorkspaceEntityConnection> {
     return this.apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
       workspace_id,
       workspace_connection_id,
       project_id,
+      issue_id,
       entity_id,
       entity_type,
       entity_data,
@@ -496,6 +499,29 @@ class IntegrationConnectionHelper {
     }
     // Return the plane credentials
     return { userCredentials: planeCredentials, wsAdminCredentials: planeAdminCredentials };
+  }
+
+  async getIssueLinkEntityConnection({
+    entity_id,
+    project_id,
+    issue_id,
+    entity_type,
+    type,
+  }: {
+    entity_id: string;
+    project_id: string;
+    issue_id: string;
+    entity_type: string;
+    type: string;
+  }): Promise<TWorkspaceEntityConnection | null> {
+    const [issueLinkEntityConnection] = await this.apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+      entity_id,
+      project_id,
+      issue_id,
+      entity_type,
+      type,
+    });
+    return issueLinkEntityConnection;
   }
 }
 

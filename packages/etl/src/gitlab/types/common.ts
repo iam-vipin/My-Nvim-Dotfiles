@@ -19,6 +19,7 @@ export interface GitlabIssue {
   title: string;
   description: string;
   state: "opened" | "closed";
+  state_event: "reopen" | "close";
   created_at: string;
   updated_at: string;
   closed_at: string | null;
@@ -139,6 +140,7 @@ export interface GitlabMergeRequest {
 export interface GitlabNote {
   id: number;
   body: string;
+  description: string;
   attachment: string | null;
   author: {
     id: number;
@@ -161,6 +163,41 @@ export interface GitlabNote {
   imported?: boolean;
   imported_from?: string;
 }
+
+export type TGitlabProjectWebhook = {
+  id: number;
+  url: string;
+  name: string;
+  description: string;
+  project_id: number;
+  push_events: boolean;
+  push_events_branch_filter: string;
+  issues_events: boolean;
+  confidential_issues_events: boolean;
+  merge_requests_events: boolean;
+  tag_push_events: boolean;
+  note_events: boolean;
+  confidential_note_events: boolean;
+  job_events: boolean;
+  pipeline_events: boolean;
+  wiki_page_events: boolean;
+  deployment_events: boolean;
+  releases_events: boolean;
+  milestone_events: boolean;
+  feature_flag_events: boolean;
+  enable_ssl_verification: boolean;
+  repository_update_events: boolean;
+  resource_access_token_events: boolean;
+  alert_status: "executable" | "warning" | "failed";
+  disabled_until: string | null;
+  url_variables: string[];
+  created_at: string;
+  custom_webhook_template: string;
+  custom_headers: {
+    key: string;
+    value: string;
+  }[];
+};
 
 export interface GitlabWebhook {
   url: string;
@@ -194,4 +231,11 @@ export interface IGitlabEntity {
 export enum EConnectionType {
   ENTITY = "ENTITY",
   PLANE_PROJECT = "PLANE_PROJECT",
+}
+
+export enum EGitlabEntityConnectionType {
+  PROJECT_ISSUE_SYNC = "PROJECT_ISSUE_SYNC",
+  PROJECT_PR_AUTOMATION = "PROJECT_PR_AUTOMATION",
+  PR_AUTOMATION_REPO_LINK = "PR_AUTOMATION_REPO_LINK",
+  ISSUE_LINK = "ISSUE_LINK",
 }

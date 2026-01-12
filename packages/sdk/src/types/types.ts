@@ -83,6 +83,7 @@ export type IIssueComment = {
   comment_stripped: string;
   access: string;
   is_member: boolean;
+  parent: string | null;
 };
 
 type IIsssue = {

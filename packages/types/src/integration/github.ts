@@ -11,20 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { IState } from "../state";
 import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "../workspace";
-import type { TStateMap } from "./common";
-
-// entity types
-export enum E_ISSUE_STATE_MAP_KEYS {
-  ISSUE_OPEN = "ISSUE_OPEN",
-  ISSUE_CLOSED = "ISSUE_CLOSED",
-}
-export type TIssueStateMapKeys = keyof typeof E_ISSUE_STATE_MAP_KEYS;
-
-export type TIssueStateMap = {
-  [key in TIssueStateMapKeys]: IState | undefined;
-};
+import type { TStateMap, TIssueStateMap } from "./common";
 
 export type TGithubMergeRequestEvent =
   | "DRAFT_MR_OPENED"

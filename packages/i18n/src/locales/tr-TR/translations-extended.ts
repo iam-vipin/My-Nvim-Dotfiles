@@ -1475,6 +1475,23 @@ export default {
     choose_entity: "Varlık Seçin",
     choose_project: "Proje Seçin",
     link_plane_project: "Plane projesini bağla",
+    project_issue_sync: "Proje Sorun Senkronizasyonu",
+    project_issue_sync_description: "Gitlab'dan Plane projenize sorunları senkronize edin",
+    project_issue_sync_empty_state: "Eşlenmiş proje sorun senkronizasyonu burada görünecek",
+    configure_project_issue_sync_state: "Sorun Senkronizasyon Durumunu Yapılandır",
+    select_issue_sync_direction: "Sorun senkronizasyon yönünü seçin",
+    allow_bidirectional_sync:
+      "Çift Yönlü - Gitlab ve Plane arasında sorunları ve yorumları her iki yönde senkronize et",
+    allow_unidirectional_sync: "Tek Yönlü - Sorunları ve yorumları yalnızca Gitlab'dan Plane'e senkronize et",
+    allow_unidirectional_sync_warning:
+      "Gitlab Sorunu'ndaki veriler Bağlantılı Plane İş Öğesi'ndeki verilerin yerini alacak (yalnızca Gitlab → Plane)",
+    remove_project_issue_sync: "Bu Proje Sorun Senkronizasyonunu Kaldır",
+    remove_project_issue_sync_confirmation: "Bu proje sorun senkronizasyonunu kaldırmak istediğinizden emin misiniz?",
+    ISSUE_OPEN: "Sorun Açık",
+    ISSUE_CLOSED: "Sorun Kapalı",
+    save: "Kaydet",
+    start_sync: "Senkronizasyonu Başlat",
+    choose_repository: "Depo Seçin...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",

@@ -11,13 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { GitlabMergeRequestEvent, GitlabWebhookEvent } from "@plane/etl/gitlab";
+import type { GitlabIssueEvent, GitlabNoteEvent, GitlabMergeRequestEvent, GitlabWebhookEvent } from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
 import { captureException } from "@/logger";
 import type { TaskHeaders } from "@/types";
 import { TaskHandler } from "@/types";
 import type { MQ, Store } from "@/worker/base";
 import { handleMergeRequest } from "./handlers/merge-request.handler";
+import { handleIssueComment } from "./handlers/issue-comment.handler";
+import { handleIssueEvents } from "./handlers/issue.handler";
 
 export class GitlabWebhookWorker extends TaskHandler {
   mq: MQ;
@@ -36,14 +38,19 @@ export class GitlabWebhookWorker extends TaskHandler {
     try {
       if (data.event_type === "merge_request") {
         await handleMergeRequest(data as GitlabMergeRequestEvent);
+      } else if (data.event_type === "issue") {
+        await handleIssueEvents(this.store, data as GitlabIssueEvent);
+      } else if (data.event_type === "note") {
+        await handleIssueComment(this.store, data as GitlabNoteEvent);
       }
       return true;
     } catch (error) {
-      logger.error("[GITLAB] Error processing gitlab webhook", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`[GITLAB][${data.event_type}] Error processing gitlab webhook`, errorMessage);
       captureException(error as Error);
       return true;
     } finally {
-      logger.info("[GITLAB] Event Processed Successfully");
+      logger.info(`[GITLAB][${data.event_type}] Event Processed Successfully`);
     }
   }
 }

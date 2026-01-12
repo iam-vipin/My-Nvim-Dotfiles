@@ -12,7 +12,7 @@
  */
 
 import type { TWorkspaceEntityConnection, TWorkspaceConnection } from "../workspace";
-import type { TStateMap } from "./common";
+import type { TStateMap, TIssueStateMap } from "./common";
 
 export type TGitlabMergeRequestEvent =
   | "DRAFT_MR_OPENED"
@@ -29,7 +29,13 @@ export type TGitlabExState = {
 };
 
 // gitlab entity connection config
-export type TGitlabEntityConnectionConfig = object & { states: { mergeRequestEventMapping: TStateMap } };
+export type TGitlabEntityConnectionConfig = object & {
+  states: {
+    mergeRequestEventMapping?: TStateMap;
+    issueEventMapping?: TIssueStateMap;
+  };
+  allowBidirectionalSync?: boolean;
+};
 
 // gitlab workspace connection config
 export type TGitlabWorkspaceConnectionConfig = object;
@@ -70,3 +76,9 @@ export type TGitlabRepository = {
   name: string;
   full_name: string;
 };
+
+export type TGitlabIssueLinkEntityConnectionConfig = {
+  comment_id: string;
+};
+
+export type TGitlabIssueLinkEntityConnection = TWorkspaceEntityConnection<TGitlabIssueLinkEntityConnectionConfig>;

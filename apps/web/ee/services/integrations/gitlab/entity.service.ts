@@ -76,6 +76,28 @@ export class GitlabEntityService {
       });
 
   /**
+   * @description create entity connection v2
+   * @param { string } workspaceId
+   * @param { string } workspaceConnectionId
+   * @param { Partial<TGitlabEntityConnection> } entityConnection
+   * @returns { Promise<TGitlabEntityConnection | undefined> }
+   */
+  createEntityConnectionV2 = async (
+    workspaceId: string,
+    workspaceConnectionId: string,
+    entityConnection: Partial<TGitlabEntityConnection>
+  ): Promise<TGitlabEntityConnection | undefined> =>
+    await this.axiosInstance
+      .post(
+        `/api/${this.isEnterprise ? "gitlab-enterprise" : "gitlab"}/entity-connections/v2/${workspaceId}/${workspaceConnectionId}`,
+        entityConnection
+      )
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+
+  /**
    * @description update entity connection
    * @param { string } workspaceId
    * @param { string } workspaceConnectionId

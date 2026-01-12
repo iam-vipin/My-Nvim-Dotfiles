@@ -553,6 +553,7 @@ class IssueCommentCreateSerializer(BaseSerializer):
             "access",
             "external_source",
             "external_id",
+            "parent",
         ]
         read_only_fields = [
             "id",

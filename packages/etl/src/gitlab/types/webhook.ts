@@ -55,8 +55,9 @@ export interface GitlabPushEvent extends GitlabWebhookEvent {
 // Issue event
 export interface GitlabIssueEvent extends GitlabWebhookEvent {
   object_kind: "issue";
+  event_type: "issue";
   object_attributes: GitlabIssue & {
-    action: string;
+    action: GitlabIssueWebhookActions;
     url: string;
   };
   labels: GitlabLabel[];
@@ -98,13 +99,17 @@ export interface GitlabMergeRequestEvent extends GitlabWebhookEvent {
 }
 
 // Note event
-export interface NoteEvent extends GitlabWebhookEvent {
+export interface GitlabNoteEvent extends GitlabWebhookEvent {
   object_kind: "note";
+  event_type: "note";
   object_attributes: GitlabNote & {
+    description: string;
     url: string;
-    noteable_type: "Issue" | "MergeRequest" | "Snippet" | "Commit";
+    action: GitlabNoteWebhookActions;
   };
-  issue?: GitlabIssue;
+  issue: Omit<GitlabIssue, "labels"> & {
+    labels: GitlabLabel[];
+  };
   merge_request?: GitlabMergeRequest;
   snippet?: {
     id: number;
@@ -128,4 +133,16 @@ export interface NoteEvent extends GitlabWebhookEvent {
       email: string;
     };
   };
+}
+
+export enum GitlabIssueWebhookActions {
+  OPEN = "open",
+  CLOSE = "close",
+  REOPEN = "reopen",
+  UPDATE = "update",
+}
+
+export enum GitlabNoteWebhookActions {
+  CREATE = "create",
+  UPDATE = "update",
 }

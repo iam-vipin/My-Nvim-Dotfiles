@@ -10,11 +10,8 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
@@ -48,19 +45,17 @@ export const stateMapInit: TStateMap = {
 };
 
 interface IRepositoryMappingRootProps {
+  isEntitiesLoading: boolean;
   isEnterprise: boolean;
 }
 
 export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
+  isEntitiesLoading,
   isEnterprise,
 }: IRepositoryMappingRootProps) {
   // hooks
   const {
-    workspace,
-    fetchProjects,
-    auth: { workspaceConnectionIds },
-    data: { fetchGitlabEntities },
-    entityConnection: { entityConnectionIds, entityConnectionById, fetchEntityConnections },
+    entityConnection: { entityConnectionIds, entityConnectionById },
   } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
@@ -69,9 +64,6 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
   const [modalProjectCreateOpen, setModalProjectCreateOpen] = useState<boolean>(false);
 
   // derived values
-  const workspaceId = workspace?.id || undefined;
-  const workspaceSlug = workspace?.slug || undefined;
-  const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const entityConnections = entityConnectionIds.map((id) => {
     const entityConnection = entityConnectionById(id);
     if (!entityConnection || entityConnection.type !== EConnectionType.ENTITY) {
@@ -87,29 +79,6 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
     }
     return entityConnection;
   });
-
-  // fetching external api token
-  const { isLoading: isGitlabEntitiesLoading } = useSWR(
-    workspaceConnectionId && workspaceId
-      ? `INTEGRATION_GITLAB_ENTITIES_${workspaceId}_${workspaceConnectionId}${isEnterprise ? "_ENTERPRISE" : ""}`
-      : null,
-    workspaceConnectionId && workspaceId ? async () => fetchGitlabEntities() : null,
-    { errorRetryCount: 0 }
-  );
-
-  // fetching plane projects
-  const { isLoading: isProjectsLoading } = useSWR(
-    workspaceSlug ? `INTEGRATION_PLANE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug ? async () => fetchProjects(workspaceSlug) : null,
-    { errorRetryCount: 0 }
-  );
-
-  // fetching entity connections
-  const { isLoading: isEntitiesLoading } = useSWR(
-    workspaceId ? `INTEGRATION_GITLAB_ENTITY_CONNECTIONS_${workspaceId}${isEnterprise ? "_ENTERPRISE" : ""}` : null,
-    workspaceId ? async () => fetchEntityConnections() : null,
-    { errorRetryCount: 0 }
-  );
 
   return (
     <div className="space-y-4">

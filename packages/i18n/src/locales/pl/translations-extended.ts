@@ -1463,6 +1463,23 @@ export default {
     choose_entity: "Wybierz jednostkę",
     choose_project: "Wybierz projekt",
     link_plane_project: "Połącz projekt Plane",
+    project_issue_sync: "Synchronizacja problemów projektu",
+    project_issue_sync_description: "Synchronizuj problemy z Gitlab do swojego projektu Plane",
+    project_issue_sync_empty_state: "Zmapowana synchronizacja problemów projektu pojawi się tutaj",
+    configure_project_issue_sync_state: "Skonfiguruj stan synchronizacji problemów",
+    select_issue_sync_direction: "Wybierz kierunek synchronizacji problemów",
+    allow_bidirectional_sync:
+      "Dwukierunkowa - Synchronizuj problemy i komentarze w obu kierunkach między Gitlab a Plane",
+    allow_unidirectional_sync: "Jednokierunkowa - Synchronizuj problemy i komentarze tylko z Gitlab do Plane",
+    allow_unidirectional_sync_warning:
+      "Dane z Gitlab Issue zastąpią dane w powiązanym elemencie pracy Plane (tylko Gitlab → Plane)",
+    remove_project_issue_sync: "Usuń tę synchronizację problemów projektu",
+    remove_project_issue_sync_confirmation: "Czy na pewno chcesz usunąć tę synchronizację problemów projektu?",
+    ISSUE_OPEN: "Problem otwarty",
+    ISSUE_CLOSED: "Problem zamknięty",
+    save: "Zapisz",
+    start_sync: "Rozpocznij synchronizację",
+    choose_repository: "Wybierz repozytorium...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",

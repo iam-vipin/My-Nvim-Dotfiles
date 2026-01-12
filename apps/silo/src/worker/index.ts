@@ -37,6 +37,7 @@ export const integrationTaskManager = new TaskManager({
     "github-webhook": "github-webhook",
     "gitlab-webhook": "gitlab-webhook",
     "plane-github-webhook": "plane-github-webhook",
+    "plane-gitlab-webhook": "plane-gitlab-webhook",
     "plane-slack-webhook": "plane-slack-webhook",
     "sentry-webhook": "sentry-webhook",
     "plane-sentry-webhook": "plane-sentry-webhook",

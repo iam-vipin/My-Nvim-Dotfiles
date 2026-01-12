@@ -169,12 +169,62 @@ export class SlackService {
     }
   }
 
-  async unfurlLink(channel: string, ts: string, unfurls: UnfurlMap) {
+  async unfurlLink(
+    channel: string,
+    ts: string,
+    unfurls: UnfurlMap,
+    metadata?: { entities: { app_unfurl_url: string }[] }
+  ) {
     try {
       const response = await this.client.post("chat.unfurl", {
         channel,
         ts,
         unfurls,
+        metadata,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error unfurling link:", error);
+      return false;
+    }
+  }
+
+  async unfurlWithWorkObject(channel: string, ts: string, metadata: { entities: { app_unfurl_url: string }[] }) {
+    try {
+      const response = await this.client.post("chat.unfurl", {
+        channel,
+        ts,
+        metadata,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error unfurling link:", error);
+      return false;
+    }
+  }
+
+  async entityPresentDetails(
+    triggerId: string,
+    props: {
+      metadata?: any;
+      userAuthRequired?: boolean;
+      userAuthUrl?: string;
+      error?: {
+        custom_title?: string;
+        custom_message?: string;
+        status: "edit_error" | "custom" | "not_found" | "internal_error";
+      };
+    }
+  ) {
+    try {
+      const response = await this.client.post("entity.presentDetails", {
+        trigger_id: triggerId,
+        metadata: props.metadata,
+        user_auth_required: props.userAuthRequired,
+        user_auth_url: props.userAuthUrl,
+        error: props.error,
       });
 
       return response.data;
@@ -267,6 +317,37 @@ export class SlackService {
 
       const response = await this.client.post("chat.postMessage", payload);
       return response.data;
+    } catch (error) {
+      console.error("Error sending thread message:", error);
+      throw error;
+    }
+  }
+
+  async sendWorkObjectThreadMessage(
+    channelId: string,
+    text: string,
+    threadTs?: string,
+    metadata?: any,
+    unfurlLinks = false
+  ): Promise<SlackMessageResponse> {
+    try {
+      const payload = {
+        channel: channelId,
+        text: text,
+        thread_ts: threadTs,
+        metadata: metadata as unknown,
+        unfurl_links: unfurlLinks,
+        unfurl_media: unfurlLinks,
+      };
+
+      const isBotInChannel = await this.ensureBotInChannel(channelId);
+      if (!isBotInChannel) {
+        // If the bot is not in the channel, log it, but make the request anyway
+        console.error("Could not add bot to channel", { channelId });
+      }
+
+      const response = await this.client.post("chat.postMessage", payload);
+      return response.data as SlackMessageResponse;
     } catch (error) {
       console.error("Error sending thread message:", error);
       throw error;

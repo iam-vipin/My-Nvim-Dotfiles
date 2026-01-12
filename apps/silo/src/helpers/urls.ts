@@ -53,3 +53,7 @@ export const getIntegrationPageUrl = (workspaceSlug: string, integrationKey: E_I
   const provider = convertIntegrationKeyToProvider(integrationKey);
   return `${env.APP_BASE_URL}/${workspaceSlug}/settings/integrations/${provider}`;
 };
+
+export const getProfileConnectionPageUrl = (workspaceSlug: string, workspaceId: string) => {
+  return `${env.APP_BASE_URL}/${workspaceSlug}/settings/account/connections?workspaceId=${workspaceId}`;
+};

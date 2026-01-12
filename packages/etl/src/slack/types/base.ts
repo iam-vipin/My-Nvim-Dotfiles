@@ -219,6 +219,10 @@ export interface ISlackView<TBlocks extends Array<any> = any[]> {
   root_view_id: string;
   app_id: string;
   external_id: string;
+  external_ref?: {
+    id: string;
+    type: string;
+  };
   app_installed_team_id: string;
   bot_id: string;
 }
@@ -407,10 +411,33 @@ export interface SlackEventPayload {
 }
 
 export type SlackEvent<TBlocks = any[]> =
+  | SlackEntityDetailsRequestedEvent
   | SlackMessageEvent<TBlocks>
   | SlackLinkSharedEvent
   | SlackAppUninstallEvent
   | SlackAppMentionEvent;
+
+export interface SlackEntityDetailsRequestedEvent {
+  type: "entity_details_requested";
+  user: string;
+  external_ref: {
+    id: string;
+    type: string;
+  };
+  entity_url: string;
+  link: {
+    url: string;
+    domain: string;
+  };
+  bot_id?: string;
+  app_unfurl_url: string;
+  event_ts: string;
+  trigger_id: string;
+  user_locale: string;
+  channel: string;
+  message_ts: string;
+  thread_ts: string;
+}
 
 export interface SlackMessageEvent<TBlocks = any[]> {
   type: "message";

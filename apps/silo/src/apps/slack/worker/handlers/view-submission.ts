@@ -29,12 +29,16 @@ import { createSlackFormParser } from "../../helpers/field-parser/field-parser";
 import { parseLinkWorkItemFormData, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { getSlackThreadUrl } from "../../helpers/urls";
 import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
+import { TFormType } from "../../types/fields";
 import type { TIntakeFormResult, TWorkItemFormResult } from "../../types/fields";
 import type { ShortcutActionPayload, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { createSlackIntakeLinkback } from "../../views/intake-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createLinkIssueModalView } from "../../views/link-issue-modal";
+import { createSlackWorkObjectFormParser } from "../../helpers/field-parser/wo-field-parser";
+import { getIssueWorkObjectService } from "../../services/workobjects/issues";
+import { AxiosError, HttpStatusCode } from "axios";
 
 const apiClient = getAPIClient();
 
@@ -59,10 +63,123 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
     case E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM:
     case E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE:
       return await handleCreateNewWorkItemViewSubmission(details, data);
+    case E_MESSAGE_ACTION_TYPES.WORK_OBJECT_EDIT:
+      return await handleWorkObjectEditViewSubmission(details, data);
     default:
       logger.error("Unknown view submission callback id:", { callbackId: data.view.callback_id });
       return;
   }
+};
+
+export const handleWorkObjectEditViewSubmission = async (
+  details: TSlackConnectionDetails,
+  data: TViewSubmissionPayload
+) => {
+  const { workspaceConnection, credentials, planeClient, slackService } = details;
+
+  if (!credentials.target_access_token) {
+    throw new Error("Target access token is required");
+  }
+
+  const externalRef = data.view.external_ref;
+
+  if (!externalRef) {
+    logger.error("External ref not found for issue submisison");
+    return;
+  }
+
+  const [projectId, issueId] = externalRef.id.split(":");
+
+  const issueDetails = await planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId);
+
+  const issueTypeId = issueDetails.type_id;
+
+  const formParser = createSlackWorkObjectFormParser(
+    {
+      workspaceSlug: workspaceConnection.workspace_slug,
+      accessToken: credentials.target_access_token,
+    },
+    {
+      projectId,
+      issueTypeId,
+    }
+  );
+
+  const parsedData = await formParser.parse(data.view);
+
+  if (parsedData.type === TFormType.WORK_ITEM) {
+    try {
+      const data = parsedData.data;
+      await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+        name: data.name,
+        state: data.state,
+        priority: data.priority,
+        assignees: data.assignees,
+        labels: data.labels,
+        start_date: data.start_date,
+        target_date: data.due_date,
+      });
+
+      await processCustomFields({
+        customFields: parsedData.data.customFields,
+        workspaceSlug: workspaceConnection.workspace_slug,
+        planeClient: planeClient,
+        projectId: projectId,
+        issueId: issueId,
+      });
+    } catch (error: any) {
+      if (error?.non_field_errors) {
+        const fieldErrors = error?.non_field_errors as string[];
+        const errorMessage = fieldErrors.join("\n");
+
+        await slackService.entityPresentDetails(data.trigger_id, {
+          error: {
+            status: "edit_error",
+            custom_message: errorMessage,
+          },
+        });
+      }
+
+      if (error instanceof AxiosError) {
+        const errorMessage = error.response?.data;
+
+        if (error.response?.status === HttpStatusCode.InternalServerError) {
+          await slackService.entityPresentDetails(data.trigger_id, {
+            error: {
+              status: "internal_error",
+              custom_message: "Something went wrong while updating work item.",
+            },
+          });
+        } else {
+          await slackService.entityPresentDetails(data.trigger_id, {
+            error: {
+              status: "edit_error",
+              custom_message: errorMessage,
+            },
+          });
+        }
+      }
+
+      logger.error("[Slack WO View Submission] Failed to update issue or custom fields", error);
+
+      return;
+    }
+  }
+
+  const issueWorkObjectService = getIssueWorkObjectService("DETAILED", data.team.id, data.user.id);
+  const updatedWorkObject = await issueWorkObjectService.getWorkObject({
+    strategy: "id",
+    projectId: projectId,
+    issueId: issueId,
+  });
+
+  const updatedView: unknown = await slackService.entityPresentDetails(data.trigger_id, {
+    metadata: updatedWorkObject,
+    userAuthUrl: "",
+    userAuthRequired: false,
+  });
+
+  logger.info("[Slack WO View Submisson] Response posted, view updated", updatedView);
 };
 
 export const handleLinkWorkItemViewSubmission = async (

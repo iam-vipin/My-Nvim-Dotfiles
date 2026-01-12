@@ -20,6 +20,7 @@ export enum E_KNOWN_FIELD_KEY {
   DESCRIPTION_HTML = "description_html",
   TITLE = "title",
   NAME = "name",
+  STATUS = "status",
   STATE = "state",
   PRIORITY = "priority",
   TYPE_ID = "type_id",

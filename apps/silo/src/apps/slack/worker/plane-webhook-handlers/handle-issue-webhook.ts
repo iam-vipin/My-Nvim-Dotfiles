@@ -55,8 +55,8 @@ const eventMatchers: Record<E_SLACK_PROJECT_UPDATES_EVENTS, TActivityMatcher> = 
     const isStateChangeEvent = activity.field === E_KNOWN_FIELD_KEY.STATE;
 
     if (!activity.newIdentifier) {
-      const movedToCompletedState = activity.newValue.toLowerCase() === "done";
-      const movedToCancelledState = activity.newValue.toLowerCase() === "cancelled";
+      const movedToCompletedState = activity.newValue?.toLowerCase() === "done";
+      const movedToCancelledState = activity.newValue?.toLowerCase() === "cancelled";
 
       return isStateChangeEvent && (movedToCompletedState || movedToCancelledState);
     } else {

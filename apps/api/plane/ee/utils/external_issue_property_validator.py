@@ -168,15 +168,15 @@ class PropertySaver:
 
     # url
     def save_url(self, value):
-        return self._save_value(value, "value_url")
+        return self._save_value(value, "value_text")
 
     # email
     def save_email(self, value):
-        return self._save_value(value, "value_email")
+        return self._save_value(value, "value_text")
 
     # file
     def save_file(self, value):
-        return self._save_value(value, "value_file")
+        return self._save_value(value, "value_text")
 
     # option
     def save_option(self, value):

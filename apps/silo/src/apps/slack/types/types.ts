@@ -140,6 +140,7 @@ export type TSlackWorkItemOrIntakeModalParams = {
 export enum E_MESSAGE_ACTION_TYPES {
   LINK_WORK_ITEM = "link_work_item",
   CREATE_NEW_WORK_ITEM = "issue_shortcut",
+  WORK_OBJECT_EDIT = "work-object-edit",
   CREATE_INTAKE_ISSUE = "create_intake_issue",
   DISCONNECT_WORK_ITEM = "disconnect_work_item",
   ISSUE_WEBLINK_SUBMISSION = "issue_weblink_submission",

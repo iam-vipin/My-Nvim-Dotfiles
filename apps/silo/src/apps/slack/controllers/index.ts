@@ -42,7 +42,7 @@ import { Store } from "@/worker/base";
 import { authenticateSlackRequestMiddleware, slackAuth } from "../auth/auth";
 import { isValidIssueUpdateActivity } from "../helpers/activity";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
-import { ACTIONS } from "../helpers/constants";
+import { ACTIONS, WO_INPUT_SUFFIX } from "../helpers/constants";
 import { convertToSlackOptions } from "../helpers/slack-options";
 import {
   extractSlackDMAlertConfigForPlaneUser,
@@ -803,7 +803,18 @@ export default class SlackController {
         return res.status(200).json({});
       }
 
-      const [projectId, fieldId] = values;
+      let [projectId, fieldId] = values;
+
+      if (fieldId === WO_INPUT_SUFFIX) {
+        const externalRef = payload.view.external_ref;
+
+        if (!externalRef) return res.status(200).json({});
+
+        const identifiers = externalRef.id.split(":");
+
+        projectId = identifiers[0];
+        fieldId = payload.block_id === "status" ? "state" : payload.block_id;
+      }
 
       const details = await getConnectionDetails(payload.team.id, {
         id: payload.user.id,

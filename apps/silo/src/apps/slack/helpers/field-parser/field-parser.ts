@@ -19,6 +19,7 @@ import { TFormType } from "../../types/fields";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { richTextBlockToMrkdwn } from "../parse-issue-form";
 import { removePrefixIfExists } from "../slack-options";
+import { WO_INPUT_SUFFIX } from "../constants";
 
 /**
  * @fileoverview
@@ -29,10 +30,19 @@ import { removePrefixIfExists } from "../slack-options";
  * the same assumption for the custom fields.
  */
 
-export class SlackFormParser {
-  constructor(private context: TFormParserContext) {}
+/**
+ * Type definition for parser handler functions
+ */
+export type TParserHandler = (viewData: {
+  callback_id: string;
+  state: { values: any };
+  private_metadata?: string;
+}) => Promise<TParsedFormResult>;
 
-  private readonly coreFieldParsers = {
+export class SlackFormParser {
+  constructor(protected readonly context: TFormParserContext) {}
+
+  protected readonly coreFieldParsers: Record<string, any> = {
     project: (data: any) => data?.selected_option?.value,
     name: (data: any) => data?.value,
     description_html: (data: any) => richTextBlockToMrkdwn(data?.rich_text_value) || "<p></p>",
@@ -44,27 +54,33 @@ export class SlackFormParser {
     issue_type: (data: any) => removePrefixIfExists(data?.selected_option?.value),
   };
 
+  /**
+   * Map of callback_id to parser handler functions.
+   * Derived classes can extend this map to add custom handlers.
+   */
+  protected readonly actionHandlers: Map<string, TParserHandler> = new Map<string, TParserHandler>([
+    [E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM, this.parseWorkItem.bind(this)],
+    [E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE, this.parseIntake.bind(this)],
+  ]);
+
   async parse(viewData: {
     callback_id: string;
     state: { values: any };
     private_metadata?: string;
   }): Promise<TParsedFormResult> {
     try {
-      switch (viewData.callback_id as E_MESSAGE_ACTION_TYPES) {
-        case E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM:
-          return await this.parseWorkItem(viewData);
+      const handler = this.actionHandlers.get(viewData.callback_id);
 
-        case E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE:
-          return await this.parseIntake(viewData);
-
-        default:
-          return {
-            type: TFormType.UNKNOWN,
-            success: false,
-            error: `Unsupported callback_id: ${viewData.callback_id}`,
-            callbackId: viewData.callback_id,
-          };
+      if (handler) {
+        return await handler(viewData);
       }
+
+      return {
+        type: TFormType.UNKNOWN,
+        success: false,
+        error: `Unsupported callback_id: ${viewData.callback_id}`,
+        callbackId: viewData.callback_id,
+      };
     } catch (error) {
       return {
         type: TFormType.UNKNOWN,
@@ -75,7 +91,7 @@ export class SlackFormParser {
     }
   }
 
-  private async parseWorkItem(viewData: any): Promise<TWorkItemFormResult> {
+  protected async parseWorkItem(viewData: any): Promise<TWorkItemFormResult> {
     const projectId = this.extractProjectId(viewData.state.values);
 
     const issueTypeFromForm = this.extractIssueType(viewData.state.values);
@@ -102,7 +118,7 @@ export class SlackFormParser {
     };
   }
 
-  private async parseIntake(viewData: any): Promise<TIntakeFormResult> {
+  protected async parseIntake(viewData: any): Promise<TIntakeFormResult> {
     const projectId = this.extractProjectId(viewData.state.values);
 
     // Fetch the form definition
@@ -125,7 +141,7 @@ export class SlackFormParser {
     };
   }
 
-  private parseFields(values: any, formFields: FormField[], projectId: string) {
+  protected parseFields(values: any, formFields: FormField[], projectId: string) {
     const coreFields = {
       project: projectId,
       name: "",
@@ -164,20 +180,28 @@ export class SlackFormParser {
     return { coreFields, customFields };
   }
 
-  private isCoreField(actionKey: string): boolean {
+  protected isCoreField(actionKey: string): boolean {
+    if (actionKey.includes(`.${WO_INPUT_SUFFIX}`)) {
+      const [key] = actionKey.split(".");
+      const cleanActionKey = removePrefixIfExists(key);
+      return cleanActionKey in this.coreFieldParsers;
+    }
+
     const cleanActionKey = removePrefixIfExists(actionKey);
     return cleanActionKey in this.coreFieldParsers;
   }
 
-  private parseCoreField(actionKey: string, actionData: any, coreFields: any) {
+  protected parseCoreField(actionKey: string, actionData: any, coreFields: any) {
     const cleanActionKey = removePrefixIfExists(actionKey);
-    const parser = this.coreFieldParsers[cleanActionKey as keyof typeof this.coreFieldParsers];
+    const parser = this.coreFieldParsers[cleanActionKey];
     if (!parser) return;
 
     const value = parser(actionData);
     if (value !== undefined) {
       if (cleanActionKey === E_KNOWN_FIELD_KEY.TITLE) {
         coreFields[E_KNOWN_FIELD_KEY.NAME] = value;
+      } else if (cleanActionKey === E_KNOWN_FIELD_KEY.STATUS) {
+        coreFields[E_KNOWN_FIELD_KEY.STATE] = value;
       } else if (cleanActionKey === E_KNOWN_FIELD_KEY.ISSUE_TYPE) {
         coreFields[E_KNOWN_FIELD_KEY.TYPE_ID] = value;
       } else {
@@ -186,49 +210,46 @@ export class SlackFormParser {
     }
   }
 
-  private parseFieldValue(actionData: any, field: FormField): unknown {
+  protected parseFieldValue(data: any, field: FormField): unknown {
     switch (field.type) {
       case "TEXT":
-        return actionData.type === "plain_text_input" ? actionData.value : undefined;
+        return data.type === "plain_text_input" ? data.value : undefined;
 
       case "DECIMAL":
-        if (actionData.type === "plain_text_input") {
-          const num = parseFloat(actionData.value);
+        if (data.type === "plain_text_input" || data.type === "number_input") {
+          const num = parseFloat(data.value);
           return isNaN(num) ? undefined : num;
         }
         return undefined;
 
       case "OPTION":
-        if (
-          field.isMulti &&
-          (actionData.type === "multi_static_select" || actionData.type === "multi_external_select")
-        ) {
-          return actionData.selected_options?.map((opt: any) => opt.value) || [];
-        } else if (!field.isMulti && (actionData.type === "static_select" || actionData.type === "external_select")) {
-          return actionData.selected_option?.value;
+        if (field.isMulti && (data.type === "multi_static_select" || data.type === "multi_external_select")) {
+          return data.selected_options?.map((opt: any) => opt.value) || [];
+        } else if (!field.isMulti && (data.type === "static_select" || data.type === "external_select")) {
+          return data.selected_option?.value;
         }
         return undefined;
 
       case "RELATION":
-        if (field.isMulti && actionData.type === "multi_external_select") {
-          return actionData.selected_options?.map((opt: any) => opt.value) || [];
-        } else if (!field.isMulti && actionData.type === "external_select") {
-          return actionData.selected_option?.value;
+        if (field.isMulti && data.type === "multi_external_select") {
+          return data.selected_options?.map((opt: any) => opt.value) || [];
+        } else if (!field.isMulti && data.type === "external_select") {
+          return data.selected_option?.value;
         }
         return undefined;
 
       case "DATETIME":
-        return actionData.type === "datepicker" ? actionData.selected_date : undefined;
+        return data.type === "datepicker" ? data.selected_date : undefined;
 
       case "BOOLEAN":
-        return actionData.type === "checkboxes" ? actionData.selected_options?.length > 0 : false;
+        return data.type === "checkboxes" ? data.selected_options?.length > 0 : false;
 
       default:
-        return actionData.value;
+        return data.value;
     }
   }
 
-  private extractProjectId(values: any): string {
+  protected extractProjectId(values: any): string {
     let projectId = "";
 
     Object.entries(values).forEach(([_, blockData]: [string, any]) => {
@@ -240,7 +261,7 @@ export class SlackFormParser {
     return projectId;
   }
 
-  private extractIssueType(values: any): string | undefined {
+  protected extractIssueType(values: any): string | undefined {
     let issueTypeId: string | undefined;
 
     Object.entries(values).forEach(([_, blockData]: [string, any]) => {

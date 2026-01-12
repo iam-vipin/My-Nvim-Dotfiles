@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { WO_INPUT_SUFFIX } from "./constants";
+
 export type PlainTextOption = {
   text: {
     type: "plain_text";
@@ -23,7 +25,7 @@ export type PlainTextOption = {
 export const removePrefixIfExists = (value: string): string => {
   if (value.includes(".")) {
     const parts = value.split(".");
-    return parts[parts.length - 1];
+    return value.includes(`.${WO_INPUT_SUFFIX}`) ? parts[0] : parts[parts.length - 1];
   }
   return value;
 };

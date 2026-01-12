@@ -23,8 +23,8 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import jwt_schema
-from pi.app.api.v2.dependencies import validate_jwt_token
+from pi.app.api.dependencies import jwt_schema
+from pi.app.api.dependencies import validate_jwt_token
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.transcription.transcribe import process_transcription
 

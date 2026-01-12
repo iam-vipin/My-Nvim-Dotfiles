@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC, ReactNode } from "react";
-import React from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { NewTabIcon, CustomersIcon } from "@plane/propel/icons";
 import { CUSTOMER_CONTRACT_STATUS, CUSTOMER_STAGES } from "@plane/constants";
@@ -26,12 +25,10 @@ import { useMember } from "@/hooks/store/use-member";
 import { getAbbreviatedNumber } from "@/plane-web/components/customers/utils";
 type TProps = {
   customer: TCustomer;
-  setPopperElement: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
-  styles: { [key: string]: React.CSSProperties };
   workspaceSlug: string;
 };
 export function CustomerPreview(props: TProps) {
-  const { customer, setPopperElement, styles, workspaceSlug } = props;
+  const { customer, workspaceSlug } = props;
   // hooks
   const { t } = useTranslation();
   const { getUserDetails } = useMember();
@@ -41,7 +38,7 @@ export function CustomerPreview(props: TProps) {
   const stage = CUSTOMER_STAGES.find((stage) => stage.value === customer?.stage);
   return (
     <div className="bg-layer-1/40">
-      <div ref={setPopperElement} className={"min-w-[350px] max-w-[400px] z-30"} style={styles.popper}>
+      <div className={"min-w-[350px] max-w-[400px]"}>
         <div className="bg-surface-1 border border-subtle-1 rounded-lg p-5 shadow-raised-100">
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center truncate">
@@ -77,7 +74,7 @@ export function CustomerPreview(props: TProps) {
                 )}
               </div>
             </div>
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <Button
                 variant="secondary"
                 className="bg-surface-1"
@@ -123,18 +120,18 @@ export function CustomerPreview(props: TProps) {
               <span className="text-13">{t(stage?.i18n_name || "common.none")}</span>
             </PreviewProperty>
             <PreviewProperty name={t("customers.properties.default.revenue.name")}>
-              <div className="w-3/5 flex-grow">
+              <div className="w-3/5 grow">
                 <span className="text-13">$ {getAbbreviatedNumber(customer.revenue || 0)}</span>
               </div>
             </PreviewProperty>
             {createdByDetails ? (
               <div className="flex h-8 gap-2 items-center">
-                <div className="w-2/5 flex-shrink-0">
+                <div className="w-2/5 shrink-0">
                   <span className="text-13 text-secondary">{t("common.created_by")}</span>
                 </div>
                 <div className="w-full h-full flex items-center gap-1.5 rounded-sm py-0.5 text-13 justify-between cursor-not-allowed">
                   <ButtonAvatars showTooltip userIds={createdByDetails.id} />
-                  <span className="flex-grow truncate text-13 leading-5">{createdByDetails?.display_name}</span>
+                  <span className="grow truncate text-13 leading-5">{createdByDetails?.display_name}</span>
                 </div>
               </div>
             ) : (
@@ -154,10 +151,10 @@ type TPreviewProps = {
 function PreviewProperty(props: TPreviewProps) {
   return (
     <div className="flex h-8 gap-2 items-center">
-      <div className="w-2/5 flex-shrink-0">
+      <div className="w-2/5 shrink-0">
         <span className="text-13 text-tertiary">{props.name}</span>
       </div>
-      <div className="w-3/5 flex-grow truncate">{props.children}</div>
+      <div className="w-3/5 grow truncate">{props.children}</div>
     </div>
   );
 }

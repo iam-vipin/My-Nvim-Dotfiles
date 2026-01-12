@@ -15,14 +15,10 @@
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { TiptapTransformer } from "@hocuspocus/transformer";
 import type { AnyExtension, JSONContent } from "@tiptap/core";
-import type * as Y from "yjs";
+import { XmlFragment } from "yjs";
+import type { YEvent, XmlElement, XmlText } from "yjs";
 // editor extensions
-import {
-  TITLE_EDITOR_EXTENSIONS,
-  createRealtimeEvent,
-  extractTextFromHTML,
-  generateTitleProsemirrorJson,
-} from "@plane/editor";
+import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent, generateTitleProsemirrorJson } from "@plane/editor";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 // helpers
@@ -30,13 +26,14 @@ import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
+import { extractTextFromXmlFragment } from "./title-update/title-utils";
 
 /**
  * Hocuspocus extension for synchronizing document titles
  */
 export class TitleSyncExtension implements Extension {
   // Maps document names to their observers and update managers
-  private titleObservers: Map<string, (events: Y.YEvent<any>[]) => void> = new Map();
+  private titleObservers: Map<string, (events: YEvent<XmlElement | XmlText>[]) => void> = new Map();
   private titleUpdateManagers: Map<string, TitleUpdateManager> = new Map();
   // Store minimal data needed for each document's title observer (prevents closure memory leaks)
   private titleObserverData: Map<
@@ -112,10 +109,12 @@ export class TitleSyncExtension implements Extension {
    * Handle title changes for a document
    * This is a separate method to avoid closure memory leaks
    */
-  private handleTitleChange(documentName: string, events: Y.YEvent<any>[]) {
+  private handleTitleChange(documentName: string, events: YEvent<XmlElement | XmlText>[]) {
     let title = "";
     events.forEach((event) => {
-      title = extractTextFromHTML(event.currentTarget.toJSON() as string);
+      if (event.currentTarget instanceof XmlFragment) {
+        title = extractTextFromXmlFragment(event.currentTarget);
+      }
     });
 
     // Get the manager for this document
@@ -136,7 +135,7 @@ export class TitleSyncExtension implements Extension {
       });
 
       // Use the instance from stored data (guaranteed to be set)
-      broadcastMessageToPage(data.instance, data.parentId, event);
+      void broadcastMessageToPage(data.instance, data.parentId, event);
     }
 
     // Schedule the title update

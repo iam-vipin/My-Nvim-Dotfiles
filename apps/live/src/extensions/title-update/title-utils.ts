@@ -11,14 +11,28 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { sanitizeHTML } from "@plane/utils";
+import * as Y from "yjs";
+import type { XmlFragment, XmlText, XmlElement } from "yjs";
+
+type XmlContainer = XmlFragment | XmlElement;
+type XmlChild = XmlElement | XmlText;
+
+const isXmlText = (node: XmlChild): node is XmlText => node instanceof Y.XmlText;
 
 /**
- * Utility function to extract text from HTML content
+ * Extracts plain text directly from a Yjs XmlFragment by traversing its children.
+ * Uses XmlText.toString() for efficient text extraction.
+ * Note: Non-string inserts (embeds/mentions) are ignored.
  */
-export const extractTextFromHTML = (html: string): string => {
-  // Use sanitizeHTML to safely extract text and remove all HTML tags
-  // This is more secure than regex as it handles edge cases and prevents injection
-  // Note: sanitizeHTML trims whitespace, which is acceptable for title extraction
-  return sanitizeHTML(html) || "";
+export const extractTextFromXmlFragment = (xml: XmlContainer): string => {
+  const children = xml.toArray() as XmlChild[];
+
+  return children
+    .map((child) => {
+      if (isXmlText(child)) {
+        return child.toString() as string;
+      }
+      return extractTextFromXmlFragment(child);
+    })
+    .join("");
 };

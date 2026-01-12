@@ -168,6 +168,10 @@ class StreamingZipFile:
     def add_file(self, archive_path, content=None, s3_key=None):
         """Add a file to the ZIP with memory-efficient processing"""
         if content is not None:
+            # Handle surrogate characters that can't be encoded in UTF-8
+            # These can appear from improperly decoded emoji or special characters
+            if isinstance(content, str):
+                content = content.encode("utf-8", errors="surrogatepass").decode("utf-8", errors="replace")
             # Add text/markdown content directly
             self.zipf.writestr(archive_path, content)
         elif s3_key is not None:

@@ -156,7 +156,7 @@ export const WikiUpgradeScreen = observer(function WikiUpgradeScreen(props: Prop
                     <Tabs.Trigger
                       key={tab.key}
                       value={tab.key}
-                      className="border-b border-subtle-1 rounded-none data-[selected]:text-accent-primary data-[selected]:border-accent-strong !bg-transparent"
+                      className="border-x-0! border-t-0! border-b border-subtle-1 rounded-none data-[selected]:text-accent-primary data-[selected]:border-accent-strong bg-transparent!"
                     >
                       {t(tab.i18n_label)}
                     </Tabs.Trigger>

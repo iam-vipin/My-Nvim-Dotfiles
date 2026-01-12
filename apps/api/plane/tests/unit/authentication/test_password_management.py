@@ -133,7 +133,7 @@ class TestChangePasswordEndpoint:
         )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.data["error_code"] == AUTHENTICATION_ERROR_CODES["INVALID_NEW_PASSWORD"]
+        assert response.data["error_code"] == AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"]
 
     @pytest.mark.django_db
     def test_change_password_missing_old_password(self, authenticated_client, test_user):
@@ -164,7 +164,9 @@ class TestChangePasswordEndpoint:
         assert response.data["error_code"] == AUTHENTICATION_ERROR_CODES["MISSING_PASSWORD"]
 
     @pytest.mark.django_db
-    def test_change_password_autoset_user_no_old_password_required(self, authenticated_autoset_client, test_user_autoset):
+    def test_change_password_autoset_user_no_old_password_required(
+        self, authenticated_autoset_client, test_user_autoset
+    ):
         """Test that user with autoset password doesn't need old password"""
         response = authenticated_autoset_client.post(
             CHANGE_PASSWORD_URL,

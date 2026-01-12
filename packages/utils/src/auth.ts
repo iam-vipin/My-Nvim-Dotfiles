@@ -232,6 +232,10 @@ const errorCodeMessages: {
     title: `Invalid password token`,
     message: () => `Invalid password token. Please try again.`,
   },
+  [EAuthErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Password too weak. Please try again.`,
+  },
   [EAuthErrorCodes.EXPIRED_PASSWORD_TOKEN]: {
     title: `Expired password token`,
     message: () => `Expired password token. Please try again.`,

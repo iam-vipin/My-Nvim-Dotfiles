@@ -164,8 +164,8 @@ class ResetPasswordEndpoint(RateLimitedView):
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                    error_message="INVALID_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                 )
                 params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
                 url = urljoin(

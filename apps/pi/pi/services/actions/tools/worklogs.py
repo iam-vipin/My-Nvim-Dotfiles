@@ -13,244 +13,156 @@
 Worklogs API tools for Plane time tracking operations.
 """
 
+import contextlib
+import re
 import uuid
 from typing import Any
 from typing import Dict
-from typing import Optional
 
-from langchain_core.tools import tool
+from pi.services.actions.tool_generator import generate_tools_for_category
+from pi.services.actions.tool_metadata import ToolMetadata
+from pi.services.actions.tool_metadata import ToolParameter
 
-from .base import PlaneToolBase
 
-# Factory wired via CATEGORY_TO_PROVIDER in tools/__init__.py
-# Returns LangChain tools implementing worklog actions
+# Pre-handler combining project resolution AND duration parsing
+async def _worklog_pre_handler(
+    metadata: ToolMetadata,
+    kwargs: Dict[str, Any],
+    context: Dict[str, Any],
+    category: str,
+    method_key: str,
+    method_executor: Any,
+) -> Dict[str, Any]:
+    """Resolve project_id and parse duration string to minutes."""
+
+    # 1. Project ID Resolution
+    issue_id = kwargs.get("issue_id")
+    project_id = kwargs.get("project_id")
+
+    should_resolve = False
+    if issue_id and not project_id:
+        should_resolve = True
+    elif issue_id and project_id:
+        try:
+            uuid.UUID(str(project_id))
+        except (ValueError, AttributeError):
+            should_resolve = True
+
+    if should_resolve:
+        try:
+            from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+            issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+            if issue_info and issue_info.get("project_id"):
+                kwargs["project_id"] = issue_info["project_id"]
+        except Exception:
+            pass
+
+    # 2. Duration Parsing (e.g., "1h 30m" -> 90)
+    duration = kwargs.get("duration")
+    if duration is not None:
+        if isinstance(duration, str):
+            # Try to parse string format "Xh Ym" or just "Xm"
+            total_minutes = 0
+
+            # Simple regex for parsing
+            # Matches "1h", "1.5h", "30m", "1h 30m"
+            hours_match = re.search(r"(\d+(?:\.\d+)?)\s*h", duration.lower())
+            minutes_match = re.search(r"(\d+(?:\.\d+)?)\s*m", duration.lower())
+
+            if hours_match:
+                with contextlib.suppress(ValueError):
+                    total_minutes += int(float(hours_match.group(1)) * 60)
+
+            if minutes_match:
+                with contextlib.suppress(ValueError):
+                    total_minutes += int(float(minutes_match.group(1)))
+
+            # If regex matched nothing but it's a digit string, treat as minutes
+            if not hours_match and not minutes_match:
+                if duration.isdigit():
+                    total_minutes = int(duration)
+
+            # If we found something, update kwargs
+            if total_minutes > 0:
+                kwargs["duration"] = total_minutes
+
+        # If int/float passed directly, ensure int
+        elif isinstance(duration, (int, float)):
+            kwargs["duration"] = int(duration)
+
+    return kwargs
+
+
+WORKLOGS_TOOL_DEFINITIONS = {
+    "create": ToolMetadata(
+        name="worklogs_create",
+        description="Create a new worklog (time entry).",
+        sdk_method="create_issue_worklog",
+        parameters=[
+            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
+            ToolParameter(name="description", description="Worklog description/note", required=True, type="str"),
+            ToolParameter(
+                name="duration", description="Duration (e.g., '1h 30m' or minutes as int)", required=True, type="Any"
+            ),  # Accepting Any to allow string
+            ToolParameter(
+                name="project_id", description="Project ID (optional, auto-filled)", required=False, type="Optional[str]", auto_fill_from_context=True
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                description="Workspace slug (optional, auto-filled)",
+                required=False,
+                type="Optional[str]",
+                auto_fill_from_context=True,
+            ),
+        ],
+        pre_handler=_worklog_pre_handler,
+        returns_entity_type="worklog",
+    ),
+    "list": ToolMetadata(
+        name="worklogs_list",
+        description="List worklogs for an issue.",
+        sdk_method="list_issue_worklogs",
+        parameters=[
+            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
+            ToolParameter(name="project_id", description="Project ID", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+        ],
+        pre_handler=_worklog_pre_handler,
+    ),
+    "update": ToolMetadata(
+        name="worklogs_update",
+        description="Update time entry.",
+        sdk_method="update_issue_worklog",
+        parameters=[
+            ToolParameter(name="worklog_id", description="Worklog ID", required=True, type="str"),
+            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
+            ToolParameter(name="description", description="Worklog description", required=False, type="Optional[str]"),
+            ToolParameter(name="duration", description="Duration (e.g., '1h 30m')", required=False, type="Any"),
+            ToolParameter(name="project_id", description="Project ID", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="created_by", description="User ID who created", required=False, type="Optional[str]"),
+            ToolParameter(name="updated_by", description="User ID who updated", required=False, type="Optional[str]"),
+        ],
+        pre_handler=_worklog_pre_handler,
+        returns_entity_type="worklog",
+    ),
+    "delete": ToolMetadata(
+        name="worklogs_delete",
+        description="Delete time entry.",
+        sdk_method="delete_issue_worklog",
+        parameters=[
+            ToolParameter(name="worklog_id", description="Worklog ID", required=True, type="str"),
+            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
+            ToolParameter(name="project_id", description="Project ID", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+        ],
+        pre_handler=_worklog_pre_handler,
+        returns_entity_type="worklog",
+    ),
+}
 
 
 def get_worklog_tools(method_executor, context):
     """Return LangChain tools for the worklogs category using method_executor and context."""
-
-    @tool
-    async def worklogs_create(
-        issue_id: str,
-        description: str,
-        duration: int,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Create a new worklog entry.
-
-        Args:
-            issue_id: Issue ID (required)
-            description: Worklog description (required)
-            duration: Duration in minutes (required)
-            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
-            workspace_slug: Workspace slug (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
-        should_resolve = False
-        if issue_id and not project_id:
-            should_resolve = True
-        elif issue_id and project_id:
-            try:
-                uuid.UUID(str(project_id))
-            except (ValueError, AttributeError):
-                should_resolve = True
-
-        if should_resolve:
-            try:
-                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
-
-                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
-                if issue_info and issue_info.get("project_id"):
-                    project_id = issue_info["project_id"]
-            except Exception:
-                pass
-
-        result = await method_executor.execute(
-            "worklogs",
-            "create",
-            issue_id=issue_id,
-            description=description,
-            duration=duration,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully created worklog", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to create worklog", result["error"])
-
-    @tool
-    async def worklogs_list(
-        issue_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """List worklogs for an issue."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
-        should_resolve = False
-        if issue_id and not project_id:
-            should_resolve = True
-        elif issue_id and project_id:
-            try:
-                uuid.UUID(str(project_id))
-            except (ValueError, AttributeError):
-                should_resolve = True
-
-        if should_resolve:
-            try:
-                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
-
-                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
-                if issue_info and issue_info.get("project_id"):
-                    project_id = issue_info["project_id"]
-            except Exception:
-                pass
-
-        result = await method_executor.execute(
-            "worklogs",
-            "list",
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved worklogs", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to list worklogs", result["error"])
-
-    @tool
-    async def worklogs_get_summary(
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Get project worklog summary."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "worklogs",
-            "get_summary",
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved worklog summary", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to get worklog summary", result["error"])
-
-    @tool
-    async def worklogs_update(
-        worklog_id: str,
-        issue_id: str,
-        description: Optional[str] = None,
-        duration: Optional[int] = None,
-        created_by: Optional[str] = None,
-        updated_by: Optional[str] = None,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Update time entry.
-
-        Args:
-            worklog_id: Worklog ID (required)
-            issue_id: Issue ID (required)
-            description: Worklog description
-            duration: Duration in minutes
-            created_by: User ID who created the worklog
-            updated_by: User ID who updated the worklog
-            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
-            workspace_slug: Workspace slug (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
-        should_resolve = False
-        if issue_id and not project_id:
-            should_resolve = True
-        elif issue_id and project_id:
-            try:
-                uuid.UUID(str(project_id))
-            except (ValueError, AttributeError):
-                should_resolve = True
-
-        if should_resolve:
-            try:
-                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
-
-                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
-                if issue_info and issue_info.get("project_id"):
-                    project_id = issue_info["project_id"]
-            except Exception:
-                pass
-
-        # Build update data
-        update_data: Dict[str, Any] = {}
-        if description is not None:
-            update_data["description"] = description
-        if duration is not None:
-            update_data["duration"] = duration
-        if created_by is not None:
-            update_data["created_by"] = created_by
-        if updated_by is not None:
-            update_data["updated_by"] = updated_by
-
-        result = await method_executor.execute(
-            "worklogs",
-            "update",
-            worklog_id=worklog_id,
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            **update_data,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully updated worklog", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to update worklog", result["error"])
-
-    @tool
-    async def worklogs_delete(
-        worklog_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Delete time entry."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "worklogs",
-            "delete",
-            worklog_id=worklog_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully deleted worklog", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to delete worklog", result["error"])
-
-    return [worklogs_create, worklogs_list, worklogs_get_summary, worklogs_update, worklogs_delete]
+    return generate_tools_for_category("worklogs", method_executor, context, WORKLOGS_TOOL_DEFINITIONS)

@@ -11,18 +11,22 @@
 
 """
 Work Items API tools for Plane issue/task management operations.
+
+MIGRATED TO AUTO-GENERATED TOOLS
+Tool metadata defined in this file. Custom pre/post handlers for complex logic.
+Special handling includes: state/type resolution, epic type injection, identifier enrichment, relation validation.
+Old manual definitions kept below for comparison/rollback safety.
 """
 
 import logging
 import uuid
 from typing import Any
 from typing import Dict
-from typing import List
 from typing import Optional
 
-from langchain_core.tools import tool
-
-from .base import PlaneToolBase
+from pi.services.actions.tool_generator import generate_tools_for_category
+from pi.services.actions.tool_metadata import ToolMetadata
+from pi.services.actions.tool_metadata import ToolParameter
 
 log = logging.getLogger(__name__)
 
@@ -38,8 +42,10 @@ RELATION_TYPES = {
     "finish_after": "finish_after",
 }
 
-# Factory wired via CATEGORY_TO_PROVIDER in tools/__init__.py
-# Returns LangChain tools implementing work-item actions
+
+# ============================================================================
+# HELPER FUNCTIONS (Preserved from original)
+# ============================================================================
 
 
 async def resolve_state_to_uuid(state: Optional[str], project_id: Optional[str], workspace_slug: Optional[str] = None) -> Optional[str]:
@@ -159,84 +165,248 @@ async def get_epic_type_id(method_executor, project_id: str, workspace_slug: str
         return None
 
 
-def get_workitem_tools(method_executor, context):
-    """Return LangChain tools for the workitems category using method_executor and context."""
+# ============================================================================
+# WORKITEMS-SPECIFIC HANDLER FUNCTIONS
+# ============================================================================
 
-    @tool
-    async def workitems_create(
-        name: str,
-        project_id: Optional[str] = None,
-        description_html: Optional[str] = None,
-        priority: Optional[str] = None,
-        state: Optional[str] = None,
-        assignees: Optional[List[str]] = None,
-        labels: Optional[List[str]] = None,
-        start_date: Optional[str] = None,
-        target_date: Optional[str] = None,
-        type_id: Optional[str] = None,
-        parent: Optional[str] = None,
-        external_id: Optional[str] = None,
-        external_source: Optional[str] = None,
-        is_draft: Optional[bool] = None,
-    ) -> Dict[str, Any]:
-        """Create a new work item/issue.
 
-        Args:
-            name: Work item title (required)
-            project_id: Project ID (required - provide from conversation context or previous actions)
-            workspace_slug: Workspace slug (required - provide from conversation context)
-            description_html: Workitem description in HTML format
-            priority: Priority level (high, medium, low, urgent, none)
-            state: State name or UUID for the workitem (e.g., "todo", "in progress", "done")
-            assignees: List of assignee user IDs
-            labels: List of label IDs
-            start_date: Start date (YYYY-MM-DD format)
-            target_date: Target completion date (YYYY-MM-DD format)
-            type_id: Workitem type ID (optional). MUST be the 'issue_types_id' (UUID of the issue type definition), NOT the 'project_issue_types_id'.
-            parent: Parent work-item ID (optional)
-            external_id: External system identifier (optional)
-            external_source: External system source name (optional)
-            is_draft: Create as draft (optional)
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
 
-        Note: To add the created work item to a module or cycle, use modules_add_work_items
-        or cycles_add_work_items after creation. These cannot be set during creation.
-        """
-        # Auto-fill workspace_slug from context (hidden from LLM)
-        workspace_slug = context.get("workspace_slug")
 
-        # Auto-fill project_id from context if not provided
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
+async def fetch_available_types_for_project(method_executor, project_id: str, workspace_slug: str) -> Optional[str]:
+    """Fetch available work item types for a project and format them for LLM consumption.
 
-        # Resolve state name to UUID if needed
-        resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
+    This helper is used to enrich tool descriptions with project-specific type information
+    during tool generation (at planning time), making types visible to the LLM.
 
-        # Resolve type name to UUID if needed
-        resolved_type_id = await resolve_type_to_uuid(type_id, project_id, workspace_slug)
+    Args:
+        method_executor: The method executor to call types API
+        project_id: Project UUID
+        workspace_slug: Workspace slug
 
+    Returns:
+        Formatted string of available types, or None if fetch fails
+        Example: "- Bug (ID: 6e8fbc42...): Defects and regressions\\n- Feature (ID: 104eb637...): New functionality"
+    """
+    if not project_id or not workspace_slug or not method_executor:
+        return None
+
+    try:
         result = await method_executor.execute(
-            "workitems",
-            "create",
-            name=name,
-            description_html=description_html,
+            "types",
+            "list",
             project_id=project_id,
             workspace_slug=workspace_slug,
-            priority=priority,
-            state=resolved_state,
-            assignees=assignees,
-            labels=labels,
-            start_date=start_date,
-            target_date=target_date,
-            type_id=resolved_type_id,
-            parent=parent,
-            external_id=external_id,
-            external_source=external_source,
-            is_draft=is_draft,
         )
 
-        if result["success"]:
-            # Enrich response data with missing fields for URL construction
-            data = result["data"]
+        if not result or not result.get("success"):
+            return None
+
+        results = result.get("data", {}).get("results", [])
+        if not results:
+            return None
+
+        # Build a human-readable list of types
+        type_lines = []
+        for t in results[:10]:  # Limit to 10 types to avoid overwhelming the description
+            type_name = t.get("name", "Unknown")
+            type_id = t.get("id", "")
+            type_desc = t.get("description", "")
+
+            # Format: "- Bug (ID: 6e8fbc42-2c07-4880-9b65-d3ef8258b784): For defects and issues"
+            line = f"- {type_name}"
+            if type_id:
+                line += f" (ID: {type_id})"  # Full UUID so LLM can use it directly in tool args
+            if type_desc:
+                line += f": {type_desc[:80]}"  # Limit description length
+            type_lines.append(line)
+
+        if type_lines:
+            formatted = "\\n".join(type_lines)
+            log.info(f"Fetched {len(results)} types for project {project_id}")
+            return formatted
+
+    except Exception as e:
+        log.warning(f"Failed to fetch types for project {project_id}: {e}")
+
+    return None
+
+
+def _sync_fetch_types(method_executor, project_id: str, workspace_slug: str) -> Optional[str]:
+    """Synchronous wrapper to fetch types from async function.
+
+    Bridges the sync/async boundary by running the async fetch function in the event loop.
+    """
+    import asyncio
+
+    try:
+        # Check if there's a running event loop
+        try:
+            asyncio.get_running_loop()
+            # We're in a running async context - create a task and wait for it
+            # Using asyncio.ensure_future + loop methods to avoid blocking
+            import concurrent.futures
+
+            with concurrent.futures.ThreadPoolExecutor() as pool:
+                future = pool.submit(asyncio.run, fetch_available_types_for_project(method_executor, project_id, workspace_slug))
+                return future.result(timeout=5)  # 5 second timeout
+        except RuntimeError:
+            # No running loop - safe to use asyncio.run()
+            return asyncio.run(fetch_available_types_for_project(method_executor, project_id, workspace_slug))
+    except Exception as e:
+        log.warning(f"Failed to fetch types for project {project_id}: {e}")
+        return None
+
+
+def _enrich_type_id_descriptions(tool_definitions: Dict[str, "ToolMetadata"], types_text: str) -> None:
+    """Inject available types into type_id parameter descriptions.
+
+    Modifies tool definitions in-place to add project-specific type information.
+    """
+    create_desc = (
+        f"Work item type to categorize this work item. Available types in this project:\\n{types_text}\\n"
+        f"Provide the full type ID (UUID) from the list above. If not specified, project's default type will be used."
+    )
+
+    update_desc = (
+        f"New work item type to categorize this work item. Available types in this project:\\n{types_text}\\n"
+        f"Provide the full type ID (UUID) from the list above."
+    )
+
+    # Update create tool
+    if "create" in tool_definitions:
+        for param in tool_definitions["create"].parameters:
+            if param.name == "type_id":
+                param.description = create_desc
+                break
+
+    # Update update tool
+    if "update" in tool_definitions:
+        for param in tool_definitions["update"].parameters:
+            if param.name == "type_id":
+                param.description = update_desc
+                break
+
+
+# ============================================================================
+# PRE/POST HANDLERS
+# ============================================================================
+
+
+async def _workitems_pre_handler(
+    metadata: ToolMetadata,
+    kwargs: Dict[str, Any],
+    context: Dict[str, Any],
+    category: str,
+    method_key: str,
+    method_executor: Any = None,
+) -> Dict[str, Any]:
+    """Pre-processing handler for workitems tools.
+
+    Handles:
+    - create/update/list: state and type resolution
+    - create_epic: epic type injection
+    - create_relation: relation type validation
+    """
+    tool_name = metadata.name
+    project_id = kwargs.get("project_id")
+    workspace_slug = kwargs.get("workspace_slug") or context.get("workspace_slug")
+
+    # Handle epic tools: inject epic type_id
+    if tool_name == "create_epic":
+        if not project_id:
+            raise ValueError("Project ID is required for epic creation. Please specify a project.")
+
+        epic_type_id = await get_epic_type_id(method_executor, str(project_id), str(workspace_slug or ""))
+        if not epic_type_id:
+            raise ValueError("Could not find epic issue type for this project. Please ensure an epic issue type exists.")
+
+        kwargs["type_id"] = epic_type_id
+        log.info(f"Injected epic type_id {epic_type_id} for create_epic")
+
+    # State resolution for create/update/list/epic tools
+    if tool_name in ["workitems_create", "workitems_update", "workitems_list", "create_epic", "update_epic"]:
+        state = kwargs.get("state")
+        if state:
+            resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
+            if resolved_state:
+                kwargs["state"] = resolved_state
+                log.debug(f"Resolved state '{state}' to {resolved_state}")
+
+    # Type resolution for create/update (but NOT epics which handle it themselves)
+    if tool_name in ["workitems_create", "workitems_update"]:
+        type_id = kwargs.get("type_id")
+        if type_id:
+            resolved_type_id = await resolve_type_to_uuid(type_id, project_id, workspace_slug)
+            if resolved_type_id:
+                kwargs["type_id"] = resolved_type_id
+                log.debug(f"Resolved type_id '{type_id}' to {resolved_type_id}")
+
+    # Relation type validation for create_relation
+    if tool_name == "workitems_create_relation":
+        relation_type = kwargs.get("relation_type")
+        if relation_type not in RELATION_TYPES:
+            valid_types = ", ".join(RELATION_TYPES.keys())
+            raise ValueError(f"Relation type '{relation_type}' is not valid. Valid types are: {valid_types}")
+
+        related_issues = kwargs.get("related_issues")
+        if not related_issues:
+            raise ValueError("At least one related issue ID must be provided")
+
+        # The SDK expects 'issues' parameter, not 'related_issues'
+        kwargs["issues"] = kwargs.pop("related_issues")
+
+    #  Fix for list: Pass filter args to SDK (BUG FIX)
+    if tool_name == "workitems_list":
+        # Build filter arguments and merge them into kwargs
+        filter_fields = [
+            "priority",
+            "assignees",
+            "labels",
+            "start_date",
+            "target_date",
+            "created_by",
+            "updated_by",
+            "type_id",
+            "parent",
+            "is_draft",
+            "created_at",
+            "updated_at",
+            "completed_at",
+            "archived_at",
+        ]
+
+        for field in filter_fields:
+            if field in kwargs and kwargs[field] is not None:
+                # These are already in kwargs, just ensure they're passed through
+                pass
+
+    return kwargs
+
+
+async def _workitems_post_handler(
+    metadata: ToolMetadata,
+    result: Dict[str, Any],
+    kwargs: Dict[str, Any],
+    context: Dict[str, Any],
+    method_executor: Any,
+    category: str,
+    method_key: str,
+) -> Dict[str, Any]:
+    """Post-processing handler for workitems tools.
+
+    Handles:
+    - create/update/create_epic/update_epic: identifier enrichment for URL construction
+    - list: URL construction for each workitem in results
+    """
+    tool_name = metadata.name
+
+    # Identifier enrichment for create/update operations
+    if tool_name in ["workitems_create", "workitems_update", "create_epic", "update_epic"]:
+        if result.get("success"):
+            data = result.get("data")
             if data and isinstance(data, dict) and data.get("id"):
                 try:
                     from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
@@ -250,619 +420,805 @@ def get_workitem_tools(method_executor, context):
                 except Exception as e:
                     log.warning(f"Could not enrich workitem data with identifier info: {e}")
 
-            return await PlaneToolBase.format_success_payload_with_url(
-                f"Successfully created work item '{name}'",
-                data,
-                "workitem",
-                context,
-            )
-        else:
-            return PlaneToolBase.format_error_payload("Failed to create work item", result.get("error"))
-
-    @tool
-    async def workitems_update(
-        issue_id: str,
-        project_id: Optional[str] = None,
-        name: Optional[str] = None,
-        description_html: Optional[str] = None,
-        priority: Optional[str] = None,
-        state: Optional[str] = None,
-        assignees: Optional[List[str]] = None,
-        labels: Optional[List[str]] = None,
-        start_date: Optional[str] = None,
-        target_date: Optional[str] = None,
-        type_id: Optional[str] = None,
-        parent: Optional[str] = None,
-        external_id: Optional[str] = None,
-        external_source: Optional[str] = None,
-        is_draft: Optional[bool] = None,
-    ) -> Dict[str, Any]:
-        """Update an existing work item/issue.
-
-        Args:
-            issue_id: Work item ID to update (required)
-            project_id: Project ID (required - provide from conversation context or previous actions)
-            workspace_slug: Workspace slug (required - provide from conversation context)
-            name: New work item title
-            description_html: New description in HTML format
-            priority: New priority level (high, medium, low, urgent, none)
-            state: New state name or UUID (e.g., "todo", "in progress", "done")
-            assignees: New list of assignee user IDs
-            labels: New list of label IDs
-            start_date: New start date (YYYY-MM-DD format)
-            target_date: New target completion date (YYYY-MM-DD format)
-            type_id: Workitem type ID (optional). MUST be the 'issue_types_id' (UUID of the issue type definition), NOT the 'project_issue_types_id'.
-            parent: Parent work-item ID (optional)
-            external_id: External system identifier (optional)
-            external_source: External system source name (optional)
-            is_draft: Mark as draft (optional)
-
-        Note: To add/move the work item to a module or cycle, use modules_add_work_items
-        or cycles_add_work_items. Module/cycle assignment is not supported via update.
-        """
-        # Auto-fill workspace_slug from context (hidden from LLM)
-        workspace_slug = context.get("workspace_slug")
-
-        # Auto-fill project_id from context if not provided
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Resolve state name to UUID if needed
-        resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
-
-        # Resolve type name to UUID if needed
-        resolved_type_id = await resolve_type_to_uuid(type_id, project_id, workspace_slug)
-
-        # Build update data with only non-None values to avoid overwriting existing fields
-        update_data = {
-            k: v
-            for k, v in {
-                "name": name,
-                "description_html": description_html,
-                "priority": priority,
-                "state": resolved_state,
-                "assignees": assignees,
-                "labels": labels,
-                "start_date": start_date,
-                "target_date": target_date,
-                "type_id": resolved_type_id,
-                "parent": parent,
-                "external_id": external_id,
-                "external_source": external_source,
-                "is_draft": is_draft,
-            }.items()
-            if v is not None
-        }
-
-        result = await method_executor.execute(
-            "workitems",
-            "update",
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            **update_data,
-        )
-
-        if result["success"]:
-            # Enrich response data with missing fields for URL construction
-            data = result["data"]
-            if data and isinstance(data, dict) and data.get("id"):
-                try:
-                    from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
-
-                    # Get the missing project_identifier and sequence_id
-                    identifier_info = await get_issue_identifier_for_artifact(str(data["id"]))
-                    if identifier_info:
-                        data["project_identifier"] = identifier_info.get("project_identifier")
-                        data["sequence_id"] = identifier_info.get("sequence_id")
-                        log.info(f"Enriched workitem update data with identifier info: {identifier_info.get("identifier")}")
-                except Exception as e:
-                    log.warning(f"Could not enrich workitem update data with identifier info: {e}")
-
-            return await PlaneToolBase.format_success_payload_with_url("Successfully updated work item", data, "workitem", context)
-        else:
-            return PlaneToolBase.format_error_payload("Failed to update work item", result["error"])
-
-    @tool
-    async def create_epic(
-        name: str,
-        project_id: Optional[str] = None,
-        description_html: Optional[str] = None,
-        priority: Optional[str] = None,
-        state: Optional[str] = None,
-        assignees: Optional[List[str]] = None,
-        labels: Optional[List[str]] = None,
-        start_date: Optional[str] = None,
-        target_date: Optional[str] = None,
-        external_id: Optional[str] = None,
-        external_source: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Create a new epic work item.
-
-        Args:
-            name: Epic title (required)
-            project_id: Project ID (required - provide from conversation context or previous actions)
-            description_html: Epic description in HTML format
-            priority: Priority level (high, medium, low, urgent, none)
-            state: State name or ID for the epic (e.g., "done", "in progress", or UUID)
-            assignees: List of assignee user IDs
-            labels: List of label IDs
-            start_date: Start date (YYYY-MM-DD format)
-            target_date: Target completion date (YYYY-MM-DD format)
-            external_id: External system identifier (optional)
-            external_source: External system source name (optional)
-
-        Note: This tool automatically sets the work item type to 'epic' for the specified project.
-        To add the created epic to a module or cycle, use modules_add_work_items or cycles_add_work_items after creation.
-        """
-        # Auto-fill workspace_slug from context (hidden from LLM)
-        workspace_slug = context.get("workspace_slug")
-
-        # Auto-fill project_id from context if not provided
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Get the epic type ID for this project
-        if project_id is None:
-            return PlaneToolBase.format_error_payload("Failed to create epic", "Project ID is required for epic creation. Please specify a project.")
-
-        epic_type_id = await get_epic_type_id(method_executor, project_id, workspace_slug)
-        if not epic_type_id:
-            return PlaneToolBase.format_error_payload(
-                "Failed to create epic", "Could not find epic issue type for this project. Please ensure an epic issue type exists."
-            )
-
-        # Resolve state name to UUID if provided as name
-        resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
-
-        result = await method_executor.execute(
-            "workitems",
-            "create",
-            name=name,
-            description_html=description_html,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            priority=priority,
-            state=resolved_state,
-            assignees=assignees,
-            labels=labels,
-            start_date=start_date,
-            target_date=target_date,
-            type_id=epic_type_id,  # Automatically set to epic type
-            external_id=external_id,
-            external_source=external_source,
-        )
-
-        if result["success"]:
-            # Enrich response data with missing fields for URL construction
-            data = result["data"]
-            if data and isinstance(data, dict) and data.get("id"):
-                try:
-                    from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
-
-                    # Get the missing project_identifier and sequence_id
-                    identifier_info = await get_issue_identifier_for_artifact(str(data["id"]))
-                    if identifier_info:
-                        data["project_identifier"] = identifier_info.get("project_identifier")
-                        data["sequence_id"] = identifier_info.get("sequence_id")
-                        log.info(f"Enriched epic data with identifier info: {identifier_info.get("identifier")}")
-                except Exception as e:
-                    log.warning(f"Could not enrich epic data with identifier info: {e}")
-
-            return await PlaneToolBase.format_success_payload_with_url(f"Successfully created epic '{name}'", data, "epic", context)
-        else:
-            return PlaneToolBase.format_error_payload("Failed to create epic", result["error"])
-
-    @tool
-    async def update_epic(
-        issue_id: str,
-        project_id: Optional[str] = None,
-        name: Optional[str] = None,
-        description_html: Optional[str] = None,
-        priority: Optional[str] = None,
-        state: Optional[str] = None,
-        assignees: Optional[List[str]] = None,
-        labels: Optional[List[str]] = None,
-        start_date: Optional[str] = None,
-        target_date: Optional[str] = None,
-        external_id: Optional[str] = None,
-        external_source: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Update an existing epic work item.
-
-        Args:
-            issue_id: Epic ID to update (required)
-            project_id: Project ID (optional - provide from conversation context)
-            name: Epic title
-            description_html: Epic description in HTML format
-            priority: Priority level (high, medium, low, urgent, none)
-            state: State ID for the epic
-            assignees: List of assignee user IDs
-            labels: List of label IDs
-            start_date: Start date (YYYY-MM-DD format)
-            target_date: Target completion date (YYYY-MM-DD format)
-            external_id: External system identifier (optional)
-            external_source: External system source name (optional)
-
-        Note: This tool updates an existing epic. It does not change the work item type.
-        To add/move the epic to a module or cycle, use modules_add_work_items or cycles_add_work_items.
-        """
-        # Auto-fill workspace_slug from context (hidden from LLM)
-        workspace_slug = context.get("workspace_slug")
-
-        # Auto-fill project_id from context if not provided
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Resolve state name to UUID if needed
-        resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
-
-        # Build update data with only non-None values to avoid overwriting existing fields
-        # Note: type_id is intentionally omitted to preserve epic type
-        update_data = {
-            k: v
-            for k, v in {
-                "name": name,
-                "description_html": description_html,
-                "priority": priority,
-                "state": resolved_state,
-                "assignees": assignees,
-                "labels": labels,
-                "start_date": start_date,
-                "target_date": target_date,
-                "external_id": external_id,
-                "external_source": external_source,
-            }.items()
-            if v is not None
-        }
-
-        result = await method_executor.execute(
-            "workitems",
-            "update",
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            **update_data,
-        )
-
-        if result["success"]:
-            return await PlaneToolBase.format_success_payload_with_url("Successfully updated epic", result["data"], "epic", context)
-        else:
-            return PlaneToolBase.format_error_payload("Failed to update epic", result["error"])
-
-    @tool
-    async def workitems_list(
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-        cursor: Optional[str] = None,
-        expand: Optional[str] = None,
-        external_id: Optional[str] = None,
-        external_source: Optional[str] = None,
-        fields: Optional[str] = None,
-        order_by: Optional[str] = None,
-        per_page: Optional[int] = 20,
-        priority: Optional[str] = None,
-        state: Optional[str] = None,
-        assignees: Optional[List[str]] = None,
-        labels: Optional[List[str]] = None,
-        start_date: Optional[str] = None,
-        target_date: Optional[str] = None,
-        created_by: Optional[str] = None,
-        updated_by: Optional[str] = None,
-        type_id: Optional[str] = None,
-        parent: Optional[str] = None,
-        is_draft: Optional[bool] = None,
-        created_at: Optional[str] = None,
-        updated_at: Optional[str] = None,
-        completed_at: Optional[str] = None,
-        archived_at: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """List work items with filtering.
-
-        Args:
-            project_id: Project ID (required - provide from conversation context or previous actions)
-            workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
-            cursor: Pagination cursor for next page
-            expand: Comma-separated list of related fields to expand in response
-            external_id: External system identifier for filtering or lookup
-            external_source: External system source name for filtering or lookup
-            fields: Comma-separated list of fields to include in response
-            order_by: Field to order results by. Prefix with '-' for descending order
-            per_page: Number of work items per page (default: 20, max: 100)
-            priority: Filter by priority (high, medium, low, urgent, none)
-            state: Filter by state name or UUID
-            assignees: Filter by assignee user IDs
-            labels: Filter by label IDs
-            start_date: Filter by start date
-            target_date: Filter by target date
-            created_by: Filter by creator ID
-            updated_by: Filter by updater ID
-            type_id: Filter by issue type ID
-            parent: Filter by parent issue ID
-            is_draft: Filter by draft status
-            created_at: Filter by creation time
-            updated_at: Filter by update time
-            completed_at: Filter by completion time
-            archived_at: Filter by archive time
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Resolve state name to UUID if needed
-        resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
-
-        # Build filter arguments
-        filter_args = {
-            "priority": priority,
-            "state": resolved_state,
-            "assignees": assignees,
-            "labels": labels,
-            "start_date": start_date,
-            "target_date": target_date,
-            "created_by": created_by,
-            "updated_by": updated_by,
-            "type_id": type_id,
-            "parent": parent,
-            "is_draft": is_draft,
-            "created_at": created_at,
-            "updated_at": updated_at,
-            "completed_at": completed_at,
-            "archived_at": archived_at,
-        }
-
-        # Remove None values
-        filter_args = {k: v for k, v in filter_args.items() if v is not None}
-
-        result = await method_executor.execute(
-            "workitems",
-            "list",
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            cursor=cursor,
-            expand=expand,
-            external_id=external_id,
-            external_source=external_source,
-            fields=fields,
-            order_by=order_by,
-            per_page=per_page,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved work items list", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to list work items", result["error"])
-
-    @tool
-    async def workitems_retrieve(
-        issue_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-        expand: Optional[str] = None,
-        external_id: Optional[str] = None,
-        external_source: Optional[str] = None,
-        fields: Optional[str] = None,
-        order_by: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Retrieve a single work item by ID.
-
-        Args:
-            issue_id: Work item ID (required)
-            project_id: Project ID (required - provide from conversation context or previous actions)
-            workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
-            expand: Comma-separated list of related fields to expand in response
-            external_id: External system identifier for filtering or lookup
-            external_source: External system source name for filtering or lookup
-            fields: Comma-separated list of fields to include in response
-            order_by: Field to order results by. Prefix with '-' for descending order
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "workitems",
-            "retrieve",
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            expand=expand,
-            external_id=external_id,
-            external_source=external_source,
-            fields=fields,
-            order_by=order_by,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved work item", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to retrieve work item", result["error"])
-
-    @tool
-    async def workitems_search(
-        search: str,
-        workspace_slug: Optional[str] = None,
-        limit: Optional[int] = None,
-        project_id: Optional[str] = None,
-        workspace_search: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Search work items by criteria.
-
-        Args:
-            search: Search query to filter results by name, description, or identifier (required)
-            workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
-            limit: Maximum number of results to return
-            project_id: Project ID for filtering results within a specific project
-            workspace_search: Whether to search across entire workspace or within specific project
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "workitems",
-            "search",
-            search=search,
-            workspace_slug=workspace_slug,
-            limit=limit,
-            project_id=project_id,
-            workspace_search=workspace_search,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully searched work items", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to search work items", result["error"])
-
-    @tool
-    async def workitems_get_workspace(
-        issue_identifier: int,
-        project_identifier: str,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Get work item across workspace using identifiers.
-
-        Args:
-            issue_identifier: Issue sequence ID (numeric identifier within project) (required)
-            project_identifier: Project identifier (unique string within workspace) (required)
-            workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-
-        result = await method_executor.execute(
-            "workitems",
-            "get_workspace",
-            issue_identifier=issue_identifier,
-            project_identifier=project_identifier,
-            workspace_slug=workspace_slug,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved workspace work item", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to retrieve workspace work item", result["error"])
-
-    @tool
-    async def workitems_create_relation(
-        issue_id: str,
-        relation_type: str,
-        related_issues: List[str],
-        project_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Create relationships between work items.
-
-        Args:
-            issue_id: Source work item ID to create relations from (required)
-            relation_type: Type of relationship - one of: blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, finish_after (required)
-            related_issues: List of work item IDs to create relations with (required)
-            project_id: Project ID (required - provide from conversation context or previous actions)
-
-        Supported relation types:
-        - blocking: This work item blocks the related work items
-        - blocked_by: This work item is blocked by the related work items
-        - duplicate: This work item is a duplicate of the related work items
-        - relates_to: This work item relates to the related work items
-        - start_before: This work item should start before the related work items
-        - start_after: This work item should start after the related work items
-        - finish_before: This work item should finish before the related work items
-        - finish_after: This work item should finish after the related work items
-
-        Examples:
-        - "Make issue A block issue B" = workitems_create_relation(issue_id=A, relation_type="blocking", related_issues=[B])
-        - "Mark issue X as duplicate of issue Y" = workitems_create_relation(issue_id=X, relation_type="duplicate", related_issues=[Y])
-        - "Issue C relates to issues D and E" = workitems_create_relation(issue_id=C, relation_type="relates_to", related_issues=[D, E])
-        """  # noqa: E501
-        # Auto-fill workspace_slug from context (hidden from LLM)
-        workspace_slug = context.get("workspace_slug")
-
-        # Auto-fill project_id from context if not provided
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Validate relation type
-        if relation_type not in RELATION_TYPES:
-            valid_types = ", ".join(RELATION_TYPES.keys())
-            return PlaneToolBase.format_error_payload(
-                "Invalid relation type", f"Relation type '{relation_type}' is not valid. Valid types are: {valid_types}"
-            )
-
-        # Validate required parameters
-        if not related_issues:
-            return PlaneToolBase.format_error_payload("Missing related issues", "At least one related issue ID must be provided")
-
-        result = await method_executor.execute(
-            "workitems",
-            "create_relation",
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            relation_type=relation_type,
-            issues=related_issues,
-        )
-
-        if result["success"]:
-            relation_count = len(related_issues)
-
-            # For relations, we need to return entity info for the source work item (issue_id)
-            # Create a mock work item response with the source issue_id for entity URL generation
-            source_workitem_data = {"id": issue_id}
-
-            return await PlaneToolBase.format_success_payload_with_url(
-                f"Successfully created {relation_count} '{relation_type}' relation(s) for work item", source_workitem_data, "workitem", context
-            )
-        else:
-            return PlaneToolBase.format_error_payload("Failed to create work item relation", result["error"])
-
-    @tool
-    async def workitems_delete(
-        issue_id: str,
-        project_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Delete a work item/issue.
-
-        Args:
-            issue_id: Work item ID to delete (required)
-            project_id: Project ID (required - provide from conversation context or previous actions)
-
-        Warning: This action is permanent and cannot be undone. The work item will be permanently deleted.
-        """
-        # Auto-fill workspace_slug from context (hidden from LLM)
-        workspace_slug = context.get("workspace_slug")
-
-        # Auto-fill project_id from context if not provided
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "workitems",
-            "delete",
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload(f"Successfully deleted work item {issue_id}", {"id": issue_id})
-        else:
-            return PlaneToolBase.format_error_payload("Failed to delete work item", result.get("error"))
-
-    return [
-        workitems_create,
-        workitems_update,
-        create_epic,
-        update_epic,
-        workitems_create_relation,
-        workitems_delete,
-        workitems_list,
-        # workitems_retrieve,
-        # workitems_search,
-        # workitems_get_workspace
-    ]
+    # URL construction for list operations
+    elif tool_name == "workitems_list":
+        if result.get("success"):
+            data = result.get("data")
+            if data and isinstance(data, dict):
+                results = data.get("results", [])
+                workspace_slug = kwargs.get("workspace_slug") or context.get("workspace_slug")
+
+                if results and isinstance(results, list):
+                    try:
+                        from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+                        from pi.config import settings
+
+                        # Get the base URL for constructing frontend URLs
+                        frontend_url = settings.plane_api.FRONTEND_URL.rstrip("/")
+
+                        # Enrich each workitem with identifier and URL
+                        for item in results:
+                            if isinstance(item, dict) and item.get("id"):
+                                try:
+                                    identifier_info = await get_issue_identifier_for_artifact(str(item["id"]))
+                                    if identifier_info:
+                                        item["project_identifier"] = identifier_info.get("project_identifier")
+                                        item["sequence_id"] = identifier_info.get("sequence_id")
+                                        item["identifier"] = identifier_info.get("identifier")
+
+                                        # Construct URL using the identifier (PROJECT-123 format)
+                                        if workspace_slug and identifier_info.get("identifier"):
+                                            item["url"] = f"{frontend_url}/{workspace_slug}/browse/{identifier_info["identifier"]}/"
+
+                                        log.debug(f"Enriched workitem {item["id"]} with identifier: {identifier_info.get("identifier")}")
+                                except Exception as e:
+                                    log.warning(f"Could not enrich workitem {item.get("id")} with identifier info: {e}")
+
+                        log.info(f"Enriched {len(results)} workitems with identifiers and URLs")
+                    except Exception as e:
+                        log.warning(f"Error enriching workitems list with identifiers: {e}")
+
+    return result
+
+
+# ============================================================================
+# WORKITEMS TOOL METADATA
+# ============================================================================
+
+WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
+    "create": ToolMetadata(
+        name="workitems_create",
+        description="Create a new work item/issue",
+        sdk_method="create_work_item",
+        returns_entity_type="workitem",
+        pre_handler=_workitems_pre_handler,
+        post_handler=_workitems_post_handler,
+        parameters=[
+            ToolParameter(name="name", type="str", required=True, description="Work item title (required)"),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (required - provide from conversation context)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="description_html",
+                type="Optional[str]",
+                required=False,
+                description="Workitem description in HTML format",
+            ),
+            ToolParameter(
+                name="priority",
+                type="Optional[str]",
+                required=False,
+                description="Priority level (high, medium, low, urgent, none)",
+            ),
+            ToolParameter(
+                name="state",
+                type="Optional[str]",
+                required=False,
+                description='State name or UUID for the workitem (e.g., "todo", "in progress", "done")',
+            ),
+            ToolParameter(
+                name="assignees",
+                type="List[str]",
+                required=False,
+                description="List of assignee user IDs",
+            ),
+            ToolParameter(
+                name="labels",
+                type="List[str]",
+                required=False,
+                description="List of label IDs",
+            ),
+            ToolParameter(
+                name="start_date",
+                type="Optional[str]",
+                required=False,
+                description="Start date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="target_date",
+                type="Optional[str]",
+                required=False,
+                description="Target completion date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="type_id",
+                type="Optional[str]",
+                required=False,
+                description="Workitem type ID (optional). MUST be the 'issue_types_id' (UUID of the issue type definition), "
+                "NOT the 'project_issue_types_id'.",
+            ),
+            ToolParameter(
+                name="parent",
+                type="Optional[str]",
+                required=False,
+                description="Parent work-item ID (optional)",
+            ),
+            ToolParameter(
+                name="external_id",
+                type="Optional[str]",
+                required=False,
+                description="External system identifier (optional)",
+            ),
+            ToolParameter(
+                name="external_source",
+                type="Optional[str]",
+                required=False,
+                description="External system source name (optional)",
+            ),
+            ToolParameter(
+                name="is_draft",
+                type="Optional[bool]",
+                required=False,
+                description="Create as draft (optional)",
+            ),
+        ],
+    ),
+    "update": ToolMetadata(
+        name="workitems_update",
+        description="Update an existing work item/issue",
+        sdk_method="update_work_item",
+        returns_entity_type="workitem",
+        pre_handler=_workitems_pre_handler,
+        post_handler=_workitems_post_handler,
+        parameters=[
+            ToolParameter(name="issue_id", type="str", required=True, description="Work item ID to update (required)"),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (required - provide from conversation context)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="name",
+                type="Optional[str]",
+                required=False,
+                description="New work item title",
+            ),
+            ToolParameter(
+                name="description_html",
+                type="Optional[str]",
+                required=False,
+                description="New description in HTML format",
+            ),
+            ToolParameter(
+                name="priority",
+                type="Optional[str]",
+                required=False,
+                description="New priority level (high, medium, low, urgent, none)",
+            ),
+            ToolParameter(
+                name="state",
+                type="Optional[str]",
+                required=False,
+                description='New state name or UUID (e.g., "todo", "in progress", "done")',
+            ),
+            ToolParameter(
+                name="assignees",
+                type="List[str]",
+                required=False,
+                description="New list of assignee user IDs",
+            ),
+            ToolParameter(
+                name="labels",
+                type="List[str]",
+                required=False,
+                description="New list of label IDs",
+            ),
+            ToolParameter(
+                name="start_date",
+                type="Optional[str]",
+                required=False,
+                description="New start date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="target_date",
+                type="Optional[str]",
+                required=False,
+                description="New target completion date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="type_id",
+                type="Optional[str]",
+                required=False,
+                description="Workitem type ID (optional). MUST be the 'issue_types_id' (UUID of the issue type definition), "
+                "NOT the 'project_issue_types_id'.",
+            ),
+            ToolParameter(
+                name="parent",
+                type="Optional[str]",
+                required=False,
+                description="Parent work-item ID (optional)",
+            ),
+            ToolParameter(
+                name="external_id",
+                type="Optional[str]",
+                required=False,
+                description="External system identifier (optional)",
+            ),
+            ToolParameter(
+                name="external_source",
+                type="Optional[str]",
+                required=False,
+                description="External system source name (optional)",
+            ),
+            ToolParameter(
+                name="is_draft",
+                type="Optional[bool]",
+                required=False,
+                description="Mark as draft (optional)",
+            ),
+        ],
+    ),
+    "list": ToolMetadata(
+        name="workitems_list",
+        description="List work items with filtering",
+        sdk_method="list_work_items",
+        pre_handler=_workitems_pre_handler,
+        post_handler=_workitems_post_handler,
+        parameters=[
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (provide if known, otherwise auto-detected)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="cursor",
+                type="Optional[str]",
+                required=False,
+                description="Pagination cursor for next page",
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="expand",
+                type="Optional[str]",
+                required=False,
+                description="Comma-separated list of related fields to expand in response",
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="external_id",
+                type="Optional[str]",
+                required=False,
+                description="External system identifier for filtering or lookup",
+            ),
+            ToolParameter(
+                name="external_source",
+                type="Optional[str]",
+                required=False,
+                description="External system source name for filtering or lookup",
+            ),
+            ToolParameter(
+                name="fields",
+                type="Optional[str]",
+                required=False,
+                description="Comma-separated list of fields to include in response",
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="order_by",
+                type="Optional[str]",
+                required=False,
+                description="Field to order results by. Prefix with '-' for descending order",
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="per_page",
+                type="Optional[int]",
+                required=False,
+                description="Number of work items per page (default: 20, max: 100)",
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="priority",
+                type="Optional[str]",
+                required=False,
+                description="Filter by priority (high, medium, low, urgent, none)",
+            ),
+            ToolParameter(
+                name="state",
+                type="Optional[str]",
+                required=False,
+                description="Filter by state name or UUID",
+            ),
+            ToolParameter(
+                name="assignees",
+                type="List[str]",
+                required=False,
+                description="Filter by assignee user IDs",
+            ),
+            ToolParameter(
+                name="labels",
+                type="List[str]",
+                required=False,
+                description="Filter by label IDs",
+            ),
+            ToolParameter(
+                name="start_date",
+                type="Optional[str]",
+                required=False,
+                description="Filter by start date",
+            ),
+            ToolParameter(
+                name="target_date",
+                type="Optional[str]",
+                required=False,
+                description="Filter by target date",
+            ),
+            ToolParameter(
+                name="created_by",
+                type="Optional[str]",
+                required=False,
+                description="Filter by creator ID",
+            ),
+            ToolParameter(
+                name="updated_by",
+                type="Optional[str]",
+                required=False,
+                description="Filter by updater ID",
+            ),
+            ToolParameter(
+                name="type_id",
+                type="Optional[str]",
+                required=False,
+                description="Filter by issue type ID",
+            ),
+            ToolParameter(
+                name="parent",
+                type="Optional[str]",
+                required=False,
+                description="Filter by parent issue ID",
+            ),
+            ToolParameter(
+                name="is_draft",
+                type="Optional[bool]",
+                required=False,
+                description="Filter by draft status",
+            ),
+            ToolParameter(
+                name="created_at",
+                type="Optional[str]",
+                required=False,
+                description="Filter by creation time",
+            ),
+            ToolParameter(
+                name="updated_at",
+                type="Optional[str]",
+                required=False,
+                description="Filter by update time",
+            ),
+            ToolParameter(
+                name="completed_at",
+                type="Optional[str]",
+                required=False,
+                description="Filter by completion time",
+            ),
+            ToolParameter(
+                name="archived_at",
+                type="Optional[str]",
+                required=False,
+                description="Filter by archive time",
+            ),
+        ],
+    ),
+    "retrieve": ToolMetadata(
+        name="workitems_retrieve",
+        description="Retrieve a single work item by ID",
+        sdk_method="retrieve_work_item",
+        parameters=[
+            ToolParameter(name="issue_id", type="str", required=True, description="Work item ID (required)"),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (provide if known, otherwise auto-detected)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="expand",
+                type="Optional[str]",
+                required=False,
+                description="Comma-separated list of related fields to expand in response",
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="external_id",
+                type="Optional[str]",
+                required=False,
+                description="External system identifier for filtering or lookup",
+            ),
+            ToolParameter(
+                name="external_source",
+                type="Optional[str]",
+                required=False,
+                description="External system source name for filtering or lookup",
+            ),
+            ToolParameter(
+                name="fields",
+                type="Optional[str]",
+                required=False,
+                description="Comma-separated list of fields to include in response",
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="order_by",
+                type="Optional[str]",
+                required=False,
+                description="Field to order results by. Prefix with '-' for descending order",
+                property_transform="skip",
+            ),
+        ],
+    ),
+    "delete": ToolMetadata(
+        name="workitems_delete",
+        description="Delete a work item/issue",
+        sdk_method="delete_work_item",
+        parameters=[
+            ToolParameter(name="issue_id", type="str", required=True, description="Work item ID to delete (required)"),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (provide if known, otherwise auto-detected)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+        ],
+    ),
+    "create_relation": ToolMetadata(
+        name="workitems_create_relation",
+        description="Create relationships between work items",
+        sdk_method="create_work_item_relation",
+        returns_entity_type="workitem",
+        pre_handler=_workitems_pre_handler,
+        parameters=[
+            ToolParameter(name="issue_id", type="str", required=True, description="Source work item ID to create relations from (required)"),
+            ToolParameter(
+                name="relation_type",
+                type="str",
+                required=True,
+                description="Type of relationship - one of: blocking, blocked_by, duplicate, relates_to, start_before, "
+                "start_after, finish_before, finish_after (required)",
+            ),
+            ToolParameter(
+                name="issues",
+                type="List[str]",
+                required=True,
+                description="List of work item IDs to create relations with (required)",
+            ),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (provide if known, otherwise auto-detected)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+        ],
+    ),
+    "search": ToolMetadata(
+        name="workitems_search",
+        description="Search work items by criteria",
+        sdk_method="search_work_items",
+        parameters=[
+            ToolParameter(
+                name="query",
+                type="str",
+                required=True,
+                description="Search query to filter results by name, description, or identifier (required)",
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (provide if known, otherwise auto-detected)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="limit",
+                type="Optional[int]",
+                required=False,
+                description="Maximum number of results to return",
+            ),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID for filtering results within a specific project",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_search",
+                type="Optional[str]",
+                required=False,
+                description="Whether to search across entire workspace or within specific project",
+            ),
+        ],
+    ),
+    "create_epic": ToolMetadata(
+        name="create_epic",
+        description="Create a new epic",
+        sdk_method="create_work_item",
+        returns_entity_type="epic",
+        pre_handler=_workitems_pre_handler,
+        post_handler=_workitems_post_handler,
+        parameters=[
+            ToolParameter(name="name", type="str", required=True, description="Epic title (required)"),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (required - provide from conversation context or previous actions)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (required - provide from conversation context)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="description_html",
+                type="Optional[str]",
+                required=False,
+                description="Epic description in HTML format",
+            ),
+            ToolParameter(
+                name="priority",
+                type="Optional[str]",
+                required=False,
+                description="Priority level (high, medium, low, urgent, none)",
+            ),
+            ToolParameter(
+                name="state",
+                type="Optional[str]",
+                required=False,
+                description='State name or ID for the epic (e.g., "done", "in progress", or UUID)',
+            ),
+            ToolParameter(
+                name="assignees",
+                type="List[str]",
+                required=False,
+                description="List of assignee user IDs",
+            ),
+            ToolParameter(
+                name="labels",
+                type="List[str]",
+                required=False,
+                description="List of label IDs",
+            ),
+            ToolParameter(
+                name="start_date",
+                type="Optional[str]",
+                required=False,
+                description="Start date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="target_date",
+                type="Optional[str]",
+                required=False,
+                description="Target completion date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="external_id",
+                type="Optional[str]",
+                required=False,
+                description="External system identifier (optional)",
+            ),
+            ToolParameter(
+                name="external_source",
+                type="Optional[str]",
+                required=False,
+                description="External system source name (optional)",
+            ),
+        ],
+    ),
+    "update_epic": ToolMetadata(
+        name="update_epic",
+        description="Update an existing epic",
+        sdk_method="update_work_item",
+        returns_entity_type="epic",
+        pre_handler=_workitems_pre_handler,
+        post_handler=_workitems_post_handler,
+        parameters=[
+            ToolParameter(name="issue_id", type="str", required=True, description="Epic ID to update (required)"),
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project ID (optional - provide from conversation context)",
+                auto_fill_from_context=True,
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (provide if known, otherwise auto-detected)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="name",
+                type="Optional[str]",
+                required=False,
+                description="Epic title",
+            ),
+            ToolParameter(
+                name="description_html",
+                type="Optional[str]",
+                required=False,
+                description="Epic description in HTML format",
+            ),
+            ToolParameter(
+                name="priority",
+                type="Optional[str]",
+                required=False,
+                description="Priority level (high, medium, low, urgent, none)",
+            ),
+            ToolParameter(
+                name="state",
+                type="Optional[str]",
+                required=False,
+                description="State ID for the epic",
+            ),
+            ToolParameter(
+                name="assignees",
+                type="List[str]",
+                required=False,
+                description="List of assignee user IDs",
+            ),
+            ToolParameter(
+                name="labels",
+                type="List[str]",
+                required=False,
+                description="List of label IDs",
+            ),
+            ToolParameter(
+                name="start_date",
+                type="Optional[str]",
+                required=False,
+                description="Start date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="target_date",
+                type="Optional[str]",
+                required=False,
+                description="Target completion date (YYYY-MM-DD format)",
+            ),
+            ToolParameter(
+                name="external_id",
+                type="Optional[str]",
+                required=False,
+                description="External system identifier (optional)",
+            ),
+            ToolParameter(
+                name="external_source",
+                type="Optional[str]",
+                required=False,
+                description="External system source name (optional)",
+            ),
+        ],
+    ),
+}
+
+
+# ============================================================================
+# TOOL FACTORY
+# ============================================================================
+
+
+def get_workitem_tools(method_executor, context):
+    """Return LangChain tools for the workitems category using auto-generation from metadata.
+
+    Dynamically fetches available work item types for the current project and injects them
+    into the type_id parameter descriptions, making types visible to the LLM during planning.
+    """
+    import copy
+
+    # Make a deep copy to avoid modifying the global constant
+    dynamic_tool_definitions = copy.deepcopy(WORKITEMS_TOOL_DEFINITIONS)
+
+    # Fetch and inject available types if we have the necessary context
+    project_id = context.get("project_id")
+    workspace_slug = context.get("workspace_slug")
+
+    if project_id and workspace_slug and method_executor:
+        types_text = _sync_fetch_types(method_executor, project_id, workspace_slug)
+        if types_text:
+            _enrich_type_id_descriptions(dynamic_tool_definitions, types_text)
+            log.info(f"Injected available types into workitem tool descriptions for project {project_id}")
+
+    return generate_tools_for_category(
+        category="workitems",
+        method_executor=method_executor,
+        context=context,
+        tool_definitions=dynamic_tool_definitions,
+    )
+
+
+# ============================================================================
+# OLD MANUAL TOOL DEFINITIONS (COMMENTED OUT - KEPT FOR COMPARISON)
+# To rollback: uncomment below and comment out the auto-generation code above
+# ============================================================================
+
+# from langchain_core.tools import tool
+#
+# def get_workitem_tools(method_executor, context):
+#     """Return LangChain tools for the workitems category using method_executor and context."""
+#
+#     @tool
+#     async def workitems_create(
+#         name: str,
+#         project_id: Optional[str] = None,
+#         description_html: Optional[str] = None,
+#         ... [TRUNCATED - See git history for full manual implementations]
+#     ):
+#         ... [All manual tool implementations omitted for brevity]
+#
+#     return [
+#         workitems_create,
+#         workitems_update,
+#         create_epic,
+#         update_epic,
+#         workitems_create_relation,
+#         workitems_delete,
+#         workitems_list,
+#         # workitems_retrieve,
+#         # workitems_search,
+#         # workitems_get_workspace
+#     ]

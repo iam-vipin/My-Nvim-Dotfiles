@@ -452,53 +452,137 @@ _LITE_LLM_CONFIGS = {
 }
 
 
+def _get_config_name_for_model(model_name: Optional[str], config_type: str) -> Optional[str]:
+    """Map user-facing model name to internal config name.
+
+    Args:
+        model_name: User-facing model name (e.g., "gpt-5.2", "claude-sonnet-4-0", None)
+        config_type: Type of config ("default", "stream", "decomposer", "fast")
+
+    Returns:
+        Internal config name to lookup in _DEFAULT_CONFIGS, _ANTHROPIC_CONFIGS, etc.
+        Returns None if no mapping exists (will use global defaults).
+    """
+    if not model_name:
+        return config_type  # Use base config type: "default", "stream", etc.
+
+    # Map GPT-5 variants to their config names
+    gpt5_mappings = {
+        "gpt-5-standard": {
+            "default": "gpt5_standard_default",
+            "stream": "gpt5_standard_stream",
+            "decomposer": "gpt5_standard_default",
+            "fast": "gpt5_standard_default",
+        },
+        "gpt-5-fast": {
+            "default": "gpt5_fast_default",
+            "stream": "gpt5_fast_stream",
+            "decomposer": "gpt5_fast_default",
+            "fast": "gpt5_fast_default",
+        },
+        "gpt-5.1": {
+            "default": "gpt5_1_default",
+            "stream": "gpt5_1_stream",
+            "decomposer": "gpt5_1_default",
+            "fast": "gpt5_1_default",
+        },
+        "gpt-5.2": {
+            "default": "gpt5_2_default",
+            "stream": "gpt5_2_stream",
+            "decomposer": "gpt5_2_default",
+            "fast": "gpt5_2_default",
+        },
+    }
+
+    # Map Claude models to their config names
+    claude_mappings = {
+        "claude-sonnet-4": {
+            "default": "claude-sonnet-4-default",
+            "stream": "claude-sonnet-4-stream",
+            "decomposer": "claude-sonnet-4-decomposer",
+            "fast": "claude-sonnet-4-fast",
+        },
+        "claude-sonnet-4-0": {
+            "default": "claude-sonnet-4-0-default",
+            "stream": "claude-sonnet-4-0-stream",
+            "decomposer": "claude-sonnet-4-0-decomposer",
+            "fast": "claude-sonnet-4-0-fast",
+        },
+        "claude-sonnet-4-5": {
+            "default": "claude-sonnet-4-5-default",
+            "stream": "claude-sonnet-4-5-stream",
+            "decomposer": "claude-sonnet-4-5-decomposer",
+            "fast": "claude-sonnet-4-5-fast",
+        },
+    }
+
+    # Check GPT-5 mappings first
+    if model_name in gpt5_mappings:
+        return gpt5_mappings[model_name].get(config_type)
+
+    # Check Claude mappings
+    if model_name in claude_mappings:
+        return claude_mappings[model_name].get(config_type)
+
+    # For other models, return None (will fall back to defaults)
+    return None
+
+
 # Backward compatibility factory methods
 class LLMFactory:
     @classmethod
     def get_default_llm(cls, model_name: Optional[str] = None) -> Any:
-        if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
-        elif model_name in _LITE_LLM_CONFIGS.keys():
-            return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
-        elif model_name in _DEFAULT_CONFIGS.keys():
-            config = _DEFAULT_CONFIGS[model_name]
-            return create_openai_llm(config)
+        # Map user-facing model name to config name
+        config_name = _get_config_name_for_model(model_name, "default")
+
+        if config_name and config_name in _ANTHROPIC_CONFIGS:
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
+        elif config_name and config_name in _LITE_LLM_CONFIGS:
+            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
+        elif config_name and config_name in _DEFAULT_CONFIGS:
+            return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
             return create_openai_llm(_DEFAULT_CONFIGS["default"])
 
     @classmethod
     def get_stream_llm(cls, model_name: Optional[str] = None) -> Any:
-        if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
-        elif model_name in _LITE_LLM_CONFIGS.keys():
-            return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
-        elif model_name in _DEFAULT_CONFIGS.keys():
-            config = _DEFAULT_CONFIGS[model_name]
-            return create_openai_llm(config)
+        # Map user-facing model name to config name
+        config_name = _get_config_name_for_model(model_name, "stream")
+
+        if config_name and config_name in _ANTHROPIC_CONFIGS:
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
+        elif config_name and config_name in _LITE_LLM_CONFIGS:
+            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
+        elif config_name and config_name in _DEFAULT_CONFIGS:
+            return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
             return create_openai_llm(_DEFAULT_CONFIGS["stream"])
 
     @classmethod
     def get_decomposer_llm(cls, model_name: Optional[str] = None) -> Any:
-        if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
-        elif model_name in _LITE_LLM_CONFIGS.keys():
-            return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
-        elif model_name in _DEFAULT_CONFIGS.keys():
-            config = _DEFAULT_CONFIGS[model_name]
-            return create_openai_llm(config)
+        # Map user-facing model name to config name
+        config_name = _get_config_name_for_model(model_name, "decomposer")
+
+        if config_name and config_name in _ANTHROPIC_CONFIGS:
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
+        elif config_name and config_name in _LITE_LLM_CONFIGS:
+            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
+        elif config_name and config_name in _DEFAULT_CONFIGS:
+            return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
             return create_openai_llm(_DEFAULT_CONFIGS["decomposer"])
 
     @classmethod
     def get_fast_llm(cls, streaming: bool = False, model_name: Optional[str] = None) -> Any:
-        if model_name in _ANTHROPIC_CONFIGS.keys():
-            return create_anthropic_llm(_ANTHROPIC_CONFIGS[model_name])
-        elif model_name in _LITE_LLM_CONFIGS.keys():
-            return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
-        elif model_name in _DEFAULT_CONFIGS.keys():
-            config = _DEFAULT_CONFIGS[model_name]
-            return create_openai_llm(config)
+        # Map user-facing model name to config name
+        config_name = _get_config_name_for_model(model_name, "fast")
+
+        if config_name and config_name in _ANTHROPIC_CONFIGS:
+            return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
+        elif config_name and config_name in _LITE_LLM_CONFIGS:
+            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
+        elif config_name and config_name in _DEFAULT_CONFIGS:
+            return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
             config_key = "fast_stream" if streaming else "fast"
             return create_openai_llm(_DEFAULT_CONFIGS[config_key])

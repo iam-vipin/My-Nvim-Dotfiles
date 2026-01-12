@@ -161,6 +161,14 @@ def format_column_context(column_context: Dict[str, Any]) -> str:
                 distinct_values = column["distinct_values_in_column"]
                 distinct_formatted = ", ".join(f"`{value}`" for value in distinct_values)
                 formatted_lines.append(f"  - **Distinct Values:** {distinct_formatted}")
+            elif "computed_status_conditions" in column:
+                conditions = column["computed_status_conditions"]
+                formatted_lines.append(f"  - **Computed Status Conditions:**")
+                for cond in conditions:
+                    status = cond.get("status", "N/A")
+                    cond_desc = cond.get("description", "No description")
+                    sql_condition = cond.get("sql_condition", "N/A")
+                    formatted_lines.append(f"    - **`{status}`** ({cond_desc}): `{sql_condition}`")
             formatted_lines.append("")
     return "\n".join(formatted_lines)
 
@@ -1096,6 +1104,31 @@ async def construct_action_entity_url(
                 return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
             else:
                 return None
+
+        elif entity_type == "workspace":
+            # For workspaces: /workspace_slug/
+            url = f"{api_base_url}/{workspace_slug}/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "sticky":
+            # For stickies: /workspace_slug/stickies/
+            url = f"{api_base_url}/{workspace_slug}/stickies/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "initiative":
+            # For initiatives: /workspace_slug/initiatives/
+            url = f"{api_base_url}/{workspace_slug}/initiatives/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "teamspace":
+            # For teamspaces: /workspace_slug/teamspaces/
+            url = f"{api_base_url}/{workspace_slug}/teamspaces/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "customer":
+            # For customers: /workspace_slug/customers/
+            url = f"{api_base_url}/{workspace_slug}/customers/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         else:
             # Unknown entity type

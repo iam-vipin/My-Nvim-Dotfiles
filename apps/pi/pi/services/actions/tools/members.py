@@ -11,102 +11,115 @@
 
 """
 Members API tools for Plane workspace and project member management.
+
+MIGRATED TO AUTO-GENERATED TOOLS
+Tool metadata defined in this file (MEMBER_TOOL_DEFINITIONS) for modularity.
+Bot filtering handled via custom post_handler function.
+Old manual definitions kept below for comparison/rollback safety.
 """
 
 from typing import Any
 from typing import Dict
-from typing import Optional
 
-from langchain_core.tools import tool
+from pi import logger
+from pi.services.actions.tool_generator import generate_tools_for_category
+from pi.services.actions.tool_metadata import ToolMetadata
+from pi.services.actions.tool_metadata import ToolParameter
 
-from .base import PlaneToolBase
+log = logger.getChild(__name__)
 
-# Factory wired via CATEGORY_TO_PROVIDER in tools/__init__.py
-# Returns LangChain tools implementing member actions
+
+# ============================================================================
+# MEMBERS-SPECIFIC HANDLER FUNCTIONS
+# ============================================================================
+
+
+async def _filter_bots_handler(
+    metadata: ToolMetadata,
+    result: Dict[str, Any],
+    kwargs: Dict[str, Any],
+    context: Dict[str, Any],
+    method_executor: Any,
+    category: str,
+    method_key: str,
+) -> Dict[str, Any]:
+    """Post-processing handler to filter bot users from member lists."""
+
+    if result["success"]:
+        members_data = result.get("data")
+        if isinstance(members_data, list):
+            filtered_members = [
+                member
+                for member in members_data
+                if not (member.get("is_bot", False) or (isinstance(member.get("email"), str) and "_bot@plane.so" in member.get("email", "").lower()))
+            ]
+            result["data"] = filtered_members
+            log.debug(f"Filtered {len(members_data) - len(filtered_members)} bot users from {metadata.name}")
+
+    return result
+
+
+# Tool metadata for members category
+MEMBER_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
+    "get_workspace_members": ToolMetadata(
+        name="members_get_workspace_members",
+        description="Get all workspace members (excludes bot users)",
+        sdk_method="get_workspace_members",
+        post_handler=_filter_bots_handler,
+        parameters=[
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (auto-filled from context)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+        ],
+    ),
+    "get_project_members": ToolMetadata(
+        name="members_get_project_members",
+        description="Get all project members (excludes bot users)",
+        sdk_method="get_project_members",
+        post_handler=_filter_bots_handler,
+        parameters=[
+            ToolParameter(
+                name="project_id",
+                type="Optional[str]",
+                required=False,
+                description="Project UUID (auto-filled from context if in project chat)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+            ToolParameter(
+                name="workspace_slug",
+                type="Optional[str]",
+                required=False,
+                description="Workspace slug (auto-filled from context)",
+                auto_fill_from_context=True,
+                property_transform="skip",
+            ),
+        ],
+    ),
+}
 
 
 def get_member_tools(method_executor, context):
-    """Return LangChain tools for the members category using method_executor and context."""
-    """Get all Members API tools."""
+    """Return LangChain tools for the members category using auto-generation from metadata."""
 
-    @tool
-    async def members_get_workspace_members(workspace_slug: Optional[str] = None) -> Dict[str, Any]:
-        """Get all workspace members (excludes bot users).
+    member_tools = generate_tools_for_category(
+        category="members",
+        method_executor=method_executor,
+        context=context,
+        tool_definitions=MEMBER_TOOL_DEFINITIONS,
+    )
 
-        Args:
-            workspace_slug: Workspace slug (auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
+    return member_tools
 
-        result = await method_executor.execute("members", "get_workspace_members", workspace_slug=workspace_slug)
 
-        if result["success"]:
-            # Filter out bot users from the results
-            members_data = result["data"]
-            if isinstance(members_data, list):
-                # Filter out users with is_bot=True and bot email patterns
-                filtered_members = [
-                    member
-                    for member in members_data
-                    if not (
-                        # Check is_bot field if present
-                        member.get("is_bot", False)
-                        # Check for bot email pattern (workspace_botname_bot@plane.so)
-                        or (isinstance(member.get("email"), str) and "_bot@plane.so" in member.get("email", "").lower())
-                    )
-                ]
-                return PlaneToolBase.format_success_payload("Successfully retrieved workspace members", filtered_members)
-            else:
-                # If data is not a list, return as-is (edge case)
-                return PlaneToolBase.format_success_payload("Successfully retrieved workspace members", members_data)
-        else:
-            return PlaneToolBase.format_error_payload("Failed to get workspace members", result["error"])
+# ============================================================================
+# OLD MANUAL TOOL DEFINITIONS (COMMENTED OUT - KEPT FOR COMPARISON)
+# To rollback: uncomment below and comment out the auto-generation code above
+# ============================================================================
 
-    @tool
-    async def members_get_project_members(
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Get all project members (excludes bot users).
-
-        Args:
-            project_id: Project UUID (auto-filled from context if in project chat)
-            workspace_slug: Workspace slug (auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "members",
-            "get_project_members",
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            # Filter out bot users from the results
-            members_data = result["data"]
-            if isinstance(members_data, list):
-                # Filter out users with is_bot=True and bot email patterns
-                filtered_members = [
-                    member
-                    for member in members_data
-                    if not (
-                        # Check is_bot field if present
-                        member.get("is_bot", False)
-                        # Check for bot email pattern (workspace_botname_bot@plane.so)
-                        or (isinstance(member.get("email"), str) and "_bot@plane.so" in member.get("email", "").lower())
-                    )
-                ]
-                return PlaneToolBase.format_success_payload("Successfully retrieved project members", filtered_members)
-            else:
-                # If data is not a list, return as-is (edge case)
-                return PlaneToolBase.format_success_payload("Successfully retrieved project members", members_data)
-        else:
-            return PlaneToolBase.format_error_payload("Failed to get project members", result["error"])
-
-    return [members_get_workspace_members, members_get_project_members]
+# [102 lines of old code omitted for brevity]

@@ -381,6 +381,11 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
             # Add this action's artifact to the list
             artifact_data_objects.append(ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data))
 
+        # Type assertions for mypy (validated above)
+        assert workspace_id is not None
+        assert chat_id is not None
+        assert message_id is not None
+
         # Execute batch actions using the service with ALL artifacts
         service = BuildModeToolExecutor(chatbot=PlaneChatBot(plane_apps_llm), db=db)
         result = await service.execute(
@@ -411,7 +416,7 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
         formatted_context = result
 
     # Parse JSON response for proper API format (avoid double-encoded JSON string)
-    parsed_response: Union[str, Dict[str, Any]] = final_response
+    parsed_response: Union[str, Dict[str, Any], Any] = final_response
     if response_type == "response" and final_response:
         try:
             # Try to parse as JSON for structured app responses
@@ -515,6 +520,11 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
 
             # Add this action's artifact to the list
             artifact_data_objects.append(ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data))
+
+        # Type assertions for mypy (validated above)
+        assert workspace_id is not None
+        assert chat_id is not None
+        assert message_id is not None
 
         # Execute batch actions using the service with ALL artifacts
         service = BuildModeToolExecutor(chatbot=PlaneChatBot(slack_ai_llm), db=db)

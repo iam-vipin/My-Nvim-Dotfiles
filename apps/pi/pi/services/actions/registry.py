@@ -30,6 +30,10 @@ API_CATEGORIES: Dict[str, str] = {
     "users": "Manage user information and profiles",
     "workitems": "Work items/issues - create, update, manage work items",
     "intake": "Submit and manage work items in intake queue for triage",
+    "initiatives": "Manage strategic initiatives with epics, labels, and projects",
+    "teamspaces": "Manage team collaboration spaces with members and projects",
+    "stickies": "Create and manage quick sticky notes and annotations",
+    "customers": "Manage customer relationships and information",
     "members": "Manage workspace and project members",
     "activity": "Track and manage work item activities",
     "attachments": "Manage file attachments on work items",
@@ -38,6 +42,7 @@ API_CATEGORIES: Dict[str, str] = {
     "properties": "Manage custom properties and their values",
     "types": "Manage work item types",
     "worklogs": "Track and manage time entries",
+    "workspaces": "Manage workspace settings and features",
 }
 
 # Centralized registry of methods for each category
@@ -45,12 +50,11 @@ API_METHODS: Dict[str, Dict[str, str]] = {
     "workitems": {
         "create": "Create a new work item/issue",
         "update": "Update an existing work item/issue",
-        "create_relation": "Create relationships between work items (blocking, blocked_by, duplicate, etc.)",
-        # "list": "List work items with filtering",
-        # "retrieve": "Get a single work item by ID",
+        "retrieve": "Get details of a single work item",
+        "list": "List work items in a project",
         "delete": "Delete a work item",
-        # "search": "Search work items by criteria",
-        # "get_workspace": "Get work item across workspace",
+        "create_relation": "Create a relationship between work items (blocks, relates_to, etc.)",
+        "search": "Search work items across workspace by query string",
     },
     "projects": {
         "create": "Create a new project",
@@ -58,8 +62,8 @@ API_METHODS: Dict[str, Dict[str, str]] = {
         "retrieve": "Get details of a single project",
         "update": "Update project details",
         "delete": "Delete a project",
-        "archive": "Archive a project",
-        "unarchive": "Restore an archived project",
+        "get_features": "Get enabled project features (epics, cycles, modules, etc.)",
+        "update_features": "Enable or disable project features",
     },
     "cycles": {
         "create": "Create a new cycle",
@@ -117,6 +121,53 @@ API_METHODS: Dict[str, Dict[str, str]] = {
         "update": "Update intake work item details",
         "delete": "Remove intake work item",
     },
+    "initiatives": {
+        "create": "Create a new initiative",
+        "list": "List initiatives in workspace",
+        "retrieve": "Get single initiative by ID",
+        "update": "Update initiative details",
+        "delete": "Delete an initiative",
+        "create_label": "Create initiative label",
+        "list_labels": "List initiative labels",
+        "retrieve_label": "Get initiative label by ID",
+        "update_label": "Update initiative label",
+        "delete_label": "Delete initiative label",
+        "add_labels": "Add labels to initiative",
+        "remove_labels": "Remove labels from initiative",
+        "add_projects": "Link projects to initiative",
+        "list_projects": "List initiative's projects",
+        "remove_projects": "Unlink projects from initiative",
+        "add_epics": "Link epics to initiative",
+        "list_epics": "List initiative's epics",
+        "remove_epics": "Unlink epics from initiative",
+    },
+    "teamspaces": {
+        "create": "Create a new teamspace",
+        "list": "List teamspaces in workspace",
+        "retrieve": "Get single teamspace by ID",
+        "update": "Update teamspace details",
+        "delete": "Delete a teamspace",
+        "add_members": "Add members to teamspace",
+        "list_members": "List teamspace members",
+        "remove_members": "Remove members from teamspace",
+        "add_projects": "Add projects to teamspace",
+        "list_projects": "List teamspace projects",
+        "remove_projects": "Remove projects from teamspace",
+    },
+    "stickies": {
+        "create": "Create a new sticky note",
+        "list": "List stickies in workspace",
+        "retrieve": "Get single sticky by ID",
+        "update": "Update sticky details",
+        "delete": "Delete a sticky",
+    },
+    "customers": {
+        "create": "Create a new customer",
+        "list": "List customers in workspace",
+        "retrieve": "Get single customer by ID",
+        "update": "Update customer details",
+        "delete": "Delete a customer",
+    },
     "members": {
         "get_workspace_members": "List all workspace members",
         "get_project_members": "List all project members",
@@ -173,6 +224,10 @@ API_METHODS: Dict[str, Dict[str, str]] = {
         "update": "Update time entry",
         "delete": "Delete time entry",
     },
+    "workspaces": {
+        "get_features": "Get enabled workspace features (initiatives, teams, customers, etc.)",
+        "update_features": "Enable or disable workspace features",
+    },
 }
 
 
@@ -201,18 +256,19 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "create_relation": "create_work_item_relation",
         "list": "list_work_items",
         "retrieve": "retrieve_work_item",
-        "search": "search_work_items",
-        "get_workspace": "get_workspace_work_item",
         "delete": "delete_work_item",
+        "search": "search_work_items",
+        "create_epic": "create_work_item",  # Epic is a workitem with specific type_id
+        "update_epic": "update_work_item",  # Epic is a workitem with specific type_id
     },
     "projects": {
         "create": "create_project",
         "list": "list_projects",
         "retrieve": "retrieve_project",
         "update": "update_project",
-        "archive": "archive_project",
-        "unarchive": "unarchive_project",
         "delete": "delete_project",
+        "get_features": "get_project_features",
+        "update_features": "update_project_features",
     },
     "cycles": {
         "create": "create_cycle",
@@ -224,7 +280,6 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "list_archived": "list_archived_cycles",
         "add_work_items": "add_cycle_work_items",
         "list_work_items": "list_cycle_work_items",
-        "retrieve_work_item": "retrieve_cycle_work_item",
         "remove_work_item": "remove_cycle_work_item",
         "transfer_work_items": "transfer_cycle_work_items",
         "delete": "delete_cycle",
@@ -232,7 +287,7 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
     "labels": {
         "create": "create_label",
         "list": "list_labels",
-        "retrieve": "get_labels",
+        "retrieve": "retrieve_label",
         "update": "update_label",
         "delete": "delete_label",
     },
@@ -259,6 +314,8 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
     "pages": {
         "create_project_page": "create_project_page",
         "create_workspace_page": "create_workspace_page",
+        "retrieve_project": "retrieve_project_page",
+        "retrieve_workspace": "retrieve_workspace_page",
     },
     "assets": {
         "create": "create_generic_asset_upload",
@@ -279,6 +336,53 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "update": "update_intake_work_item",
         "delete": "delete_intake_work_item",
     },
+    "initiatives": {
+        "create": "create_initiative",
+        "list": "list_initiatives",
+        "retrieve": "retrieve_initiative",
+        "update": "update_initiative",
+        "delete": "delete_initiative",
+        "create_label": "create_initiative_label",
+        "list_labels": "list_initiative_labels",
+        "retrieve_label": "retrieve_initiative_label",
+        "update_label": "update_initiative_label",
+        "delete_label": "delete_initiative_label",
+        "add_labels": "add_initiative_labels",
+        "remove_labels": "remove_initiative_labels",
+        "add_projects": "add_initiative_projects",
+        "list_projects": "list_initiative_projects",
+        "remove_projects": "remove_initiative_projects",
+        "add_epics": "add_initiative_epics",
+        "list_epics": "list_initiative_epics",
+        "remove_epics": "remove_initiative_epics",
+    },
+    "teamspaces": {
+        "create": "create_teamspace",
+        "list": "list_teamspaces",
+        "retrieve": "retrieve_teamspace",
+        "update": "update_teamspace",
+        "delete": "delete_teamspace",
+        "add_members": "add_teamspace_members",
+        "list_members": "list_teamspace_members",
+        "remove_members": "remove_teamspace_members",
+        "add_projects": "add_teamspace_projects",
+        "list_projects": "list_teamspace_projects",
+        "remove_projects": "remove_teamspace_projects",
+    },
+    "stickies": {
+        "create": "create_sticky",
+        "list": "list_stickies",
+        "retrieve": "retrieve_sticky",
+        "update": "update_sticky",
+        "delete": "delete_sticky",
+    },
+    "customers": {
+        "create": "create_customer",
+        "list": "list_customers",
+        "retrieve": "retrieve_customer",
+        "update": "update_customer",
+        "delete": "delete_customer",
+    },
     "members": {
         "get_workspace_members": "get_workspace_members",
         "get_project_members": "get_project_members",
@@ -291,6 +395,7 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "create": "create_work_item_attachment",
         "list": "list_work_item_attachments",
         "retrieve": "retrieve_work_item_attachment",
+        "update": "update_work_item_attachment",
         "delete": "delete_work_item_attachment",
     },
     "comments": {
@@ -335,6 +440,10 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
         "update": "update_issue_worklog",
         "delete": "delete_issue_worklog",
     },
+    "workspaces": {
+        "get_features": "get_workspace_features",
+        "update_features": "update_workspace_features",
+    },
 }
 
 
@@ -371,3 +480,80 @@ def resolve_actual_method_name(category: str, method: str) -> Optional[str]:
 
     # If not a simplified name, assume it could already be actual; allow pass-through
     return method
+
+
+# ============================================================================
+# CENTRALIZED TOOL DEFINITIONS (Phase 1: Foundation)
+# ============================================================================
+# This is the single source of truth for all tool metadata.
+# Auto-generation in progress - currently only labels category defined.
+
+from pi.services.actions.tool_metadata import ToolMetadata
+
+# Tool definitions - now imported from individual tool modules for modularity
+# Each tool file defines its own metadata, special handlers, and business logic
+from pi.services.actions.tools.activity import ACTIVITY_TOOL_DEFINITIONS
+from pi.services.actions.tools.assets import ASSET_TOOL_DEFINITIONS
+from pi.services.actions.tools.comments import COMMENTS_TOOL_DEFINITIONS
+from pi.services.actions.tools.customers import CUSTOMER_TOOL_DEFINITIONS
+from pi.services.actions.tools.cycles import CYCLES_TOOL_DEFINITIONS
+from pi.services.actions.tools.initiatives import INITIATIVE_TOOL_DEFINITIONS
+from pi.services.actions.tools.intake import INTAKE_TOOL_DEFINITIONS
+from pi.services.actions.tools.labels import LABEL_TOOL_DEFINITIONS
+from pi.services.actions.tools.links import LINKS_TOOL_DEFINITIONS
+from pi.services.actions.tools.members import MEMBER_TOOL_DEFINITIONS
+from pi.services.actions.tools.modules import MODULES_TOOL_DEFINITIONS
+from pi.services.actions.tools.pages import PAGE_TOOL_DEFINITIONS
+from pi.services.actions.tools.projects import PROJECT_TOOL_DEFINITIONS
+from pi.services.actions.tools.properties import PROPERTIES_TOOL_DEFINITIONS
+from pi.services.actions.tools.states import STATE_TOOL_DEFINITIONS
+from pi.services.actions.tools.stickies import STICKY_TOOL_DEFINITIONS
+from pi.services.actions.tools.teamspaces import TEAMSPACE_TOOL_DEFINITIONS
+from pi.services.actions.tools.types import TYPE_TOOL_DEFINITIONS
+from pi.services.actions.tools.users import USER_TOOL_DEFINITIONS
+from pi.services.actions.tools.workitems import WORKITEMS_TOOL_DEFINITIONS
+from pi.services.actions.tools.worklogs import WORKLOGS_TOOL_DEFINITIONS
+from pi.services.actions.tools.workspaces import WORKSPACE_TOOL_DEFINITIONS
+
+TOOL_DEFINITIONS: Dict[str, Dict[str, ToolMetadata]] = {
+    "activity": ACTIVITY_TOOL_DEFINITIONS,
+    "assets": ASSET_TOOL_DEFINITIONS,
+    "comments": COMMENTS_TOOL_DEFINITIONS,
+    "customers": CUSTOMER_TOOL_DEFINITIONS,
+    "cycles": CYCLES_TOOL_DEFINITIONS,
+    "initiatives": INITIATIVE_TOOL_DEFINITIONS,
+    "intake": INTAKE_TOOL_DEFINITIONS,
+    "labels": LABEL_TOOL_DEFINITIONS,
+    "links": LINKS_TOOL_DEFINITIONS,
+    "members": MEMBER_TOOL_DEFINITIONS,
+    "modules": MODULES_TOOL_DEFINITIONS,
+    "pages": PAGE_TOOL_DEFINITIONS,
+    "projects": PROJECT_TOOL_DEFINITIONS,
+    "properties": PROPERTIES_TOOL_DEFINITIONS,
+    "states": STATE_TOOL_DEFINITIONS,
+    "stickies": STICKY_TOOL_DEFINITIONS,
+    "teamspaces": TEAMSPACE_TOOL_DEFINITIONS,
+    "types": TYPE_TOOL_DEFINITIONS,
+    "users": USER_TOOL_DEFINITIONS,
+    "workitems": WORKITEMS_TOOL_DEFINITIONS,
+    "worklogs": WORKLOGS_TOOL_DEFINITIONS,
+    "workspaces": WORKSPACE_TOOL_DEFINITIONS,
+}
+
+
+def get_tool_metadata(category: str, method: str) -> Optional[ToolMetadata]:
+    """Get tool metadata for a specific category and method.
+
+    Args:
+        category: API category (e.g., "labels", "workitems")
+        method: Simplified method name (e.g., "create", "list")
+
+    Returns:
+        ToolMetadata if found, None otherwise
+    """
+    return TOOL_DEFINITIONS.get(category, {}).get(method)
+
+
+def get_all_tool_metadata() -> Dict[str, Dict[str, ToolMetadata]]:
+    """Get all tool metadata across all categories."""
+    return TOOL_DEFINITIONS.copy()

@@ -23,9 +23,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.agents.sql_agent.tools import construct_entity_urls_from_db
-from pi.agents.sql_agent.tools import extract_ids_from_sql_result
-from pi.agents.sql_agent.tools import format_as_bullet_points
+from pi.agents.sql_agent.helpers import construct_entity_urls_from_db
+from pi.agents.sql_agent.helpers import extract_ids_from_sql_result
+from pi.agents.sql_agent.helpers import format_as_bullet_points
 from pi.app.models.enums import MessageMetaStepType
 
 # Import new modular tools from actions service
@@ -66,10 +66,6 @@ class ChatKit(AttachmentMixin):
         from pi.services.llm.llms import _create_anthropic_config
         from pi.services.llm.llms import create_anthropic_llm
         from pi.services.llm.llms import create_openai_llm
-
-        # Store original switch_llm value to determine if custom model was requested
-        # GPT-5 variants and gpt-5.1 are handled separately, not as custom models
-        use_custom_model = switch_llm is not None and not (switch_llm.startswith("gpt-5") or switch_llm == "gpt-5.1")
 
         # Model name mapping for user-friendly names to actual LiteLLM model names
         claude_model_name_mapping = {
@@ -136,36 +132,11 @@ class ChatKit(AttachmentMixin):
                 TOOL_LLM = switch_llm
                 tool_config = LLMConfig(model=TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
 
-        # Initialize LLMs using LLMFactory with switch_llm support
-        if use_custom_model:
-            # For custom models, try LiteLLM configs with model-type naming convention
-            self.llm = llms.LLMFactory.get_default_llm(f"{switch_llm}-default")
-            self.stream_llm = llms.LLMFactory.get_stream_llm(f"{switch_llm}-stream")
-            self.decomposer_llm = llms.LLMFactory.get_decomposer_llm(f"{switch_llm}-decomposer")
-            self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name=f"{switch_llm}-fast")
-        else:
-            # Use default global instances, but for GPT-5 variants create dynamic instances
-            if switch_llm == "gpt-5-standard":
-                self.llm = llms.LLMFactory.get_default_llm("gpt5_standard_default")
-                self.stream_llm = llms.LLMFactory.get_stream_llm("gpt5_standard_stream")
-                self.decomposer_llm = llms.LLMFactory.get_decomposer_llm("gpt5_standard_default")
-                self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name="gpt5_standard_default")
-            elif switch_llm == "gpt-5-fast":
-                self.llm = llms.LLMFactory.get_default_llm("gpt5_fast_default")
-                self.stream_llm = llms.LLMFactory.get_stream_llm("gpt5_fast_stream")
-                self.decomposer_llm = llms.LLMFactory.get_decomposer_llm("gpt5_fast_default")
-                self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name="gpt5_fast_default")
-            elif switch_llm == "gpt-5.1":
-                self.llm = llms.LLMFactory.get_default_llm("gpt5_1_default")
-                self.stream_llm = llms.LLMFactory.get_stream_llm("gpt5_1_stream")
-                self.decomposer_llm = llms.LLMFactory.get_decomposer_llm("gpt5_1_default")
-                self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name="gpt5_1_default")
-            else:
-                # Use default global instances
-                self.llm = llms.llm
-                self.stream_llm = llms.stream_llm
-                self.decomposer_llm = llms.decomposer_llm
-                self.fast_llm = llms.fast_llm
+        # Initialize LLMs using LLMFactory with centralized model name mapping
+        self.llm = llms.LLMFactory.get_default_llm(switch_llm)
+        self.stream_llm = llms.LLMFactory.get_stream_llm(switch_llm)
+        self.decomposer_llm = llms.LLMFactory.get_decomposer_llm(switch_llm)
+        self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name=switch_llm)
 
         self.switch_llm = switch_llm
         # Get chat LLM - reasoning effort is now determined by model name

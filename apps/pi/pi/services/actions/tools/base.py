@@ -88,7 +88,7 @@ class PlaneToolBase:
         """
 
         # Lazy import to avoid circular dependency
-        from pi.agents.sql_agent.tools import extract_entity_from_api_response
+        from pi.agents.sql_agent.helpers import extract_entity_from_api_response
 
         # Extract entity data from response
         entity_data = extract_entity_from_api_response(data, entity_type)
@@ -107,7 +107,7 @@ class PlaneToolBase:
                 # Construct entity URL
                 try:
                     # Lazy import to avoid circular dependency
-                    from pi.agents.sql_agent.tools import construct_action_entity_url
+                    from pi.agents.sql_agent.helpers import construct_action_entity_url
 
                     # Since this method is now async, we can directly await the async function
                     url_info = await construct_action_entity_url(entity_data, entity_type, workspace_slug, frontend_url)
@@ -164,7 +164,7 @@ class PlaneToolBase:
         Structured success payload that also includes constructed entity URL information when available.
         """
         # Lazy import to avoid circular dependency
-        from pi.agents.sql_agent.tools import extract_entity_from_api_response
+        from pi.agents.sql_agent.helpers import extract_entity_from_api_response
         from pi.config import settings as _settings
 
         entity: Dict[str, Any] = {}
@@ -177,7 +177,7 @@ class PlaneToolBase:
                     entity_data["workspace"] = str(context["workspace_id"])
                 if workspace_slug:
                     try:
-                        from pi.agents.sql_agent.tools import construct_action_entity_url
+                        from pi.agents.sql_agent.helpers import construct_action_entity_url
 
                         url_info = await construct_action_entity_url(entity_data, entity_type, workspace_slug, frontend_url)
                         if url_info:

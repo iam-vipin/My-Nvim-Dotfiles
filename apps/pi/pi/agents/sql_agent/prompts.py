@@ -16,7 +16,7 @@ from typing import Any
 
 # Lazy import to avoid circular dependency
 # from pi.services.chat.prompts import plane_context
-from pi.agents.sql_agent.tools import format_table_details
+from pi.agents.sql_agent.helpers import format_table_details
 
 table_description_content: dict[str, dict[str, Any]] = json.loads(read_text("pi.agents.sql_agent.store", "table-descriptions.json"))
 table_descriptions = format_table_details(table_description_content)

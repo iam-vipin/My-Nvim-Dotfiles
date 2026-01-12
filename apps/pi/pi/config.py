@@ -428,6 +428,10 @@ class Settings:
         colorlog.getLogger("httpx").setLevel(colorlog.WARNING)
         colorlog.getLogger("httpcore").setLevel(colorlog.WARNING)
 
+        # Suppress Anthropic client debug logs
+        colorlog.getLogger("anthropic").setLevel(colorlog.WARNING)
+        colorlog.getLogger("anthropic._base_client").setLevel(colorlog.WARNING)
+
         # Suppress boto3/botocore debug logs
         colorlog.getLogger("boto3").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore").setLevel(colorlog.INFO)
@@ -453,13 +457,32 @@ class Settings:
         colorlog.getLogger("datadog").setLevel(colorlog.INFO)
         colorlog.getLogger("datadog.dogstatsd").setLevel(colorlog.INFO)
 
-        colorlog.getLogger("ddtrace.internal.telemetry").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal.telemetry.writer").setLevel(colorlog.INFO)
+        # Conditional logging format based on DD_ENABLED (Datadog)
+        # When Datadog is enabled (production), use JSON logging for structured logs
+        # When Datadog is disabled (local dev), use colored logs for readability
+        dd_enabled = get_env_bool("DD_ENABLED", "0")
+        if dd_enabled:
+            # Production: Use JSON formatter for structured logging (Datadog)
+            from pythonjsonlogger.json import JsonFormatter
 
-        from pythonjsonlogger.json import JsonFormatter
-
-        json_formatter = JsonFormatter(fmt="%(asctime)s %(name)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
-        handler.setFormatter(json_formatter)
+            colorlog.getLogger("ddtrace.internal.telemetry").setLevel(colorlog.INFO)
+            colorlog.getLogger("ddtrace.internal.telemetry.writer").setLevel(colorlog.INFO)
+            json_formatter = JsonFormatter(fmt="%(asctime)s %(name)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+            handler.setFormatter(json_formatter)
+        else:
+            # Local development: Use colorlog for readable output
+            color_formatter = colorlog.ColoredFormatter(
+                "%(log_color)s%(asctime)s %(name)-20s %(levelname)-8s%(reset)s %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+                log_colors={
+                    "DEBUG": "cyan",
+                    "INFO": "green",
+                    "WARNING": "yellow",
+                    "ERROR": "red",
+                    "CRITICAL": "red,bg_white",
+                },
+            )
+            handler.setFormatter(color_formatter)
 
         # Get the root logger and configure it
         root_logger = colorlog.getLogger()

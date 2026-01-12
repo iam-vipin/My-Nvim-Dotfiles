@@ -23,6 +23,7 @@ Only this file should need changes when the SDK evolves.
 import logging
 from typing import Any
 from typing import Dict
+from typing import Iterable
 from typing import List
 from typing import Optional
 from typing import Union
@@ -104,9 +105,10 @@ class PlaneSDKAdapter:
 
         # Handle Pydantic v2 models
         if hasattr(model, "model_dump"):
-            # Use Pydantic v2's model_dump method
-            data = model.model_dump()
-            # Recursively convert nested models
+            # Use Pydantic v2's model_dump method with mode='json' to ensure
+            # all types (including enums, dates, UUIDs) are converted to JSON-compatible primitives
+            data = model.model_dump(mode="json")
+            # Recursively convert any remaining nested models
             return {k: self._model_to_dict(v) for k, v in data.items()}
         elif hasattr(model, "dict"):
             # Fallback for backwards compatibility
@@ -115,6 +117,12 @@ class PlaneSDKAdapter:
 
         # Return primitive types as-is
         return model
+
+    def _filter_payload(self, data: Dict[str, Any], allowed_keys: Optional[Iterable[str]] = None, remove_none: bool = True) -> Dict[str, Any]:
+        """
+        Filter dictionary with options to remove None values and restrict to allowed keys.
+        """
+        return {k: v for k, v in data.items() if (not remove_none or v is not None) and (allowed_keys is None or k in allowed_keys)}
 
     def _safe_model_to_dict(self, model: Any) -> Union[Dict[str, Any], List[Any], Any]:
         """
@@ -187,10 +195,13 @@ class PlaneSDKAdapter:
                 data["start_date"] = start_date
             if target_date:
                 data["target_date"] = target_date
+            # Explicitly add type_id if provided
+            if kwargs.get("type_id") is not None:
+                data["type_id"] = kwargs.pop("type_id")
             # Allow extra fields to pass-through (SDK DTO uses extra="ignore")
 
             if kwargs:
-                filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+                filtered_kwargs = self._filter_payload(kwargs)
                 data.update(filtered_kwargs)
 
             request_model = CreateWorkItem(**data)
@@ -270,6 +281,29 @@ class PlaneSDKAdapter:
             log.error(f"Failed to retrieve work item: {e} ({getattr(e, "status_code", None)})")
             raise
         except Exception as e:
+            # Handle Pydantic validation errors when using selective fields with expand
+            error_str = str(e)
+            if "validation error" in error_str.lower() and params:
+                log.warning(f"SDK validation failed with expand, using raw HTTP fallback: {e}")
+                try:
+                    import httpx
+
+                    url = f"{self._base_url}/api/v1/workspaces/{workspace_slug}/projects/{project_id}/work-items/{issue_id}/"
+                    if params and params.expand:
+                        url += f"?expand={params.expand}"
+
+                    # Use access_token or api_key for auth
+                    if self._access_token:
+                        headers = {"Authorization": f"Bearer {self._access_token}"}
+                    else:
+                        headers = {"X-API-Key": str(self._api_key)}
+
+                    response = httpx.get(url, headers=headers, timeout=30.0)
+                    response.raise_for_status()
+                    return response.json()
+                except Exception as fallback_error:
+                    log.error(f"Fallback request failed: {fallback_error}")
+                    raise e
             log.error(f"Failed to retrieve work item: {str(e)}")
             raise
 
@@ -414,6 +448,49 @@ class PlaneSDKAdapter:
             log.error(f"Failed to create work item relation: {str(e)}")
             raise
 
+    def search_work_items(self, workspace_slug: str, query: str, **kwargs) -> Dict[str, Any]:
+        """Search work items across workspace using v0.2 client.
+
+        Args:
+            workspace_slug: Workspace slug
+            query: Search query string
+            **kwargs: Optional parameters like expand, fields, etc.
+
+        Returns:
+            Dict with search results
+        """
+        try:
+            params = None
+            if kwargs:
+                from plane.models.query_params import RetrieveQueryParams  # type: ignore[attr-defined]
+
+                expand = kwargs.get("expand")
+                fields = kwargs.get("fields")
+                params = RetrieveQueryParams(expand=expand, fields=fields)
+
+            response = self.client.work_items.search(
+                workspace_slug=workspace_slug,
+                query=query,
+                params=params,
+            )
+
+            # Extract results from search response
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+            }
+        except HttpError as e:
+            log.error(f"Failed to search work items: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to search work items: {str(e)}")
+            raise
+
     # ============================================================================
     # USERS API METHODS
     # ============================================================================
@@ -464,7 +541,7 @@ class PlaneSDKAdapter:
             }
 
             if kwargs:
-                filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+                filtered_kwargs = self._filter_payload(kwargs)
                 data.update(filtered_kwargs)
 
             project = self.client.projects.create(workspace_slug=workspace_slug, data=CreateProject(**data))
@@ -580,6 +657,50 @@ class PlaneSDKAdapter:
             raise
         except Exception as e:
             log.error(f"Failed to delete project: {str(e)}")
+            raise
+
+    def get_project_features(self, workspace_slug: str, project_id: str) -> Dict[str, Any]:
+        """Get enabled project features (v0.2.1+)."""
+        try:
+            features = self.client.projects.get_features(workspace_slug=workspace_slug, project_id=project_id)
+            result = self._model_to_dict(features)
+            if isinstance(result, dict):
+                return result
+            else:
+                return {"data": result}
+        except HttpError as e:
+            log.error(f"Failed to get project features: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to get project features: {str(e)}")
+            raise
+
+    def update_project_features(self, workspace_slug: str, project_id: str, **features) -> Dict[str, Any]:
+        """Update project features (v0.2.1+). Enable/disable epics, cycles, modules, etc."""
+        try:
+            from plane.models.projects import ProjectFeature  # type: ignore[attr-defined]
+
+            # Build feature update payload
+            feature_data = {}
+            for key in ["epics", "modules", "cycles", "views", "pages", "intakes", "work_item_types"]:
+                if key in features and features[key] is not None:
+                    feature_data[key] = features[key]
+
+            if not feature_data:
+                raise ValueError("At least one feature field must be provided")
+
+            data_model = ProjectFeature(**feature_data)
+            result = self.client.projects.update_features(workspace_slug=workspace_slug, project_id=project_id, data=data_model)
+            result_dict = self._model_to_dict(result)
+            if isinstance(result_dict, dict):
+                return result_dict
+            else:
+                return {"data": result_dict}
+        except HttpError as e:
+            log.error(f"Failed to update project features: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update project features: {str(e)}")
             raise
 
     # ============================================================================
@@ -699,7 +820,7 @@ class PlaneSDKAdapter:
     def update_label(self, workspace_slug: str, project_id: str, label_id: str, **kwargs) -> Dict[str, Any]:
         """Update a label (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             data_model = UpdateLabel(**payload)
             resp = self.client.labels.update(workspace_slug, project_id, label_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -765,7 +886,7 @@ class PlaneSDKAdapter:
             required = {"name", "color", "group"}
             if not required.issubset(set(kwargs.keys())):
                 raise ValueError("name, color, group are required to create a state")
-            data_model = CreateState(**{k: v for k, v in kwargs.items() if v is not None})
+            data_model = CreateState(**self._filter_payload(kwargs))
             resp = self.client.states.create(workspace_slug, project_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -778,7 +899,7 @@ class PlaneSDKAdapter:
     def update_state(self, workspace_slug: str, project_id: str, state_id: str, **kwargs) -> Dict[str, Any]:
         """Update a state (v0.2)."""
         try:
-            data_model = UpdateState(**{k: v for k, v in kwargs.items() if v is not None})
+            data_model = UpdateState(**self._filter_payload(kwargs))
             resp = self.client.states.update(workspace_slug, project_id, state_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -885,7 +1006,7 @@ class PlaneSDKAdapter:
     def update_module(self, workspace_slug: str, project_id: str, module_id: str, **kwargs) -> Dict[str, Any]:
         """Update a module (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             data_model = ModulesUpdateModule(**payload)
             resp = self.client.modules.update(workspace_slug, project_id, module_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -1064,7 +1185,7 @@ class PlaneSDKAdapter:
                 payload["logo_props"] = logo_props
 
             # Add any extra kwargs
-            payload.update({k: v for k, v in kwargs.items() if v is not None})
+            payload.update(self._filter_payload(kwargs))
 
             # Ensure name is present (required field)
             if "name" not in payload or not payload["name"]:
@@ -1127,7 +1248,7 @@ class PlaneSDKAdapter:
                 payload["logo_props"] = logo_props
 
             # Add any extra kwargs
-            payload.update({k: v for k, v in kwargs.items() if v is not None})
+            payload.update(self._filter_payload(kwargs))
 
             # Ensure name is present (required field)
             if "name" not in payload or not payload["name"]:
@@ -1144,48 +1265,6 @@ class PlaneSDKAdapter:
             raise
         except Exception as e:
             log.error(f"Failed to create workspace page: {str(e)}")
-            raise
-
-    def list_workspace_pages(self, workspace_slug: str) -> Dict[str, Any]:
-        """List workspace pages (v0.2)."""
-        try:
-            response = self.client.pages.list_workspace_pages(workspace_slug)
-            results = self._model_to_dict(getattr(response, "results", []))
-            if not isinstance(results, list):
-                results = [results] if results else []
-            return {
-                "results": results,
-                "count": len(results),
-                "total_results": getattr(response, "total_count", len(results)),
-                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
-                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
-            }
-        except HttpError as e:
-            log.error(f"Failed to list workspace pages: {e} ({getattr(e, "status_code", None)})")
-            raise
-        except Exception as e:
-            log.error(f"Failed to list workspace pages: {str(e)}")
-            raise
-
-    def list_project_pages(self, workspace_slug: str, project_id: str) -> Dict[str, Any]:
-        """List project pages (v0.2)."""
-        try:
-            response = self.client.pages.list_project_pages(workspace_slug, project_id)
-            results = self._model_to_dict(getattr(response, "results", []))
-            if not isinstance(results, list):
-                results = [results] if results else []
-            return {
-                "results": results,
-                "count": len(results),
-                "total_results": getattr(response, "total_count", len(results)),
-                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
-                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
-            }
-        except HttpError as e:
-            log.error(f"Failed to list project pages: {e} ({getattr(e, "status_code", None)})")
-            raise
-        except Exception as e:
-            log.error(f"Failed to list project pages: {str(e)}")
             raise
 
     def retrieve_workspace_page(self, workspace_slug: str, page_id: str) -> Dict[str, Any]:
@@ -1248,23 +1327,37 @@ class PlaneSDKAdapter:
                 # CreateCycle requires owned_by; fail early with clear message
                 raise ValueError("owner could not be determined; please provide owned_by explicitly")
 
-            data["project_id"] = project_id
-
             # Only include kwargs that are not None to avoid sending null values to API
             if kwargs:
-                filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+                filtered_kwargs = self._filter_payload(kwargs)
                 data.update(filtered_kwargs)
-            print("create cycle p args", workspace_slug, project_id)
-            print("create cycle data", data)
 
             model = CreateCycle(**data)
             cycle = self.client.cycles.create(workspace_slug, project_id, data=model)
             return cast(Dict[str, Any], self._model_to_dict(cycle))
         except HttpError as e:
+            # Try to extract detailed error message from response
+            error_detail = "No detail available"
+            try:
+                if hasattr(e, "body") and e.body:
+                    error_detail = str(e.body)
+                elif hasattr(e, "response") and e.response:
+                    if hasattr(e.response, "text"):
+                        error_detail = e.response.text
+                    elif hasattr(e.response, "content"):
+                        error_detail = e.response.content.decode("utf-8") if isinstance(e.response.content, bytes) else str(e.response.content)
+                elif hasattr(e, "message"):
+                    error_detail = e.message
+            except Exception as extract_err:
+                log.error(f"Failed to extract error detail: {extract_err}")
+
             log.error(f"Failed to create cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Cycle creation data: {data}")
+            log.error(f"API error detail: {error_detail}")
             raise
         except Exception as e:
             log.error(f"Failed to create cycle: {str(e)}")
+            log.error(f"Cycle creation data: {data}")
             raise
 
     def list_cycles(
@@ -1330,7 +1423,7 @@ class PlaneSDKAdapter:
         """Update a cycle using PlaneClient v0.2 and return as dict."""
         try:
             # Build payload with only non-None values
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
 
             model = UpdateCycle(**payload)
             cycle = self.client.cycles.update(workspace_slug, project_id, cycle_id, data=model)
@@ -1465,10 +1558,27 @@ class PlaneSDKAdapter:
     # ============================================================================
 
     def create_intake_work_item(self, workspace_slug: str, project_id: str, **kwargs) -> Dict[str, Any]:
-        """Create a new intake work item (v0.2)."""
+        """Create a new intake work item (v0.2).
+
+        The SDK expects: CreateIntakeWorkItem(issue=WorkItemForIntakeRequest(name=..., ...))
+        We receive flat kwargs like: name, description_html, priority
+        """
+        from plane.models.work_items import WorkItemForIntakeRequest  # type: ignore[attr-defined]
+
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
-            data_model = CreateIntakeWorkItem(**payload)
+            # Extract issue-related fields from kwargs
+            issue_fields = {}
+            for field in ["name", "description", "description_html", "priority"]:
+                if field in kwargs and kwargs[field] is not None:
+                    issue_fields[field] = kwargs[field]
+
+            if not issue_fields.get("name"):
+                raise ValueError("'name' is required for intake work item creation")
+
+            # Create the nested structure expected by SDK
+            issue_request = WorkItemForIntakeRequest(**issue_fields)
+            data_model = CreateIntakeWorkItem(issue=issue_request)
+
             resp = self.client.intake.create(workspace_slug, project_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -1496,15 +1606,29 @@ class PlaneSDKAdapter:
 
             # Pass params to SDK
             response = self.client.intake.list(workspace_slug, project_id, params=params or None)
-            results = self._model_to_dict(getattr(response, "results", []))
+
+            # Handle both dict and Pydantic model responses
+            if isinstance(response, dict):
+                raw_results = response.get("results", [])
+                total_count = response.get("total_count", len(raw_results) if raw_results else 0)
+                next_cursor = response.get("next_page_number")
+                prev_cursor = response.get("prev_page_number")
+            else:
+                raw_results = getattr(response, "results", [])
+                total_count = getattr(response, "total_count", len(raw_results) if raw_results else 0)
+                next_cursor = getattr(response, "next_page_number", None)
+                prev_cursor = getattr(response, "prev_page_number", None)
+
+            results = self._model_to_dict(raw_results)
             if not isinstance(results, list):
                 results = [results] if results else []
+
             return {
                 "results": results,
                 "count": len(results),
-                "total_results": getattr(response, "total_count", len(results)),
-                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
-                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+                "total_results": total_count,
+                "next_cursor": str(next_cursor) if next_cursor else None,
+                "prev_cursor": str(prev_cursor) if prev_cursor else None,
             }
         except HttpError as e:
             log.error(f"Failed to list intake work items: {e} ({getattr(e, "status_code", None)})")
@@ -1526,10 +1650,46 @@ class PlaneSDKAdapter:
             raise
 
     def update_intake_work_item(self, workspace_slug: str, project_id: str, intake_id: str, **kwargs) -> Dict[str, Any]:
-        """Update an intake work item (v0.2)."""
+        """Update an intake work item (v0.2).
+
+        The SDK expects issue fields in: UpdateIntakeWorkItem(issue={...})
+        Non-issue fields (status, snoozed_till, duplicate_to, source, source_email) are passed directly.
+
+        Note: WorkItemForIntakeRequest requires 'name'. If updating other issue fields without name,
+        we must fetch the current name first to satisfy the SDK model validation.
+        """
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
-            data_model = UpdateIntakeWorkItem(**payload)
+            # Separate issue fields from other intake fields
+            issue_field_names = {"name", "description", "description_html", "priority"}
+            intake_field_names = {"status", "snoozed_till", "duplicate_to", "source", "source_email"}
+
+            issue_fields = {}
+            intake_fields = {}
+
+            for k, v in kwargs.items():
+                if v is not None:
+                    if k in issue_field_names:
+                        issue_fields[k] = v
+                    elif k in intake_field_names:
+                        intake_fields[k] = v
+
+            # Build the update payload
+            if issue_fields:
+                # If name is missing but we have other issue fields, fetch current name
+                if "name" not in issue_fields:
+                    try:
+                        current_item = self.retrieve_intake_work_item(workspace_slug, project_id, intake_id)
+                        # The retrieve response has 'issue_detail' which contains the name
+                        issue_name = (current_item or {}).get("issue_detail", {}).get("name")
+                        if issue_name:
+                            issue_fields["name"] = issue_name
+                    except Exception as e:
+                        # Fallback or log if retrieval fails, though validation will likely fail next
+                        log.warning(f"Failed to fetch current intake name for update: {e}")
+
+                intake_fields["issue"] = issue_fields  # Pass as dict to let Pydantic handle it
+
+            data_model = UpdateIntakeWorkItem(**intake_fields)
             resp = self.client.intake.update(workspace_slug, project_id, intake_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -1607,14 +1767,10 @@ class PlaneSDKAdapter:
     # ACTIVITY API METHODS
     # ============================================================================
 
-    def list_work_item_activities(self, workspace_slug: str, project_id: str, issue_id: Optional[str] = None) -> Dict[str, Any]:
-        """List work item activities (v0.2)."""
+    def list_work_item_activities(self, workspace_slug: str, project_id: str, issue_id: str) -> Dict[str, Any]:
+        """List work item activities (v0.2). Requires issue_id - activities are work-item-specific."""
         try:
-            if issue_id:
-                response = self.client.work_items.activity.list(workspace_slug, project_id, issue_id)
-            else:
-                # Best-effort: try project-level activities
-                response = self.client.work_items.activity.list(workspace_slug, project_id, "")
+            response = self.client.work_items.activities.list(workspace_slug, project_id, issue_id)
             results = self._model_to_dict(getattr(response, "results", []))
             if not isinstance(results, list):
                 results = [results] if results else []
@@ -1635,7 +1791,7 @@ class PlaneSDKAdapter:
     def retrieve_work_item_activity(self, workspace_slug: str, project_id: str, issue_id: str, activity_id: str) -> Dict[str, Any]:
         """Retrieve a specific work item activity (v0.2)."""
         try:
-            resp = self.client.work_items.activity.retrieve(workspace_slug, project_id, issue_id, activity_id)
+            resp = self.client.work_items.activities.retrieve(workspace_slug, project_id, issue_id, activity_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
             log.error(f"Failed to retrieve work item activity: {e} ({getattr(e, "status_code", None)})")
@@ -1651,7 +1807,7 @@ class PlaneSDKAdapter:
     def create_work_item_attachment(self, workspace_slug: str, project_id: str, issue_id: str, **kwargs) -> Dict[str, Any]:
         """Create a work item attachment (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             data_model = WorkItemAttachmentUploadRequest(**payload)
             resp = self.client.work_items.attachments.create(workspace_slug, project_id, issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -1702,7 +1858,7 @@ class PlaneSDKAdapter:
     def update_work_item_attachment(self, workspace_slug: str, project_id: str, issue_id: str, attachment_id: str, **kwargs) -> Dict[str, Any]:
         """Update a work item attachment (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             data_model = UpdateWorkItemAttachment(**payload)
             resp = self.client.work_items.attachments.update(workspace_slug, project_id, issue_id, attachment_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -1732,7 +1888,7 @@ class PlaneSDKAdapter:
     def create_work_item_comment(self, workspace_slug: str, project_id: str, issue_id: str, **kwargs) -> Dict[str, Any]:
         """Create a work item comment (v0.2). Requires comment or comment_html."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             data_obj = CreateWorkItemComment(**payload)
             resp = self.client.work_items.comments.create(workspace_slug, project_id, issue_id, data=data_obj)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -1783,7 +1939,7 @@ class PlaneSDKAdapter:
     def update_work_item_comment(self, workspace_slug: str, project_id: str, issue_id: str, comment_id: str, **kwargs) -> Dict[str, Any]:
         """Update a work item comment (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             data_obj = UpdateWorkItemComment(**payload)
             resp = self.client.work_items.comments.update(workspace_slug, project_id, issue_id, comment_id, data=data_obj)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -1811,9 +1967,23 @@ class PlaneSDKAdapter:
     # ============================================================================
 
     def create_work_item_link(self, workspace_slug: str, project_id: str, issue_id: str, **kwargs) -> Dict[str, Any]:
-        """Create a work item link (v0.2). Requires url."""
+        """Create a work item link (v0.2). Requires url.
+
+        Note: The CreateWorkItemLink model only accepts 'url' field. Other fields like 'title'
+        and 'metadata' are not supported and will be filtered out.
+        """
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            # Filter payload to only include fields that the CreateWorkItemLink model accepts
+            # CreateWorkItemLink only has 'url' field
+            allowed_fields = {"url"}
+            payload = self._filter_payload(kwargs, allowed_fields)
+
+            # Ensure URL has a protocol
+            if "url" in payload and payload["url"]:
+                url = payload["url"]
+                if not url.startswith(("http://", "https://")):
+                    payload["url"] = f"https://{url}"
+
             data_model = CreateWorkItemLink(**payload)
             resp = self.client.work_items.links.create(workspace_slug, project_id, issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -1864,7 +2034,7 @@ class PlaneSDKAdapter:
     def update_issue_link(self, workspace_slug: str, project_id: str, issue_id: str, link_id: str, **kwargs) -> Dict[str, Any]:
         """Update a work item link (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             data_model = UpdateWorkItemLink(**payload)
             resp = self.client.work_items.links.update(workspace_slug, project_id, issue_id, link_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
@@ -1893,7 +2063,20 @@ class PlaneSDKAdapter:
 
     def create_issue_property(self, workspace_slug: str, project_id: str, type_id: str, **kwargs) -> Dict[str, Any]:
         """Create an issue property (v0.2)."""
+        from plane.models.work_item_property_configurations import DateAttributeSettings  # type: ignore[attr-defined]
+        from plane.models.work_item_property_configurations import TextAttributeSettings  # type: ignore[attr-defined]
+
         try:
+            # Inject default settings if missing
+            if "settings" not in kwargs:
+                prop_type = kwargs.get("property_type")
+                if prop_type == "DATETIME":
+                    # Use a sensible default format
+                    kwargs["settings"] = DateAttributeSettings(display_format="MMM dd, yyyy")
+                elif prop_type == "TEXT":
+                    # Default to multi-line text
+                    kwargs["settings"] = TextAttributeSettings(display_format="multi-line")
+
             # Use SDK model for validation and serialization
             property_data = CreateWorkItemProperty(**kwargs)
             resp = self.client.work_item_properties.create(workspace_slug, project_id, type_id, data=property_data)
@@ -1968,36 +2151,169 @@ class PlaneSDKAdapter:
     def create_issue_property_option(
         self, workspace_slug: str, project_id: str, property_id: str, type_id: Optional[str] = None, **kwargs
     ) -> Dict[str, Any]:
-        """Create an issue property option (v0.2 - not yet implemented)."""
-        raise NotImplementedError("create_issue_property_option not yet available in v0.2")
+        """Create an issue property option (v0.2)."""
+        from plane.models.work_item_properties import CreateWorkItemPropertyOption  # type: ignore[attr-defined]
+
+        try:
+            payload = self._filter_payload(kwargs)
+            data_model = CreateWorkItemPropertyOption(**payload)
+            resp = self.client.work_item_properties.options.create(workspace_slug, project_id, property_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(resp))
+        except HttpError as e:
+            log.error(f"Failed to create issue property option: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create issue property option: {str(e)}")
+            raise
 
     def create_issue_property_value(
         self, workspace_slug: str, project_id: str, property_id: str, type_id: Optional[str] = None, issue_id: Optional[str] = None, **kwargs
     ) -> Dict[str, Any]:
-        """Create an issue property value (v0.2 - not yet implemented)."""
-        raise NotImplementedError("create_issue_property_value not yet available in v0.2")
+        """Create or update an issue property value (v0.2).
+
+        Note: The SDK's create method acts as an upsert (create or update).
+        For multi-value properties, existing values are replaced.
+
+        Args:
+            issue_id: Work item ID (required)
+            property_id: Property ID (required)
+            value: The value to set (passed in kwargs)
+        """
+        from plane.models.work_item_properties import CreateWorkItemPropertyValue  # type: ignore[attr-defined]
+
+        if not issue_id:
+            raise ValueError("issue_id is required to set a property value")
+
+        try:
+            # value is passed in kwargs, e.g. from ToolParameter "value"
+            # Filter to only allowed fields: 'value', 'external_id', 'external_source'
+            allowed_fields = {"value", "external_id", "external_source"}
+            payload = self._filter_payload(kwargs, allowed_fields)
+
+            # Ensure value is present
+            if "value" not in payload:
+                raise ValueError("value is required")
+
+            # Convert value to appropriate type based on string representation
+            val = payload["value"]
+
+            # Handle stringified lists (e.g., for multi-select OPTION properties)
+            if isinstance(val, str) and val.strip().startswith("[") and val.strip().endswith("]"):
+                try:
+                    import json
+
+                    parsed = json.loads(val)
+                    if isinstance(parsed, list):
+                        payload["value"] = parsed
+                        val = parsed  # Update val for further processing
+                except Exception:
+                    # Ignore parsing errors, assume it's just a string value starting with [
+                    pass
+
+            # Handle boolean conversion (e.g., "true" -> True, "false" -> False)
+            if isinstance(val, str) and val.lower() in ("true", "false"):
+                payload["value"] = val.lower() == "true"
+            # Handle numeric conversion for DECIMAL properties (e.g., "10" -> 10.0)
+            elif isinstance(val, str):
+                try:
+                    # Check if it's a valid number
+                    num_val = float(val)
+                    # If it's a whole number, keep it as int, otherwise float
+                    payload["value"] = int(num_val) if num_val.is_integer() else num_val
+                except (ValueError, AttributeError):
+                    # Not a number. Check if it looks like a URL missing protocol (heuristic for URL properties)
+                    if (
+                        "." in val
+                        and " " not in val
+                        and len(val) > 3
+                        and not val.startswith(("http://", "https://", "ftp://"))
+                        and not val.startswith("/")
+                    ):
+                        # Heuristic: prepend https:// if it looks like a domain
+                        payload["value"] = f"https://{val}"
+
+            data_model = CreateWorkItemPropertyValue(**payload)
+
+            # Note: type_id is unused for values.create but kept in signature for tool compatibility
+            resp = self.client.work_item_properties.values.create(workspace_slug, project_id, issue_id, property_id, data=data_model)
+
+            # Response can be a single object or list (for multi-value)
+            results = self._model_to_dict(resp)
+            return {"result": results, "success": True}
+
+        except HttpError as e:
+            log.error(f"Failed to create issue property value: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create issue property value: {str(e)}")
+            raise
 
     def list_issue_property_options(self, workspace_slug: str, project_id: str, property_id: str, type_id: Optional[str] = None) -> Dict[str, Any]:
-        """List issue property options (v0.2 - not yet implemented)."""
-        raise NotImplementedError("list_issue_property_options not yet available in v0.2")
+        """List issue property options (v0.2)."""
+        try:
+            response = self.client.work_item_properties.options.list(workspace_slug, project_id, property_id)
+            # SDK returns list directly, not paginated
+            results = self._model_to_dict(response)
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": len(results),
+            }
+        except HttpError as e:
+            log.error(f"Failed to list issue property options: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list issue property options: {str(e)}")
+            raise
 
     def list_issue_property_values(self, workspace_slug: str, project_id: str, type_id: str, issue_id: str) -> Dict[str, Any]:
         """List issue property values (v0.2 - not yet implemented)."""
+        # TODO: Implement when SDK supports property values listing
         raise NotImplementedError("list_issue_property_values not yet available in v0.2")
 
     def retrieve_issue_property_option(self, workspace_slug: str, project_id: str, property_id: str, type_id: str, option_id: str) -> Dict[str, Any]:
-        """Retrieve an issue property option (v0.2 - not yet implemented)."""
-        raise NotImplementedError("retrieve_issue_property_option not yet available in v0.2")
+        """Retrieve an issue property option (v0.2)."""
+        try:
+            resp = self.client.work_item_properties.options.retrieve(workspace_slug, project_id, property_id, option_id)
+            return cast(Dict[str, Any], self._model_to_dict(resp))
+        except HttpError as e:
+            log.error(f"Failed to retrieve issue property option: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve issue property option: {str(e)}")
+            raise
 
     def update_issue_property_option(
         self, workspace_slug: str, project_id: str, property_id: str, type_id: str, option_id: str, **kwargs
     ) -> Dict[str, Any]:
-        """Update an issue property option (v0.2 - not yet implemented)."""
-        raise NotImplementedError("update_issue_property_option not yet available in v0.2")
+        """Update an issue property option (v0.2)."""
+        from plane.models.work_item_properties import UpdateWorkItemPropertyOption  # type: ignore[attr-defined]
+
+        try:
+            payload = self._filter_payload(kwargs)
+            data_model = UpdateWorkItemPropertyOption(**payload)
+            resp = self.client.work_item_properties.options.update(workspace_slug, project_id, property_id, option_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(resp))
+        except HttpError as e:
+            log.error(f"Failed to update issue property option: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update issue property option: {str(e)}")
+            raise
 
     def delete_issue_property_option(self, workspace_slug: str, project_id: str, property_id: str, type_id: str, option_id: str) -> Dict[str, Any]:
-        """Delete an issue property option (v0.2 - not yet implemented)."""
-        raise NotImplementedError("delete_issue_property_option not yet available in v0.2")
+        """Delete an issue property option (v0.2)."""
+        try:
+            self.client.work_item_properties.options.delete(workspace_slug, project_id, property_id, option_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete issue property option: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete issue property option: {str(e)}")
+            raise
 
     # ============================================================================
     # TYPES API METHODS
@@ -2006,7 +2322,7 @@ class PlaneSDKAdapter:
     def create_issue_type(self, workspace_slug: str, project_id: str, **kwargs) -> Dict[str, Any]:
         """Create an issue type (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             resp = self.client.work_item_types.create(workspace_slug, project_id, data=CreateWorkItemType(**payload))
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -2052,7 +2368,7 @@ class PlaneSDKAdapter:
     def update_issue_type(self, workspace_slug: str, project_id: str, type_id: str, **kwargs) -> Dict[str, Any]:
         """Update an issue type (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             resp = self.client.work_item_types.update(workspace_slug, project_id, type_id, data=UpdateWorkItemType(**payload))
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -2081,7 +2397,7 @@ class PlaneSDKAdapter:
     def create_issue_worklog(self, workspace_slug: str, project_id: str, issue_id: str, **kwargs) -> Dict[str, Any]:
         """Create an issue worklog (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             resp = self.client.work_items.work_logs.create(workspace_slug, project_id, work_item_id=issue_id, data=payload)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -2128,7 +2444,7 @@ class PlaneSDKAdapter:
     def update_issue_worklog(self, workspace_slug: str, project_id: str, issue_id: str, worklog_id: str, **kwargs) -> Dict[str, Any]:
         """Update an issue worklog (v0.2)."""
         try:
-            payload = {k: v for k, v in kwargs.items() if v is not None}
+            payload = self._filter_payload(kwargs)
             resp = self.client.work_items.work_logs.update(workspace_slug, project_id, work_item_id=issue_id, work_log_id=worklog_id, data=payload)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
@@ -2148,4 +2464,674 @@ class PlaneSDKAdapter:
             raise
         except Exception as e:
             log.error(f"Failed to delete issue worklog: {str(e)}")
+            raise
+
+    # ============================================================================
+    # WORKSPACES API METHODS
+    # ============================================================================
+
+    def get_workspace_features(self, workspace_slug: str) -> Dict[str, Any]:
+        """Get enabled workspace features (v0.2.1+)."""
+        try:
+            features = self.client.workspaces.get_features(workspace_slug=workspace_slug)
+            result = self._model_to_dict(features)
+            if isinstance(result, dict):
+                return result
+            else:
+                return {"data": result}
+        except HttpError as e:
+            log.error(f"Failed to get workspace features: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to get workspace features: {str(e)}")
+            raise
+
+    def update_workspace_features(self, workspace_slug: str, **features) -> Dict[str, Any]:
+        """Update workspace features (v0.2.1+). Enable/disable initiatives, teams, customers, etc."""
+        try:
+            from plane.models.workspaces import WorkspaceFeature  # type: ignore[attr-defined]
+
+            # Build feature update payload
+            feature_data = {}
+            for key in ["project_grouping", "initiatives", "teams", "customers", "wiki", "pi"]:
+                if key in features and features[key] is not None:
+                    feature_data[key] = features[key]
+
+            if not feature_data:
+                raise ValueError("At least one feature field must be provided")
+
+            data_model = WorkspaceFeature(**feature_data)
+            result = self.client.workspaces.update_features(workspace_slug=workspace_slug, data=data_model)
+            result_dict = self._model_to_dict(result)
+            if isinstance(result_dict, dict):
+                return result_dict
+            else:
+                return {"data": result_dict}
+        except HttpError as e:
+            log.error(f"Failed to update workspace features: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update workspace features: {str(e)}")
+            raise
+
+    # ============================================================================
+    # INITIATIVES API METHODS
+    # ============================================================================
+
+    def create_initiative(self, workspace_slug: str, name: str, **kwargs) -> Dict[str, Any]:
+        """Create a new initiative (v0.2.1+)."""
+        try:
+            from plane.models.initiatives import CreateInitiative  # type: ignore[attr-defined]
+
+            payload = {"name": name}
+            for key in ["description_html", "start_date", "end_date", "logo_props", "state", "lead"]:
+                if key in kwargs and kwargs[key] is not None:
+                    payload[key] = kwargs[key]
+
+            data_model = CreateInitiative(**payload)
+            # SDK bug workaround: SDK calls data.model_dump(exclude_none=True) but doesn't use mode="json",
+            # causing enum objects to leak into json.dumps and crash. We wrap model_dump to fix this.
+            original_model_dump = data_model.model_dump
+            data_model.model_dump = lambda **kw: original_model_dump(mode="json", exclude_none=True)  # type: ignore[method-assign]
+            initiative = self.client.initiatives.create(workspace_slug=workspace_slug, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(initiative))
+        except HttpError as e:
+            log.error(f"Failed to create initiative: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create initiative: {str(e)}")
+            raise
+
+    def list_initiatives(self, workspace_slug: str) -> Dict[str, Any]:
+        """List initiatives (v0.2.1+)."""
+        try:
+            response = self.client.initiatives.list(workspace_slug=workspace_slug)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
+                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+            }
+        except HttpError as e:
+            log.error(f"Failed to list initiatives: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list initiatives: {str(e)}")
+            raise
+
+    def retrieve_initiative(self, workspace_slug: str, initiative_id: str) -> Dict[str, Any]:
+        """Retrieve a single initiative (v0.2.1+)."""
+        try:
+            initiative = self.client.initiatives.retrieve(workspace_slug=workspace_slug, initiative_id=initiative_id)
+            return cast(Dict[str, Any], self._model_to_dict(initiative))
+        except HttpError as e:
+            log.error(f"Failed to retrieve initiative: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve initiative: {str(e)}")
+            raise
+
+    def update_initiative(self, workspace_slug: str, initiative_id: str, **kwargs) -> Dict[str, Any]:
+        """Update an initiative (v0.2.1+)."""
+        try:
+            from plane.models.initiatives import UpdateInitiative  # type: ignore[attr-defined]
+
+            payload = {}
+            for k, v in kwargs.items():
+                if v is not None:
+                    payload[k] = v
+            data_model = UpdateInitiative(**payload)
+            # SDK bug workaround: SDK calls data.model_dump(exclude_none=True) but doesn't use mode="json"
+            original_model_dump = data_model.model_dump
+            data_model.model_dump = lambda **kw: original_model_dump(mode="json", exclude_none=True)  # type: ignore[method-assign]
+            initiative = self.client.initiatives.update(workspace_slug=workspace_slug, initiative_id=initiative_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(initiative))
+        except HttpError as e:
+            log.error(f"Failed to update initiative: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update initiative: {str(e)}")
+            raise
+
+    def delete_initiative(self, workspace_slug: str, initiative_id: str) -> Dict[str, Any]:
+        """Delete an initiative (v0.2.1+)."""
+        try:
+            self.client.initiatives.delete(workspace_slug=workspace_slug, initiative_id=initiative_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete initiative: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete initiative: {str(e)}")
+            raise
+
+    # Initiative Labels
+    def create_initiative_label(self, workspace_slug: str, name: str, **kwargs) -> Dict[str, Any]:
+        """Create initiative label (v0.2.1+), which are workspace-scoped, not initiative-scoped."""
+        try:
+            from plane.models.initiatives import CreateInitiativeLabel  # type: ignore[attr-defined]
+
+            payload = {"name": name}
+            for key in ["color", "description"]:
+                if key in kwargs and kwargs[key] is not None:
+                    payload[key] = kwargs[key]
+
+            data_model = CreateInitiativeLabel(**payload)
+            label = self.client.initiatives.labels.create(workspace_slug=workspace_slug, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(label))
+        except HttpError as e:
+            log.error(f"Failed to create initiative label: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create initiative label: {str(e)}")
+            raise
+
+    def list_initiative_labels(self, workspace_slug: str) -> Dict[str, Any]:
+        """List all initiative labels in workspace (v0.2.1+)."""
+        try:
+            response = self.client.initiatives.labels.list(workspace_slug=workspace_slug)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+            }
+        except HttpError as e:
+            log.error(f"Failed to list initiative labels: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list initiative labels: {str(e)}")
+            raise
+
+    def retrieve_initiative_label(self, workspace_slug: str, label_id: str) -> Dict[str, Any]:
+        """Retrieve initiative label (v0.2.1+)."""
+        try:
+            label = self.client.initiatives.labels.retrieve(workspace_slug=workspace_slug, label_id=label_id)
+            return cast(Dict[str, Any], self._model_to_dict(label))
+        except HttpError as e:
+            log.error(f"Failed to retrieve initiative label: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve initiative label: {str(e)}")
+            raise
+
+    def update_initiative_label(self, workspace_slug: str, label_id: str, **kwargs) -> Dict[str, Any]:
+        """Update initiative label (v0.2.1+)."""
+        try:
+            from plane.models.initiatives import UpdateInitiativeLabel  # type: ignore[attr-defined]
+
+            payload = self._filter_payload(kwargs)
+            data_model = UpdateInitiativeLabel(**payload)
+            label = self.client.initiatives.labels.update(workspace_slug=workspace_slug, label_id=label_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(label))
+        except HttpError as e:
+            log.error(f"Failed to update initiative label: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update initiative label: {str(e)}")
+            raise
+
+    def delete_initiative_label(self, workspace_slug: str, label_id: str) -> Dict[str, Any]:
+        """Delete initiative label (v0.2.1+)."""
+        try:
+            self.client.initiatives.labels.delete(workspace_slug=workspace_slug, label_id=label_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete initiative label: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete initiative label: {str(e)}")
+            raise
+
+    def add_initiative_labels(self, workspace_slug: str, initiative_id: str, label_ids: List[str]) -> Dict[str, Any]:
+        """Add labels to an initiative (v0.2.1+)."""
+        try:
+            labels = self.client.initiatives.labels.add_labels(workspace_slug=workspace_slug, initiative_id=initiative_id, label_ids=label_ids)
+            return cast(Dict[str, Any], {"success": True, "labels_added": len(label_ids), "labels": self._model_to_dict(labels)})
+        except HttpError as e:
+            log.error(f"Failed to add initiative labels: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to add initiative labels: {str(e)}")
+            raise
+
+    def remove_initiative_labels(self, workspace_slug: str, initiative_id: str, label_ids: List[str]) -> Dict[str, Any]:
+        """Remove labels from an initiative (v0.2.1+)."""
+        try:
+            self.client.initiatives.labels.remove_labels(workspace_slug=workspace_slug, initiative_id=initiative_id, label_ids=label_ids)
+            return {"success": True, "labels_removed": len(label_ids)}
+        except HttpError as e:
+            log.error(f"Failed to remove initiative labels: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to remove initiative labels: {str(e)}")
+            raise
+
+    # Initiative Projects
+    def add_initiative_projects(self, workspace_slug: str, initiative_id: str, project_ids: List[str]) -> Dict[str, Any]:
+        """Add projects to initiative (v0.2.1+)."""
+        try:
+            self.client.initiatives.projects.add(workspace_slug=workspace_slug, initiative_id=initiative_id, project_ids=project_ids)
+            return {"success": True, "projects_added": len(project_ids)}
+        except HttpError as e:
+            log.error(f"Failed to add initiative projects: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to add initiative projects: {str(e)}")
+            raise
+
+    def list_initiative_projects(self, workspace_slug: str, initiative_id: str) -> Dict[str, Any]:
+        """List initiative projects (v0.2.1+)."""
+        try:
+            response = self.client.initiatives.projects.list(workspace_slug=workspace_slug, initiative_id=initiative_id)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+            }
+        except HttpError as e:
+            log.error(f"Failed to list initiative projects: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list initiative projects: {str(e)}")
+            raise
+
+    def remove_initiative_projects(self, workspace_slug: str, initiative_id: str, project_ids: List[str]) -> Dict[str, Any]:
+        """Remove projects from initiative (v0.2.1+)."""
+        try:
+            self.client.initiatives.projects.remove(workspace_slug=workspace_slug, initiative_id=initiative_id, project_ids=project_ids)
+            return {"success": True, "projects_removed": len(project_ids)}
+        except HttpError as e:
+            log.error(f"Failed to remove initiative projects: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to remove initiative projects: {str(e)}")
+            raise
+
+    # Initiative Epics
+    def add_initiative_epics(self, workspace_slug: str, initiative_id: str, epic_ids: List[str]) -> Dict[str, Any]:
+        """Add epics to initiative (v0.2.1+)."""
+        try:
+            self.client.initiatives.epics.add(workspace_slug=workspace_slug, initiative_id=initiative_id, epic_ids=epic_ids)
+            return {"success": True, "epics_added": len(epic_ids)}
+        except HttpError as e:
+            log.error(f"Failed to add initiative epics: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to add initiative epics: {str(e)}")
+            raise
+
+    def list_initiative_epics(self, workspace_slug: str, initiative_id: str) -> Dict[str, Any]:
+        """List initiative epics (v0.2.1+)."""
+        try:
+            response = self.client.initiatives.epics.list(workspace_slug=workspace_slug, initiative_id=initiative_id)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+            }
+        except HttpError as e:
+            log.error(f"Failed to list initiative epics: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list initiative epics: {str(e)}")
+            raise
+
+    def remove_initiative_epics(self, workspace_slug: str, initiative_id: str, epic_ids: List[str]) -> Dict[str, Any]:
+        """Remove epics from initiative (v0.2.1+)."""
+        try:
+            self.client.initiatives.epics.remove(workspace_slug=workspace_slug, initiative_id=initiative_id, epic_ids=epic_ids)
+            return {"success": True, "epics_removed": len(epic_ids)}
+        except HttpError as e:
+            log.error(f"Failed to remove initiative epics: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to remove initiative epics: {str(e)}")
+            raise
+
+    # ============================================================================
+    # TEAMSPACES API METHODS
+    # ============================================================================
+
+    def create_teamspace(self, workspace_slug: str, name: str, **kwargs) -> Dict[str, Any]:
+        """Create a new teamspace (v0.2.1+)."""
+        try:
+            from plane.models.teamspaces import CreateTeamspace  # type: ignore[attr-defined]
+
+            payload = {"name": name}
+            for key in ["description_html", "logo_props", "lead"]:
+                if key in kwargs and kwargs[key] is not None:
+                    payload[key] = kwargs[key]
+
+            data_model = CreateTeamspace(**payload)
+            teamspace = self.client.teamspaces.create(workspace_slug=workspace_slug, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(teamspace))
+        except HttpError as e:
+            log.error(f"Failed to create teamspace: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create teamspace: {str(e)}")
+            raise
+
+    def list_teamspaces(self, workspace_slug: str) -> Dict[str, Any]:
+        """List teamspaces (v0.2.1+)."""
+        try:
+            response = self.client.teamspaces.list(workspace_slug=workspace_slug)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
+                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+            }
+        except HttpError as e:
+            log.error(f"Failed to list teamspaces: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list teamspaces: {str(e)}")
+            raise
+
+    def retrieve_teamspace(self, workspace_slug: str, teamspace_id: str) -> Dict[str, Any]:
+        """Retrieve a single teamspace (v0.2.1+)."""
+        try:
+            teamspace = self.client.teamspaces.retrieve(workspace_slug=workspace_slug, teamspace_id=teamspace_id)
+            return cast(Dict[str, Any], self._model_to_dict(teamspace))
+        except HttpError as e:
+            log.error(f"Failed to retrieve teamspace: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve teamspace: {str(e)}")
+            raise
+
+    def update_teamspace(self, workspace_slug: str, teamspace_id: str, **kwargs) -> Dict[str, Any]:
+        """Update a teamspace (v0.2.1+)."""
+        try:
+            from plane.models.teamspaces import UpdateTeamspace  # type: ignore[attr-defined]
+
+            payload = self._filter_payload(kwargs)
+            data_model = UpdateTeamspace(**payload)
+            teamspace = self.client.teamspaces.update(workspace_slug=workspace_slug, teamspace_id=teamspace_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(teamspace))
+        except HttpError as e:
+            log.error(f"Failed to update teamspace: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update teamspace: {str(e)}")
+            raise
+
+    def delete_teamspace(self, workspace_slug: str, teamspace_id: str) -> Dict[str, Any]:
+        """Delete a teamspace (v0.2.1+)."""
+        try:
+            self.client.teamspaces.delete(workspace_slug=workspace_slug, teamspace_id=teamspace_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete teamspace: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete teamspace: {str(e)}")
+            raise
+
+    # Teamspace Members
+    def add_teamspace_members(self, workspace_slug: str, teamspace_id: str, member_ids: List[str]) -> Dict[str, Any]:
+        """Add members to teamspace (v0.2.1+)."""
+        try:
+            self.client.teamspaces.members.add(workspace_slug=workspace_slug, teamspace_id=teamspace_id, member_ids=member_ids)
+            return {"success": True, "members_added": len(member_ids)}
+        except HttpError as e:
+            log.error(f"Failed to add teamspace members: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to add teamspace members: {str(e)}")
+            raise
+
+    def list_teamspace_members(self, workspace_slug: str, teamspace_id: str) -> Dict[str, Any]:
+        """List teamspace members (v0.2.1+)."""
+        try:
+            response = self.client.teamspaces.members.list(workspace_slug=workspace_slug, teamspace_id=teamspace_id)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+            }
+        except HttpError as e:
+            log.error(f"Failed to list teamspace members: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list teamspace members: {str(e)}")
+            raise
+
+    def remove_teamspace_members(self, workspace_slug: str, teamspace_id: str, member_ids: List[str]) -> Dict[str, Any]:
+        """Remove members from teamspace (v0.2.1+)."""
+        try:
+            self.client.teamspaces.members.remove(workspace_slug=workspace_slug, teamspace_id=teamspace_id, member_ids=member_ids)
+            return {"success": True, "members_removed": len(member_ids)}
+        except HttpError as e:
+            log.error(f"Failed to remove teamspace members: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to remove teamspace members: {str(e)}")
+            raise
+
+    # Teamspace Projects
+    def add_teamspace_projects(self, workspace_slug: str, teamspace_id: str, project_ids: List[str]) -> Dict[str, Any]:
+        """Add projects to teamspace (v0.2.1+)."""
+        try:
+            self.client.teamspaces.projects.add(workspace_slug=workspace_slug, teamspace_id=teamspace_id, project_ids=project_ids)
+            return {"success": True, "projects_added": len(project_ids)}
+        except HttpError as e:
+            log.error(f"Failed to add teamspace projects: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to add teamspace projects: {str(e)}")
+            raise
+
+    def list_teamspace_projects(self, workspace_slug: str, teamspace_id: str) -> Dict[str, Any]:
+        """List teamspace projects (v0.2.1+)."""
+        try:
+            response = self.client.teamspaces.projects.list(workspace_slug=workspace_slug, teamspace_id=teamspace_id)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+            }
+        except HttpError as e:
+            log.error(f"Failed to list teamspace projects: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list teamspace projects: {str(e)}")
+            raise
+
+    def remove_teamspace_projects(self, workspace_slug: str, teamspace_id: str, project_ids: List[str]) -> Dict[str, Any]:
+        """Remove projects from teamspace (v0.2.1+)."""
+        try:
+            self.client.teamspaces.projects.remove(workspace_slug=workspace_slug, teamspace_id=teamspace_id, project_ids=project_ids)
+            return {"success": True, "projects_removed": len(project_ids)}
+        except HttpError as e:
+            log.error(f"Failed to remove teamspace projects: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to remove teamspace projects: {str(e)}")
+            raise
+
+    # ============================================================================
+    # STICKIES API METHODS
+    # ============================================================================
+
+    def create_sticky(self, workspace_slug: str, **kwargs) -> Dict[str, Any]:
+        """Create a new sticky note (v0.2.1+)."""
+        try:
+            from plane.models.stickies import CreateSticky  # type: ignore[attr-defined]
+
+            payload = self._filter_payload(kwargs)
+            data_model = CreateSticky(**payload)
+            sticky = self.client.stickies.create(workspace_slug=workspace_slug, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(sticky))
+        except HttpError as e:
+            log.error(f"Failed to create sticky: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create sticky: {str(e)}")
+            raise
+
+    def list_stickies(self, workspace_slug: str) -> Dict[str, Any]:
+        """List stickies (v0.2.1+)."""
+        try:
+            response = self.client.stickies.list(workspace_slug=workspace_slug)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
+                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+            }
+        except HttpError as e:
+            log.error(f"Failed to list stickies: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list stickies: {str(e)}")
+            raise
+
+    def retrieve_sticky(self, workspace_slug: str, sticky_id: str) -> Dict[str, Any]:
+        """Retrieve a single sticky (v0.2.1+)."""
+        try:
+            sticky = self.client.stickies.retrieve(workspace_slug=workspace_slug, sticky_id=sticky_id)
+            return cast(Dict[str, Any], self._model_to_dict(sticky))
+        except HttpError as e:
+            log.error(f"Failed to retrieve sticky: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve sticky: {str(e)}")
+            raise
+
+    def update_sticky(self, workspace_slug: str, sticky_id: str, **kwargs) -> Dict[str, Any]:
+        """Update a sticky (v0.2.1+)."""
+        try:
+            from plane.models.stickies import UpdateSticky  # type: ignore[attr-defined]
+
+            payload = self._filter_payload(kwargs)
+            data_model = UpdateSticky(**payload)
+            sticky = self.client.stickies.update(workspace_slug=workspace_slug, sticky_id=sticky_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(sticky))
+        except HttpError as e:
+            log.error(f"Failed to update sticky: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update sticky: {str(e)}")
+            raise
+
+    def delete_sticky(self, workspace_slug: str, sticky_id: str) -> Dict[str, Any]:
+        """Delete a sticky (v0.2.1+)."""
+        try:
+            self.client.stickies.delete(workspace_slug=workspace_slug, sticky_id=sticky_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete sticky: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete sticky: {str(e)}")
+            raise
+
+    # ============================================================================
+    # CUSTOMERS API METHODS
+    # ============================================================================
+
+    def create_customer(self, workspace_slug: str, **kwargs) -> Dict[str, Any]:
+        """Create a new customer (v0.2.1+)."""
+        try:
+            from plane.models.customers import CreateCustomer  # type: ignore[attr-defined]
+
+            payload = self._filter_payload(kwargs)
+            data_model = CreateCustomer(**payload)
+            customer = self.client.customers.create(workspace_slug=workspace_slug, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(customer))
+        except HttpError as e:
+            log.error(f"Failed to create customer: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create customer: {str(e)}")
+            raise
+
+    def list_customers(self, workspace_slug: str) -> Dict[str, Any]:
+        """List customers (v0.2.1+)."""
+        try:
+            response = self.client.customers.list(workspace_slug=workspace_slug)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
+                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+            }
+        except HttpError as e:
+            log.error(f"Failed to list customers: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list customers: {str(e)}")
+            raise
+
+    def retrieve_customer(self, workspace_slug: str, customer_id: str) -> Dict[str, Any]:
+        """Retrieve a single customer (v0.2.1+)."""
+        try:
+            customer = self.client.customers.retrieve(workspace_slug=workspace_slug, customer_id=customer_id)
+            return cast(Dict[str, Any], self._model_to_dict(customer))
+        except HttpError as e:
+            log.error(f"Failed to retrieve customer: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve customer: {str(e)}")
+            raise
+
+    def update_customer(self, workspace_slug: str, customer_id: str, **kwargs) -> Dict[str, Any]:
+        """Update a customer (v0.2.1+)."""
+        try:
+            from plane.models.customers import UpdateCustomer  # type: ignore[attr-defined]
+
+            payload = self._filter_payload(kwargs)
+            data_model = UpdateCustomer(**payload)
+            customer = self.client.customers.update(workspace_slug=workspace_slug, customer_id=customer_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(customer))
+        except HttpError as e:
+            log.error(f"Failed to update customer: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update customer: {str(e)}")
+            raise
+
+    def delete_customer(self, workspace_slug: str, customer_id: str) -> Dict[str, Any]:
+        """Delete a customer (v0.2.1+)."""
+        try:
+            self.client.customers.delete(workspace_slug=workspace_slug, customer_id=customer_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete customer: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete customer: {str(e)}")
             raise

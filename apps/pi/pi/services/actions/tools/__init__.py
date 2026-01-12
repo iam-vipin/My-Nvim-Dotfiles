@@ -29,7 +29,9 @@ from .activity import get_activity_tools
 from .assets import get_asset_tools
 from .attachments import get_attachment_tools
 from .comments import get_comment_tools
+from .customers import get_customer_tools
 from .cycles import get_cycle_tools
+from .initiatives import get_initiative_tools
 from .intake import get_intake_tools
 from .labels import get_label_tools
 from .links import get_link_tools
@@ -39,10 +41,13 @@ from .pages import get_page_tools
 from .projects import get_project_tools
 from .properties import get_property_tools
 from .states import get_state_tools
+from .stickies import get_sticky_tools
+from .teamspaces import get_teamspace_tools
 from .types import get_type_tools
 from .users import get_user_tools
 from .workitems import get_workitem_tools
 from .worklogs import get_worklog_tools
+from .workspaces import get_workspace_tools
 
 CATEGORY_TO_PROVIDER: Dict[str, Callable] = {
     "activity": get_activity_tools,
@@ -53,10 +58,14 @@ CATEGORY_TO_PROVIDER: Dict[str, Callable] = {
     "attachment": get_attachment_tools,
     "comments": get_comment_tools,
     "comment": get_comment_tools,
+    "customers": get_customer_tools,
+    "customer": get_customer_tools,
     "cycles": get_cycle_tools,
     "cycle": get_cycle_tools,
     "intake": get_intake_tools,
     "intakes": get_intake_tools,
+    "initiatives": get_initiative_tools,
+    "initiative": get_initiative_tools,
     "labels": get_label_tools,
     "label": get_label_tools,
     "links": get_link_tools,
@@ -73,6 +82,10 @@ CATEGORY_TO_PROVIDER: Dict[str, Callable] = {
     "property": get_property_tools,
     "states": get_state_tools,
     "state": get_state_tools,
+    "stickies": get_sticky_tools,
+    "sticky": get_sticky_tools,
+    "teamspaces": get_teamspace_tools,
+    "teamspace": get_teamspace_tools,
     "types": get_type_tools,
     "type": get_type_tools,
     "users": get_user_tools,
@@ -81,6 +94,8 @@ CATEGORY_TO_PROVIDER: Dict[str, Callable] = {
     "workitem": get_workitem_tools,
     "worklogs": get_worklog_tools,
     "worklog": get_worklog_tools,
+    "workspaces": get_workspace_tools,
+    "workspace": get_workspace_tools,
 }
 
 

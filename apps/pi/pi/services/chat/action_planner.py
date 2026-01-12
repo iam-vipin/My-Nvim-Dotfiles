@@ -13,6 +13,7 @@
 
 import contextlib
 import json
+import re
 from collections.abc import AsyncIterator
 from typing import Any
 from typing import Dict
@@ -91,7 +92,7 @@ async def _inject_urls_into_entities(entities: list[Dict[str, Any]] | str, pendi
     # This happens when action tools (not retrieval tools) are used
     if not url_map:
         from pi import settings
-        from pi.agents.sql_agent.tools import construct_entity_urls_from_db
+        from pi.agents.sql_agent.helpers import construct_entity_urls_from_db
 
         # Collect entity IDs by type
         entity_ids_by_type: Dict[str, List[str]] = {"issues": [], "pages": [], "cycles": [], "modules": [], "projects": []}
@@ -446,6 +447,21 @@ async def execute_tools_for_build_mode(
             _has_tool_calls = hasattr(response, "tool_calls") and bool(getattr(response, "tool_calls", None))
         except Exception:
             _has_tool_calls = False
+
+        # FAILSAFE: Detect if LLM mistakenly put tool_calls in content instead of using API
+        # This can happen with certain models/prompts - detect and handle gracefully
+        response_content = str(getattr(response, "content", "") or "").strip()
+        if not _has_tool_calls and "```tool_calls" in response_content:
+            log.warning(f"ChatID: {chat_id} - DETECTED: LLM output tool_calls as markdown instead of API. Stripping from content.")
+            # Strip the tool_calls markdown block from content to avoid showing JSON to user
+            # Remove ```tool_calls ... ``` blocks from content
+            cleaned_content = re.sub(r"```tool_calls\s*\n?\[[\s\S]*?\]\s*\n?```", "", response_content)
+            cleaned_content = cleaned_content.strip()
+            # Update response content to cleaned version for streaming
+            if hasattr(response, "content"):
+                response.content = cleaned_content
+            log.info(f"ChatID: {chat_id} - Stripped tool_calls markdown. Cleaned content: {cleaned_content[:200]}...")
+
         log.info(f"ChatID: {chat_id} - Has Tool Calls: {_has_tool_calls}")
 
         if _has_tool_calls:
@@ -871,6 +887,15 @@ async def execute_tools_for_build_mode(
 
             # update _has_tool_calls
             _has_tool_calls = has_more_tool_calls
+
+            # FAILSAFE: Detect if LLM mistakenly put tool_calls in content in iterations
+            if not _has_tool_calls:
+                iter_content = str(getattr(response, "content", "") or "").strip()
+                if "```tool_calls" in iter_content:
+                    log.warning(f"ChatID: {chat_id} - DETECTED (iteration {iteration_count}): LLM output tool_calls as markdown. Stripping.")
+                    cleaned_content = re.sub(r"```tool_calls\s*\n?\[[\s\S]*?\]\s*\n?```", "", iter_content).strip()
+                    if hasattr(response, "content"):
+                        response.content = cleaned_content
 
             # Log planner decisions for this iteration
             try:

@@ -705,7 +705,7 @@ class MobileAPITester:
             payload["workspace_id"] = self.config.workspace_id
 
         v1_resp, v1_err = self._make_request("POST", v1_url, json_data=payload)
-        
+
         # V2 uses query params
         v2_params = {"is_project_chat": False}
         if self.config.workspace_id:
@@ -1058,7 +1058,7 @@ class MobileAPITester:
                     differences_serializable = json.loads(json.dumps(str(result.differences)))
                 except Exception:
                     differences_serializable = str(result.differences)
-            
+
             results_data.append(
                 {
                     "endpoint_name": result.endpoint_name,

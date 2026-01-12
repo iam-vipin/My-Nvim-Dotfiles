@@ -178,6 +178,11 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
 
             artifact_data_objects.append(ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data))
 
+        # Type assertions for mypy (validated above)
+        assert workspace_id is not None
+        assert chat_id is not None
+        assert message_id is not None
+
         # Execute batch actions using the service
         service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
 

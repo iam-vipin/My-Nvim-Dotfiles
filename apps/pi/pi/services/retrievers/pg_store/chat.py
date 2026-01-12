@@ -26,7 +26,7 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.agents.sql_agent.tools import format_as_bullet_points
+from pi.agents.sql_agent.helpers import format_as_bullet_points
 from pi.app.models import Chat
 from pi.app.models import Message
 from pi.app.models import MessageFlowStep

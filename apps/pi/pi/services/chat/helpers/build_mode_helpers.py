@@ -296,6 +296,7 @@ def build_planning_tools(
         "module",
         "worklogs",
         "worklog",
+        "workitems",  # Added to support epic feature checking via projects_retrieve
         "epics",
         "epic",
         "intake",
@@ -307,6 +308,15 @@ def build_planning_tools(
         "pages",
         "page",
     ]
+    workspace_scoped_cats = [
+        "initiatives",
+        "initiative",
+        "teamspaces",
+        "teamspace",
+        "customers",
+        "customer",
+    ]
+
     all_method_tools: List[Any] = []
     built_categories: List[str] = []
     for sel in selections_list:
@@ -330,6 +340,14 @@ def build_planning_tools(
                 # remove all tools except projects_retrieve and projects_update
                 tools_for_project = [t for t in tools_for_project if getattr(t, "name", "") in ["projects_retrieve", "projects_update"]]
                 all_method_tools.extend(tools_for_project)
+
+            if cat in workspace_scoped_cats:
+                tools_for_workspace = chatbot_instance._build_planning_method_tools("workspaces", method_executor, context)
+                # remove all tools except workspaces_get_features and workspaces_update_features
+                tools_for_workspace = [
+                    t for t in tools_for_workspace if getattr(t, "name", "") in ["workspaces_get_features", "workspaces_update_features"]
+                ]
+                all_method_tools.extend(tools_for_workspace)
 
         except Exception as e:
             log.warning(f"Failed to build tools for category {cat}: {e}")

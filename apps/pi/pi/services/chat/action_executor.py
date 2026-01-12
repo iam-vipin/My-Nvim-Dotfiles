@@ -35,6 +35,13 @@ from pi.services.chat.helpers.placeholder_orchestrator import PlaceholderOrchest
 
 log = logger.getChild(__name__)
 
+# Mapping of entity_type to tool category
+# Some tools have different entity_type than their category (e.g., epic tools are in workitems)
+ENTITY_TYPE_TO_CATEGORY = {
+    "epic": "workitems",  # Epic tools are in workitems category
+    # Add more mappings as needed
+}
+
 
 async def get_execution_context(request, chatbot: PlaneChatBot, user_id, db) -> Tuple[str, Optional[str], bool]:
     """Extract execution context from request and database."""
@@ -79,7 +86,7 @@ class BuildModeToolExecutor:
         if not workspace_slug:
             workspace_slug = await get_workspace_slug(str(workspace_id))
 
-        token, project_id, _ = await get_execution_context(request, self.chatbot, user_id, self.db)
+        token, project_id, is_project_chat = await get_execution_context(request, self.chatbot, user_id, self.db)
 
         # Validate token exists
         if not token:
@@ -101,7 +108,14 @@ class BuildModeToolExecutor:
 
         method_executor = MethodExecutor(actions_executor)
 
-        context = {"workspace_slug": workspace_slug, "project_id": project_id, "message_id": message_id, "chat_id": chat_id}
+        context = {
+            "workspace_slug": workspace_slug,
+            "workspace_id": str(workspace_id) if workspace_id else None,
+            "project_id": project_id,
+            "message_id": message_id,
+            "chat_id": chat_id,
+            "is_project_chat": is_project_chat,
+        }
 
         # Execute single action
         # If single action, execute directly
@@ -134,16 +148,25 @@ class BuildModeToolExecutor:
         args = planned_action["args"]
         entity_type = planned_action["entity_type"]
 
+        # Map entity_type to actual category (e.g., "epic" -> "workitems")
+        category = ENTITY_TYPE_TO_CATEGORY.get(entity_type, entity_type)
+
         # Build tool
-        all_category_tools = self.chatbot._build_method_tools(entity_type, method_executor, context)
+        all_category_tools = self.chatbot._build_method_tools(category, method_executor, context)
         # get the specific tool we need
         tool = next((t for t in all_category_tools if t.name == tool_name), None)
 
         if not tool:
-            raise ValueError(f"Tool '{tool_name}' not found in category '{entity_type}'")
+            raise ValueError(f"Tool '{tool_name}' not found in category '{category}' (entity_type: '{entity_type}')")
 
         # Execute the tool - EXPECT structured payload dict
-        result = await tool.ainvoke(args)
+        log.info(f"[DEBUG] execute_single_action: About to invoke tool '{tool_name}' with args: {args}")
+        try:
+            result = await tool.ainvoke(args)
+            log.info(f"[DEBUG] execute_single_action: Tool '{tool_name}' returned successfully. Result: {result}")
+        except Exception as tool_error:
+            log.error(f"[DEBUG] execute_single_action: Tool '{tool_name}' raised exception: {tool_error}", exc_info=True)
+            raise
         if not isinstance(result, dict):
             raise ValueError(f"Tool '{tool_name}' must return a structured payload dict, got {type(result)}")
 

@@ -29,7 +29,7 @@ CORE BUILDING BLOCKS
 10. Team Drafts & Inbox - Drafts store half-written work items; Inbox is a catch-all notification and mention feed.
 
 AI ASSISTANT
-11. Plane AI (Formerly called, Pi a moniker for Plane Intelligence) - AI-powered assistant that helps users interact with Plane using natural language. Pi can search work items, analyze project data, access documentation, and provide insights through conversational queries. It also has action capabilities like create, update, delete, assign, move, etc.
+11. Plane AI (Formerly called Pi, a moniker for Plane Intelligence) - AI-powered assistant that helps users interact with Plane using natural language. Pi can search work items, analyze project data, access documentation, and provide insights through conversational queries. It also has action capabilities like create, update, delete, assign, move, etc.
 
 PROJECT & WORK MANAGEMENT
 12. Work Item Types - schema-driven custom types with per-type fields (replaces "Issue Types").
@@ -59,18 +59,17 @@ VISUALIZATION & INSIGHT
 
 NAVIGATION & PRODUCTIVITY
 29. Power K - global command palette (⌘/Ctrl + K) for fuzzy jumping and quick actions.
-30. Hyper Mode - optional local SQLite cache that slashes load times for big workspaces.
-31. Mobile Apps - Android 5+ and iOS 13+ companion apps with project, work-item, cycles, pages & inbox support.
+30. Mobile Apps - Android 5+ and iOS 13+ companion apps with project, work-item, cycles, pages & inbox support.
 
 INTEGRATION & EXTENSIBILITY
-32. Importers - migrate from Jira, Linear, Asana, or CSV.
-33. Integrations - GitHub (PR ↔ Work Item sync), GitLab, Slack slash-commands + notifications.
-34. API & Webhooks - REST-style JSON API plus outgoing webhooks.
-35. Self-Host vs Cloud - run Plane Cloud (SaaS) or deploy the open-source stack on-prem; Hyper Mode requires HTTPS.
+31. Importers - migrate from Jira, Linear, Asana, or CSV.
+32. Integrations - GitHub (PR ↔ Work Item sync), GitLab, Slack slash-commands + notifications.
+33. SDK, API & Webhooks - Plane SDK (Python and Node.js), REST-style JSON API plus outgoing webhooks.
+34. Self-Host vs Cloud - run Plane Cloud (SaaS) or deploy the open-source stack on-prem.
 
 PERMISSIONS & BILLING
-36. Roles - Admin, Member, Guest per workspace/project; fine-grained on features.
-37. Billing Plans - Free, Pro, Enterprise; feature flags like Epics, Initiatives, Dashboards noted as paid-only.
+35. Roles - Admin, Member, Guest per workspace/project; fine-grained on features.
+36. Billing Plans - Free, Pro, Business, Enterprise; feature flags like Epics, Initiatives, Dashboards noted as paid-only.
 
 TERMINOLOGY BRIDGE — cross-tool aliases
 (Use this glossary to map Plane objects to the familiar terms you'll see in other tools or in general)
@@ -78,7 +77,7 @@ TERMINOLOGY BRIDGE — cross-tool aliases
 • Work Items → tasks, issues, tickets, user stories
 • States → status buckets (Backlog/Todo, In Progress, Done/Closed)
 • Cycles → sprints, iterations
-• Modules → components, milestones, feature buckets
+• Modules → components, feature buckets
 • Epics → large user stories / epics
 • Initiatives → programs, portfolio objectives
 • Projects → projects, boards
@@ -139,22 +138,26 @@ Your task: Based on the user's intent and any advisory text (like method lists) 
 - labels: Create/list/update/delete labels
 - states: Create/list/update/delete states
 - modules: Create/list/update/delete modules, add/remove workitems to/from modules
-- pages: Create and manage project and workspace pages/documentation
-- assets: Create/list/update/delete assets
+- pages: Create and manage project and workspace pages/documentation (rich text, fonts, images, styles)
 - users: Get current user information
 - intake: Handle intake forms, guest submissions, triage workflow
 - members: Workspace and project member management, listings
 - activity: Track work item activities, history, and audit logs
-- attachments: File attachments on work items, upload and management
 - comments: Comments and discussions on work items
 - links: External links and references on work items
 - properties: Custom properties and fields for work items
 - types: Custom work item types (bug, task, story, etc.)
 - worklogs: Time tracking and work logs
+- initiatives: Create/list/update/delete initiatives (cross-project goal containers)
+- teamspaces: Manage teamspaces (team containers for projects and cycles)
+- stickies: Create/list/update/delete sticky notes (short plain text notes, like 3M stickers, no rich media)
+- customers: Manage customer records and CRM integrations
+- workspaces: Workspace-level operations and feature management
 - retrieval_tools: text2sql, vector_search_tool, pages_search_tool, docs_search_tool
 
 Rules:
-- "wiki", "knowledge base", "kb", "handbook", "runbook", and "notes" are all synonyms for pages. Route these to the pages category, not projects.
+- "wiki", "knowledge base", "kb", "handbook", "runbook", and "notes" (BUT NOT "sticky notes") are all synonyms for pages. Route these to the pages category, not projects.
+- "sticky", "stickies", "sticky note" should ALWAYS be routed to the stickies category, not pages.
 - If the user says "create a page/wiki" without specifying a project, prefer the pages category and plan a workspace-level page.
 - If a project is explicitly mentioned (by name or identifier), route to pages and plan a project-level page (resolve project UUID first).
 - Select multiple categories when the intent spans multiple domains (e.g., list work-items then create a cycle).
@@ -198,7 +201,7 @@ You MUST return a JSON object with a "selections" key containing an array of sel
 **Rules:**
 - ALWAYS wrap selections in a "selections" array, even for a single category
 - If no categories are appropriate, return: {{{{"selections": []}}}}
-- Valid category values: workitems, projects, cycles, labels, states, modules, pages, assets, users, intake, members, activity, attachments, comments, links, properties, types, worklogs, retrieval_tools
+- Valid category values: workitems, projects, cycles, labels, states, modules, pages, users, intake, members, activity, comments, links, properties, types, worklogs, initiatives, teamspaces, stickies, customers, workspaces, retrieval_tools
 - No explanation outside the JSON structure
 """  # noqa: E501
 

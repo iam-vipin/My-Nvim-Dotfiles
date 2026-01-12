@@ -13,185 +13,122 @@
 Links API tools for Plane issue link management.
 """
 
+import uuid
 from typing import Any
 from typing import Dict
-from typing import Optional
 
-from langchain_core.tools import tool
+from pi.services.actions.tool_generator import generate_tools_for_category
+from pi.services.actions.tool_metadata import ToolMetadata
+from pi.services.actions.tool_metadata import ToolParameter
 
-from .base import PlaneToolBase
 
-# Factory wired via CATEGORY_TO_PROVIDER in tools/__init__.py
-# Returns LangChain tools implementing link actions
+# Pre-handler to resolve project_id from issue_id if missing
+async def _resolve_project_pre_handler(
+    metadata: ToolMetadata,
+    kwargs: Dict[str, Any],
+    context: Dict[str, Any],
+    category: str,
+    method_key: str,
+    method_executor: Any,
+) -> Dict[str, Any]:
+    """Resolve project_id from issue_id if it is missing or invalid."""
+    issue_id = kwargs.get("issue_id")
+    project_id = kwargs.get("project_id")
+
+    should_resolve = False
+    if issue_id and not project_id:
+        should_resolve = True
+    elif issue_id and project_id:
+        try:
+            uuid.UUID(str(project_id))
+        except (ValueError, AttributeError):
+            should_resolve = True
+
+    if should_resolve:
+        try:
+            from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+            issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+            if issue_info and issue_info.get("project_id"):
+                kwargs["project_id"] = issue_info["project_id"]
+        except Exception:
+            # Best effort, proceed without resolution
+            pass
+
+    return kwargs
+
+
+LINKS_TOOL_DEFINITIONS = {
+    "create": ToolMetadata(
+        name="links_create",
+        description="Create a link for an issue.",
+        sdk_method="create_work_item_link",
+        parameters=[
+            ToolParameter(name="issue_id", description="UUID of the work item", required=True, type="str"),
+            ToolParameter(name="url", description="The URL of the link", required=True, type="str"),
+            ToolParameter(name="title", description="Title/label for the link", required=False, type="Optional[str]"),
+            ToolParameter(name="project_id", description="UUID of the project", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="metadata", description="Link metadata", required=False, type="Optional[dict]"),
+        ],
+        pre_handler=_resolve_project_pre_handler,
+        returns_entity_type="link",
+    ),
+    "list": ToolMetadata(
+        name="links_list",
+        description="List links for an issue.",
+        sdk_method="list_work_item_links",
+        parameters=[
+            ToolParameter(name="issue_id", description="Issue ID", required=True, type="str"),
+            ToolParameter(name="project_id", description="Project ID", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+        ],
+        pre_handler=_resolve_project_pre_handler,
+    ),
+    "retrieve": ToolMetadata(
+        name="links_retrieve",
+        description="Get a single link by ID.",
+        sdk_method="retrieve_work_item_link",
+        parameters=[
+            ToolParameter(name="link_id", description="UUID of the link", required=True, type="str"),
+            ToolParameter(name="issue_id", description="UUID of the work item", required=True, type="str"),
+            ToolParameter(name="project_id", description="UUID of the project", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+        ],
+        pre_handler=_resolve_project_pre_handler,
+    ),
+    "update": ToolMetadata(
+        name="links_update",
+        description="Update link details.",
+        sdk_method="update_issue_link",
+        parameters=[
+            ToolParameter(name="link_id", description="UUID of the link", required=True, type="str"),
+            ToolParameter(name="issue_id", description="UUID of the work item", required=True, type="str"),
+            ToolParameter(name="url", description="New URL", required=False, type="Optional[str]"),
+            ToolParameter(name="title", description="New title", required=False, type="Optional[str]"),
+            ToolParameter(name="project_id", description="UUID of the project", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="metadata", description="Link metadata", required=False, type="Optional[dict]"),
+        ],
+        pre_handler=_resolve_project_pre_handler,
+        returns_entity_type="link",
+    ),
+    "delete": ToolMetadata(
+        name="links_delete",
+        description="Delete a link.",
+        sdk_method="delete_work_item_link",
+        parameters=[
+            ToolParameter(name="link_id", description="UUID of the link", required=True, type="str"),
+            ToolParameter(name="issue_id", description="UUID of the work item", required=True, type="str"),
+            ToolParameter(name="project_id", description="UUID of the project", required=False, type="Optional[str]", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", description="Workspace slug", required=False, type="Optional[str]", auto_fill_from_context=True),
+        ],
+        pre_handler=_resolve_project_pre_handler,
+        returns_entity_type="link",
+    ),
+}
 
 
 def get_link_tools(method_executor, context):
     """Return LangChain tools for the links category using method_executor and context."""
-
-    @tool
-    async def links_create(
-        issue_id: str,
-        url: str,
-        title: Optional[str] = None,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Create a link for an issue.
-
-        Args:
-            issue_id: UUID of the work item to create a link for (required)
-            url: The URL of the link (required)
-            title: Optional title/label for the link
-            project_id: UUID of the project (optional, auto-filled from context)
-            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "links",
-            "create",
-            issue_id=issue_id,
-            url=url,
-            title=title,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully created link", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to create link", result["error"])
-
-    @tool
-    async def links_list(issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
-        """List links for an issue."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute("links", "list", issue_id=issue_id, project_id=project_id, workspace_slug=workspace_slug)
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved links list", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to list links", result["error"])
-
-    @tool
-    async def links_retrieve(
-        link_id: str,
-        issue_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Get a single link by ID.
-
-        Args:
-            link_id: UUID of the link to retrieve (required)
-            issue_id: UUID of the work item the link belongs to (required)
-            project_id: UUID of the project (optional, auto-filled from context)
-            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "links",
-            "retrieve",
-            link_id=link_id,
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved link", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to retrieve link", result["error"])
-
-    @tool
-    async def links_update(
-        link_id: str,
-        issue_id: str,
-        url: Optional[str] = None,
-        title: Optional[str] = None,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Update link details.
-
-        Args:
-            link_id: UUID of the link to update (required)
-            issue_id: UUID of the work item the link belongs to (required)
-            url: New URL for the link (optional)
-            title: New title/label for the link (optional)
-            project_id: UUID of the project (optional, auto-filled from context)
-            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Build update data
-        update_data = {}
-        if url is not None:
-            update_data["url"] = url
-        if title is not None:
-            update_data["title"] = title
-
-        result = await method_executor.execute(
-            "links",
-            "update",
-            link_id=link_id,
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            **update_data,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully updated link", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to update link", result["error"])
-
-    @tool
-    async def links_delete(
-        link_id: str,
-        issue_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Delete a link.
-
-        Args:
-            link_id: UUID of the link to delete (required)
-            issue_id: UUID of the work item the link belongs to (required)
-            project_id: UUID of the project (optional, auto-filled from context)
-            workspace_slug: Workspace slug identifier (optional, auto-filled from context)
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "links",
-            "delete",
-            link_id=link_id,
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully deleted link", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to delete link", result["error"])
-
-    return [links_create, links_list, links_retrieve, links_update, links_delete]
+    return generate_tools_for_category("links", method_executor, context, LINKS_TOOL_DEFINITIONS)

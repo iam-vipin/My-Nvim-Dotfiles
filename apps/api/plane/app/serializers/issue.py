@@ -867,6 +867,7 @@ class IssueCommentSerializer(BaseSerializer):
             agent_run = {
                 "id": str(agent_runs[0].id),
                 "status": agent_runs[0].status,
+                "agent_user": str(agent_runs[0].agent_user_id),
             }
             return agent_run
         return None

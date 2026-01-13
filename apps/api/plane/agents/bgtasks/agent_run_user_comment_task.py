@@ -42,7 +42,7 @@ def create_prompt_activity(agent_run: AgentRun, source_comment: IssueComment):
     try:
         return AgentRunActivity.objects.create(
             agent_run=agent_run,
-            content={"type": AgentRunActivityType.PROMPT, "body": source_comment.comment_stripped},
+            content={"type": AgentRunActivityType.PROMPT, "body": source_comment.comment_html},
             actor=source_comment.actor,
             comment=source_comment,
             project=source_comment.project,

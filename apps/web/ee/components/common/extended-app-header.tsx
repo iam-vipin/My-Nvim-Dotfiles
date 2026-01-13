@@ -20,8 +20,11 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 
-export const ExtendedAppHeader = observer(function ExtendedAppHeader(props: { header: ReactNode }) {
-  const { header } = props;
+export const ExtendedAppHeader = observer(function ExtendedAppHeader(props: {
+  header: ReactNode;
+  showToggleButton?: boolean;
+}) {
+  const { header, showToggleButton = true } = props;
   // router
   const { projectId, workItem } = useParams();
   // store hooks
@@ -33,7 +36,7 @@ export const ExtendedAppHeader = observer(function ExtendedAppHeader(props: { he
 
   return (
     <>
-      {sidebarCollapsed && shouldShowSidebarToggleButton && <AppSidebarToggleButton />}
+      {showToggleButton && sidebarCollapsed && shouldShowSidebarToggleButton && <AppSidebarToggleButton />}
       <div className="flex items-center gap-2 divide-x divide-subtle w-full">
         <div className="w-full flex-1">{header}</div>
       </div>

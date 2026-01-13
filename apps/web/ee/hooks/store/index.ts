@@ -32,3 +32,5 @@ export * from "./customers";
 export * from "./epics";
 export * from "./marketplace";
 export * from "./templates";
+export * from "./use-agent";
+export * from "./use-theme";

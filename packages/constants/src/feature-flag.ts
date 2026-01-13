@@ -76,6 +76,7 @@ export enum E_FEATURE_FLAGS {
 
   // ==== silo ======
   SILO = "SILO",
+  AGENT_SIDECAR = "AGENT_SIDECAR",
 
   // ====== silo integrations ======
   SILO_INTEGRATIONS = "SILO_INTEGRATIONS",

@@ -47,6 +47,9 @@ import type { IProjectMembersActivityStore } from "@/plane-web/store/project-mem
 import { ProjectMembersActivityStore } from "@/plane-web/store/project-members-activity.store";
 // store
 import { CoreRootStore } from "@/store/root.store";
+// theme
+import type { IThemeStore } from "./theme.store";
+import { ThemeStore } from "./theme.store";
 import { EZipDriverType } from "../types/importers/zip-importer";
 // automations
 import type { IAutomationsRootStore } from "./automations/root.store";
@@ -108,6 +111,8 @@ import type { IMilestoneStore } from "./milestones/milestone.store";
 // Plane AI
 import type { IPiChatStore } from "./pi-chat/pi-chat";
 import { PiChatStore } from "./pi-chat/pi-chat";
+import type { IAgentStore } from "./agent";
+import { AgentStore } from "./agent";
 // timeline
 import type { IProjectInboxStore } from "./project-inbox.store";
 import { ProjectInboxStore } from "./project-inbox.store";
@@ -125,6 +130,8 @@ import { TemplatesRootStore } from "./templates/store/root.store";
 import type { ITimelineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
+  // Override theme with extended type
+  theme: IThemeStore;
   workspacePages: IWorkspacePageStore;
   publishPage: IPublishPageStore;
   workspaceSubscription: IWorkspaceSubscriptionStore;
@@ -140,6 +147,7 @@ export class RootStore extends CoreRootStore {
   issuePropertiesActivity: IIssuePropertiesActivityStore;
   cycle: ICycleStore;
   piChat: IPiChatStore;
+  agent: IAgentStore;
   timelineStore: ITimelineStore;
   projectDetails: IProjectStore;
   teamspaceRoot: ITeamspaceRootStore;
@@ -191,6 +199,8 @@ export class RootStore extends CoreRootStore {
 
   constructor() {
     super();
+    // Override the theme store with extended version
+    this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
@@ -206,6 +216,7 @@ export class RootStore extends CoreRootStore {
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
+    this.agent = new AgentStore(this);
     this.timelineStore = new TimeLineStore(this);
     this.projectDetails = new ProjectStore(this);
     this.teamspaceRoot = new TeamspaceRootStore(this);
@@ -260,6 +271,8 @@ export class RootStore extends CoreRootStore {
 
   resetOnSignOut() {
     super.resetOnSignOut();
+    // Override theme store reset
+    this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
@@ -275,6 +288,7 @@ export class RootStore extends CoreRootStore {
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
+    this.agent = new AgentStore(this);
     this.timelineStore = new TimeLineStore(this);
     this.projectDetails = new ProjectStore(this);
     this.teamspaceRoot = new TeamspaceRootStore(this);

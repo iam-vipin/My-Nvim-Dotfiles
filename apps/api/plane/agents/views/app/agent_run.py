@@ -12,7 +12,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 
-from plane.api.views.base import BaseViewSet
+from plane.app.views.base import BaseViewSet
 from plane.agents.models import AgentRun, AgentRunActivity, AgentRunActivityType, AgentRunActivitySignal
 from plane.agents.serializers.app import AgentRunSerializer
 from plane.app.permissions import WorkSpaceAdminPermission

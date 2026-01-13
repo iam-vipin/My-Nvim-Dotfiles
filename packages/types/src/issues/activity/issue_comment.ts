@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { TAgentRun } from "../../agents";
 import type { JSONContent } from "../../editor";
 import type { EIssueCommentAccessSpecifier } from "../../enums";
 import type { TFileSignedURLResponse } from "../../file";
@@ -57,6 +58,7 @@ export type TIssueComment = {
   reply_count?: number;
   replied_user_ids?: string[];
   last_reply_at?: string | null;
+  agent_run?: TAgentRun | null;
 };
 
 export type TCommentsOperations = {

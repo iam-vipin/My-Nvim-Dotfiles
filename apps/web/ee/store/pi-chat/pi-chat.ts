@@ -36,10 +36,9 @@ import type {
   TSSEReasoningEvent,
   TSSEActionsEvent,
   TSSETitleResponse,
-  TPiChatDrawerOpen,
   TTemplate,
 } from "@/plane-web/types";
-import { PI_CHAT_ASSISTANT_KEY, ESource, EExecutionStatus } from "@/plane-web/types";
+import { ESource, EExecutionStatus } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
 import { PiChatAttachmentStore } from "./attachment.store";
 import type { TSearchResults, EAiFeedback } from "@plane/types";
@@ -60,8 +59,6 @@ export interface IPiChatStore {
   favoriteChats: string[];
   isLoading: boolean;
   isPiTyping: boolean;
-  isPiChatDrawerOpen: boolean;
-  drawerChatId: string | undefined;
   isPiArtifactsDrawerOpen: string | undefined;
   artifactsStore: ArtifactsStore;
   attachmentStore: PiChatAttachmentStore;
@@ -112,7 +109,6 @@ export interface IPiChatStore {
   unfavoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
   fetchRecentChats: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
   fetchFavoriteChats: (workspaceId: string | undefined) => Promise<void>;
-  togglePiChatDrawer: (value?: boolean) => void;
   togglePiArtifactsDrawer: (value?: string) => void;
   regenerateAnswer: (chatId: string, token: string, workspaceId: string | undefined) => Promise<void>;
   getGroupedArtifactsByDialogue: (
@@ -164,7 +160,6 @@ export class PiChatStore implements IPiChatStore {
   isLoadingMap: Record<string, boolean> = {};
   favoriteChats: string[] = [];
   isPiArtifactsDrawerOpen: string | undefined = undefined;
-  _isPiChatDrawerOpen: TPiChatDrawerOpen = { is_open: false };
   eventSources: Record<string, EventSource> = {};
   //services
   userStore;
@@ -192,14 +187,11 @@ export class PiChatStore implements IPiChatStore {
       isLoadingThreads: observable,
       favoriteChats: observable,
       isPiArtifactsDrawerOpen: observable.ref,
-      _isPiChatDrawerOpen: observable,
       eventSources: observable,
       // computed
       activeChat: computed,
       isPiTyping: computed,
       isLoading: computed,
-      isPiChatDrawerOpen: computed,
-      drawerChatId: computed,
       // actions
       initPiChat: action,
       getAnswer: action,
@@ -216,13 +208,11 @@ export class PiChatStore implements IPiChatStore {
       unfavoriteChat: action,
       fetchRecentChats: action,
       fetchFavoriteChats: action,
-      togglePiChatDrawer: action,
       togglePiArtifactsDrawer: action,
       executeAction: action,
       followUp: action,
       convertToPage: action,
       abortStream: action,
-      updateStorage: action,
       fetchPrompts: action,
     });
 
@@ -233,8 +223,6 @@ export class PiChatStore implements IPiChatStore {
     this.piChatService = new PiChatService();
     this.workspaceService = new WorkspaceService();
     this.artifactsStore = new ArtifactsStore();
-    // Initialize drawer state from localStorage
-    this._isPiChatDrawerOpen = this.readDrawerStateFromStorage();
   }
 
   get activeChat() {
@@ -333,27 +321,16 @@ export class PiChatStore implements IPiChatStore {
     return response;
   });
 
-  updateStorage = (newValue: Partial<TPiChatDrawerOpen>) => {
-    const updatedValue = { ...this._isPiChatDrawerOpen, ...newValue };
-    storage.set(PI_CHAT_ASSISTANT_KEY, JSON.stringify(updatedValue));
-    // Update observable to trigger reactivity
-    runInAction(() => {
-      this._isPiChatDrawerOpen = updatedValue;
-    });
-  };
-
   // actions
   initPiChat = (chatId?: string) => {
-    // Existing chat
-
     if (chatId) {
       this.activeChatId = chatId;
       this.isNewChat = false;
-      this.updateStorage({ chatId: chatId });
+      this.rootStore.theme.updateSidecarChatId(chatId);
     } else {
       this.activeChatId = "";
-      this.updateStorage({ chatId: "" });
       this.isNewChat = true;
+      this.rootStore.theme.updateSidecarChatId("");
     }
     this.isAuthorized = true;
     this.isPiArtifactsDrawerOpen = undefined;
@@ -381,7 +358,7 @@ export class PiChatStore implements IPiChatStore {
 
     const newChatId = await this.piChatService.createChat(payload);
     this.activeChatId = newChatId;
-    this.updateStorage({ chatId: newChatId });
+    this.rootStore.theme.updateSidecarChatId(newChatId);
 
     this.chatMap[newChatId] = {
       chat_id: newChatId,
@@ -443,8 +420,9 @@ export class PiChatStore implements IPiChatStore {
     if (focus.isInWorkspaceContext) {
       payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
     }
-    if (this.isPiChatDrawerOpen && callbackUrl) {
-      payload = { ...payload, pi_sidebar_open: this.isPiChatDrawerOpen, sidebar_open_url: callbackUrl };
+    const isPiChatSidecarOpen = this.rootStore.theme.activeSidecar === "pi-chat";
+    if (isPiChatSidecarOpen && callbackUrl) {
+      payload = { ...payload, pi_sidebar_open: isPiChatSidecarOpen, sidebar_open_url: callbackUrl };
     }
     return payload;
   };
@@ -989,28 +967,6 @@ export class PiChatStore implements IPiChatStore {
         }
       });
     }
-  };
-
-  private readDrawerStateFromStorage(): TPiChatDrawerOpen {
-    try {
-      const value = JSON.parse(storage.get(PI_CHAT_ASSISTANT_KEY) || "{}") as TPiChatDrawerOpen;
-      return value.is_open !== undefined ? value : { is_open: false };
-    } catch (e) {
-      return { is_open: false };
-    }
-  }
-
-  get isPiChatDrawerOpen() {
-    return !!this._isPiChatDrawerOpen.is_open;
-  }
-
-  get drawerChatId() {
-    return this._isPiChatDrawerOpen.chatId;
-  }
-
-  togglePiChatDrawer = (value?: boolean): void => {
-    const newIsOpen = value ?? !this._isPiChatDrawerOpen.is_open;
-    this.updateStorage({ is_open: newIsOpen, chatId: this.activeChatId });
   };
 
   togglePiArtifactsDrawer = (value?: string) => {

@@ -24,15 +24,16 @@ export interface AppHeaderProps {
   mobileHeader?: ReactNode;
   className?: string;
   rowClassName?: string;
+  showToggleButton?: boolean;
 }
 
 export const AppHeader = observer(function AppHeader(props: AppHeaderProps) {
-  const { header, mobileHeader, className, rowClassName } = props;
+  const { header, mobileHeader, className, rowClassName, showToggleButton = true } = props;
 
   return (
     <div className={cn("z-[18]", className)}>
       <Row className={cn("h-11 flex gap-2 w-full items-center border-b border-subtle bg-surface-1", rowClassName)}>
-        <ExtendedAppHeader header={header} />
+        <ExtendedAppHeader header={header} showToggleButton={showToggleButton} />
       </Row>
       {mobileHeader && mobileHeader}
     </div>

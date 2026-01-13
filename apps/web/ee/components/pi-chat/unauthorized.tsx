@@ -20,6 +20,7 @@ import darkState from "@/app/assets/auth/pi-chat-dark.webp?url";
 import lightState from "@/app/assets/auth/pi-chat-light.webp?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { useTheme as useAppTheme } from "@/plane-web/hooks/store";
 
 export function UnauthorizedView(props: { className?: string; imgClassName?: string }) {
   const { className, imgClassName } = props;
@@ -27,10 +28,12 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
   // store hooks
-  const { isPiChatDrawerOpen, getInstance } = usePiChat();
+  const { getInstance } = usePiChat();
   const { resolvedTheme } = useTheme();
+  const { activeSidecar } = useAppTheme();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
+  const isPiChatSidecarOpen = activeSidecar === "pi-chat";
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const isInFullScreen = pathname.includes("/pi-chat");
   // SWR
@@ -68,7 +71,7 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
           </div>
           {instance && !instance?.is_authorized && (
             <a
-              href={`${instance.oauth_url}?sidebar_open_url=${pathname}${isPiChatDrawerOpen ? "?pi_sidebar_open=true" : ""}`}
+              href={`${instance.oauth_url}?sidebar_open_url=${pathname}${isPiChatSidecarOpen ? "?pi_sidebar_open=true" : ""}`}
               className={cn(getButtonStyling("primary", "base"), "w-fit p-2")}
             >
               Activate Build mode

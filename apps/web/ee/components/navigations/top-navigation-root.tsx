@@ -33,8 +33,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 // plane web imports
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useAppRailVisibility } from "@/lib/app-rail/context";
-import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { useFlag, useWorkspaceFeatures, useTheme } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { DesktopHeaderProvider } from "../desktop/root";
 import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
@@ -44,8 +43,10 @@ import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
   const { config } = useInstance();
-  const { togglePiChatDrawer, isPiChatDrawerOpen } = usePiChat();
+  const { activeSidecar, openPiChatSidecar, closeSidecar } = useTheme();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  // derived values
+  const isPiChatSidecarOpen = activeSidecar === "pi-chat";
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
   const { preferences } = useAppRailPreferences();
   const { isEnabled: isAppRailEnabled, isCollapsed: isAppRailCollapsed } = useAppRailVisibility();
@@ -125,14 +126,14 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                 className={cn(
                   "flex items-center gap-1.5 transition-colors h-8 py-1.5 px-1 rounded-md  bg-layer-1 text-primary hover:bg-layer-1-hover place-items-center w-full",
                   {
-                    "bg-layer-1-active": isPiChatDrawerOpen,
+                    "bg-layer-1-active": isPiChatSidecarOpen,
                   }
                 )}
-                onClick={() => togglePiChatDrawer()}
+                onClick={() => (isPiChatSidecarOpen ? closeSidecar() : openPiChatSidecar())}
                 data-prevent-outside-click
               >
                 <span className="shrink-0 size-5 grid place-items-center text-icon-secondary">
-                  {isPiChatDrawerOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}
+                  {isPiChatSidecarOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}
                 </span>
                 <span className="text-13 leading-normal font-medium pr-1">AI assistant</span>
               </button>

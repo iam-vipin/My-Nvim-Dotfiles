@@ -16,7 +16,7 @@ from django.utils import timezone
 
 from plane.db.models import BaseModel
 
-STALE_TIMEOUT = timedelta(minutes=5)
+STALE_TIMEOUT = timedelta(minutes=1)
 
 
 # created - The run has been initiated but not yet started processing
@@ -69,8 +69,14 @@ class AgentRun(BaseModel):
     )  # more info about the error like message, stack trace, etc
     type = models.CharField(max_length=255, choices=AgentRunType.choices, default=AgentRunType.COMMENT_THREAD)
 
-    def get_status(self):
-        """Returns status, marking as stale if inactive for too long."""
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        instance._check_and_update_stale_status()
+        return instance
+
+    def _check_and_update_stale_status(self):
+        """Marks as stale if inactive for too long."""
         active_statuses = [
             AgentRunStatus.CREATED,
             AgentRunStatus.IN_PROGRESS,
@@ -81,8 +87,7 @@ class AgentRun(BaseModel):
                 self.status = AgentRunStatus.STALE
                 self.ended_at = timezone.now()
                 self.save(update_fields=["status", "ended_at", "updated_at"])
-        return self.status
-    
+
     def save(self, *args, **kwargs):
         is_creating = self._state.adding
         super().save(*args, **kwargs)
@@ -195,10 +200,12 @@ class AgentRunActivity(BaseModel):
         # handle the agent activity by creating a new comment conditionally
 
         if is_creating:
-          if self.actor == self.agent_run.agent_user:
-              from plane.agents.utils.handlers import handle_agent_run_activity
-              handle_agent_run_activity(self)
-          else:
-              # trigger the activity webhook for the user activity
-              from plane.agents.bgtasks.agent_run_activity_webhook import trigger_user_activity_webhook_task
-              trigger_user_activity_webhook_task.delay(self.id)
+            if self.actor == self.agent_run.agent_user:
+                from plane.agents.utils.handlers import handle_agent_run_activity
+
+                handle_agent_run_activity(self)
+            else:
+                # trigger the activity webhook for the user activity
+                from plane.agents.bgtasks.agent_run_activity_webhook import trigger_user_activity_webhook_task
+
+                trigger_user_activity_webhook_task.delay(self.id)

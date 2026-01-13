@@ -24,8 +24,7 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useTheme, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { usePathname } from "next/navigation";
 
@@ -34,7 +33,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
   const { toggleSidebar } = useAppTheme();
   const { topNavInputRef, topNavSearchInputRef } = usePowerK();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const { togglePiChatDrawer } = usePiChat();
+  const { openPiChatSidecar, closeSidecar, activeSidecar } = useTheme();
   const pathname = usePathname();
   // translation
   const { t } = useTranslation();
@@ -110,7 +109,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       i18n_title: "power_k.miscellaneous_actions.open_ai_assistant",
       icon: PiIcon,
       modifierShortcut: "cmd+a",
-      action: () => togglePiChatDrawer(),
+      action: () => (activeSidecar === "pi-chat" ? closeSidecar() : openPiChatSidecar()),
       isEnabled: (ctx) =>
         isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
         Boolean(ctx.params.projectId?.toString() || ctx.params.workItem?.toString()) &&

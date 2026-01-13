@@ -22,8 +22,8 @@ import { StickyActionBar } from "@/components/stickies/action-bar";
 // plane web imports
 import { useAppRailVisibility } from "@/lib/app-rail";
 import { PiChatArtifactsRoot } from "@/plane-web/components/pi-chat/actions/artifacts/detail/root";
-import { PiChatFloatingBot } from "@/plane-web/components/pi-chat/floating-bot";
 import { TopNavigationRoot } from "../navigations";
+import { WorkspaceSidecar } from "./sidecar";
 
 export const WorkspaceContentWrapper = observer(function WorkspaceContentWrapper({
   children,
@@ -57,7 +57,7 @@ export const WorkspaceContentWrapper = observer(function WorkspaceContentWrapper
           </div>
         </div>
         <div className="pb-2">
-          <PiChatFloatingBot />
+          <WorkspaceSidecar />
         </div>
         {shouldRenderAiCanvas && (
           <div className="pb-2">

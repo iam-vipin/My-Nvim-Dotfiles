@@ -12,7 +12,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 
-from plane.api.views.base import BaseViewSet
+from plane.app.views.base import BaseViewSet
 from plane.agents.models import AgentRunActivity
 from plane.agents.serializers.app import AgentRunActivitySerializer
 from plane.app.permissions import WorkSpaceAdminPermission
@@ -38,10 +38,12 @@ class AgentRunActivityViewSet(BaseViewSet):
         agent_run = AgentRun.objects.get(id=run_id, workspace__slug=slug)
         if not agent_run:
             return Response({"error": "Run not found"}, status=status.HTTP_404_NOT_FOUND)
-        activities = self.get_queryset().order_by("created_at")
-        return self.paginate(
+        activities = self.get_queryset().order_by("-created_at")
+        response = self.paginate(
             request=request,
             queryset=(activities),
             on_results=lambda activities: self.get_serializer(activities, many=True).data,
             default_per_page=20,
         )
+        response.data["agent_run_status"] = agent_run.status
+        return response

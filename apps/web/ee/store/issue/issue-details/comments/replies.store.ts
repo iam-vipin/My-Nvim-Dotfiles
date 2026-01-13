@@ -146,6 +146,11 @@ export class RepliesStore implements IRepliesStore {
         comment.reply_count = (comment.reply_count || 0) + 1;
         comment.last_reply_at = reply.created_at;
         comment.replied_user_ids = [...(comment.replied_user_ids || []), reply.actor];
+
+        // update agent activity if it exists
+        if (comment.agent_run) {
+          this.rootIssueDetail.rootIssueStore.rootStore.agent.fetchRunActivities(workspaceSlug, comment.agent_run.id);
+        }
       }
       set(this.rootIssueDetail.comment.commentMap, commentId, comment);
     });

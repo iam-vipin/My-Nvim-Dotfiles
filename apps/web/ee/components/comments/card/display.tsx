@@ -19,7 +19,7 @@ import { EmojiReactionButton, EmojiReactionPicker } from "@plane/propel/emoji-re
 import { IconButton } from "@plane/propel/icon-button";
 import { ReplyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { CommentCardDisplay as BaseCommentCardDisplay } from "@/components/comments/card/display";
@@ -29,6 +29,7 @@ import { useMember } from "@/hooks/store/use-member";
 // local imports
 import type { CommentRepliesRootHandle } from "../replies/root";
 import { CommentRepliesRoot } from "../replies/root";
+import { AgentCommentHeader } from "../../agents/comment-header";
 
 type Props = TCommentCardDisplayProps & {
   enableReplies: boolean;
@@ -83,6 +84,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
 
   return (
     <>
+      {comment?.agent_run && <AgentCommentHeader comment={comment} workspaceSlug={workspaceSlug} />}
       <div className={cn("relative", isReply && "pt-2")}>
         {shouldShowIndicator && (
           <div

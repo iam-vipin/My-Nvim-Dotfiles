@@ -51,7 +51,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = params;
   // store hooks
-  const { createPage, fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
+  const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({
     pageId,
     storeType,
@@ -158,20 +158,6 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
     return (
       <div className="size-full grid place-items-center">
         <LogoSpinner />
-      </div>
-    );
-
-  if (!isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id)
-    return (
-      <div className="size-full flex flex-col items-center justify-center">
-        <h3 className="text-16 font-semibold text-center">Please upgrade your plan to view this nested page</h3>
-        <p className="text-13 text-secondary text-center mt-3">Please upgrade your plan to view this nested page</p>
-        <Link
-          href={`/${workspaceSlug}/projects/${projectId}/pages`}
-          className={cn(getButtonStyling("secondary", "base"), "mt-5")}
-        >
-          View other Pages
-        </Link>
       </div>
     );
 

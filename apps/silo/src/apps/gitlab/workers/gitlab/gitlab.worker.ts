@@ -38,7 +38,7 @@ export class GitlabWebhookWorker extends TaskHandler {
     try {
       if (data.event_type === "merge_request") {
         await handleMergeRequest(data as GitlabMergeRequestEvent);
-      } else if (data.event_type === "issue") {
+      } else if (data.event_type === "issue" || data.event_type === "work_item") {
         await handleIssueEvents(this.store, data as GitlabIssueEvent);
       } else if (data.event_type === "note") {
         await handleIssueComment(this.store, data as GitlabNoteEvent);

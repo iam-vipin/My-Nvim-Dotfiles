@@ -42,7 +42,7 @@ class PlaneOAuthService {
       (response) => response,
       (error: AxiosError) => {
         if (error.response) {
-          logger.error("OAuth request failed:", error.response.data);
+          logger.error("OAuth request failed:", { error: error.response.data, status: error.response.status });
           throw new Error("OAuth request failed");
         }
         throw error;

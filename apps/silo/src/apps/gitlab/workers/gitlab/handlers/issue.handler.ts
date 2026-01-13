@@ -19,12 +19,18 @@ import {
 } from "@/apps/gitlab/helpers/cache-keys";
 import { createGitlabIssueLinkedComment } from "@/apps/gitlab/helpers/methods";
 import { shouldSyncGitlabToPlane } from "@/apps/gitlab/helpers/helpers";
-import { GITLAB_ISSUE_LINKED_COMMENT_PREFIX } from "@/apps/gitlab/helpers/constants";
+import { GITLAB_ISSUE_LINKED_COMMENT_PREFIX, GITLAB_SUPPORTED_WORK_ITEM_TYPES } from "@/apps/gitlab/helpers/constants";
 import { getGitlabUploadsPrefix } from "@/apps/gitlab/helpers/urls";
 
 export const handleIssueEvents = async (store: Store, data: GitlabIssueEvent) => {
   // Check if this webhook was triggered by our own Plane->GitHub sync (loop prevention)
   // The Plane->Gitlab handler sets a temporary key right after syncing to Gitlab
+  if (!GITLAB_SUPPORTED_WORK_ITEM_TYPES.includes(data.object_attributes.type)) {
+    logger.info(`[GITLAB][ISSUE] Work item type is not supported, skipping`, {
+      workItemType: data.object_attributes.type,
+    });
+    return true;
+  }
   if (data && data.object_attributes.id) {
     const glIssueCacheKey = GITLAB_ISSUE_CACHE_KEY(data.project.id.toString(), data.object_attributes.id.toString());
     const exist = await store.get(glIssueCacheKey);

@@ -54,11 +54,12 @@ export interface GitlabPushEvent extends GitlabWebhookEvent {
 
 // Issue event
 export interface GitlabIssueEvent extends GitlabWebhookEvent {
-  object_kind: "issue";
-  event_type: "issue";
+  object_kind: "issue" | "work_item";
+  event_type: "issue" | "work_item";
   object_attributes: GitlabIssue & {
     action: GitlabIssueWebhookActions;
     url: string;
+    type: "Issue" | "Task" | "Incident";
   };
   labels: GitlabLabel[];
   changes: {

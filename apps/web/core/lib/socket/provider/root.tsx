@@ -90,21 +90,13 @@ export function SocketProvider(props: TSocketProviderProps) {
     [client]
   );
 
-  const subscribeAny = useCallback(
-    (pattern: RegExp | string, handler: (eventName: string, data: unknown) => void) => {
-      return client.subscribeAny(pattern, handler);
-    },
-    [client]
-  );
-
   // Memoized context value
   const contextValue = useMemo<TSocketContext>(
     () => ({
       status,
       subscribe,
-      subscribeAny,
     }),
-    [status, subscribe, subscribeAny]
+    [status, subscribe]
   );
 
   return <SocketContext.Provider value={contextValue}>{children}</SocketContext.Provider>;

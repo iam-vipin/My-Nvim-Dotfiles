@@ -13,8 +13,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useCallback, useContext } from "react";
 // local imports
-import { SocketContext } from "./provider/root";
-import type { TServerEventName, TServerEventPayload, TConnectionStatus, TSocketContext } from "./types";
+import { SocketContext } from "@/lib/socket/provider/root";
+import type { TServerEventName, TServerEventPayload, TConnectionStatus, TSocketContext } from "@/lib/socket/types";
 
 // Internal hook to access socket context
 function useSocketInternal(): TSocketContext {
@@ -90,54 +90,6 @@ export function useSocketEvent<E extends TServerEventName>(
 }
 
 /**
- * Subscribe to multiple socket events with a single handler
- * Useful for handling related events (e.g., all issue events) in one place
- *
- * @example
- * // Subscribe to all issue events
- * useSocketEvents(
- *   ['issue.created', 'issue.updated', 'issue.deleted'],
- *   (eventName, data) => {
- *     console.log(`Received ${eventName}:`, data);
- *     mutate('/api/issues'); // Revalidate issues list
- *   }
- * );
- */
-export function useSocketEvents(
-  events: TServerEventName[],
-  handler: (eventName: TServerEventName, data: unknown) => void,
-  options: { enabled?: boolean } = {}
-): void {
-  const { enabled = true } = options;
-  const { subscribe, status } = useSocketInternal();
-
-  // Use ref to avoid re-subscribing when handler changes
-  const handlerRef = useRef(handler);
-
-  useLayoutEffect(() => {
-    handlerRef.current = handler;
-  });
-
-  useEffect(() => {
-    if (!enabled || status !== "connected" || events.length === 0) {
-      return;
-    }
-
-    // Subscribe to all events
-    const unsubscribeFunctions = events.map((event) =>
-      subscribe(event, (data) => {
-        handlerRef.current(event, data);
-      })
-    );
-
-    // Cleanup: unsubscribe from all events
-    return () => {
-      unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
-    };
-  }, [enabled, events, status, subscribe]);
-}
-
-/**
  * Filter socket events by a condition
  *
  * @example
@@ -171,54 +123,6 @@ export function useFilteredSocketEvent<E extends TServerEventName>(
   }, []);
 
   useSocketEvent(event, wrappedHandler, options);
-}
-
-/**
- * Subscribe to socket events matching a pattern (prefix or regex)
- * Uses Socket.IO's onAny() internally, which has performance implications.
- *
- * WARNING: This processes EVERY event to check if it matches the pattern.
- * Prefer using `useSocketEvents` with specific event names when possible.
- *
- * @example
- * // Subscribe to all issue events using prefix
- * useSocketEventPattern('issue.', (eventName, data) => {
- *   console.log(`Matched ${eventName}:`, data);
- *   mutate('/api/issues');
- * });
- *
- * @example
- * // Subscribe using regex
- * useSocketEventPattern(/^(issue|project)\./, (eventName, data) => {
- *   console.log(`Matched ${eventName}:`, data);
- * });
- */
-export function useSocketEventPattern(
-  pattern: RegExp | string,
-  handler: (eventName: string, data: unknown) => void,
-  options: { enabled?: boolean } = {}
-): void {
-  const { enabled = true } = options;
-  const { subscribeAny, status } = useSocketInternal();
-
-  // Use ref to avoid re-subscribing when handler changes
-  const handlerRef = useRef(handler);
-
-  useLayoutEffect(() => {
-    handlerRef.current = handler;
-  });
-
-  useEffect(() => {
-    if (!enabled || status !== "connected") {
-      return;
-    }
-
-    const unsubscribe = subscribeAny(pattern, (eventName, data) => {
-      handlerRef.current(eventName, data);
-    });
-
-    return unsubscribe;
-  }, [enabled, pattern, status, subscribeAny]);
 }
 
 /**

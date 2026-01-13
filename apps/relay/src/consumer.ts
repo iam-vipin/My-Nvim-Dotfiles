@@ -1,6 +1,6 @@
 import { Effect, Layer, Schema, Fiber } from "effect";
 import { NodeRuntime } from "@effect/platform-node";
-import { AppConfig, AmqpService } from "./services";
+import { AppConfig, AmqpService, SocketEmitter } from "./services";
 import { MessageParseError } from "./schema";
 import type { AmqpMessage } from "./services/amqp";
 
@@ -39,38 +39,66 @@ const parseEventMessage = Effect.fn("parseEventMessage")(
     )
 );
 
-const processMessage = Effect.fn("processMessage")(
-  (message: AmqpMessage): Effect.Effect<void> =>
-    Effect.gen(function* () {
-      const parseResult = yield* parseEventMessage(message.content).pipe(Effect.either);
+const createMessageHandler = (emitter: SocketEmitter) =>
+  Effect.fn("processMessage")(
+    (message: AmqpMessage): Effect.Effect<void> =>
+      Effect.gen(function* () {
+        const parseResult = yield* parseEventMessage(message.content).pipe(Effect.either);
 
-      if (parseResult._tag === "Left") {
-        yield* Effect.logWarning("CONSUMER: Failed to parse message", { error: parseResult.left });
+        if (parseResult._tag === "Left") {
+          yield* Effect.logWarning("CONSUMER: Failed to parse message", { error: parseResult.left });
+          yield* message.ack;
+          return;
+        }
+
+        const event = parseResult.right;
+
+        yield* Effect.logDebug("CONSUMER: Received event", {
+          event_type: event.event_type,
+          entity_type: event.entity_type,
+          workspace_id: event.workspace_id,
+        });
+
+        // Emit event to workspace room if workspace_id is present
+        if (event.workspace_id) {
+          const eventData = {
+            entity_id: event.entity_id,
+            project_id: event.project_id,
+            workspace_id: event.workspace_id,
+            event_type: event.event_type,
+            entity_type: event.entity_type,
+            payload: event.payload,
+            timestamp: event.timestamp,
+            initiator_id: event.initiator_id,
+          };
+          yield* emitter.emitToWorkspace(event.workspace_id, "work-item:updated", eventData);
+          yield* Effect.logInfo("CONSUMER: Emitted event to workspace", {
+            workspace_id: event.workspace_id,
+            entity_id: event.entity_id,
+            project_id: event.project_id,
+          });
+        } else {
+          yield* Effect.logDebug("CONSUMER: Skipping event without workspace_id", {
+            event_type: event.event_type,
+          });
+        }
+
         yield* message.ack;
-        return;
-      }
-
-      const event = parseResult.right;
-
-      yield* Effect.logInfo("CONSUMER: Received event", event);
-
-      if (event.event_type) {
-        yield* Effect.logDebug("CONSUMER: Processing event", { event_type: event.event_type });
-      }
-
-      yield* message.ack;
-    })
-);
+      })
+  );
 
 const AmqpLive = AmqpService.Default.pipe(Layer.provide(AppConfig.Default));
-const ConsumerLive = Layer.merge(AppConfig.Default, AmqpLive);
+const SocketEmitterLive = SocketEmitter.Default.pipe(Layer.provide(AppConfig.Default));
+const ConsumerLive = Layer.mergeAll(AppConfig.Default, AmqpLive, SocketEmitterLive);
 
 const main = Effect.gen(function* () {
   const amqp = yield* AmqpService;
+  const emitter = yield* SocketEmitter;
 
   yield* Effect.logInfo("CONSUMER: Starting event consumer...");
   yield* Effect.addFinalizer(() => Effect.logInfo("CONSUMER: Shutting down gracefully..."));
 
+  const processMessage = createMessageHandler(emitter);
   const consumerFiber = yield* amqp.subscribe(processMessage);
 
   yield* Effect.logInfo("CONSUMER: Listening for events...");

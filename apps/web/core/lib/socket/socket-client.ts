@@ -150,42 +150,6 @@ export class SocketClient {
   }
 
   /**
-   * Subscribe to ALL events with a pattern filter
-   * Useful for subscribing to events matching a prefix or regex pattern
-   *
-   * WARNING: This has performance implications as it processes every event.
-   * Use `subscribe` with specific event names when possible.
-   *
-   * @param pattern - RegExp or string prefix to match against event names
-   * @param handler - Handler called with (eventName, data) for matching events
-   */
-  subscribeAny(pattern: RegExp | string, handler: (eventName: string, data: unknown) => void): () => void {
-    if (!this.socket) {
-      console.warn(`[WorkspaceSocket] Cannot subscribe to pattern - not connected`);
-      return () => {};
-    }
-
-    const matcher =
-      typeof pattern === "string" ? (name: string) => name.startsWith(pattern) : (name: string) => pattern.test(name);
-
-    const anyHandler = (eventName: string, data: unknown) => {
-      if (matcher(eventName)) {
-        handler(eventName, data);
-      }
-    };
-
-    // Socket.IO's onAny catches all events
-    this.socket.onAny(anyHandler);
-
-    // Return unsubscribe function
-    return () => {
-      if (this.socket) {
-        this.socket.offAny(anyHandler);
-      }
-    };
-  }
-
-  /**
    * Subscribe to status changes
    */
   onStatusChange(handler: TStatusChangeHandler): () => void {

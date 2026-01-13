@@ -307,8 +307,8 @@ export abstract class IssueDetail implements IIssueDetail {
   // issue
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.fetchIssue(workspaceSlug, projectId, issueId);
-  fetchIssueWithIdentifier = async (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
-    this.issue.fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequenceId);
+  fetchWorkItemWithIdentifier = async (workspaceSlug: string, identifier: string) =>
+    this.issue.fetchWorkItemWithIdentifier(workspaceSlug, identifier);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

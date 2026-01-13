@@ -31,6 +31,7 @@
     "@effect/platform-node": "0.104.0",
     "@plane/logger": "workspace:*",
     "@socket.io/redis-adapter": "8.3.0",
+    "@socket.io/redis-emitter": "5.1.0",
     "amqplib": "0.10.5",
     "axios": "catalog:",
     "effect": "3.19.14",

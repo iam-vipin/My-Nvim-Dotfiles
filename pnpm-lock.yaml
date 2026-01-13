@@ -510,6 +510,9 @@ importers:
       '@socket.io/redis-adapter':
         specifier: 8.3.0
         version: 8.3.0(socket.io-adapter@2.5.6)
+      '@socket.io/redis-emitter':
+        specifier: 5.1.0
+        version: 5.1.0
       amqplib:
         specifier: 0.10.5
         version: 0.10.5
@@ -4801,6 +4804,9 @@ packages:
     engines: {node: '>=10.0.0'}
     peerDependencies:
       socket.io-adapter: ^2.5.4
+
+  '@socket.io/redis-emitter@5.1.0':
+    resolution: {integrity: sha512-QQUFPBq6JX7JIuM/X1811ymKlAfwufnQ8w6G2/59Jaqp09hdF1GJ/+e8eo/XdcmT0TqkvcSa2TT98ggTXa5QYw==}
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
@@ -15848,6 +15854,14 @@ snapshots:
       notepack.io: 3.0.1
       socket.io-adapter: 2.5.6
       uid2: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@socket.io/redis-emitter@5.1.0':
+    dependencies:
+      debug: 4.3.7
+      notepack.io: 3.0.1
+      socket.io-parser: 4.2.5
     transitivePeerDependencies:
       - supports-color
 

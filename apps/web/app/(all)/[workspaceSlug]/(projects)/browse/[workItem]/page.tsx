@@ -31,11 +31,11 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useWorkItemDetailRevalidation } from "@/lib/socket/hooks/work-item-detail";
 // plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
-
 import type { Route } from "./+types/page";
 
 export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: Route.ComponentProps) {
@@ -47,35 +47,80 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   // store hooks
   const { t } = useTranslation();
   const {
-    fetchIssueWithIdentifier,
+    fetchWorkItemWithIdentifier,
     issue: { getIssueById },
   } = useIssueDetail();
   const { getProjectById, getProjectByIdentifier } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
 
-  const [projectIdentifier, sequence_id] = workItem.split("-");
-
   // fetching issue details
-  const { data, isLoading, error } = useSWR<TIssue, Error>(
-    `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`,
-    () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
+  const {
+    data,
+    isLoading,
+    error,
+    mutate: mutateWorkItemDetail,
+  } = useSWR<TIssue, Error>(["workItemDetail", workspaceSlug, workItem], () =>
+    fetchWorkItemWithIdentifier(workspaceSlug, workItem)
   );
 
   // derived values
+  const [projectIdentifier] = workItem.split("-");
   const projectDetails = getProjectByIdentifier(projectIdentifier);
-  const issueId = data?.id;
-  const projectId = data?.project_id ?? projectDetails?.id ?? "";
-  const issue = getIssueById(issueId?.toString() || "") || undefined;
-  const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
-  const issueLoader = !issue || isLoading;
-  const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+  const workItemId = data?.id;
+  const projectId = data?.project_id ?? projectDetails?.id ?? undefined;
+  const workItemDetail = workItemId ? getIssueById(workItemId) : undefined;
+  const project = (workItemDetail?.project_id && getProjectById(workItemDetail?.project_id)) || undefined;
+  const workItemLoader = !workItemDetail || isLoading;
+  const pageTitle =
+    project && workItemDetail
+      ? `${project?.identifier}-${workItemDetail?.sequence_id} ${workItemDetail?.name}`
+      : undefined;
+  const workItemServiceType = workItemDetail?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES;
 
-  useWorkItemProperties(
-    projectId,
-    workspaceSlug.toString(),
-    issueId,
-    issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
+  useWorkItemProperties(projectId, workspaceSlug, workItemId, workItemServiceType);
+
+  const {
+    activity: { fetchActivities },
+    comment: { fetchComments },
+    subIssues: { fetchSubIssues },
+    relation: { fetchRelations },
+  } = useIssueDetail(workItemServiceType);
+
+  const { mutate: mutateWorkItemActivity } = useSWR(
+    projectId && workItemId ? ["workItemActivity", projectId, workItemId] : null,
+    projectId && workItemId ? () => fetchActivities(workspaceSlug, projectId, workItemId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: true }
   );
+
+  const { mutate: mutateWorkItemComments } = useSWR(
+    projectId && workItemId ? ["workItemComments", projectId, workItemId] : null,
+    projectId && workItemId ? () => fetchComments(workspaceSlug, projectId, workItemId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: true }
+  );
+
+  const { mutate: mutateWorkItemSubWorkItems } = useSWR(
+    projectId && workItemId ? ["workItemSubWorkItems", projectId, workItemId] : null,
+    projectId && workItemId ? () => fetchSubIssues(workspaceSlug, projectId, workItemId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: true }
+  );
+
+  const { mutate: mutateWorkItemRelations } = useSWR(
+    projectId && workItemId ? ["workItemRelations", projectId, workItemId] : null,
+    projectId && workItemId ? () => fetchRelations(workspaceSlug, projectId, workItemId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: true }
+  );
+
+  useWorkItemDetailRevalidation({
+    workItemId,
+    entityType: workItemDetail?.is_epic ? "epic" : "issue",
+    mutateFn: {
+      detail: mutateWorkItemDetail,
+      comments: mutateWorkItemComments,
+      relations: mutateWorkItemRelations,
+      subWorkItems: mutateWorkItemSubWorkItems,
+      activity: mutateWorkItemActivity,
+    },
+  });
 
   useEffect(() => {
     const handleToggleIssueDetailSidebar = () => {
@@ -111,7 +156,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
     );
   }
 
-  if (issueLoader) {
+  if (workItemLoader) {
     return (
       <Loader className="flex h-full gap-5 p-5">
         <div className="basis-2/3 space-y-2">
@@ -133,13 +178,13 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   return (
     <>
       <PageHead title={pageTitle} />
-      {workspaceSlug && projectId && issueId && (
+      {workspaceSlug && projectId && workItemId && (
         <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
           <WorkItemDetailRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            issueId={issueId.toString()}
-            issue={issue}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={workItemId}
+            issue={workItemDetail}
           />
         </ProjectAuthWrapper>
       )}

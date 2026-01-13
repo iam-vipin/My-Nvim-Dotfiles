@@ -78,6 +78,7 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "oauth",
     "applications",
     "workspace-selector",
+    "relay",
 ]
 
 RESTRICTED_ISSUE_PROPERTY_DISPLAY_NAMES = ["state", "due date", "cycle", "modules"]

@@ -266,5 +266,3 @@ src/
 | `AMQP_URL`              | Yes\*    | -                    | RabbitMQ connection URL         |
 | `EVENT_STREAM_EXCHANGE` | No       | `plane.event_stream` | AMQP exchange name              |
 | `PREFETCH_COUNT`        | No       | `10`                 | AMQP prefetch count             |
-
-\*Required only when running the consumer.

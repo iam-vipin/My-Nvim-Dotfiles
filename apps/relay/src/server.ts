@@ -78,8 +78,9 @@ export class RelayServer extends Effect.Service<RelayServer>()("RelayServer", {
       const io = new SocketIOServer(httpServer, {
         path: `${basePath}/socket.io`,
         cors: {
-          origin: config.isProduction ? false : "*",
+          origin: config.corsOrigin,
           methods: ["GET", "POST"],
+          credentials: true,
         },
         transports: ["websocket", "polling"],
       });

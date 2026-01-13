@@ -13,6 +13,9 @@ export class AppConfig extends Effect.Service<AppConfig>()("AppConfig", {
     // API base URL for authentication
     const apiBaseUrl = yield* Config.string("API_BASE_URL").pipe(Config.withDefault("http://api:8000"));
 
+    // CORS origin for socket connections (required for credentials)
+    const corsOrigin = yield* Config.string("CORS_ORIGIN").pipe(Config.withDefault("http://localhost:3000"));
+
     // AMQP configuration
     const amqpUrl = yield* Config.string("AMQP_URL");
     const eventStreamExchange = yield* Config.string("EVENT_STREAM_EXCHANGE").pipe(
@@ -27,6 +30,7 @@ export class AppConfig extends Effect.Service<AppConfig>()("AppConfig", {
       channelPrefix,
       relayBasePath,
       apiBaseUrl,
+      corsOrigin,
       isProduction: nodeEnv === "production",
       // AMQP
       amqpUrl,

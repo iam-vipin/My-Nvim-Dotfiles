@@ -261,7 +261,7 @@ class ModuleSerializer(DynamicBaseSerializer):
         read_only_fields = fields
     
     def get_member_ids(self, instance):
-        return [str(member.id) for member in instance.members.all()]
+        return [str(member.id) for member in instance.members.filter(modulemember__deleted_at__isnull=True)]
 
 
 class ModuleDetailSerializer(ModuleSerializer):

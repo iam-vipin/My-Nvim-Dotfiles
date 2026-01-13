@@ -27,7 +27,7 @@ import { getConnectionDetails } from "../../helpers/connection-details";
 import { getSlackContentParser } from "../../helpers/content-parser";
 import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
-import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import slackConnectionService from "../../services/connection.service";
 import type { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
@@ -37,6 +37,9 @@ import { createProjectLinkback } from "../../views/project-linkback";
 import { handleAppMentionEvent } from "./message-handlers/app-mention";
 import { getIssueWorkObjectService } from "../../services/workobjects/issues";
 import type { TWorkObjectView } from "../../types/workobjects";
+import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+import { createSlackLinkback } from "../../views/issue-linkback";
 
 const apiClient = getAPIClient();
 
@@ -253,17 +256,65 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
         if (resource.type === "issue") {
           if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
 
-          /* ----------------- Work Object Creation --------------------- */
-          const issueWorkObjectService = getIssueWorkObjectService("MINIMAL", data.team_id, userId);
-          const workObject = await issueWorkObjectService.getWorkObject({
-            strategy: "sequence",
-            projectIdentifier: resource.projectIdentifier,
-            issueSequence: Number(resource.issueKey),
-            appUnfurlUrl: link.url,
-          });
+          let workObjectEnabled = false;
 
-          // Push the work object inside the metadata entity
-          metadataEntities.push(workObject);
+          try {
+            const featureFlagService = await getPlaneFeatureFlagService();
+            const planeUserId = userMap.get(userId);
+
+            const featureFlagResponse = await featureFlagService.featureFlags({
+              workspace_slug: workspaceConnection.workspace_slug,
+              user_id: planeUserId ?? "",
+              // @ts-expect-error we will need to check the feature key
+              flag_key: E_FEATURE_FLAGS.SLACK_WORK_OBJECTS,
+            });
+
+            workObjectEnabled = featureFlagResponse || false;
+          } catch (error) {
+            logger.error("Work Object feature flag error", error);
+          }
+
+          if (workObjectEnabled) {
+            /* ----------------- Work Object Creation --------------------- */
+            const issueWorkObjectService = getIssueWorkObjectService("MINIMAL", data.team_id, userId);
+            const workObject = await issueWorkObjectService.getWorkObject({
+              strategy: "sequence",
+              projectIdentifier: resource.projectIdentifier,
+              issueSequence: Number(resource.issueKey),
+              appUnfurlUrl: link.url,
+            });
+
+            // Push the work object inside the metadata entity
+            metadataEntities.push(workObject);
+          } else {
+            const issue = await planeClient.issue.getIssueByIdentifierWithFields(
+              workspaceConnection.workspace_slug,
+              resource.projectIdentifier,
+              Number(resource.issueKey),
+              ["state", "project", "assignees", "labels", "type", "created_by", "updated_by"],
+              true
+            );
+
+            const enhancedUserMap = await enhanceUserMapWithSlackLookup({
+              planeUsers: issue.assignees,
+              currentUserMap: userMap,
+              slackService,
+            });
+
+            const hideActions = issue.type?.is_epic ?? false;
+
+            const linkBack = createSlackLinkback(
+              workspaceConnection.workspace_slug,
+              issue,
+              enhancedUserMap,
+              false,
+              hideActions,
+              true
+            );
+            unfurlMap[link.url] = {
+              blocks: linkBack.blocks,
+            };
+          }
         } else if (resource.type === "page") {
           const linkBack = await getPageLinkback(resource, details);
           if (!linkBack) return;

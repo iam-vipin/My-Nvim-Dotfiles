@@ -211,7 +211,7 @@ class ModuleLinkSerializer(BaseSerializer):
 
 
 class ModuleSerializer(DynamicBaseSerializer):
-    member_ids = serializers.ListField(child=serializers.UUIDField(), required=False, allow_null=True)
+    member_ids = serializers.SerializerMethodField(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
@@ -259,6 +259,9 @@ class ModuleSerializer(DynamicBaseSerializer):
             "archived_at",
         ]
         read_only_fields = fields
+    
+    def get_member_ids(self, instance):
+        return [str(member.id) for member in instance.members.all()]
 
 
 class ModuleDetailSerializer(ModuleSerializer):

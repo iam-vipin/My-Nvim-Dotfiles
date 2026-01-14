@@ -11,8 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TIssue } from "@plane/types";
 import type { Socket } from "socket.io-client";
+// plane imports
+import type { TIssue } from "@plane/types";
+// local imports
+import type { TWorkItemWithComment } from "./work-item";
 
 // =============================================================================
 // Connection
@@ -71,9 +74,9 @@ export type TEventDataMap = {
   "issue.link.added": Partial<TIssue>;
   "issue.link.updated": Partial<TIssue>;
   "issue.link.removed": Partial<TIssue>;
-  "issue.comment.created": Partial<TIssue>;
-  "issue.comment.updated": Partial<TIssue>;
-  "issue.comment.deleted": Partial<TIssue>;
+  "issue.comment.created": Partial<TWorkItemWithComment>;
+  "issue.comment.updated": Partial<TWorkItemWithComment>;
+  "issue.comment.deleted": Partial<TWorkItemWithComment>;
   "issue.relation.added": Partial<TIssue>;
   "issue.relation.removed": Partial<TIssue>;
   // Epic events
@@ -92,9 +95,9 @@ export type TEventDataMap = {
   "epic.link.added": Partial<TIssue>;
   "epic.link.updated": Partial<TIssue>;
   "epic.link.removed": Partial<TIssue>;
-  "epic.comment.created": Partial<TIssue>;
-  "epic.comment.updated": Partial<TIssue>;
-  "epic.comment.deleted": Partial<TIssue>;
+  "epic.comment.created": Partial<TWorkItemWithComment>;
+  "epic.comment.updated": Partial<TWorkItemWithComment>;
+  "epic.comment.deleted": Partial<TWorkItemWithComment>;
   "epic.relation.added": Partial<TIssue>;
   "epic.relation.removed": Partial<TIssue>;
 };

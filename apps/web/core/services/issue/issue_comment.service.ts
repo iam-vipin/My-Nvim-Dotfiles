@@ -43,7 +43,9 @@ export class IssueCommentService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/history/`, {
       params: {
         activity_type: `${this.serviceType === EIssueServiceType.EPICS ? "epic-comment" : "issue-comment"}`,
-        ...params,
+        // ...params, // TODO: (TEMP) Fetch all comments instead of filtering by created_at__gt.
+        // This should be changed to use updated_at__gt once the updated_at field is properly
+        // updated for comment replies (currently only parent comments update this field).
       },
     })
       .then((response) => response?.data)

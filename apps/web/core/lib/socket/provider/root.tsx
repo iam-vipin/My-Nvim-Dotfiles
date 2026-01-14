@@ -20,7 +20,7 @@ import type {
   TConnectionStatus,
   TServerEventName,
   TServerEventListener,
-} from "../types";
+} from "../types/root";
 
 // =============================================================================
 // Context

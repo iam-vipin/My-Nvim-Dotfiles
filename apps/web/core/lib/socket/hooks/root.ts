@@ -14,7 +14,7 @@
 import { useEffect, useLayoutEffect, useRef, useCallback, useContext } from "react";
 // local imports
 import { SocketContext } from "@/lib/socket/provider/root";
-import type { TServerEventName, TServerEventPayload, TConnectionStatus, TSocketContext } from "@/lib/socket/types";
+import type { TServerEventName, TServerEventPayload, TConnectionStatus, TSocketContext } from "@/lib/socket/types/root";
 
 // Internal hook to access socket context
 function useSocketInternal(): TSocketContext {

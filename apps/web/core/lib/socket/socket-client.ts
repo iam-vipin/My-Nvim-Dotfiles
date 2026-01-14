@@ -19,7 +19,7 @@ import type {
   TServerEventName,
   TServerEventListener,
   TSocketInstance,
-} from "./types";
+} from "./types/root";
 
 const DEFAULT_OPTIONS = {
   withCredentials: true,

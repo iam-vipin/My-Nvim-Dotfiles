@@ -37,6 +37,7 @@ import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
 import type { Route } from "./+types/page";
+import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
 
 export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: Route.ComponentProps) {
   // router
@@ -85,6 +86,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
     subIssues: { fetchSubIssues },
     relation: { fetchRelations },
   } = useIssueDetail(workItemServiceType);
+  const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, workItemId);
 
   const { mutate: mutateWorkItemActivity } = useSWR(
     projectId && workItemId ? ["workItemActivity", projectId, workItemId] : null,
@@ -116,6 +118,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
     mutateFn: {
       detail: mutateWorkItemDetail,
       comments: mutateWorkItemComments,
+      commentReplies: activityOperations?.replyOperations?.fetchReplies,
       relations: mutateWorkItemRelations,
       subWorkItems: mutateWorkItemSubWorkItems,
       activity: mutateWorkItemActivity,

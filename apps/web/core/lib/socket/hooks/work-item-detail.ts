@@ -10,6 +10,7 @@ type TUseWorkItemDetailRevalidationProps = {
   mutateFn: {
     detail: KeyedMutator<TIssue>;
     comments: KeyedMutator<TIssueComment[]>;
+    commentReplies: ((commentId: string) => Promise<void>) | undefined;
     relations: KeyedMutator<TIssueRelation>;
     subWorkItems: KeyedMutator<TIssueSubIssues>;
     activity: KeyedMutator<TIssueActivity[]>;
@@ -52,6 +53,13 @@ export const useWorkItemDetailRevalidation = ({
 
     // Revalidate comments for comment events
     if (data.event_type?.startsWith(`${entityType}.comment.`)) {
+      const parentCommentId =
+        data.payload?.data && "comment" in data.payload.data ? data.payload.data.comment?.parent_id : undefined;
+      // It's a comment reply if there is a parent comment id
+      if (parentCommentId) {
+        void mutateFn.commentReplies?.(parentCommentId);
+      }
+      // Always revalidate comments to update reply counts and comment list
       void mutateFn.comments();
     }
 

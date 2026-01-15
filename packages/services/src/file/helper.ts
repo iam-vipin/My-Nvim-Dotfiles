@@ -101,6 +101,10 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn(`File validation warning: ${filenameError}`);
   }
 
+  if (file.type && file.type.trim().length > 0) {
+    return file.type;
+  }
+
   try {
     const signatureType = await detectMimeTypeFromSignature(file);
     if (signatureType) {

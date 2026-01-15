@@ -22,12 +22,12 @@ from django.template.loader import render_to_string
 
 # Django imports
 from django.utils import timezone
-from django.utils.html import strip_tags
 
 # Module imports
 from plane.db.models import EmailNotificationLog, Issue, User, IssueSubscriber, UserNotificationPreference
 
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.db.models.notification import EntityName
 from plane.ee.models import Teamspace, Initiative
@@ -348,7 +348,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
             "entity_type": entity_type,
         }
         html_content = render_to_string(template_name, context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         try:
             send_email(subject, text_content, receiver, html_content, email_notification_ids)
@@ -424,7 +424,7 @@ def send_workspace_level_email_notification(
             template_name = "emails/notifications/teamspace-updates.html"
 
         html_content = render_to_string(template_name, context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         try:
             # Get email configurations

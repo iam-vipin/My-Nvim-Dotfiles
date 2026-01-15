@@ -16,7 +16,6 @@ import logging
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 
 # Third party imports
 from celery import shared_task
@@ -25,6 +24,7 @@ from celery import shared_task
 from plane.db.models import Page, User
 from plane.ee.models import PageUser
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 
@@ -91,7 +91,7 @@ def share_page_notification(page_id, user_id, newly_shared_user_ids, slug):
             # Create email subject and content
             subject = f"{context['shared_by_name']} shared a page with you"
             html_content = render_to_string("emails/notifications/share_page.html", context)
-            text_content = strip_tags(html_content)
+            text_content = generate_plain_text_from_html(html_content)
 
             # Configure email connection
             connection = get_connection(

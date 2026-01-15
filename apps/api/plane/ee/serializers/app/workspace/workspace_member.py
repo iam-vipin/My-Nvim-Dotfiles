@@ -11,14 +11,11 @@
 
 from plane.app.serializers.base import BaseSerializer
 from plane.ee.models import WorkspaceMemberActivity
-from plane.app.serializers import (
-    UserLiteSerializer,
-)
+from rest_framework import serializers
 
 
 class WorkspaceMemberActivitySerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    workspace_member_detail = UserLiteSerializer(read_only=True, source="workspace_member.member", allow_null=True)
+    workspace_member = serializers.UUIDField(read_only=True, source="workspace_member.member_id", allow_null=True)
 
     class Meta:
         model = WorkspaceMemberActivity

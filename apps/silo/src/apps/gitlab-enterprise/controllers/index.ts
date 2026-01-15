@@ -590,7 +590,7 @@ export default class GitlabEnterpriseController {
         appConfig.clientSecret
       );
 
-      const projects = await gitlabClientService.getProjects();
+      const projects = await gitlabClientService.getAllProjects();
       if (projects.length) {
         entities.push(
           ...projects.map((project: IGitlabEntity) => ({

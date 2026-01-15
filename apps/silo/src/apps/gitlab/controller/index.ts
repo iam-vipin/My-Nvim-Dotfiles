@@ -778,7 +778,7 @@ export default class GitlabController {
       const entities = [];
       const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
 
-      const projects = await gitlabClientService.getProjects();
+      const projects = await gitlabClientService.getAllProjects();
       if (projects.length) {
         entities.push(
           ...projects.map((project: IGitlabEntity) => ({

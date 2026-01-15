@@ -291,4 +291,53 @@ export class GitLabService {
       throw error;
     }
   }
+
+  async getAllProjects() {
+    try {
+      const allProjects = [];
+      const perPage = 100;
+      const currentPage = 1;
+      let totalPages = 1;
+
+      // Fetch first page to get pagination info
+      const firstResponse = await this.client.get("/projects", {
+        params: {
+          membership: true,
+          per_page: perPage,
+          page: currentPage,
+        },
+      });
+
+      allProjects.push(...firstResponse.data);
+
+      // Get total pages from response headers
+      const totalPagesHeader = firstResponse.headers["x-total-pages"];
+      if (totalPagesHeader) {
+        totalPages = parseInt(totalPagesHeader, 10);
+      }
+
+      // Fetch remaining pages if there are more
+      if (totalPages > 1) {
+        const remainingPages = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
+        const pagePromises = remainingPages.map((page) =>
+          this.client.get("/projects", {
+            params: {
+              membership: true,
+              per_page: perPage,
+              page,
+            },
+          })
+        );
+
+        const responses = await Promise.all(pagePromises);
+        responses.forEach((response) => {
+          allProjects.push(...response.data);
+        });
+      }
+
+      return allProjects;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

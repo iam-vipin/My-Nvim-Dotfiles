@@ -150,6 +150,28 @@ def get_default_product_tour():
     }
 
 
+def get_default_checklist():
+    return {
+        "project_created": False,
+        "project_joined": False,
+        "work_item_created": False,
+        "team_members_invited": False,
+        "page_created": False,
+        "ai_chat_tried": False,
+        "integration_linked": False,
+        "view_created": False,
+        "sticky_created": False,
+    }
+
+
+def get_default_tips():
+    return {"mobile_app_download": False}
+
+
+def get_default_explored_features():
+    return {"github_integrated": False, "slack_integrated": False, "ai_chat_tried": False}
+
+
 class Workspace(BaseModel):
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
 
@@ -289,6 +311,9 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    getting_started_checklist = models.JSONField(default=get_default_checklist)
+    tips = models.JSONField(default=get_default_tips)
+    explored_features = models.JSONField(default=get_default_explored_features)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]

@@ -15,26 +15,25 @@ import { isEmpty } from "lodash-es";
 
 export const storage = {
   set: (key: string, value: object | string | boolean): void => {
-    if (typeof window === undefined || typeof window === "undefined" || !key || !value) return undefined;
-    const tempValue: string | undefined = value
-      ? ["string", "boolean"].includes(typeof value)
-        ? value.toString()
-        : isEmpty(value)
-          ? undefined
-          : JSON.stringify(value)
-      : undefined;
-    if (!tempValue) return undefined;
+    if (typeof window === "undefined" || !key || !value) return;
+    let tempValue: string | undefined;
+    if (typeof value === "string" || typeof value === "boolean") {
+      tempValue = String(value);
+    } else if (!isEmpty(value)) {
+      tempValue = JSON.stringify(value);
+    }
+    if (!tempValue) return;
     window.localStorage.setItem(key, tempValue);
   },
 
   get: (key: string): string | undefined => {
-    if (typeof window === undefined || typeof window === "undefined") return undefined;
+    if (typeof window === "undefined") return undefined;
     const item = window.localStorage.getItem(key);
-    return item ? item : undefined;
+    return item ?? undefined;
   },
 
   remove: (key: string): void => {
-    if (typeof window === undefined || typeof window === "undefined" || !key) return undefined;
+    if (typeof window === "undefined" || !key) return;
     window.localStorage.removeItem(key);
   },
 };

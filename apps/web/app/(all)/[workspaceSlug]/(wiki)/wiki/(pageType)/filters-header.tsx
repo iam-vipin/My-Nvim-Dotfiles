@@ -46,10 +46,10 @@ export const PageTypeFiltersHeader = observer(function PageTypeFiltersHeader() {
     [filters.filters, updateFilters]
   );
 
+  // Clear search query on tab change, but preserve filters
   useEffect(() => {
-    clearAllFilters();
     updateFilters("searchQuery", "");
-  }, [clearAllFilters, pathname, updateFilters]);
+  }, [pathname, updateFilters]);
 
   if (!isFiltersApplied) return null;
 

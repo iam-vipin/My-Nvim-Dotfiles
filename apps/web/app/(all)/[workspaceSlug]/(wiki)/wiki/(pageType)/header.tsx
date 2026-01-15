@@ -50,7 +50,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { createPage, filters, updateFilters, clearAllFilters } = usePageStore(EPageStoreType.WORKSPACE);
+  const { createPage, filters, updateFilters } = usePageStore(EPageStoreType.WORKSPACE);
   // derived values
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
   // handle page create
@@ -76,10 +76,10 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
       .finally(() => setIsCreatingPage(false));
   };
 
+  // Clear search query on tab change, but preserve filters
   useEffect(() => {
-    clearAllFilters();
     updateFilters("searchQuery", "");
-  }, [clearAllFilters, pathname, updateFilters]);
+  }, [pathname, updateFilters]);
 
   return (
     <Header>

@@ -219,15 +219,19 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 			existingUserMap[user.UserID] = user
 		}
 
+		// Use payload.MembersList (from API) as source of truth for active members
+		// This ensures users removed from workspace are deleted from UserLicense
 		newUserMap := make(map[uuid.UUID]prime_api.WorkspaceMember)
-		for _, member := range data.MemberList {
+		for _, member := range payload.MembersList {
 			userUUID, _ := uuid.Parse(member.UserId)
 			newUserMap[userUUID] = member
 		}
 
+		// Determine added users from payload.MembersList (consistent with newUserMap)
+		// to ensure we use the same source of truth for both additions and removals
 		var addedUsers []prime_api.WorkspaceMember
 
-		for _, member := range data.MemberList {
+		for _, member := range payload.MembersList {
 			userUUID, _ := uuid.Parse(member.UserId)
 			if _, exists := existingUserMap[userUUID]; !exists {
 				addedUsers = append(addedUsers, member)
@@ -238,13 +242,16 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 		var removedUsers []db.UserLicense
 		for _, user := range existingUsers {
 			if _, exists := newUserMap[user.UserID]; !exists {
-				// If the removed user's role is greater than 10, then we can increase
-				// the count of the remaining seat by 1, as one seat has been freed
-				if user.Role > 10 {
-					remainingSeats = remainingSeats + 1
-				} else {
-					// A free seat has been released
-					remainingFreeSeat = remainingFreeSeat + 1
+				// Only add back seats if the user was active (since initial counting
+				// only subtracted for active users)
+				if user.IsActive {
+					if user.Role > 10 {
+						// A paid seat has been freed
+						remainingSeats = remainingSeats + 1
+					} else {
+						// A free seat has been released
+						remainingFreeSeat = remainingFreeSeat + 1
+					}
 				}
 				removedUsers = append(removedUsers, user)
 			}
@@ -253,6 +260,46 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 		// Remove the removed users from the database
 		for _, user := range removedUsers {
 			db.Db.Delete(&user)
+		}
+
+		// Update roles for existing users if changed
+		// Use index-based iteration to modify the original slice elements,
+		// ensuring subsequent logic sees the updated role values
+		for i := range existingUsers {
+			// Skip users that were removed (already deleted from database)
+			if containsUser(removedUsers, existingUsers[i].UserID) {
+				continue
+			}
+			if newMember, exists := newUserMap[existingUsers[i].UserID]; exists {
+				// User exists in both - check if role changed
+				if existingUsers[i].Role != newMember.UserRole {
+					oldRole := existingUsers[i].Role
+					newRole := newMember.UserRole
+
+					// For active users, adjust seat counts by first reversing the initial
+					// counting (which was based on old role), then applying the new role's
+					// consumption. This ensures we don't double-count.
+					if existingUsers[i].IsActive {
+						// Step 1: Reverse the initial subtraction (add back old role's seat)
+						if oldRole > 10 {
+							remainingSeats = remainingSeats + 1
+						} else {
+							remainingFreeSeat = remainingFreeSeat + 1
+						}
+
+						// Step 2: Apply the new role's consumption
+						if newRole > 10 {
+							remainingSeats = remainingSeats - 1
+						} else {
+							remainingFreeSeat = remainingFreeSeat - 1
+						}
+					}
+
+					// Update the role in database and in the slice
+					existingUsers[i].Role = newRole
+					db.Db.Save(&existingUsers[i])
+				}
+			}
 		}
 
 		if license.ProductType == "PRO" || license.ProductType == "BUSINESS" || license.ProductType == "ENTERPRISE" {
@@ -286,28 +333,28 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 				})
 			}
 
-			// Check the availability of seats
-			if remainingSeats > 0 {
-				// Check if there is a users, which is in inactive mode, we can make it
-				// consume a seat and release the remaining seats
-				for _, user := range existingUsers {
-					if user.Role > 10 && !user.IsActive && !containsUser(removedUsers, user.UserID) {
-						user.IsActive = true
-						db.Db.Save(&user)
-						remainingSeats = remainingSeats - 1
-					}
+			// Activate inactive users if seats are available
+			// Check seat availability inside the loop to prevent over-allocation
+			for i := range existingUsers {
+				if remainingSeats <= 0 {
+					break
+				}
+				if existingUsers[i].Role > 10 && !existingUsers[i].IsActive && !containsUser(removedUsers, existingUsers[i].UserID) {
+					existingUsers[i].IsActive = true
+					db.Db.Save(&existingUsers[i])
+					remainingSeats = remainingSeats - 1
 				}
 			}
 
-			if remainingFreeSeat > 0 {
-				// Check if there are users with role less than 10, in inactive mode, we
-				// can give them the seat and try to make the remainingFreeSeat count to 0
-				for _, user := range existingUsers {
-					if user.Role <= 10 && !user.IsActive && !containsUser(removedUsers, user.UserID) {
-						user.IsActive = true
-						db.Db.Save(&user)
-						remainingFreeSeat = remainingFreeSeat - 1
-					}
+			// Activate inactive free-role users if free seats are available
+			for i := range existingUsers {
+				if remainingFreeSeat <= 0 {
+					break
+				}
+				if existingUsers[i].Role <= 10 && !existingUsers[i].IsActive && !containsUser(removedUsers, existingUsers[i].UserID) {
+					existingUsers[i].IsActive = true
+					db.Db.Save(&existingUsers[i])
+					remainingFreeSeat = remainingFreeSeat - 1
 				}
 			}
 		} else {

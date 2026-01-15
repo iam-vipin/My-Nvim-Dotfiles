@@ -19,10 +19,12 @@ import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import { LeadIcon, TeamsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { EFileAssetType } from "@plane/types";
 import { AvatarGroup, Avatar } from "@plane/ui";
 // plane utils
 import { getFileURL } from "@plane/utils";
 // components
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
@@ -31,7 +33,6 @@ import { AddTeamspaceMembersButton } from "@/plane-web/components/teamspaces/act
 import { UpdateTeamspaceProjectsButton } from "@/plane-web/components/teamspaces/actions/projects/button";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports
-import { TeamspaceDescriptionInput } from "./description-input";
 import { TeamNameInput } from "./name-input";
 
 type TTeamsOverviewPropertiesProps = {
@@ -47,7 +48,8 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   // hooks
   const { getUserDetails } = useMember();
-  const { isCurrentUserMemberOfTeamspace, getTeamspaceById, updateTeamspace } = useTeamspaces();
+  const { isCurrentUserMemberOfTeamspace, getTeamspaceById, updateTeamspace, updateTeamspaceNameDescriptionLoader } =
+    useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
@@ -100,12 +102,21 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
         teamspaceId={teamspaceId}
         disabled={!isEditingAllowed}
       />
-      <TeamspaceDescriptionInput
+      <DescriptionInput
+        key={teamspaceId}
         initialValue={teamspaceDescription}
-        workspaceSlug={workspaceSlug.toString()}
-        teamspaceId={teamspaceId}
+        workspaceSlug={workspaceSlug}
+        onSubmit={async (value) => {
+          await updateTeamspace(workspaceSlug, teamspaceId, {
+            description_html: value.description_html ?? "<p></p>",
+            description_json: value.description_json,
+          });
+        }}
+        entityId={teamspaceId}
         disabled={!isEditingAllowed}
         containerClassName="-ml-3 border-none"
+        fileAssetType={EFileAssetType.TEAM_SPACE_DESCRIPTION}
+        setIsSubmitting={(value) => updateTeamspaceNameDescriptionLoader(teamspaceId, value)}
       />
       <div className="flex items-center justify-between gap-x-2 py-1.5">
         <div className="flex items-center gap-x-1.5">

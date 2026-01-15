@@ -51,8 +51,8 @@ export const DescriptionBox = observer(function DescriptionBox(props: TProps) {
           entityId={project.id}
           fileAssetType={EFileAssetType.PROJECT_DESCRIPTION}
           initialValue={project?.description_html ?? "<p></p>"}
-          onSubmit={async (value: string) => {
-            await handleProjectUpdate({ description_html: value });
+          onSubmit={async (value) => {
+            await handleProjectUpdate({ description_html: value.description_html });
           }}
           setIsSubmitting={setIsSubmitting}
           workspaceSlug={workspaceSlug}

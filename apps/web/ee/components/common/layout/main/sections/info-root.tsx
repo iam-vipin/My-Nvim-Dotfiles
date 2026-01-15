@@ -106,7 +106,7 @@ export function InfoSection(props: TInfoSectionProps) {
           entityId={itemId}
           fileAssetType={fileAssetType}
           initialValue={descriptionValue}
-          onSubmit={(value, isMigrationUpdate) => onDescriptionSubmit(value, isMigrationUpdate)}
+          onSubmit={(value, isMigrationUpdate) => onDescriptionSubmit(value.description_html, isMigrationUpdate)}
           projectId={projectId}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           workspaceSlug={workspaceSlug}

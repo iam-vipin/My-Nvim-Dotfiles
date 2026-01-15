@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TProject } from "@plane/types";
 import { Card, cn } from "@plane/ui";
@@ -19,6 +19,8 @@ import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 import { useProjectData } from "../useArtifactData";
 import { PiChatArtifactsFooter } from "./footer";
+import { getRandomCoverImage } from "@/helpers/cover-image.helper";
+import { getRandomEmoji } from "@plane/utils";
 
 interface TProjectDetailProps {
   data: TArtifact;
@@ -35,7 +37,8 @@ export const ProjectDetail = observer(function ProjectDetail(props: TProjectDeta
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // hooks
-  const updatedData = useProjectData(data.artifact_id);
+  const projectData = useProjectData(data.artifact_id);
+
   // handlers
   const handleOnSave = () => {
     setIsSaving(false);
@@ -59,6 +62,38 @@ export const ProjectDetail = observer(function ProjectDetail(props: TProjectDeta
       });
   };
 
+  const hasUpdatedRef = useRef(false);
+  const coverImageUrl = projectData?.cover_image_url;
+  const logoProps = projectData?.logo_props;
+
+  useEffect(() => {
+    // Only run on client to avoid hydration mismatches
+    if (typeof window === "undefined") return;
+    // Only update once per artifact
+    if (hasUpdatedRef.current) return;
+    // Skip if already has both cover image and logo
+    if (coverImageUrl && logoProps) return;
+
+    hasUpdatedRef.current = true;
+
+    const updateCoverImageAndLogo = async () => {
+      // Generate random values only on client side
+      const img = getRandomCoverImage();
+      await updateArtifact({
+        ...(projectData || {}),
+        cover_image_url: coverImageUrl || img,
+        logo_props: logoProps || {
+          in_use: "emoji",
+          emoji: {
+            value: getRandomEmoji(),
+          },
+        },
+      });
+    };
+
+    void updateCoverImageAndLogo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.artifact_id]);
   return (
     <>
       <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
@@ -66,12 +101,12 @@ export const ProjectDetail = observer(function ProjectDetail(props: TProjectDeta
           workspaceSlug={workspaceSlug}
           onClose={() => {}}
           handleNextStep={() => {}}
-          data={updatedData}
+          data={projectData}
           templateId={undefined}
           showActionButtons={false}
           onChange={handleOnChange}
           updateCoverImageStatus={() => Promise.resolve()}
-          dataResetProperties={[data.artifact_id, updatedData]}
+          dataResetProperties={[data.artifact_id, projectData]}
         />
         <div
           className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {

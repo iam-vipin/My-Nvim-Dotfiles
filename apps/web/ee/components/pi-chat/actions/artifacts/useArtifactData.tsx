@@ -107,39 +107,6 @@ export const useProjectData = (artifactId: string): Partial<TProject> => {
         name: parameters?.name,
       };
 
-  const hasUpdatedRef = useRef(false);
-  const coverImageUrl = projectData?.cover_image_url;
-  const logoProps = projectData?.logo_props || parameters?.logo_props;
-
-  useEffect(() => {
-    // Only run on client to avoid hydration mismatches
-    if (typeof window === "undefined") return;
-    // Only update once per artifact
-    if (hasUpdatedRef.current) return;
-    // Skip if already has both cover image and logo
-    if (coverImageUrl && logoProps) return;
-
-    hasUpdatedRef.current = true;
-
-    const updateCoverImageAndLogo = async () => {
-      // Generate random values only on client side
-      const img = getRandomCoverImage();
-      await updateArtifact(artifactId, "updated", {
-        ...projectData,
-        cover_image_url: coverImageUrl || img,
-        logo_props: logoProps || {
-          in_use: "emoji",
-          emoji: {
-            value: getRandomEmoji(),
-          },
-        },
-      });
-    };
-
-    updateCoverImageAndLogo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [artifactId]);
-
   return projectData;
 };
 

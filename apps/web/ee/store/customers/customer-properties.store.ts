@@ -36,6 +36,7 @@ export interface ICustomerPropertiesStore {
   loader: boolean;
   properties: IIssueProperty<EIssuePropertyType>[];
   // computed
+  sortedProperties: IIssueProperty<EIssuePropertyType>[];
   activeProperties: IIssueProperty<EIssuePropertyType>[];
   // computed function
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
@@ -72,6 +73,7 @@ export class CustomerProperties implements ICustomerPropertiesStore {
       deleteProperty: action,
       // computed
       activeProperties: computed,
+      sortedProperties: computed,
     });
     // root
     this.rootStore = _root;
@@ -84,7 +86,13 @@ export class CustomerProperties implements ICustomerPropertiesStore {
    * @description Get active properties
    */
   get activeProperties() {
-    return this.properties.filter((property) => property.is_active);
+    return this.sortedProperties.filter((property) => property.is_active);
+  }
+
+  // Get sorted properties
+  get sortedProperties() {
+    const sortedData = Array.from(this.properties).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    return sortedData;
   }
 
   // computed function

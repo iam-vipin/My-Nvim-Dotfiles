@@ -42,6 +42,7 @@ import { PropertyTypeDropdown } from "./dropdowns/property-type";
 import { PropertyMandatoryFieldCheckbox } from "./mandatory-field";
 import { IssuePropertyQuickActions } from "./quick-actions";
 import type { TIssuePropertyCreateList } from "./root";
+import { GripVertical } from "lucide-react";
 
 export type TCustomPropertyOperations = {
   getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;
@@ -429,8 +430,12 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
         onDoubleClick={() => setIssuePropertyOperationMode("update")}
       >
         <div className="flex items-center gap-1 text-body-xs-medium">
+          {/* Drag handle */}
+          <Tooltip tooltipContent="Drag to rearrange">
+            <GripVertical className="size-5 text-placeholder cursor-grab" />
+          </Tooltip>
           {issuePropertyData?.logo_props && (
-            <div className="flex-shrink-0 size-5 grid place-items-center">
+            <div className="shrink-0 size-5 grid place-items-center">
               <IssuePropertyLogo
                 icon_props={issuePropertyData.logo_props.icon}
                 colorClassName={issuePropertyData.is_active ? "text-secondary" : "text-tertiary"}
@@ -443,14 +448,14 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
             </span>
             {issuePropertyData.description && (
               <Tooltip tooltipContent={issuePropertyData.description} position="right">
-                <span className="flex-shrink-0">
+                <span className="shrink-0">
                   <InfoIcon className="size-3 text-secondary cursor-help outline-none" />
                 </span>
               </Tooltip>
             )}
           </div>
         </div>
-        <div className="flex flex-shrink-0 items-center justify-end gap-2.5 transition-all duration-200">
+        <div className="flex shrink-0 items-center justify-end gap-2.5 transition-all duration-200">
           <div className="flex items-center gap-2.5 select-none">
             {i18nAttributeDisplayNameKey && <AttributePill data={t(i18nAttributeDisplayNameKey)} />}
             {issuePropertyData.is_required && <AttributePill data={t("common.mandatory")} />}
@@ -464,7 +469,7 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
               <AttributePill data={t("common.disabled")} className="bg-danger-subtle text-danger-primary" />
             )}
           </div>
-          <div className="flex-shrink-0 border-l border-subtle-1 pl-2" onDoubleClick={(e) => e.stopPropagation()}>
+          <div className="shrink-0 border-l border-subtle-1 pl-2" onDoubleClick={(e) => e.stopPropagation()}>
             <IssuePropertyQuickActions
               isPropertyDisabled={!issuePropertyData.is_active}
               onDisable={async () => handlePropertyDataChange("is_active", false, true)}

@@ -11,10 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
+import { useCallback } from "react";
 // plane imports
 import type { EIssuePropertyType, IIssueProperty } from "@plane/types";
+import { calculateSortOrder } from "@plane/utils";
 // plane web imports
 import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
 // local imports
@@ -22,6 +23,7 @@ import { IssuePropertyCreateListItem } from "./property-create-list-item";
 import { IssuePropertyListItem } from "./property-list-item";
 import type { TCustomPropertyOperations } from "./property-list-item";
 import type { TIssuePropertyCreateList } from "./root";
+import { Sortable } from "@plane/ui";
 
 type TIssuePropertyList = {
   properties: IIssueProperty<EIssuePropertyType>[] | undefined;
@@ -49,24 +51,59 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
     trackers,
   } = props;
 
+  const handlePropertiesReorder = useCallback(
+    async (
+      data: IIssueProperty<EIssuePropertyType>[],
+      movedProperty: IIssueProperty<EIssuePropertyType> | undefined
+    ) => {
+      if (!movedProperty?.id) return;
+      const sortedData = data
+        .map((property) => {
+          if (!property.id || property.sort_order === undefined) return;
+          return {
+            id: property.id,
+            sort_order: property.sort_order,
+          };
+        })
+        .filter((e) => e !== undefined);
+
+      const updatedSortOrder = calculateSortOrder(sortedData, movedProperty.id);
+
+      if (updatedSortOrder) {
+        await customPropertyOperations.updateProperty(movedProperty.id, { sort_order: updatedSortOrder });
+      }
+    },
+    [customPropertyOperations]
+  );
+
   return (
     <div className="w-full mt-1">
       <div ref={containerRef} className="w-full overflow-y-auto px-6 transition-all">
-        {properties &&
-          properties.map((property) => (
-            <IssuePropertyOptionsProvider
-              key={property.id}
-              customPropertyId={property.id}
-              customPropertyOperations={customPropertyOperations}
-            >
-              <IssuePropertyListItem
+        {properties && (
+          <Sortable
+            data={properties}
+            render={(property) => (
+              <IssuePropertyOptionsProvider
+                key={property.id}
                 customPropertyId={property.id}
                 customPropertyOperations={customPropertyOperations}
-                isUpdateAllowed={isUpdateAllowed}
-                trackers={trackers}
-              />
-            </IssuePropertyOptionsProvider>
-          ))}
+              >
+                <IssuePropertyListItem
+                  customPropertyId={property.id}
+                  customPropertyOperations={customPropertyOperations}
+                  isUpdateAllowed={isUpdateAllowed}
+                  trackers={trackers}
+                />
+              </IssuePropertyOptionsProvider>
+            )}
+            onChange={(data, movedItem) => {
+              handlePropertiesReorder(data, movedItem).catch((error) => {
+                console.error(error);
+              });
+            }}
+            keyExtractor={(option, index) => option.id?.toString() ?? index.toString()}
+          />
+        )}
         {/* Issue properties create list */}
         {issuePropertyCreateList.map((issueProperty, index) => (
           <IssuePropertyOptionsProvider

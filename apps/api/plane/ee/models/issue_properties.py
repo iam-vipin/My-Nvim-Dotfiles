@@ -77,7 +77,7 @@ class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
         created = self._state.adding
         if created:
             # Get the maximum sequence value from the database
-            last_id = IssueProperty.objects.filter(workspace_id=self.workspace_id).aggregate(
+            last_id = IssueProperty.objects.filter(issue_type=self.issue_type_id, project_id=self.project_id).aggregate(
                 largest=models.Max("sort_order")
             )["largest"]
             # if last_id is not None

@@ -173,6 +173,7 @@ export const mockCreateCustomProperty = async ({
   data,
 }: TCreateIssuePropertyPayload): Promise<TIssuePropertyResponse> => {
   const customPropertyId = data.id ?? uuidv4();
+  const propertyOptions = data.options ?? [];
   return Promise.resolve({
     id: customPropertyId,
     name: data.name,
@@ -194,7 +195,7 @@ export const mockCreateCustomProperty = async ({
     settings: data.settings,
     options: (
       await Promise.all(
-        data.options.map((option) =>
+        propertyOptions.map((option) =>
           mockCreateCustomPropertyOption({
             workspaceSlug,
             projectId,
@@ -236,7 +237,7 @@ export const mockUpdateCustomProperty = async (
     projectId,
     customPropertyId: currentCustomProperty.id,
     currentOptions: currentCustomProperty.propertyOptions,
-    newOptions: options,
+    newOptions: options ?? [],
     createOptionInstance,
   });
 

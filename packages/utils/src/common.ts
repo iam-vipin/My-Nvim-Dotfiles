@@ -128,3 +128,29 @@ export const isComplete = <T>(obj: CompleteOrEmpty<T>): obj is T => {
 };
 
 export const convertRemToPixel = (rem: number): number => rem * 0.9 * 16;
+
+/**
+ *  Calculates the final sort_order for the movedItem
+ * @param data Objects in updated order
+ * @param movedItemId Item that is moved to re-order
+ */
+export const calculateSortOrder = (
+  data: { id: string; sort_order: number }[],
+  movedItemId: string
+): number | undefined => {
+  const movedItemIndex = data.findIndex((item) => item.id === movedItemId);
+  const DEFAULT_SORT_ORDER = 10000;
+
+  if (movedItemIndex === -1) return;
+
+  // Get previous and next items' sort_order
+  const prevSortOrder = data[movedItemIndex - 1]?.sort_order;
+  const nextSortOrder = data[movedItemIndex + 1]?.sort_order;
+
+  // Item is moved to top
+  if (prevSortOrder === undefined) return (nextSortOrder ?? DEFAULT_SORT_ORDER) / 2;
+  // Item is moved to end
+  if (nextSortOrder === undefined) return prevSortOrder + DEFAULT_SORT_ORDER;
+  // Item is moved to middle
+  return (prevSortOrder + nextSortOrder) / 2;
+};

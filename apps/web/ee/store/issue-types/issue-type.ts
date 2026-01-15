@@ -80,6 +80,7 @@ export class IssueType implements IIssueType {
       // computed
       asJSON: computed,
       activeProperties: computed,
+      sortedProperties: computed,
       // actions
       updateType: action,
       addOrUpdateProperty: action,
@@ -134,11 +135,17 @@ export class IssueType implements IIssueType {
     };
   }
 
+  // Get sorted properties
+  get sortedProperties() {
+    const sortedData = Array.from(this.properties).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    return sortedData;
+  }
+
   /**
    * @description Get active properties
    */
   get activeProperties() {
-    return this.properties.filter((property) => property.is_active);
+    return this.sortedProperties.filter((property) => property.is_active);
   }
 
   // computed function

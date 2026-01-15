@@ -75,7 +75,7 @@ export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProp
 
 // Issue property payload
 export type TIssuePropertyPayload = Partial<TIssueProperty<EIssuePropertyType>> & {
-  options: Partial<TIssuePropertyOption>[];
+  options?: Partial<TIssuePropertyOption>[];
 };
 
 // Issue property response

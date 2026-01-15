@@ -51,6 +51,7 @@ export interface IIssueType extends TIssueType {
   // computed
   asJSON: TIssueType | undefined;
   activeProperties: IIssueProperty<EIssuePropertyType>[];
+  sortedProperties: IIssueProperty<EIssuePropertyType>[];
   // computed function
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
   // actions

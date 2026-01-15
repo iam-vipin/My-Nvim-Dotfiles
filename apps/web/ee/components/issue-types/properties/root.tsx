@@ -67,7 +67,7 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
   // store hooks
   const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
-  const properties = issueType?.properties;
+  const properties = issueType?.sortedProperties;
   const isAnyPropertiesAvailable = (properties && properties?.length > 0) || issuePropertyCreateList.length > 0;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);

@@ -15,8 +15,9 @@ from django.db import models
 from django.utils import timezone
 
 from plane.db.models import BaseModel
+from django.conf import settings
 
-STALE_TIMEOUT = timedelta(minutes=1)
+STALE_TIMEOUT = timedelta(minutes=int(settings.AGENT_RUN_STALE_TIMEOUT_IN_MINS))
 
 
 # created - The run has been initiated but not yet started processing

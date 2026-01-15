@@ -697,3 +697,6 @@ IS_AIRGAPPED = os.environ.get("IS_AIRGAPPED", "0") == "1"
 ENABLE_OUTBOX_POLLER = os.environ.get("ENABLE_OUTBOX_POLLER", "0") == "1"
 
 USE_STORAGE_PROXY = os.environ.get("USE_STORAGE_PROXY", "0") == "1"
+
+# Agent settings
+AGENT_RUN_STALE_TIMEOUT_IN_MINS = int(os.environ.get("AGENT_RUN_STALE_TIMEOUT_IN_MINS", 5))

@@ -23,12 +23,14 @@ import { BaseTimeLineStore } from "@/plane-web/store/timeline/base-timeline.stor
 
 export class GroupedTimeLineStore extends BaseTimeLineStore implements IBaseTimelineStore {
   blockGroups: EGanttBlockType[] = [];
+  originalBlockIdsByType: Record<EGanttBlockType, string[]> = {} as Record<EGanttBlockType, string[]>;
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
 
     makeObservable(this, {
       blockGroups: observable,
+      originalBlockIdsByType: observable,
       setBlockGroups: action,
     });
 
@@ -54,6 +56,14 @@ export class GroupedTimeLineStore extends BaseTimeLineStore implements IBaseTime
       return type;
     });
     set(this, "blockGroups", blockGroups);
+
+    // Store original block IDs per type for accurate counting
+    const originalBlockIdsByType: Record<EGanttBlockType, string[]> = {} as Record<EGanttBlockType, string[]>;
+    groupData.forEach((group) => {
+      originalBlockIdsByType[group.type] = group.blockIds;
+    });
+    this.originalBlockIdsByType = originalBlockIdsByType;
+
     // Flatten all the block ids
     const flattenedBlockIds = groupData.flatMap((group) => group.blockIds);
     this.setBlockIds(flattenedBlockIds);
@@ -68,24 +78,71 @@ export class GroupedTimeLineStore extends BaseTimeLineStore implements IBaseTime
 
     if (!this.blockIds) return groupBlockIds;
 
-    this.blockIds.forEach((blockId) => {
-      const block = this.blocksMap[blockId];
-      if (!block) return;
+    // Use original block IDs for counting to ensure accurate count even when collapsed
+    this.blockGroups.forEach((groupType) => {
+      const group = groupBlockIds.find((g) => g.type === groupType);
+      if (!group) return;
 
-      const type = block.meta?.type as EGanttBlockType;
-      if (type) {
-        const group = groupBlockIds.find((group) => group.type === type);
-        if (group) {
-          // Add blockId only if group is not collapsed
-          if (!this.collapsedGroups.includes(type)) {
-            group.blockIds.push(blockId);
-          }
-          // Increment count irrespective of whether it is collapsed or not
-          group.count = (group.count ?? 0) + 1;
-        }
+      const originalBlockIds = this.originalBlockIdsByType[groupType] || [];
+      // Count from original block IDs to maintain accurate count
+      group.count = originalBlockIds.length;
+
+      // Only add blockIds to display if group is not collapsed
+      if (!this.collapsedGroups.includes(groupType) && this.blockIds) {
+        // Filter to only include blocks that are currently in blockIds (visible)
+        const visibleBlockIds = this.blockIds.filter((blockId) => {
+          const block = this.blocksMap[blockId];
+          return block?.meta?.type === groupType;
+        });
+        group.blockIds = visibleBlockIds;
       }
     });
 
     return groupBlockIds;
   });
+
+  // Override toggleGroup to properly restore blocks when expanding using original block IDs
+  toggleGroup = (type: EGanttBlockType, open: boolean = false) => {
+    const isCurrentlyCollapsed = this.collapsedGroups.includes(type);
+
+    if (open) {
+      // Force expand if explicitly requested and currently collapsed
+      if (isCurrentlyCollapsed) {
+        this.expandGroupWithOriginalIds(type);
+      }
+    } else {
+      // Normal toggle behavior
+      if (isCurrentlyCollapsed) {
+        this.expandGroupWithOriginalIds(type);
+      } else {
+        // Collapse: remove blocks of this type from visible block ids
+        this.collapsedGroups.push(type);
+        const blocksExceptType =
+          this.blockIds?.filter((blockId) => {
+            const block = this.blocksMap[blockId];
+            return block?.meta?.type !== type;
+          }) ?? [];
+        this.setBlockIds(blocksExceptType);
+      }
+    }
+  };
+
+  private expandGroupWithOriginalIds = (type: EGanttBlockType) => {
+    // Remove from collapsed groups
+    this.collapsedGroups = this.collapsedGroups.filter((group) => group !== type);
+
+    // Get original block IDs for this type
+    const originalBlockIds = this.originalBlockIdsByType[type] || [];
+
+    // Get current block IDs (excluding the type we're expanding to avoid duplicates)
+    const currentBlockIds =
+      this.blockIds?.filter((blockId) => {
+        const block = this.blocksMap[blockId];
+        return block?.meta?.type !== type;
+      }) ?? [];
+
+    // Combine: add original block IDs of this type back, then add all other current block IDs
+    const updatedBlockIds = Array.from(new Set([...originalBlockIds, ...currentBlockIds]));
+    this.setBlockIds(updatedBlockIds);
+  };
 }

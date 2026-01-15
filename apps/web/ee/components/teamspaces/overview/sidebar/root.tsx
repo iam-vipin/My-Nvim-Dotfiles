@@ -122,16 +122,16 @@ export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props
       )}
       style={isTeamSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
     >
-      <div className="px-4">
+      <div className="px-4 flex-1 overflow-hidden">
         <Tabs defaultValue={TEAM_OVERVIEW_SIDEBAR_TABS[0].key}>
-          <Tabs.List>
+          <Tabs.List className="shrink-0">
             {TEAM_OVERVIEW_SIDEBAR_TABS.map((tab) => (
               <Tabs.Trigger key={tab.key} value={tab.key}>
                 {tab.icon && <tab.icon className="size-4" />}
               </Tabs.Trigger>
             ))}
           </Tabs.List>
-          <div className="mt-4">
+          <div className="mt-4 flex-1 overflow-auto">
             {TEAM_OVERVIEW_SIDEBAR_TABS.map((tab) => (
               <Tabs.Content key={tab.key} value={tab.key}>
                 {tab.content}

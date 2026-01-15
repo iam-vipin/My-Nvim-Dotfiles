@@ -79,13 +79,14 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
-  const { isNestedPagesEnabled } = usePageStore(storeType);
+  const { isNestedPagesEnabled: getIsNestedPagesEnabled } = usePageStore(storeType);
   // derived values
   const {
     isContentEditable,
     editor: { setEditorRef },
     fetchEmbedsAndMentions,
   } = page;
+  const isNestedPagesEnabled = getIsNestedPagesEnabled(workspaceSlug);
   // page fallback
   const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
@@ -157,7 +158,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
   const handleRestoreVersion = useCallback(
     async (descriptionHTML: string) => {
-      if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
+      if (version && isNestedPagesEnabled) {
         page.setVersionToBeRestored(version, descriptionHTML);
         page.setRestorationStatus(true);
         updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
@@ -169,7 +170,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
         editorRef.current?.setEditorValue(descriptionHTML);
       }
     },
-    [version, workspaceSlug, page, handlers, editorRef, isNestedPagesEnabled]
+    [version, page, handlers, editorRef, isNestedPagesEnabled]
   );
   // cleanup
   useEffect(
@@ -193,30 +194,32 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           storeType={storeType}
         />
         <NestedPagesDownloadBanner page={page} storeType={storeType} workspaceSlug={workspaceSlug} />
-        <PageEditorToolbarRoot
-          handleOpenNavigationPane={handleOpenNavigationPane}
-          isNavigationPaneOpen={isNavigationPaneOpen}
-          page={page}
-        />
         {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
-        <PageEditorBody
-          config={config}
-          customRealtimeEventHandlers={mergedCustomEventHandlers}
-          editorReady={editorReady}
-          editorForwardRef={editorRef}
-          handleEditorReady={handleEditorReady}
-          handleOpenNavigationPane={handleOpenNavigationPane}
-          handlers={handlers}
-          isNavigationPaneOpen={isNavigationPaneOpen}
-          page={page}
-          projectId={projectId}
-          storeType={storeType}
-          webhookConnectionParams={webhookConnectionParams}
-          workspaceSlug={workspaceSlug}
-          extendedEditorProps={extendedEditorProps}
-          isFetchingFallbackBinary={isFetchingFallbackBinary}
-          onCollaborationStateChange={setCollaborationState}
-        />
+        <div className="shrink-0 relative size-full flex flex-col overflow-hidden">
+          <PageEditorToolbarRoot
+            handleOpenNavigationPane={handleOpenNavigationPane}
+            isNavigationPaneOpen={isNavigationPaneOpen}
+            page={page}
+          />
+          <PageEditorBody
+            config={config}
+            customRealtimeEventHandlers={mergedCustomEventHandlers}
+            editorReady={editorReady}
+            editorForwardRef={editorRef}
+            handleEditorReady={handleEditorReady}
+            handleOpenNavigationPane={handleOpenNavigationPane}
+            handlers={handlers}
+            isNavigationPaneOpen={isNavigationPaneOpen}
+            page={page}
+            projectId={projectId}
+            storeType={storeType}
+            webhookConnectionParams={webhookConnectionParams}
+            workspaceSlug={workspaceSlug}
+            extendedEditorProps={extendedEditorProps}
+            isFetchingFallbackBinary={isFetchingFallbackBinary}
+            onCollaborationStateChange={setCollaborationState}
+          />
+        </div>
       </div>
       <PageNavigationPaneRoot
         storeType={storeType}

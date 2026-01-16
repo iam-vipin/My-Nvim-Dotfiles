@@ -315,7 +315,7 @@ class IssueMutationV2:
 
         # issue description activity
         issue_description_version_task.delay(
-            updated_issue=json.dumps(issue_payload),
+            updated_issue=json.dumps(activity_payload),
             issue_id=issue_id,
             user_id=user_id,
             is_creating=True,
@@ -325,7 +325,7 @@ class IssueMutationV2:
         model_activity.delay(
             model_name="issue",
             model_id=issue_id,
-            requested_data=json.dumps(issue_payload),
+            requested_data=json.dumps(activity_payload),
             current_instance=None,
             actor_id=user_id,
             slug=workspace_slug,

@@ -188,7 +188,7 @@ class EpicMutation:
 
         # issue description activity
         issue_description_version_task.delay(
-            updated_issue=json.dumps(epic_payload),
+            updated_issue=json.dumps(activity_payload),
             issue_id=epic_id,
             user_id=user_id,
             is_creating=True,

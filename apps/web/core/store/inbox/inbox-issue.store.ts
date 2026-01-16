@@ -28,7 +28,8 @@ import { EInboxIssueStatus } from "@plane/types";
 import { InboxIssueService } from "@/services/inbox";
 import { IssueService } from "@/services/issue";
 // store
-import type { CoreRootStore } from "../root.store";
+import type { IProjectInboxStore } from "./project-inbox.store";
+import type { IIssueRootStore } from "../issue/root.store";
 
 export class InboxIssueStore implements IInboxIssueStore {
   // observables
@@ -51,7 +52,8 @@ export class InboxIssueStore implements IInboxIssueStore {
     workspaceSlug: string,
     projectId: string,
     data: TInboxIssue,
-    private store: CoreRootStore
+    private issueStore: IIssueRootStore,
+    private projectInboxStore: IProjectInboxStore
   ) {
     this.id = data.id;
     this.status = data.status;
@@ -99,10 +101,15 @@ export class InboxIssueStore implements IInboxIssueStore {
       });
       runInAction(() => set(this, "status", inboxIssue?.status));
 
+      // Update counts
+      const currentTotalResults = this.projectInboxStore.inboxIssuePaginationInfo?.total_results ?? 0;
+      const updatedCount = currentTotalResults > 0 ? currentTotalResults - 1 : currentTotalResults;
+      set(this.projectInboxStore, ["inboxIssuePaginationInfo", "total_results"], updatedCount);
+
       // If issue accepted sync issue to local db
       if (status === EInboxIssueStatus.ACCEPTED) {
         const updatedIssue = { ...this.issue, ...inboxIssue.issue };
-        this.store.issue.issues.addIssue([updatedIssue]);
+        this.issueStore.issues.addIssue([updatedIssue]);
       }
     } catch {
       runInAction(() => set(this, "status", previousData.status));
@@ -189,12 +196,12 @@ export class InboxIssueStore implements IInboxIssueStore {
       });
       await this.issueService.patchIssue(this.workspaceSlug, this.projectId, inboxIssue.id, issue);
       if (issue.cycle_id) {
-        await this.store.issue.issueDetail.addIssueToCycle(this.workspaceSlug, this.projectId, issue.cycle_id, [
+        await this.issueStore.issueDetail.addIssueToCycle(this.workspaceSlug, this.projectId, issue.cycle_id, [
           inboxIssue.id,
         ]);
       }
       if (issue.module_ids) {
-        await this.store.issue.issueDetail.changeModulesInIssue(
+        await this.issueStore.issueDetail.changeModulesInIssue(
           this.workspaceSlug,
           this.projectId,
           inboxIssue.id,
@@ -216,7 +223,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   fetchIssueActivity = async () => {
     try {
       if (!this.issue) return;
-      await this.store.issue.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
+      await this.issueStore.issueDetail.fetchActivities(this.workspaceSlug, this.projectId, this.issue.id);
     } catch {
       console.error("Failed to fetch issue activity");
     }

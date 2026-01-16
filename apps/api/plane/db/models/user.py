@@ -320,7 +320,7 @@ def send_welcome_slack(instance: User, created: bool):
         return
 
 
-def update_user_notification_preferences(instance: User):
+def create_user_notification_preferences(instance: User):
     from plane.db.models import UserNotificationPreference
 
     try:
@@ -358,9 +358,9 @@ def track_signup_event(instance: User):
 
 
 @receiver(post_save, sender=User)
-def create_user_notification(sender, instance, created, **kwargs):
+def trigger_user_post_save_operations(sender, instance, created, **kwargs):
     # create preferences
     if created and not instance.is_bot:
-        update_user_notification_preferences(instance)
+        create_user_notification_preferences(instance)
         send_welcome_slack(instance, created)
         track_signup_event(instance)

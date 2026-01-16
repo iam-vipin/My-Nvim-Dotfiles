@@ -379,9 +379,6 @@ importers:
       '@tiptap/html':
         specifier: 'catalog:'
         version: 2.26.2(@tiptap/core@2.27.1(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
-      amqplib:
-        specifier: 0.10.5
-        version: 0.10.5
       axios:
         specifier: 'catalog:'
         version: 1.12.0
@@ -455,9 +452,6 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@types/amqplib':
-        specifier: 0.10.5
-        version: 0.10.5
       '@types/compression':
         specifier: 1.8.1
         version: 1.8.1
@@ -12131,6 +12125,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}

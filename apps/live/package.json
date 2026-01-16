@@ -6,8 +6,7 @@
   "main": "./dist/start.mjs",
   "module": "./dist/start.mjs",
   "exports": {
-    "./consumer": "./dist/consumer.mjs",
-    "./start": "./dist/start.mjs",
+    ".": "./dist/start.mjs",
     "./package.json": "./package.json"
   },
   "private": true,
@@ -43,7 +42,6 @@
     "@sentry/profiling-node": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/html": "catalog:",
-    "amqplib": "^0.10.5",
     "axios": "catalog:",
     "compression": "1.8.1",
     "cookie-parser": "^1.4.7",
@@ -70,7 +68,6 @@
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
-    "@types/amqplib": "^0.10.5",
     "@types/compression": "1.8.1",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",

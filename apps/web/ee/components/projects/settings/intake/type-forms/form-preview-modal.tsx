@@ -73,7 +73,7 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
             <IntakePublishForm
               projectName={currentProjectDetails.name || ""}
               projectLogo={currentProjectDetails.logo_props}
-              projectCoverImage={currentProjectDetails.cover_image}
+              projectCoverImage={currentProjectDetails.cover_image_url}
               projectCoverImageFallback={DEFAULT_COVER_IMAGE_URL}
               formTitle={formTitle || ""}
               properties={formProperties}

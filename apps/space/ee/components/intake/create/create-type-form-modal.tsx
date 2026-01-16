@@ -165,7 +165,7 @@ function CreateTypeFormModal({ formSettings, anchor }: TProps) {
               <IntakePublishForm
                 projectName={projectDetails?.name || ""}
                 projectLogo={projectDetails?.logo_props}
-                projectCoverImage={projectDetails?.cover_image}
+                projectCoverImage={projectDetails?.cover_image_url}
                 // CoverImage1 is the default cover image in web/helpers/cover-image.helper.ts
                 projectCoverImageFallback={CoverImage1}
                 formTitle={formSettings.name}

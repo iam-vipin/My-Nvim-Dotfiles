@@ -165,7 +165,7 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
     if (coverImage) {
       const imageType = getCoverImageType(coverImage);
 
-      if (imageType === "local_static") {
+      if (imageType === "local_static" || imageType === "unsplash") {
         try {
           uploadedAssetUrl = await uploadCoverImage(coverImage, {
             workspaceSlug: workspaceSlug.toString(),

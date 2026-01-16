@@ -85,7 +85,7 @@ export const CreateUpdateProjectTemplate = observer(function CreateUpdateProject
     if (coverImage) {
       const imageType = getCoverImageType(coverImage);
 
-      if (imageType === "local_static") {
+      if (imageType === "local_static" || imageType === "unsplash") {
         try {
           const uploadedUrl = await uploadCoverImage(coverImage, {
             workspaceSlug: workspaceSlug,

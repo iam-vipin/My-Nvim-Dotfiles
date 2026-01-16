@@ -42,6 +42,10 @@ const ChatSupportModal = lazy(function ChatSupportModal() {
   return import("@/components/global/chat-support-modal");
 });
 
+const PostHogProvider = lazy(function PostHogProvider() {
+  return import("@/components/global/posthog-provider");
+});
+
 export interface IAppProvider {
   children: React.ReactNode;
 }
@@ -61,6 +65,7 @@ export function AppProvider(props: IAppProvider) {
             <InstanceWrapper>
               <Suspense>
                 <ChatSupportModal />
+                <PostHogProvider />
                 <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
               </Suspense>
             </InstanceWrapper>

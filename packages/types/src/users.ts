@@ -59,6 +59,7 @@ export interface IUser extends IUserLite {
   theme: IUserTheme;
   avatar: string;
   is_app_rail_docked: boolean;
+  last_login_time: string;
 }
 
 export interface IUserAccount {

@@ -16,7 +16,7 @@ from typing import Dict, Any
 
 # third party imports
 from celery import shared_task
-from posthog import Posthog
+from posthog import Posthog, identify_context, new_context
 
 # module imports
 from plane.license.utils.instance_value import get_configuration_value
@@ -82,9 +82,9 @@ def track_event(user_id: uuid.UUID, event_name: str, slug: str, event_properties
         }
         # track the event using posthog
         posthog = Posthog(POSTHOG_API_KEY, host=POSTHOG_HOST)
-        with posthog.new_context():
-            posthog.identify(str(user_id))
-            posthog.capture(event=event_name, properties=data_properties, groups=groups)
+        with new_context():
+            identify_context(str(user_id))
+            posthog.capture(distinct_id=str(user_id), event=event_name, properties=data_properties, groups=groups)
     except Exception as e:
         log_exception(e)
         return False

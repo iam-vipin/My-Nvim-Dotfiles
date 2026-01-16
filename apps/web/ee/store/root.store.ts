@@ -12,7 +12,7 @@
  */
 
 // plane web store
-import type { IIssuePropertiesActivityStore, IIssueTypesStore } from "@plane/types";
+import type { IIssueTypesStore } from "@plane/types";
 import type { ICustomerPropertiesStore, ICustomersStore } from "@/plane-web/store/customers";
 import { CustomerProperties, CustomerStore } from "@/plane-web/store/customers";
 import type { ICycleStore } from "@/plane-web/store/cycle";
@@ -21,7 +21,7 @@ import type { IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature
 import { FeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
 import type { IIntakeResponsibilityStore } from "@/plane-web/store/intake-responsibility.store";
 import { IntakeResponsibilityStore } from "@/plane-web/store/intake-responsibility.store";
-import { IssuePropertiesActivityStore, IssueTypes } from "@/plane-web/store/issue-types";
+import { IssueTypes } from "@/plane-web/store/issue-types";
 import type { IWorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
 import { WorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
 import type { IPublishPageStore } from "@/plane-web/store/pages/publish-page.store";
@@ -144,7 +144,6 @@ export class RootStore extends CoreRootStore {
   workspaceProjectStates: IWorkspaceProjectStatesStore;
   projectFilter: IProjectFilterStore;
   issueTypes: IIssueTypesStore;
-  issuePropertiesActivity: IIssuePropertiesActivityStore;
   cycle: ICycleStore;
   piChat: IPiChatStore;
   agent: IAgentStore;
@@ -212,7 +211,6 @@ export class RootStore extends CoreRootStore {
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);
-    this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
@@ -284,7 +282,6 @@ export class RootStore extends CoreRootStore {
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.issueTypes = new IssueTypes(this);
-    this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);

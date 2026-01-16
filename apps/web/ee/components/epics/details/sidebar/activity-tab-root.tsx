@@ -15,11 +15,16 @@ import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
+import {
+  E_SORT_ORDER,
+  EActivityFilterType,
+  EActivityFilterTypeEE,
+  filterActivityOnSelectedFilters,
+} from "@plane/constants";
+import type { TActivityFilters } from "@plane/constants";
 // hooks
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import type { TIssueActivityComment } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
@@ -28,7 +33,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 // local components
-import { EpicActivityItem } from "./activity/activity-block";
+import { EpicActivityItem, EpicAdditionalPropertiesActivity } from "./activity/activity-block";
 
 type TEpicDetailActivityRootProps = {
   epicId: string;
@@ -63,7 +68,10 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
   // derived values
   const activityComments = getActivityAndCommentsByIssueId(epicId, sortOrder ?? E_SORT_ORDER.ASC);
 
-  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], BASE_ACTIVITY_FILTER_TYPES);
+  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
+    EActivityFilterType.ACTIVITY,
+    EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
+  ] as TActivityFilters[]);
 
   return (
     <SidebarContentWrapper
@@ -74,13 +82,28 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
         {filteredActivityComments.length > 0 &&
           filteredActivityComments.map((activityComment, index) => {
             const currActivityComment = activityComment;
-            return (
-              <EpicActivityItem
-                key={currActivityComment.id}
-                id={currActivityComment.id}
-                ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
-              />
-            );
+
+            if (currActivityComment.activity_type === "ACTIVITY") {
+              return (
+                <EpicActivityItem
+                  key={currActivityComment.id}
+                  id={currActivityComment.id}
+                  ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
+                />
+              );
+            }
+
+            if (currActivityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY") {
+              return (
+                <EpicAdditionalPropertiesActivity
+                  key={currActivityComment.id}
+                  activityId={currActivityComment.id}
+                  ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
+                />
+              );
+            }
+
+            return <></>;
           })}
       </div>
     </SidebarContentWrapper>

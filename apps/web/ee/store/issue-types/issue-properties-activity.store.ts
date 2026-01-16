@@ -20,7 +20,9 @@ import type {
   TIssuePropertiesActivity,
   IIssuePropertiesActivity,
   IIssuePropertiesActivityStore,
+  TIssueServiceType,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // helpers
 import { convertToEpoch } from "@plane/utils";
 // plane web services
@@ -91,7 +93,7 @@ export class IssuePropertiesActivityStore implements IIssuePropertiesActivitySto
         existingActivity.updateActivityData(activity);
       } else {
         // add new activity
-        set(this.propertyActivities, activity.id, new IssuePropertiesActivity(this.store, activity));
+        set(this.propertyActivities, activity.id, new IssuePropertiesActivity(activity));
       }
     }
   };
@@ -101,10 +103,11 @@ export class IssuePropertiesActivityStore implements IIssuePropertiesActivitySto
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    loaderType: TLoader = "init-loader"
+    loaderType: TLoader = "init-loader",
+    serviceType: TIssueServiceType = EIssueServiceType.ISSUES
   ) => {
     try {
-      this.loader = loaderType;
+      this.loader = loaderType ?? "init-loader";
       // get last activity created_at timestamp
       let params = {};
       const currentActivityIds = this.getPropertyActivityIdsByIssueId(issueId);
@@ -112,8 +115,15 @@ export class IssuePropertiesActivityStore implements IIssuePropertiesActivitySto
         const currentActivity = this.getPropertyActivityById(currentActivityIds[0]); // getPropertyActivityIdsByIssueId returns sorted activities by created_at
         if (currentActivity) params = { created_at__gt: currentActivity.created_at };
       }
+
       // fetch property activities after last activity created_at timestamp
-      const issuePropertiesActivities = await this.service.fetchAll(workspaceSlug, projectId, issueId, params);
+      const issuePropertiesActivities = await this.service.fetchAll(
+        workspaceSlug,
+        projectId,
+        issueId,
+        params,
+        serviceType
+      );
       if (issuePropertiesActivities) {
         runInAction(() => {
           this.addOrUpdatePropertyActivity(issuePropertiesActivities);

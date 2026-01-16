@@ -14,10 +14,11 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
+import { EIssueServiceType } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
-import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { IssueActivityBlockComponent } from "./common";
 
@@ -40,7 +41,12 @@ export const IssueAdditionalPropertiesActivity = observer(function IssueAddition
     issue: { getIssueById },
   } = useIssueDetail();
   const { getIssuePropertyById } = useIssueTypes();
-  const { getPropertyActivityById } = useIssuePropertiesActivity();
+  const {
+    activity: {
+      issuePropertiesActivity: { getPropertyActivityById },
+    },
+  } = useIssueDetail();
+
   // activity details
   const activityDetail = getPropertyActivityById(activityId);
   if (!activityDetail || !activityDetail.issue || !activityDetail.property) return <></>;

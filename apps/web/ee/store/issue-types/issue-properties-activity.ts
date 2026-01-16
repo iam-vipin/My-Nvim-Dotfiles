@@ -16,7 +16,6 @@ import { action, computed, makeObservable, observable } from "mobx";
 // plane imports
 import type { IIssuePropertiesActivity, IUserLite, TIssuePropertiesActivity, TIssuePropertyAction } from "@plane/types";
 // plane web store
-import type { RootStore } from "@/plane-web/store/root.store";
 
 export class IssuePropertiesActivity implements IIssuePropertiesActivity {
   // properties
@@ -39,10 +38,7 @@ export class IssuePropertiesActivity implements IIssuePropertiesActivity {
   updated_at: string | undefined = undefined;
   updated_by: string | undefined = undefined;
 
-  constructor(
-    private store: RootStore,
-    protected issueActivityData: TIssuePropertiesActivity
-  ) {
+  constructor(protected issueActivityData: TIssuePropertiesActivity) {
     makeObservable(this, {
       id: observable.ref,
       old_value: observable.ref,

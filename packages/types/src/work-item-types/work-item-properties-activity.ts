@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TLoader } from "../issues/base";
+import type { TIssueServiceType, TLoader } from "../issues/base";
 import type { IUserLite } from "../users";
 
 export type TIssuePropertyAction = "created" | "updated" | "deleted";
@@ -53,6 +53,7 @@ export interface IIssuePropertiesActivityStore {
   // observables
   loader: TLoader;
   propertyActivities: Record<string, IIssuePropertiesActivity>; // activityId -> IIssuePropertiesActivity
+
   // computed functions
   getPropertyActivityIdsByIssueId: (issueId: string) => string[] | undefined;
   getPropertyActivityById: (activityId: string) => IIssuePropertiesActivity | undefined;
@@ -63,6 +64,7 @@ export interface IIssuePropertiesActivityStore {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    loaderType?: TLoader
+    loaderType?: TLoader,
+    serviceType?: TIssueServiceType
   ) => Promise<TIssuePropertiesActivity[]>;
 }

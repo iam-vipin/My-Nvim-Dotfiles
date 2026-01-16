@@ -14,9 +14,9 @@
 import type { FC } from "react";
 import Link from "next/link";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
-import { useIssuePropertiesActivity } from "@/plane-web/hooks/store";
 
 type TIssueUser = {
   activityId: string;
@@ -25,7 +25,12 @@ type TIssueUser = {
 export function IssueUser(props: TIssueUser) {
   const { activityId } = props;
   // hooks
-  const { getPropertyActivityById } = useIssuePropertiesActivity();
+  const {
+    activity: {
+      issuePropertiesActivity: { getPropertyActivityById },
+    },
+  } = useIssueDetail();
+
   const { getWorkspaceById } = useWorkspace();
   // derived values
   const activityDetail = getPropertyActivityById(activityId);

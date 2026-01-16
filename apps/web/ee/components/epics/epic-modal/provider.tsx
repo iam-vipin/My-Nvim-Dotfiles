@@ -28,10 +28,11 @@ import type {
 } from "@/components/issues/issue-modal/context";
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web components
 // plane web hooks
-import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local components
@@ -58,7 +59,12 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
   // plane web hooks
   const { isEpicEnabledForProject, getIssueTypeById, getIssueTypeProperties, getProjectEpicId, convertWorkItem } =
     useIssueTypes();
-  const { fetchPropertyActivities } = useIssuePropertiesActivity();
+  const {
+    activity: {
+      issuePropertiesActivity: { fetchPropertyActivities },
+    },
+  } = useIssueDetail(EIssueServiceType.EPICS);
+
   // derived values
   const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
   // helpers
@@ -144,7 +150,7 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
           `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${EWorkItemTypeEntity.EPIC}_${isEpicEnabled}`
         );
         // fetch property activities
-        fetchPropertyActivities(workspaceSlug, projectId, issueId);
+        fetchPropertyActivities(workspaceSlug, projectId, issueId, "init-loader", EIssueServiceType.EPICS);
         // reset issue property values
         setIssuePropertyValues({
           ...getPropertiesDefaultValues(issueType?.activeProperties ?? []),

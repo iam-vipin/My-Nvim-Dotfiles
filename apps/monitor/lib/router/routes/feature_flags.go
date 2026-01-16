@@ -92,7 +92,7 @@ func addPlansLicenseHandler(controller *fiber.App, api *prime_api.IPrimeMonitorA
 
 func addEnterpriseLicenseRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
 	controller.Post("/licenses/enterprise/activate/", handlers.GetEnterpriseLicenseActivateHandler(*api, key))
-	controller.Post("/licenses/enterprise/sync/", handlers.GetEnterpriseLicenseManualSyncHandler(*api, key))
+	controller.Post("/licenses/enterprise/sync/", handlers.GetEnterpriseLicenseSync(*api, key))
 	controller.Post("/licenses/enterprise/deactivate/", handlers.DeactivateEnterpriseLicense(*api, key))
 	controller.Post("/licenses/enterprise/modify-seats/", handlers.UpdateEnterpriseLicenseSeats(*api, key))
 	controller.Post("/licenses/enterprise/subscription-portal/", handlers.GetEnterpriseLicensePortal(*api, key))

@@ -319,6 +319,73 @@ func GetEnterpriseLicensePortal(api prime_api.IPrimeMonitorApi, key string) func
 	}
 }
 
+func GetEnterpriseLicenseSync(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		var payload prime_api.EnterpriseLicenseSyncPayload
+
+		// Parse the incoming payload
+		if err := ctx.BodyParser(&payload); err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid payload passed for enterprise license sync",
+			})
+		}
+
+		license := &db.License{}
+		record := db.Db.Model(&db.License{}).Where("product_type = ?", "ENTERPRISE").First(&license)
+
+		// No license found, exit
+		if record.Error != nil {
+			return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+				"message": "No enterprise license found for the instance",
+				"status":  false,
+			})
+		}
+
+		// Set the license key from the existing license
+		payload.LicenceKey = license.LicenseKey
+
+		// Sync with Prime
+		data, err := api.SyncEnterpriseLicense(payload)
+
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error":  err.Error,
+				"status": false,
+			})
+		}
+
+		// Use transaction to update license, users, and flags
+		txErr := db.Db.Transaction(func(tx *gorm.DB) error {
+			// Refresh enterprise license users from Prime response
+			if err := router_helpers.RefreshEnterpriseLicenseUsers(context.Background(), license, *data, tx); err != nil {
+				return err
+			}
+
+			// Refresh enterprise license feature flags (skip for airgapped)
+			if !api.IsAirgapped() {
+				if err := router_helpers.RefreshEnterpriseLicenseFeatureFlags(context.Background(), api, *license, tx); err != nil {
+					return err
+				}
+			}
+
+			return nil
+		})
+
+		if txErr != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error":  "Failed to sync enterprise license",
+				"status": false,
+			})
+		}
+
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Enterprise license synced successfully",
+			"status":  true,
+			"license": license,
+		})
+	}
+}
+
 func GetEnterpriseLicenseProrationPreview(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var payload UpdateEnterpriseLicenseSeatsPayload

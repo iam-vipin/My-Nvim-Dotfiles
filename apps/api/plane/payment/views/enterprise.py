@@ -193,12 +193,30 @@ class InstanceLicenseSyncEndpoint(BaseAPIView):
     def post(self, request):
         # Check if the request is authorized
         if settings.PAYMENT_SERVER_BASE_URL:
+            # Get all active users (enterprise is instance-wide)
+            users = (
+                User.objects.filter(is_active=True, is_bot=False)
+                .annotate(
+                    user_email=F("email"),
+                    user_id=F("id"),
+                    user_role=Value(20),  # Default role for enterprise users
+                )
+                .values("user_email", "user_id", "user_role")
+            )
+
+            # Convert user_id to string
+            for user in users:
+                user["user_id"] = str(user["user_id"])
+
             try:
                 response = requests.post(
                     f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/enterprise/sync/",
                     headers={
                         "content-type": "application/json",
                         "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                    json={
+                        "members_list": users,
                     },
                 )
                 # raise an exception if the request is not successful

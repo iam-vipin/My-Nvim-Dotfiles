@@ -16,13 +16,13 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 
 import { PlusIcon, LayersIcon } from "@plane/propel/icons";
-import { Button } from "@plane/propel/button";
 // components
 import { Loader } from "@plane/ui";
 import { useIntakeTypeForms } from "@/plane-web/hooks/store/use-intake-type-forms";
 import { TypeFormCreateUpdateRoot } from "./create-update-form";
 import { TypeFormListItem } from "./form-list-item";
 import { SelectTypesModal } from "./select-types-modal";
+import { IconButton } from "@plane/propel/icon-button";
 
 export function TypeFormsRoot() {
   // router
@@ -59,61 +59,53 @@ export function TypeFormsRoot() {
   };
 
   return (
-    <>
-      <div className="pb-3 space-y-2">
-        <div className="px-3 border-t border-subtle">
-          <div className="flex gap-2 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <LayersIcon className="size-4" />{" "}
-              <span className="text-11 font-medium text-secondary">Create Forms using work item types</span>
-            </div>
-            <Button variant="ghost" className="px-0" onClick={() => setIsSelectTypesModalOpen(true)}>
-              <PlusIcon className="size-4" />
-            </Button>
-          </div>
+    <div className="border-t border-subtle pb-3">
+      <div className="flex gap-2 px-3 pt-3 items-center justify-between">
+        <div className="flex items-center gap-2">
+          <LayersIcon className="size-4" />{" "}
+          <span className="text-11 font-medium text-secondary">Create Forms using work item types</span>
         </div>
-        {/* Existing forms */}
-        {isLoading ? (
-          <div className="px-3">
-            <Loader className="space-y-3">
-              <Loader.Item height="120px" />
-              <Loader.Item height="120px" />
-            </Loader>
-          </div>
-        ) : (
-          projectFormIds.length > 0 && (
-            <div className="space-y-3 p-3">
-              {projectFormIds.map((formId) => (
-                <TypeFormListItem
-                  key={formId}
-                  formId={formId}
-                  projectId={projectId.toString()}
-                  workspaceSlug={workspaceSlug.toString()}
-                />
-              ))}
-            </div>
-          )
-        )}
-        {/* Create forms */}
-        {formCreateList.length > 0 && (
-          <div className="space-y-3 p-3">
-            {formCreateList.map((typeId) => (
-              <TypeFormCreateUpdateRoot
-                key={typeId}
-                typeId={typeId}
-                handleRemove={() => handleRemoveForm(typeId)}
-                onClose={() => handleRemoveForm(typeId)}
+        <IconButton size="sm" variant={"ghost"} icon={PlusIcon} onClick={() => setIsSelectTypesModalOpen(true)} />
+      </div>
+      {/* Existing forms */}
+      {isLoading ? (
+        <Loader className="flex flex-col gap-3 px-3 pt-3">
+          <Loader.Item height="120px" />
+          <Loader.Item height="120px" />
+        </Loader>
+      ) : (
+        projectFormIds.length > 0 && (
+          <div className="flex flex-col gap-3 px-3 pt-3">
+            {projectFormIds.map((formId) => (
+              <TypeFormListItem
+                key={formId}
+                formId={formId}
+                projectId={projectId.toString()}
+                workspaceSlug={workspaceSlug.toString()}
               />
             ))}
           </div>
-        )}
-      </div>
+        )
+      )}
+      {/* Create forms */}
+      {formCreateList.length > 0 && (
+        <div className="flex flex-col gap-3 px-3 pt-3">
+          {formCreateList.map((typeId) => (
+            <TypeFormCreateUpdateRoot
+              key={typeId}
+              typeId={typeId}
+              handleRemove={() => handleRemoveForm(typeId)}
+              onClose={() => handleRemoveForm(typeId)}
+            />
+          ))}
+        </div>
+      )}
 
       <SelectTypesModal
         isOpen={isSelectTypesModalOpen}
         onClose={() => setIsSelectTypesModalOpen(false)}
         onSelect={handleSelectType}
       />
-    </>
+    </div>
   );
 }

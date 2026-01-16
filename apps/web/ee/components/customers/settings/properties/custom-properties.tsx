@@ -53,9 +53,9 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
   const [customerPropertyCreateList, setCustomerPropertyCreateList] = useState<TCustomerPropertyCreateList[]>([]);
   // hooks
   const { t } = useTranslation();
-  const { properties, getPropertyById, createProperty, deleteProperty } = useCustomerProperties();
+  const { sortedProperties, getPropertyById, createProperty, deleteProperty } = useCustomerProperties();
   // derived
-  const isAnyPropertiesAvailable = customerPropertyCreateList.length > 0 || properties.length > 0;
+  const isAnyPropertiesAvailable = customerPropertyCreateList.length > 0 || sortedProperties.length > 0;
 
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -136,7 +136,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
                 customPropertyOperations={customPropertyOperations}
                 containerRef={containerRef}
                 lastElementRef={lastElementRef}
-                properties={properties}
+                properties={sortedProperties}
                 isUpdateAllowed={false}
                 trackers={{
                   create: {

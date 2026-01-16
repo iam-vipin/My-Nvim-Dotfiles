@@ -67,8 +67,10 @@ class IntakeFormSettingsEndpoint(BaseAPIView):
         )
 
         # Get the issue properties
-        issue_properties = IssueProperty.objects.filter(id__in=intake_form_fields).prefetch_related(
-            Prefetch("options", queryset=IssuePropertyOption.objects.all())
+        issue_properties = (
+            IssueProperty.objects.filter(id__in=intake_form_fields)
+            .prefetch_related(Prefetch("options", queryset=IssuePropertyOption.objects.all()))
+            .order_by("sort_order")
         )
         issue_properties_serializer = IntakeFormFieldSerializer(issue_properties, many=True)
         issue_properties_data = issue_properties_serializer.data

@@ -75,8 +75,14 @@ export const PageActions = observer(function PageActions(props: Props) {
   });
 
   // derived values
-  const { access, archived_at, canCurrentUserChangeAccess, canCurrentUserDeletePage, canCurrentUserDuplicatePage } =
-    page;
+  const {
+    access,
+    archived_at,
+    canCurrentUserChangeAccess,
+    canCurrentUserDeletePage,
+    canCurrentUserDuplicatePage,
+    isContentEditable,
+  } = page;
 
   const isProjectPage = page.project_ids && page.project_ids.length > 0;
   // Base menu items that are common across all implementations
@@ -89,7 +95,7 @@ export const PageActions = observer(function PageActions(props: Props) {
         },
         title: access === EPageAccess.PUBLIC ? "Make private" : isProjectPage ? "Make public" : "Open to workspace",
         icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
-        shouldRender: canCurrentUserChangeAccess && !archived_at,
+        shouldRender: canCurrentUserChangeAccess && !archived_at && isContentEditable,
       },
       {
         key: "open-in-new-tab",

@@ -256,21 +256,6 @@ class WorkspacePageViewSet(BaseViewSet):
         page = self.get_queryset().filter(pk=page_id).first()
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
-        if not page:
-            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        if page.parent_id and (
-            not check_workspace_feature_flag(
-                feature_key=FeatureFlag.NESTED_PAGES,
-                slug=slug,
-                user_id=str(request.user.id),
-            )
-        ):
-            return Response(
-                {"error": "You are not authorized to access this page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if page is None:
             return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         else:

@@ -88,11 +88,6 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
     name,
   } = page ?? {};
 
-  const shouldHideListItem = useMemo(
-    () => !isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id,
-    [isNestedPagesEnabled, workspaceSlug, page?.parent_id]
-  );
-
   const isDescriptionEmpty = useMemo(
     () => is_description_empty || description_html === "<p></p>",
     [is_description_empty, description_html]

@@ -294,18 +294,6 @@ class PageExtendedViewSet(BaseViewSet):
         the requesting user then dont show the page
         """
 
-        if page.parent_id and (
-            not check_workspace_feature_flag(
-                feature_key=FeatureFlag.NESTED_PAGES,
-                slug=slug,
-                user_id=str(request.user.id),
-            )
-        ):
-            return Response(
-                {"error": "You are not authorized to access this page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -323,23 +311,20 @@ class PageExtendedViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if page is None:
-            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            issue_ids = PageLog.objects.filter(page_id=page_id, entity_name="issue").values_list(
-                "entity_identifier", flat=True
+        issue_ids = PageLog.objects.filter(page_id=page_id, entity_name="issue").values_list(
+            "entity_identifier", flat=True
+        )
+        data = PageDetailSerializer(page).data
+        data["issue_ids"] = issue_ids
+        if track_visit:
+            recent_visited_task.delay(
+                slug=slug,
+                entity_name="page",
+                entity_identifier=page_id,
+                user_id=request.user.id,
+                project_id=project_id,
             )
-            data = PageDetailSerializer(page).data
-            data["issue_ids"] = issue_ids
-            if track_visit:
-                recent_visited_task.delay(
-                    slug=slug,
-                    entity_name="page",
-                    entity_identifier=page_id,
-                    user_id=request.user.id,
-                    project_id=project_id,
-                )
-            return Response(data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
 
     def lock(self, request, slug, project_id, page_id):
         action = request.data.get("action", "current-page")
@@ -789,14 +774,12 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.get(
-                Q(owned_by=self.request.user) | Q(access=0),
-                pk=page_id,
-                workspace__slug=slug,
-                project_pages__project_id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
 
         if page.is_locked:

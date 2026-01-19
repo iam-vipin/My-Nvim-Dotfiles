@@ -13,7 +13,7 @@ x-plane-commercial: &plane
 x-monitor-env: &monitor-env
   SERVICE_HTTP_WEB: web:3000
   SERVICE_HTTP_API: api:8000
-  SERVICE_HTTP_LIVE: live:3000
+  SERVICE_HTTP_LIVE: live:3000/live/health
   SERVICE_HTTP_PROXY: proxy:80
   SERVICE_HTTP_MINIO: plane-minio:9090
   SERVICE_TCP_REDIS: plane-redis:6379

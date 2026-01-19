@@ -33,6 +33,36 @@ export default defineConfig(() => ({
   },
   server: {
     host: "127.0.0.1",
+    warmup: {
+      clientFiles: ["./app/root.tsx", "./app/entry.client.tsx", "./styles/globals.css"],
+    },
+  },
+  css: {
+    devSourcemap: false,
+  },
+  optimizeDeps: {
+    exclude: ["@plane/tailwind-config"],
+    include: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "mobx",
+      "mobx-react",
+      "mobx-utils",
+      "react-router",
+      "clsx",
+      "lucide-react",
+      "swr",
+      "axios",
+      "lodash-es",
+      "date-fns",
+      "uuid",
+      "@headlessui/react",
+      "react-hook-form",
+      "fuse.js",
+      "cmdk",
+    ],
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));

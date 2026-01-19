@@ -15,10 +15,10 @@ import { useState } from "react";
 import { StopCircle, Download, LockOpen } from "lucide-react";
 import { LockIcon, EditIcon, TrashIcon, CommentReplyIcon } from "@plane/propel/icons";
 // plane imports
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 // components
 import { useQuickActionsFactory as useCoreQuickActionsFactory } from "@/components/common/quick-actions-factory";
@@ -32,6 +32,7 @@ import { ExportModal } from "@/plane-web/components/issues/issue-layouts/export-
 import type { TExportProvider } from "@/plane-web/components/issues/issue-layouts/export-modal";
 import { useFlag } from "@/plane-web/hooks/store";
 import exportService from "@/plane-web/services/export.service";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type FeatureResult = {
   items: TContextMenuItem[];
@@ -43,6 +44,11 @@ type FeatureResult = {
  */
 export const useQuickActionsFactory = () => {
   const coreFactory = useCoreQuickActionsFactory();
+  const { allowPermissions } = useUserPermissions();
+  const hasMemberPermissions = allowPermissions(
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return {
     ...coreFactory,
@@ -127,7 +133,7 @@ export const useQuickActionsFactory = () => {
       const richFilters = getFilter(EIssuesStoreType.CYCLE, props.cycleId)?.getExternalExpression();
 
       const { issuesFilter: _issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS);
+      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {
         try {
@@ -195,7 +201,7 @@ export const useQuickActionsFactory = () => {
       const [isOpen, setIsOpen] = useState(false);
       const { getFilter } = useWorkItemFilters();
       const richFilters = getFilter(EIssuesStoreType.MODULE, props.moduleId)?.getExternalExpression();
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS);
+      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {
         try {
@@ -274,6 +280,7 @@ export const useQuickActionsFactory = () => {
               title: "Success!",
               message: props.isLocked ? "View unlocked successfully." : "View locked successfully.",
             });
+            return;
           })
           .catch(() => {
             setToast({
@@ -308,7 +315,7 @@ export const useQuickActionsFactory = () => {
       const { getFilter } = useWorkItemFilters();
       const richFilterEntityType = props.projectId ? EIssuesStoreType.PROJECT_VIEW : EIssuesStoreType.GLOBAL;
       const richFilters = getFilter(richFilterEntityType, props.viewId)?.getExternalExpression();
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS);
+      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {
         try {
@@ -379,7 +386,7 @@ export const useQuickActionsFactory = () => {
       const { getFilter } = useWorkItemFilters();
       const richFilterEntityType = props.storeType === "EPIC" ? EIssuesStoreType.EPIC : EIssuesStoreType.PROJECT;
       const richFilters = getFilter(richFilterEntityType, props.projectId)?.getExternalExpression();
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS);
+      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {
         try {
@@ -437,7 +444,7 @@ export const useQuickActionsFactory = () => {
     // EE feature: Export for Intake
     useIntakeExportFeature: (props: { workspaceSlug: string; projectId: string }): FeatureResult => {
       const [isOpen, setIsOpen] = useState(false);
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS);
+      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {
         try {

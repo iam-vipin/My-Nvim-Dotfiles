@@ -11,22 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { CircleAlert } from "lucide-react";
-// types
+// plane imports
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
-// ui
-import { Collapsible, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// helpers
+import { useTranslation } from "@plane/i18n";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web hooks
+// components
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+// plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+// local imports
 import { DeleteWorkspaceModal } from "./delete-workspace-modal";
 
 type TDeleteWorkspace = {
@@ -38,13 +38,14 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
   // router
   const { workspaceSlug } = useParams();
   // states
-  const [isOpen, setIsOpen] = useState(false);
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
   const [activeSubscriptionModal, setActiveSubscriptionModal] = useState(false);
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   // derived values
   const isAnySubscriptionActive = !currentWorkspaceSubscribedPlanDetail?.can_delete_workspace;
+  // translation
+  const { t } = useTranslation();
 
   const handleDeleteWorkspace = () => {
     if (isAnySubscriptionActive) {
@@ -65,7 +66,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
         <div className="p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4">
           <span
             className={cn(
-              "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-accent-primary/20 text-accent-primary"
+              "shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-accent-primary/20 text-accent-primary"
             )}
           >
             <CircleAlert className="size-5" aria-hidden="true" />
@@ -96,35 +97,15 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
       />
-      <div className="border-t border-subtle">
-        <div className="w-full">
-          <Collapsible
-            isOpen={isOpen}
-            onToggle={() => setIsOpen(!isOpen)}
-            className="w-full"
-            buttonClassName="flex w-full items-center justify-between py-4"
-            title={
-              <>
-                <span className="text-16 tracking-tight">Delete this workspace</span>
-                {isOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
-              </>
-            }
-          >
-            <div className="flex flex-col gap-4">
-              <span className="text-14 tracking-tight">
-                Tread carefully here. You delete your workspace, you lose all your data, your members can{"’"}t access
-                projects and pages, and we can{"’"}t retrieve any of it for you. Proceed only if you are sure you want
-                your workspace deleted.
-              </span>
-              <div>
-                <Button variant="error-fill" onClick={handleDeleteWorkspace}>
-                  Delete this workspace
-                </Button>
-              </div>
-            </div>
-          </Collapsible>
-        </div>
-      </div>
+      <SettingsBoxedControlItem
+        title={t("workspace_settings.settings.general.delete_workspace")}
+        description="Tread carefully here. You delete your workspace, you lose all your data, your members can't access projects and pages, and we can't retrieve any of it for you. Proceed only if you are sure you want your workspace deleted."
+        control={
+          <Button variant="error-outline" onClick={handleDeleteWorkspace}>
+            {t("delete")}
+          </Button>
+        }
+      />
     </>
   );
 });

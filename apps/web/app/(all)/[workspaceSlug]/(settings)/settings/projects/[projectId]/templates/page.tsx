@@ -24,7 +24,7 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web components
+// plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import {
   CreateTemplatesButton,
@@ -32,7 +32,9 @@ import {
   ProjectTemplatesSettingsRoot,
 } from "@/plane-web/components/templates/settings";
 import { useFlag, usePageTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
+// local imports
 import type { Route } from "./+types/page";
+import { TemplatesProjectSettingsHeader } from "./header";
 
 function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -69,7 +71,7 @@ function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<TemplatesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <SettingsHeading
         title={t("project_settings.templates.heading")}

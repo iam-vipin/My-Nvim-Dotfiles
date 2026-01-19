@@ -11,25 +11,27 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import Link from "next/link";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-// plane web components
+import { getButtonStyling } from "@plane/propel/button";
+import { cn } from "@plane/utils";
+// plane web imports
 import type { ImporterProps } from "@/plane-web/components/importers";
 import { useFlag } from "@/plane-web/hooks/store";
+// local imports
 import { BetaBadge } from "../common/beta";
 
-export type ImportersListItemProps = {
+type Props = {
   provider: ImporterProps;
   workspaceSlug: string;
 };
 
-export function ImportersListItem(props: ImportersListItemProps) {
+export function ImportersListItem(props: Props) {
   const { provider, workspaceSlug } = props;
-
+  // translation
   const { t } = useTranslation();
-
+  // derived values
   const isFeatureEnabled = useFlag(workspaceSlug, provider.flag);
   const importerUnderFlags = ["notion", "confluence"];
 
@@ -38,25 +40,27 @@ export function ImportersListItem(props: ImportersListItemProps) {
   }
 
   return (
-    <div
-      key={provider.key}
-      className="flex flex-col w-full md:w-[30%] justify-between gap-2 rounded-md border border-subtle bg-surface-1  px-4 py-6 flex-shrink-0 overflow-hidden"
-    >
-      <div className="relative h-12 w-12 flex-shrink-0 bg-layer-1 rounded-sm flex items-center justify-center">
-        <img src={provider.logo} alt={`${provider.title} Logo`} className="w-full h-full object-cover" />
+    <div className="flex flex-col gap-3 rounded-md bg-layer-2 border border-subtle-1 p-4">
+      <div className="shrink-0 size-10 bg-layer-3 rounded-lg grid place-items-center">
+        <img src={provider.logo} alt={`${provider.title} Logo`} className="size-6" />
       </div>
-      <div className="relative flex items-center gap-2">
-        <h3 className="flex items-center gap-4 text-13 font-medium">{provider.title}</h3>
-        {provider.beta && <BetaBadge />}
+      <div className="flex flex-col gap-y-1">
+        <div className="flex items-center gap-2">
+          <h3 className="text-body-sm-medium">{provider.title}</h3>
+          {provider.beta && (
+            <span className="shrink-0">
+              <BetaBadge />
+            </span>
+          )}
+        </div>
+        <p className="text-13 tracking-tight text-secondary truncate">{t(provider.i18n_description)}</p>
       </div>
-      <p className="text-13 tracking-tight text-secondary truncate">{t(provider.i18n_description)}</p>
-      <div className="flex-shrink-0">
-        <Link href={`/${workspaceSlug}/settings/imports/${provider.key}`}>
-          <span>
-            <Button variant="secondary">{t("importers.import")}</Button>
-          </span>
-        </Link>
-      </div>
+      <Link
+        href={`/${workspaceSlug}/settings/imports/${provider.key}`}
+        className={cn("shrink-0 self-start", getButtonStyling("secondary", "base"))}
+      >
+        {t("importers.import")}
+      </Link>
     </div>
   );
 }

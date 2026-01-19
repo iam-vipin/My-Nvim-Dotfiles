@@ -118,7 +118,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
             </Tooltip>
           </div>
         )}
-        <UserMenuRoot size="xs" />
+        <UserMenuRoot />
       </div>
     </div>
   );

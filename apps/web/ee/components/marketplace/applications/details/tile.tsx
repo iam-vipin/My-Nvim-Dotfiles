@@ -119,19 +119,19 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
   }
 
   return (
-    <div className="flex flex-col items-start justify-between border border-subtle p-4 rounded-md gap-2 h-full">
+    <div className="flex flex-col gap-3 rounded-md bg-layer-2 border border-subtle-1 p-4">
+      <div className="shrink-0 size-10 bg-layer-3 rounded-lg grid place-items-center">
+        <AppTileLogo app={app} />
+      </div>
       <div className="flex flex-col space-y-1 flex-1 w-full">
-        <div className="flex  gap-2 justify-between w-full">
+        <div className="flex gap-2 justify-between w-full">
           <div className="flex flex-col gap-2 w-full">
             <div className="flex flex-1 justify-between">
-              <div className="rounded-md size-12 justify-center items-center flex overflow-hidden w-10 h-10 border border-subtle">
-                <AppTileLogo app={app} />
-              </div>
               {(!isFreePlan || app.is_owned) && (
                 <div className="flex gap-1 items-center h-fit">
                   {/* Installed Badge */}
                   {app.is_installed && !app.is_default && (
-                    <div className="px-2  text-caption-sm-medium bg-toast-border-success text-toast-text-success rounded-full h-fit">
+                    <div className="px-2 text-caption-sm-medium bg-toast-border-success text-toast-text-success rounded-full h-fit">
                       {t("workspace_settings.settings.applications.installed")}
                     </div>
                   )}
@@ -153,25 +153,24 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
             <div className="text-body-sm-medium">{app.name}</div>
           </div>
         </div>
-
         <div className="text-body-xs-regular text-secondary flex-1 line-clamp-2">{t(app.short_description)}</div>
       </div>
-
-      <div className="flex items-center space-x-1 mt-3">
+      <div className="flex items-center gap-x-1 flex-wrap">
         {isFreePlan && !app.is_owned ? (
-          <button
-            className="cursor-pointer flex items-center gap-1 text-body-xs-medium text-accent-primary"
+          <Button
+            variant="link"
             onClick={() => togglePaidPlanModal(true)}
+            className="px-0"
+            prependIcon={<Crown className="size-3.5" />}
           >
-            <Crown className="h-3.5 w-3.5" />
-            <div>{t("common.upgrade")}</div>
-          </button>
+            {t("common.upgrade")}
+          </Button>
         ) : (
           <>
             {showInstallButton && (
               <Button
                 variant={app.is_installed ? "link" : "secondary"}
-                className={cn(app.is_installed && "p-0 hover:underline font-semibold text-accent-primary")}
+                className={cn(app.is_installed && "p-0")}
                 onClick={handleInstall}
               >
                 {app.is_installed
@@ -179,7 +178,6 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
                   : t("workspace_settings.settings.applications.install")}
               </Button>
             )}
-
             {showConfigureButton &&
               (isNotSupported ? (
                 <Tooltip
@@ -191,18 +189,13 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
                         })
                   }
                 >
-                  <div className="flex gap-1.5 cursor-help shrink-0 items-center text-secondary">
-                    <InfoIcon height={12} width={12} />
-                    <div className="text-body-xs-medium text-tertiary">{t("integrations.not_configured")}</div>
+                  <div className="shrink-0 flex items-center gap-1 cursor-help text-tertiary">
+                    <InfoIcon className="shrink-0 size-3.5" />
+                    <span className="text-body-xs-medium">{t("integrations.not_configured")}</span>
                   </div>
                 </Tooltip>
               ) : (
-                <Button
-                  variant="ghost"
-                  onClick={handleConfigure}
-                  className="hover:underline"
-                  appendIcon={<ArrowRight size={12} />}
-                >
+                <Button variant="ghost" onClick={handleConfigure} appendIcon={<ArrowRight className="size-3.5" />}>
                   {t("workspace_settings.settings.applications.configure")}
                 </Button>
               ))}

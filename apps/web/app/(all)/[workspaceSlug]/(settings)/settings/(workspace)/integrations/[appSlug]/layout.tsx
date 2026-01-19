@@ -12,15 +12,15 @@
  */
 
 import Link from "next/link";
-
 import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
+// local imports
 import type { Route } from "./+types/layout";
 
 function IntegrationLayout({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   return (
-    <div className="w-full h-full">
+    <>
       <Link
         href={`/${workspaceSlug}/settings/integrations`}
         className="flex items-center gap-2 text-body-xs-semibold text-tertiary mb-6"
@@ -29,7 +29,7 @@ function IntegrationLayout({ params }: Route.ComponentProps) {
         Back to integrations
       </Link>
       <Outlet />
-    </div>
+    </>
   );
 }
 

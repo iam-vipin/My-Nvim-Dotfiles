@@ -31,13 +31,13 @@ export const PlanCard = observer(function PlanCard({ planVariant, planDescriptio
   const isInTrialPeriod = getIsInTrialPeriod(false);
 
   return (
-    <div className="flex gap-2 font-medium items-center justify-between">
+    <div className="w-full bg-layer-2 rounded-lg border border-subtle px-4 py-3 flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 md:gap-8">
       <div className="flex flex-col gap-1.5">
-        <h4 className="text-18 leading-6 font-bold text-accent-primary">
+        <h4 className="text-body-sm-medium text-accent-primary">
           {planName}
           {isInTrialPeriod && " trial"}
         </h4>
-        <div className="text-13 text-secondary font-medium">{planDescription}</div>
+        <div className="text-caption-md-regular text-tertiary">{planDescription}</div>
       </div>
       {button && <div className="flex flex-col gap-1 items-center justify-center">{button}</div>}
     </div>

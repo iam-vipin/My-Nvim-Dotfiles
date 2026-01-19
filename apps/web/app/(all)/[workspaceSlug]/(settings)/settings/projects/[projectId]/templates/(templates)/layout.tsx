@@ -23,7 +23,9 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
 import type { Route } from "./+types/layout";
+import { TemplatesProjectSettingsHeader } from "../header";
 
 function ProjectLevelTemplatesLayout({ params }: Route.ComponentProps) {
   // router params
@@ -38,7 +40,7 @@ function ProjectLevelTemplatesLayout({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<TemplatesProjectSettingsHeader />}>
       <div className="w-full h-full">
         <Link
           href={`/${workspaceSlug}/settings/projects/${projectId}/templates`}

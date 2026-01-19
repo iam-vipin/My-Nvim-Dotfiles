@@ -21,6 +21,7 @@ import {
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useCustomerProperties } from "@/plane-web/hooks/store/customers/use-customer-properties";
 import {} from "mobx";
+import { SettingsHeading2 } from "@/components/settings/heading-2";
 
 type TCustomerSettingsRoot = {
   workspaceId: string;
@@ -36,16 +37,22 @@ export const CustomerSettingsRoot = observer(function CustomerSettingsRoot(props
   // derived values
   const isLoader = loader || customerPropertiesLoader;
   return (
-    <div className="space-y-3 space-x pt-3">
-      {isCustomersFeatureEnabled ? (
-        isLoader ? (
-          <CustomerPropertiesLoader />
+    <div className="mt-12">
+      <SettingsHeading2
+        title="Custom properties"
+        description="Customize customers properties to match your projects unique work structure"
+      />
+      <div className="mt-4">
+        {isCustomersFeatureEnabled ? (
+          isLoader ? (
+            <CustomerPropertiesLoader />
+          ) : (
+            <CustomerPropertiesRoot />
+          )
         ) : (
-          <CustomerPropertiesRoot />
-        )
-      ) : (
-        <CustomerSettingsDisabled toggleCustomersFeature={toggleCustomersFeature} />
-      )}
+          <CustomerSettingsDisabled toggleCustomersFeature={toggleCustomersFeature} />
+        )}
+      </div>
     </div>
   );
 });

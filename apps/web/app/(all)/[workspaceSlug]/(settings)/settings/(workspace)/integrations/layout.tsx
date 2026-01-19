@@ -14,10 +14,12 @@
 import { Outlet } from "react-router";
 // components
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// local imports
+import { IntegrationsWorkspaceSettingsHeader } from "./header";
 
 function IntegrationsLayout() {
   return (
-    <SettingsContentWrapper size="md">
+    <SettingsContentWrapper header={<IntegrationsWorkspaceSettingsHeader />}>
       <Outlet />
     </SettingsContentWrapper>
   );

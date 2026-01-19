@@ -32,7 +32,10 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { PiChatUpgrade } from "@/plane-web/components/pi-chat/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import type { Route } from "./+types/page";
+import { PlaneAIWorkspaceSettingsHeader } from "./header";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -77,7 +80,7 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
   };
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<PlaneAIWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <SettingsHeading title="Plane AI" description={t("workspace_settings.settings.plane-intelligence.description")} />
       <WithFeatureFlagHOC
@@ -85,20 +88,12 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
         fallback={<PiChatUpgrade />}
         workspaceSlug={workspaceSlug}
       >
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle w-full">
-          <div className="flex items-center gap-4">
-            <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
-              <PiIcon className="size-5 text-tertiary" />
-            </div>
-            <div className="leading-tight">
-              <h5 className="font-medium">Turn on AI for this workspace.</h5>
-              <span className="text-placeholder text-13">Your new smart teammate, ready when you are. </span>
-            </div>
-          </div>
-
-          <div>
-            <ToggleSwitch value={isPlaneIntelligenceFeatureEnabled} onChange={toggleTeamsFeature} size="sm" />
-          </div>
+        <div className="mt-6">
+          <SettingsBoxedControlItem
+            title="Turn on AI for this workspace."
+            description="Your new smart teammate, ready when you are."
+            control={<ToggleSwitch value={isPlaneIntelligenceFeatureEnabled} onChange={toggleTeamsFeature} size="sm" />}
+          />
         </div>
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>

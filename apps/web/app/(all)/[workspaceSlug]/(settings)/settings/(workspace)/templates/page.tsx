@@ -14,14 +14,14 @@
 import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
-// component
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-// store hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
@@ -32,7 +32,9 @@ import {
   WorkspaceTemplatesSettingsRoot,
 } from "@/plane-web/components/templates/settings";
 import { useFlag, useProjectTemplates, useWorkItemTemplates, usePageTemplates } from "@/plane-web/hooks/store";
+// local imports
 import type { Route } from "./+types/page";
+import { TemplatesWorkspaceSettingsHeader } from "./header";
 
 function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -65,7 +67,7 @@ function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<TemplatesWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <SettingsHeading
         title={t("workspace_settings.settings.templates.heading")}

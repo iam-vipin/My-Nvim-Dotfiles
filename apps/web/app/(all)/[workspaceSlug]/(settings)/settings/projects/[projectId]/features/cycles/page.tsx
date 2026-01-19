@@ -30,6 +30,7 @@ import { AutoScheduleCycles } from "@/plane-web/components/cycles/settings";
 // plane web imports
 import { PROJECT_BASE_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 import type { Route } from "./+types/page";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function CyclesFeatureSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
@@ -73,33 +74,30 @@ function CyclesFeatureSettingsPage({ params }: Route.ComponentProps) {
           </div>
         </Link>
       </div>
-
       <SettingsHeading
         title="Cycles"
         description="Schedule work in flexible periods that adapt to this project's unique rhythm and pace."
       />
-
-      <div className="gap-x-8 gap-y-2 border-b border-subtle bg-surface-1 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded-sm bg-layer-1 p-3">{cyclesIcon}</div>
-            <div>
-              <h4 className="text-13 font-medium leading-5">Enable cycles</h4>
-              <p className="text-13 leading-5 tracking-tight text-tertiary">Plan work in focused timeframes.</p>
-            </div>
-          </div>
-
-          <ToggleSwitch
-            value={!!currentProjectDetails?.cycle_view}
-            onChange={handleToggle}
-            disabled={!canPerformProjectAdminActions}
-            size="sm"
-          />
-        </div>
+      <div className="mt-6">
+        <SettingsBoxedControlItem
+          title="Enable cycles"
+          description="Plan work in focused timeframes."
+          control={
+            <ToggleSwitch
+              value={!!currentProjectDetails?.cycle_view}
+              onChange={handleToggle}
+              disabled={!canPerformProjectAdminActions}
+              size="sm"
+            />
+          }
+        />
       </div>
-
       {/* Auto-schedule cycles configuration */}
-      {currentProjectDetails?.cycle_view && <AutoScheduleCycles />}
+      {currentProjectDetails?.cycle_view && (
+        <div className="mt-12">
+          <AutoScheduleCycles />
+        </div>
+      )}
     </SettingsContentWrapper>
   );
 }

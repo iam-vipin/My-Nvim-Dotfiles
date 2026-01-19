@@ -27,7 +27,7 @@ import { EFileAssetType } from "@plane/types";
 import { cn, Dropdown, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
-import { SettingsHeading } from "@/components/settings/heading";
+import { SettingsHeading2 } from "@/components/settings/heading-2";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -183,8 +183,8 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
 
   return (
     <form onSubmit={handleAppFormSubmit}>
-      <div className="flex justify-between items-center">
-        <SettingsHeading
+      <div className="flex justify-between items-center gap-4">
+        <SettingsHeading2
           title={
             !watch("id")
               ? t("workspace_settings.settings.applications.build_your_own_app")
@@ -193,9 +193,8 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
         />
         <Button
           type="button"
-          className="flex items-center gap-2 hover:bg-surface-1"
           variant="ghost"
-          prependIcon={<Book className="h-4 shrink-0" />}
+          prependIcon={<Book />}
           onClick={() => {
             window.open("https://developers.plane.so/api-reference/byoa/build-plane-app", "_blank");
           }}
@@ -203,8 +202,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
           {t("docs")}
         </Button>
       </div>
-
-      <div className="space-y-5 flew-grow w-full">
+      <div className="flex flex-col mt-4 w-full">
         <FormSection title={"Basic information"}>
           <AppImageUploadModal
             isOpen={isImageModalOpen}
@@ -215,7 +213,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
             entityType={EFileAssetType.OAUTH_APP_LOGO}
           />
 
-          <div className="flex  gap-4">
+          <div className="flex gap-4">
             <div className="space-y-2 size-14">
               {watch("logo_url") ? (
                 <img

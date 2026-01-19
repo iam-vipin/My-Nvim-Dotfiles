@@ -30,6 +30,8 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { ProjectUpdatesUpgrade } from "@/plane-web/components/project-overview/upgrade";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import type { Route } from "./+types/page";
+import { ProjectUpdatesProjectSettingsHeader } from "./header";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function UpdatesSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -76,37 +78,29 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
   };
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<ProjectUpdatesProjectSettingsHeader />}>
       <div className="w-full">
         <SettingsHeading
           title={t("project_settings.project_updates.heading")}
           description={t("project_settings.project_updates.description")}
         />
-        <WithFeatureFlagHOC flag="PROJECT_UPDATES" fallback={<ProjectUpdatesUpgrade />} workspaceSlug={workspaceSlug}>
-          <>
-            <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle">
-              <div className="flex items-center gap-4">
-                <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
-                  <UpdatesIcon className="size-5 text-tertiary" />
-                </div>
-                <div className="leading-tight">
-                  <h5 className="font-medium">Turn on Project Updates</h5>
-                  <span className="text-placeholder text-13">
-                    See all updates on demand from anyone in this project. Easily track updates across four preset
-                    categories.
-                  </span>
-                </div>
-              </div>
-              {currentProjectDetails && (
-                <ToggleSwitch
-                  value={currentProjectDetails?.["is_project_updates_enabled"]}
-                  onChange={toggleUpdatesFeature}
-                  size="sm"
-                />
-              )}
-            </div>
-          </>
-        </WithFeatureFlagHOC>
+        <div className="mt-6">
+          <WithFeatureFlagHOC flag="PROJECT_UPDATES" fallback={<ProjectUpdatesUpgrade />} workspaceSlug={workspaceSlug}>
+            <SettingsBoxedControlItem
+              title="Turn on Project Updates"
+              description="See all updates on demand from anyone in this project. Easily track updates across four preset categories."
+              control={
+                currentProjectDetails && (
+                  <ToggleSwitch
+                    value={currentProjectDetails?.["is_project_updates_enabled"]}
+                    onChange={toggleUpdatesFeature}
+                    size="sm"
+                  />
+                )
+              }
+            />
+          </WithFeatureFlagHOC>
+        </div>
       </div>
     </SettingsContentWrapper>
   );

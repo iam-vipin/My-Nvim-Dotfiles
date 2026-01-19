@@ -12,19 +12,20 @@
  */
 
 import { observer } from "mobx-react";
-
-// component
 import Link from "next/link";
 import useSWR from "swr";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-// hooks
-import SettingsHeading from "@/components/settings/heading";
+import { SettingsHeading } from "@/components/settings/heading";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
+// constants
 import { APPLICATIONS_LIST } from "@/constants/fetch-keys";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
@@ -61,11 +62,15 @@ function WorkspaceIntegrationsPage() {
     }
   );
 
-  if (!data || isLoading || !applications || !supportedIntegrations || supportedIntegrationsLoading) {
+  const areIntegrationsLoading =
+    !data || isLoading || !applications || !supportedIntegrations || supportedIntegrationsLoading;
+  const isUnauthorized = workspaceUserInfo && !canPerformWorkspaceAdminActions;
+
+  if (areIntegrationsLoading) {
     return <EmailSettingsLoader />;
   }
 
-  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
+  if (isUnauthorized) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
   }
 
@@ -74,7 +79,7 @@ function WorkspaceIntegrationsPage() {
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
         <SettingsHeading
-          title={t("workspace_settings.settings.integrations.page_title")}
+          title={t("workspace_settings.settings.integrations.title")}
           description={t("workspace_settings.settings.integrations.page_description")}
           appendToRight={
             <Link href={`/${workspaceSlug}/settings/integrations/create`} className={getButtonStyling("primary", "lg")}>
@@ -82,8 +87,9 @@ function WorkspaceIntegrationsPage() {
             </Link>
           }
         />
-        <div className="w-full border-t border-subtle pb-6" />
-        {workspaceSlug && <AppListRoot apps={applications} supportedIntegrations={supportedIntegrations} />}
+        <div className="mt-6">
+          <AppListRoot apps={applications} supportedIntegrations={supportedIntegrations} />
+        </div>
       </section>
     </>
   );

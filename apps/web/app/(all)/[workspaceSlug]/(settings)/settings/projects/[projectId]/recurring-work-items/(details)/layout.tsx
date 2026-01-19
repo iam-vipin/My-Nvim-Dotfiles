@@ -25,6 +25,7 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/layout";
+import { RecurringWorkItemsProjectSettingsHeader } from "../header";
 
 function RecurringWorkItemsDetailsLayout({ params }: Route.ComponentProps) {
   // router params
@@ -39,7 +40,7 @@ function RecurringWorkItemsDetailsLayout({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<RecurringWorkItemsProjectSettingsHeader />}>
       <div className="w-full h-full">
         <Link
           href={getRecurringWorkItemSettingsPath({ workspaceSlug, projectId })}

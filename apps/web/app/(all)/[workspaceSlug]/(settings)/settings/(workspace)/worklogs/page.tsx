@@ -17,7 +17,6 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -25,7 +24,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";
 import { useFlag } from "@/plane-web/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// local imports
 import type { Route } from "./+types/page";
+import { WorklogsWorkspaceSettingsHeader } from "./header";
 
 function WorklogsPage({ params }: Route.ComponentProps) {
   // router
@@ -45,7 +47,7 @@ function WorklogsPage({ params }: Route.ComponentProps) {
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
-    <SettingsContentWrapper size={isFeatureEnabled ? "lg" : "md"}>
+    <SettingsContentWrapper header={<WorklogsWorkspaceSettingsHeader />} hugging={isFeatureEnabled}>
       <PageHead title={pageTitle} />
       <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="ISSUE_WORKLOG" fallback={<WorkspaceWorklogsUpgrade />}>
         <WorkspaceWorklogRoot workspaceSlug={workspaceSlug} workspaceId={currentWorkspace.id} />

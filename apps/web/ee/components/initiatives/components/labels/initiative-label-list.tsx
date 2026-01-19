@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
@@ -22,11 +22,9 @@ import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TInitiativeLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
-import SettingsHeading from "@/components/settings/heading";
-
+import { SettingsHeading2 } from "@/components/settings/heading-2";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-
 // local imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -35,19 +33,17 @@ import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initia
 import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";
 import { InitiativeLabelItem } from "./initiative-label-item";
+import { Button } from "@plane/propel/button";
 
 export const InitiativeLabelList = observer(function InitiativeLabelList() {
   const { workspaceSlug } = useParams();
   const scrollToRef = useRef<HTMLDivElement>(null);
-
   // plane hooks
   const { t } = useTranslation();
-
   // states
   const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<TInitiativeLabel | null>(null);
-
   // store hooks
   const {
     initiative: { createInitiativeLabel, updateInitiativeLabel, updateInitiativeLabelPosition, getInitiativesLabels },
@@ -117,20 +113,13 @@ export const InitiativeLabelList = observer(function InitiativeLabelList() {
         data={selectDeleteLabel ?? null}
         onClose={() => setSelectDeleteLabel(null)}
       />
-      <SettingsHeading
+      <SettingsHeading2
         title={t("initiatives.initiative_settings.labels.heading")}
         description={t("initiatives.initiative_settings.labels.description")}
-        button={{
-          label: t("common.add_label"),
-          onClick: () => {
-            newLabel();
-          },
-        }}
-        showButton={isEditable}
+        control={isEditable && <Button onClick={newLabel}>{t("common.add_label")}</Button>}
         className="border-b-0"
       />
-
-      <div className="w-full bg-layer-3 rounded-lg border  border-subtle p-2">
+      <div className="mt-4 w-full bg-layer-3 rounded-lg border border-subtle p-2">
         {showLabelForm && (
           <div className="w-full rounded border border-subtle">
             <CreateUpdateInitiativeLabelInline

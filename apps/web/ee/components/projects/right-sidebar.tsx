@@ -16,11 +16,10 @@ import { usePathname } from "next/navigation";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
 // plane imports
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import { E_FEATURE_FLAGS, PROJECT_SETTINGS } from "@plane/constants";
 // plane web components
 import { ProjectMembersActivitySidebar } from "@/plane-web/components/projects/members/siderbar";
 import { useFlag } from "@/plane-web/hooks/store";
-import { PROJECT_SETTINGS } from "@/plane-web/constants";
 
 type TProjectRightSidebarProps = { workspaceSlug: string; projectId: string };
 

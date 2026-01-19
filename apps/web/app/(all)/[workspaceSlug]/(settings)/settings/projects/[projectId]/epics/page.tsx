@@ -26,7 +26,9 @@ import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { EpicsRoot } from "@/plane-web/components/epics/settings";
 import { EpicsUpgrade } from "@/plane-web/components/epics/upgrade";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+// local imports
 import type { Route } from "./+types/page";
+import { EpicsProjectSettingsHeader } from "./header";
 
 function EpicsSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -43,7 +45,7 @@ function EpicsSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<EpicsProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full overflow-hidden `}>
         <WithFeatureFlagHOC flag="EPICS" fallback={<EpicsUpgrade />} workspaceSlug={workspaceSlug}>

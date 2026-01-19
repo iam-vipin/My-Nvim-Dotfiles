@@ -35,7 +35,9 @@ import { StateWorkflowRoot } from "@/plane-web/components/workflow/page/root";
 import { WorkflowUpgrade } from "@/plane-web/components/workflow/page/upgrade";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+// local imports
 import type { Route } from "./+types/page";
+import { WorkflowsProjectSettingsHeader } from "./header";
 
 function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -99,7 +101,7 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
   };
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<WorkflowsProjectSettingsHeader />}>
       <div className="w-full h-full flex flex-col">
         <PageHead title={pageTitle} />
         <SettingsHeading
@@ -121,8 +123,7 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
             </>
           }
         />
-
-        <div className="flex-1">
+        <div className="flex-1 mt-6">
           <WithFeatureFlagHOC flag="WORKFLOWS" fallback={<WorkflowUpgrade />} workspaceSlug={workspaceSlug}>
             <StateWorkflowRoot workspaceSlug={workspaceSlug} projectId={projectId} />
           </WithFeatureFlagHOC>

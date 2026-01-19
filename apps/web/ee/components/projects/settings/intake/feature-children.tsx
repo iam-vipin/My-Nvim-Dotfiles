@@ -22,6 +22,7 @@ import { INTAKE_FEATURES_LIST, INTAKE_RESPONSIBILITY_LIST } from "@/plane-web/co
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import IntakeSubFeatures from "./intake-sub-features";
 import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";
+import { SettingsHeading2 } from "@/components/settings/heading-2";
 
 type Props = {
   currentProjectDetails: IProject;
@@ -36,8 +37,8 @@ export const IntakeFeatureChildren = observer(function IntakeFeatureChildren({
 
   return (
     <>
-      <h4 className="mt-4 mb-2 text-13 font-medium text-tertiary">Intake sources</h4>
-      <div className="px-4 rounded-sm border transition-all border-subtle-1 bg-layer-1">
+      <SettingsHeading2 title="Intake sources" />
+      <div className="mt-4 px-4 rounded-lg border transition-all border-subtle bg-layer-2">
         {isEmailEnabled || isFormEnabled ? (
           <IntakeSubFeatures projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />
         ) : (
@@ -45,7 +46,9 @@ export const IntakeFeatureChildren = observer(function IntakeFeatureChildren({
         )}
       </div>
 
-      <IntakeResponsibility projectId={currentProjectDetails?.id} featureList={INTAKE_RESPONSIBILITY_LIST} />
+      <div className="mt-12">
+        <IntakeResponsibility projectId={currentProjectDetails?.id} featureList={INTAKE_RESPONSIBILITY_LIST} />
+      </div>
     </>
   );
 });

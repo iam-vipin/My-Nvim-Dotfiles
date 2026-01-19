@@ -11,12 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+// components
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+import { SettingsHeading2 } from "@/components/settings/heading-2";
 // hooks
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -54,40 +56,43 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
     async () => workspaceSlug && projectId && getProjectEstimates(workspaceSlug, projectId)
   );
 
+  if (loader === "init-loader" || isSWRLoading) {
+    return <EstimateLoaderScreen />;
+  }
+
   return (
-    <div className="container mx-auto">
-      {loader === "init-loader" || isSWRLoading ? (
-        <EstimateLoaderScreen />
-      ) : (
-        <div className="space-y-2">
-          {/* header */}
-
-          <SettingsHeading
-            title={t("project_settings.estimates.heading")}
-            description={t("project_settings.estimates.description")}
-          />
-
+    <>
+      <div>
+        {/* header */}
+        <SettingsHeading
+          title={t("project_settings.estimates.heading")}
+          description={t("project_settings.estimates.description")}
+        />
+        <div className="mt-6">
           {/* current active estimate section */}
           {currentActiveEstimateId ? (
-            <div className="">
+            <>
               {/* estimates activated deactivated section */}
-              <div className="relative border-b border-subtle pb-4 flex justify-between items-center gap-3">
-                <div className="space-y-1">
-                  <h3 className="text-16 font-medium text-primary">{t("project_settings.estimates.title")}</h3>
-                  <p className="text-13 text-secondary">{t("project_settings.estimates.enable_description")}</p>
-                </div>
-                <EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
-              </div>
-              {/* active estimates section */}
-              <EstimateList
-                estimateIds={[currentActiveEstimateId]}
-                isAdmin={isAdmin}
-                isEstimateEnabled={Boolean(currentProjectDetails?.estimate)}
-                isEditable
-                onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
-                onDeleteClick={(estimateId: string) => setEstimateToDelete(estimateId)}
+              <SettingsBoxedControlItem
+                title={t("project_settings.estimates.title")}
+                description={t("project_settings.estimates.enable_description")}
+                control={
+                  <EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
+                }
               />
-            </div>
+              {/* active estimates section */}
+              <div className="mt-12 flex flex-col gap-y-4">
+                <SettingsHeading2 title="Estimates list" />
+                <EstimateList
+                  estimateIds={[currentActiveEstimateId]}
+                  isAdmin={isAdmin}
+                  isEstimateEnabled={Boolean(currentProjectDetails?.estimate)}
+                  isEditable
+                  onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
+                  onDeleteClick={(estimateId: string) => setEstimateToDelete(estimateId)}
+                />
+              </div>
+            </>
           ) : (
             <EmptyStateCompact
               assetKey="estimate"
@@ -104,31 +109,31 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
               rootClassName="py-20"
             />
           )}
-
           {/* archived estimates section */}
           {archivedEstimateIds && archivedEstimateIds.length > 0 && (
-            <div className="">
-              <div className="border-b border-subtle space-y-1 pb-4">
-                <h3 className="text-16 font-medium text-primary">Archived estimates</h3>
-                <p className="text-13 text-secondary">
-                  Estimates have gone through a change, these are the estimates you had in your older versions which
-                  were not in use. Read more about them&nbsp;
-                  <a
-                    href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
-                    target="_blank"
-                    className="text-accent-primary/80 hover:text-accent-primary"
-                    rel="noreferrer"
-                  >
-                    here.
-                  </a>
-                </p>
-              </div>
+            <div className="mt-12 flex flex-col gap-y-4">
+              <SettingsHeading2
+                title="Archived estimates"
+                description={
+                  <>
+                    Estimates have gone through a change, these are the estimates you had in your older versions which
+                    were not in use. Read more about them&nbsp;
+                    <a
+                      href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
+                      target="_blank"
+                      className="text-accent-primary/80 hover:text-accent-primary"
+                      rel="noreferrer"
+                    >
+                      here.
+                    </a>
+                  </>
+                }
+              />
               <EstimateList estimateIds={archivedEstimateIds} isAdmin={isAdmin} />
             </div>
           )}
         </div>
-      )}
-
+      </div>
       {/* CRUD modals */}
       <CreateEstimateModal
         workspaceSlug={workspaceSlug}
@@ -150,6 +155,6 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
         isOpen={estimateToDelete ? true : false}
         handleClose={() => setEstimateToDelete(undefined)}
       />
-    </div>
+    </>
   );
 });

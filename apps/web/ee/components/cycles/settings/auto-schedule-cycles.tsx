@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,9 +25,10 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { TCycleConfig } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { Input, ToggleSwitch, CustomSelect, Loader } from "@plane/ui";
-import { renderFormattedPayloadDate, getDate } from "@plane/utils";
+import { renderFormattedPayloadDate, getDate, cn } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 //services
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -177,23 +178,21 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
   };
 
   return (
-    <div className="space-y-2">
+    <div>
       {/* Main toggle */}
-      <div className="gap-x-8 gap-y-2 bg-surface-1 py-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h4 className="text-13 font-medium leading-5 flex items-center gap-1">
-              {t("project_settings.cycles.auto_schedule.heading")}
-              <Tooltip tooltipContent={t("project_settings.cycles.auto_schedule.tooltip")} position="right">
-                <div>
-                  <InfoIcon className="size-3 text-placeholder" />
-                </div>
-              </Tooltip>
-            </h4>
-            <p className="text-13 leading-5 tracking-tight text-tertiary">
-              {t("project_settings.cycles.auto_schedule.description")}
-            </p>
-          </div>
+      <SettingsBoxedControlItem
+        title={
+          <span className="flex items-center gap-2">
+            {t("project_settings.cycles.auto_schedule.heading")}
+            <Tooltip tooltipContent={t("project_settings.cycles.auto_schedule.tooltip")} position="right">
+              <div>
+                <InfoIcon className="size-3 text-placeholder" />
+              </div>
+            </Tooltip>
+          </span>
+        }
+        description={t("project_settings.cycles.auto_schedule.description")}
+        control={
           <div className="flex items-center gap-2">
             {isAutoScheduleEnabled && !isEdit && !isLoading && (
               <Button type="button" variant="secondary" onClick={() => setIsEdit(true)}>
@@ -202,12 +201,12 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
             )}
             <ToggleSwitch value={isAutoScheduleEnabled} onChange={toggleScheduleCycle} size="sm" />
           </div>
-        </div>
-      </div>
-
+        }
+        className={cn(isAutoScheduleEnabled && "rounded-b-none")}
+      />
       {/* Configuration form - only show when enabled */}
       {isAutoScheduleEnabled && (
-        <div className="border border-subtle-1 bg-layer-1/80 p-4 rounded-lg">
+        <div className="border border-t-0 border-subtle bg-layer-1 p-4 rounded-lg rounded-t-none">
           {isLoading ? (
             <Loader className="space-y-5">
               <div className="flex justify-between items-center">

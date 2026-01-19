@@ -16,20 +16,19 @@ import Link from "next/link";
 import { Outlet } from "react-router";
 import { SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
 import { ChevronLeftIcon } from "@plane/propel/icons";
-// hooks
+// components
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
+// local imports
 import type { Route } from "./+types/layout";
 
 function ImporterLayout({ params }: Route.ComponentProps) {
-  // router params
   const { workspaceSlug } = params;
-
-  // hooks
+  // store hooks
   const { currentWorkspace } = useWorkspace();
   const { data: currentUser } = useUser();
-
   // derived values
   const siloBaseUrl = encodeURI(SILO_BASE_URL + SILO_BASE_PATH) || undefined;
   const workspaceId = currentWorkspace?.id || undefined;
@@ -39,7 +38,7 @@ function ImporterLayout({ params }: Route.ComponentProps) {
   if (!workspaceId || !userId || !siloBaseUrl) return null;
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper>
       <Link
         href={`/${workspaceSlug}/settings/imports`}
         className="flex items-center gap-2 text-13 text-tertiary font-semibold pb-4"

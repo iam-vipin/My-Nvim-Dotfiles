@@ -28,7 +28,7 @@ export const WorkflowStateList = observer(function WorkflowStateList(props: TSta
   const { workspaceSlug, projectId, states } = props;
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {states.map((state: IState) => (
         <WorkflowStateItem
           key={state?.name}
@@ -38,6 +38,6 @@ export const WorkflowStateList = observer(function WorkflowStateList(props: TSta
           state={state}
         />
       ))}
-    </>
+    </div>
   );
 });

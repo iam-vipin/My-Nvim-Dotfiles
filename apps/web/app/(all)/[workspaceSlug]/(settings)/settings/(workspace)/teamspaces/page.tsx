@@ -31,7 +31,10 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import type { Route } from "./+types/page";
+import { TeamspacesWorkspaceSettingsHeader } from "./header";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -76,39 +79,32 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
   };
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<TeamspacesWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <SettingsHeading
         title={t("workspace_settings.settings.teamspaces.heading")}
         description={t("workspace_settings.settings.teamspaces.description")}
       />
       <WithFeatureFlagHOC flag="TEAMSPACES" fallback={<TeamspaceUpgrade />} workspaceSlug={workspaceSlug}>
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle w-full">
-          <div className="flex items-center gap-4">
-            <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
-              <TeamsIcon className="size-5 text-tertiary" />
-            </div>
-            <div className="leading-tight">
-              <h5 className="font-medium">Turn on Teamspaces for this workspace.</h5>
-              <span className="text-tertiary text-body-xs-regular">
-                Once turned on, you can&apos;t turn this feature off.
-              </span>
-            </div>
-          </div>
-          <Tooltip
-            tooltipContent={"Teamspaces can't be disabled"}
-            disabled={!isTeamspacesFeatureEnabled}
-            position="left"
-          >
-            <div>
-              <ToggleSwitch
-                value={isTeamspacesFeatureEnabled}
-                onChange={toggleTeamsFeature}
-                size="sm"
-                disabled={isTeamspacesFeatureEnabled}
-              />
-            </div>
-          </Tooltip>
+        <div className="mt-6">
+          <SettingsBoxedControlItem
+            title="Turn on Teamspaces for this workspace."
+            description="Once turned on, you can't turn this feature off."
+            control={
+              <Tooltip
+                tooltipContent={"Teamspaces can't be disabled"}
+                disabled={!isTeamspacesFeatureEnabled}
+                position="left"
+              >
+                <ToggleSwitch
+                  value={isTeamspacesFeatureEnabled}
+                  onChange={toggleTeamsFeature}
+                  size="sm"
+                  disabled={isTeamspacesFeatureEnabled}
+                />
+              </Tooltip>
+            }
+          />
         </div>
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>

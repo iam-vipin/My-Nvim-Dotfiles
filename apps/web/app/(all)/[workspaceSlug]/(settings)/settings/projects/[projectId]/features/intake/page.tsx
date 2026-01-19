@@ -30,6 +30,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { IntakeFeatureChildren } from "@/plane-web/components/projects/settings/intake/feature-children";
 import { PROJECT_BASE_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 import type { Route } from "./+types/page";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 const IntakeFeatureSettingsPage = observer(function IntakeFeatureSettingsPage(props: Route.ComponentProps) {
   const { workspaceSlug, projectId } = props.params;
@@ -80,30 +81,24 @@ const IntakeFeatureSettingsPage = observer(function IntakeFeatureSettingsPage(pr
         title="Intake"
         description="Approve or discard suggested work items from your customers, users, or other stakeholders."
       />
-
-      <div className="gap-x-8 gap-y-2 bg-surface-1 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded-sm bg-layer-1 p-3">{featureIcon}</div>
-            <div>
-              <h4 className="text-13 font-medium leading-5">Enable Intake for this project</h4>
-              <p className="text-13 leading-5 tracking-tight text-tertiary">
-                Consider and discuss issues before you add them to your project.
-              </p>
-            </div>
-          </div>
-
-          <ToggleSwitch
-            value={Boolean(currentProjectDetails?.inbox_view)}
-            onChange={handleToggle}
-            disabled={!canPerformProjectAdminActions}
-            size="sm"
-          />
-        </div>
+      <div className="mt-6">
+        <SettingsBoxedControlItem
+          title="Enable intake for this project"
+          description="Consider and discuss issues before you add them to your project."
+          control={
+            <ToggleSwitch
+              value={Boolean(currentProjectDetails?.inbox_view)}
+              onChange={handleToggle}
+              disabled={!canPerformProjectAdminActions}
+              size="sm"
+            />
+          }
+        />
       </div>
-
       {currentProjectDetails.inbox_view && (
-        <IntakeFeatureChildren currentProjectDetails={currentProjectDetails} workspaceSlug={workspaceSlug} />
+        <div className="mt-12">
+          <IntakeFeatureChildren currentProjectDetails={currentProjectDetails} workspaceSlug={workspaceSlug} />
+        </div>
       )}
     </SettingsContentWrapper>
   );

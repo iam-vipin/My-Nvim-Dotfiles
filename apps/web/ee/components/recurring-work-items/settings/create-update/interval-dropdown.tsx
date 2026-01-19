@@ -17,6 +17,7 @@ import { usePopper } from "react-popper";
 import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
+import { Button } from "@plane/propel/button";
 import { ERecurringWorkItemIntervalType } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -186,25 +187,20 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
         onKeyDown={handleKeyDown}
       >
         <Combobox.Button as={Fragment}>
-          <button
+          <Button
             ref={setReferenceElement}
             type="button"
-            className={cn("clickable block h-full outline-none", {
-              "cursor-not-allowed text-secondary": disabled,
-              "cursor-pointer": !disabled,
-            })}
+            variant="ghost"
+            size="lg"
             onClick={handleOnClick}
+            className={cn("h-7 w-full flex items-center justify-start gap-1.5 border-[0.5px] border-strong", {
+              [COMMON_ERROR_CLASS_NAME]: hasError,
+            })}
+            disabled={disabled}
           >
-            <div
-              className={cn(
-                "h-full flex items-center justify-between gap-1.5 border rounded-sm text-caption-sm-medium px-2 py-0.5 hover:bg-layer-1-hover border-subtle",
-                { [COMMON_ERROR_CLASS_NAME]: hasError }
-              )}
-            >
-              <span className="truncate">{currentMainLabel}</span>
-              {!disabled && <ChevronDownIcon className="size-2.5 flex-shrink-0" aria-hidden="true" />}
-            </div>
-          </button>
+            <span className="truncate">{currentMainLabel}</span>
+            {!disabled && <ChevronDownIcon className="size-2.5 flex-shrink-0" aria-hidden="true" />}
+          </Button>
         </Combobox.Button>
         {isOpen && (
           <Combobox.Options className="fixed z-10" static>
@@ -255,20 +251,22 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
             onKeyDown={handleCountKeyDown}
           >
             <Combobox.Button as={Fragment}>
-              <button
+              <Button
                 ref={setCountReferenceElement}
                 type="button"
-                className={cn("clickable block h-full outline-none", {
-                  "cursor-not-allowed text-secondary": disabled,
-                  "cursor-pointer": !disabled,
-                })}
+                variant="ghost"
+                size="lg"
+                className={cn(
+                  "h-7 w-full flex items-center justify-start gap-1.5 border-[0.5px] border-strong",
+                  { [COMMON_ERROR_CLASS_NAME]: hasError },
+                  className
+                )}
                 onClick={handleCountOnClick}
+                disabled={disabled}
               >
-                <div className="h-full flex items-center justify-between gap-1 border rounded-sm text-caption-sm-medium px-2 py-0.5 hover:bg-layer-1-hover border-subtle min-w-[48px]">
-                  <span className="flex-grow text-center">{intervalCount}</span>
-                  {!disabled && <ChevronDownIcon className="size-2.5 flex-shrink-0" aria-hidden="true" />}
-                </div>
-              </button>
+                <span className="flex-grow text-center">{intervalCount}</span>
+                {!disabled && <ChevronDownIcon className="size-2.5 flex-shrink-0" aria-hidden="true" />}
+              </Button>
             </Combobox.Button>
             {isCountOpen && (
               <Combobox.Options className="fixed z-10" static>
@@ -309,26 +307,28 @@ export function IntervalDropdown(props: TIntervalDropdownProps) {
             onKeyDown={handleTypeKeyDown}
           >
             <Combobox.Button as={Fragment}>
-              <button
+              <Button
                 ref={setTypeReferenceElement}
                 type="button"
-                className={cn("clickable block h-full outline-none", {
-                  "cursor-not-allowed text-secondary": disabled,
-                  "cursor-pointer": !disabled,
-                })}
+                variant="ghost"
+                size="lg"
+                className={cn(
+                  "h-7 w-full flex items-center justify-start gap-1.5 border-[0.5px] border-strong",
+                  { [COMMON_ERROR_CLASS_NAME]: hasError },
+                  className
+                )}
                 onClick={handleTypeOnClick}
+                disabled={disabled}
               >
-                <div className="h-full flex items-center justify-between gap-1 border rounded-sm text-caption-sm-medium px-2 py-0.5 hover:bg-layer-1-hover border-subtle min-w-[64px]">
-                  <span className="truncate">
-                    {currentTypeOption
-                      ? intervalCount === 1
-                        ? currentTypeOption.singular
-                        : currentTypeOption.plural
-                      : "Select"}
-                  </span>
-                  {!disabled && <ChevronDownIcon className="size-2.5 flex-shrink-0" aria-hidden="true" />}
-                </div>
-              </button>
+                <span className="truncate">
+                  {currentTypeOption
+                    ? intervalCount === 1
+                      ? currentTypeOption.singular
+                      : currentTypeOption.plural
+                    : "Select"}
+                </span>
+                {!disabled && <ChevronDownIcon className="size-2.5 flex-shrink-0" aria-hidden="true" />}
+              </Button>
             </Combobox.Button>
             {isTypeOpen && (
               <Combobox.Options className="fixed z-10" static>

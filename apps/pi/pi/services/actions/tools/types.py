@@ -55,6 +55,7 @@ TYPE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ),
             ToolParameter(name="external_id", type="Optional[str]", required=False, description="External system identifier for this type"),
         ],
+        returns_entity_type="type",
     ),
     "list": ToolMetadata(
         name="types_list",
@@ -129,6 +130,7 @@ TYPE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
             ToolParameter(name="external_source", type="Optional[str]", required=False, description="Updated external integration source"),
             ToolParameter(name="external_id", type="Optional[str]", required=False, description="Updated external system identifier"),
         ],
+        returns_entity_type="type",
     ),
     "delete": ToolMetadata(
         name="types_delete",
@@ -151,6 +153,7 @@ TYPE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 auto_fill_from_context=True,
             ),
         ],
+        returns_entity_type="type",
     ),
 }
 

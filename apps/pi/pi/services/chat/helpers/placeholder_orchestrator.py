@@ -141,6 +141,7 @@ class PlaceholderOrchestrator:
         self.execution_context: Dict[str, Dict[str, Any]] = {}  # Stores tool results
         self.results: List[Dict[str, Any]] = []  # Final execution results
         self.tools_cache: Dict[str, Any] = {}  # Cache of built tools
+        self.failed_entities: set = set()  # Track entities that failed to create
 
         # UUID validation pattern
         self.uuid_pattern = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
@@ -185,6 +186,8 @@ class PlaceholderOrchestrator:
                         self._update_context(action, result)
                     else:
                         log.warning(f"Action {action.get("tool_name")} failed, not updating context")
+                        # Track failed entity to fail dependent actions early
+                        self._track_failed_entity(action)
 
                     remaining.remove(action)
                 except Exception as e:
@@ -205,6 +208,8 @@ class PlaceholderOrchestrator:
                     }
                     self.results.append(failure_result)
                     remaining.remove(action)
+                    # Track failed entity to fail dependent actions early
+                    self._track_failed_entity(action)
 
             # 4. Try to resolve placeholders for blocked actions
             for action in blocked:
@@ -246,6 +251,10 @@ class PlaceholderOrchestrator:
             # If an action depends on a tool that is still in the 'actions' list (not executed yet),
             # it should be blocked.
             elif self._has_pending_implicit_dependency(action, pending_tool_names):
+                is_blocked = True
+
+            # 3. Check if action depends on failed entities
+            elif self._depends_on_failed_entity(action):
                 is_blocked = True
 
             if is_blocked:
@@ -539,6 +548,7 @@ IMPORTANT:
         message = result.get("message") or ""
         ok = bool(result.get("ok", True))
         entity_info = result.get("entity")
+
         if ok and not entity_info:
             entity_info = await infer_selected_entity(args, self.context, entity_type_hint=action.get("entity_type"))
 
@@ -555,6 +565,10 @@ IMPORTANT:
 
         if not ok:
             execution_result["error"] = result.get("error", "Unknown error")
+
+        # Preserve workitem_entity if present (e.g., from intake creation)
+        if "workitem_entity" in result:
+            execution_result["workitem_entity"] = result["workitem_entity"]
 
         return execution_result
 
@@ -603,6 +617,25 @@ IMPORTANT:
 
         log.info(f"✅ Stored in context: {entity_type}:{actual_name} (with {len(keys)} lookup keys)")
 
+        # If result includes a workitem_entity (e.g., from intake creation), also store it
+        workitem_entity = result.get("workitem_entity")
+        if workitem_entity:
+            workitem_name = workitem_entity.get("entity_name")
+            if workitem_name:
+                workitem_result = {"entity_info": workitem_entity, **result}
+
+                workitem_keys = [
+                    f"workitem:{workitem_name.lower()}",
+                    f"workitem:{actual_name.lower()}",
+                ]
+                if planned_name:
+                    workitem_keys.append(f"workitem:{planned_name.lower()}")
+
+                for key in workitem_keys:
+                    self.execution_context[key] = workitem_result
+
+                log.info(f"✅ Also stored work item entity: workitem:{workitem_name} (ID: {workitem_entity.get("entity_id")})")
+
     def _can_resolve_from_context(self, entity_type: Optional[str], entity_name: Optional[str]) -> bool:
         """
         Check if we have this entity in our execution context (case-insensitive).
@@ -642,6 +675,45 @@ IMPORTANT:
             return match.group(1), match.group(2).strip()
         return None, None
 
+    def _track_failed_entity(self, action: Dict[str, Any]):
+        """Track entity that failed to create."""
+        args = action.get("args", {})
+        entity_name = args.get("name") or args.get("display_name")
+        entity_type = action.get("artifact_type")  # Fixed: was "entity_type", should be "artifact_type"
+
+        if entity_name and entity_type:
+            failed_key = f"{entity_type}:{entity_name.lower()}"
+            self.failed_entities.add(failed_key)
+            log.warning(f"Tracked failed entity: {failed_key}")
+
+    def _depends_on_failed_entity(self, action: Dict[str, Any]) -> bool:
+        """Check if action depends on an entity that failed to create."""
+        args = action.get("args", {})
+
+        for key, value in args.items():
+            if self._is_placeholder(value):
+                entity_type, entity_name = self._parse_placeholder(value)
+                if entity_type and entity_name:
+                    failed_key = f"{entity_type}:{entity_name.lower()}"
+                    if failed_key in self.failed_entities:
+                        log.error(f"Action {action.get("tool_name")} depends on failed entity: {failed_key}")
+                        # Create immediate failure result
+                        failure_result = {
+                            "tool_name": action.get("tool_name"),
+                            "result": f"Cannot execute: prerequisite '{entity_name}' ({entity_type}) failed to create",
+                            "entity_info": None,
+                            "artifact_id": action.get("artifact_id"),
+                            "sequence": len(self.results) + 1,
+                            "artifact_type": action.get("entity_type"),
+                            "executed_at": datetime.utcnow().isoformat(),
+                            "success": False,
+                            "error": f"Prerequisite entity '{entity_name}' failed to create",
+                        }
+                        self.results.append(failure_result)
+                        return True
+
+        return False
+
     def _build_deadlock_error(self, blocked_actions: List[Dict[str, Any]]) -> str:
         """
         Build informative error message for deadlock situations.
@@ -660,13 +732,15 @@ IMPORTANT:
                     placeholders.append(value)
 
         available_entities = list(self.execution_context.keys())
+        failed_entities_list = list(self.failed_entities)
 
         return (
             f"Deadlock detected: Cannot resolve placeholders.\n"
             f"Blocked placeholders: {placeholders}\n"
             f"Available entities in context: {available_entities}\n"
+            f"Failed entities (not created): {failed_entities_list}\n"
             f"Possible causes:\n"
-            f"- Entity was not created successfully\n"
+            f"- Prerequisite entity creation failed (check failed entities above)\n"
             f"- Entity name mismatch between placeholder and actual name\n"
             f"- Circular dependency between actions"
         )

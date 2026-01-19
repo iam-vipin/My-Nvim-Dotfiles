@@ -397,6 +397,13 @@ async def execute_tools_for_build_mode(
         except Exception as e:
             log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
 
+        if not combined_tool_query or not combined_tool_query.strip():
+            log.error(f"ChatID: {chat_id} - Empty user query received in build mode")
+            error_msg = "I didn't receive a valid question. Please try again with a specific request."
+            yield error_msg
+            yield f"__FINAL_RESPONSE__{error_msg}"
+            return
+
         # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (timestamp) content
         # Get timestamp context but keep it separate from the static system prompt
         date_time_context = await get_current_timestamp_context(user_id)

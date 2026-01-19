@@ -27,6 +27,7 @@ from typing import Optional
 from pi.services.actions.tool_generator import generate_tools_for_category
 from pi.services.actions.tool_metadata import ToolMetadata
 from pi.services.actions.tool_metadata import ToolParameter
+from pi.services.chat.helpers.tool_utils import generate_success_message
 
 log = logging.getLogger(__name__)
 
@@ -347,16 +348,19 @@ async def _workitems_pre_handler(
     # Relation type validation for create_relation
     if tool_name == "workitems_create_relation":
         relation_type = kwargs.get("relation_type")
+        if not relation_type:
+            raise ValueError(
+                "Relation type is required.\n"
+                "Please specify one of: blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, finish_after"
+            )
+
         if relation_type not in RELATION_TYPES:
             valid_types = ", ".join(RELATION_TYPES.keys())
             raise ValueError(f"Relation type '{relation_type}' is not valid. Valid types are: {valid_types}")
 
-        related_issues = kwargs.get("related_issues")
-        if not related_issues:
-            raise ValueError("At least one related issue ID must be provided")
-
-        # The SDK expects 'issues' parameter, not 'related_issues'
-        kwargs["issues"] = kwargs.pop("related_issues")
+        issues = kwargs.get("issues")
+        if not issues:
+            raise ValueError("At least one related issue ID must be provided in the 'issues' parameter")
 
     #  Fix for list: Pass filter args to SDK (BUG FIX)
     if tool_name == "workitems_list":
@@ -419,6 +423,9 @@ async def _workitems_post_handler(
                         log.info(f"Enriched workitem data with identifier info: {identifier_info.get("identifier")}")
                 except Exception as e:
                     log.warning(f"Could not enrich workitem data with identifier info: {e}")
+
+                # Generate user-friendly success message
+                result["message"] = generate_success_message(tool_name, data.get("name"))
 
     # URL construction for list operations
     elif tool_name == "workitems_list":
@@ -1151,6 +1158,12 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 type="Optional[str]",
                 required=False,
                 description="External system source name (optional)",
+            ),
+            ToolParameter(
+                name="type_id",
+                type="Optional[str]",
+                required=False,
+                description="Work item type ID (set to empty string to convert epic to regular work item)",
             ),
         ],
     ),

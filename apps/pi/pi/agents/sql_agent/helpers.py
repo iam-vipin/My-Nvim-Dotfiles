@@ -886,7 +886,7 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
 
     Args:
         result: The API response result
-        entity_type: Type of entity (module, cycle, workitem, project, page)
+        entity_type: Type of entity (module, cycle, workitem, project, page, intake)
 
     Returns:
         Dictionary with entity data or None if extraction fails
@@ -933,6 +933,13 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
             # but we have identifier and workspace info
             entity_data["identifier"] = data.get("identifier")
             # Note: workspace field might be missing from API response, we'll handle this in URL construction
+        elif entity_type == "intake":
+            # For intake, the name is nested in issue_detail
+            issue_detail = data.get("issue_detail", {})
+            if issue_detail and isinstance(issue_detail, dict):
+                entity_data["name"] = issue_detail.get("name")
+            # Also store the underlying work item ID for reference
+            entity_data["issue"] = data.get("issue")
 
         # Validate required fields
         if not entity_data["id"]:
@@ -1129,6 +1136,15 @@ async def construct_action_entity_url(
             # For customers: /workspace_slug/customers/
             url = f"{api_base_url}/{workspace_slug}/customers/"
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "intake":
+            # For intake: /workspace_slug/projects/project_id/intake/?currentTab=open&inboxIssueId=entity_id
+            project_id = entity_data.get("project")
+            if project_id:
+                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/intake/?currentTab=open&inboxIssueId={entity_id}"
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+            else:
+                return None
 
         else:
             # Unknown entity type

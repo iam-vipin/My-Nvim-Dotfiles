@@ -312,6 +312,55 @@ def category_display_name(category: str) -> str:
     return overrides.get(category, category.replace("_", " ").title())
 
 
+def generate_success_message(tool_name: str, entity_name: Optional[str] = None) -> str:
+    """Generate user-friendly success message from tool metadata.
+
+    Uses existing TOOL_NAME_TO_CATEGORY_MAP to build messages like:
+    'Successfully created work item newsfive'
+    """
+    tool_meta = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {})
+    if not tool_meta:
+        return f"Successfully executed {tool_name}"
+
+    action_type = tool_meta.get("action_type", "executed")
+    entity_type = tool_meta.get("entity_type", "entity")
+
+    # Convert action to past tense
+    action_map = {
+        "create": "created",
+        "update": "updated",
+        "delete": "deleted",
+        "add": "added",
+        "remove": "removed",
+        "archive": "archived",
+        "unarchive": "unarchived",
+        "transfer": "transferred",
+    }
+    action_verb = action_map.get(action_type, action_type)
+
+    if entity_name:
+        return f"Successfully {action_verb} {entity_type} '{entity_name}'"
+    return f"Successfully {action_verb} {entity_type}"
+
+
+def generate_error_message(tool_name: str, entity_name: Optional[str] = None) -> str:
+    """Generate user-friendly error message from tool metadata.
+
+    Uses existing TOOL_NAME_TO_CATEGORY_MAP to build messages like:
+    'Failed to create comment'
+    """
+    tool_meta = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {})
+    if not tool_meta:
+        return f"Failed to execute {tool_name}"
+
+    action_type = tool_meta.get("action_type", "execute")
+    entity_type = tool_meta.get("entity_type", "entity")
+
+    if entity_name:
+        return f"Failed to {action_type} {entity_type} '{entity_name}'"
+    return f"Failed to {action_type} {entity_type}"
+
+
 def is_uuid_like(value: Any) -> bool:
     """Check if a value looks like a UUID."""
     if not isinstance(value, str):
@@ -1063,7 +1112,9 @@ After resolving project_id for cycles/modules/pages creation:
 **✅ CAN be set during workitems_create:**
 - name, description, priority, state, assignees, labels, story_points, start_date, target_date
 - **EPIC CREATION**: Use `create_epic` tool to create epics - this automatically sets the correct epic type_id
+- **EPIC TO WORK-ITEM CONVERSION**: To convert an existing epic to a regular work-item, use `update_epic` and set `type_id` to an empty string `""` (do NOT use null/None, and do NOT create a new work-item copy)
 - **IMPORTANT**: Use workitems_create with ALL properties at once - do NOT create then update!
+
 
 **WORK-ITEM RELATIONS CAPABILITIES:**
 **✅ CAN create relationships between work items using workitems_create_relation:**

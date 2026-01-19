@@ -18,6 +18,7 @@ execute_tools_for_build_mode function lean and readable.
 from __future__ import annotations
 
 import ast
+import contextlib
 import datetime
 import json
 import re
@@ -577,6 +578,28 @@ async def plan_action_and_prepare_outputs(
         parameters["description"] = _tool_args.pop("description_html")
     if "project_id" in _tool_args.keys():
         parameters["project"] = {"id": _tool_args.pop("project_id")}
+
+    # Parse duration for worklogs before mapping properties
+    if artifact_type == "worklog" and "duration" in _tool_args:
+        duration = _tool_args["duration"]
+        if isinstance(duration, str):
+            total_minutes = 0
+            hours_match = re.search(r"(\d+(?:\.\d+)?)\s*h", duration, re.IGNORECASE)
+            minutes_match = re.search(r"(\d+(?:\.\d+)?)\s*m", duration, re.IGNORECASE)
+
+            if hours_match:
+                hours = int(float(hours_match.group(1)) * 60)
+                total_minutes += hours
+            if minutes_match:
+                mins = int(float(minutes_match.group(1)))
+                total_minutes += mins
+            # If regex matched nothing but it's a digit string, treat as minutes
+            if not hours_match and not minutes_match:
+                with contextlib.suppress(ValueError):
+                    total_minutes = int(duration)
+
+            if total_minutes > 0:
+                _tool_args["duration"] = total_minutes
 
     # Add other parameters into properties sub-dict
     properties = map_tool_properties(artifact_type, _tool_args)

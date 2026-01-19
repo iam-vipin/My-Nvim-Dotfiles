@@ -11,15 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import {
   E_SORT_ORDER,
-  EActivityFilterType,
   EActivityFilterTypeEE,
   filterActivityOnSelectedFilters,
+  BASE_ACTIVITY_FILTER_TYPES,
 } from "@plane/constants";
 import type { TActivityFilters } from "@plane/constants";
 // hooks
@@ -39,14 +37,6 @@ type TEpicDetailActivityRootProps = {
   epicId: string;
 };
 
-// TODO: replace with @plane/constants import later
-const BASE_ACTIVITY_FILTER_TYPES = [
-  EActivityFilterType.ACTIVITY,
-  EActivityFilterType.STATE,
-  EActivityFilterType.ASSIGNEE,
-  EActivityFilterType.DEFAULT,
-];
-
 export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot(props: TEpicDetailActivityRootProps) {
   const { epicId } = props;
   // i18n
@@ -59,7 +49,6 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
   // store hooks
   const {
     activity: { getActivityAndCommentsByIssueId },
-    comment: {},
   } = useIssueDetail(EIssueServiceType.EPICS);
 
   // handlers
@@ -69,7 +58,7 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
   const activityComments = getActivityAndCommentsByIssueId(epicId, sortOrder ?? E_SORT_ORDER.ASC);
 
   const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
-    EActivityFilterType.ACTIVITY,
+    ...BASE_ACTIVITY_FILTER_TYPES,
     EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
   ] as TActivityFilters[]);
 

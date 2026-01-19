@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC, ReactElement, ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { ArrowRightLeft, CalendarDays, MessageSquare, Paperclip } from "lucide-react";
 // plane imports
 import {
@@ -22,6 +22,7 @@ import {
   Intake,
   LabelPropertyIcon,
   MembersPropertyIcon,
+  MilestoneIcon,
   ModuleIcon,
   ParentPropertyIcon,
   PriorityPropertyIcon,
@@ -53,25 +54,26 @@ type TIssueActivityBlock = {
 };
 
 export const activityIconMap: Record<string, ReactElement> = {
-  state: <StatePropertyIcon width={14} height={14} className="text-secondary" aria-hidden="true" />,
-  name: <MessageSquare size={14} className="text-secondary" aria-hidden="true" />,
-  description: <MessageSquare size={14} className="text-secondary" aria-hidden="true" />,
-  assignees: <MembersPropertyIcon className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
-  priority: <PriorityPropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
-  estimate_point: <EstimatePropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
-  parent: <ParentPropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
-  start_date: <CalendarDays size={14} className="text-secondary" aria-hidden="true" />,
-  target_date: <CalendarDays size={14} className="text-secondary" aria-hidden="true" />,
-  cycles: <CycleIcon className="h-4 w-4 flex-shrink-0 text-secondary" />,
-  modules: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-secondary" />,
-  labels: <LabelPropertyIcon height={14} width={14} className="text-secondary" aria-hidden="true" />,
-  link: <MessageSquare size={14} className="text-secondary" aria-hidden="true" />,
-  attachment: <Paperclip size={14} className="text-secondary" aria-hidden="true" />,
-  archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />,
-  inbox: <Intake className="h-4 w-4 flex-shrink-0 text-secondary" />,
-  type: <ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
-  customer: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
-  customer_request: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />,
+  state: <StatePropertyIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
+  name: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
+  description: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
+  assignees: <MembersPropertyIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  priority: <PriorityPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
+  estimate_point: <EstimatePropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
+  parent: <ParentPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
+  start_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
+  target_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
+  cycles: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  modules: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  labels: <LabelPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
+  link: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
+  attachment: <Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />,
+  archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />,
+  inbox: <Intake className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  type: <ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  customer: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  customer_request: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  milestones: <MilestoneIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
 };
 
 export function IssueActivityBlock(props: TIssueActivityBlock) {

@@ -20,6 +20,7 @@ import {
   EstimatePropertyIcon,
   LabelPropertyIcon,
   MembersPropertyIcon,
+  MilestoneIcon,
   StatePropertyIcon,
 } from "@plane/propel/icons";
 import type { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
@@ -53,7 +54,8 @@ export type TEpicActivityFields =
   | "customer_request"
   | "customer"
   | "work_item"
-  | "page";
+  | "page"
+  | "milestones";
 
 export type TEpicActivityVerbs = TBaseActivityVerbs;
 
@@ -383,6 +385,30 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     message: (
       <>
         removed the page <span className={commonTextClassName}>{getPageName(activity.old_value || "")}</span>.
+      </>
+    ),
+  }),
+  milestones_updated: (activity: TIssueActivity) => ({
+    icon: MilestoneIcon,
+    message: (
+      <>
+        set the milestone to <span className={commonTextClassName}>{activity.new_value}</span>.
+      </>
+    ),
+  }),
+  milestones_deleted: (activity: TIssueActivity) => ({
+    icon: MilestoneIcon,
+    message: (
+      <>
+        removed the milestone <span className={commonTextClassName}>{activity.old_value}</span>.
+      </>
+    ),
+  }),
+  milestones_created: (activity: TIssueActivity) => ({
+    icon: MilestoneIcon,
+    message: (
+      <>
+        added this epic to the milestone <span className={commonTextClassName}>{activity.new_value}</span>.
       </>
     ),
   }),

@@ -38,7 +38,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
   const isEditable = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   return (
-    <LayoutRoot>
+    <LayoutRoot key={projectId}>
       <ProjectOverviewMainContentRoot workspaceSlug={workspaceSlug} projectId={projectId} disabled={!isEditable} />
       <ProjectOverviewSidebarRoot workspaceSlug={workspaceSlug} projectId={projectId} />
     </LayoutRoot>

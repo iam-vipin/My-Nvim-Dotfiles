@@ -58,6 +58,7 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
   start_at: TRecurringWorkItem["start_at"];
   end_at: TRecurringWorkItem["end_at"];
   interval_type: TRecurringWorkItem["interval_type"];
+  interval_count: TRecurringWorkItem["interval_count"];
   workspace: TRecurringWorkItem["workspace"];
   project: TRecurringWorkItem["project"];
   created_at: TRecurringWorkItem["created_at"];
@@ -79,6 +80,7 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
     this.start_at = recurringWorkItemData.start_at;
     this.end_at = recurringWorkItemData.end_at;
     this.interval_type = recurringWorkItemData.interval_type;
+    this.interval_count = recurringWorkItemData.interval_count;
     this.workspace = recurringWorkItemData.workspace;
     this.project = recurringWorkItemData.project;
     this.created_at = recurringWorkItemData.created_at;
@@ -98,6 +100,7 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
       start_at: observable,
       end_at: observable,
       interval_type: observable,
+      interval_count: observable,
       workspace: observable,
       project: observable,
       created_at: observable,
@@ -125,6 +128,7 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
       start_at: this.start_at,
       end_at: this.end_at,
       interval_type: this.interval_type,
+      interval_count: this.interval_count,
       workspace: this.workspace,
       project: this.project,
       created_at: this.created_at,

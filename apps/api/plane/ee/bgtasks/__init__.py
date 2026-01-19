@@ -17,3 +17,6 @@ from .batched_search_update_task import (
     log_opensearch_update_queue_metrics,
 )
 from .search_index_update_task import run_search_index_command
+
+from .recurring_work_item_scheduler import schedule_batch, schedule_on_create_or_enable
+from .recurring_work_item_task import create_work_item_from_template

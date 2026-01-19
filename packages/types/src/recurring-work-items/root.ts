@@ -28,6 +28,7 @@ export type TRecurringWorkItem = {
   start_at: Date;
   end_at: Date | null;
   interval_type: ERecurringWorkItemIntervalType;
+  interval_count: number; // Repeat every X intervals (e.g., 2 = every 2 weeks/months)
   // workspace
   workspace: string;
   // project
@@ -39,7 +40,7 @@ export type TRecurringWorkItem = {
 
 export type TRecurringWorkItemForm = Pick<
   TRecurringWorkItem,
-  "id" | "enabled" | "start_at" | "end_at" | "interval_type"
+  "id" | "enabled" | "start_at" | "end_at" | "interval_type" | "interval_count"
 > & {
   workitem_blueprint: TWorkItemBlueprintFormData;
 };

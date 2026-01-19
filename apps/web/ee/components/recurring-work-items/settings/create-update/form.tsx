@@ -71,6 +71,7 @@ const DEFAULT_RECURRING_WORK_ITEM_FORM_VALUES: Partial<TRecurringWorkItemForm> =
   start_at: undefined,
   end_at: null,
   interval_type: undefined,
+  interval_count: 1,
   workitem_blueprint: DEFAULT_WORK_ITEM_BLUEPRINT_FORM_VALUES,
 };
 
@@ -280,10 +281,16 @@ export const RecurringWorkItemFormRoot = observer(function RecurringWorkItemForm
                         message: t("recurring_work_items.settings.form.interval.interval_type.validation.required"),
                       },
                     }}
-                    render={({ field: { value, onChange } }) => (
-                      <div className="h-7">
-                        <IntervalDropdown value={value} onChange={onChange} hasError={Boolean(errors.interval_type)} />
-                      </div>
+                    render={({ field: { value: intervalType, onChange: onIntervalTypeChange } }) => (
+                      <IntervalDropdown
+                        intervalType={intervalType}
+                        intervalCount={watch("interval_count") ?? 1}
+                        onIntervalTypeChange={onIntervalTypeChange}
+                        onIntervalCountChange={(count) =>
+                          methods.setValue("interval_count", count, { shouldDirty: true })
+                        }
+                        hasError={Boolean(errors.interval_type)}
+                      />
                     )}
                   />
                 </div>

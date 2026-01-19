@@ -9,6 +9,9 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from datetime import datetime, time
+
+import pytz
 from rest_framework import serializers
 
 from plane.ee.models import (
@@ -16,9 +19,9 @@ from plane.ee.models import (
     RecurringWorkItemTaskActivity,
     RecurringWorkitemTaskLog,
 )
+from plane.db.models import Project
 from plane.app.serializers.base import BaseSerializer
 from plane.ee.serializers import WorkitemTemplateSerializer
-from plane.utils.timezone_converter import convert_to_utc
 
 
 class RecurringWorkItemTaskLogSerializer(BaseSerializer):
@@ -50,6 +53,9 @@ class RecurringWorkItemSerializer(BaseSerializer):
             "start_at",
             "end_at",
             "interval_type",
+            "interval_count",
+            "next_scheduled_at",
+            "last_run_at",
             "enabled",
             "schedule_description",
             "created_at",
@@ -65,28 +71,55 @@ class RecurringWorkItemSerializer(BaseSerializer):
             "project",
             "workspace",
             "schedule_description",
+            "next_scheduled_at",
+            "last_run_at",
         ]
 
     def validate(self, data):
         """Validate and process input data"""
-        self._convert_timezone_for_start_at(data)
-        return data
-
-    def _convert_timezone_for_start_at(self, data):
-        """Handle start_at timezone conversion"""
-        if not data.get("start_at"):
-            return
-
         project_id = self._get_project_id()
         if not project_id:
             raise serializers.ValidationError("Project ID is required for timezone conversion")
 
-        # Convert start_at to UTC using the project's timezone
-        data["start_at"] = convert_to_utc(
-            date=str(data.get("start_at").date()),
-            project_id=project_id,
-            is_start_date=True,
-        )
+        if data.get("start_at"):
+            data["start_at"] = self._convert_date_to_project_tz(data["start_at"], project_id, start_of_day=True)
+        if data.get("end_at"):
+            data["end_at"] = self._convert_date_to_project_tz(data["end_at"], project_id, start_of_day=False)
+
+        return data
+
+    def _convert_date_to_project_tz(self, date_value, project_id, start_of_day=True):
+        """
+        Convert a date to project timezone, then to UTC.
+
+        Args:
+            date_value: A date or datetime object
+            project_id: The project ID to get timezone from
+            start_of_day: If True, use 00:05:00; if False, use 23:59:59
+
+        Returns:
+            datetime: The time in project timezone, converted to UTC
+        """
+        project = Project.objects.get(id=project_id)
+        project_timezone = project.timezone
+
+        if not project_timezone:
+            raise serializers.ValidationError("Project timezone is not configured")
+
+        # Get just the date portion
+        date_only = date_value.date() if hasattr(date_value, "date") else date_value
+
+        # Get project timezone
+        tz = pytz.timezone(project_timezone)
+
+        # Create start or end of day in project timezone
+        # Use 00:05 instead of 00:00 to avoid batch scheduler boundary issues
+        # (batch runs every 6 hours at :00, so :05 avoids edge cases)
+        local_time = time(0, 5, 0) if start_of_day else time(23, 59, 59)
+        local_datetime = tz.localize(datetime.combine(date_only, local_time))
+
+        # Convert to UTC for storage
+        return local_datetime.astimezone(pytz.UTC)
 
     def _get_project_id(self):
         """Get project ID from context or instance"""

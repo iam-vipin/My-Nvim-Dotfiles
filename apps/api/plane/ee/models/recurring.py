@@ -9,21 +9,21 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-import json
-
 # Django imports
 from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
-from django_celery_beat.models import PeriodicTask, CrontabSchedule
+from django.utils import timezone
+from django_celery_beat.models import PeriodicTask
 import pytz
-from typing import Optional
+from dateutil.relativedelta import relativedelta
 
 # Module imports
 from plane.db.models import ProjectBaseModel
+from plane.db.mixins import ChangeTrackerMixin
 
 
-class RecurringWorkitemTask(ProjectBaseModel):
+class RecurringWorkitemTask(ChangeTrackerMixin, ProjectBaseModel):
     """
     A configuration that is used to create a recurring workitem.
     Stores user-defined timing and references the template.
@@ -43,18 +43,8 @@ class RecurringWorkitemTask(ProjectBaseModel):
         (INTERVAL_YEARLY, "Yearly"),
     ]
 
-    # Celery task name constant
-    CELERY_TASK_NAME = "plane.ee.bgtasks.recurring_work_item_task.create_work_item_from_template"
-
-    # Cron expression constants
-    CRON_WILDCARD = "*"
-    CRON_FIELDS_COUNT = 5
-
-    # Day of week conversion (Python weekday to cron)
-    # Python: 0=Monday, 6=Sunday
-    # Cron: 0=Sunday, 6=Saturday
-    PYTHON_SUNDAY = 6
-    CRON_SUNDAY = 0
+    # Fields to track for schedule recalculation and scheduler triggering
+    TRACKED_FIELDS = ["start_at", "interval_type", "interval_count", "enabled"]
 
     workitem_blueprint = models.ForeignKey(
         "ee.WorkitemTemplate",
@@ -67,6 +57,21 @@ class RecurringWorkitemTask(ProjectBaseModel):
     interval_type = models.CharField(
         max_length=20,
         default=INTERVAL_MONTHLY,
+    )
+    interval_count = models.PositiveIntegerField(
+        default=1,
+        help_text="Repeat every X intervals (e.g., 2 = every 2 weeks/months)",
+    )
+    # Scheduler fields for batch scheduling approach
+    next_scheduled_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Next scheduled execution time (calendar-accurate)",
+    )
+    last_run_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Last successful execution time",
     )
     interval_seconds = models.PositiveIntegerField(
         null=True,
@@ -100,204 +105,237 @@ class RecurringWorkitemTask(ProjectBaseModel):
 
     def clean(self):
         """Validate required fields"""
-        if not self.cron_expression:
-            raise ValidationError("cron_expression is required")
+        # For new tasks (without periodic_task), cron_expression is not required
+        # as they use the batch scheduler. Only validate for legacy tasks.
+        if self.periodic_task and not self.cron_expression and self.interval_count == 1:
+            raise ValidationError("cron_expression is required for legacy tasks")
         if not self.start_at:
             raise ValidationError("start_at is required")
+        if self.interval_count < 1:
+            raise ValidationError("interval_count must be at least 1")
 
-    @classmethod
-    def generate_cron_expression(cls, start_at, interval_type, project_timezone: Optional[str] = None):
+    def _get_interval_delta(self):
         """
-        Generate cron expression based on start_at datetime and interval_type.
-
-        Args:
-            start_at (datetime): The datetime when the task should start
-            interval_type (str): One of 'second', 'daily', 'week', 'month', 'year'
-            project_timezone (Optional[str]): IANA timezone for the project;
+        Get the relativedelta for this task's interval type and count.
 
         Returns:
-            str: Cron expression in format "minute hour day month day_of_week"
-
-        Raises:
-            ValidationError: If interval_type is invalid
+            relativedelta: The interval delta, or None if interval_type is invalid.
         """
-        if not start_at:
+        if self.interval_type == self.INTERVAL_DAILY:
+            return relativedelta(days=self.interval_count)
+        elif self.interval_type == self.INTERVAL_WEEKLY:
+            return relativedelta(weeks=self.interval_count)
+        elif self.interval_type == self.INTERVAL_MONTHLY:
+            return relativedelta(months=self.interval_count)
+        elif self.interval_type == self.INTERVAL_YEARLY:
+            return relativedelta(years=self.interval_count)
+        return None
+
+    def _get_project_timezone(self):
+        """
+        Get the project's timezone as a pytz timezone object.
+
+        Returns:
+            pytz.timezone: The project timezone, or UTC if not set/invalid.
+        """
+        project_tz = getattr(self.project, "timezone", None)
+        if project_tz:
+            try:
+                return pytz.timezone(project_tz)
+            except Exception:
+                pass
+        return pytz.UTC
+
+    def calculate_next_scheduled_at(self, from_date=None, allow_past=False):
+        """
+        Calculate next execution time using calendar-accurate deltas.
+
+        Uses dateutil.relativedelta to properly handle calendar months and years,
+        avoiding drift that would occur with fixed day approximations.
+
+        Calendar math is performed in the project's timezone to correctly handle
+        DST transitions (e.g., "every day at 00:05" stays at 00:05 local time).
+
+        Args:
+            from_date: The date to calculate from. If None, uses current time.
+            allow_past: If True, can return a past time for immediate execution.
+                        Use True for new tasks, False for updates.
+
+        Returns:
+            datetime: The next scheduled execution time (in UTC), or None if not applicable.
+        """
+        now = from_date or timezone.now()
+
+        if not self.start_at:
             return None
 
-        # Validate interval type
-        valid_intervals = [choice[0] for choice in cls.INTERVAL_CHOICES]
-        if interval_type not in valid_intervals:
-            raise ValidationError(
-                f"Invalid interval_type: {interval_type}. Must be one of {valid_intervals}"  # noqa: E501
-            )
-
-        if not start_at:
+        delta = self._get_interval_delta()
+        if not delta:
             return None
 
-        # Ensure aware datetime
-        aware_start = start_at if start_at.tzinfo else pytz.UTC.localize(start_at)
+        # Get project timezone for calendar math
+        tz = self._get_project_timezone()
+        now_local = now.astimezone(tz)
 
-        # Resolve project tz (fallback to UTC if invalid/missing)
-        try:
-            tz = pytz.timezone(project_timezone) if project_timezone else pytz.UTC
-        except Exception:
-            tz = pytz.UTC
+        # Use next_scheduled_at as base if available, otherwise start_at
+        base = self.next_scheduled_at or self.start_at
+        base_local = base.astimezone(tz)
 
-        # Normalize to project-local midnight
-        local_midnight = aware_start.astimezone(tz).replace(hour=0, minute=0, second=0, microsecond=0)
+        # For new tasks (allow_past=True): if base is today or future, use it directly
+        if allow_past and base_local.date() >= now_local.date():
+            return base_local.astimezone(pytz.UTC)
 
-        # Extract cron fields from project timezone (not UTC) since CrontabSchedule
-        # will be created with project_timezone
-        minute, hour = local_midnight.minute, local_midnight.hour
-        day, month = local_midnight.day, local_midnight.month
-        cron_day_of_week = cls._convert_python_weekday_to_cron(local_midnight.weekday())
+        # If base is in future, return it
+        if base_local > now_local:
+            return base_local.astimezone(pytz.UTC)
 
-        # Generate cron expression based on interval type
-        if interval_type == cls.INTERVAL_DAILY:
-            return f"{minute} {hour} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"  # noqa: E501
-        elif interval_type == cls.INTERVAL_WEEKLY:
-            return f"{minute} {hour} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cron_day_of_week}"  # noqa: E501
-        elif interval_type == cls.INTERVAL_MONTHLY:
-            return f"{minute} {hour} {day} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"
-        elif interval_type == cls.INTERVAL_YEARLY:
-            return f"{minute} {hour} {day} {month} {cls.CRON_WILDCARD}"
+        # Base is in the past - calculate how many intervals to skip
+        diff = relativedelta(now_local, base_local)
 
-    @classmethod
-    def _convert_python_weekday_to_cron(cls, python_weekday):
-        """Convert Python weekday (0=Monday, 6=Sunday) to cron format (0=Sunday, 6=Saturday)"""  # noqa: E501
-        return cls.CRON_SUNDAY if python_weekday == cls.PYTHON_SUNDAY else python_weekday + 1
+        if self.interval_type == self.INTERVAL_DAILY:
+            intervals_to_add = ((now_local - base_local).days // self.interval_count) + 1
+        elif self.interval_type == self.INTERVAL_WEEKLY:
+            intervals_to_add = ((now_local - base_local).days // (7 * self.interval_count)) + 1
+        elif self.interval_type == self.INTERVAL_MONTHLY:
+            total_months = diff.years * 12 + diff.months
+            intervals_to_add = (total_months // self.interval_count) + 1
+        elif self.interval_type == self.INTERVAL_YEARLY:
+            intervals_to_add = (diff.years // self.interval_count) + 1
+        else:
+            return None
+
+        # Add calculated intervals to base
+        next_run_local = base_local + (delta * intervals_to_add)
+
+        # Handle edge case for monthly/yearly with varying lengths
+        if next_run_local <= now_local:
+            next_run_local += delta
+
+        # Convert back to UTC for storage
+        return next_run_local.astimezone(pytz.UTC)
+
+    def advance_to_next_schedule(self):
+        """
+        Advance to next execution time after successful run.
+
+        Called by the background task after successfully creating a work item.
+        Uses relativedelta for calendar-accurate scheduling.
+
+        Calendar math is performed in the project's timezone to correctly handle
+        DST transitions. The next execution is always normalized to 00:05
+        in the project timezone, which handles timezone changes gracefully.
+
+        Returns:
+            datetime: The new next_scheduled_at value (in UTC), or None if not applicable.
+        """
+        from datetime import datetime, time
+
+        current = self.next_scheduled_at or self.start_at
+        if not current:
+            return None
+
+        delta = self._get_interval_delta()
+        if not delta:
+            return None
+
+        # Get project timezone for calendar math
+        tz = self._get_project_timezone()
+
+        # Convert to project timezone and get the date
+        # This handles timezone changes: if the project timezone changed,
+        # we use the date in the NEW timezone as the base
+        current_local = current.astimezone(tz)
+        current_date = current_local.date()
+
+        # Add interval to get next date (relativedelta handles calendar math)
+        next_date = current_date + delta
+
+        # Create 00:05 in project timezone for the next date
+        # Use 00:05 instead of 00:00 to avoid batch scheduler boundary issues
+        # (batch runs every 6 hours at :00, so :05 avoids edge cases)
+        next_run_local = tz.localize(datetime.combine(next_date, time(0, 5, 0)))
+
+        self.next_scheduled_at = next_run_local.astimezone(pytz.UTC)
+        self.last_run_at = timezone.now()
+        self.save(update_fields=["next_scheduled_at", "last_run_at", "updated_at"])
+
+        return self.next_scheduled_at
 
     def save(self, *args, **kwargs):
-        """Override save to generate cron expression and manage PeriodicTask synchronization"""  # noqa: E501
-        # Auto-generate cron expression from interval_type and start_at
-        if self.interval_type and self.start_at:
-            project_tz = getattr(self.project, "timezone", None)
-            self.cron_expression = self.generate_cron_expression(
-                self.start_at, self.interval_type, project_timezone=project_tz
-            )
+        """Override save to generate cron expression and manage scheduling"""  # noqa: E501
+        # Use _state.adding instead of pk check because UUID pk is set in __init__
+        is_new = self._state.adding
+        skip_scheduler = kwargs.pop("skip_scheduler", False)
+
+        # Migrate existing legacy tasks (with periodic_task) to new batch scheduler
+        # This happens on any update to an existing task
+        if not is_new and self.periodic_task_id is not None:
+            self._migrate_to_batch_scheduler()
+
+        # Check if schedule fields changed (excluding 'enabled' for this check)
+        schedule_fields = {"start_at", "interval_type", "interval_count"}
+        schedule_fields_changed = bool(set(self.changed_fields) & schedule_fields)
+
+        # If schedule fields changed, reset next_scheduled_at to recalculate from start_at
+        if not is_new and schedule_fields_changed:
+            self.next_scheduled_at = None
+
+        # Check if task was just enabled (to handle stale past dates from disabled period)
+        was_just_enabled = "enabled" in self.changed_fields and self.enabled
+
+        # Calculate next_scheduled_at if enabled and:
+        # 1. next_scheduled_at is not set, OR
+        # 2. Task was just enabled (recalculate to avoid immediate execution of stale schedule)
+        # allow_past=True for new tasks enables immediate execution if start date is today
+        # allow_past=False for updates/re-enables ensures future scheduling
+        if self.enabled and (not self.next_scheduled_at or was_just_enabled):
+            self.next_scheduled_at = self.calculate_next_scheduled_at(allow_past=is_new)
 
         self.clean()
 
-        # Detect if we should skip syncing (e.g., during soft delete)
-        skip_sync = getattr(self, "_skip_periodic_sync", False) or getattr(self, "deleted_at", None) is not None
-
         super().save(*args, **kwargs)
 
-        if not skip_sync:
-            self._sync_periodic_task()
+        # Trigger scheduler if task is enabled and either:
+        # - It's a new task, or
+        # - Schedule fields changed, or
+        # - Task was just enabled (enabled changed from False to True)
+        if not skip_scheduler and self.enabled:
+            should_trigger = is_new or schedule_fields_changed or was_just_enabled
+            if should_trigger:
+                from plane.ee.bgtasks.recurring_work_item_scheduler import schedule_on_create_or_enable
+                schedule_on_create_or_enable.delay(str(self.id))
+
+    def _migrate_to_batch_scheduler(self):
+        """
+        Migrate a legacy task (with PeriodicTask) to the new batch scheduler.
+
+        Called during save() for existing tasks that still have a periodic_task.
+        Deletes the PeriodicTask and sets up next_scheduled_at for the batch scheduler.
+        """
+        # Delete the legacy PeriodicTask
+        if self.periodic_task:
+            try:
+                self.periodic_task.delete()
+            except PeriodicTask.DoesNotExist:
+                pass
+            self.periodic_task = None
+
+        # Calculate next_scheduled_at for batch scheduler if not already set
+        # allow_past=True enables immediate execution if start date is today
+        if self.enabled and not self.next_scheduled_at:
+            self.next_scheduled_at = self.calculate_next_scheduled_at(allow_past=True)
 
     def delete(self, *args, **kwargs):
-        """Override delete to clean up associated PeriodicTask and avoid re-sync during soft delete"""  # noqa: E501
-        # Ensure save() doesn't attempt to re-sync during soft delete
-        self._skip_periodic_sync = True
-
-        # If there is an associated periodic task, delete it and null out the relation on this instance # noqa: E501
+        """Override delete to clean up associated PeriodicTask"""
+        # If there is an associated periodic task, delete it
         if self.periodic_task_id is not None:
             try:
                 self.periodic_task.delete()
             except PeriodicTask.DoesNotExist:
                 pass
-            finally:
-                # Null local relation to avoid "unsaved related object" on save during soft delete # noqa: E501
-                self.periodic_task = None
+            self.periodic_task = None
 
         return super().delete(*args, **kwargs)
-
-    def _sync_periodic_task(self):
-        """Create or update the associated PeriodicTask for Beat scheduling"""
-        # Defensive validation to avoid creating a PeriodicTask without a schedule
-        old_instance = None
-        if self.pk:
-            try:
-                old_instance = RecurringWorkitemTask.objects.get(pk=self.pk)
-            except RecurringWorkitemTask.DoesNotExist:
-                pass
-
-        task_name = self._generate_task_name()
-        task_args, task_kwargs = self._prepare_task_arguments()
-
-        cron_schedule = self._get_or_create_cron_schedule()
-
-        old_start_at = getattr(old_instance, "start_at", None)
-        start_changed = old_start_at != self.start_at
-
-        if self.periodic_task:
-            if start_changed:
-                self._update_existing_periodic_task(task_name, task_args, task_kwargs, cron_schedule)
-        else:
-            self._create_new_periodic_task(task_name, task_args, task_kwargs, cron_schedule)
-
-    def _generate_task_name(self):
-        """Generate a unique task name for the periodic task"""
-        return f"rwit-{self.pk}-{self.workitem_blueprint.name}"
-
-    def _prepare_task_arguments(self):
-        """Prepare arguments for the celery task"""
-        task_args = []
-        task_kwargs = {"recurring_workitem_task_id": str(self.pk)}
-        return json.dumps(task_args), json.dumps(task_kwargs)
-
-    def _update_existing_periodic_task(self, task_name, task_args, task_kwargs, cron_schedule):
-        """Update an existing PeriodicTask"""
-        periodic_task = self.periodic_task
-        periodic_task.name = task_name
-        periodic_task.task = self.CELERY_TASK_NAME
-        periodic_task.args = task_args
-        periodic_task.kwargs = task_kwargs
-        periodic_task.enabled = self.enabled
-        periodic_task.start_time = self.start_at
-        periodic_task.expires = self.end_at
-        periodic_task.crontab = cron_schedule
-        periodic_task.interval = None
-        periodic_task.save()
-
-    def _create_new_periodic_task(self, task_name, task_args, task_kwargs, cron_schedule):
-        """Create a new PeriodicTask"""
-        periodic_task = PeriodicTask.objects.create(
-            name=task_name,
-            task=self.CELERY_TASK_NAME,
-            args=task_args,
-            kwargs=task_kwargs,
-            enabled=self.enabled,
-            start_time=self.start_at,
-            expires=self.end_at,
-            crontab=cron_schedule,
-            interval=None,
-        )
-        self.periodic_task = periodic_task
-        super().save(update_fields=["periodic_task"])
-
-    def _get_or_create_cron_schedule(self):
-        """Get or create CrontabSchedule for cron-based scheduling"""
-        if not self.cron_expression:
-            return None
-
-        cron_parts = self._parse_cron_expression()
-        project_timezone = self.project.timezone
-
-        schedule, created = CrontabSchedule.objects.get_or_create(
-            minute=cron_parts["minute"],
-            hour=cron_parts["hour"],
-            day_of_month=cron_parts["day_of_month"],
-            month_of_year=cron_parts["month_of_year"],
-            day_of_week=cron_parts["day_of_week"],
-            timezone=project_timezone,
-        )
-        return schedule
-
-    def _parse_cron_expression(self):
-        """Parse cron expression into components"""
-        parts = self.cron_expression.split()
-        if len(parts) != self.CRON_FIELDS_COUNT:
-            raise ValidationError(f"Invalid cron expression: {self.cron_expression}")
-
-        return {
-            "minute": parts[0],
-            "hour": parts[1],
-            "day_of_month": parts[2],
-            "month_of_year": parts[3],
-            "day_of_week": parts[4],
-        }
 
     def enable(self):
         """Enable the recurring task"""
@@ -309,78 +347,11 @@ class RecurringWorkitemTask(ProjectBaseModel):
         self.enabled = False
         self.save()
 
-    def get_next_run_time(self):
-        """Get the next scheduled run time"""
-        if self.periodic_task:
-            return self.periodic_task.get_next_run_time()
-        return None
-
-    def _detect_interval_type_from_cron(self):
-        """
-        Detect interval type from cron expression pattern.
-
-        Returns:
-            str: One of 'daily', 'week', 'month', 'year', or None
-        """
-        if not self.cron_expression:
-            return None
-
-        try:
-            cron_parts = self._parse_cron_expression()
-        except ValidationError:
-            return None
-
-        # Check patterns to determine interval type
-        if self._is_daily_pattern(cron_parts):
-            return self.INTERVAL_DAILY
-        elif self._is_weekly_pattern(cron_parts):
-            return self.INTERVAL_WEEKLY
-        elif self._is_monthly_pattern(cron_parts):
-            return self.INTERVAL_MONTHLY
-        elif self._is_yearly_pattern(cron_parts):
-            return self.INTERVAL_YEARLY
-
-        return None
-
-    def _is_daily_pattern(self, cron_parts):
-        """Check if cron pattern represents daily recurrence"""
-        return (
-            cron_parts["day_of_month"] == self.CRON_WILDCARD
-            and cron_parts["month_of_year"] == self.CRON_WILDCARD
-            and cron_parts["day_of_week"] == self.CRON_WILDCARD
-        )
-
-    def _is_weekly_pattern(self, cron_parts):
-        """Check if cron pattern represents weekly recurrence"""
-        return (
-            cron_parts["day_of_month"] == self.CRON_WILDCARD
-            and cron_parts["month_of_year"] == self.CRON_WILDCARD
-            and cron_parts["day_of_week"] != self.CRON_WILDCARD
-        )
-
-    def _is_monthly_pattern(self, cron_parts):
-        """Check if cron pattern represents monthly recurrence"""
-        return (
-            cron_parts["day_of_month"] != self.CRON_WILDCARD
-            and cron_parts["month_of_year"] == self.CRON_WILDCARD
-            and cron_parts["day_of_week"] == self.CRON_WILDCARD
-        )
-
-    def _is_yearly_pattern(self, cron_parts):
-        """Check if cron pattern represents yearly recurrence"""
-        return (
-            cron_parts["day_of_month"] != self.CRON_WILDCARD
-            and cron_parts["month_of_year"] != self.CRON_WILDCARD
-            and cron_parts["day_of_week"] == self.CRON_WILDCARD
-        )
-
     @property
     def schedule_description(self):
         """Get a human-readable description of the schedule"""
-        if not self.cron_expression:
-            return "No schedule configured"
-
-        interval_type = self._detect_interval_type_from_cron()
+        interval_type = self.interval_type
+        interval_count = self.interval_count
 
         # Represent the description in the project's local timezone
         local_dt = None
@@ -394,18 +365,33 @@ class RecurringWorkitemTask(ProjectBaseModel):
         except Exception:
             local_dt = self.start_at
 
+        # Helper to pluralize interval descriptions
+        def pluralize(count, singular, plural):
+            return singular if count == 1 else plural
+
         if interval_type == self.INTERVAL_DAILY:
-            return "Every day at 00:00"
+            if interval_count == 1:
+                return "Every day at 00:05"
+            return f"Every {interval_count} days at 00:05"
         elif interval_type == self.INTERVAL_WEEKLY:
-            return f"Every week on {local_dt.strftime('%A')} at 00:00" if local_dt else f"Cron: {self.cron_expression}"
+            day_name = local_dt.strftime('%A') if local_dt else "the scheduled day"
+            if interval_count == 1:
+                return f"Every week on {day_name} at 00:05"
+            return f"Every {interval_count} weeks on {day_name} at 00:05"
         elif interval_type == self.INTERVAL_MONTHLY:
-            return f"Every month on day {local_dt.day} at 00:00" if local_dt else f"Cron: {self.cron_expression}"
+            day_num = local_dt.day if local_dt else "the scheduled day"
+            if interval_count == 1:
+                return f"Every month on day {day_num} at 00:05"
+            return f"Every {interval_count} months on day {day_num} at 00:05"
         elif interval_type == self.INTERVAL_YEARLY:
-            return (
-                f"Every year on {local_dt.strftime('%B %d')} at 00:00" if local_dt else f"Cron: {self.cron_expression}"
-            )
+            date_str = local_dt.strftime('%B %d') if local_dt else "the scheduled date"
+            if interval_count == 1:
+                return f"Every year on {date_str} at 00:05"
+            return f"Every {interval_count} years on {date_str} at 00:05"
         else:
-            return f"Cron: {self.cron_expression}"
+            if self.cron_expression:
+                return f"Cron: {self.cron_expression}"
+            return "No schedule configured"
 
 
 class RecurringWorkitemTaskLog(ProjectBaseModel):
@@ -433,7 +419,7 @@ class RecurringWorkitemTaskLog(ProjectBaseModel):
         related_name="recurring_task_logs",
         help_text="Concrete item created on success",
     )
-    task_id = models.CharField(max_length=50, help_text="Unique per Celery execution")
+    task_id = models.CharField(max_length=255, help_text="Unique per Celery execution")
     status = models.CharField(
         max_length=20,
         choices=TaskStatus.choices,

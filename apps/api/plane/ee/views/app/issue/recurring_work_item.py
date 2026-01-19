@@ -57,7 +57,7 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
         # create a new recurring work item
         serializer = RecurringWorkItemSerializer(data=request.data, context={"project_id": project_id})
         if serializer.is_valid():
-            serializer.save(workitem_blueprint_id=work_item_template.id, project_id=project_id)
+            instance = serializer.save(workitem_blueprint_id=work_item_template.id, project_id=project_id)
             # create a new recurring work item activity
             recurring_work_item_activity.delay(
                 type="recurring_workitem.activity.created",
@@ -134,7 +134,8 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
 
         if serializer.is_valid():
             serializer.save()
-            work_item_serializer.save()
+            if work_item_serializer:
+                work_item_serializer.save()
             recurring_work_item_activity.delay(
                 type="recurring_workitem.activity.updated",
                 requested_data=request_data,
@@ -145,6 +146,7 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
                 epoch=int(timezone.now().timestamp()),
             )
             recurring_work_item.refresh_from_db()
+
             serializer = RecurringWorkItemSerializer(recurring_work_item)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:

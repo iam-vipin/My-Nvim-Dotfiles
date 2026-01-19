@@ -1560,6 +1560,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "選擇預設檢視",
+      compact: "緊湊",
+      full: "全螢幕",
+    },
   },
   workspace_settings: {
     label: "工作區設定",

@@ -1589,6 +1589,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Selectează vizualizarea implicită",
+      compact: "Compact",
+      full: "Ecran complet",
+    },
   },
   workspace_settings: {
     label: "Setări spațiu de lucru",

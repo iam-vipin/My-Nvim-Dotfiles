@@ -1568,6 +1568,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "기본 보기 선택",
+      compact: "컴팩트",
+      full: "전체 화면",
+    },
   },
   workspace_settings: {
     label: "작업 공간 설정",

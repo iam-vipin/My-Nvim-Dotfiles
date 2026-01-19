@@ -1575,6 +1575,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "デフォルト表示を選択",
+      compact: "コンパクト",
+      full: "全画面",
+    },
   },
   workspace_settings: {
     label: "ワークスペース設定",

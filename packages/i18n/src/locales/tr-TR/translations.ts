@@ -1584,6 +1584,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Varsayılan görünümü seç",
+      compact: "Kompakt",
+      full: "Tam ekran",
+    },
   },
   workspace_settings: {
     label: "Çalışma Alanı Ayarları",

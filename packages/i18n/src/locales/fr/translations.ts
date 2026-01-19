@@ -1597,6 +1597,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Sélectionner la vue par défaut",
+      compact: "Compact",
+      full: "Plein écran",
+    },
   },
   workspace_settings: {
     label: "Paramètres de l’espace de travail",

@@ -1585,6 +1585,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Chọn chế độ xem mặc định",
+      compact: "Gọn",
+      full: "Toàn màn hình",
+    },
   },
   workspace_settings: {
     label: "Cài đặt không gian làm việc",

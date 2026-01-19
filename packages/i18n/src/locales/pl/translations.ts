@@ -1579,6 +1579,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Wybierz widok domyślny",
+      compact: "Kompaktowy",
+      full: "Pełny ekran",
+    },
   },
   workspace_settings: {
     label: "Ustawienia przestrzeni roboczej",

@@ -1,16 +1,3 @@
-/**
- * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
- * SPDX-License-Identifier: LicenseRef-Plane-Commercial
- *
- * Licensed under the Plane Commercial License (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * https://plane.so/legals/eula
- *
- * DO NOT remove or modify this notice.
- * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
- */
-
 import { orderBy, isEmpty, update, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -37,10 +24,14 @@ import type { CoreRootStore } from "@/store/root.store";
 type TNotificationLoader = ENotificationLoader | undefined;
 type TNotificationQueryParamType = ENotificationQueryParamType;
 
+export type TGroupedNotifications = Record<string, TNotification[]>;
+export type TNotificationsViewMode = "full" | "compact";
+
 export interface IWorkspaceNotificationStore {
   // observables
   loader: TNotificationLoader;
   unreadNotificationsCount: TUnreadNotificationsCount;
+  viewMode: TNotificationsViewMode;
   notifications: Record<string, INotification>; // notification_id -> notification
   currentNotificationTab: TNotificationTab;
   currentSelectedNotificationId: string | undefined;
@@ -65,6 +56,7 @@ export interface IWorkspaceNotificationStore {
     queryCursorType?: TNotificationQueryParamType
   ) => Promise<TNotificationPaginatedInfo | undefined>;
   markAllNotificationsAsRead: (workspaceId: string) => Promise<void>;
+  setViewMode: (viewMode: TNotificationsViewMode) => void;
 }
 
 export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
@@ -72,6 +64,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   paginatedCount = 300;
   // observables
   loader: TNotificationLoader = undefined;
+  viewMode: TNotificationsViewMode = "full";
   unreadNotificationsCount: TUnreadNotificationsCount = {
     total_unread_notifications_count: 0,
     mention_unread_notifications_count: 0,
@@ -95,6 +88,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     makeObservable(this, {
       // observables
       loader: observable.ref,
+      viewMode: observable,
       unreadNotificationsCount: observable,
       notifications: observable,
       currentNotificationTab: observable.ref,
@@ -113,8 +107,12 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       getUnreadNotificationsCount: action,
       getNotifications: action,
       markAllNotificationsAsRead: action,
+      setViewMode: action,
     });
   }
+  setViewMode = (viewMode: TNotificationsViewMode): void => {
+    set(this, "viewMode", viewMode);
+  };
 
   // computed
 

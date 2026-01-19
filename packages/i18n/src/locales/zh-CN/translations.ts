@@ -1559,6 +1559,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "选择默认视图",
+      compact: "紧凑",
+      full: "全屏",
+    },
   },
   workspace_settings: {
     label: "工作区设置",

@@ -1576,6 +1576,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Vybrat výchozí zobrazení",
+      compact: "Kompaktní",
+      full: "Celá obrazovka",
+    },
   },
   workspace_settings: {
     label: "Nastavení pracovního prostoru",

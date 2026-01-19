@@ -1582,6 +1582,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Выбрать вид по умолчанию",
+      compact: "Компактный",
+      full: "Полный экран",
+    },
   },
   workspace_settings: {
     label: "Настройки пространства",
@@ -2607,7 +2612,6 @@ export default {
       "Выберите View Logs из setup.sh и логов Docker, чтобы убедиться.",
   },
   no_of: "Количество {entity}",
-
   page_navigation_pane: {
     tabs: {
       outline: {

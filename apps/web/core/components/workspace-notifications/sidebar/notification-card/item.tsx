@@ -29,10 +29,11 @@ import { NotificationOption } from "./options";
 type TNotificationItem = {
   workspaceSlug: string;
   notificationId: string;
+  onNotificationClick?: () => void;
 };
 
 export const NotificationItem = observer(function NotificationItem(props: TNotificationItem) {
-  const { workspaceSlug, notificationId } = props;
+  const { workspaceSlug, notificationId, onNotificationClick } = props;
   // hooks
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
@@ -52,6 +53,8 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
 
   const handleNotificationIssuePeekOverview = async () => {
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
+      onNotificationClick?.();
+
       setPeekIssue(undefined);
       setCurrentSelectedNotificationId(notificationId);
 

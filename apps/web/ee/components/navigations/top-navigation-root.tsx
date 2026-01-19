@@ -11,34 +11,34 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
 import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import useSWR from "swr";
+import { useMemo } from "react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { CloseIcon, InboxIcon, PiIcon } from "@plane/propel/icons";
+import { CloseIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { TopNavPowerK } from "@/components/navigation";
-import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
 import { UserMenuRoot } from "@/components/workspace/sidebar/user-menu-root";
 import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu-root";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useInstance } from "@/hooks/store/use-instance";
 // plane web imports
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useAppRailVisibility } from "@/lib/app-rail/context";
+import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 import { useFlag, useWorkspaceFeatures, useTheme } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { DesktopHeaderProvider } from "../desktop/root";
 import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
 import { TopNavSearch } from "./top-nav-search";
-import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
+import { NotificationsPopoverRoot } from "@/components/notifications/popover/root";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import useSWR from "swr";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
@@ -47,26 +47,20 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // derived values
   const isPiChatSidecarOpen = activeSidecar === "pi-chat";
-  const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
   const { preferences } = useAppRailPreferences();
   const { isEnabled: isAppRailEnabled, isCollapsed: isAppRailCollapsed } = useAppRailVisibility();
   // router
   const { workspaceSlug, projectId, workItem } = useParams();
+  const { getUnreadNotificationsCount } = useWorkspaceNotifications();
+
   const pathname = usePathname();
   // derived
   const isDesktopApp = useMemo(() => isDesktopAppFn(), []);
 
-  // Fetch notification count
   useSWR(
     workspaceSlug ? "WORKSPACE_UNREAD_NOTIFICATION_COUNT" : null,
     workspaceSlug ? () => getUnreadNotificationsCount(workspaceSlug.toString()) : null
   );
-
-  // Calculate notification count
-  const isMentionsEnabled = unreadNotificationsCount.mention_unread_notifications_count > 0;
-  const totalNotifications = isMentionsEnabled
-    ? unreadNotificationsCount.mention_unread_notifications_count
-    : unreadNotificationsCount.total_unread_notifications_count;
 
   const shouldRenderPiChat =
     useFlag(workspaceSlug?.toString() ?? "", E_FEATURE_FLAGS.PI_CHAT) &&
@@ -100,24 +94,8 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         {isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}
       </div>
       {/* Additional Actions */}
-      <div className="shrink-0 flex-1 flex items-center gap-1 justify-end">
-        <Tooltip tooltipContent="Inbox" position="bottom">
-          <AppSidebarItem
-            variant="link"
-            item={{
-              href: `/${workspaceSlug?.toString()}/notifications/`,
-              icon: (
-                <div className="relative">
-                  <InboxIcon className="size-5" />
-                  {totalNotifications > 0 && (
-                    <span className="absolute top-0 right-0 size-2 rounded-full bg-danger-primary" />
-                  )}
-                </div>
-              ),
-              isActive: pathname?.includes("/notifications/"),
-            }}
-          />
-        </Tooltip>
+      <div className="desktop-header-actions shrink-0 flex-1 flex items-center gap-1 justify-end">
+        <NotificationsPopoverRoot workspaceSlug={workspaceSlug?.toString()} />
         <HelpMenuRoot />
         {shouldRenderPiChat && (
           <div>

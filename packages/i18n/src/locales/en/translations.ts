@@ -1426,6 +1426,9 @@ export default {
     notifications: {
       heading: "Email notifications",
       description: "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
+      select_default_view: "Select default view",
+      compact: "Compact",
+      full: "Full Screen",
     },
     security: {
       heading: "Security",

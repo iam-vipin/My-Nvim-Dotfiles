@@ -1583,6 +1583,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Вибрати подання за замовчуванням",
+      compact: "Компактний",
+      full: "Повний екран",
+    },
   },
   workspace_settings: {
     label: "Налаштування робочого простору",

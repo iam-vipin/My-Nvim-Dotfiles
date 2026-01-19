@@ -1599,6 +1599,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Seleccionar vista predeterminada",
+      compact: "Compacto",
+      full: "Pantalla completa",
+    },
   },
   workspace_settings: {
     label: "Configuración del espacio de trabajo",

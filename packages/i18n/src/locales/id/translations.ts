@@ -1584,6 +1584,11 @@ export default {
         },
       },
     },
+    notifications: {
+      select_default_view: "Pilih tampilan default",
+      compact: "Ringkas",
+      full: "Layar penuh",
+    },
   },
   workspace_settings: {
     label: "Pengaturan ruang kerja",

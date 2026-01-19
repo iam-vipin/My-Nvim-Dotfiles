@@ -22,6 +22,7 @@ import { ToggleSwitch } from "@plane/ui";
 // assets
 import SAMLLogo from "@/app/assets/logos/saml-logo.svg?url";
 // hooks
+import { useDomains } from "@/plane-web/hooks/sso/use-domains";
 import { useProviders } from "@/plane-web/hooks/sso/use-providers";
 import { useProviderActions } from "@/plane-web/hooks/sso/use-provider-actions";
 // local imports
@@ -57,6 +58,7 @@ export function SAMLRoot(props: TSAMLRoot) {
   // plane hooks
   const { t } = useTranslation();
   // SWR hooks
+  const { hasAnyVerifiedDomain } = useDomains(workspaceSlug);
   const { isLoading: isProvidersLoading, samlProvider, activeProvider } = useProviders(workspaceSlug);
   const { createProvider, updateProvider } = useProviderActions(workspaceSlug);
   // derived values
@@ -86,7 +88,7 @@ export function SAMLRoot(props: TSAMLRoot) {
   });
   const isEnabled = useWatch({ control, name: "is_enabled" });
   // form derived values
-  const isSubmitButtonDisabled = (!isDirty && !!samlProvider) || isInitializing;
+  const isSubmitButtonDisabled = (!isDirty && !!samlProvider) || isInitializing || !hasAnyVerifiedDomain;
 
   // Reset form when provider changes
   useEffect(() => {
@@ -207,6 +209,7 @@ export function SAMLRoot(props: TSAMLRoot) {
             onSubmit={async (enableProvider: boolean) => await handleSubmit((data) => onSubmit(data, enableProvider))()}
             submitType={submitType}
             t={t}
+            tooltipContentI18nKey={hasAnyVerifiedDomain ? undefined : "sso.providers.disabled_message"}
           />
         </ProviderFormSection>
       </form>

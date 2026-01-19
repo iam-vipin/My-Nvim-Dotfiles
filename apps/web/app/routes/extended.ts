@@ -496,7 +496,7 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
             layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/layout.tsx", [
               route(
                 ":workspaceSlug/settings/identity/oidc",
-                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/odic/page.tsx"
+                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/oidc/page.tsx"
               ),
               route(
                 ":workspaceSlug/settings/identity/saml",

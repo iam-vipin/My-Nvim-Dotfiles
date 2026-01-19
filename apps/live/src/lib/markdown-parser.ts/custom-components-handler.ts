@@ -50,12 +50,26 @@ export const parseCustomComponents = (args: TArgs): Record<string, Handle> => {
     },
     "mention-component": (_state, node) => {
       const properties = node.properties || {};
-      const userId = String(properties.entity_identifier);
-      const userDetails = metaData.user_mentions.find((user) => user.id === userId);
-      const path = `${workspaceSlug}/profile/${userId}`;
-      const url = `${resolvedBaseURL}${path}`;
+      const mentionType = String(properties.entity_name);
 
-      return createTextNode(`[@${userDetails?.display_name || ""}](${url}) `);
+      let url: string = resolvedBaseURL;
+      let tag: string = "@";
+      if (mentionType === "user_mention") {
+        const userId = String(properties.entity_identifier);
+        const userDetails = metaData.user_mentions.find((user) => user.id === userId);
+        const path = `${workspaceSlug}/profile/${userId}`;
+        url = `${resolvedBaseURL}${path}`;
+        tag = `@${userDetails?.display_name || ""}`;
+      } else if (mentionType === "issue_mention") {
+        const workItemId = String(properties?.["entity_identifier"]);
+        const workItemDetails = metaData.work_item_mentions.find((workItem) => workItem.id === workItemId);
+        const workItemIdentifier = `${workItemDetails?.project__identifier || ""}-${workItemDetails?.sequence_id || ""}`;
+        const path = `${workspaceSlug}/browse/${workItemIdentifier}`;
+        url = `${resolvedBaseURL}${path}`;
+        tag = `@${workItemIdentifier}`;
+      }
+
+      return createTextNode(`[${tag}](${url}) `);
     },
     "attachment-component": (_state, node) => {
       const properties = node.properties || {};
@@ -64,8 +78,14 @@ export const parseCustomComponents = (args: TArgs): Record<string, Handle> => {
 
       return createTextNode(`[${path}](./${path})\n\n`);
     },
-    "inline-math-component": (_state, node) => createTextNode(`$${node.properties?.latex || ""}$ `),
-    "block-math-component": (_state, node) => createTextNode(`$$\n${node.properties?.latex || ""}\n$$\n\n`),
+    "inline-math-component": (_state, node) => {
+      const latexEquation = String(node.properties?.latex || "");
+      return createTextNode(`$${latexEquation}$ `);
+    },
+    "block-math-component": (_state, node) => {
+      const latexEquation = String(node.properties?.latex || "");
+      return createTextNode(`$$\n${latexEquation}\n$$\n\n`);
+    },
     "external-embed-component": (_state, node) => {
       const properties = node.properties || {};
       const src = String(properties.src || "");

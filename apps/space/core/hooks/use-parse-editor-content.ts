@@ -32,7 +32,7 @@ export const useParseEditorContent = (args: TArgs) => {
     (htmlContent: string): TCustomComponentsMetaData => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlContent, "text/html");
-      const imageMetaData: TCustomComponentsMetaData["file_assets"] = [];
+      const filesMetaData: TCustomComponentsMetaData["file_assets"] = [];
       // process image components
       const imageComponents = doc.querySelectorAll("image-component");
       imageComponents.forEach((element) => {
@@ -40,7 +40,7 @@ export const useParseEditorContent = (args: TArgs) => {
         if (src) {
           const assetSrc = src.startsWith("http") ? src : getEditorAssetSrc(anchor, src);
           if (assetSrc) {
-            imageMetaData.push({
+            filesMetaData.push({
               id: src,
               name: src,
               url: assetSrc,
@@ -67,9 +67,25 @@ export const useParseEditorContent = (args: TArgs) => {
           }
         }
       });
+      // process attachment components
+      const attachmentComponents = doc.querySelectorAll("attachment-component");
+      attachmentComponents.forEach((element) => {
+        const src = element.getAttribute("src");
+        const name = element.getAttribute("data-name") || "";
+        if (src) {
+          const assetSrc = src.startsWith("http") ? src : getEditorAssetSrc(anchor, src);
+          if (assetSrc) {
+            filesMetaData.push({
+              id: src,
+              name,
+              url: assetSrc,
+            });
+          }
+        }
+      });
 
       return {
-        file_assets: imageMetaData,
+        file_assets: filesMetaData,
         user_mentions: userMentions,
       };
     },

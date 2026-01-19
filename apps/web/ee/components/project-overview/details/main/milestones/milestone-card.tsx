@@ -128,7 +128,7 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
                         percentage={milestone.progress_percentage}
                         strokeWidth={3}
                         strokeColor={cn(
-                          milestone.progress_percentage >= 100 ? "stroke-success" : "stroke-accent-primary"
+                          milestone.progress_percentage >= 100 ? "stroke-success-secondary" : "stroke-accent-primary"
                         )}
                       />
                       <span className="text-caption-sm-medium text-primary">{milestone.progress_percentage}%</span>

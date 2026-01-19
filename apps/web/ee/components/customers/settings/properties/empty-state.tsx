@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { v4 } from "uuid";
 
 import { PlusIcon, BuildingsIcon } from "@plane/propel/icons";
@@ -35,9 +33,9 @@ export function CustomerPropertiesEmptyState(props: TCustomerPropertiesEmptyStat
   const { handleCustomerPropertiesCreate } = props;
   const { t } = useTranslation();
   return (
-    <div className="w-full p-8 relative flex justify-center items-center bg-surface-1 rounded-lg border border-subtle mx-4">
+    <div className="p-8 relative flex justify-center items-center bg-surface-1 rounded-lg border border-subtle mx-4">
       <div className="flex flex-col items-center space-y-1">
-        <div className="flex-shrink-0 grid place-items-center rounded-lg bg-layer-1 p-3">
+        <div className="shrink-0 grid place-items-center rounded-lg bg-layer-1 p-3">
           <BuildingsIcon className="h-14 w-14 text-placeholder" strokeWidth="1.5" />
         </div>
         <div className="text-primary font-medium text-14">{t("customers.properties.empty_state.title")}</div>

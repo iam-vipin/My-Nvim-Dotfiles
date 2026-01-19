@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -49,7 +47,7 @@ export const SidebarCustomersList = observer(function SidebarCustomersList(props
           ? customerIds?.map((id) => (
               <CustomerSidebarListitem workspaceSlug={workspaceSlug} isPeekView={isPeekView} key={id} customerId={id} />
             ))
-          : !isAdmin && <span className="text-13 text-placeholder px-2">{t("customers.dropdown.no_selection")}</span>}
+          : !isAdmin && <span className="text-13 text-placeholder">{t("customers.dropdown.no_selection")}</span>}
       </div>
       {isAdmin && (
         <CustomerSelect

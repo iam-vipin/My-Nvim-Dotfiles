@@ -47,11 +47,13 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
     await updateTourCompleted();
   };
 
+  const showTour = currentUserProfile && !currentUserProfile.is_tour_completed;
+
   // TODO: refactor loader implementation
   return (
     <>
-      {currentUserProfile && !currentUserProfile.is_tour_completed && (
-        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-backdrop transition-opacity overflow-y-auto">
+      {showTour && (
+        <div className="fixed left-0 top-0 z-30 grid h-full w-full place-items-center bg-backdrop transition-opacity overflow-y-auto">
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}

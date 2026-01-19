@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python Imports
 from typing import List, Optional
 
@@ -17,7 +28,7 @@ from plane.graphql.types.page import PageMentionEntityNameEnum, PageMentionType
 # Local Imports
 from .feature_flag import is_page_mention_feature_flagged
 from ...project import _get_project
-from ...workspace import _get_workspace
+from ...workspace import get_workspace
 
 
 # constructing page log query
@@ -39,7 +50,7 @@ def page_log_base_query(
     )
 
     # validating workspace
-    workspace = _get_workspace(workspace_slug=workspace_slug)
+    workspace = get_workspace(slug=workspace_slug)
     workspace_slug = workspace.slug
 
     # validating project

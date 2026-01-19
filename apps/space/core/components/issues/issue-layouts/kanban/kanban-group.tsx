@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { MutableRefObject } from "react";
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -38,7 +51,9 @@ const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader(
   props: Record<string, unknown>,
   ref: React.ForwardedRef<HTMLSpanElement>
 ) {
-  return <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-custom-background-80 rounded" />;
+  return (
+    <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-[var(--illustration-fill-quaternary)] rounded-sm" />
+  );
 });
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
 
@@ -88,8 +103,9 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+      className="w-full p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
       onClick={loadMoreIssuesInThisGroup}
+      role="button"
     >
       {" "}
       Load More &darr;
@@ -112,7 +128,17 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         scrollableContainerRef={scrollableContainerRef}
       />
 
-      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore &&
+        (isSubGroup ? (
+          <>{loadMore}</>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <KanbanIssueBlockLoader key={index} />
+            ))}
+            <KanbanIssueBlockLoader ref={setIntersectionElement} />
+          </div>
+        ))}
     </div>
   );
 });

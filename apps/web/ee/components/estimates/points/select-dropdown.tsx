@@ -1,11 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import { Check, Info } from "lucide-react";
+import { CheckIcon, InfoIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Listbox, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";
@@ -66,13 +78,11 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
           ref={setReferenceElement}
           onClick={() => setIsDropdownOpen((prev) => !prev)}
           className={cn(
-            "relative w-full rounded border flex items-center gap-3 px-3 py-2",
-            error ? `border-red-500` : `border-custom-border-200`
+            "relative w-full rounded-sm border flex items-center gap-3 px-3 py-2",
+            error ? `border-danger-strong` : `border-subtle-1`
           )}
         >
-          <div
-            className={cn(`w-full text-sm text-left`, !selectedValue ? "text-custom-text-300" : "text-custom-text-100")}
-          >
+          <div className={cn(`w-full text-13 text-left`, !selectedValue ? "text-tertiary" : "text-primary")}>
             {estimateSystem === EEstimateSystem.TIME && selectedValue?.id
               ? convertMinutesToHoursMinutesString(Number(selectedValue?.value))
               : selectedValue?.value || "Select an estimate point"}
@@ -81,8 +91,8 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
           {error && (
             <>
               <Tooltip tooltipContent={error} position="bottom">
-                <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden relative flex justify-center items-center text-red-500">
-                  <Info size={14} />
+                <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden relative flex justify-center items-center text-danger-primary">
+                  <InfoIcon height={14} width={14} />
                 </div>
               </Tooltip>
             </>
@@ -100,7 +110,7 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
           leaveTo="transform opacity-0 scale-95"
         >
           <div
-            className="p-1.5 fixed z-10 mt-1 h-fit w-48 sm:w-60 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100 shadow-sm focus:outline-none"
+            className="p-1.5 fixed z-10 mt-1 h-fit w-48 sm:w-60 overflow-y-auto rounded-md border border-subtle-1 bg-surface-1 shadow-sm focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
@@ -110,13 +120,13 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
                 <Listbox.Option
                   value={"none"}
                   className={cn(
-                    `cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-90`,
-                    selectedOption === "none" ? "text-custom-text-100" : "text-custom-text-300"
+                    `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 hover:bg-layer-1`,
+                    selectedOption === "none" ? "text-primary" : "text-tertiary"
                   )}
                 >
                   <div className="relative flex items-center text-wrap gap-2 px-1 py-0.5">
-                    <div className="text-sm font-medium w-full line-clamp-1">None</div>
-                    {selectedOption === "none" && <Check size={12} />}
+                    <div className="text-13 font-medium w-full line-clamp-1">None</div>
+                    {selectedOption === "none" && <CheckIcon height={12} width={12} />}
                   </div>
                 </Listbox.Option>
                 {options.map((option) => (
@@ -124,17 +134,17 @@ export function EstimatePointDropdown(props: TEstimatePointDropdown) {
                     key={option?.key}
                     value={option?.id}
                     className={cn(
-                      `cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-90`,
-                      selectedOption === option?.id ? "text-custom-text-100" : "text-custom-text-300"
+                      `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 hover:bg-layer-1`,
+                      selectedOption === option?.id ? "text-primary" : "text-tertiary"
                     )}
                   >
                     <div className="relative flex items-center text-wrap gap-2 px-1 py-0.5">
-                      <div className="text-sm font-medium w-full line-clamp-1">
+                      <div className="text-13 font-medium w-full line-clamp-1">
                         {estimateSystem === EEstimateSystem.TIME
                           ? convertMinutesToHoursMinutesString(Number(option.value))
                           : option.value}
                       </div>
-                      {selectedOption === option?.id && <Check size={12} />}
+                      {selectedOption === option?.id && <CheckIcon width={12} height={12} />}
                     </div>
                   </Listbox.Option>
                 ))}

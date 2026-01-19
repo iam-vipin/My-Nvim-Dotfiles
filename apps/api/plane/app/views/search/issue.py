@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from uuid import UUID
 
@@ -158,9 +169,7 @@ class IssueSearchEndpoint(BaseAPIView):
         # Filter issues and epics by project
         if workspace_search == "false":
             issues = self.filter_issues_by_project(project_id, issues)
-            issues_and_epics = self.filter_issues_by_project(
-                project_id, issues_and_epics
-            )
+            issues_and_epics = self.filter_issues_by_project(project_id, issues_and_epics)
 
         # Filter issues and epics by query
         if epic == "true":
@@ -180,9 +189,7 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = self.search_issues_and_excluding_parent(issues_and_epics, issue_id)
 
         if issue_relation == "true" and issue_id:
-            issues = self.filter_issues_excluding_related_issues(
-                issue_id, issues_and_epics
-            )
+            issues = self.filter_issues_excluding_related_issues(issue_id, issues_and_epics)
 
         if sub_issue == "true" and issue_id:
             issues = self.filter_root_issues_only(issue_id, issues)
@@ -197,9 +204,7 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = self.filter_issues_without_target_date(issues)
 
         if convert == "true" and issue_id:
-            issues = self.filter_issues_and_epics_by_excluding_given_issue_id(
-                query, issue_id, issues_and_epics
-            )
+            issues = self.filter_issues_and_epics_by_excluding_given_issue_id(query, issue_id, issues_and_epics)
         if ProjectMember.objects.filter(
             project_id=project_id, member=self.request.user, is_active=True, role=5
         ).exists():

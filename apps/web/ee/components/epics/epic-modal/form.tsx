@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -277,8 +290,8 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
             onSubmit={handleSubmit((data) => handleFormSubmit(data))}
             className="flex flex-col w-full"
           >
-            <div className="p-5 rounded-t-lg bg-custom-background-100">
-              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
+            <div className="p-5 rounded-t-lg bg-surface-1">
+              <h3 className="text-18 font-medium text-secondary pb-2">{modalTitle}</h3>
               <div className="flex items-center justify-between pt-2 pb-4">
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect control={control} disabled handleFormChange={handleFormChange} />
@@ -295,7 +308,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
             </div>
             <div
               className={cn(
-                "pb-4 space-y-3 bg-custom-background-100",
+                "pb-4 space-y-3 bg-surface-1",
                 activeAdditionalPropertiesLength > 4 &&
                   "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
               )}
@@ -341,7 +354,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
                 )}
               </div>
             </div>
-            <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-lg rounded-b-lg bg-custom-background-100">
+            <div className="px-4 py-3 border-t-[0.5px] border-subtle-1 shadow-lg rounded-b-lg bg-surface-1">
               <div className="pb-3">
                 <EpicDefaultProperties
                   control={control}
@@ -358,11 +371,10 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
                 />
               </div>
               {showActionButtons && (
-                <div className="flex items-center justify-end gap-4 py-3 border-t-[0.5px] border-custom-border-200">
+                <div className="flex items-center justify-end gap-4 py-3 border-t-[0.5px] border-subtle-1">
                   <div className="flex items-center gap-2">
                     <Button
-                      variant="neutral-primary"
-                      size="sm"
+                      variant="secondary"
                       onClick={() => {
                         if (editorRef.current?.isEditorReadyToDiscard()) {
                           onClose();
@@ -381,7 +393,6 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
                     <Button
                       variant="primary"
                       type="submit"
-                      size="sm"
                       ref={submitBtnRef}
                       loading={isSubmitting}
                       tabIndex={getIndex("submit_button")}

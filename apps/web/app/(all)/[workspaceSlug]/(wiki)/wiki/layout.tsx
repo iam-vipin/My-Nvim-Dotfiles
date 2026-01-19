@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
@@ -33,9 +46,9 @@ export default function WikiLayout({ params }: Route.ComponentProps) {
         fallback={<WikiUpgradeScreen workspaceSlug={workspaceSlug} />}
       >
         <WorkspaceAccessWrapper pageKey="pages" allowedPermissions={[EUserPermissions.ADMIN, EUserPermissions.MEMBER]}>
-          <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
+          <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-subtle-1">
             <PagesAppSidebar />
-            <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+            <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
               <Outlet />
             </main>
           </div>

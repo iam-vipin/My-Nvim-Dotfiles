@@ -1,12 +1,22 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { WORKSPACE_WORKLOG_TRACKER_ELEMENTS, WORKSPACE_WORKLOG_TRACKER_EVENTS } from "@plane/constants";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { PopoverMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceWorklogDownloads, useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 import type { TWorklogDownload } from "@/plane-web/types";
 
@@ -49,41 +59,31 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
       const payload: Partial<TWorklogDownload> = { provider: format, filters: filters };
       await createWorklogDownload(workspaceSlug, payload);
       setButtonLoader(false);
-      captureSuccess({
-        eventName: WORKSPACE_WORKLOG_TRACKER_EVENTS.CREATE_WORKLOG_DOWNLOAD,
-        payload: {
-          format,
-        },
-      });
-    } catch (error) {
+    } catch (_error) {
       setButtonLoader(false);
-      captureError({
-        eventName: WORKSPACE_WORKLOG_TRACKER_EVENTS.CREATE_WORKLOG_DOWNLOAD,
-        error: error as Error,
-      });
     }
   };
 
   return (
     <button
       className={cn(
-        "relative flex items-center rounded transition-all bg-custom-primary-100 hover:bg-custom-primary-200 focus:text-custom-brand-40 focus:bg-custom-primary-200 font-semibold text-white",
+        "relative flex items-center rounded-sm transition-all bg-accent-primary hover:bg-accent-primary/80 focus:bg-accent-primary/80 font-semibold",
         {
-          "cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60": buttonLoader,
+          "cursor-not-allowed hover:bg-accent-subtle!": buttonLoader,
         }
       )}
       disabled={buttonLoader}
     >
       <div
-        className="flex w-full h-full px-2 py-0.5 text-sm font-medium border-r border-white"
+        className="flex w-full h-full px-2 py-0.5 text-13 font-medium border-r border-white text-on-color"
         onClick={() => downloadWorklogs("csv")}
       >
-        {buttonLoader ? "Downloading..." : "Download"}
+        {buttonLoader ? "Downloading" : "Download"}
       </div>
       <PopoverMenu
         buttonClassName="outline-none focus:outline-none flex"
         button={
-          <div className="flex-shrink-0 px-2 py-0.5 overflow-hidden flex justify-center items-center my-auto">
+          <div className="flex-shrink-0 px-2 py-0.5 overflow-hidden flex justify-center items-center my-auto text-on-color">
             <ChevronDownIcon height={16} width={16} className="my-auto" />
           </div>
         }
@@ -92,10 +92,9 @@ export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklog
         panelClassName="space-y-0.5 w-32 flex flex-col"
         render={(option: TDownloadFormatOptions) => (
           <button
-            className="px-1.5 py-1 text-left rounded text-xs font-medium cursor-pointer hover:bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100 transition-all"
+            className="px-1.5 py-1 text-left rounded-sm text-11 font-medium cursor-pointer hover:bg-layer-transparent-hover transition-all"
             onClick={() => downloadWorklogs(option.value)}
             disabled={buttonLoader}
-            data-ph-element={WORKSPACE_WORKLOG_TRACKER_ELEMENTS.HEADER_DOWNLOAD_CONTEXT_MENU}
           >
             {option.label}
           </button>

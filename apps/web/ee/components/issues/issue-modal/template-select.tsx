@@ -1,16 +1,26 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
 import type { TWorkItemTemplateSelect } from "@/ce/components/issues/issue-modal/template-select";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -53,7 +63,7 @@ export const WorkItemTemplateSelect = observer(function WorkItemTemplateSelect(p
         <>
           {renderChevron && (
             <div className="flex items-center gap-2">
-              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
+              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-tertiary" aria-hidden="true" />
             </div>
           )}
           <div className={cn("h-7", dropDownContainerClassName)}>
@@ -68,12 +78,6 @@ export const WorkItemTemplateSelect = observer(function WorkItemTemplateSelect(p
                 placeholder={placeholder}
                 customLabelContent={isApplyingTemplate && <Spinner className="size-4 animate-spin" />}
                 handleTemplateChange={(templateId) => {
-                  captureClick({
-                    elementName: WORKITEM_TEMPLATE_TRACKER_ELEMENTS.CREATE_WORKITEM_MODAL_TEMPLATE_OPTION,
-                    context: {
-                      id: templateId,
-                    },
-                  });
                   setWorkItemTemplateId(templateId);
                   handleFormChange?.();
                 }}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -99,8 +112,8 @@ export const InitiativeLabelProperty = observer(function InitiativeLabelProperty
         >
           <div
             className={cn(
-              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong",
               fullWidth && "w-full"
             )}
           >
@@ -118,13 +131,13 @@ export const InitiativeLabelProperty = observer(function InitiativeLabelProperty
       return (
         <div
           className={cn(
-            "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+            "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
+            noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong",
             fullWidth && "w-full"
           )}
         >
           <Tags className="h-3.5 w-3.5" strokeWidth={2} />
-          <span className="text-custom-text-200">{value.length} labels</span>
+          <span className="text-secondary">{value.length} labels</span>
         </div>
       );
     },
@@ -137,8 +150,8 @@ export const InitiativeLabelProperty = observer(function InitiativeLabelProperty
         return (
           <div
             className={cn(
-              "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+              "flex h-full items-center justify-center gap-1 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong",
               fullWidth && "w-full"
             )}
           >

@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "使用者名稱",
+        placeholder: "請輸入您的使用者名稱",
+      },
+    },
+    ldap: {
+      header: {
+        label: "使用 {ldapProviderName} 繼續",
+        sub_header: "請輸入您的 {ldapProviderName} 憑證",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "派聊天",
     initiatives: "計劃",
@@ -692,6 +719,11 @@ export default {
       worklogs: {
         title: "工作日誌",
       },
+      identity: {
+        title: "身份",
+        heading: "身份",
+        description: "配置您的網域並啟用單一登入",
+      },
       project_states: {
         title: "專案狀態",
       },
@@ -878,6 +910,54 @@ export default {
         title: "Plane AI",
         heading: "Plane AI",
         description: "使用與您的工作和知識庫原生連接的 AI，讓您的任務變得更智能、更快速。",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "從CSV匯入成員",
+      description: "上傳包含以下欄位的CSV：Email, Display Name, First Name, Last Name, Role（5、15或20）",
+      dropzone: {
+        active: "將CSV檔案放在這裡",
+        inactive: "拖放或點擊上傳",
+        file_type: "僅支援.csv檔案",
+      },
+      buttons: {
+        cancel: "取消",
+        import: "匯入",
+        try_again: "重試",
+        close: "關閉",
+        done: "完成",
+      },
+      progress: {
+        uploading: "上傳中...",
+        importing: "匯入中...",
+      },
+      summary: {
+        title: {
+          failed: "匯入失敗",
+          complete: "匯入完成",
+        },
+        message: {
+          seat_limit: "由於席位限制，無法匯入成員。",
+          success: "成功將{count}名成員新增至工作區。",
+          no_imports: "未從CSV檔案匯入任何成員。",
+        },
+        stats: {
+          successful: "成功",
+          failed: "失敗",
+        },
+        download_errors: "下載錯誤",
+      },
+      toast: {
+        invalid_file: {
+          title: "無效檔案",
+          message: "僅支援CSV檔案。",
+        },
+        import_failed: {
+          title: "匯入失敗",
+          message: "發生錯誤。",
+        },
       },
     },
   },
@@ -1334,6 +1414,21 @@ export default {
     choose_entity: "選擇實體",
     choose_project: "選擇專案",
     link_plane_project: "連接 Plane 專案",
+    project_issue_sync: "專案問題同步",
+    project_issue_sync_description: "從 Gitlab 同步問題到您的 Plane 專案",
+    project_issue_sync_empty_state: "映射的專案問題同步將顯示在這裡",
+    configure_project_issue_sync_state: "配置問題同步狀態",
+    select_issue_sync_direction: "選擇問題同步方向",
+    allow_bidirectional_sync: "雙向 - 在 Gitlab 和 Plane 之間雙向同步問題和評論",
+    allow_unidirectional_sync: "單向 - 僅從 Gitlab 同步問題和評論到 Plane",
+    allow_unidirectional_sync_warning: "Gitlab 問題中的資料將替換連結的 Plane 工作項中的資料（僅 Gitlab → Plane）",
+    remove_project_issue_sync: "移除此專案問題同步",
+    remove_project_issue_sync_confirmation: "您確定要移除此專案問題同步嗎？",
+    ISSUE_OPEN: "問題開啟",
+    ISSUE_CLOSED: "問題關閉",
+    save: "保存",
+    start_sync: "開始同步",
+    choose_repository: "選擇儲存庫...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3027,6 +3122,214 @@ export default {
         title: "自動化",
         description: "自動化是在您的專案中自動執行任務的方式。",
         sub_description: "使用自動化可以節省80%的管理時間。",
+      },
+    },
+  },
+  sso: {
+    header: "身分",
+    description: "設定您的網域以存取安全功能，包括單一登入。",
+    domain_management: {
+      header: "網域管理",
+      verified_domains: {
+        header: "已驗證的網域",
+        description: "驗證電子郵件網域的所有權以啟用單一登入。",
+        button_text: "新增網域",
+        list: {
+          domain_name: "網域名稱",
+          status: "狀態",
+          status_verified: "已驗證",
+          status_failed: "失敗",
+          status_pending: "待處理",
+        },
+        add_domain: {
+          title: "新增網域",
+          description: "新增您的網域以設定 SSO 並驗證它。",
+          form: {
+            domain_label: "網域",
+            domain_placeholder: "plane.so",
+            domain_required: "網域為必填",
+            domain_invalid: "請輸入有效的網域名稱（例如 plane.so）",
+          },
+          primary_button_text: "新增網域",
+          primary_button_loading_text: "新增中",
+          toast: {
+            success_title: "成功！",
+            success_message: "網域已成功新增。請透過新增 DNS TXT 記錄來驗證它。",
+            error_message: "新增網域失敗。請重試。",
+          },
+        },
+        verify_domain: {
+          title: "驗證您的網域",
+          description: "請按照以下步驟驗證您的網域。",
+          instructions: {
+            label: "說明",
+            step_1: "前往您的網域主機的 DNS 設定。",
+            step_2: {
+              part_1: "建立一個",
+              part_2: "TXT 記錄",
+              part_3: "並貼上下面提供的完整記錄值。",
+            },
+            step_3: "此更新通常需要幾分鐘，但可能需要長達 72 小時才能完成。",
+            step_4: "DNS 記錄更新後，點擊「驗證網域」進行確認。",
+          },
+          verification_code_label: "TXT 記錄值",
+          verification_code_description: "將此記錄新增到您的 DNS 設定",
+          domain_label: "網域",
+          primary_button_text: "驗證網域",
+          primary_button_loading_text: "驗證中",
+          secondary_button_text: "稍後處理",
+          toast: {
+            success_title: "成功！",
+            success_message: "網域已成功驗證。",
+            error_message: "驗證網域失敗。請重試。",
+          },
+        },
+        delete_domain: {
+          title: "刪除網域",
+          description: {
+            prefix: "您確定要刪除",
+            suffix: "嗎？此操作無法復原。",
+          },
+          primary_button_text: "刪除",
+          primary_button_loading_text: "刪除中",
+          secondary_button_text: "取消",
+          toast: {
+            success_title: "成功！",
+            success_message: "網域已成功刪除。",
+            error_message: "刪除網域失敗。請重試。",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "單一登入",
+      disabled_message: "新增已驗證的網域以設定 SSO",
+      configure: {
+        create: "設定",
+        update: "編輯",
+      },
+      switch_alert_modal: {
+        title: "將 SSO 方法切換到 {newProviderShortName}？",
+        content:
+          "您即將啟用 {newProviderLongName}（{newProviderShortName}）。此操作將自動停用 {activeProviderLongName}（{activeProviderShortName}）。嘗試透過 {activeProviderShortName} 登入的使用者將無法再存取平台，直到他們切換到新方法。您確定要繼續嗎？",
+        primary_button_text: "切換",
+        primary_button_text_loading: "切換中",
+        secondary_button_text: "取消",
+      },
+      form_section: {
+        title: "IdP 為 {workspaceName} 提供的詳細資訊",
+      },
+      form_action_buttons: {
+        saving: "儲存中",
+        save_changes: "儲存變更",
+        configure_only: "僅設定",
+        configure_and_enable: "設定並啟用",
+        default: "儲存",
+      },
+      setup_details_section: {
+        title: "{workspaceName} 為您的 IdP 提供的詳細資訊",
+        button_text: "取得設定詳細資訊",
+      },
+      saml: {
+        header: "啟用 SAML",
+        description: "設定您的 SAML 身分提供者以啟用單一登入。",
+        configure: {
+          title: "啟用 SAML",
+          description: "驗證電子郵件網域的所有權以存取安全功能，包括單一登入。",
+          toast: {
+            success_title: "成功！",
+            create_success_message: "SAML 提供者已成功建立。",
+            update_success_message: "SAML 提供者已成功更新。",
+            error_title: "錯誤！",
+            error_message: "儲存 SAML 提供者失敗。請重試。",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web 詳細資訊",
+            entity_id: {
+              label: "實體 ID | 對象 | 中繼資料資訊",
+              description: "我們將產生此部分中繼資料，將此 Plane 應用程式識別為您 IdP 上的授權服務。",
+            },
+            callback_url: {
+              label: "單一登入 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
+            },
+            logout_url: {
+              label: "單一登出 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的單一登出重新導向 URL 欄位中。",
+            },
+          },
+          mobile_details: {
+            header: "行動裝置詳細資訊",
+            entity_id: {
+              label: "實體 ID | 對象 | 中繼資料資訊",
+              description: "我們將產生此部分中繼資料，將此 Plane 應用程式識別為您 IdP 上的授權服務。",
+            },
+            callback_url: {
+              label: "單一登入 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
+            },
+            logout_url: {
+              label: "單一登出 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的登出重新導向 URL 欄位中。",
+            },
+          },
+          mapping_table: {
+            header: "對應詳細資訊",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "啟用 OIDC",
+        description: "設定您的 OIDC 身分提供者以啟用單一登入。",
+        configure: {
+          title: "啟用 OIDC",
+          description: "驗證電子郵件網域的所有權以存取安全功能，包括單一登入。",
+          toast: {
+            success_title: "成功！",
+            create_success_message: "OIDC 提供者已成功建立。",
+            update_success_message: "OIDC 提供者已成功更新。",
+            error_title: "錯誤！",
+            error_message: "儲存 OIDC 提供者失敗。請重試。",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web 詳細資訊",
+            origin_url: {
+              label: "來源 URL",
+              description: "我們將為此 Plane 應用程式產生此內容。將其作為受信任的來源新增到您 IdP 的對應欄位中。",
+            },
+            callback_url: {
+              label: "重新導向 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
+            },
+            logout_url: {
+              label: "登出 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的登出重新導向 URL 欄位中。",
+            },
+          },
+          mobile_details: {
+            header: "行動裝置詳細資訊",
+            origin_url: {
+              label: "來源 URL",
+              description: "我們將為此 Plane 應用程式產生此內容。將其作為受信任的來源新增到您 IdP 的對應欄位中。",
+            },
+            callback_url: {
+              label: "重新導向 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的登入重新導向 URL 欄位中。",
+            },
+            logout_url: {
+              label: "登出 URL",
+              description: "我們將為您產生此內容。將其新增到您 IdP 的登出重新導向 URL 欄位中。",
+            },
+          },
+        },
       },
     },
   },

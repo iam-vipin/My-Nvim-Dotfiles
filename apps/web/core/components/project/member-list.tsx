@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 // components
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
@@ -14,6 +27,8 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { MemberListFiltersDropdown } from "./dropdowns/filters/member-list";
 import { ProjectMemberListItem } from "./member-list-item";
 import { SendProjectInvitationModal } from "./send-project-invitation-modal";
+// plane web components
+import { ProjectMembersActivityButton } from "@/plane-web/components/projects/members/members-activity-button";
 
 type TProjectMemberListProps = {
   projectId: string;
@@ -75,13 +90,13 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />
-      <div className="flex items-center justify-between gap-4 py-2 overflow-x-hidden border-b border-custom-border-100">
-        <div className="text-base font-semibold">{t("common.members")}</div>
+      <div className="flex items-center justify-between gap-4 py-2 overflow-x-hidden border-b border-subtle">
+        <div className="text-14 font-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-start gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1">
-            <Search className="h-3.5 w-3.5" />
+          <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle bg-surface-1 px-2 py-1">
+            <SearchIcon className="h-3.5 w-3.5" />
             <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-13 focus:outline-none placeholder:text-placeholder"
               placeholder="Search"
               value={searchQuery}
               autoFocus
@@ -93,10 +108,11 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             handleUpdate={handleRoleFilterUpdate}
             memberType="project"
           />
+          {isAdmin && <ProjectMembersActivityButton workspaceSlug={workspaceSlug} projectId={projectId} />}
           {isAdmin && (
             <Button
               variant="primary"
-              size="sm"
+              size="lg"
               onClick={() => {
                 setInviteModal(true);
               }}
@@ -110,7 +126,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
       {!projectMemberIds ? (
         <MembersSettingsLoader />
       ) : (
-        <div className="divide-y divide-custom-border-100 overflow-scroll">
+        <div className="divide-y divide-subtle overflow-scroll">
           {searchedProjectMembers.length !== 0 && (
             <ProjectMemberListItem
               memberDetails={memberDetails ?? []}
@@ -119,7 +135,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             />
           )}
           {searchedProjectMembers.length === 0 && (
-            <h4 className="text-sm mt-16 text-center text-custom-text-400">{t("no_matching_members")}</h4>
+            <h4 className="text-13 mt-16 text-center text-placeholder">{t("no_matching_members")}</h4>
           )}
         </div>
       )}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 import json
 import uuid
@@ -60,9 +71,7 @@ def create_automation_version(db, workspace, project, create_user):
 
 
 @pytest.fixture
-def create_automation_node(
-    db, create_automation_version, workspace, project, create_user
-):
+def create_automation_node(db, create_automation_version, workspace, project, create_user):
     """Create and return an automation node instance"""
     automation, version = create_automation_version
 
@@ -228,9 +237,7 @@ class TestAutomationNodeEndpoint:
             },
         )
 
-        response = session_client.post(
-            url, data=json.dumps(automation_node_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(automation_node_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data["name"] == automation_node_data["name"]
@@ -274,9 +281,7 @@ class TestAutomationNodeEndpoint:
             "config": {},
         }
 
-        response = session_client.post(
-            url, data=json.dumps(incomplete_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(incomplete_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "name" in response.data
@@ -312,9 +317,7 @@ class TestAutomationNodeEndpoint:
             "is_enabled": True,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_create_automation_node_valid_node_types(
@@ -351,12 +354,8 @@ class TestAutomationNodeEndpoint:
                 "is_enabled": True,
             }
 
-            with patch(
-                "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-            ):
-                response = session_client.post(
-                    url, data=json.dumps(valid_data), content_type="application/json"
-                )
+            with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
+                response = session_client.post(url, data=json.dumps(valid_data), content_type="application/json")
 
             assert response.status_code == status.HTTP_201_CREATED
             assert response.data["node_type"] == node_type
@@ -402,9 +401,7 @@ class TestAutomationNodeEndpoint:
             "is_enabled": True,
         }
 
-        with patch(
-            "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-        ):
+        with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
             response = session_client.post(
                 url,
                 data=json.dumps(complex_config_data),
@@ -448,9 +445,7 @@ class TestAutomationNodeEndpoint:
             "is_enabled": False,
         }
 
-        response = session_client.patch(
-            url, data=json.dumps(update_data), content_type="application/json"
-        )
+        response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["name"] == update_data["name"]
@@ -486,9 +481,7 @@ class TestAutomationNodeEndpoint:
             "node_type": "invalid_type",  # Invalid node type
         }
 
-        response = session_client.patch(
-            url, data=json.dumps(update_data), content_type="application/json"
-        )
+        response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -525,12 +518,8 @@ class TestAutomationNodeEndpoint:
             "name": "Updated Name",  # This should work
         }
 
-        with patch(
-            "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-        ):
-            response = session_client.patch(
-                url, data=json.dumps(update_data), content_type="application/json"
-            )
+        with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
+            response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["name"] == "Updated Name"
@@ -624,9 +613,7 @@ class TestAutomationNodeEndpoint:
             },
         )
 
-        response = session_client.post(
-            url, data=json.dumps({}), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps({}), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -652,9 +639,7 @@ class TestAutomationNodeEndpoint:
                 "automation_id": automation.id,
             },
         )
-        response = session_client.post(
-            url, data="invalid json", content_type="application/json"
-        )
+        response = session_client.post(url, data="invalid json", content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -689,9 +674,7 @@ class TestAutomationNodeEndpoint:
             "is_enabled": "not_boolean",  # Should be boolean
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -720,9 +703,7 @@ class TestAutomationNodeEndpoint:
             },
         )
 
-        response = session_client.post(
-            url, data=json.dumps(automation_node_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(automation_node_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 

@@ -1,8 +1,9 @@
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { v4 as uuidv4 } from "uuid";
+import { debounce } from "lodash-es";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
@@ -34,8 +35,11 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
   const [isLoading, setIsLoading] = useState(false);
   // refs
   const dropdownContainer = useRef<HTMLDivElement>(null);
-  const isEmpty = useMemo(() => Object.keys(sections).length === 0, [sections]);
-  const sectionKeys = useMemo(() => Object.keys(sections), [sections]);
+  const searchCallbackRef = useRef(searchCallback);
+  const debouncedSearchRef = useRef<ReturnType<typeof debounce> | null>(null);
+
+  const isEmpty = Object.keys(sections).length === 0;
+  const sectionKeys = Object.keys(sections);
 
   const selectItem = useCallback(
     (section: number, index: number) => {
@@ -58,7 +62,7 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
         console.error("Error selecting mention item:", error);
       }
     },
-    [command, sectionKeys, sections, selectedIndex]
+    [command, sectionKeys, sections]
   );
 
   const upHandler = useCallback(() => {
@@ -142,24 +146,34 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
   useEffect(() => {
     const scrollIntoViewHelper = async (elementId: string) => {
       const element = document.getElementById(elementId);
-      if (element) await smoothScrollIntoView(element, { behavior: "smooth", block: "center", duration: 1500 });
+      if (element) {
+        await smoothScrollIntoView(element, { behavior: "smooth", block: "center", duration: 1500 });
+      }
     };
 
     const selectedSectionKey = sectionKeys[selectedIndex.section];
-    scrollIntoViewHelper(`${selectedSectionKey}-${selectedIndex.item}`);
+    void scrollIntoViewHelper(`${selectedSectionKey}-${selectedIndex.item}`);
   }, [sectionKeys, selectedIndex]);
 
-  // fetch mention sections based on query
+  // update ref when searchCallback changes
   useEffect(() => {
-    const fetchSuggestions = async () => {
+    searchCallbackRef.current = searchCallback;
+  }, [searchCallback]);
+
+  // initialize debounced search function once
+  useEffect(() => {
+    debouncedSearchRef.current = debounce(async (searchQuery: string) => {
       setIsLoading(true);
       try {
-        const sectionsResponse = await searchCallback?.(query);
+        const sectionsResponse = await searchCallbackRef.current?.(searchQuery);
         if (sectionsResponse) {
           // remove empty sections
-          const filteredSections = Object.fromEntries(
-            Object.entries(sectionsResponse).filter(([_, value]) => value.length > 0)
-          );
+          const filteredSections: PiChatMentionSearchCallbackResponse = {};
+          for (const [key, value] of Object.entries(sectionsResponse)) {
+            if (value && Array.isArray(value) && value.length > 0) {
+              filteredSections[key] = value;
+            }
+          }
           setSections(filteredSections);
         }
       } catch (error) {
@@ -167,9 +181,18 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
       } finally {
         setIsLoading(false);
       }
+    }, 300);
+
+    return () => {
+      debouncedSearchRef.current?.cancel();
     };
-    fetchSuggestions();
-  }, [query, searchCallback]);
+  }, []);
+
+  useEffect(() => {
+    if (query !== undefined && query !== null) {
+      void debouncedSearchRef.current?.(query);
+    }
+  }, [query]);
 
   useOutsideClickDetector(dropdownContainer, onClose);
 
@@ -184,15 +207,15 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
       />
       <div
         ref={dropdownContainer}
-        className="relative max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-[500px] w-[14rem] overflow-y-auto rounded-md border border-subtle-1 bg-surface-1 px-2 py-2.5 shadow-raised-200 space-y-2"
         style={{
           zIndex: 100,
         }}
       >
         {!query ? (
-          <div className="text-center text-sm text-custom-text-400">Start typing to see suggestions</div>
+          <div className="text-center text-body-xs-regular text-tertiary">Start typing to see suggestions</div>
         ) : isLoading ? (
-          <div className="text-center text-sm text-custom-text-400">Loading...</div>
+          <div className="text-center text-body-xs-regular text-tertiary">Loading...</div>
         ) : sectionKeys.length > 0 ? (
           sectionKeys.map((type, index) => (
             <MentionsDropdownSection
@@ -205,7 +228,7 @@ export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMent
             />
           ))
         ) : (
-          <div className="text-center text-sm text-custom-text-400">{"No results"}</div>
+          <div className="text-center text-body-xs-regular text-tertiary">{"No results"}</div>
         )}
       </div>
     </>

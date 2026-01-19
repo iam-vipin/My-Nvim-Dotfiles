@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -13,10 +26,12 @@ type Props = {
   searchQuery: string;
   updateSearchQuery: (value: string) => void;
   isProjectLevel?: boolean;
+  isFullScreen?: boolean;
+  onClick?: () => void;
 };
 
 export const Toolbar = observer(function Toolbar(props: Props) {
-  const { searchQuery, updateSearchQuery, isProjectLevel = false } = props;
+  const { searchQuery, updateSearchQuery, isProjectLevel = false, isFullScreen = false, onClick } = props;
   const { workspaceSlug } = useParams();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,18 +48,34 @@ export const Toolbar = observer(function Toolbar(props: Props) {
   return (
     <div className="flex items-center justify-between gap-2 h-8 w-full">
       {/* New */}
-      <Link
-        href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/`}
-        className={cn(
-          "flex items-center px-2 text-custom-text-300 justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-custom-sidebar-border-300 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
-          {
-            "w-full justify-start": !isSearchOpen,
-          }
-        )}
-      >
-        <SquarePen className="flex-shrink-0 size-4" />
-        {!isSearchOpen && <span className="text-sm text-nowrap font-medium">New chat</span>}
-      </Link>
+      {isFullScreen ? (
+        <Link
+          href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/`}
+          className={cn(
+            "flex items-center px-2 text-tertiary justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-subtle-1 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
+            {
+              "w-full justify-start": !isSearchOpen,
+            }
+          )}
+        >
+          <SquarePen className="shrink-0 size-4" />
+          {!isSearchOpen && <span className="text-h6-medium text-nowrap">New chat</span>}
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className={cn(
+            "flex items-center px-2 text-tertiary justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-subtle-1 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
+            {
+              "w-full justify-start": !isSearchOpen,
+            }
+          )}
+          onClick={onClick}
+        >
+          <SquarePen className="shrink-0 size-4" />
+          {!isSearchOpen && <span className="text-h6-medium text-nowrap">New chat</span>}
+        </button>
+      )}
       {/* Search */}
       <div className="flex items-center flex-1">
         {!isSearchOpen && (
@@ -61,16 +92,16 @@ export const Toolbar = observer(function Toolbar(props: Props) {
 
         <div
           className={cn(
-            "ml-auto flex items-center justify-start gap-1 rounded border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-90 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+            "ml-auto flex items-center justify-start gap-1 rounded-sm border-[0.5px] border-subtle-1 bg-layer-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
             {
-              "w-full px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+              "w-full px-2.5 py-1.5 border-subtle-1 opacity-100": isSearchOpen,
             }
           )}
         >
-          <Search className="h-3.5 w-3.5" />
+          <Search className="shrink-0 size-4" />
           <input
             ref={inputRef}
-            className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => updateSearchQuery(e.target.value)}

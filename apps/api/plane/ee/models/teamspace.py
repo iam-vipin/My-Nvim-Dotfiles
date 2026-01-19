@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import models
 from django.conf import settings
@@ -51,9 +62,7 @@ def get_default_display_properties():
 
 
 class Teamspace(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_spaces"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_spaces")
     name = models.CharField(max_length=255)
     description_json = models.JSONField(default=dict, blank=True)
     description_html = models.TextField(default="<p></p>", blank=True)
@@ -77,15 +86,9 @@ class Teamspace(BaseModel):
 
 
 class TeamspaceMember(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_space_members"
-    )
-    member = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="team_spaces"
-    )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="members"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_members")
+    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="team_spaces")
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="members")
     sort_order = models.IntegerField(default=65535)
 
     class Meta:
@@ -106,15 +109,9 @@ class TeamspaceMember(BaseModel):
 
 
 class TeamspaceProject(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_space_projects"
-    )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="projects"
-    )
-    project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, related_name="team_spaces"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_projects")
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="projects")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="team_spaces")
     sort_order = models.IntegerField(default=65535)
 
     class Meta:
@@ -135,15 +132,9 @@ class TeamspaceProject(BaseModel):
 
 
 class TeamspaceLabel(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_space_labels"
-    )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="labels"
-    )
-    label = models.ForeignKey(
-        "db.Label", on_delete=models.CASCADE, related_name="team_spaces"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_labels")
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="labels")
+    label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="team_spaces")
     sort_order = models.IntegerField(default=65535)
 
     class Meta:
@@ -164,15 +155,9 @@ class TeamspaceLabel(BaseModel):
 
 
 class TeamspacePage(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_space_pages"
-    )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="pages"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="team_spaces"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_pages")
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="pages")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="team_spaces")
     sort_order = models.IntegerField(default=65535)
 
     class Meta:
@@ -193,15 +178,9 @@ class TeamspacePage(BaseModel):
 
 
 class TeamspaceView(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_space_views"
-    )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="views"
-    )
-    view = models.ForeignKey(
-        "db.IssueView", on_delete=models.CASCADE, related_name="team_spaces"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_views")
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="views")
+    view = models.ForeignKey("db.IssueView", on_delete=models.CASCADE, related_name="team_spaces")
     sort_order = models.IntegerField(default=65535)
 
     class Meta:
@@ -222,16 +201,10 @@ class TeamspaceView(BaseModel):
 
 
 class TeamspaceActivity(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_space_activities"
-    )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="activities"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_activities")
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="activities")
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
-    field = models.CharField(
-        max_length=255, verbose_name="Field Name", blank=True, null=True
-    )
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
     new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
     comment = models.TextField(verbose_name="Comment", blank=True)
@@ -256,12 +229,8 @@ class TeamspaceActivity(BaseModel):
 
 
 class TeamspaceComment(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_space_comments"
-    )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="comments"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_comments")
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="comments")
     parent = models.ForeignKey(
         "self",
         on_delete=models.SET_NULL,
@@ -296,9 +265,7 @@ class TeamspaceCommentReaction(BaseModel):
         on_delete=models.CASCADE,
         related_name="team_space_comment_reactions",
     )
-    team_space = models.ForeignKey(
-        Teamspace, on_delete=models.CASCADE, related_name="comment_reactions"
-    )
+    team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="comment_reactions")
     comment = models.ForeignKey(
         "ee.TeamspaceComment",
         on_delete=models.CASCADE,
@@ -335,12 +302,8 @@ class TeamspaceUserProperty(BaseModel):
         on_delete=models.CASCADE,
         related_name="team_space_user_properties",
     )
-    team_space = models.ForeignKey(
-        "ee.Teamspace", on_delete=models.CASCADE, related_name="user_properties"
-    )
-    user = models.ForeignKey(
-        "db.User", on_delete=models.CASCADE, related_name="team_space_properties"
-    )
+    team_space = models.ForeignKey("ee.Teamspace", on_delete=models.CASCADE, related_name="user_properties")
+    user = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="team_space_properties")
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)

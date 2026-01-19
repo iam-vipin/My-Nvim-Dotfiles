@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import uuid
 
 from fastapi import APIRouter
@@ -10,8 +21,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v1.dependencies import cookie_schema
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.attachment import AttachmentCompleteRequest
 from pi.app.schemas.attachment import AttachmentDetailResponse
@@ -38,18 +48,11 @@ async def create_attachment_upload(
     workspace_id: str = Form(...),
     chat_id: str = Form(...),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Receive file, scan for security, then upload to S3 if safe"""
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-    try:
+        user_id = current_user.id
         # Read file into memory
         file_data = await file.read()
         file_size = len(file_data)
@@ -137,19 +140,12 @@ async def create_attachment_upload(
 async def complete_attachment_upload(
     data: AttachmentCompleteRequest,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Complete attachment upload - only for failed uploads or linking to messages"""
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     try:
+        user_id = current_user.id
         # Get attachment
         stmt = select(MessageAttachment).where(
             MessageAttachment.id == data.attachment_id,
@@ -220,19 +216,11 @@ async def get_attachment_url(
     attachment_id: str,
     chat_id: str,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Get pre-signed URLs (download & preview) for an attachment"""
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         # Convert string IDs to UUIDs
         attachment_uuid = uuid.UUID(attachment_id)
         chat_uuid = uuid.UUID(chat_id)
@@ -284,19 +272,11 @@ async def get_attachment_url(
 async def get_attachments_by_chat(
     chat_id: str,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Get all attachment objects for a chat"""
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         # Convert string ID to UUID
         chat_uuid = uuid.UUID(chat_id)
 
@@ -337,43 +317,3 @@ async def get_attachments_by_chat(
     except Exception as e:
         log.error(f"Error retrieving attachments for chat: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
-
-
-# @router.delete("/delete-attachment/")
-# async def delete_attachment(
-#     data: AttachmentDeleteRequest,
-#     db: AsyncSession = Depends(get_async_session),
-#     session: str = Depends(cookie_schema),
-# ):
-#     """Delete an attachment (soft delete)"""
-#     try:
-#         auth = await is_valid_session(session)
-#         if not auth.user:
-#             return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-#         user_id = auth.user.id
-#     except Exception as e:
-#         log.error(f"Error validating session: {e!s}")
-#         return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-#     try:
-#         # Get attachment
-#         stmt = select(MessageAttachment).where(
-#             MessageAttachment.id == data.attachment_id,
-#             MessageAttachment.chat_id == data.chat_id,
-#             MessageAttachment.user_id == user_id,
-#         )
-#         result = await db.execute(stmt)
-#         attachment = result.scalar_one_or_none()
-
-#         if not attachment:
-#             return JSONResponse(status_code=404, content={"detail": "Attachment not found"})
-
-#         # Soft delete
-#         attachment.soft_delete()
-#         await db.commit()
-
-#         return JSONResponse(content={"detail": "Attachment deleted successfully"})
-
-#     except Exception as e:
-#         log.error(f"Error deleting attachment: {e!s}")
-#         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})

@@ -18,11 +18,11 @@
     "start": "node .",
     "test": "jest",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings=2553",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=2553",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --max-warnings=2553 --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=2553 --fix",
+    "fix:format": "prettier . --cache --write"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",
@@ -85,8 +85,6 @@
     "jest": "^30.0.5",
     "node-html-parser": "^6.1.13",
     "nodemon": "^3.1.4",
-    "prettier": "^3.3.3",
-    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "tsdown": "catalog:",

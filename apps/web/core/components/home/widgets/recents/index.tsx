@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -73,7 +86,7 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
     return (
       <div ref={ref} className="max-h-[500px] overflow-y-scroll">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-base font-semibold text-custom-text-350">{t("home.recents.title")}</div>
+          <div className="text-14 font-semibold text-tertiary">{t("home.recents.title")}</div>
           {showFilterSelect && <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />}
         </div>
         <div className="flex flex-col items-center justify-center">
@@ -87,10 +100,10 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
       maxHeight={415}
       containerClassName="box-border min-h-[250px]"
       fallback={<></>}
-      buttonClassName="bg-custom-background-90/20"
+      buttonClassName="bg-surface-2/20"
     >
       <div className="flex items-center justify-between mb-2">
-        <div className="text-base font-semibold text-custom-text-350">{t("home.recents.title")}</div>
+        <div className="text-14 font-semibold text-tertiary">{t("home.recents.title")}</div>
         {showFilterSelect && <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />}
       </div>
       <div className="min-h-[250px] flex flex-col">

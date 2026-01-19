@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import type { TUserThreads } from "@/plane-web/types";
@@ -13,13 +26,13 @@ const PiChatList = observer(function PiChatList(props: TProps) {
 
   return (
     <div className="flex flex-col space-y-2  overflow-scroll">
-      <div className="flex flex-col divide-y divide-custom-border-200">
+      <div className="flex flex-col divide-y divide-subtle-1">
         {userThreads && userThreads.length > 0 ? (
           uniqBy(userThreads, "chat_id").map((thread) => <PiChatListItem key={thread.chat_id} thread={thread} />)
         ) : isLoading ? (
           <PiChatListLoader />
         ) : (
-          <div className="text-custom-text-400 text-sm">No threads available</div>
+          <div className="text-placeholder text-13">No threads available</div>
         )}
       </div>
     </div>

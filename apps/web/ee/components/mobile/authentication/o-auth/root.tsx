@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import type { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
 // plane web components
@@ -25,9 +38,9 @@ export function OAuthRoot(props: TOAuthRoot) {
   return (
     <div className="relative space-y-6">
       <div className="mt-4 flex items-center pt-2">
-        <hr className="w-full border-custom-border-100" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
-        <hr className="w-full border-custom-border-100" />
+        <hr className="w-full border-subtle" />
+        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
+        <hr className="w-full border-subtle" />
       </div>
 
       <div className="space-y-2">

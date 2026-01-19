@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -60,9 +73,9 @@ function OAuthPage() {
     return (
       <DefaultLayout>
         <div className="flex flex-col justify-center items-center space-y-4 flex-grow container h-[100vh-60px] mx-auto max-w-2xl px-10 lg:max-w-2xl lg:px-5 transition-all mt-10">
-          <PlaneLockup className="h-12 w-auto text-custom-text-100" />
-          <h1 className="text-2xl font-bold">Something went wrong</h1>
-          <p className="text-sm text-gray-500">Please check the URL and try again.</p>
+          <PlaneLockup className="h-12 w-auto text-primary" />
+          <h1 className="text-20 font-bold">Something went wrong</h1>
+          <p className="text-13 text-gray-500">Please check the URL and try again.</p>
         </div>
       </DefaultLayout>
     );
@@ -75,9 +88,9 @@ function OAuthPage() {
           <div className="relative w-screen h-screen overflow-hidden">
             <PageHead title={"OAuth | Plane"} />
             <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
-              <div className="container min-w-full px-5 lg:px-10 py-5 lg:py-5 flex-shrink-0 relative flex justify-start pb-4 transition-all border-b border-custom-border-100">
+              <div className="container min-w-full px-5 lg:px-10 py-5 lg:py-5 flex-shrink-0 relative flex justify-start pb-4 transition-all border-b border-subtle">
                 <Link href={`/`}>
-                  <PlaneLockup className="h-7 w-auto text-custom-text-100" />
+                  <PlaneLockup className="h-7 w-auto text-primary" />
                 </Link>
               </div>
               <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-2xl px-10 lg:max-w-2xl lg:px-5 transition-all">

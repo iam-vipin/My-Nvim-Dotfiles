@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 //ui
 import type { IIssueDisplayProperties } from "@plane/types";
 import { SPREADSHEET_PROPERTY_DETAILS } from "..";
@@ -17,9 +30,9 @@ export function HeaderColumn(props: Props) {
   if (!propertyDetails) return <></>;
 
   return (
-    <div className="flex w-full items-center justify-between gap-1.5 py-2 text-sm text-custom-text-200 hover:text-custom-text-100">
+    <div className="flex w-full items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
       <div className="flex items-center gap-1.5">
-        {<propertyDetails.icon className="h-4 w-4 text-custom-text-400" />}
+        {<propertyDetails.icon className="h-4 w-4 text-placeholder" />}
         {propertyDetails.title}
       </div>
     </div>

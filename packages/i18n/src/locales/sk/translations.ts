@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "Projekty",
@@ -305,7 +318,6 @@ export default {
   drafts: "Koncepty",
   projects: "Projekty",
   views: "Pohľady",
-  workspace: "Pracovný priestor",
   archives: "Archívy",
   settings: "Nastavenia",
   failed_to_move_favorite: "Presunutie obľúbeného zlyhalo",
@@ -1583,6 +1595,7 @@ export default {
         name: "Názov pracovného priestoru",
         company_size: "Veľkosť spoločnosti",
         url: "URL pracovného priestoru",
+        workspace_timezone: "Časové pásmo pracovného priestoru",
         update_workspace: "Aktualizovať priestor",
         delete_workspace: "Zmazať tento priestor",
         delete_workspace_description: "Zmazaním priestoru odstránite všetky dáta a zdroje. Akcia je nevratná.",

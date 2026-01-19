@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import IntegrityError
 
@@ -14,6 +25,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.ee.models import IntakeResponsibility, IntakeResponsibilityTypeChoices
 from plane.ee.serializers.space.issue import IssueCreateSerializer
+
 
 class ExtendedIssueCreateSerializer(IssueCreateSerializer):
     def create(self, validated_data):
@@ -36,9 +48,7 @@ class ExtendedIssueCreateSerializer(IssueCreateSerializer):
             ).first()
             issue_type = issue_type
 
-        triage_state = State.triage_objects.filter(
-            project_id=project_id, workspace_id=workspace_id
-        ).first()
+        triage_state = State.triage_objects.filter(project_id=project_id, workspace_id=workspace_id).first()
         if not triage_state:
             triage_state = State.objects.create(
                 name="Triage",

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Hybrid Placeholder Orchestration System
 
@@ -21,8 +32,63 @@ from pydantic import Field
 
 from pi import logger
 from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENCY_RULES
+from pi.services.chat.helpers.entity_inference import infer_selected_entity
 
 log = logger.getChild(__name__)
+
+
+def _format_validation_error(error_str: str) -> str:
+    """
+    Format Pydantic validation errors to show only essential information.
+
+    Converts verbose Pydantic validation traces like:
+        "3 validation errors for cycles_add_work_items
+        cycle_id
+          Field required [type=missing, input_value={...}, input_type=dict]
+          For further information visit https://errors.pydantic.dev/2.8/v/missing"
+
+    To concise user-friendly messages like:
+        "Missing required fields: cycle_id, issues, project_id"
+
+    Args:
+        error_str: The raw error string from Pydantic
+
+    Returns:
+        A concise, user-friendly error message
+    """
+
+    # Check if this is a Pydantic validation error
+    if "validation error" in error_str.lower():
+        # Extract field names from the error
+        missing_fields = []
+
+        # Pattern to match field names followed by "Field required"
+        # This handles multi-line format where field name is on its own line
+        lines = error_str.split("\n")
+        for i, line in enumerate(lines):
+            line = line.strip()
+            # Look for lines that contain "Field required"
+            if "Field required" in line and i > 0:
+                # The field name is typically on the previous line
+                prev_line = lines[i - 1].strip()
+                # Filter out lines that are parts of error messages
+                if prev_line and not prev_line.startswith("[") and not prev_line.startswith("For further"):
+                    missing_fields.append(prev_line)
+
+        if missing_fields:
+            # Remove duplicates while preserving order
+            unique_fields = list(dict.fromkeys(missing_fields))
+            return f"Missing required fields: {", ".join(unique_fields)}"
+
+    # For other validation errors, try to extract a meaningful summary
+    if "validation error" in error_str.lower():
+        # Extract the first line which usually has the summary
+        first_line = error_str.split("\n")[0]
+        # Return first 150 characters to keep it concise
+        return first_line[:150]
+
+    # For non-Pydantic errors, truncate to reasonable length
+    return error_str[:200] if len(error_str) > 200 else error_str
 
 
 # Pydantic models for structured extraction
@@ -122,18 +188,20 @@ class PlaceholderOrchestrator:
 
                     remaining.remove(action)
                 except Exception as e:
-                    log.error(f"Failed to execute action {action.get("tool_name")}: {e}")
+                    log.error(f"Failed to execute action {action.get("tool_name")}: {e}", exc_info=True)
+                    # Format error message for user-friendly display
+                    formatted_error = _format_validation_error(str(e))
                     # Create failure result
                     failure_result = {
                         "tool_name": action.get("tool_name"),
-                        "result": f"❌ Failed to execute: {str(e)}",
+                        "result": f"❌ Failed to execute: {formatted_error}",
                         "entity_info": None,
                         "artifact_id": action.get("artifact_id"),
                         "sequence": len(self.results) + 1,
                         "artifact_type": action.get("entity_type"),
                         "executed_at": datetime.utcnow().isoformat(),
                         "success": False,
-                        "error": str(e),
+                        "error": formatted_error,
                     }
                     self.results.append(failure_result)
                     remaining.remove(action)
@@ -281,15 +349,16 @@ class PlaceholderOrchestrator:
         if not entity_type or not entity_name:
             raise ValueError(f"Failed to parse placeholder: {placeholder}")
 
-        # Build lookup key
-        lookup_key = f"{entity_type}:{entity_name}"
+        # Build lookup key (lowercase for case-insensitive matching)
+        lookup_key = f"{entity_type}:{entity_name.lower()}"
+        name_key = entity_name.lower()
 
-        # Try exact match first
+        # Try exact match first (keys are stored lowercase)
         if lookup_key in self.execution_context:
             context_entry = self.execution_context[lookup_key]
-        elif entity_name in self.execution_context:
+        elif name_key in self.execution_context:
             # Fallback to name-only lookup
-            context_entry = self.execution_context[entity_name]
+            context_entry = self.execution_context[name_key]
         else:
             raise ValueError(
                 f"Entity '{entity_name}' (type: {entity_type}) not found in execution context. "
@@ -430,11 +499,24 @@ IMPORTANT:
 
         # Build tool if not cached
         if tool_name not in self.tools_cache:
-            entity_type = action.get("entity_type")
-            if entity_type:
-                tools = self.chatbot._build_method_tools(entity_type, self.method_executor, self.context)
-                for tool in tools:
-                    self.tools_cache[tool.name] = tool
+            # Special cases where tool name doesn't follow {category}_{method} pattern
+            SPECIAL_TOOL_CATEGORIES = {
+                "create_epic": "workitems",
+                "update_epic": "workitems",
+            }
+
+            # Extract category from tool name
+            if tool_name in SPECIAL_TOOL_CATEGORIES:
+                category = SPECIAL_TOOL_CATEGORIES[tool_name]
+            else:
+                # Standard pattern: {category}_{method}
+                # e.g., "initiatives_create_label" -> "initiatives"
+                category = tool_name.split("_")[0] if "_" in tool_name else tool_name
+
+            log.info(f"Building tools for category '{category}' (tool: {tool_name})")
+            tools = self.chatbot._build_method_tools(category, self.method_executor, self.context)
+            for tool in tools:
+                self.tools_cache[tool.name] = tool
 
         # Get the tool
         tool = self.tools_cache.get(tool_name)
@@ -442,7 +524,13 @@ IMPORTANT:
             raise ValueError(f"Tool '{tool_name}' not found")
 
         # Execute the tool
-        result = await tool.ainvoke(args)
+        log.info(f"[DEBUG] About to invoke tool '{tool_name}' with args: {args}")
+        try:
+            result = await tool.ainvoke(args)
+            log.info(f"[DEBUG] Tool '{tool_name}' invocation completed. Result type: {type(result)}")
+        except Exception as tool_error:
+            log.error(f"[DEBUG] Tool '{tool_name}' raised exception during ainvoke: {tool_error}", exc_info=True)
+            raise
 
         if not isinstance(result, dict):
             raise ValueError(f"Tool '{tool_name}' must return a dict, got {type(result)}")
@@ -451,6 +539,8 @@ IMPORTANT:
         message = result.get("message") or ""
         ok = bool(result.get("ok", True))
         entity_info = result.get("entity")
+        if ok and not entity_info:
+            entity_info = await infer_selected_entity(args, self.context, entity_type_hint=action.get("entity_type"))
 
         execution_result = {
             "tool_name": tool_name,
@@ -490,20 +580,22 @@ IMPORTANT:
             return
 
         # Get the planned name from action args
-        planned_name = action.get("args", {}).get("name")
+        # Check both 'name' and 'display_name' (properties use display_name)
+        planned_name = action.get("args", {}).get("name") or action.get("args", {}).get("display_name")
 
-        # Build all possible lookup keys
+        # Build all possible lookup keys (use lowercase for case-insensitive matching)
         keys = [
-            f"{entity_type}:{actual_name}",  # e.g., "project:Motor Bike47119"
-            actual_name,  # Allow lookup by actual name alone
+            f"{entity_type}:{actual_name.lower()}",  # e.g., "property:severity"
+            actual_name.lower(),  # Allow lookup by actual name alone
         ]
 
         # IMPORTANT: Also store under planned name if different from actual
-        # This handles SDK name modifications on conflict (409)
-        if planned_name and planned_name != actual_name:
-            keys.append(f"{entity_type}:{planned_name}")  # e.g., "project:Motor Bike"
-            keys.append(planned_name)  # Allow lookup by planned name
-            log.info(f"⚠️ Name mismatch: planned='{planned_name}' vs actual='{actual_name}'. " f"Storing under both names for lookup.")
+        # This handles SDK name modifications on conflict (409) AND case differences
+        if planned_name:
+            keys.append(f"{entity_type}:{planned_name.lower()}")  # e.g., "property:severity"
+            keys.append(planned_name.lower())  # Allow lookup by planned name
+            if planned_name.lower() != actual_name.lower():
+                log.info(f"⚠️ Name mismatch: planned='{planned_name}' vs actual='{actual_name}'. " f"Storing under both names for lookup.")
 
         # Store under all keys
         for key in keys:
@@ -513,7 +605,7 @@ IMPORTANT:
 
     def _can_resolve_from_context(self, entity_type: Optional[str], entity_name: Optional[str]) -> bool:
         """
-        Check if we have this entity in our execution context.
+        Check if we have this entity in our execution context (case-insensitive).
 
         Args:
             entity_type: Type of entity (e.g., "project")
@@ -525,9 +617,10 @@ IMPORTANT:
         if not entity_type or not entity_name:
             return False
 
-        # Check if we have this entity stored
-        key = f"{entity_type}:{entity_name}"
-        return key in self.execution_context or entity_name in self.execution_context
+        # Check if we have this entity stored (case-insensitive)
+        key = f"{entity_type}:{entity_name.lower()}"
+        name_key = entity_name.lower()
+        return key in self.execution_context or name_key in self.execution_context
 
     def _is_placeholder(self, value: Any) -> bool:
         """Check if value is a placeholder string."""

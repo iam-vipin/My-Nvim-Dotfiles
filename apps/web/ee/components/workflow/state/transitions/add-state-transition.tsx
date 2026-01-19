@@ -1,7 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -10,7 +22,6 @@ import { cn } from "@plane/utils";
 // components
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
@@ -35,26 +46,10 @@ export const AddStateTransition = observer(function AddStateTransition(props: Pr
     setIsAdding(true);
     try {
       await addStateTransition(workspaceSlug, projectId, parentStateId, transitionStateId);
-      captureSuccess({
-        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_CREATED,
-        payload: {
-          project_id: projectId,
-          parent_state_id: parentStateId,
-          transition_state_id: transitionStateId,
-        },
-      });
       if (onTransitionAdd) {
         onTransitionAdd();
       }
-    } catch (error) {
-      captureError({
-        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_CREATED,
-        payload: {
-          project_id: projectId,
-          parent_state_id: parentStateId,
-        },
-        error: error as Error,
-      });
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.add_state_change_rule.error.title"),
@@ -70,12 +65,10 @@ export const AddStateTransition = observer(function AddStateTransition(props: Pr
       <StateDropdown
         button={
           <Button
-            variant="accent-primary"
-            size="sm"
-            className={cn("text-xs px-2 py-1", {
+            variant="secondary"
+            className={cn("text-11 px-2 py-1", {
               "cursor-pointer": !isAdding,
             })}
-            data-ph-element={WORKFLOW_TRACKER_ELEMENTS.CREATE_TRANSITION_BUTTON}
           >
             {isAdding ? (
               <div className="flex gap-1 items-center">

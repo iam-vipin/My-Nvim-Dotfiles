@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -41,7 +54,7 @@ export const ProjectGanttBlock = observer(function ProjectGanttBlock(props: Prop
         backgroundColor: stateDetails?.color,
       }}
     >
-      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+      <div className="absolute left-0 top-0 h-full w-full bg-surface-1/50" />
       <Tooltip
         isMobile={isMobile}
         tooltipContent={
@@ -55,7 +68,7 @@ export const ProjectGanttBlock = observer(function ProjectGanttBlock(props: Prop
         }
         position="top-start"
       >
-        <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100">
+        <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-13 text-primary">
           {projectDetails?.name}
         </div>
       </Tooltip>
@@ -80,17 +93,17 @@ export const ProjectGanttSidebarBlock = observer(function ProjectGanttSidebarBlo
   const children = (
     <>
       <div className="relative flex h-full w-full items-center gap-2 py-3">
-        <div className="flex-shrink-0 text-xs text-custom-text-300 mr-3 w-[40px]">
+        <div className="flex-shrink-0 text-11 text-tertiary mr-3 w-[40px]">
           {projectDetails.identifier} {projectDetails?.sequence_id}
         </div>
         <Logo logo={projectDetails.logo_props} size={16} />
         <Tooltip tooltipContent={projectDetails?.name} isMobile={isMobile}>
-          <span className="flex-grow text-sm font-medium max-w-[150px] truncate">{projectDetails?.name}</span>
+          <span className="flex-grow text-13 font-medium max-w-[150px] truncate">{projectDetails?.name}</span>
         </Tooltip>
       </div>
       {filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
       {duration && (
-        <div className="flex-shrink-0 h-full text-sm font-medium py-3 ml-2">
+        <div className="flex-shrink-0 h-full text-13 font-medium py-3 ml-2">
           {duration} day{duration > 1 ? "s" : ""}
         </div>
       )}
@@ -99,12 +112,12 @@ export const ProjectGanttSidebarBlock = observer(function ProjectGanttSidebarBlo
   return projectDetails.member_role ? (
     <Link
       href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-      className="px-page-x w-full cursor-pointer text-sm text-custom-text-100 flex justify-between h-11"
+      className="px-page-x w-full cursor-pointer text-13 text-primary flex justify-between h-11 bg-layer-transparent hover:bg-layer-transparent-hover"
     >
       {children}
     </Link>
   ) : (
-    <div className="px-page-x w-full cursor-not-allowed text-sm text-custom-text-100 flex justify-between h-11">
+    <div className="px-page-x w-full cursor-not-allowed text-13 text-primary flex justify-between h-11 bg-layer-transparent">
       {children}
     </div>
   );

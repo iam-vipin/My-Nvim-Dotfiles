@@ -1,10 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Dispatch, FC, SetStateAction } from "react";
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon, ChevronLeftIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronLeftIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TEstimatePointsObject, TEstimateTypeError, TEstimateUpdateStageKeys } from "@plane/types";
 import { Sortable } from "@plane/ui";
@@ -164,16 +176,16 @@ export const EstimatePointEditRoot = observer(function EstimatePointEditRoot(pro
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </div>
-          <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.edit.title")}</div>
+          <div className="text-18 font-medium text-secondary">{t("project_settings.estimates.edit.title")}</div>
         </div>
 
-        <Button variant="primary" size="sm" onClick={handleEstimateDone}>
+        <Button variant="primary" onClick={handleEstimateDone}>
           {t("common.done")}
         </Button>
       </div>
 
       <div className="space-y-3 px-5">
-        <div className="text-sm font-medium text-custom-text-200 capitalize">{estimate?.type}</div>
+        <div className="text-13 font-medium text-secondary capitalize">{estimate?.type}</div>
         <div>
           <Sortable
             data={estimatePoints}
@@ -233,7 +245,7 @@ export const EstimatePointEditRoot = observer(function EstimatePointEditRoot(pro
           )}
 
         {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (
-          <Button variant="link-primary" size="sm" prependIcon={<Plus />} onClick={handleCreate}>
+          <Button variant="link" prependIcon={<PlusIcon />} onClick={handleCreate}>
             Add {estimate?.type}
           </Button>
         )}

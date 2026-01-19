@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -57,7 +70,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
 
   function BreadcrumbSeparator() {
     return (
-      <div className="flex items-center px-2 text-custom-text-300">
+      <div className="flex items-center px-2 text-tertiary">
         <ChevronRightIcon className="size-3" />
       </div>
     );
@@ -93,7 +106,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                 <BreadcrumbLink
                   label="Pages"
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
-                  icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -102,7 +115,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                 {isParentPagesLoading ? (
                   <div className="flex items-center">
                     <div className="flex items-center animate-pulse">
-                      <div className="h-4 w-24 bg-custom-background-80 rounded" />
+                      <div className="h-4 w-24 bg-layer-1 rounded" />
                     </div>
                   </div>
                 ) : (
@@ -172,7 +185,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
       </Header.LeftItem>
       <Header.RightItem>
         <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
-        <CollaboratorsList page={page} className="bottom-1" />
+        <CollaboratorsList page={page} />
         <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>

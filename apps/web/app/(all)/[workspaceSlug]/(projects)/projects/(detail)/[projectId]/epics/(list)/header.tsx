@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -61,7 +74,7 @@ export const EpicsHeader = observer(function EpicsHeader() {
                 <BreadcrumbLink
                   label="Epics"
                   href={`/${workspaceSlug}/projects/${projectId}/epics/`}
-                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<EpicIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -79,7 +92,7 @@ export const EpicsHeader = observer(function EpicsHeader() {
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <div className="hidden gap-3 md:flex">
+          <div className="hidden gap-2 md:flex items-center">
             <HeaderFilters
               storeType={EIssuesStoreType.EPIC}
               projectId={projectId?.toString()}
@@ -90,10 +103,10 @@ export const EpicsHeader = observer(function EpicsHeader() {
           </div>
           {canUserCreateIssue && (
             <Button
+              size="lg"
               onClick={() => {
                 setIsCreateIssueModalOpen(true);
               }}
-              size="sm"
             >
               <div className="hidden sm:block">New</div> Epic
             </Button>

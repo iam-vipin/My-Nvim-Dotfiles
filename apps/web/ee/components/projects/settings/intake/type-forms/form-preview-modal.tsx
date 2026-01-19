@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { IntakePublishForm } from "@plane/propel/domain/intake-form";
 import { CloseIcon } from "@plane/propel/icons";
@@ -50,17 +63,17 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
       width={EModalWidth.XXXXL}
       className="p-5"
     >
-      <div className="flex items-center justify-between text-custom-text-400 sticky">
-        <span className="text-sm font-medium">Preview</span>
+      <div className="flex items-center justify-between text-placeholder sticky">
+        <span className="text-13 font-medium">Preview</span>
         <CloseIcon className="size-4 cursor-pointer" onClick={onClose} />
       </div>
       <div className="">
         <div className="max-w-xl mx-auto">
-          <div className="p-6 pt-4 shadow-md rounded-md border border-custom-border-100">
+          <div className="p-6 pt-4 shadow-md rounded-md border border-subtle">
             <IntakePublishForm
               projectName={currentProjectDetails.name || ""}
               projectLogo={currentProjectDetails.logo_props}
-              projectCoverImage={currentProjectDetails.cover_image}
+              projectCoverImage={currentProjectDetails.cover_image_url}
               projectCoverImageFallback={DEFAULT_COVER_IMAGE_URL}
               formTitle={formTitle || ""}
               properties={formProperties}

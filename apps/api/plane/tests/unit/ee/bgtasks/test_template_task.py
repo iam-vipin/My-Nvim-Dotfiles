@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import pytest
 from unittest.mock import patch
 import uuid
@@ -457,23 +468,17 @@ class TestCreateProjectFromTemplate:
 
         # Check labels were created
         assert Label.objects.filter(project=project).count() == 2
-        label_names = list(
-            Label.objects.filter(project=project).values_list("name", flat=True)
-        )
+        label_names = list(Label.objects.filter(project=project).values_list("name", flat=True))
         assert "Bug" in label_names
         assert "Feature" in label_names
 
         # Check workitem types were created
         assert IssueType.objects.filter(workspace=project.workspace).exists()
         issue_type = IssueType.objects.get(workspace=project.workspace, name="Task")
-        assert ProjectIssueType.objects.filter(
-            project=project, issue_type=issue_type
-        ).exists()
+        assert ProjectIssueType.objects.filter(project=project, issue_type=issue_type).exists()
 
         # Check epic was created
-        epic_type = IssueType.objects.filter(
-            workspace=project.workspace, is_epic=True
-        ).first()
+        epic_type = IssueType.objects.filter(workspace=project.workspace, is_epic=True).first()
         assert epic_type is not None
         assert epic_type.name == "Epic"
 
@@ -567,9 +572,7 @@ class TestCreateProjectFromTemplate:
         create_project_from_template(template_id, project_id, user_id, state_map)
 
         # Assert
-        assert not IssueType.objects.filter(
-            workspace=project.workspace, is_epic=True
-        ).exists()
+        assert not IssueType.objects.filter(workspace=project.workspace, is_epic=True).exists()
 
     @pytest.mark.django_db
     def test_create_project_from_template_with_workitem_blueprints(
@@ -592,9 +595,7 @@ class TestCreateProjectFromTemplate:
 
         # Assert
         # Check workitem was created
-        assert Issue.objects.filter(
-            project_id=project_id, name=workitem_template.name
-        ).exists()
+        assert Issue.objects.filter(project_id=project_id, name=workitem_template.name).exists()
         issue = Issue.objects.get(project_id=project_id, name=workitem_template.name)
         assert issue.description_stripped == workitem_template.description_stripped
         assert issue.priority == workitem_template.priority
@@ -654,22 +655,14 @@ class TestCreateSubworkitems:
         )
 
         # Act
-        create_subworkitems(
-            workitem_template_id, project_id, str(parent_issue.id), user_id
-        )
+        create_subworkitems(workitem_template_id, project_id, str(parent_issue.id), user_id)
 
         # Assert
         # Check subworkitem was created
-        assert Issue.objects.filter(
-            project=project, name=sub_workitem_template.name, parent=parent_issue
-        ).exists()
+        assert Issue.objects.filter(project=project, name=sub_workitem_template.name, parent=parent_issue).exists()
 
-        sub_issue = Issue.objects.get(
-            project=project, name=sub_workitem_template.name, parent=parent_issue
-        )
-        assert (
-            sub_issue.description_stripped == sub_workitem_template.description_stripped
-        )
+        sub_issue = Issue.objects.get(project=project, name=sub_workitem_template.name, parent=parent_issue)
+        assert sub_issue.description_stripped == sub_workitem_template.description_stripped
         assert sub_issue.priority == sub_workitem_template.priority
         assert str(sub_issue.state_id) == sub_workitem_template.state["id"]
         assert str(sub_issue.type_id) == sub_workitem_template.type["id"]
@@ -702,14 +695,10 @@ class TestCreateSubworkitems:
         )
 
         # Act
-        create_subworkitems(
-            workitem_template_id, project_id, str(parent_issue.id), user_id
-        )
+        create_subworkitems(workitem_template_id, project_id, str(parent_issue.id), user_id)
 
         # Assert
-        sub_issue = Issue.objects.get(
-            project=project, name=sub_workitem_template.name, parent=parent_issue
-        )
+        sub_issue = Issue.objects.get(project=project, name=sub_workitem_template.name, parent=parent_issue)
         assert IssueAssignee.objects.filter(issue=sub_issue).exists()
 
     @pytest.mark.django_db
@@ -735,14 +724,10 @@ class TestCreateSubworkitems:
         )
 
         # Act
-        create_subworkitems(
-            workitem_template_id, project_id, str(parent_issue.id), user_id
-        )
+        create_subworkitems(workitem_template_id, project_id, str(parent_issue.id), user_id)
 
         # Assert
-        sub_issue = Issue.objects.get(
-            project=project, name=sub_workitem_template.name, parent=parent_issue
-        )
+        sub_issue = Issue.objects.get(project=project, name=sub_workitem_template.name, parent=parent_issue)
         assert IssueLabel.objects.filter(issue=sub_issue, label=labels[0].id).exists()
 
     @pytest.mark.django_db
@@ -768,17 +753,11 @@ class TestCreateSubworkitems:
         )
 
         # Act
-        create_subworkitems(
-            workitem_template_id, project_id, str(parent_issue.id), user_id
-        )
+        create_subworkitems(workitem_template_id, project_id, str(parent_issue.id), user_id)
 
         # Assert
-        sub_issue = Issue.objects.get(
-            project=project, name=sub_workitem_template.name, parent=parent_issue
-        )
-        assert IssuePropertyValue.objects.filter(
-            issue=sub_issue, property=issue_property_text
-        ).exists()
+        sub_issue = Issue.objects.get(project=project, name=sub_workitem_template.name, parent=parent_issue)
+        assert IssuePropertyValue.objects.filter(issue=sub_issue, property=issue_property_text).exists()
 
     @pytest.mark.django_db
     def test_create_subworkitems_template_not_found(
@@ -800,9 +779,7 @@ class TestCreateSubworkitems:
         )
 
         # Act
-        create_subworkitems(
-            workitem_template_id, project_id, str(parent_issue.id), user_id
-        )
+        create_subworkitems(workitem_template_id, project_id, str(parent_issue.id), user_id)
 
         # Assert
         # Should not create any issues
@@ -829,9 +806,7 @@ class TestCreateSubworkitems:
         )
 
         # Act
-        create_subworkitems(
-            workitem_template_id, project_id, str(parent_issue.id), user_id
-        )
+        create_subworkitems(workitem_template_id, project_id, str(parent_issue.id), user_id)
 
         # Assert
         # Should not create any new issues
@@ -921,22 +896,16 @@ class TestHelperFunctions:
         assert result == {"value_datetime": dt}
 
     @pytest.mark.django_db
-    def test_get_property_value_data_option(
-        self, issue_property_option, property_option_choice
-    ):
+    def test_get_property_value_data_option(self, issue_property_option, property_option_choice):
         """Test property value data generation for option type"""
         issue_property_option.property_type = PropertyTypeEnum.OPTION
         issue_property_option.save()
 
-        result = _get_property_value_data(
-            issue_property_option, str(property_option_choice.id)
-        )
+        result = _get_property_value_data(issue_property_option, str(property_option_choice.id))
         assert result == {"value_option": property_option_choice}
 
     @pytest.mark.django_db
-    def test_get_property_value_data_option_with_mapping(
-        self, issue_property_option, property_option_choice
-    ):
+    def test_get_property_value_data_option_with_mapping(self, issue_property_option, property_option_choice):
         """Test property value data generation for option type with mapping"""
         issue_property_option.property_type = PropertyTypeEnum.OPTION
         issue_property_option.save()
@@ -1004,9 +973,7 @@ class TestIndividualFunctions:
             ],
         }
 
-        result = create_estimates(
-            estimate_data, str(project.id), project, str(create_user.id)
-        )
+        result = create_estimates(estimate_data, str(project.id), project, str(create_user.id))
 
         assert Estimate.objects.filter(project=project).exists()
         estimate = Estimate.objects.get(project=project)
@@ -1023,14 +990,10 @@ class TestIndividualFunctions:
             {"id": str(uuid4()), "name": "Feature", "color": "#00ff00"},
         ]
 
-        result = create_labels(
-            label_data, str(project.id), str(project.workspace.id), str(create_user.id)
-        )
+        result = create_labels(label_data, str(project.id), str(project.workspace.id), str(create_user.id))
 
         assert Label.objects.filter(project=project).count() == 2
-        label_names = list(
-            Label.objects.filter(project=project).values_list("name", flat=True)
-        )
+        label_names = list(Label.objects.filter(project=project).values_list("name", flat=True))
         assert "Bug" in label_names
         assert "Feature" in label_names
         assert len(result) == 2  # Should return mapping of old to new IDs
@@ -1071,9 +1034,7 @@ class TestIndividualFunctions:
 
         assert IssueType.objects.filter(workspace=project.workspace).exists()
         issue_type = IssueType.objects.get(workspace=project.workspace, name="Task")
-        assert ProjectIssueType.objects.filter(
-            project=project, issue_type=issue_type
-        ).exists()
+        assert ProjectIssueType.objects.filter(project=project, issue_type=issue_type).exists()
         assert IssueProperty.objects.filter(issue_type=issue_type).exists()
 
         assert len(workitem_type_map) == 1
@@ -1099,24 +1060,16 @@ class TestIndividualFunctions:
             ],
         }
 
-        create_epics(
-            epic_data, str(project.id), str(project.workspace.id), str(create_user.id)
-        )
+        create_epics(epic_data, str(project.id), str(project.workspace.id), str(create_user.id))
 
-        epic_type = IssueType.objects.filter(
-            workspace=project.workspace, is_epic=True
-        ).first()
+        epic_type = IssueType.objects.filter(workspace=project.workspace, is_epic=True).first()
         assert epic_type is not None
         assert epic_type.name == "Epic"
-        assert ProjectIssueType.objects.filter(
-            project=project, issue_type=epic_type
-        ).exists()
+        assert ProjectIssueType.objects.filter(project=project, issue_type=epic_type).exists()
         assert IssueProperty.objects.filter(issue_type=epic_type).exists()
 
     @pytest.mark.django_db
-    def test_create_issue_property_values(
-        self, project, create_user, issue_property_text
-    ):
+    def test_create_issue_property_values(self, project, create_user, issue_property_text):
         """Test issue property value creation"""
         # Create an issue
         issue = Issue.objects.create(
@@ -1125,13 +1078,9 @@ class TestIndividualFunctions:
             created_by=create_user,
         )
 
-        blueprint_properties = [
-            {"id": str(issue_property_text.id), "values": ["Test value"]}
-        ]
+        blueprint_properties = [{"id": str(issue_property_text.id), "values": ["Test value"]}]
 
-        workitem_property_map = {
-            str(issue_property_text.id): str(issue_property_text.id)
-        }
+        workitem_property_map = {str(issue_property_text.id): str(issue_property_text.id)}
         workitem_property_option_map = {}
 
         create_issue_property_values(
@@ -1144,10 +1093,6 @@ class TestIndividualFunctions:
             str(create_user.id),
         )
 
-        assert IssuePropertyValue.objects.filter(
-            issue=issue, property=issue_property_text
-        ).exists()
-        property_value = IssuePropertyValue.objects.get(
-            issue=issue, property=issue_property_text
-        )
+        assert IssuePropertyValue.objects.filter(issue=issue, property=issue_property_text).exists()
+        property_value = IssuePropertyValue.objects.get(issue=issue, property=issue_property_text)
         assert property_value.value_text == "Test value"

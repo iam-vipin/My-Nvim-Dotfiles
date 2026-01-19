@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -36,9 +47,7 @@ class MilestoneViewSet(BaseViewSet):
 
     def get_serializer_class(self):
         return (
-            MilestoneWriteSerializer
-            if self.action in ["create", "update", "partial_update"]
-            else MilestoneSerializer
+            MilestoneWriteSerializer if self.action in ["create", "update", "partial_update"] else MilestoneSerializer
         )
 
     def get_queryset(self):
@@ -113,9 +122,7 @@ class MilestoneViewSet(BaseViewSet):
 
         # Re-fetch milestone with annotations for proper response
         milestone = self.get_queryset().get(id=milestone.id)
-        return Response(
-            MilestoneSerializer(milestone).data, status=status.HTTP_201_CREATED
-        )
+        return Response(MilestoneSerializer(milestone).data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.MILESTONES)
     def partial_update(self, request, slug, project_id, pk):
@@ -141,9 +148,7 @@ class MilestoneViewSet(BaseViewSet):
         milestone = self.get_object()
 
         # Get all milestone issues to delete them explicitly
-        milestone_issues = MilestoneIssue.objects.filter(
-            milestone_id=pk, workspace__slug=slug, project_id=project_id
-        )
+        milestone_issues = MilestoneIssue.objects.filter(milestone_id=pk, workspace__slug=slug, project_id=project_id)
 
         # Collect work item IDs before deletion for activity logging
         work_item_ids = list(milestone_issues.values_list("issue_id", flat=True))

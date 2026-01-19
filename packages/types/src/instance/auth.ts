@@ -1,5 +1,32 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import type { TExtendedInstanceAuthenticationModeKeys } from "./auth-ee";
+
+export type TCoreInstanceAuthenticationModeKeys =
+  | "unique-codes"
+  | "passwords-login"
+  | "google"
+  | "github"
+  | "gitlab"
+  | "gitea";
+
+export type TInstanceAuthenticationModeKeys =
+  | TCoreInstanceAuthenticationModeKeys
+  | TExtendedInstanceAuthenticationModeKeys;
+
 export type TInstanceAuthenticationModes = {
-  key: string;
+  key: TInstanceAuthenticationModeKeys;
   name: string;
   description: string;
   icon: React.ReactNode;
@@ -51,6 +78,19 @@ export type TGetBaseAuthenticationModeProps = {
   disabled: boolean;
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
   resolvedTheme: string | undefined;
+};
+
+export type TOAuthOption = {
+  id: string;
+  text: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  enabled?: boolean;
+};
+
+export type TOAuthConfigs = {
+  isOAuthEnabled: boolean;
+  oAuthOptions: TOAuthOption[];
 };
 
 export type TCoreLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google" | "gitea";

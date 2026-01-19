@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { GITHUB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
@@ -99,21 +112,22 @@ export const ProjectIssueSyncRoot = observer(function ProjectIssueSyncRoot({
     return <MappingLoader />;
   }
   return (
-    <div className="relative border border-custom-border-200 rounded">
+    <div className="relative border border-subtle rounded">
       {/* Header */}
-      <div className="flex flex-row items-center justify-between py-5 px-5 bg-custom-background-90 border-b border-custom-border-200">
+      <div className="flex flex-row items-center justify-between py-5 px-5 bg-layer-1 border-b border-subtle">
         <div className="space-y-1">
-          <div className="text-base font-medium">{t("github_integration.project_issue_sync")}</div>
-          <div className="text-sm text-custom-text-200">{t("github_integration.project_issue_sync_description")}</div>
+          <div className="text-body-sm-medium">{t("github_integration.project_issue_sync")}</div>
+          <div className="text-body-xs-regular text-secondary">
+            {t("github_integration.project_issue_sync_description")}
+          </div>
         </div>
         <Button
-          variant="neutral-primary"
-          size="sm"
-          className="h-8 w-8 rounded p-0"
+          variant="secondary"
+          className="h-8 w-8 rounded-sm p-0"
           onClick={() => setModalCreateOpen(true)}
           data-ph-element={GITHUB_INTEGRATION_TRACKER_ELEMENTS.REPOSITORY_MAPPING_HEADER_ADD_BUTTON}
         >
-          <Plus className="h-5 w-5" />
+          <PlusIcon className="h-5 w-5" />
         </Button>
       </div>
 
@@ -142,7 +156,9 @@ export const ProjectIssueSyncRoot = observer(function ProjectIssueSyncRoot({
         </div>
       ) : (
         <div className="p-10 relative text-center">
-          <div className="text-sm text-custom-text-200">{t("github_integration.project_issue_sync_empty_state")}</div>
+          <div className="text-body-xs-regular text-secondary">
+            {t("github_integration.project_issue_sync_empty_state")}
+          </div>
         </div>
       )}
 

@@ -1,16 +1,26 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Trash2 } from "lucide-react";
-// ui
-import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { LeadIcon } from "@plane/propel/icons";
+// Plane imports
+import { TrashIcon, LeadIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Avatar, CustomMenu } from "@plane/ui";
 // helpers
 import { cn, getFileURL } from "@plane/utils";
 // hooks
-import { captureClick, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -64,19 +74,12 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
     await removeTeamspaceMemberPromise.then(() => {
       const isCurrentUser = currentUser?.id === memberId;
       if (isCurrentUser) router.push(`/${workspaceSlug}/teamspaces`);
-      captureSuccess({
-        eventName: isCurrentUser ? TEAMSPACE_TRACKER_EVENTS.LEAVE : TEAMSPACE_TRACKER_EVENTS.MEMBER_REMOVED,
-        payload: {
-          id: teamspace.id,
-          memberId,
-        },
-      });
     });
   };
 
   return (
-    <div className="relative flex flex-col w-full h-full gap-y-2 pt-2 px-6">
-      <div className="flex items-center gap-1.5 text-sm font-semibold">Members</div>
+    <div className="relative flex flex-col w-full h-full gap-y-2 ">
+      <div className="flex items-center gap-1.5 text-13 font-semibold">Members</div>
       <div className="flex-1 flex flex-col py-2 px-0.5 gap-x-2 gap-y-5 overflow-y-auto">
         <AddTeamspaceMembersButton teamspaceId={teamspace.id} variant="sidebar" isEditingAllowed={isEditingAllowed} />
         {members &&
@@ -93,14 +96,14 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                       name={member.display_name}
                       src={getFileURL(member.avatar_url)}
                       size={32}
-                      className="text-sm"
+                      className="text-body-xs-regular"
                       showTooltip={false}
                     />
                     {isTeamspaceLead && (
                       <LeadIcon className="flex-shrink-0 absolute top-0 -left-0.5 size-4 rounded-full" />
                     )}
                   </span>
-                  <span className="text-sm font-medium text-custom-text-200">
+                  <span className="text-body-xs-medium text-secondary">
                     {member.first_name} {member.last_name}
                   </span>
                 </div>
@@ -109,15 +112,12 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                     <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
                       <CustomMenu.MenuItem
                         onClick={() => {
-                          captureClick({
-                            elementName: TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_REMOVE_MEMBER_BUTTON,
-                          });
                           handleMemberLeaveOrRemove(member.id);
                         }}
-                        className={cn("flex items-center gap-2 text-red-500")}
+                        className={cn("flex items-center gap-2 text-danger-primary")}
                         disabled={!isEditingAllowed}
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <TrashIcon className="h-3 w-3" />
                         <div>{currentUser?.id === member.id ? "Leave" : "Remove"}</div>
                       </CustomMenu.MenuItem>
                     </CustomMenu>

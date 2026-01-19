@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import serializers
 from django.db import IntegrityError
@@ -7,7 +18,6 @@ from plane.app.serializers import BaseSerializer
 from plane.ee.models import Milestone, MilestoneIssue
 from plane.db.models import Issue
 from plane.ee.serializers.app.description import DescriptionSerializer
-from plane.app.serializers.issue import IssueListDetailSerializer
 
 
 class MilestoneWorkItemResponseSerializer(BaseSerializer):
@@ -57,9 +67,7 @@ class MilestoneWorkItemSerializer(serializers.Serializer):
     """
 
     work_item_ids = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(
-            queryset=Issue.objects.values_list("id", flat=True)
-        ),
+        child=serializers.PrimaryKeyRelatedField(queryset=Issue.objects.values_list("id", flat=True)),
         required=True,
     )
 
@@ -94,9 +102,9 @@ class MilestoneWorkItemSerializer(serializers.Serializer):
 
         # Get the current work items
         current_work_items = list(
-            MilestoneIssue.objects.filter(
-                milestone=instance, deleted_at__isnull=True
-            ).values_list("issue_id", flat=True)
+            MilestoneIssue.objects.filter(milestone=instance, deleted_at__isnull=True).values_list(
+                "issue_id", flat=True
+            )
         )
 
         # Calculate diff (following pattern from IssueSerializer lines 277-312)
@@ -108,9 +116,7 @@ class MilestoneWorkItemSerializer(serializers.Serializer):
         self.work_items_to_remove = work_items_to_remove
 
         # Delete the work items to remove
-        MilestoneIssue.objects.filter(
-            milestone=instance, issue_id__in=work_items_to_remove
-        ).delete()
+        MilestoneIssue.objects.filter(milestone=instance, issue_id__in=work_items_to_remove).delete()
 
         # Bulk create new work items
         try:
@@ -163,9 +169,7 @@ class MilestoneWriteSerializer(BaseSerializer):
         project_id = instance.project_id
 
         if description_data:
-            serializer = DescriptionSerializer(
-                instance.description, data=description_data, partial=True
-            )
+            serializer = DescriptionSerializer(instance.description, data=description_data, partial=True)
             serializer.is_valid(raise_exception=True)
             description = serializer.save(
                 workspace_id=workspace_id,

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
 // utils
 import {
@@ -20,13 +33,32 @@ const fetchDocument = async ({ context, documentName: pageId, instance }: FetchP
   try {
     const service = getPageService(context.documentType, context);
     // fetch details
-    const response = await service.fetchDescriptionBinary(pageId);
+    const response = (await service.fetchDescriptionBinary(pageId)) as Buffer;
     const binaryData = new Uint8Array(response);
     // if binary data is empty, convert HTML to binary data
     if (binaryData.byteLength === 0) {
       const pageDetails = await service.fetchDetails(pageId);
-      const convertedBinaryData = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
+      const convertedBinaryData = getBinaryDataFromDocumentEditorHTMLString(
+        pageDetails.description_html ?? "<p></p>",
+        pageDetails.name
+      );
       if (convertedBinaryData) {
+        // save the converted binary data back to the database
+        try {
+          const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+            convertedBinaryData,
+            true
+          );
+          const payload = {
+            description_binary: contentBinaryEncoded,
+            description_html: contentHTML,
+            description: contentJSON,
+          };
+          await service.updateDescriptionBinary(pageId, payload);
+        } catch (e) {
+          const error = new AppError(e);
+          logger.error("Failed to save binary after first conversion from html:", error);
+        }
         return convertedBinaryData;
       }
     }

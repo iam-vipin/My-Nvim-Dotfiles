@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Global Settings"""
 
 # Python imports
@@ -30,7 +41,7 @@ AES_SALT = os.environ.get("AES_SALT", "aes-salt")
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Self-hosted mode
-IS_SELF_MANAGED = True
+IS_SELF_MANAGED = False
 
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
@@ -40,7 +51,8 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    # In house apps
+    "django.contrib.staticfiles",
+    # Inhouse apps
     "plane.analytics",
     "plane.app",
     "plane.space",
@@ -58,6 +70,8 @@ INSTALLED_APPS = [
     "plane.payment",
     "plane.silo",
     "plane.event_stream",
+    "plane.agents",
+    "plane.webhook",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -71,6 +85,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "plane.authentication.middleware.session.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -299,6 +314,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.cleanup_task",
+    "plane.bgtasks.logger_task",
     "plane.license.bgtasks.tracer",
     "plane.license.bgtasks.version_check_task",
     # payment tasks
@@ -325,6 +341,13 @@ CELERY_IMPORTS = (
     "plane.silo.bgtasks.bulk_update_issue_relations_task_v2",
     # event stream tasks
     "plane.event_stream.bgtasks.outbox_cleaner",
+    # webhook tasks
+    "plane.webhook.bgtasks.webhook_task",
+    # agents tasks
+    "plane.agents.bgtasks.agent_run_agent_assigned_task",
+    "plane.agents.bgtasks.agent_run_user_comment_task",
+    "plane.agents.bgtasks.agent_run_activity_webhook",
+    "plane.agents.bgtasks.agent_run_webhook",
 )
 
 # Application Envs
@@ -371,6 +394,9 @@ else:
 # Admin Cookie
 ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
 ADMIN_SESSION_COOKIE_AGE = int(os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600))
+
+# Concurrent Session Limit
+MAX_CONCURRENT_SESSIONS = int(os.environ.get("MAX_CONCURRENT_SESSIONS", 5))
 
 # CSRF cookies
 CSRF_COOKIE_SECURE = secure_origins
@@ -671,3 +697,6 @@ IS_AIRGAPPED = os.environ.get("IS_AIRGAPPED", "0") == "1"
 ENABLE_OUTBOX_POLLER = os.environ.get("ENABLE_OUTBOX_POLLER", "0") == "1"
 
 USE_STORAGE_PROXY = os.environ.get("USE_STORAGE_PROXY", "0") == "1"
+
+# Agent settings
+AGENT_RUN_STALE_TIMEOUT_IN_MINS = int(os.environ.get("AGENT_RUN_STALE_TIMEOUT_IN_MINS", 5))

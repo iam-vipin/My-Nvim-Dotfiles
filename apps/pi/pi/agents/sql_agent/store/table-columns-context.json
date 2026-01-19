@@ -1,229 +1,273 @@
 [
-    {
-        "table": "intake_issues",
-        "columns": [
-            {
-                "name": "status",
-                "description": "Enumerated states representing the status of an issue in intake",
-                "enumerations": [
-                    {
-                        "identifier": -2,
-                        "description": "Pending"
-                    },
-                    {
-                        "identifier": -1,
-                        "description": "Rejected"
-                    },
-                    {
-                        "identifier": 0,
-                        "description": "Snoozed"
-                    },
-                    {
-                        "identifier": 1,
-                        "description": "Accepted"
-                    },
-                    {
-                        "identifier": 2,
-                        "description": "Duplicate"
-                    }
-                ]
-            }
+  {
+    "table": "intake_issues",
+    "columns": [
+      {
+        "name": "status",
+        "description": "Enumerated states representing the status of an issue in intake",
+        "enumerations": [
+          {
+            "identifier": -2,
+            "description": "Pending"
+          },
+          {
+            "identifier": -1,
+            "description": "Rejected"
+          },
+          {
+            "identifier": 0,
+            "description": "Snoozed"
+          },
+          {
+            "identifier": 1,
+            "description": "Accepted"
+          },
+          {
+            "identifier": 2,
+            "description": "Duplicate"
+          }
         ]
-    },
-    {
-        "table": "project_members",
-        "columns": [
-            {
-                "name": "role",
-                "description": "Enumerated role representing the role of a memebr in project",
-                "enumerations": [
-                    {
-                        "identifier": 5,
-                        "description": "Guest"
-                    },
-                    {
-                        "identifier": 15,
-                        "description": "Member"
-                    },
-                    {
-                        "identifier": 20,
-                        "description": "Admin"
-                    }
-                ]
-            }
+      }
+    ]
+  },
+  {
+    "table": "project_members",
+    "columns": [
+      {
+        "name": "role",
+        "description": "Enumerated role representing the role of a memebr in project",
+        "enumerations": [
+          {
+            "identifier": 5,
+            "description": "Guest"
+          },
+          {
+            "identifier": 15,
+            "description": "Member"
+          },
+          {
+            "identifier": 20,
+            "description": "Admin"
+          }
         ]
-    },
-    {
-        "table": "workspace_members",
-        "columns": [
-            {
-                "name": "role",
-                "description": "Enumerated role representing the role of a memebr in workspace",
-                "enumerations": [
-                    {
-                        "identifier": 5,
-                        "description": "Guest"
-                    },
-                    {
-                        "identifier": 15,
-                        "description": "Member"
-                    },
-                    {
-                        "identifier": 20,
-                        "description": "Admin"
-                    }
-                ]
-            }
+      }
+    ]
+  },
+  {
+    "table": "workspace_members",
+    "columns": [
+      {
+        "name": "role",
+        "description": "Enumerated role representing the role of a memebr in workspace",
+        "enumerations": [
+          {
+            "identifier": 5,
+            "description": "Guest"
+          },
+          {
+            "identifier": 15,
+            "description": "Member"
+          },
+          {
+            "identifier": 20,
+            "description": "Admin"
+          }
         ]
-    },
-    {
-        "table": "issue_relations",
-        "columns": [
-            {
-                "name": "relation_type",
-                "description": "The type of relationship between two issues.",
-                "distinct_values_in_column": [
-                    "duplicate",
-                    "finish_before",
-                    "blocked_by",
-                    "start_before",
-                    "relates_to"
-                ]
-            }
+      }
+    ]
+  },
+  {
+    "table": "issue_relations",
+    "columns": [
+      {
+        "name": "relation_type",
+        "description": "The type of relationship between two issues.",
+        "distinct_values_in_column": ["duplicate", "finish_before", "blocked_by", "start_before", "relates_to"]
+      }
+    ]
+  },
+  {
+    "table": "issue_activities",
+    "columns": [
+      {
+        "name": "verb",
+        "description": "The action that was performed on field present in 'field' column for the given issue.",
+        "distinct_values_in_column": ["created", "deleted", "removed", "updated"]
+      },
+      {
+        "name": "field",
+        "description": "The name of the field on which activity is performed.",
+        "distinct_values_in_column": [
+          "archived_at",
+          "assignees",
+          "attachment",
+          "blocked_by",
+          "blocking",
+          "comment",
+          "cycles",
+          "description",
+          "draft",
+          "duplicate",
+          "estimate_point",
+          "finish_before",
+          "finish_after",
+          "intake",
+          "issue",
+          "labels",
+          "link",
+          "modules",
+          "name",
+          "parent",
+          "priority",
+          "project",
+          "reaction",
+          "relates_to",
+          "sequence_id",
+          "start_before",
+          "start_after",
+          "start_date",
+          "state",
+          "target_date",
+          "type",
+          "vote"
         ]
-    },
-    {
-        "table": "issue_activities",
-        "columns": [
-            {
-                "name": "verb",
-                "description": "The action that was performed on field present in 'field' column for the given issue.",
-                "distinct_values_in_column": [
-                    "created",
-                    "deleted",
-                    "removed",
-                    "updated"
-                ]
-            },
-            {
-                "name": "field",
-                "description": "The name of the field on which activity is performed.",
-                "distinct_values_in_column": [
-                    "archived_at",
-                    "assignees",
-                    "attachment",
-                    "blocked_by",
-                    "blocking",
-                    "comment",
-                    "cycles",
-                    "description",
-                    "draft",
-                    "duplicate",
-                    "estimate_point",
-                    "finish_before",
-                    "finish_after",
-                    "intake",
-                    "issue",
-                    "labels",
-                    "link",
-                    "modules",
-                    "name",
-                    "parent",
-                    "priority",
-                    "project",
-                    "reaction",
-                    "relates_to",
-                    "sequence_id",
-                    "start_before",
-                    "start_after",
-                    "start_date",
-                    "state",
-                    "target_date",
-                    "type",
-                    "vote"
-                ]
-            },
-            {
-                "name": "new_value",
-                "description": "The new value (string) of the field after the update."
-            },
-            {
-                "name": "old_value",
-                "description": "The old value (string) of the field before the update."
-            },
-            {
-                "name": "new_identifier",
-                "description": "The identifier (UUID) of the new value of the field after the update."
-            },
-            {
-                "name": "old_identifier",
-                "description": "The identifier (UUID) of the old value of the field before the update."
-            }
+      },
+      {
+        "name": "new_value",
+        "description": "The new value (string) of the field after the update."
+      },
+      {
+        "name": "old_value",
+        "description": "The old value (string) of the field before the update."
+      },
+      {
+        "name": "new_identifier",
+        "description": "The identifier (UUID) of the new value of the field after the update."
+      },
+      {
+        "name": "old_identifier",
+        "description": "The identifier (UUID) of the old value of the field before the update."
+      }
+    ]
+  },
+  {
+    "table": "states",
+    "columns": [
+      {
+        "name": "group",
+        "description": "The name of the group to which the issue state belongs.",
+        "distinct_values_in_column": ["started", "backlog", "completed", "cancelled", "unstarted"]
+      }
+    ]
+  },
+  {
+    "table": "issue_attachments",
+    "columns": [
+      {
+        "name": "attributes",
+        "description": "Attributes of the attachment (size, name).",
+        "fields_in_jsonb_object": ["name", "size"]
+      }
+    ]
+  },
+  {
+    "table": "project_states",
+    "columns": [
+      {
+        "name": "group",
+        "description": "The name of the group to which the project state belongs.",
+        "distinct_values_in_column": ["monitoring", "draft", "completed", "cancelled", "planning", "execution"]
+      }
+    ]
+  },
+  {
+    "table": "projects",
+    "columns": [
+      {
+        "name": "network",
+        "description": "Enumerated numbers representing the visibility of a project (public/ private).",
+        "enumerations": [
+          {
+            "identifier": 0,
+            "description": "Private"
+          },
+          {
+            "identifier": 2,
+            "description": "Public"
+          }
         ]
-    },
-    {
-        "table": "states",
-        "columns": [
-            {
-                "name": "group",
-                "description": "The name of the group to which the issue state belongs.",
-                "distinct_values_in_column": [
-                    "started",
-                    "backlog",
-                    "completed",
-                    "cancelled",
-                    "unstarted"
-                ]
-            }
+      }
+    ]
+  },
+  {
+    "table": "issues",
+    "columns": [
+      {
+        "name": "priority",
+        "description": "The priority level assigned to the issue, stored as lowercase text",
+        "distinct_values_in_column": ["urgent", "high", "medium", "low", "none"]
+      }
+    ]
+  },
+  {
+    "table": "cycles",
+    "columns": [
+      {
+        "name": "status",
+        "description": "IMPORTANT: The 'cycles' table does NOT have a 'status' column. Status is computed dynamically based on 'start_date' and 'end_date'. Use the following conditions to filter by status",
+        "computed_status_conditions": [
+          {
+            "status": "current",
+            "description": "Currently active cycle",
+            "sql_condition": "start_date <= NOW() AND end_date >= NOW()"
+          },
+          {
+            "status": "active",
+            "description": "Alias for 'current' - currently active cycle",
+            "sql_condition": "start_date <= NOW() AND end_date >= NOW()"
+          },
+          {
+            "status": "ongoing",
+            "description": "Alias for 'current' - currently active cycle",
+            "sql_condition": "start_date <= NOW() AND end_date >= NOW()"
+          },
+          {
+            "status": "in-progress",
+            "description": "Alias for 'current' - currently active cycle",
+            "sql_condition": "start_date <= NOW() AND end_date >= NOW()"
+          },
+          {
+            "status": "upcoming",
+            "description": "Cycle that hasn't started yet",
+            "sql_condition": "start_date > NOW()"
+          },
+          {
+            "status": "completed",
+            "description": "Cycle that has ended",
+            "sql_condition": "end_date < NOW()"
+          },
+          {
+            "status": "draft",
+            "description": "Cycle without start or end dates",
+            "sql_condition": "start_date IS NULL AND end_date IS NULL"
+          },
+          {
+            "status": "incomplete",
+            "description": "Cycle that is not yet completed (current, upcoming, or draft)",
+            "sql_condition": "end_date >= NOW() OR end_date IS NULL"
+          }
         ]
-    },
-    {
-        "table": "issue_attachments",
-        "columns": [
-            {
-                "name": "attributes",
-                "description": "Attributes of the attachment (size, name).",
-                "fields_in_jsonb_object": [
-                    "name",
-                    "size"
-                ]
-            }
-        ]
-    },
-    {
-        "table": "project_states",
-        "columns": [
-            {
-                "name": "group",
-                "description": "The name of the group to which the project state belongs.",
-                "distinct_values_in_column": [
-                    "monitoring",
-                    "draft",
-                    "completed",
-                    "cancelled",
-                    "planning",
-                    "execution"
-                ]
-            }
-        ]
-    },
-    {
-        "table": "projects",
-        "columns": [
-            {
-                "name": "network",
-                "description": "Enumerated numbers representing the visibility of a project (public/ private).",
-                "enumerations": [
-                    {
-                        "identifier": 0,
-                        "description": "Private"
-                    },
-                    {
-                        "identifier": 2,
-                        "description": "Public"
-                    }
-                ]
-            }
-        ]
-    }
+      }
+    ]
+  },
+  {
+    "table": "modules",
+    "columns": [
+      {
+        "name": "status",
+        "description": "The status of a module, stored as a string",
+        "distinct_values_in_column": ["backlog", "planned", "in-progress", "paused", "completed", "cancelled"]
+      }
+    ]
+  }
 ]

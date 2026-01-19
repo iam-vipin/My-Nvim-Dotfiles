@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Extension } from "@tiptap/core";
 // helpers
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -8,8 +21,6 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { NodeHighlightPlugin } from "@/plugins/highlight";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
-// types
-import { PasteAssetPlugin } from "@/plugins/paste-asset";
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 import { codemark } from "./code-mark";
 
@@ -83,7 +94,6 @@ export const UtilityExtension = (props: Props) => {
           flaggedExtensions,
           editor: this.editor,
         }),
-        PasteAssetPlugin(),
         NodeHighlightPlugin(),
       ];
     },

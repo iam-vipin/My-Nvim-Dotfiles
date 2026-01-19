@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -20,17 +33,17 @@ export function MobileLayoutSelection({
   return (
     <CustomMenu
       maxHeight={"md"}
-      className="flex flex-grow justify-center text-sm text-custom-text-200"
+      className="flex flex-grow justify-center text-13 text-secondary"
       placement="bottom-start"
       customButton={
-        <Button variant="neutral-primary" size="sm" className="relative px-2">
+        <Button variant="secondary" className="relative px-2">
           {activeLayout && (
             <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className={`h-3.5 w-3.5`} />
           )}
-          <ChevronDownIcon className="size-3 text-custom-text-200 my-auto" strokeWidth={2} />
+          <ChevronDownIcon className="size-3 text-secondary my-auto" strokeWidth={2} />
         </Button>
       }
-      customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+      customButtonClassName="flex flex-grow justify-center text-secondary text-13"
       closeOnSelect
     >
       {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout, index) => (
@@ -42,7 +55,7 @@ export function MobileLayoutSelection({
           className="flex items-center gap-2"
         >
           <IssueLayoutIcon layout={layout.key} className="h-3 w-3" />
-          <div className="text-custom-text-300">{t(layout.i18n_label)}</div>
+          <div className="text-tertiary">{t(layout.i18n_label)}</div>
         </CustomMenu.MenuItem>
       ))}
     </CustomMenu>

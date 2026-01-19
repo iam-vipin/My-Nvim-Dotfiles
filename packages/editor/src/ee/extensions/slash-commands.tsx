@@ -1,13 +1,22 @@
 // extensions
+import { findParentNodeClosestToPos } from "@tiptap/react";
 import { FileCode2, Paperclip, Sigma, SquareRadical } from "lucide-react";
-import { VideoIcon } from "@plane/propel/icons";
+import { PiIcon, VideoIcon } from "@plane/propel/icons";
 import type { TSlashCommandAdditionalOption } from "@/extensions";
+// constants
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import type { CommandProps, IEditorProps, TExtensions } from "@/types";
 // plane editor
 import { ProBadge } from "../components/badges/pro-badge";
-import { insertAttachment, insertBlockMath, insertExternalEmbed, insertInlineMath } from "../helpers/editor-commands";
+import {
+  insertAttachment,
+  insertBlockMath,
+  insertExternalEmbed,
+  insertInlineMath,
+  insertAIBlock,
+} from "../helpers/editor-commands";
 import { EMBED_SEARCH_TERMS } from "./external-embed/constants";
 
 type Props = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions">;
@@ -85,6 +94,31 @@ const coreSlashCommandRegistry: {
       badge: flaggedExtensions?.includes("external-embed") ? <ProBadge /> : undefined,
       section: "general",
       pushAfter: "code",
+    }),
+  },
+  {
+    // AI block slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !flaggedExtensions?.includes("ai-block") && !disabledExtensions?.includes("ai-block"),
+    getOption: ({ flaggedExtensions }) => ({
+      commandKey: "ai-block",
+      key: "ai-block",
+      title: "AI Block",
+      icon: <PiIcon className="size-3.5 text-icon-secondary" />,
+      description: "Insert an AI block",
+      searchTerms: ["ai", "artificial", "intelligence", "smart", "assistant", "prompt", "generate"],
+      command: ({ editor, range }: CommandProps) => insertAIBlock(editor, range),
+      badge: flaggedExtensions?.includes("ai-block") ? <ProBadge /> : undefined,
+      section: "general",
+      pushAfter: "callout",
+      // Prevent showing AI block option when already inside an AI block
+      shouldShow: (editor) => {
+        const { $from } = editor.state.selection;
+        const aiBlockName: string = ADDITIONAL_EXTENSIONS.AI_BLOCK;
+        const isInsideAIBlock = (node: { type: { name: string } }) => node.type.name === aiBlockName;
+        const parentAIBlock = findParentNodeClosestToPos($from, isInsideAIBlock);
+        return !parentAIBlock;
+      },
     }),
   },
   {

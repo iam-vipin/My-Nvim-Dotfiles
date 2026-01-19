@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
     },
     stickies: {
-      title: "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
-      cta_primary: "Add sticky",
+      title: "Capture ideas instantly",
+      description: "Create stickies for quick notes and to-dos, and keep them with you wherever you go.",
+      cta_primary: "Create first sticky",
+      cta_secondary: "Documentation",
     },
     active_cycles: {
       title: "No active cycles",
@@ -103,11 +118,6 @@ export default {
       description:
         "Reduce setup time by creating templates for projects, work items, and pages — and start new work in seconds.",
       cta_primary: "Create template",
-    },
-    webhooks: {
-      title: "No Webhook added yet",
-      description: "Automate notifications to external services when project events occur.",
-      cta_primary: "Add webhook",
     },
   },
 } as const;

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Retrieval tool execution logic for single and multi-tool scenarios.
 Also includes tools for ask mode."""
 
@@ -27,6 +38,9 @@ from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
 from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 from pi.services.chat.prompts import pai_ask_system_prompt
 from pi.services.chat.utils import reasoning_dict_maker
+from pi.services.llm.cache_utils import create_claude_cached_system_message
+from pi.services.llm.cache_utils import get_claude_bind_kwargs_with_cache
+from pi.services.llm.cache_utils import should_enable_claude_caching
 
 log = logger.getChild(__name__)
 
@@ -165,7 +179,14 @@ async def execute_tools_for_ask_mode(
         # Bind tools to the LLM - explicitly set tool_choice to 'auto' to ensure tool use is enabled
         # deduplicate tools
         tools = list({tool.name: tool for tool in tools}.values())
-        llm_with_tools = chatbot_instance.tool_llm.bind_tools(tools)
+
+        # Enable prompt caching for Claude models when binding tools
+        bind_kwargs = {}
+        if should_enable_claude_caching(chatbot_instance.switch_llm):
+            # For Claude with caching: mark tools for caching via cache_control
+            bind_kwargs = get_claude_bind_kwargs_with_cache()
+
+        llm_with_tools = chatbot_instance.tool_llm.bind_tools(tools, **bind_kwargs)
 
         # Set tracking context on the bound LLM instance
         llm_with_tools.set_tracking_context(query_id, db, MessageMetaStepType.TOOL_ORCHESTRATION, chat_id=str(chat_id))
@@ -175,14 +196,22 @@ async def execute_tools_for_ask_mode(
         messages: List[BaseMessage] = []  # type: ignore[no-redef]
         responses: List[Tuple[str, str, Union[str, Dict[str, Any]]]] = []
 
+        # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (conversation history) content
+        # Static content (system prompt + context_block) should remain constant for cache hits
         system_prompt_to_use = f"{pai_ask_system_prompt}\n\n{context_block}"
-        messages.append(SystemMessage(content=system_prompt_to_use))
 
+        # Add system message with cache control if using Claude
+        if should_enable_claude_caching(chatbot_instance.switch_llm):
+            messages.append(create_claude_cached_system_message(system_prompt_to_use))
+        else:
+            messages.append(SystemMessage(content=system_prompt_to_use))
+
+        # log.info(f"ChatID: {chat_id} - Ask mode LLM input - System Prompt:\n{"=" * 80}\n{system_prompt_to_use}\n{"=" * 80}")
+
+        # IMPORTANT: custom_prompt contains dynamic conversation history - put it in user message
+        # This keeps the cached system message unchanged
         query_to_use = f"{custom_prompt}\n\nUser Query: {enhanced_query_for_processing}"
         messages.append(HumanMessage(content=query_to_use))
-
-        # Log what's sent to the tool selection LLM
-        log.info(f"ChatID: {chat_id} - Ask mode LLM input - Query: {query_to_use}")
 
         ## change point: "πspecial reasoning blockπ:
         # Yield initial status - different message for clarification follow-ups
@@ -382,6 +411,20 @@ async def execute_tools_for_ask_mode(
 
             # Add tool messages to conversation
             messages.extend(tool_messages)
+
+            # # Log the messages being sent to the LLM (includes tool results)
+            # log.info(f"ChatID: {chat_id} - Ask mode LLM iteration - Messages count: {len(messages)}")
+            # try:
+            #     # Log last few messages for context (tool results + conversation)
+            #     last_messages_preview = []
+            #     for message_preview in messages[-3:]:  # Last 3 messages
+            #         if hasattr(message_preview, "content"):
+            #             content_preview = str(message_preview.content)[:200] + "..." if
+            #                   len(str(message_preview.content)) > 200 else str(message_preview.content)
+            #             last_messages_preview.append(f"{message_preview.__class__.__name__}: {content_preview}")
+            #     log.info(f"ChatID: {chat_id} - Ask mode LLM iteration - Recent messages:\n" + "\n".join(last_messages_preview))
+            # except Exception:
+            #     pass
 
             # Yield status before getting next LLM response
             stage = "ask_mode_analyzing_results"

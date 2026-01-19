@@ -39,7 +39,7 @@ export function PiChatEditorMentionNodeView(props: PiChatEditorMentionNodeViewPr
       as="a"
       href={redirect_uri}
       target="_blank"
-      className="mention-component inline-flex w-fit items-center gap-1 rounded bg-custom-primary-100/20 text-custom-primary-100 px-1"
+      className="mention-component inline-flex w-fit items-center gap-1 rounded-sm bg-accent-primary/20 text-accent-primary px-1"
     >
       <Icon className="size-[14px] flex-shrink-0" />
       {label}

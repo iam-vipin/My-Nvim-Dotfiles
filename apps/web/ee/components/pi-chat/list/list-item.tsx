@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Pencil, Star, Trash } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { Star } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -25,11 +39,12 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
   // router
   const { workspaceSlug } = useParams();
   const { t } = useTranslation();
+  const router = useRouter();
   // states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // hooks
-  const { favoriteChat, unfavoriteChat } = usePiChat();
+  const { favoriteChat, unfavoriteChat, activeChatId } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
@@ -50,7 +65,7 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
     {
       key: "rename",
       title: t("edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: () => setIsEditModalOpen(true),
     },
     {
@@ -64,7 +79,7 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
       key: "delete",
       action: () => setIsDeleteModalOpen(true),
       title: t("delete"),
-      icon: Trash,
+      icon: TrashIcon,
     },
   ];
   return (
@@ -75,6 +90,11 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
         isOpen={isDeleteModalOpen}
         chatTitle={thread.title || ""}
         handleClose={() => setIsDeleteModalOpen(false)}
+        onDelete={() => {
+          if (activeChatId === thread.chat_id) {
+            router.push(`/${workspaceSlug}/pi-chat`);
+          }
+        }}
       />
       <ModalCore
         isOpen={isEditModalOpen}
@@ -94,11 +114,11 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
           key={`${thread.chat_id}-${thread.last_modified}`}
           href={`/${workspaceSlug}/pi-chat/${thread.chat_id}`}
           className={cn(
-            "w-full overflow-hidden py-4 flex-1 flex flex-col items-start gap-1 text-custom-text-200 truncate hover:text-custom-text-200 hover:bg-custom-background-90 pointer"
+            "w-full overflow-hidden py-4 flex-1 flex flex-col items-start gap-1 text-secondary truncate hover:text-secondary hover:bg-layer-1 pointer"
           )}
         >
-          <div className="truncate text-base overflow-hidden"> {thread.title || "No title"}</div>
-          <div className="text-sm text-custom-text-350 font-medium"> {calculateTimeAgo(thread.last_modified)}</div>
+          <div className="truncate text-14 overflow-hidden"> {thread.title || "No title"}</div>
+          <div className="text-13 text-tertiary font-medium"> {calculateTimeAgo(thread.last_modified)}</div>
         </Link>
         <div className="py-4">
           <CustomMenu ellipsis placement="bottom-end" closeOnSelect maxHeight="lg">
@@ -113,7 +133,7 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
                   className={cn(
                     "flex items-center gap-2",
                     {
-                      "text-custom-text-400": item.disabled,
+                      "text-placeholder": item.disabled,
                     },
                     item.className
                   )}
@@ -124,8 +144,8 @@ export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}

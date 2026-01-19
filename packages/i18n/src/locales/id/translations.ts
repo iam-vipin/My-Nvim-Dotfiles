@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "Projek",
@@ -307,7 +320,6 @@ export default {
   drafts: "Draf",
   projects: "Proyek",
   views: "Tampilan",
-  workspace: "Ruang kerja",
   archives: "Arsip",
   settings: "Pengaturan",
   failed_to_move_favorite: "Gagal memindahkan favorit",
@@ -1588,6 +1600,7 @@ export default {
         name: "Nama ruang kerja",
         company_size: "Ukuran perusahaan",
         url: "URL ruang kerja",
+        workspace_timezone: "Zona waktu ruang kerja",
         update_workspace: "Perbarui ruang kerja",
         delete_workspace: "Hapus ruang kerja ini",
         delete_workspace_description:

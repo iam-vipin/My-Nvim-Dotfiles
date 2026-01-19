@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import serializers
 
@@ -17,12 +28,8 @@ class ViewIssueListSerializer(serializers.Serializer):
 
         # Check if the user has access to the customer request count
         if slug and user_id:
-            if check_workspace_feature_flag(
-                feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
-            ):
-                self.fields["customer_request_ids"] = serializers.ListField(
-                    read_only=True
-                )
+            if check_workspace_feature_flag(feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id):
+                self.fields["customer_request_ids"] = serializers.ListField(read_only=True)
                 self.fields["customer_ids"] = serializers.ListField(read_only=True)
 
     def get_assignee_ids(self, instance):
@@ -35,15 +42,10 @@ class ViewIssueListSerializer(serializers.Serializer):
         return [module.module_id for module in instance.issue_module.all()]
 
     def get_customer_ids(self, instance):
-        return [
-            customer.customer_id for customer in instance.customer_request_issues.all()
-        ]
+        return [customer.customer_id for customer in instance.customer_request_issues.all()]
 
     def get_customer_request_ids(self, instance):
-        return [
-            customer_request.customer_request_id
-            for customer_request in instance.customer_request_issues.all()
-        ]
+        return [customer_request.customer_request_id for customer_request in instance.customer_request_issues.all()]
 
     def to_representation(self, instance):
         data = {

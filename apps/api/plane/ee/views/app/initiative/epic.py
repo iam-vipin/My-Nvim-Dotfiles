@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from uuid import UUID
@@ -49,9 +60,7 @@ class InitiativeEpicViewSet(BaseViewSet):
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
         largest_sort_order = (
-            InitiativeEpic.objects.filter(
-                workspace=workspace, initiative_id=initiative_id
-            )
+            InitiativeEpic.objects.filter(workspace=workspace, initiative_id=initiative_id)
             .filter(epic__project__deleted_at__isnull=True)
             .filter(epic__project__archived_at__isnull=True)
             .aggregate(largest=models.Max("sort_order"))["largest"]
@@ -94,9 +103,7 @@ class InitiativeEpicViewSet(BaseViewSet):
         ).delete()
 
         # Bulk create the initiative_epics
-        initiative_epics = InitiativeEpic.objects.bulk_create(
-            initiative_epics, batch_size=1000
-        )
+        initiative_epics = InitiativeEpic.objects.bulk_create(initiative_epics, batch_size=1000)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
 
         initiative_activity.delay(
@@ -121,10 +128,7 @@ class InitiativeEpicViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -164,9 +168,9 @@ class InitiativeEpicViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def list(self, request, slug, initiative_id):
-        initiative_epics = InitiativeEpic.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
-        ).values_list("epic_id", flat=True)
+        initiative_epics = InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id).values_list(
+            "epic_id", flat=True
+        )
 
         epics = (
             Issue.objects.filter(
@@ -182,10 +186,7 @@ class InitiativeEpicViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -264,27 +265,17 @@ class InitiativeEpicViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def destroy(self, request, slug, initiative_id, epic_id):
         initiative_epics = (
-            InitiativeEpic.objects.filter(
-                workspace__slug=slug, initiative_id=initiative_id
-            )
+            InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id)
             .filter(epic__project__deleted_at__isnull=True)
             .filter(epic__project__archived_at__isnull=True)
             .values_list("epic_id", flat=True)
         )
 
-        current_instance = json.dumps(
-            {"epic_ids": list(initiative_epics)}, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps({"epic_ids": list(initiative_epics)}, cls=DjangoJSONEncoder)
 
-        updated_epic_ids = (
-            [eid for eid in initiative_epics if eid != UUID(str(epic_id))]
-            if initiative_epics
-            else []
-        )
+        updated_epic_ids = [eid for eid in initiative_epics if eid != UUID(str(epic_id))] if initiative_epics else []
 
-        requested_data = json.dumps(
-            {"epic_ids": updated_epic_ids}, cls=DjangoJSONEncoder
-        )
+        requested_data = json.dumps({"epic_ids": updated_epic_ids}, cls=DjangoJSONEncoder)
 
         initiative_activity.delay(
             type="initiative.activity.updated",
@@ -309,9 +300,9 @@ class InitiativeEpicIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def list(self, request, slug, initiative_id):
-        initiative_epics = InitiativeEpic.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
-        ).values_list("epic_id", flat=True)
+        initiative_epics = InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id).values_list(
+            "epic_id", flat=True
+        )
 
         epics = (
             Issue.objects.filter(
@@ -359,9 +350,7 @@ class InitiativeEpicIssueViewSet(BaseViewSet):
             epics, order_by_param = order_issue_queryset(epics, order_by_param)
 
         # Issue queryset
-        epics, order_by_param = order_issue_queryset(
-            issue_queryset=epics, order_by_param=order_by_param
-        )
+        epics, order_by_param = order_issue_queryset(issue_queryset=epics, order_by_param=order_by_param)
 
         return self.paginate(
             request=request,

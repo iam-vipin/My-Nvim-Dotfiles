@@ -1,12 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { memo } from "react";
-import { Trash2, Eye, Pencil, Check, MessageSquareText } from "lucide-react";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { Eye, MessageSquareText } from "lucide-react";
+import { TrashIcon, EditIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
 const ACCESS_OPTIONS = [
   { value: "0", label: "View", icon: Eye },
   { value: "1", label: "Comment", icon: MessageSquareText },
-  { value: "2", label: "Edit", icon: Pencil },
+  { value: "2", label: "Edit", icon: EditIcon },
 ];
 
 type TAccessMenuProps = {
@@ -25,7 +38,7 @@ export const AccessMenu = memo(function AccessMenu({
   canCurrentUserChangeAccess = true,
 }: TAccessMenuProps) {
   if (isOwner) {
-    return <span className="text-xs text-custom-text-300 px-2 py-1">Owner</span>;
+    return <span className="text-11 text-tertiary px-2 py-1">Owner</span>;
   }
 
   const currentOption = ACCESS_OPTIONS.find((opt) => opt.value === currentAccess.toString());
@@ -33,13 +46,13 @@ export const AccessMenu = memo(function AccessMenu({
 
   // If user cannot change access, show read-only label
   if (!canCurrentUserChangeAccess) {
-    return <span className="text-xs text-custom-text-300 px-2 py-1">can {accessLabel.toLowerCase()}</span>;
+    return <span className="text-11 text-tertiary px-2 py-1">can {accessLabel.toLowerCase()}</span>;
   }
 
   return (
     <CustomMenu
       customButton={
-        <div className="flex items-center gap-1 px-2 py-1 text-xs text-custom-text-300 hover:bg-custom-background-90 rounded transition-colors whitespace-nowrap">
+        <div className="flex items-center gap-1 px-2 py-1 text-11 text-tertiary hover:bg-surface-2 rounded transition-colors whitespace-nowrap">
           can {accessLabel.toLowerCase()}
           <ChevronDownIcon className="h-3 w-3" />
         </div>
@@ -57,14 +70,14 @@ export const AccessMenu = memo(function AccessMenu({
                 <IconComponent className="size-3" />
                 can {option.label.toLowerCase()}
               </div>
-              {isSelected && <Check className="size-3" />}
+              {isSelected && <CheckIcon className="size-3" />}
             </div>
           </CustomMenu.MenuItem>
         );
       })}
       <CustomMenu.MenuItem onClick={onRemove}>
-        <div className="flex items-center gap-2 text-red-500">
-          <Trash2 className="size-3" />
+        <div className="flex items-center gap-2 text-danger-primary">
+          <TrashIcon className="size-3" />
           Remove
         </div>
       </CustomMenu.MenuItem>

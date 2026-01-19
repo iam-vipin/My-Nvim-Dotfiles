@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third-Party Imports
 import strawberry
 
@@ -5,7 +16,8 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Prefetch
+from django.db.models import Count, OuterRef, Prefetch, Q, Subquery
+from django.db.models.functions import Coalesce
 
 # Strawberry Imports
 from strawberry.permission import PermissionExtension
@@ -16,7 +28,7 @@ from plane.db.models import CommentReaction, IssueComment
 from plane.graphql.helpers import (
     get_intake_work_item_async,
     get_project,
-    get_workspace,
+    get_workspace_async,
     is_project_intakes_enabled_async,
     project_member_filter_via_teamspaces_async,
 )
@@ -37,7 +49,7 @@ class IntakeWorkItemCommentQuery:
         await is_project_intakes_enabled_async(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
 
         # get the project
@@ -56,12 +68,24 @@ class IntakeWorkItemCommentQuery:
             user_id=user_id,
             workspace_slug=slug,
         )
+
+        comment_replies_count_subquery = Coalesce(
+            Subquery(
+                IssueComment.objects.filter(parent_id=OuterRef("id"))
+                .values("parent_id")
+                .annotate(count=Count("id"))
+                .values("count")
+            ),
+            0,
+        )
+
         intake_work_item_comments = await sync_to_async(list)(
-            IssueComment.objects.filter(workspace__slug=slug)
+            IssueComment.all_objects.filter(workspace__slug=slug)
             .filter(project__id=project)
             .filter(issue_id=intake_work_item_id)
-            .filter(deleted_at__isnull=True)
             .filter(project_teamspace_filter.query)
+            .annotate(comment_replies_count=comment_replies_count_subquery)
+            .filter(Q(deleted_at__isnull=True) | Q(comment_replies_count__gt=0))
             .distinct()
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")

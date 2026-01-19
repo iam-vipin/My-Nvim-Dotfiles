@@ -1,12 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { AUTOMATION_ACTIVITY_TYPE_OPTIONS, AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { AUTOMATION_ACTIVITY_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TAutomationActivityType } from "@plane/types";
 import { CustomSelect, ToggleSwitch } from "@plane/ui";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -31,13 +42,10 @@ export const AutomationDetailsSidebarActivityHeaderFilters = observer(
     return (
       <div className="shrink-0 flex items-center gap-2">
         <div className="shrink-0 flex items-center gap-2">
-          <span className="text-custom-text-200 text-xs font-medium">
-            {t("automations.activity.filters.show_fails")}
-          </span>
+          <span className="text-secondary text-11 font-medium">{t("automations.activity.filters.show_fails")}</span>
           <ToggleSwitch
             value={isShowFailsToggleEnabled}
             onChange={() => {
-              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_ACTIVITY_FILTER });
               updateFilters?.({
                 show_fails: !isShowFailsToggleEnabled,
               });
@@ -48,7 +56,6 @@ export const AutomationDetailsSidebarActivityHeaderFilters = observer(
         <CustomSelect
           value={activityTypeFilter}
           onChange={(value: TAutomationActivityType) => {
-            captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_ACTIVITY_FILTER });
             updateFilters?.({
               type: value,
             });
@@ -56,11 +63,11 @@ export const AutomationDetailsSidebarActivityHeaderFilters = observer(
           customButton={
             <button
               type="button"
-              className="relative grid place-items-center rounded hover:bg-custom-background-80 p-1 aspect-square transition-colors"
+              className="relative grid place-items-center rounded hover:bg-layer-1 p-1 aspect-square transition-colors"
             >
               <ListFilter className="size-3" />
               {activityTypeFilter !== "all" && (
-                <span className="absolute size-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+                <span className="absolute size-2 -right-0.5 -top-0.5 bg-accent-primary rounded-full" />
               )}
             </button>
           }

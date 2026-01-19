@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import logging
 
 from celery import shared_task
@@ -59,9 +70,7 @@ def process_batched_opensearch_updates():
                             f"OpenSearch batch processed {chunk_processed} {model_name} instances with registry-powered cascades"
                         )
                     except Exception as e:
-                        logger.error(
-                            f"Error processing chunk {chunk_info['chunk_number']} for {model_name}: {e}"
-                        )
+                        logger.error(f"Error processing chunk {chunk_info['chunk_number']} for {model_name}: {e}")
                         # Continue processing other chunks even if one fails
 
                 total_processed += model_processed

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -18,8 +31,8 @@ export const WorkspaceSelectorEmptyState = observer(function WorkspaceSelectorEm
 
   return (
     <div className="relative flex flex-col gap-4 h-full w-full justify-center px-8 pb-8 items-center">
-      <div className="text-3xl font-bold text-center">{t("no_workspaces_to_connect")}</div>
-      <div className="font-medium text-custom-text-300 max-w-[450px] text-center">
+      <div className="text-28 font-bold text-center">{t("no_workspaces_to_connect")}</div>
+      <div className="font-medium text-tertiary max-w-[450px] text-center">
         {t("no_workspaces_to_connect_description")}
       </div>
       <div className="overflow-y-auto vertical-scrollbar scrollbar-sm mb-10 w-full md:w-fit">
@@ -29,14 +42,14 @@ export const WorkspaceSelectorEmptyState = observer(function WorkspaceSelectorEm
             <a
               href="https://docs.plane.so/core-concepts/workspaces/overview"
               target="_blank"
-              className={cn(getButtonStyling("outline-primary", "md"), "border-custom-border-200 text-custom-text-100")}
+              className={cn(getButtonStyling("secondary", "base"), "border-subtle-1 text-primary")}
               rel="noreferrer"
             >
               {t("learn_more_about_workspaces")}
             </a>
             <Link
               href="/create-workspace"
-              className={cn("text-sm text-custom-text-300 w-full", getButtonStyling("primary", "md"))}
+              className={cn("text-13 text-tertiary w-full", getButtonStyling("primary", "base"))}
             >
               {t("create_a_new_workspace")}
             </Link>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -62,22 +75,20 @@ export const DashboardsFeatureFlagFallback = observer(function DashboardsFeature
       <div
         className={cn("min-h-[25rem] flex item-center justify-between rounded-xl mb-5 lg:mb-12", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": isDarkMode,
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400": !isDarkMode,
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": !isDarkMode,
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">
           <div className="flex max-w-64 flex-col gap-2">
-            <h2 className="text-2xl font-semibold">{t("dashboards.empty_state.feature_flag.title")}</h2>
-            <p className="text-base font-medium text-custom-text-300">
-              {t("dashboards.empty_state.feature_flag.description")}
-            </p>
+            <h2 className="text-20 font-semibold">{t("dashboards.empty_state.feature_flag.title")}</h2>
+            <p className="text-14 font-medium text-tertiary">{t("dashboards.empty_state.feature_flag.description")}</p>
           </div>
           <div className="flex items-center gap-3">
             <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={E_FEATURE_FLAGS.DASHBOARDS} />
             <a
               href="https://plane.so/contact"
               target="_blank"
-              className="bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"
+              className="bg-transparent underline text-13 text-accent-primary my-auto font-medium"
               rel="noreferrer"
             >
               {t("common.upgrade_cta.talk_to_sales")}
@@ -95,27 +106,27 @@ export const DashboardsFeatureFlagFallback = observer(function DashboardsFeature
       </div>
       <div className="h-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-8">
         {CARDS_LIST.map((item) => (
-          <div key={item.key} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-custom-background-90 p-4">
+          <div key={item.key} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-layer-1 p-4">
             <div className="flex items-center justify-between gap-2">
               <h3 className="font-medium">
                 {t(`dashboards.empty_state.feature_flag.${item.key}.title`)}
                 {item.comingSoonTitle === true && (
                   <>
                     {" "}
-                    <span className="text-custom-primary-100 bg-custom-primary-100/20 rounded px-1 py-0.5 text-xs font-medium">
+                    <span className="text-accent-primary bg-accent-primary/20 rounded-sm px-1 py-0.5 text-11 font-medium">
                       {t("common.coming_soon")}
                     </span>
                   </>
                 )}
               </h3>
-              <item.icon className="flex-shrink-0 size-4 text-custom-primary-100" />
+              <item.icon className="flex-shrink-0 size-4 text-accent-primary" />
             </div>
-            <p className="text-sm text-custom-text-300">
+            <p className="text-13 text-tertiary">
               {t(`dashboards.empty_state.feature_flag.${item.key}.description`)}
               {item.comingSoonDescription === true && (
                 <>
                   {" "}
-                  <span className="text-custom-primary-100 bg-custom-primary-100/20 rounded px-1 py-0.5 text-xs font-medium">
+                  <span className="text-accent-primary bg-accent-primary/20 rounded-sm px-1 py-0.5 text-11 font-medium">
                     {t("dashboards.empty_state.feature_flag.coming_soon_to_mobile")}
                   </span>
                 </>

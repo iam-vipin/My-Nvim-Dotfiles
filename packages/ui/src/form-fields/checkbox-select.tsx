@@ -57,7 +57,7 @@ export function CheckboxSelect<T extends string | number | readonly string[] | u
             onClick={() => !disabled && setSelected(key)}
             className={cn(
               "flex items-center gap-2",
-              disabled ? `bg-custom-background-200 border-custom-border-200 cursor-not-allowed` : ``,
+              disabled ? `bg-layer-1 border-subtle-1 cursor-not-allowed` : ``,
               fieldClassName
             )}
           >
@@ -72,7 +72,7 @@ export function CheckboxSelect<T extends string | number | readonly string[] | u
               indeterminate={indeterminate}
               disabled={disabled}
             />
-            <label htmlFor={`${name}_${index}`} className={cn("text-base cursor-pointer", checkboxLabelClassName)}>
+            <label htmlFor={`${name}_${index}`} className={cn("text-14 cursor-pointer", checkboxLabelClassName)}>
               {label}
             </label>
           </div>

@@ -1,11 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { ArrowRight } from "lucide-react";
 // plane imports
+import { Button } from "@plane/propel/button";
 import { EpicIcon, LayersIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EWorkItemConversionType } from "@plane/types";
-import { cn } from "@plane/utils";
 
 interface ConvertWorkItemIconProps {
   handleOnClick: () => void;
@@ -19,25 +32,18 @@ export function ConvertWorkItemIcon(props: ConvertWorkItemIconProps) {
   const IconComponent = conversionType === EWorkItemConversionType.WORK_ITEM ? LayersIcon : EpicIcon;
   const tooltipContent =
     conversionType === EWorkItemConversionType.WORK_ITEM ? "Convert to Work item" : "Convert to Epic";
-  const commonIconClasses = "size-4 text-current";
 
   return (
     <Tooltip tooltipContent={tooltipContent}>
-      <button
-        type="button"
-        className={cn(
-          "flex items-center justify-center gap-[1px]",
-          "text-custom-text-300 hover:text-custom-text-100",
-          "hover:cursor-pointer",
-          disabled && "cursor-not-allowed text-custom-text-400"
-        )}
+      <Button
+        size="lg"
+        variant="secondary"
         onClick={handleOnClick}
         disabled={disabled}
         aria-label={tooltipContent}
-      >
-        <ArrowRight className={commonIconClasses} />
-        <IconComponent className={commonIconClasses} />
-      </button>
+        prependIcon={<ArrowRight />}
+        appendIcon={<IconComponent />}
+      />
     </Tooltip>
   );
 }

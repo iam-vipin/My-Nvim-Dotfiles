@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
@@ -36,10 +49,10 @@ export const TeamspaceProgressBanner = observer(function TeamspaceProgressBanner
       ) : (
         <div
           className={cn(
-            "flex w-full h-8 py-0.5 px-4 items-center justify-between gap-2 text-sm font-medium rounded-lg",
+            "flex w-full h-8 py-0.5 px-4 items-center justify-between gap-2 text-body-xs-medium rounded-lg",
             {
-              "text-red-500 bg-red-500/15": areIssuesOverdue,
-              "text-green-600 bg-green-500/15": !areIssuesOverdue,
+              "text-danger-primary bg-danger-subtle": areIssuesOverdue,
+              "text-success-primary bg-success-subtle": !areIssuesOverdue,
             }
           )}
         >

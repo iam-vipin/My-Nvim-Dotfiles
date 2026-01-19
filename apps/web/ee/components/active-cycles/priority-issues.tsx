@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -56,9 +69,9 @@ export const ActiveCyclePriorityIssues = observer(function ActiveCyclePriorityIs
   );
 
   return (
-    <div className="flex flex-col gap-4 p-4 min-h-52 overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 min-h-52 overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-subtle-1 rounded-lg">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-lg text-custom-text-300 font-medium">High-priority work items</h3>
+        <h3 className="text-16 text-tertiary font-medium">High-priority work items</h3>
       </div>
       <div className="flex flex-col gap-1 h-full w-full max-h-40 overflow-y-auto">
         {activeCycleIssues ? (
@@ -73,16 +86,12 @@ export const ActiveCyclePriorityIssues = observer(function ActiveCyclePriorityIs
                   projectIdentifier,
                   sequenceId: issue?.sequence_id,
                 })}
-                className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-layer-1 p-1"
               >
                 <div className="flex items-center gap-1.5 flex-grow w-full truncate">
-                  <IssueIdentifier
-                    issueId={issue.id}
-                    projectId={projectId}
-                    textContainerClassName="text-xs text-custom-text-200"
-                  />
+                  <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
                   <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
-                    <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
+                    <span className="text-[0.825rem] text-primary truncate">{issue.name}</span>
                   </Tooltip>
                 </div>
                 <PriorityIcon priority={issue.priority} withContainer size={12} />
@@ -93,13 +102,13 @@ export const ActiveCyclePriorityIssues = observer(function ActiveCyclePriorityIs
                     projectId={projectId?.toString() ?? ""}
                     buttonVariant="background-with-text"
                     buttonContainerClassName="cursor-pointer"
-                    buttonClassName="group-hover:bg-custom-background-100"
+                    buttonClassName="group-hover:bg-surface-1"
                   />
                   {issue.target_date && (
                     <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
-                      <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
+                      <div className="h-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 bg-layer-1 group-hover:bg-surface-1 cursor-pointer">
                         <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                        <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
+                        <span className="text-11">{renderFormattedDateWithoutYear(issue.target_date)}</span>
                       </div>
                     </Tooltip>
                   )}
@@ -107,7 +116,7 @@ export const ActiveCyclePriorityIssues = observer(function ActiveCyclePriorityIs
               </Link>
             ))
           ) : (
-            <div className="flex items-center justify-center h-full text-sm text-custom-text-200">
+            <div className="flex items-center justify-center h-full text-13 text-secondary">
               <span>There are no high priority work items present in this cycle.</span>
             </div>
           )

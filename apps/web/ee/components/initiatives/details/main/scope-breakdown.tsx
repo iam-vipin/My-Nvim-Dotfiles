@@ -1,17 +1,28 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PlusIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ScopeIcon } from "@plane/propel/icons";
-import { Button, CircularProgressIndicator, ControlLink, Loader } from "@plane/ui";
+import { CircularProgressIndicator, ControlLink, Loader } from "@plane/ui";
+import { PlusIcon, ScopeIcon } from "@plane/propel/icons";
+import { Button } from "@plane/propel/button";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
-import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
-import { useInitiativeUpdates } from "@/plane-web/components/initiatives/details/sidebar/use-updates";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
 
@@ -27,7 +38,6 @@ type TDataCardProps = {
 function DataCard(props: TDataCardProps) {
   const { type, data, workspaceSlug, initiativeId, count } = props;
   const router = useRouter();
-  const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
   const total =
     (data?.backlog_issues ?? 0) +
     (data?.unstarted_issues ?? 0) +
@@ -43,43 +53,23 @@ function DataCard(props: TDataCardProps) {
   return (
     <ControlLink
       href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
-      className="group rounded-md py-3 px-4 w-full hover:cursor-pointer hover:bg-custom-background-80 transition-colors flex justify-between border border-custom-border-100 bg-custom-background-100"
+      className="group rounded-md py-3 px-4 w-full hover:cursor-pointer hover:bg-layer-2-hover transition-colors flex justify-between border border-subtle bg-layer-2"
       onClick={handleControlLinkClick}
     >
-      <div className="flex w-full justify-between text-custom-text-300 flex-1 ">
+      <div className="flex w-full justify-between text-tertiary flex-1 ">
         <div className="flex gap-2 items-center">
-          <div className="font-semibold text-base capitalize">{type}s</div>
-          <span className="text-custom-text-400 font-medium text-xs">{count}</span>
+          <div className="font-medium text-14 capitalize">{type}s</div>
+          <span className="text-tertiary text-11 font-medium">{count}</span>
         </div>
       </div>
       {data ? (
         <div className="rounded-md flex gap-3 justify-between items-center">
           <div className="flex flex-col gap-3">
             <div className="flex gap-2 items-center">
-              <CircularProgressIndicator
-                percentage={progress}
-                strokeWidth={4}
-                size={18}
-                strokeColor="stroke-green-500"
-              />
-              <span className="flex items-baseline text-custom-text-200 justify-center text-sm">
+              <CircularProgressIndicator percentage={progress} strokeWidth={4} size={18} />
+              <span className="flex items-baseline text-13 justify-center">
                 <span>{progress}%</span>
               </span>
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <div role="group" aria-label="update-status-pills">
-              <UpdateStatusPills
-                defaultTab={type}
-                handleUpdateOperations={handleUpdateOperations}
-                workspaceSlug={workspaceSlug.toString()}
-                initiativeId={initiativeId}
-                analytics={{
-                  on_track_updates: data?.on_track_updates ?? 0,
-                  at_risk_updates: data?.at_risk_updates ?? 0,
-                  off_track_updates: data?.off_track_updates ?? 0,
-                }}
-              />
             </div>
           </div>
         </div>
@@ -142,23 +132,19 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
     <SectionWrapper className="flex-col gap-4 @container">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div className="text-custom-text-300 font-semibold text-base">{t("initiatives.scope.breakdown")}</div>
+        <div className="text-14 font-medium text-tertiary">{t("initiatives.scope.breakdown")}</div>
         {/* button */}
         <div className="flex gap-2 items-center">
           <Link
             href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
-            className=" font-medium text-sm text-custom-text-200"
+            className=" font-medium text-sm text-secondary"
           >
             {t("initiatives.scope.view_scope")}
           </Link>
           <AddScopeButton
             disabled={disabled}
             customButton={
-              <Button
-                variant="link-neutral"
-                size="sm"
-                className="!p-1 bg-custom-background-80 hover:bg-custom-background-90"
-              >
+              <Button variant="link" size="sm" className="!p-1 hover:bg-layer-transparent-hover">
                 <PlusIcon className="size-4" />
               </Button>
             }
@@ -174,7 +160,7 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
           actionElement={<AddScopeButton disabled={disabled} />}
         />
       ) : (
-        <div className="grid w-full grid-cols-1 @sm:grid-cols-1 bg-custom-background-90 rounded-lg p-2 gap-2">
+        <div className="grid w-full grid-cols-1 @sm:grid-cols-1 bg-layer-1 rounded-lg p-2 gap-2">
           {/* Projects */}
           {shouldShowProjectsCard && (
             <DataCard

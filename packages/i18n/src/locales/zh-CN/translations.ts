@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "项目",
@@ -297,7 +310,6 @@ export default {
   drafts: "草稿",
   projects: "项目",
   views: "视图",
-  workspace: "工作区",
   archives: "归档",
   settings: "设置",
   failed_to_move_favorite: "移动收藏失败",
@@ -1562,6 +1574,7 @@ export default {
         name: "工作区名称",
         company_size: "公司规模",
         url: "工作区网址",
+        workspace_timezone: "工作区时区",
         update_workspace: "更新工作区",
         delete_workspace: "删除此工作区",
         delete_workspace_description: "删除工作区时，该工作区内的所有数据和资源将被永久删除，且无法恢复。",

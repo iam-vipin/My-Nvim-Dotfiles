@@ -1,6 +1,18 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import { ChevronLeftIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -18,22 +30,19 @@ export const SettingsHeader = observer(function SettingsHeader() {
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
   const { isScrolled } = useUserSettings();
-  const { resolvedTheme } = useTheme();
-  // redirect url for normal mode
 
   return (
     <div
-      className={cn("bg-custom-background-90 p-page-x transition-all duration-300 ease-in-out relative", {
-        "!pt-4 flex md:flex-col": isScrolled,
-        "bg-custom-background-90/50": resolvedTheme === "dark",
+      className={cn("bg-surface-2 p-page-x transition-all duration-300 ease-in-out relative", {
+        "pt-4! flex md:flex-col": isScrolled,
       })}
     >
       <Link
         href={`/${currentWorkspace?.slug}`}
         className={cn(
-          getButtonStyling("neutral-primary", "sm"),
-          "md:absolute left-2 top-9 group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg ",
-          "h-6 w-6 rounded-lg p-1 bg-custom-background-100 border-custom-border-200 ",
+          getButtonStyling("secondary", "base"),
+          "md:absolute left-2 top-9 group flex  gap-2 text-tertiary mb-4 w-fit rounded-lg",
+          "h-6 w-6 rounded-lg p-1",
           isScrolled ? "-mt-2 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
         )}
       >
@@ -43,15 +52,15 @@ export const SettingsHeader = observer(function SettingsHeader() {
       <Link
         href={`/${currentWorkspace?.slug}`}
         className={cn(
-          "group flex  gap-2 text-custom-text-300 mb-3 border border-transparent w-fit rounded-lg",
-          !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2 " : " h-0 m-0"
+          "group flex  gap-2 text-tertiary mb-3 border border-transparent w-fit rounded-lg",
+          !isScrolled ? "hover:bg-layer-transparent-hover hover:border-subtle items-center pr-2 " : " h-0 m-0"
         )}
       >
         <button
           className={cn(
-            getButtonStyling("neutral-primary", "sm"),
-            "h-6 w-6 rounded-lg p-1 hover:bg-custom-background-100 hover:border-custom-border-200",
-            "group-hover:bg-custom-background-100 group-hover:border-transparent",
+            getButtonStyling("secondary", "base"),
+            "h-6 w-6 rounded-lg p-1 hover:bg-surface-1 hover:border-subtle",
+            "group-hover:bg-surface-1 group-hover:border-transparent",
             { "h-0 hidden": isScrolled }
           )}
         >
@@ -62,21 +71,21 @@ export const SettingsHeader = observer(function SettingsHeader() {
             "h-0 w-0 overflow-hidden": isScrolled,
           })}
         >
-          <div className="text-sm my-auto font-semibold text-custom-text-200">{t("back_to_workspace")}</div>
+          <div className="text-13 my-auto font-semibold text-secondary">{t("back_to_workspace")}</div>
           {/* Last workspace */}
           <div className="flex items-center gap-1">
             <WorkspaceLogo
               name={currentWorkspace?.name || ""}
               logo={currentWorkspace?.logo_url || ""}
-              classNames="my-auto size-4 text-xs"
+              classNames="my-auto size-4 text-11"
             />
-            <div className="text-xs my-auto text-custom-text-100 font-semibold">{currentWorkspace?.name}</div>
+            <div className="text-11 my-auto text-primary font-semibold">{currentWorkspace?.name}</div>
           </div>
         </div>
       </Link>
       <div className="flex flex-col gap-1.5">
         {/* Description */}
-        <div className="text-custom-text-100 font-semibold text-2xl">{t("settings")}</div>
+        <div className="text-primary font-semibold text-20">{t("settings")}</div>
         {/* Actions */}
         <SettingsTabs />
       </div>

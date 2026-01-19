@@ -1,15 +1,26 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // ui
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useCustomers } from "@/plane-web/hooks/store";
 
@@ -42,26 +53,13 @@ export const DeleteCustomerModal = observer(function DeleteCustomerModal(props: 
           router.push(`/${workspaceSlug}/customers`);
         }
         handleClose();
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.delete_customer,
-          payload: {
-            id: customerId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Customer deleted successfully.",
         });
       })
-      .catch((error) => {
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.delete_customer,
-          payload: {
-            id: customerId,
-          },
-          error: error as Error,
-        });
+      .catch((_error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -77,24 +75,24 @@ export const DeleteCustomerModal = observer(function DeleteCustomerModal(props: 
     <ModalCore isOpen={isModalOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
       <form onSubmit={onSubmit} className="flex flex-col gap-6 p-6">
         <div className="flex w-full items-center justify-start gap-4">
-          <span className="place-items-center rounded-full bg-red-500/20 p-3">
-            <AlertTriangle className="size-6 text-red-600" aria-hidden="true" />
+          <span className="place-items-center rounded-full bg-danger-subtle p-3">
+            <AlertTriangle className="size-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-lg font-medium xl:text-xl">
+            <h3 className="text-16 font-medium xl:text-18">
               {t("customers.delete.title", { customer_name: customer?.name })}
             </h3>
           </span>
         </div>
         <span>
-          <p className="text-sm leading-5 text-custom-text-200">{t("customers.delete.description")}</p>
+          <p className="text-13 leading-5 text-secondary">{t("customers.delete.description")}</p>
         </span>
 
         <div className="flex justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="danger" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="error-fill" type="submit" loading={isSubmitting}>
             {isSubmitting ? "Deleting..." : "Delete"}
           </Button>
         </div>

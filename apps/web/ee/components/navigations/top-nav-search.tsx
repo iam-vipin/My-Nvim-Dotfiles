@@ -1,8 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { Command } from "cmdk";
 import { useState, useEffect } from "react";
 import { SearchResults } from "ee/components/workspace/search/results/root";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
-import { useParams } from "react-router";
 import { Search } from "lucide-react";
 // plane imports
 import type { TSearchResultItem } from "@plane/constants";
@@ -17,9 +29,6 @@ export const TopNavSearch = observer(function TopNavSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  // router hooks
-  const router = useRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { setTopNavSearchInputRef } = usePowerK();
   // expandable search hook
@@ -56,16 +65,10 @@ export const TopNavSearch = observer(function TopNavSearch() {
       e.preventDefault();
       closePanel();
     }
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      router.push(`/${workspaceSlug}/search?q=${searchQuery}`);
-      closePanel();
-    }
   };
 
   return (
-    <div ref={containerRef} className="relative flex justify-center">
+    <Command ref={containerRef} className="relative flex justify-center">
       <div
         className={cn(
           "relative flex items-center transition-all duration-300 ease-in-out z-30",
@@ -74,15 +77,15 @@ export const TopNavSearch = observer(function TopNavSearch() {
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 px-2 py-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 border border-transparent transition-colors duration-200",
+            "flex items-center w-full h-7 p-2 rounded-lg bg-layer-2 border border-subtle-1 transition-colors duration-200",
             {
-              "border-custom-border-200": isOpen,
+              "bg-layer-1": isOpen,
             }
           )}
           onClick={() => inputRef.current?.focus()}
           role="button"
         >
-          <SearchIcon className="shrink-0 size-3.5 text-custom-text-350 mr-2" />
+          <SearchIcon className="shrink-0 size-3.5 text-tertiary mr-2" />
           <input
             ref={inputRef}
             type="text"
@@ -96,18 +99,18 @@ export const TopNavSearch = observer(function TopNavSearch() {
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search"
-            className="flex-1 bg-transparent text-sm text-custom-text-100 placeholder-custom-text-350 outline-none min-w-0"
+            className="flex-1 bg-transparent text-13 text-primary placeholder-custom-text-350 outline-none min-w-0"
           />
           {searchQuery && (
             <button onClick={handleClear} className="shrink-0 ml-2">
-              <CloseIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-100" />
+              <CloseIcon className="size-3.5 text-placeholder hover:text-primary" />
             </button>
           )}
         </div>
       </div>
       <div
         className={cn(
-          "absolute -top-[6px] left-1/2 -translate-x-1/2 bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg flex flex-col overflow-hidden z-20 transition-all duration-300 ease-in-out pt-10",
+          "absolute -top-[6px] left-1/2 -translate-x-1/2 bg-surface-1 border border-subtle-1 rounded-md shadow-lg flex flex-col overflow-hidden z-20 transition-all duration-300 ease-in-out pt-10",
           {
             "opacity-100 w-[574px] max-h-[80vh]": isOpen,
             "opacity-0 w-0 h-0": !isOpen,
@@ -116,12 +119,12 @@ export const TopNavSearch = observer(function TopNavSearch() {
       >
         {!searchQuery ? (
           <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
-            <div className="w-24 h-24 bg-custom-background-90 rounded-full flex items-center justify-center">
-              <Search className="w-14 h-14 text-custom-text-400/40" />
+            <div className="w-24 h-24 bg-layer-1 rounded-full flex items-center justify-center">
+              <Search className="w-14 h-14 text-placeholder/40" />
             </div>
             <div className="text-center space-y-2">
-              <div className="text-xl font-bold text-custom-text-300">Search your workspace</div>
-              <div className="text-sm text-custom-text-300 max-w-[300px]">
+              <div className="text-18 font-bold text-tertiary">Search your workspace</div>
+              <div className="text-13 text-tertiary max-w-[300px]">
                 Start typing to search across work items, projects, cycles, modules and more
               </div>
             </div>
@@ -137,6 +140,6 @@ export const TopNavSearch = observer(function TopNavSearch() {
           />
         )}
       </div>
-    </div>
+    </Command>
   );
 });

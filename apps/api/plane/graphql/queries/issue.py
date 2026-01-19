@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third-Party Imports
 from typing import Optional
 
@@ -6,7 +17,7 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Prefetch, Q
+from django.db.models import Q
 
 # Strawberry Imports
 from strawberry.exceptions import GraphQLError
@@ -16,12 +27,10 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import (
-    CommentReaction,
     Issue,
     IssueActivity,
-    IssueComment,
     IssueType,
-    IssueUserProperty,
+    ProjectUserProperty,
 )
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
@@ -33,7 +42,6 @@ from plane.graphql.types.issues.base import (
     IssuesInformationType,
     IssuesType,
 )
-from plane.graphql.types.issues.comment import IssueCommentActivityType
 from plane.graphql.types.issues.issue_type import IssueTypesType
 from plane.graphql.types.issues.user_property import IssueUserPropertyType
 from plane.graphql.types.paginator import PaginatorResponse
@@ -237,7 +245,7 @@ class IssueUserPropertyQuery:
         user = info.context.user
 
         def get_issue_user_property():
-            issue_properties, _ = IssueUserProperty.objects.get_or_create(
+            issue_properties, _ = ProjectUserProperty.objects.get_or_create(
                 workspace__slug=slug, project_id=project, user=user
             )
             return issue_properties
@@ -273,36 +281,6 @@ class IssuePropertiesActivityQuery:
         )
 
         return issue_activities
-
-
-@strawberry.type
-class IssueCommentActivityQuery:
-    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
-    async def issue_comment_activities(
-        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
-    ) -> list[IssueCommentActivityType]:
-        user = info.context.user
-        user_id = str(user.id)
-
-        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
-            user_id=user_id,
-            workspace_slug=slug,
-        )
-        issue_comments = await sync_to_async(list)(
-            IssueComment.objects.filter(issue_id=issue, project_id=project, workspace__slug=slug)
-            .filter(project_teamspace_filter.query)
-            .distinct()
-            .order_by("created_at")
-            .select_related("actor", "issue", "project", "workspace")
-            .prefetch_related(
-                Prefetch(
-                    "comment_reactions",
-                    queryset=CommentReaction.objects.select_related("actor"),
-                )
-            )
-        )
-
-        return issue_comments
 
 
 # User profile issues

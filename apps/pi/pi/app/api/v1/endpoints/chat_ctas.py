@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Chat CTAs (Call-to-Action) endpoints for post-chat actions.
 Handles actions like saving answers as pages.
@@ -17,8 +28,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
-from pi.app.api.v1.dependencies import cookie_schema
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.app.utils.markdown_to_html import md_to_html
 from pi.core.db.plane import PlaneDBPool
 from pi.core.db.plane_pi.lifecycle import get_async_session
@@ -54,18 +64,11 @@ class SaveAsPageResponse(BaseModel):
 @router.post("/save-as-page/", response_model=SaveAsPageResponse, status_code=status.HTTP_201_CREATED)
 async def save_as_page(
     data: SaveAsPageRequest,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(
-                status_code=401, content={"success": False, "message": "Invalid User", "page_id": None, "page_url": None, "data": None}
-            )
-
-        user_id = auth.user.id
-
+        user_id = current_user.id
         data.description_html = md_to_html(data.description_html)
 
         # Validate page_type and project_id combination

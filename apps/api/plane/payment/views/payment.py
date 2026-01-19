@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import requests
 
@@ -25,9 +36,7 @@ class PaymentLinkEndpoint(BaseAPIView):
         try:
             workspace = Workspace.objects.get(slug=slug)
             workspace_members = (
-                WorkspaceMember.objects.filter(
-                    workspace__slug=slug, is_active=True, member__is_bot=False
-                )
+                WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True, member__is_bot=False)
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
@@ -37,17 +46,13 @@ class PaymentLinkEndpoint(BaseAPIView):
             )
 
             # Check the active paid users in the workspace - for self hosted plans
-            invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug, role__gt=10
-            ).count()
+            invited_member_count = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
 
             for member in workspace_members:
                 member["user_id"] = str(member["user_id"])
 
             # Calculate the workspace member count
-            workspace_member_count = count_member_payments(
-                members_list=list(workspace_members)
-            )
+            workspace_member_count = count_member_payments(members_list=list(workspace_members))
 
             product_id = request.data.get("product_id", False)
             price_id = request.data.get("price_id", False)
@@ -60,16 +65,12 @@ class PaymentLinkEndpoint(BaseAPIView):
 
             if settings.PAYMENT_SERVER_BASE_URL:
                 # Fetch the workspace license
-                workspace_license_response = resync_workspace_license(
-                    workspace_slug=slug
-                )
+                workspace_license_response = resync_workspace_license(workspace_slug=slug)
                 # Check if the workspace is on trial
                 if workspace_license_response.get("is_on_trial"):
                     purchased_seats = workspace_license_response.get("purchased_seats")
 
-                    if purchased_seats > int(
-                        workspace_member_count + invited_member_count
-                    ):
+                    if purchased_seats > int(workspace_member_count + invited_member_count):
                         required_seats = purchased_seats
                     else:
                         required_seats = workspace_member_count + invited_member_count
@@ -110,9 +111,7 @@ class PaymentLinkEndpoint(BaseAPIView):
                             "stripe_price_id": price_id,
                             "customer_email": request.user.email,
                             "members_list": list(workspace_members),
-                            "required_seats": (
-                                workspace_member_count + invited_member_count
-                            ),
+                            "required_seats": (workspace_member_count + invited_member_count),
                         },
                     )
                     response.raise_for_status()
@@ -155,9 +154,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
 
             # Get the workspace members
             workspace_members = (
-                WorkspaceMember.objects.filter(
-                    workspace__slug=slug, is_active=True, member__is_bot=False
-                )
+                WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True, member__is_bot=False)
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
@@ -167,18 +164,14 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
             )
 
             # Check the active paid users in the workspace
-            invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug, role__gt=10
-            ).count()
+            invited_member_count = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
 
             # Convert the user_id to string
             for member in workspace_members:
                 member["user_id"] = str(member["user_id"])
 
             # Calculate the workspace member count
-            workspace_member_count = count_member_payments(
-                members_list=list(workspace_members)
-            )
+            workspace_member_count = count_member_payments(members_list=list(workspace_members))
 
             # Check if the payment server base url is present
             if settings.PAYMENT_SERVER_BASE_URL:
@@ -195,9 +188,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                         "members_list": list(workspace_members),
                         "stripe_product_id": product_id,
                         "stripe_price_id": price_id,
-                        "required_seats": int(
-                            workspace_member_count + invited_member_count
-                        ),
+                        "required_seats": int(workspace_member_count + invited_member_count),
                     },
                 )
                 # Check if the response is successful

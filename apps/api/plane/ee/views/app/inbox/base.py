@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.utils import timezone
 
@@ -31,9 +42,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         )
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def partial_update(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -43,27 +52,17 @@ class InboxViewSet(BaseViewSet, BasePaginator):
                 id__in=request.data.get("notification_ids"),
             )
             for notification in notifications:
-                notification_data = {
-                    "snoozed_till": request.data.get("snoozed_till", None)
-                }
-                serializer = NotificationSerializer(
-                    notification, data=notification_data, partial=True
-                )
+                notification_data = {"snoozed_till": request.data.get("snoozed_till", None)}
+                serializer = NotificationSerializer(notification, data=notification_data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                 else:
-                    return Response(
-                        serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                    )
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        notification = Notification.objects.get(
-            workspace__slug=slug, receiver=request.user
-        )
+        notification = Notification.objects.get(workspace__slug=slug, receiver=request.user)
         # Only read_at and snoozed_till can be updated
         notification_data = {"snoozed_till": request.data.get("snoozed_till", None)}
-        serializer = NotificationSerializer(
-            notification, data=notification_data, partial=True
-        )
+        serializer = NotificationSerializer(notification, data=notification_data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -71,9 +70,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def mark_read(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -86,17 +83,13 @@ class InboxViewSet(BaseViewSet, BasePaginator):
                 notification.read_at = timezone.now()
                 notification.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug)
         notification.read_at = timezone.now()
         notification.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def mark_unread(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -109,16 +102,12 @@ class InboxViewSet(BaseViewSet, BasePaginator):
                 notification.read_at = None
                 notification.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug)
         notification.read_at = None
         notification.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def archive(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -131,16 +120,12 @@ class InboxViewSet(BaseViewSet, BasePaginator):
                 notification.archived_at = timezone.now()
                 notification.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug)
         notification.archived_at = timezone.now()
         notification.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def unarchive(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -153,9 +138,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
                 notification.archived_at = None
                 notification.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug)
         notification.archived_at = None
         notification.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

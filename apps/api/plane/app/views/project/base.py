@@ -1,20 +1,28 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from typing import Dict, Any, List
 import uuid
 
-import boto3
 
 # Django imports
-from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
 from django.utils import timezone
 
 # Third Party imports
 from rest_framework import status
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 # Module imports
@@ -28,10 +36,9 @@ from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
-    UserFavorite,
     DeployBoard,
     Intake,
-    IssueUserProperty,
+    ProjectUserProperty,
     Project,
     ProjectIdentifier,
     ProjectMember,
@@ -43,7 +50,6 @@ from plane.db.models import (
     WorkspaceMember,
     APIToken,
 )
-from plane.utils.cache import cache_response
 from plane.utils.host import base_host
 
 # EE imports
@@ -138,11 +144,10 @@ class ProjectViewSet(BaseViewSet):
         return payload
 
     def get_queryset(self):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
 
         # EE: project_grouping starts
@@ -273,11 +278,10 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
 
         base_queryset = (
@@ -419,8 +423,6 @@ class ProjectViewSet(BaseViewSet):
                     member=request.user,
                     role=ROLE.ADMIN.value,
                 )
-                # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
                 if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
                     request.user.id
@@ -429,11 +431,6 @@ class ProjectViewSet(BaseViewSet):
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
                         role=ROLE.ADMIN.value,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.data["id"],
-                        user_id=serializer.data["project_lead"],
                     )
 
                 State.objects.bulk_create(

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from django.urls import reverse
 from rest_framework import status
 from django.utils import timezone
@@ -14,9 +25,7 @@ from plane.tests.factories import (
 class TestOAuthApplicationUninstallEndpoint:
     """Test cases for OAuthApplicationUninstallEndpoint"""
 
-    def test_uninstall_application_success(
-        self, session_client, workspace, workspace_app_installation
-    ):
+    def test_uninstall_application_success(self, session_client, workspace, workspace_app_installation):
         """Test successful uninstallation of an application"""
         url = reverse(
             "app-installation-detail",
@@ -31,13 +40,9 @@ class TestOAuthApplicationUninstallEndpoint:
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         # Verify the installation is deleted
-        assert not WorkspaceAppInstallation.objects.filter(
-            id=workspace_app_installation.id
-        ).exists()
+        assert not WorkspaceAppInstallation.objects.filter(id=workspace_app_installation.id).exists()
 
-    def test_uninstall_application_bot_cleanup(
-        self, session_client, workspace, project, workspace_app_installation
-    ):
+    def test_uninstall_application_bot_cleanup(self, session_client, workspace, project, workspace_app_installation):
         """Test that bot user is properly cleaned up during uninstallation"""
         # Verify bot user exists and is active
         app_bot = workspace_app_installation.app_bot
@@ -99,15 +104,9 @@ class TestOAuthApplicationUninstallEndpoint:
     ):
         """Test that bot is removed from all projects in the workspace"""
         # Create multiple projects BEFORE creating the installation
-        project1 = ProjectFactory(
-            workspace=workspace, created_by=create_user, updated_by=create_user
-        )
-        project2 = ProjectFactory(
-            workspace=workspace, created_by=create_user, updated_by=create_user
-        )
-        project3 = ProjectFactory(
-            workspace=workspace, created_by=create_user, updated_by=create_user
-        )
+        project1 = ProjectFactory(workspace=workspace, created_by=create_user, updated_by=create_user)
+        project2 = ProjectFactory(workspace=workspace, created_by=create_user, updated_by=create_user)
+        project3 = ProjectFactory(workspace=workspace, created_by=create_user, updated_by=create_user)
 
         # Now create the installation - this will add bot to all existing projects
         workspace_app_installation = WorkspaceAppInstallationFactory(
@@ -119,15 +118,9 @@ class TestOAuthApplicationUninstallEndpoint:
 
         # Verify bot is member of all projects
         app_bot = workspace_app_installation.app_bot
-        assert ProjectMember.objects.filter(
-            member=app_bot, project=project1, is_active=True
-        ).exists()
-        assert ProjectMember.objects.filter(
-            member=app_bot, project=project2, is_active=True
-        ).exists()
-        assert ProjectMember.objects.filter(
-            member=app_bot, project=project3, is_active=True
-        ).exists()
+        assert ProjectMember.objects.filter(member=app_bot, project=project1, is_active=True).exists()
+        assert ProjectMember.objects.filter(member=app_bot, project=project2, is_active=True).exists()
+        assert ProjectMember.objects.filter(member=app_bot, project=project3, is_active=True).exists()
 
         url = reverse(
             "app-installation-detail",
@@ -234,9 +227,7 @@ class TestOAuthApplicationUninstallEndpoint:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.data["error"] == "Installation not found"
 
-    def test_uninstall_application_wrong_workspace(
-        self, session_client, workspace, oauth_application, create_user
-    ):
+    def test_uninstall_application_wrong_workspace(self, session_client, workspace, oauth_application, create_user):
         """Test uninstallation when installation belongs to different workspace"""
         # Create another workspace
         other_workspace = WorkspaceFactory(owner=create_user)
@@ -263,9 +254,7 @@ class TestOAuthApplicationUninstallEndpoint:
         assert response.data["error"] == "Installation not found"
 
         # Verify the installation still exists
-        assert WorkspaceAppInstallation.objects.filter(
-            id=other_installation.id
-        ).exists()
+        assert WorkspaceAppInstallation.objects.filter(id=other_installation.id).exists()
 
     def test_uninstall_application_workspace_not_found(
         self,
@@ -285,9 +274,7 @@ class TestOAuthApplicationUninstallEndpoint:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_uninstall_application_unauthenticated(
-        self, api_client, workspace, workspace_app_installation
-    ):
+    def test_uninstall_application_unauthenticated(self, api_client, workspace, workspace_app_installation):
         """Test uninstallation without authentication"""
         url = reverse(
             "app-installation-detail",
@@ -371,9 +358,7 @@ class TestOAuthApplicationUninstallEndpoint:
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         # Verify the installation is deleted
-        assert not WorkspaceAppInstallation.objects.filter(
-            id=workspace_app_installation.id
-        ).exists()
+        assert not WorkspaceAppInstallation.objects.filter(id=workspace_app_installation.id).exists()
 
         # Verify the webhook is deleted
         assert not Webhook.objects.filter(id=webhook.id).exists()
@@ -420,13 +405,9 @@ class TestOAuthApplicationUninstallEndpoint:
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
         # Verify installation still exists
-        assert WorkspaceAppInstallation.objects.filter(
-            id=workspace_app_installation.id
-        ).exists()
+        assert WorkspaceAppInstallation.objects.filter(id=workspace_app_installation.id).exists()
 
-    def test_uninstall_application_bot_reuse(
-        self, session_client, workspace, oauth_application, create_user
-    ):
+    def test_uninstall_application_bot_reuse(self, session_client, workspace, oauth_application, create_user):
         """Test that inactive bot users are reused when reinstalling the same app"""
         # Create initial installation
         installation1 = WorkspaceAppInstallationFactory(
@@ -469,9 +450,7 @@ class TestOAuthApplicationUninstallEndpoint:
         assert installation2.app_bot.username == original_username
         assert installation2.app_bot.is_active is True
 
-    def test_installation_bot_creation_and_membership(
-        self, workspace, oauth_application, create_user, project
-    ):
+    def test_installation_bot_creation_and_membership(self, workspace, oauth_application, create_user, project):
         """Test that bot user is properly created and added to workspace/project members during installation"""
         # Create installation which should trigger bot creation
         installation = WorkspaceAppInstallationFactory(

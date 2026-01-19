@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 import type { ShouldRevalidateFunctionArgs } from "react-router";
@@ -114,7 +127,7 @@ function IssuesLayout(props: Route.ComponentProps) {
 
   if (!publishSettings && !error) {
     return (
-      <div className="flex items-center justify-center h-screen w-full">
+      <div className="bg-surface-1 flex items-center justify-center h-screen w-full">
         <LogoSpinner />
       </div>
     );
@@ -127,10 +140,10 @@ function IssuesLayout(props: Route.ComponentProps) {
   return (
     <>
       <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
-        <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
+        <div className="relative flex h-[60px] shrink-0 select-none items-center border-b border-subtle-1 bg-surface-1">
           <IssuesNavbarRoot publishSettings={publishSettings} />
         </div>
-        <div className="relative h-full w-full overflow-hidden bg-custom-background-90">
+        <div className="relative size-full bg-surface-2 overflow-hidden">
           <Outlet />
         </div>
       </div>

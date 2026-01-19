@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Helper functions for batch action execution."""
 
 import json
@@ -22,205 +33,6 @@ from pi.services.chat.prompts import plane_context
 from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts_by_ids
 
 log = logger.getChild(__name__)
-
-# Entity type to ID field mapping for update operations
-# Maps entity types to the parameter name used for their ID in update tools
-ENTITY_ID_FIELD_MAP = {
-    "workitem": "issue_id",
-    "epic": "issue_id",
-    "cycle": "cycle_id",
-    "module": "module_id",
-    "project": "project_id",
-    "label": "label_id",
-    "state": "state_id",
-    "comment": "comment_id",
-    "attachment": "attachment_id",
-    "type": "type_id",
-    "property": "property_id",
-    "intake": "intake_id",
-    "worklog": "worklog_id",
-    "link": "link_id",
-}
-
-
-def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity_type: str, action: str) -> Dict[str, Any]:
-    """
-    Extract tool-compatible parameters from artifact data for execution.
-
-    This is the REVERSE of prepare_edited_workitem_artifact_data:
-    - prepare_edited: enriches simple IDs → full objects (for display)
-    - extract_tool_params: extracts/renames fields (for execution)
-
-    Args:
-        artifact_data: Raw data from frontend (uses artifact schema field names)
-        entity_type: Type of entity (workitem, epic, project, etc.)
-        action: Action type (create, update, delete)
-
-    Returns:
-        Tool-compatible parameters dictionary with renamed fields and unsupported fields removed
-    """
-    # Field mapping: artifact schema → tool parameter names
-    ARTIFACT_TO_TOOL_MAPPING = {
-        "assignee_ids": "assignees",
-        "label_ids": "labels",
-        "parent_id": "parent",
-        "state_id": "state",  # SDK adapter handles state_id internally
-    }
-
-    # Fields that cannot be set during creation (require separate API calls after creation)
-    CREATE_UNSUPPORTED_FIELDS = {
-        "workitem": {"cycle_id", "module_ids"},
-        "epic": {"cycle_id", "module_ids"},
-    }
-
-    tool_params = {}
-    unsupported = CREATE_UNSUPPORTED_FIELDS.get(entity_type, set()) if action == "create" else set()
-
-    # Handle nested properties structure if present
-    data_to_process = artifact_data.copy()
-    if "properties" in data_to_process and isinstance(data_to_process["properties"], dict):
-        # Merge properties into top level for processing
-        properties = data_to_process.pop("properties")
-        data_to_process.update(properties)
-
-    for key, value in data_to_process.items():
-        # Skip None values
-        if value is None:
-            continue
-
-        # Skip empty lists (but allow empty strings for explicit clearing)
-        if isinstance(value, list) and not value:
-            continue
-
-        # Skip empty description_html - API rejects empty string, use None instead
-        if key == "description_html" and value == "":
-            continue
-
-        # Skip metadata fields that shouldn't be sent to tools
-        if key in {"entity_info", "artifact_sub_type"}:
-            continue
-
-        # Filter unsupported fields for this entity type and action
-        if key in unsupported:
-            log.warning(f"Field '{key}' cannot be set during {entity_type} {action}, skipping")
-            continue
-
-        # Map artifact field names to tool parameter names
-        mapped_key = ARTIFACT_TO_TOOL_MAPPING.get(key, key)
-        tool_params[mapped_key] = value
-
-    log.debug(f"Extracted tool params for {entity_type} {action}: {list(tool_params.keys())}")
-    return tool_params
-
-
-# Implicit dependency rules for action execution
-# Format: (prerequisite_tool, dependent_tool)
-# When both tools are present in planned actions, dependent must wait for prerequisite
-IMPLICIT_DEPENDENCY_RULES = [
-    # Project updates must complete before creating project-scoped features
-    # (modules, cycles, pages, worklogs, views, intake all require project feature flags)
-    ("projects_update", "modules_create"),
-    ("projects_update", "cycles_create"),
-    ("projects_update", "worklogs_create"),
-    ("projects_update", "pages_create"),
-    ("projects_update", "views_create"),
-    ("projects_update", "intake_create"),
-    # Entity creation must complete before adding items to it
-    ("modules_create", "modules_add_work_items"),
-    ("cycles_create", "cycles_add_work_items"),
-]
-
-# Entity type to ID field mapping for update operations
-# Maps entity types to the parameter name used for their ID in update tools
-ENTITY_ID_FIELD_MAP = {
-    "workitem": "issue_id",
-    "epic": "issue_id",
-    "cycle": "cycle_id",
-    "module": "module_id",
-    "project": "project_id",
-    "label": "label_id",
-    "state": "state_id",
-    "comment": "comment_id",
-    "attachment": "attachment_id",
-    "type": "type_id",
-    "property": "property_id",
-    "intake": "intake_id",
-    "worklog": "worklog_id",
-    "link": "link_id",
-}
-
-
-def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity_type: str, action: str) -> Dict[str, Any]:
-    """
-    Extract tool-compatible parameters from artifact data for execution.
-
-    This is the REVERSE of prepare_edited_workitem_artifact_data:
-    - prepare_edited: enriches simple IDs → full objects (for display)
-    - extract_tool_params: extracts/renames fields (for execution)
-
-    Args:
-        artifact_data: Raw data from frontend (uses artifact schema field names)
-        entity_type: Type of entity (workitem, epic, project, etc.)
-        action: Action type (create, update, delete)
-
-    Returns:
-        Tool-compatible parameters dictionary with renamed fields and unsupported fields removed
-    """
-    # Field mapping: artifact schema → tool parameter names
-    ARTIFACT_TO_TOOL_MAPPING = {
-        "assignee_ids": "assignees",
-        "label_ids": "labels",
-        "parent_id": "parent",
-        "state_id": "state",  # SDK adapter handles state_id internally
-        "lead_id": "lead",  # Module lead
-        "member_ids": "members",  # Module members
-    }
-
-    # Fields that cannot be set during creation (require separate API calls after creation)
-    CREATE_UNSUPPORTED_FIELDS = {
-        "workitem": {"cycle_id", "module_ids"},
-        "epic": {"cycle_id", "module_ids"},
-    }
-
-    tool_params = {}
-    unsupported = CREATE_UNSUPPORTED_FIELDS.get(entity_type, set()) if action == "create" else set()
-
-    # Handle nested properties structure if present
-    data_to_process = artifact_data.copy()
-    if "properties" in data_to_process and isinstance(data_to_process["properties"], dict):
-        # Merge properties into top level for processing
-        properties = data_to_process.pop("properties")
-        data_to_process.update(properties)
-
-    for key, value in data_to_process.items():
-        # Skip None values
-        if value is None:
-            continue
-
-        # Skip empty lists (but allow empty strings for explicit clearing)
-        if isinstance(value, list) and not value:
-            continue
-
-        # Skip empty description_html - API rejects empty string, use None instead
-        if key == "description_html" and value == "":
-            continue
-
-        # Skip metadata fields that shouldn't be sent to tools
-        if key in {"entity_info", "artifact_sub_type"}:
-            continue
-
-        # Filter unsupported fields for this entity type and action
-        if key in unsupported:
-            log.warning(f"Field '{key}' cannot be set during {entity_type} {action}, skipping")
-            continue
-
-        # Map artifact field names to tool parameter names
-        mapped_key = ARTIFACT_TO_TOOL_MAPPING.get(key, key)
-        tool_params[mapped_key] = value
-
-    log.debug(f"Extracted tool params for {entity_type} {action}: {list(tool_params.keys())}")
-    return tool_params
-
 
 # Implicit dependency rules for action execution
 # Format: (prerequisite_tool, dependent_tool)
@@ -363,6 +175,9 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
         "state_id": "state",  # SDK adapter handles state_id internally
         "lead_id": "lead",  # Module lead
         "member_ids": "members",  # Module members
+        "cover_image_url": "cover_image",
+        "logo_props": "logo_props",
+        "icon_prop": "icon_prop",
     }
 
     # Fields that cannot be set during creation (require separate API calls after creation)
@@ -370,6 +185,12 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
         "workitem": {"cycle_id", "module_ids"},
         "epic": {"cycle_id", "module_ids"},
     }
+
+    # Fields that are auto-generated by SDK and should never be sent to any tool
+    SDK_AUTO_GENERATED_FIELDS = {"logo_props", "icon_prop", "emoji"}
+
+    # Fields that are project-specific and should not be sent to other entities
+    PROJECT_ONLY_FIELDS = {"cover_image"}
 
     tool_params = {}
     unsupported = CREATE_UNSUPPORTED_FIELDS.get(entity_type, set()) if action == "create" else set()
@@ -394,8 +215,25 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
         if key == "description_html" and value == "":
             continue
 
+        # Skip empty identifier values (Plane rejects empty identifiers on update)
+        if key == "identifier" and isinstance(value, str) and value.strip() == "":
+            continue
+
         # Skip metadata fields that shouldn't be sent to tools
         if key in {"entity_info", "artifact_sub_type"}:
+            continue
+
+        # Map artifact field names to tool parameter names FIRST (needed for subsequent checks)
+        mapped_key = ARTIFACT_TO_TOOL_MAPPING.get(key, key)
+
+        # Skip SDK auto-generated fields (logo_props, icon_prop, emoji) for all entities
+        if key in SDK_AUTO_GENERATED_FIELDS or mapped_key in SDK_AUTO_GENERATED_FIELDS:
+            log.debug(f"Skipping SDK auto-generated field '{key}' for {entity_type}")
+            continue
+
+        # Skip project-only fields for non-project entities
+        if entity_type != "project" and (key in PROJECT_ONLY_FIELDS or mapped_key in PROJECT_ONLY_FIELDS):
+            log.debug(f"Skipping project-only field '{key}' for {entity_type}")
             continue
 
         # Filter unsupported fields for this entity type and action
@@ -403,8 +241,9 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
             log.warning(f"Field '{key}' cannot be set during {entity_type} {action}, skipping")
             continue
 
-        # Map artifact field names to tool parameter names
-        mapped_key = ARTIFACT_TO_TOOL_MAPPING.get(key, key)
+        if mapped_key == "project_lead" and isinstance(value, dict) and value.get("id"):
+            value = value["id"]
+
         tool_params[mapped_key] = value
 
     log.debug(f"Extracted tool params for {entity_type} {action}: {list(tool_params.keys())}")
@@ -415,14 +254,28 @@ async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> 
     """Load and validate artifacts for execution."""
     artifacts = await get_action_artifacts_by_ids(db, [a.artifact_id for a in request_data])
 
-    original_query = artifacts[0].data.get("planning_context", {}).get("original_query", "")
-    conversation_context = artifacts[0].data.get("planning_context", {}).get("conversation_context", {})
+    # Create artifact ID lookup map to ensure correct pairing regardless of database return order
+    artifact_map = {str(artifact.id): artifact for artifact in artifacts}
+
+    if not artifacts:
+        raise ValueError("No artifacts found for execution")
+
+    # Get planning context from first artifact (shared across all artifacts in the batch)
+    first_artifact = artifacts[0]
+    original_query = first_artifact.data.get("planning_context", {}).get("original_query", "")
+    conversation_context = first_artifact.data.get("planning_context", {}).get("conversation_context", {})
 
     # Extract workspace_slug from conversation_context for ID resolution
     workspace_slug = conversation_context.get("workspace_slug")
 
     planned_actions = []
-    for artifact, req_item in zip(artifacts, request_data):
+    for req_item in request_data:
+        # Match request item to its artifact by ID (critical for correct parameter extraction)
+        artifact = artifact_map.get(str(req_item.artifact_id))
+        if not artifact:
+            log.error(f"Artifact {req_item.artifact_id} not found in loaded artifacts - skipping")
+            continue
+
         entity_type = artifact.data.get("planning_data", {}).get("artifact_type", "")
         action = artifact.data.get("planning_data", {}).get("action", "")
 
@@ -430,22 +283,64 @@ async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> 
             # Transform edited artifact data from frontend schema to tool parameters
             tool_args = extract_tool_params_from_artifact_data(req_item.action_data or {}, entity_type, action)
 
-            # For UPDATE actions, preserve the entity ID from the original artifact
+            # Get original tool args for preserving context fields
+            original_tool_args = artifact.data.get("tool_args_raw", {})
+
+            # PRESERVE CONTEXT FIELDS for all actions (these are never editable but required for execution)
+            # workspace_slug and project_id are context, not user-editable fields
+            if "workspace_slug" in original_tool_args and "workspace_slug" not in tool_args:
+                tool_args["workspace_slug"] = original_tool_args["workspace_slug"]
+                log.debug(f"Preserved workspace_slug={original_tool_args["workspace_slug"]} for {entity_type} {action}")
+
+            if "project_id" in original_tool_args and "project_id" not in tool_args:
+                tool_args["project_id"] = original_tool_args["project_id"]
+                log.debug(f"Preserved project_id={original_tool_args["project_id"]} for {entity_type} {action}")
+
+            # PRESERVE NON-EDITABLE PLANNING PARAMETERS
+            # These are planning-time decisions that aren't exposed in the edit UI but are critical for execution
+            NON_EDITABLE_PARAMS = {
+                # Project feature flags (planning-time decisions)
+                "cycle_view",
+                "module_view",
+                "page_view",
+                "intake_view",
+                "is_issue_type_enabled",
+                "is_time_tracking_enabled",
+                "issue_views_view",
+                "guest_view_all_features",
+                # Project update_features params (must be preserved from plan)
+                "epics",
+                "modules",
+                "cycles",
+                "views",
+                "pages",
+                "intakes",
+                "work_item_types",
+                # Other planning parameters
+                "timezone",
+                "archive_in",
+                "close_in",
+                "external_id",
+                "external_source",
+                # User/owner assignments that may be auto-set
+                "owned_by",
+                "project_lead",
+                "default_assignee",
+            }
+
+            for param in NON_EDITABLE_PARAMS:
+                if param in original_tool_args and param not in tool_args:
+                    tool_args[param] = original_tool_args[param]
+                    log.debug(f"Preserved non-editable param {param}={original_tool_args[param]} for {entity_type} {action}")
+
+            # For UPDATE actions, also preserve the entity ID being updated
             # The frontend edits fields but doesn't include the entity ID being updated
             if action == "update":
-                original_tool_args = artifact.data.get("tool_args_raw", {})
-
                 # Preserve the entity's ID field (e.g., issue_id, cycle_id, module_id)
                 id_field = ENTITY_ID_FIELD_MAP.get(entity_type)
                 if id_field and id_field in original_tool_args and id_field not in tool_args:
                     tool_args[id_field] = original_tool_args[id_field]
                     log.debug(f"Preserved {id_field}={original_tool_args[id_field]} for {entity_type} update")
-
-                # Also preserve project_id if it's not in the edited data
-                # (many update tools require it as context even though it's not being changed)
-                if "project_id" in original_tool_args and "project_id" not in tool_args:
-                    tool_args["project_id"] = original_tool_args["project_id"]
-                    log.info(f"Preserved project_id={original_tool_args["project_id"]} for {entity_type} update")
         else:
             # Use original planned tool arguments
             tool_args = artifact.data.get("tool_args_raw", {})

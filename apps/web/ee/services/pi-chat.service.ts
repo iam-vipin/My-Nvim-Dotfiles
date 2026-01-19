@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // constants
 import type { AxiosRequestConfig } from "axios";
 import { PI_URL } from "@plane/constants";
@@ -19,6 +32,7 @@ import type {
   TFollowUpResponse,
   TUpdatedArtifact,
   TPiAttachment,
+  TTemplate,
 } from "../types";
 
 type TChatHistoryResponse = {
@@ -32,6 +46,8 @@ type TChatHistoryResponse = {
     focus_workspace_id: string;
     focus_project_id: string;
     workspace_id?: string;
+    llm?: string;
+    mode?: string;
   };
 };
 export type TUserThreadsResponse = {
@@ -117,11 +133,26 @@ export class PiChatService extends APIService {
 
   // fetch instance
   async getInstance(workspaceId: string): Promise<TInstanceResponse> {
-    return this.get(`/api/v1/chat/start/`, {
+    return this.get(`/api/v1/chat/start/auth-check/`, {
       params: {
         workspace_id: workspaceId,
       },
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get preset templates
+  async fetchPrompts(data: {
+    workspace_id: string;
+    mode: string;
+    project_id: string | undefined;
+    entity_id: string | undefined;
+    entity_type: string | undefined;
+  }): Promise<{ templates: TTemplate[] }> {
+    return this.post(`/api/v1/chat/start/set-prompts/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -308,7 +339,7 @@ export class PiChatService extends APIService {
     current_artifact_data: TUpdatedArtifact,
     user_message_id: string,
     entity_type: string,
-    project_id: string
+    project_id: string | undefined
   ): Promise<TFollowUpResponse> {
     return this.post(`/api/v1/artifacts/${artifact_id}/followup/`, {
       query,

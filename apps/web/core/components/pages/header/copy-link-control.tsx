@@ -1,8 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useRef, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
-import { Link, Check } from "lucide-react";
+
+import { LinkIcon, CheckIcon } from "@plane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { IconButton } from "@plane/propel/icon-button";
 import { cn } from "@plane/utils";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
@@ -50,27 +65,14 @@ export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page 
 
   return (
     <Tooltip tooltipContent={isCopied ? "Copied!" : "Copy link"} position="bottom">
-      <button
-        type="button"
+      <IconButton
+        variant="ghost"
+        size="lg"
+        icon={isCopied ? CheckIcon : LinkIcon}
         onClick={handleCopy}
-        className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors duration-200 ease"
         aria-label={isCopied ? "Copied link" : "Copy link"}
-      >
-        <div className="relative w-3.5 h-3.5 overflow-hidden">
-          <Link
-            className={cn(
-              "absolute inset-0 size-3.5 transition-all duration-300 ease-out",
-              isCopied ? "opacity-0 scale-90" : "opacity-100 scale-100"
-            )}
-          />
-          <Check
-            className={cn(
-              "absolute inset-0 size-3.5 transition-all duration-300 ease-out text-green-500",
-              isCopied ? "opacity-100 scale-100" : "opacity-0 scale-90"
-            )}
-          />
-        </div>
-      </button>
+        className={cn(isCopied && "text-success-primary")}
+      />
     </Tooltip>
   );
 });

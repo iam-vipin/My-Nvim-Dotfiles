@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -96,8 +109,8 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
         >
           <div
             className={cn(
-              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+              "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-11 hover:bg-layer-1",
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong",
               fullWidth && "w-full"
             )}
           >
@@ -115,9 +128,9 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
       return (
         <div
           className={cn(
-            "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-xs",
+            "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-11",
             fullWidth && "w-full",
-            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+            noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong",
             disabled ? "cursor-not-allowed" : "cursor-pointer"
           )}
         >
@@ -131,8 +144,8 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
               .join(", ")}
             renderByDefault={false}
           >
-            <div className="flex h-full items-center gap-1.5 text-custom-text-200">
-              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+            <div className="flex h-full items-center gap-1.5 text-secondary">
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               {`${value.length} Labels`}
             </div>
           </Tooltip>
@@ -156,13 +169,13 @@ export const InitiativeLabels = observer(function InitiativeLabels(props: IIniti
           <div
             key={label?.id}
             className={cn(
-              "flex overflow-hidden justify-center hover:bg-custom-background-80 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-xs",
+              "flex overflow-hidden justify-center hover:bg-layer-1 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-11",
               !disabled && "cursor-pointer",
               fullWidth && "w-full",
-              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong"
             )}
           >
-            <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+            <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-secondary">
               <span
                 className="h-2 w-2 flex-shrink-0 rounded-full"
                 style={{

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import copy
 
 # Django imports
@@ -263,9 +274,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        return Issue.issue_objects.filter(
-            workspace__slug=self.kwargs.get("slug")
-        ).accessible_to(self.request.user.id, self.kwargs.get("slug"))
+        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug")).accessible_to(
+            self.request.user.id, self.kwargs.get("slug")
+        )
 
     @method_decorator(gzip_page)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
@@ -285,9 +296,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         issue_queryset = issue_queryset.filter(**filters)
 
         if request.query_params.get("sub_issue", None) == "false":
-            issue_queryset = issue_queryset.filter(
-                Q(parent__isnull=True) | (Q(parent__type__is_epic=True))
-            )
+            issue_queryset = issue_queryset.filter(Q(parent__isnull=True) | (Q(parent__type__is_epic=True)))
 
         # Get common project permission filters
         permission_filters = self._get_project_permission_filters()
@@ -385,9 +394,7 @@ class IssueViewViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             queryset = queryset.filter(owned_by=request.user)
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
@@ -413,9 +420,7 @@ class IssueViewViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue_view.owned_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},

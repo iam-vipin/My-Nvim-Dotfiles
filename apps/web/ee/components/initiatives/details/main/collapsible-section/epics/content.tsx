@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -73,7 +86,7 @@ export const InitiativeEpicsCollapsibleContent = observer(function InitiativeEpi
             subHeading={t("initiatives.empty_state.epics.subHeading")}
             icon={<ListFilter />}
             actionElement={
-              <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(initiativeId)}>
+              <Button variant="secondary" onClick={() => resetFilters(initiativeId)}>
                 {t("initiatives.empty_state.epics.action")}
               </Button>
             }
@@ -94,7 +107,7 @@ export const InitiativeEpicsCollapsibleContent = observer(function InitiativeEpi
               }}
               disabled={disabled}
             >
-              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>
+              <span className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1")}>
                 {t("epics.empty_state.section.primary_button.text")}
               </span>
             </button>

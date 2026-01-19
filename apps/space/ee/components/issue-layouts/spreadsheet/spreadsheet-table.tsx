@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { MutableRefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -23,17 +36,17 @@ type Props = {
 
 function SpreadsheetIssueRowLoader(props: { columnCount: number }) {
   return (
-    <tr className="border-b border-custom-border-200 bg-custom-background-100">
-      <td className="h-11 min-w-[28rem] z-[10] sticky left-0 flex items-center border-r-[0.5px] border-custom-border-200 bg-custom-background-100">
+    <tr className="border-b border-subtle-1 bg-surface-1">
+      <td className="h-11 min-w-[28rem] z-[10] sticky left-0 flex items-center border-r-[0.5px] border-subtle-1 bg-surface-1">
         <div className="flex items-center gap-3 px-3">
-          <span className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
-          <span className={`h-5 w-52 bg-custom-background-80 rounded animate-pulse`} />
+          <span className="h-5 w-10 bg-layer-1 rounded-sm animate-pulse" />
+          <span className={`h-5 w-52 bg-layer-1 rounded-sm animate-pulse`} />
         </div>
       </td>
       {[...Array(props.columnCount)].map((_, colIndex) => (
-        <td key={colIndex} className="h-11 w-full min-w-[8rem] border-r border-custom-border-200 ">
+        <td key={colIndex} className="h-11 w-full min-w-[8rem] border-r border-subtle-1 ">
           <div className="flex items-center justify-center gap-3 px-3">
-            <span className="h-5 w-20 bg-custom-background-80 rounded animate-pulse" />
+            <span className="h-5 w-20 bg-layer-1 rounded-sm animate-pulse" />
           </div>
         </td>
       ))}
@@ -92,7 +105,7 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
   const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
 
   return (
-    <table className="overflow-y-auto bg-custom-background-100">
+    <table className="overflow-y-auto">
       <SpreadsheetHeader displayProperties={displayProperties} spreadsheetColumnsList={spreadsheetColumnsList} />
       <tbody>
         {issueIds.map((id) => (

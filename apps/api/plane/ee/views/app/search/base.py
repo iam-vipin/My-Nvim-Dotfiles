@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 
 # Third-party imports
@@ -199,10 +210,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         # Access control OR filter - simplified approach:
         # (access = 0 AND user in active_member_user_ids) OR (owned_by_id = user)
         # This handles both public pages accessible to workspace members AND any page owned by user
-        access_filter = (
-            Q("term", access=0)
-            & Q("term", active_member_user_ids=str(self.request.user.id))
-        ) | Q("term", owned_by_id=str(self.request.user.id))
+        access_filter = (Q("term", access=0) & Q("term", active_member_user_ids=str(self.request.user.id))) | Q(
+            "term", owned_by_id=str(self.request.user.id)
+        )
 
         # Combine base filters with access control
         custom_filter = base_filter & access_filter

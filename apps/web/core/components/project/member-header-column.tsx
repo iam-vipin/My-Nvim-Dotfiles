@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // ui
 import { observer } from "mobx-react";
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // constants
 import type { IProjectMemberDisplayProperties, TMemberOrderByOptions } from "@plane/constants";
 import { MEMBER_PROPERTY_DETAILS } from "@plane/constants";
@@ -41,7 +55,7 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
       customButtonTabIndex={-1}
       className="!w-full"
       customButton={
-        <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-sm text-custom-text-200 hover:text-custom-text-100">
+        <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
           <span>{t(propertyDetails.i18n_title)}</span>
           <div className="ml-3 flex">
             {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
@@ -67,8 +81,8 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
             <div
               className={`flex items-center justify-between gap-1.5 px-1 ${
                 activeSortingProperty === propertyDetails.ascendingOrderKey
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
+                  ? "text-primary"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -85,8 +99,8 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
             <div
               className={`flex items-center justify-between gap-1.5 px-1 ${
                 activeSortingProperty === propertyDetails.descendingOrderKey
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
+                  ? "text-primary"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               <div className="flex items-center gap-2">

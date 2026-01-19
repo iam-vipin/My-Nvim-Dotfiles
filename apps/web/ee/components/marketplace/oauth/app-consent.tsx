@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -153,28 +166,24 @@ export const AppConsent = observer(function AppConsent({
         {application?.logo_url ? (
           <img src={getFileURL(application?.logo_url ?? "") ?? ""} alt="Plane logo" className="w-10 h-10" />
         ) : (
-          <div className="w-10 h-10 flex items-center justify-center rounded-md bg-custom-primary-500 text-white capitalize">
+          <div className="w-10 h-10 flex items-center justify-center rounded-md bg-accent-primary text-white capitalize">
             {application?.name?.[0] ?? "..."}
           </div>
         )}
         <img src={ConnectSvg} alt="Connect" className="w-5 h-5" />
-        <PlaneLogo className="h-10 w-auto text-custom-primary-100" />
+        <PlaneLogo className="h-10 w-auto text-accent-primary" />
       </div>
       <h1>{t("workspace_settings.settings.applications.app_consent_title", { app: application?.name })}</h1>
 
       {!application?.published_at && !application?.is_internal && (
-        <div className="flex-shrink-0">
-          <div
-            className={cn(
-              "relative flex  justify-start items-start gap-2 p-2 px-4 md:w-[636px] rounded-lg bg-red-300/10 text-red-500"
-            )}
-          >
+        <div className="shrink-0">
+          <div className="relative flex justify-start items-start gap-2 p-2 px-4 md:w-[636px] rounded-lg bg-danger-subtle text-danger-primary">
             <CircleAlert className="size-4" />
             <div className="flex flex-col gap-1">
-              <div className="text-sm font-semibold text-start">
+              <div className="text-13 font-semibold text-start">
                 {t("workspace_settings.settings.applications.app_consent_unapproved_title")}
               </div>
-              <div className="text-sm font-medium text-start">
+              <div className="text-13 font-medium text-start">
                 {t("workspace_settings.settings.applications.app_consent_unapproved_description")}
               </div>
             </div>
@@ -182,28 +191,28 @@ export const AppConsent = observer(function AppConsent({
         </div>
       )}
 
-      <div className="flex flex-col gap-y-4 border border-custom-border-100 rounded-lg p-4 bg-custom-background-90 w-full md:min-w-[636px]">
-        <div className="text-sm text-custom-text-300 font-medium">
+      <div className="flex flex-col gap-y-4 border border-subtle rounded-lg p-4 bg-surface-2 w-full md:min-w-[636px]">
+        <div className="text-13 text-tertiary font-medium">
           {t("workspace_settings.settings.applications.choose_workspace_to_connect_app_with")}
         </div>
         {isLoadingWorkspaces ? (
-          <div className="text-sm text-custom-text-400">Loading workspaces...</div>
+          <div className="text-13 text-placeholder">Loading workspaces...</div>
         ) : workspacesList.length > 0 ? (
           <CustomMenu
             maxHeight={"md"}
-            className="flex flex-grow justify-center text-sm text-custom-text-200"
+            className="flex flex-grow justify-center text-13 text-secondary"
             placement="bottom-start"
             customButton={
-              <div className="flex flex-grow gap-1.5 justify-between items-center text-sm text-custom-text-200 w-full overflow-hidden">
+              <div className="flex flex-grow gap-1.5 justify-between items-center text-13 text-secondary w-full overflow-hidden">
                 {selectedWorkspace ? (
                   <WorkspaceDetails workspace={selectedWorkspace} />
                 ) : (
-                  <span className="text-custom-text-400">Select workspace...</span>
+                  <span className="text-placeholder">Select workspace...</span>
                 )}
-                <ChevronDownIcon className="ml-auto h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-auto h-4 w-4 text-secondary" />
               </div>
             }
-            customButtonClassName="flex flex-grow border border-custom-border-200 rounded-md p-2 bg-custom-background-100 text-custom-text-200 text-sm w-40"
+            customButtonClassName="flex flex-grow border border-subtle-1 rounded-md p-2 bg-surface-1 text-secondary text-13 w-40"
             closeOnSelect
             disabled={disableDropdown}
           >
@@ -213,37 +222,34 @@ export const AppConsent = observer(function AppConsent({
                 onClick={() => {
                   handleWorkspaceChange(workspace);
                 }}
-                className={cn(
-                  "flex items-center gap-2",
-                  selectedWorkspace?.id === workspace.id && "bg-custom-background-80"
-                )}
+                className={cn("flex items-center gap-2", selectedWorkspace?.id === workspace.id && "bg-layer-1")}
               >
                 <WorkspaceDetails workspace={workspace} />
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
         ) : (
-          <div className="text-sm text-custom-text-400">No workspaces available for this application.</div>
+          <div className="text-13 text-placeholder">No workspaces available for this application.</div>
         )}
         {hasPermissions ? (
           <>
             <div className="flex flex-col gap-y-2">
-              <div className="text-sm text-custom-text-200 font-medium">
+              <div className="text-13 text-secondary font-medium">
                 {t("workspace_settings.settings.applications.app_consent_workspace_permissions_title", {
                   app: application?.name,
                 })}
               </div>
-              <div className="flex flex-col space-y-2 py-2 border-b border-custom-border-200">
+              <div className="flex flex-col space-y-2 py-2 border-b border-subtle-1">
                 {workspaceLevelPermissions.map((permission) => (
                   <ApplicationPermissionText key={permission.key} permission={permission} />
                 ))}
               </div>
             </div>
             <div className="flex flex-col gap-y-2">
-              <div className="text-sm text-custom-text-200 font-medium">
+              <div className="text-13 text-secondary font-medium">
                 {t("workspace_settings.settings.applications.user_permissions")}
               </div>
-              <div className="text-sm text-custom-text-300">
+              <div className="text-13 text-tertiary">
                 {t("workspace_settings.settings.applications.app_consent_user_permissions_title", {
                   app: application?.name,
                 })}
@@ -256,10 +262,10 @@ export const AppConsent = observer(function AppConsent({
             </div>
 
             <div className="flex flex-col gap-y-1">
-              <div className="text-sm text-custom-text-300 font-medium">
+              <div className="text-13 text-tertiary font-medium">
                 {t("workspace_settings.settings.applications.app_consent_accept_title")}
               </div>
-              <ul className="list-disc list-inside text-custom-text-300 text-sm">
+              <ul className="list-disc list-inside text-tertiary text-13">
                 <li>{t("workspace_settings.settings.applications.app_consent_accept_1")}</li>
                 <li>
                   {t("workspace_settings.settings.applications.app_consent_accept_2", { app: application?.name })}
@@ -272,11 +278,11 @@ export const AppConsent = observer(function AppConsent({
             <div className="flex-shrink-0">
               <div
                 className={cn(
-                  "relative flex  justify-start items-start gap-2 p-2 px-4 w-full rounded-lg bg-custom-background-100 text-custom-text-300"
+                  "relative flex  justify-start items-start gap-2 p-2 px-4 w-full rounded-lg bg-surface-1 text-tertiary"
                 )}
               >
                 <CircleAlert className="size-4" />
-                <div className="text-sm font-medium text-start">
+                <div className="text-13 font-medium text-start">
                   {t("workspace_settings.settings.applications.app_consent_no_access_description")}
                 </div>
               </div>
@@ -286,13 +292,13 @@ export const AppConsent = observer(function AppConsent({
       </div>
       <div className="flex flex-row justify-end items-center gap-x-2 ml-auto">
         {hasPermissions && (
-          <Button variant="primary" size="sm" onClick={handleAccept} disabled={isSubmitting}>
+          <Button variant="primary" onClick={handleAccept} disabled={isSubmitting}>
             {isSubmitting
               ? t("workspace_settings.settings.applications.accepting")
               : t("workspace_settings.settings.applications.accept")}
           </Button>
         )}
-        <Button variant="neutral-primary" size="sm" onClick={handleCancel} disabled={isSubmitting}>
+        <Button variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
           {t("common.cancel")}
         </Button>
       </div>
@@ -305,19 +311,19 @@ function WorkspaceDetails(props: { workspace: IWorkspace }) {
   return (
     <>
       <span
-        className={`relative flex h-5 w-5 flex-shrink-0 items-center justify-center p-2 text-xs uppercase ${!workspace?.logo_url && "rounded bg-custom-primary-500 text-white"}`}
+        className={`relative flex h-5 w-5 flex-shrink-0 items-center justify-center p-2 text-11 uppercase ${!workspace?.logo_url && "rounded-sm bg-accent-primary text-on-color"}`}
       >
         {workspace?.logo_url && workspace.logo_url !== "" ? (
           <img
             src={getFileURL(workspace.logo_url)}
-            className="absolute left-0 top-0 h-full w-full rounded object-cover"
+            className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
             alt="Workspace Logo"
           />
         ) : (
           (workspace?.name?.[0] ?? "...")
         )}
       </span>
-      <span className="text-custom-text-300 truncate">{workspace?.name}</span>
+      <span className="text-tertiary truncate">{workspace?.name}</span>
     </>
   );
 }

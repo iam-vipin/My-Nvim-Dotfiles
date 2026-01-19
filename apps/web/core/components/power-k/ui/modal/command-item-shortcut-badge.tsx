@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 
 /**
@@ -70,7 +83,7 @@ export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
     <div className="shrink-0 pointer-events-none inline-flex items-center gap-1 select-none font-medium">
       {formatted?.split("").map((char, index) => (
         <React.Fragment key={index}>
-          <kbd className="inline-flex h-5 items-center justify-center rounded border border-custom-border-300 bg-custom-background-100 px-1.5 font-mono text-[10px] font-medium text-custom-text-300">
+          <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
             {char.toUpperCase()}
           </kbd>
         </React.Fragment>
@@ -98,10 +111,10 @@ export function KeySequenceBadge({ sequence }: { sequence: string | undefined })
     <div className="shrink-0 pointer-events-none inline-flex items-center gap-1 select-none font-medium">
       {chars.map((char, index) => (
         <React.Fragment key={index}>
-          <kbd className="inline-flex h-5 items-center justify-center rounded border border-custom-border-300 bg-custom-background-100 px-1.5 font-mono text-[10px] font-medium text-custom-text-300">
+          <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
             {char.toUpperCase()}
           </kbd>
-          {index < chars.length - 1 && <span className="text-[10px] text-custom-text-400">then</span>}
+          {index < chars.length - 1 && <span className="text-10 text-placeholder">then</span>}
         </React.Fragment>
       ))}
     </div>

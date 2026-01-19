@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -25,7 +38,7 @@ export interface IIssueStoreActions {
     removeModuleIds: string[]
   ) => Promise<void>;
   removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
-  fetchIssueWithIdentifier: (workspaceSlug: string, project_identifier: string, sequence_id: string) => Promise<TIssue>;
+  fetchWorkItemWithIdentifier: (workspaceSlug: string, identifier: string) => Promise<TIssue>;
 }
 
 export interface IIssueStore extends IIssueStoreActions {
@@ -286,77 +299,55 @@ export class IssueStore implements IIssueStore {
     return currentModule;
   };
 
-  fetchIssueWithIdentifier = async (workspaceSlug: string, project_identifier: string, sequence_id: string) => {
+  fetchWorkItemWithIdentifier = async (workspaceSlug: string, identifier: string) => {
     const query = {
       expand: "issue_reactions,issue_attachments,issue_link,parent",
     };
-    const issue = await this.issueService.retrieveWithIdentifier(workspaceSlug, project_identifier, sequence_id, query);
-    const issueIdentifier = `${project_identifier}-${sequence_id}`;
-    const issueId = issue?.id;
-    const projectId = issue?.project_id;
-    const rootWorkItemDetailStore = issue?.is_epic
+    const [projectIdentifier, sequenceId] = identifier.split("-");
+    const issue = await this.issueService.retrieveWithIdentifier(workspaceSlug, projectIdentifier, sequenceId, query);
+    const issueId = issue.id;
+    const projectId = issue.project_id;
+
+    if (!issue || !projectId || !issueId) throw new Error("Work item not found");
+
+    // determine work item store and service type
+    const workItemDetailStore = issue.is_epic
       ? this.rootIssueDetailStore.rootIssueStore.epicDetail
       : this.rootIssueDetailStore.rootIssueStore.issueDetail;
 
-    if (!issue || !projectId || !issueId) throw new Error("Issue not found");
-
     const issuePayload = this.addIssueToStore(issue);
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
+    // add identifiers to map
+    workItemDetailStore.rootIssueStore.issues.addIssueIdentifier(identifier, issueId);
 
-    // handle parent issue if exists
+    // handle parent work item if exists
+    const parentWorkItem = issue?.parent;
     if (
-      issue &&
-      issue?.parent &&
-      issue?.parent?.id &&
-      issue?.parent?.project_id &&
+      parentWorkItem &&
+      parentWorkItem.id &&
+      parentWorkItem.project_id &&
       this.serviceType === EIssueServiceType.ISSUES
     ) {
-      if (this.isEpic(projectId, issue?.parent)) {
-        this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
-          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-        });
-      } else {
-        this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
-          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-        });
-      }
+      const parentWorkItemRetrieveService = this.isEpic(projectId, parentWorkItem)
+        ? this.epicService
+        : this.issueService;
+      parentWorkItemRetrieveService
+        .retrieve(workspaceSlug, parentWorkItem.project_id, parentWorkItem.id)
+        .then((res) => this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]))
+        .catch((error) => console.error("Failed to retrieve parent work item", error));
     }
-    // add identifiers to map
-    rootWorkItemDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
 
-    // add related data
-    if (issue.issue_reactions) rootWorkItemDetailStore.addReactions(issue.id, issue.issue_reactions);
-    if (issue.issue_link) rootWorkItemDetailStore.addLinks(issue.id, issue.issue_link);
-    if (issue.issue_attachments) rootWorkItemDetailStore.addAttachments(issue.id, issue.issue_attachments);
-    rootWorkItemDetailStore.addSubscription(issue.id, issue.is_subscribed);
+    // update reactions
+    if (issue.issue_reactions) workItemDetailStore.addReactions(issue.id, issue.issue_reactions);
 
-    // fetch related data
-    // issue reactions
-    if (issue.issue_reactions) rootWorkItemDetailStore.addReactions(issueId, issue.issue_reactions);
+    // update links
+    if (issue.issue_link) workItemDetailStore.addLinks(issueId, issue.issue_link);
 
-    // fetch issue links
-    if (issue.issue_link) rootWorkItemDetailStore.addLinks(issueId, issue.issue_link);
+    // update attachments
+    if (issue.issue_attachments) workItemDetailStore.addAttachments(issueId, issue.issue_attachments);
 
-    // fetch issue attachments
-    if (issue.issue_attachments) rootWorkItemDetailStore.addAttachments(issueId, issue.issue_attachments);
-
-    rootWorkItemDetailStore.addSubscription(issueId, issue.is_subscribed);
-
-    // fetch issue activity
-    rootWorkItemDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-
-    // fetch issue comments
-    rootWorkItemDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
-
-    // fetch sub issues
-    rootWorkItemDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
-
-    // fetch issue relations
-    rootWorkItemDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
-
-    // fetching states
-    // TODO: check if this function is required
-    rootWorkItemDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
+    // update subscription
+    workItemDetailStore.addSubscription(issueId, issue.is_subscribed);
 
     return issue;
   };

@@ -1,6 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type {
@@ -50,17 +63,17 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
   function CustomerPropertyDetail() {
     return (
       <>
-        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
+        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-13 text-secondary")}>
           <span className="flex gap-0.5 items-center">
             <span className="truncate">{propertyDetail?.display_name}</span>
-            {propertyDetail?.is_required && <span className="text-red-500">*</span>}
+            {propertyDetail?.is_required && <span className="text-danger-primary">*</span>}
             {propertyDetail.description && (
               <Tooltip
                 tooltipContent={propertyDetail?.description}
                 position="right"
                 disabled={!propertyDetail?.description}
               >
-                <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
+                <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-tertiary cursor-pointer" />
               </Tooltip>
             )}
           </span>
@@ -190,7 +203,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
       )}
       {variant === "update" && (
         <div className={cn("flex w-full gap-1 items-center min-h-8")}>
-          <div className={cn("gap-1 flex-shrink-0 text-sm text-custom-text-300 w-2/5")}>
+          <div className={cn("gap-1 flex-shrink-0 text-body-xs-regular text-tertiary w-2/5")}>
             <CustomerPropertyDetail />
           </div>
           <div className={cn("relative h-full flex flex-col gap-0.5 w-3/5")}>{CurrentPropertyAttribute}</div>

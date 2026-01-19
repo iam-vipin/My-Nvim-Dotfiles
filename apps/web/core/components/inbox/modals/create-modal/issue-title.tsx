@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -32,12 +45,12 @@ export const InboxIssueTitle = observer(function InboxIssueTitle(props: TInboxIs
         value={data?.name}
         onChange={(e) => handleData("name", e.target.value)}
         placeholder={t("title")}
-        className="w-full text-base"
+        className="w-full text-14"
         tabIndex={getIndex("name")}
         required
       />
       {isTitleLengthMoreThan255Character && (
-        <span className="text-xs text-red-500">{t("title_should_be_less_than_255_characters")}</span>
+        <span className="text-11 text-danger-primary">{t("title_should_be_less_than_255_characters")}</span>
       )}
     </div>
   );

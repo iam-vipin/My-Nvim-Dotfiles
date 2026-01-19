@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // types
 import type {
   IWorkspaceDefaultEnhancedSearchResult,
@@ -22,7 +35,10 @@ import {
 } from "@plane/propel/icons";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
-import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// core imports
+import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
+// local components
 import { ActorAvatar, CommentItem } from "./comment-item";
 
 export const SearchItems: {
@@ -43,7 +59,7 @@ export const SearchItems: {
     icon: () => <CycleIcon className="size-4 my-auto" />,
     itemName: (cycle: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{cycle.project_identifier}</span> {cycle.name}
+        <span className="text-11 text-tertiary">{cycle.project_identifier}</span> {cycle.name}
       </h6>
     ),
     path: (cycle: IWorkspaceDefaultEnhancedSearchResult) =>
@@ -59,15 +75,12 @@ export const SearchItems: {
             issueTypeId={issue.type_id}
             projectIdentifier={issue.project_identifier}
             issueSequenceId={issue.sequence_id}
-            textContainerClassName="text-xs"
+            size="xs"
           />
         ) : (
           <div className="flex gap-2">
             <WorkItemsIcon width={16} height={16} className="my-auto" />
-            <IdentifierText
-              identifier={`${issue.project_identifier}-${issue.sequence_id}`}
-              textContainerClassName="text-xs"
-            />
+            <IdentifierText identifier={`${issue.project_identifier}-${issue.sequence_id}`} size="xs" />
           </div>
         )}
       </>
@@ -87,7 +100,7 @@ export const SearchItems: {
     icon: () => <ViewsIcon className="size-4 my-auto" />,
     itemName: (view: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{view.project_identifier}</span> {view.name}
+        <span className="text-11 text-tertiary">{view.project_identifier}</span> {view.name}
       </h6>
     ),
     path: (view: IWorkspaceDefaultEnhancedSearchResult) =>
@@ -98,7 +111,7 @@ export const SearchItems: {
     icon: () => <ModuleIcon className="size-4 my-auto" />,
     itemName: (module: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{module.project_identifier}</span> {module.name}
+        <span className="text-11 text-tertiary">{module.project_identifier}</span> {module.name}
       </h6>
     ),
     path: (module: IWorkspaceDefaultEnhancedSearchResult) =>
@@ -109,7 +122,7 @@ export const SearchItems: {
     icon: () => <PageIcon className="size-4 my-auto" />,
     itemName: (page: IWorkspacePageEnhancedSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{page.project_identifiers?.[0]}</span> {page.name}
+        <span className="text-11 text-tertiary">{page.project_identifiers?.[0]}</span> {page.name}
       </h6>
     ),
     path: (page: IWorkspacePageEnhancedSearchResult) => {
@@ -138,7 +151,7 @@ export const SearchItems: {
             issueTypeId={epic.type_id}
             projectIdentifier={epic.project_identifier}
             issueSequenceId={epic.sequence_id}
-            textContainerClassName="text-xs"
+            size="xs"
           />
         ) : (
           <EpicIcon width={16} height={16} className="my-auto" />

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -72,10 +85,10 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
               <button
                 key={displayProperty.key}
                 type="button"
-                className={`rounded border px-2 py-0.5 text-xs transition-all ${
+                className={`rounded-sm border px-2 py-0.5 text-11 transition-all ${
                   displayProperties?.[displayProperty.key]
-                    ? "border-custom-primary-100 bg-custom-primary-100 text-white"
-                    : "border-custom-border-200 hover:bg-custom-background-80"
+                    ? "border-accent-strong bg-accent-primary text-on-color"
+                    : "border-subtle hover:bg-layer-1"
                 }`}
                 onClick={() =>
                   handleUpdate({

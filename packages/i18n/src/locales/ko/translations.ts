@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "프로젝트",
@@ -300,7 +313,6 @@ export default {
   drafts: "초안",
   projects: "프로젝트",
   views: "보기",
-  workspace: "작업 공간",
   archives: "아카이브",
   settings: "설정",
   failed_to_move_favorite: "즐겨찾기 이동 실패",
@@ -1572,6 +1584,7 @@ export default {
         name: "작업 공간 이름",
         company_size: "회사 규모",
         url: "작업 공간 URL",
+        workspace_timezone: "작업 공간 시간대",
         update_workspace: "작업 공간 업데이트",
         delete_workspace: "이 작업 공간 삭제",
         delete_workspace_description:

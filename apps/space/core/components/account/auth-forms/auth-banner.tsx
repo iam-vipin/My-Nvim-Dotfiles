@@ -1,5 +1,17 @@
-import { Info } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { InfoIcon, CloseIcon } from "@plane/propel/icons";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 
@@ -13,13 +25,13 @@ export function AuthBanner(props: TAuthBanner) {
 
   if (!bannerData) return <></>;
   return (
-    <div className="relative flex items-center p-2 rounded-md gap-2 border border-custom-primary-100/50 bg-custom-primary-100/10">
+    <div className="relative flex items-center p-2 rounded-md gap-2 border border-accent-strong/50 bg-accent-primary/10">
       <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
-        <Info size={16} className="text-custom-primary-100" />
+        <InfoIcon width={16} height={16} className="text-accent-primary" />
       </div>
-      <div className="w-full text-sm font-medium text-custom-primary-100">{bannerData?.message}</div>
+      <div className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</div>
       <div
-        className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-custom-primary-100/20 text-custom-primary-100/80"
+        className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-accent-primary/20 text-accent-primary/80"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
         <CloseIcon className="w-4 h-4 flex-shrink-0" />

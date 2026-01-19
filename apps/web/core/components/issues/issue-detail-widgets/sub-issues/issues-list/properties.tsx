@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { SyntheticEvent } from "react";
 import { useMemo } from "react";
@@ -116,7 +129,6 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             }
             disabled={!canEdit}
             buttonVariant="border-without-text"
-            buttonClassName="border"
             showTooltip
           />
         </div>
@@ -144,7 +156,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlight ? "text-red-500" : ""}
+            buttonClassName={shouldHighlight ? "text-danger-primary" : ""}
             disabled={!canEdit}
             showTooltip
             customTooltipHeading="Date Range"
@@ -188,8 +200,8 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             placeholder={t("common.order_by.due_date")}
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlight ? "text-red-500" : ""}
-            clearIconClassName="text-custom-text-100"
+            buttonClassName={shouldHighlight ? "text-danger-primary" : ""}
+            clearIconClassName="text-primary"
             optionsClassName="z-30"
             disabled={!canEdit}
             showTooltip

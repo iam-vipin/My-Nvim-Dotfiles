@@ -29,11 +29,11 @@ export function BooleanInput({ property, isPreview = false, required = false }: 
         render={({ field: { value, onChange } }) => (
           <div className="flex items-center gap-3">
             <div>
-              <label htmlFor={fieldName} className="text-sm font-medium text-custom-text-300">
+              <label htmlFor={fieldName} className="text-13 font-medium text-tertiary">
                 {property.display_name}
-                {(required || property.is_required) && <span className="ml-0.5 text-red-500">*</span>}
+                {(required || property.is_required) && <span className="ml-0.5 text-danger-primary">*</span>}
               </label>
-              {property.description && <p className="mt-0.5 text-xs text-custom-text-400">{property.description}</p>}
+              {property.description && <p className="mt-0.5 text-11 text-placeholder">{property.description}</p>}
             </div>
             <Switch
               value={value === "true" || value === true}
@@ -44,7 +44,7 @@ export function BooleanInput({ property, isPreview = false, required = false }: 
           </div>
         )}
       />
-      {error && <span className="text-xs text-red-500">{error.message as string}</span>}
+      {error && <span className="text-11 text-danger-primary">{error.message as string}</span>}
     </div>
   );
 }

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -16,12 +29,12 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
-import { IssueFiltersService } from "@/services/issue_filter.service";
 import type { IBaseIssueFilterStore } from "../helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import type { IIssueRootStore } from "../root.store";
+import { ProjectService } from "@/services/project";
 // constants
 // services
 
@@ -56,7 +69,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   // root store
   rootIssueStore: IIssueRootStore;
   // services
-  issueFilterService;
+  projectService;
 
   constructor(_rootStore: IIssueRootStore) {
     super();
@@ -74,7 +87,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     // root store
     this.rootIssueStore = _rootStore;
     // services
-    this.issueFilterService = new IssueFiltersService();
+    this.projectService = new ProjectService();
   }
 
   get issueFilters() {
@@ -129,7 +142,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
-    const _filters = await this.issueFilterService.fetchProjectIssueFilters(workspaceSlug, projectId);
+    const _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
 
     const richFilters = _filters?.rich_filters;
     const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
@@ -176,7 +189,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       });
 
       this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
-      await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
+      await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
         rich_filters: filters,
       });
     } catch (error) {
@@ -238,7 +251,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
           }
 
-          await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
+          await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
             display_filters: _filters.displayFilters,
           });
 
@@ -258,7 +271,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
+          await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
             display_properties: _filters.displayProperties,
           });
           break;

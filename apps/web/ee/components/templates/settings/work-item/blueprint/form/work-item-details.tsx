@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import type { FieldPath, FieldValues } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
@@ -128,15 +141,15 @@ export function WorkItemBlueprintDetails<T extends FieldValues>(props: TWorkItem
               placeholder={placeholders?.name || t("templates.settings.form.work_item.name.placeholder")}
               className={cn("w-full", {
                 "p-0": inputBorderVariant === "true-transparent",
-                "text-lg font-bold": inputTextSize === "lg",
-                "text-base": inputTextSize === "md",
+                "text-h5-bold": inputTextSize === "lg",
+                "text-body-sm-regular": inputTextSize === "md",
               })}
               mode={inputBorderVariant}
             />
           )}
         />
         {nameError && typeof nameError.message === "string" && (
-          <span className="text-xs font-medium text-red-500">{nameError.message}</span>
+          <span className="text-caption-sm-medium text-danger-primary">{nameError.message}</span>
         )}
       </div>
       {/* Work Item Description */}
@@ -161,7 +174,7 @@ export function WorkItemBlueprintDetails<T extends FieldValues>(props: TWorkItem
                   : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
               }
               containerClassName={cn("min-h-[120px]", {
-                "border border-custom-border-100 py-2": inputBorderVariant === "primary",
+                "border border-subtle py-2": inputBorderVariant === "primary",
                 "px-0": inputBorderVariant === "true-transparent",
               })}
               disabledExtensions={["image", "attachments"]}

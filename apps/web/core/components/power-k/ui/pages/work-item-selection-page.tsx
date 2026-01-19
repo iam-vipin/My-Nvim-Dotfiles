@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState, useEffect } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
@@ -89,7 +102,8 @@ export function WorkItemSelectionPage(props: Props) {
                     projectId={issue.project_id}
                     projectIdentifier={issue.project_identifier}
                     issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-sm text-custom-text-200"
+                    size="sm"
+                    variant="secondary"
                   />
                 )}
                 <span className="truncate">{issue.name}</span>
@@ -112,7 +126,7 @@ export function WorkItemSelectionPage(props: Props) {
             emptyText="Search for issue id or issue title"
           />
         ) : (
-          <div className="px-3 py-8 text-center text-sm text-custom-text-300">Search for issue id or issue title</div>
+          <div className="px-3 py-8 text-center text-13 text-tertiary">Search for issue id or issue title</div>
         )
       ) : issueResults.length > 0 ? (
         <CommandPaletteEntityList
@@ -127,7 +141,8 @@ export function WorkItemSelectionPage(props: Props) {
                   projectId={issue.project_id}
                   projectIdentifier={issue.project__identifier}
                   issueSequenceId={issue.sequence_id}
-                  textContainerClassName="text-sm text-custom-text-200"
+                  size="sm"
+                  variant="secondary"
                 />
               )}
               <span className="truncate">{issue.name}</span>

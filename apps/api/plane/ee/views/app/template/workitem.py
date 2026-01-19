@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models.query import Prefetch
 
@@ -38,9 +49,9 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
                 .prefetch_related(
                     Prefetch(
                         "workitem_templates",
-                        queryset=WorkitemTemplate.objects.filter(
-                            workspace__slug=slug
-                        ).select_related("parent_workitem_template"),
+                        queryset=WorkitemTemplate.objects.filter(workspace__slug=slug).select_related(
+                            "parent_workitem_template"
+                        ),
                         to_attr="template_data",
                     )
                 )
@@ -50,15 +61,13 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         templates = (
-            Template.objects.filter(
-                workspace__slug=slug, template_type=Template.TemplateType.WORKITEM
-            )
+            Template.objects.filter(workspace__slug=slug, template_type=Template.TemplateType.WORKITEM)
             .prefetch_related(
                 Prefetch(
                     "workitem_templates",
-                    queryset=WorkitemTemplate.objects.filter(
-                        workspace__slug=slug
-                    ).select_related("parent_workitem_template"),
+                    queryset=WorkitemTemplate.objects.filter(workspace__slug=slug).select_related(
+                        "parent_workitem_template"
+                    ),
                     to_attr="template_data",
                 )
             )
@@ -92,13 +101,9 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
         # create a new template only after validation is successful
         template_serializer = TemplateSerializer(data=request.data)
         if template_serializer.is_valid():
-            template = template_serializer.save(
-                workspace=workspace, template_type=Template.TemplateType.WORKITEM
-            )
+            template = template_serializer.save(workspace=workspace, template_type=Template.TemplateType.WORKITEM)
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = {
             "template": str(template.id),
@@ -134,9 +139,9 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
                 .prefetch_related(
                     Prefetch(
                         "workitem_templates",
-                        queryset=WorkitemTemplate.objects.filter(
-                            workspace__slug=slug
-                        ).select_related("parent_workitem_template"),
+                        queryset=WorkitemTemplate.objects.filter(workspace__slug=slug).select_related(
+                            "parent_workitem_template"
+                        ),
                         to_attr="template_data",
                     ),
                 )
@@ -151,20 +156,14 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def patch(self, request, slug, pk):
-        template = Template.objects.get(
-            workspace__slug=slug, template_type=Template.TemplateType.WORKITEM, pk=pk
-        )
+        template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.WORKITEM, pk=pk)
         template_data = request.data.pop("template_data", {})
 
-        template_serializer = TemplateSerializer(
-            template, data=request.data, partial=True
-        )
+        template_serializer = TemplateSerializer(template, data=request.data, partial=True)
         if template_serializer.is_valid():
             template_serializer.save()
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # validate template data
         if template_data:
@@ -183,13 +182,9 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
                     return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
             # get the workitem template
-            workitem_template = WorkitemTemplate.objects.get(
-                workspace__slug=slug, template_id=pk
-            )
+            workitem_template = WorkitemTemplate.objects.get(workspace__slug=slug, template_id=pk)
             # validate the workitem template
-            workitem_serializer = WorkitemTemplateSerializer(
-                workitem_template, data=template_data, partial=True
-            )
+            workitem_serializer = WorkitemTemplateSerializer(workitem_template, data=template_data, partial=True)
             if workitem_serializer.is_valid():
                 workitem_serializer.save()
                 # delete the existing subworkitem templates
@@ -213,18 +208,16 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
                 WorkitemTemplate.objects.bulk_create(bulk_subworkitem_data)
 
             else:
-                return Response(
-                    workitem_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(workitem_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         # Fetch the template and work item
         template = (
             Template.objects.filter(pk=pk)
             .prefetch_related(
                 Prefetch(
                     "workitem_templates",
-                    queryset=WorkitemTemplate.objects.filter(
-                        workspace__slug=slug
-                    ).select_related("parent_workitem_template"),
+                    queryset=WorkitemTemplate.objects.filter(workspace__slug=slug).select_related(
+                        "parent_workitem_template"
+                    ),
                     to_attr="template_data",
                 )
             )
@@ -236,9 +229,7 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def delete(self, request, slug, pk):
-        template = Template.objects.get(
-            workspace__slug=slug, template_type=Template.TemplateType.WORKITEM, pk=pk
-        )
+        template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.WORKITEM, pk=pk)
         template.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -247,7 +238,6 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def get(self, request, slug, project_id, pk=None):
-
         if pk:
             templates = (
                 Template.objects.filter(
@@ -268,9 +258,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
                 .first()
             )
             if not templates:
-                return Response(
-                    {"error": "Template not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Template not found"}, status=status.HTTP_404_NOT_FOUND)
 
             serializer = TemplateDataSerializer(templates)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -318,13 +306,9 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
         # create a new template
         template_serializer = TemplateSerializer(data=request.data)
         if template_serializer.is_valid():
-            template = template_serializer.save(
-                project_id=project_id, template_type=Template.TemplateType.WORKITEM
-            )
+            template = template_serializer.save(project_id=project_id, template_type=Template.TemplateType.WORKITEM)
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = {
             "template": str(template.id),
@@ -410,9 +394,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
                 workspace__slug=slug, template_id=pk, project_id=project_id
             )
             # validate the workitem template
-            workitem_serializer = WorkitemTemplateSerializer(
-                workitem_template, data=template_data, partial=True
-            )
+            workitem_serializer = WorkitemTemplateSerializer(workitem_template, data=template_data, partial=True)
             if workitem_serializer.is_valid():
                 workitem_serializer.save()
                 # delete the existing subworkitem templates
@@ -435,9 +417,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
                     )
                 WorkitemTemplate.objects.bulk_create(bulk_subworkitem_data)
             else:
-                return Response(
-                    workitem_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(workitem_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Fetch the template and work item
         template = (
@@ -445,9 +425,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
             .prefetch_related(
                 Prefetch(
                     "workitem_templates",
-                    queryset=WorkitemTemplate.objects.filter(
-                        project_id=project_id, workspace__slug=slug
-                    ),
+                    queryset=WorkitemTemplate.objects.filter(project_id=project_id, workspace__slug=slug),
                     to_attr="template_data",
                 )
             )

@@ -1,9 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
-import { StopCircle, Download, Lock, LockOpen, Pencil, Trash2 } from "lucide-react";
+import { StopCircle, Download, LockOpen } from "lucide-react";
+import { LockIcon, EditIcon, TrashIcon, CommentReplyIcon } from "@plane/propel/icons";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CommentReplyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -57,7 +70,7 @@ export const useQuickActionsFactory = () => {
     ): TContextMenuItem => ({
       key: "toggle-lock",
       title: opts.isLocked ? "Unlock" : "Lock",
-      icon: opts.isLocked ? LockOpen : Lock,
+      icon: opts.isLocked ? LockOpen : LockIcon,
       action: handler,
       shouldRender: opts.shouldRender,
     }),
@@ -130,12 +143,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -198,12 +211,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -279,7 +292,7 @@ export const useQuickActionsFactory = () => {
               {
                 key: "toggle-lock",
                 title: props.isLocked ? "Unlock" : "Lock",
-                icon: props.isLocked ? LockOpen : Lock,
+                icon: props.isLocked ? LockOpen : LockIcon,
                 action: handleToggleLock,
                 shouldRender: true,
               } as TContextMenuItem,
@@ -315,12 +328,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -380,12 +393,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -434,12 +447,12 @@ export const useQuickActionsFactory = () => {
             title: "Export started",
             message: "Your export will be ready soon.",
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={`/${props.workspaceSlug}/settings/exports`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View Exports
                 </a>
@@ -479,7 +492,7 @@ export const useQuickActionsFactory = () => {
     createReplyEditMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "edit",
       title: coreFactory.createCommentEditMenuItem(handler, shouldRender).title,
-      icon: Pencil,
+      icon: EditIcon,
       action: handler,
       shouldRender,
     }),
@@ -487,7 +500,7 @@ export const useQuickActionsFactory = () => {
     createReplyDeleteMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "delete",
       title: coreFactory.createCommentDeleteMenuItem(handler, shouldRender).title,
-      icon: Trash2,
+      icon: TrashIcon,
       action: handler,
       shouldRender,
     }),

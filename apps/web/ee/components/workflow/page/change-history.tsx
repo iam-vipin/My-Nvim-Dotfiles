@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC, ReactNode } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
@@ -32,7 +45,7 @@ type TWorkflowChangeHistoryItemProps = {
 };
 
 export type TWorkflowChangeHistoryDetails = {
-  icon: ReactNode;
+  icon: FC<{ className?: string }>;
   message: ReactNode;
   customUserName?: string;
 };
@@ -41,24 +54,23 @@ export type TWorkflowChangeHistoryDetailsHelperMap = {
   [key in TWorkflowChangeHistoryKeys]: (changeHistory: TWorkflowChangeHistory) => TWorkflowChangeHistoryDetails;
 };
 
-const commonIconClassName = "h-4 w-4 flex-shrink-0 text-custom-text-300";
-const commonTextClassName = "text-custom-text-100 font-medium";
+const commonTextClassName = "text-primary font-medium";
 
 export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryDetailsHelperMap> = {
   is_workflow_enabled_enabled: () => ({
-    icon: <WorkflowIcon className={commonIconClassName} />,
+    icon: WorkflowIcon,
     message: <>enabled the workflow.</>,
   }),
   is_workflow_enabled_disabled: () => ({
-    icon: <WorkflowIcon className={commonIconClassName} />,
+    icon: WorkflowIcon,
     message: <>disabled the workflow.</>,
   }),
   reset_updated: () => ({
-    icon: <WorkflowIcon className={commonIconClassName} />,
+    icon: WorkflowIcon,
     message: <>reset the workflow.</>,
   }),
   allow_work_item_creation_enabled: (activity: TWorkflowChangeHistory) => ({
-    icon: <LayersIcon className={commonIconClassName} />,
+    icon: LayersIcon,
     message: (
       <>
         allowed new work item creation in{" "}
@@ -67,7 +79,7 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
     ),
   }),
   allow_work_item_creation_disabled: (activity: TWorkflowChangeHistory) => ({
-    icon: <LayersIcon className={commonIconClassName} />,
+    icon: LayersIcon,
     message: (
       <>
         disallowed new work item creation in{" "}
@@ -76,7 +88,7 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
     ),
   }),
   state_transition_added: (activity: TWorkflowChangeHistory) => ({
-    icon: <WorkflowIcon className={commonIconClassName} />,
+    icon: WorkflowIcon,
     message: (
       <>
         added a state-change rule from{" "}
@@ -86,7 +98,7 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
     ),
   }),
   state_transition_removed: (activity: TWorkflowChangeHistory) => ({
-    icon: <WorkflowIcon className={commonIconClassName} />,
+    icon: WorkflowIcon,
     message: (
       <>
         removed a state-change rule from{" "}
@@ -96,7 +108,7 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
     ),
   }),
   state_transition_approver_added: (activity: TWorkflowChangeHistory) => ({
-    icon: <ApproverIcon className={commonIconClassName} />,
+    icon: ApproverIcon,
     message: (
       <>
         made{" "}
@@ -111,7 +123,7 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
     ),
   }),
   state_transition_approver_removed: (activity: TWorkflowChangeHistory) => ({
-    icon: <ApproverIcon className={commonIconClassName} />,
+    icon: ApproverIcon,
     message: (
       <>
         removed{" "}
@@ -188,7 +200,7 @@ export const WorkflowChangeHistory = observer(function WorkflowChangeHistory(pro
     <div
       ref={ref}
       className={cn(
-        "absolute top-0 right-0 h-full z-[19] -my-6 -mx-4 flex flex-col justify-between gap-4 w-[368px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-l border-custom-sidebar-border-200 shadow-md py-4",
+        "absolute top-0 right-0 h-full z-[19] -my-6 -mx-4 flex flex-col justify-between gap-4 w-[368px] transform transition-all duration-300 ease-in-out bg-surface-1 border-l border-subtle shadow-md py-4",
         {
           "opacity-100": isOpen,
           "opacity-0 invisible": !isOpen,
@@ -201,20 +213,15 @@ export const WorkflowChangeHistory = observer(function WorkflowChangeHistory(pro
       <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
         <div className="p-4 pt-2 flex flex-col">
           <div className="flex gap-2 items-center justify-between">
-            <span className="text-lg font-medium">{t("common.change_history")}</span>
+            <span className="text-16 font-medium">{t("common.change_history")}</span>
             <span className="flex items-center gap-2">
               {workflowChangeHistoryLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
               <ActivitySortRoot
                 sortOrder={workflowChangeHistorySortOrder}
                 toggleSort={toggleWorkflowChangeHistorySortOrder}
-                className="py-1"
-                iconClassName="size-3"
               />
               <div
-                className={cn(
-                  getButtonStyling("neutral-primary", "sm"),
-                  "py-1 px-2 text-custom-text-300 cursor-pointer"
-                )}
+                className={cn(getButtonStyling("secondary", "base"), "py-1 px-2 text-tertiary cursor-pointer")}
                 onClick={onClose}
               >
                 <CloseIcon className="size-3" />

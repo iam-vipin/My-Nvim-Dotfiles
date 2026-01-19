@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -39,22 +52,21 @@ export const WorkFlowGroupTree = observer(function WorkFlowGroupTree(props: Prop
   return (
     <Tooltip
       tooltipContent={<WorkFlowEnabledMessage parentStateId={groupId} />}
-      className="p-3 border-[0.5px] border-custom-border-300 shadow-lg"
+      className="p-3 border-[0.5px] border-subtle-1 shadow-lg"
       position="bottom-start"
     >
       <div
         className={cn(
-          "flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded transition-all",
+          "flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all bg-layer-transparent hover:bg-layer-transparent-hover text-icon-primary",
           {
             "bg-[#00A0CC]/15": isTransitionEnabledForUser,
-            "bg-custom-background-80 hover:bg-custom-background-80": !isTransitionEnabledForUser,
           }
         )}
       >
         {isTransitionEnabledForUser ? (
           <ApproverIcon width={14} strokeWidth={2} className="text-[#00A0CC]" />
         ) : (
-          <WorkflowIcon width={14} strokeWidth={2} className="text-custom-text-200" />
+          <WorkflowIcon width={14} strokeWidth={2} className="text-secondary" />
         )}
       </div>
     </Tooltip>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -128,7 +141,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   ) : (
     <div
       className={
-        "h-11 relative flex items-center gap-3 bg-custom-background-100 border border-transparent border-t-custom-border-200 pl-8 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+        "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-subtle-1 pl-8 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
       }
       onClick={() => loadMoreIssues(group.id)}
     >
@@ -250,13 +263,13 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   return validateEmptyIssueGroups(groupIssueCount) ? (
     <div
       ref={groupRef}
-      className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
-        "border-custom-primary-100": isDraggingOverColumn,
-        "border-custom-error-200": isDraggingOverColumn && isDropDisabled,
+      className={cn(`relative flex flex-shrink-0 flex-col`, {
+        "border-accent-strong": isDraggingOverColumn,
+        "border-danger-subtle": isDraggingOverColumn && isDropDisabled,
       })}
     >
       <Row
-        className={cn("w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1", {
+        className={cn("w-full flex-shrink-0 border-b border-subtle bg-layer-1 hover:bg-layer-1-hover pr-3 py-1", {
           "sticky top-0 z-[2]": isExpanded && groupIssueCount > 0,
         })}
       >
@@ -306,7 +319,17 @@ export const ListGroup = observer(function ListGroup(props: Props) {
             />
           )}
 
-          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
+          {shouldLoadMore &&
+            (group_by ? (
+              <>{loadMore}</>
+            ) : (
+              <>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <ListLoaderItemRow key={index} />
+                ))}
+                <ListLoaderItemRow ref={setIntersectionElement} />
+              </>
+            ))}
 
           {enableIssueQuickAdd &&
             !disableIssueCreation &&
@@ -318,7 +341,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
                   layout={EIssueLayoutTypes.LIST}
                   QuickAddButton={ListQuickAddIssueButton}
                   prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
-                  containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
+                  containerClassName="border-b border-t border-subtle bg-surface-1 "
                   quickAddCallback={quickAddCallback}
                   isEpic={isEpic}
                 />

@@ -1,13 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import {
-  AUTH_TRACKER_EVENTS,
-  E_PASSWORD_STRENGTH,
-  ONBOARDING_TRACKER_ELEMENTS,
-  USER_TRACKER_EVENTS,
-} from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -16,12 +24,9 @@ import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
-import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
-// constants
-// helpers
 // hooks
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -118,18 +123,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const handleSetPassword = async (password: string) => {
     const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
-    await authService
-      .setPassword(token, { password })
-      .then(() => {
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.password_created,
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.password_created,
-        });
-      });
+    await authService.setPassword(token, { password });
   };
 
   const handleSubmitProfileSetup = async (formData: TProfileSetupFormValues) => {
@@ -148,13 +142,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: profileUpdatePayload.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -165,9 +152,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         finishOnboarding();
       }
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -188,20 +172,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         formData.password && handleSetPassword(formData.password),
       ]).then(() => {
         if (formData.password) {
-          captureView({
-            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SELECTED,
-          });
         } else {
-          captureView({
-            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SKIPPED,
-          });
+          setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
         }
-        setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
       });
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -220,13 +195,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: profileUpdatePayload.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -237,9 +205,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         finishOnboarding();
       }
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -250,9 +215,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!user) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
     if (profileSetupStep === EProfileSetupSteps.ALL) await handleSubmitProfileSetup(formData);
     if (profileSetupStep === EProfileSetupSteps.USER_DETAILS) await handleSubmitUserDetail(formData);
     if (profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION) await handleSubmitUserPersonalization(formData);
@@ -315,11 +277,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   {!userAvatar || userAvatar === "" ? (
                     <div className="flex flex-col items-center justify-between">
                       <div className="relative h-14 w-14 overflow-hidden">
-                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-white text-3xl font-medium bg-[#9747FF] uppercase">
+                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-on-color text-24 font-medium bg-accent-primary uppercase">
                           {watch("first_name")[0] ?? "R"}
                         </div>
                       </div>
-                      <div className="pt-1 text-sm font-medium text-custom-primary-300 hover:text-custom-primary-400">
+                      <div className="pt-1 text-13 font-medium text-accent-secondary hover:text-tertiary">
                         Choose image
                       </div>
                     </div>
@@ -338,7 +300,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label
-                    className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="first_name"
                   >
                     First name
@@ -348,9 +310,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="first_name"
                     rules={{
                       required: "First name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "First name must be within 24 characters.",
+                        value: 50,
+                        message: "First name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -364,16 +327,18 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         ref={ref}
                         hasError={Boolean(errors.first_name)}
                         placeholder="Wilbur"
-                        className="w-full border-custom-border-300"
+                        className="w-full border-strong"
                         autoComplete="on"
                       />
                     )}
                   />
-                  {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
+                  {errors.first_name && (
+                    <span className="text-13 text-danger-primary">{errors.first_name.message}</span>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <label
-                    className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="last_name"
                   >
                     Last name
@@ -383,9 +348,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="last_name"
                     rules={{
                       required: "Last name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "Last name must be within 24 characters.",
+                        value: 50,
+                        message: "Last name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -398,12 +364,12 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         ref={ref}
                         hasError={Boolean(errors.last_name)}
                         placeholder="Wright"
-                        className="w-full border-custom-border-300"
+                        className="w-full border-strong"
                         autoComplete="on"
                       />
                     )}
                   />
-                  {errors.last_name && <span className="text-sm text-red-500">{errors.last_name.message}</span>}
+                  {errors.last_name && <span className="text-13 text-danger-primary">{errors.last_name.message}</span>}
                 </div>
               </div>
 
@@ -411,7 +377,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               {!isPasswordAlreadySetup && (
                 <>
                   <div className="space-y-1">
-                    <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+                    <label className="text-13 text-tertiary font-medium" htmlFor="password">
                       Set a password ({t("common.optional")})
                     </label>
                     <Controller
@@ -430,19 +396,19 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.password)}
                             placeholder="New password..."
-                            className="w-full border-[0.5px] border-custom-border-100 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-[0.5px] border-subtle pr-12 placeholder:text-placeholder"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
-                            autoComplete="on"
+                            autoComplete="new-password"
                           />
                           {showPassword.password ? (
                             <EyeOff
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
                               onClick={() => handleShowPassword("password")}
                             />
                           ) : (
                             <Eye
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
                               onClick={() => handleShowPassword("password")}
                             />
                           )}
@@ -452,7 +418,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     <PasswordStrengthIndicator password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
+                    <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
                       {t("auth.common.password.confirm_password.label")} ({t("common.optional")})
                     </label>
                     <Controller
@@ -473,16 +439,17 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
-                            className="w-full border-custom-border-100 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-subtle pr-12 placeholder:text-placeholder"
+                            autoComplete="new-password"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
                               onClick={() => handleShowPassword("retypePassword")}
                             />
                           ) : (
                             <Eye
-                              className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
+                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
                               onClick={() => handleShowPassword("retypePassword")}
                             />
                           )}
@@ -490,7 +457,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       )}
                     />
                     {errors.confirm_password && (
-                      <span className="text-sm text-red-500">{errors.confirm_password.message}</span>
+                      <span className="text-13 text-danger-primary">{errors.confirm_password.message}</span>
                     )}
                   </div>
                 </>
@@ -503,7 +470,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
             <>
               <div className="space-y-1">
                 <label
-                  className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="role"
                 >
                   What role are you working on? Choose one.
@@ -520,10 +487,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         <div
                           key={userRole}
                           className={cn(
-                            "flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 rounded px-3 py-1.5 text-sm font-medium",
+                            "shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 rounded px-3 py-1.5 text-13 font-medium",
                             {
-                              "border-custom-primary-100": value === userRole,
-                              "border-custom-border-300": value !== userRole,
+                              "border-accent-strong": value === userRole,
+                              "border-strong": value !== userRole,
                             }
                           )}
                           onClick={() => onChange(userRole)}
@@ -534,11 +501,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
+                {errors.role && <span className="text-13 text-danger-primary">{errors.role.message}</span>}
               </div>
               <div className="space-y-1">
                 <label
-                  className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="use_case"
                 >
                   What is your domain expertise? Choose one or more.
@@ -557,9 +524,9 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         return (
                           <div
                             key={userDomain}
-                            className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
-                              isSelected ? "border-custom-primary-100" : "border-custom-border-300"
-                            } rounded px-3 py-1.5 text-sm font-medium`}
+                            className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
+                              isSelected ? "border-accent-strong" : "border-strong"
+                            } rounded px-3 py-1.5 text-13 font-medium`}
                             onClick={() => {
                               const currentValue = value || [];
                               if (isSelected) {
@@ -576,11 +543,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.use_case && <span className="text-sm text-red-500">{errors.use_case.message}</span>}
+                {errors.use_case && <span className="text-13 text-danger-primary">{errors.use_case.message}</span>}
               </div>
             </>
           )}
-          <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+          <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
             {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
           </Button>
         </form>

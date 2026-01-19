@@ -1,13 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Lock } from "lucide-react";
+import { LockIcon, TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
 import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, EIssueLayoutTypes } from "@plane/types";
@@ -125,7 +137,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label={t("teamspaces.label")}
-                  icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<TeamsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -149,7 +161,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/views`}
                   label={t("views")}
-                  icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -175,9 +187,9 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
         </div>
         {/* View access detail */}
         {view?.access === EViewAccess.PRIVATE ? (
-          <div className="cursor-default text-custom-text-300">
+          <div className="cursor-default text-tertiary">
             <Tooltip tooltipContent={"Private"}>
-              <Lock className="h-4 w-4" />
+              <LockIcon className="h-4 w-4" />
             </Tooltip>
           </div>
         ) : (
@@ -187,11 +199,11 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
         {view?.anchor && publishLink ? (
           <a
             href={publishLink}
-            className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-success-subtle text-success-primary rounded-sm text-caption-sm-medium flex items-center gap-1.5"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+            <span className="flex-shrink-0 rounded-full size-1.5 bg-success-primary" />
             {t("common.live")}
           </a>
         ) : (
@@ -228,7 +240,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
         {canUserCreateIssue ? (
           <Button
             onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds)}
-            size="sm"
+            size="lg"
           >
             <div className="hidden sm:block">Add</div> work item
           </Button>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -49,10 +62,10 @@ export const IssueKanbanLayoutRoot = observer(function IssueKanbanLayoutRoot(pro
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
       <div
-        className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 overflow-x-auto overflow-y-hidden`}
+        className="horizontal-scrollbar scrollbar-lg relative flex size-full overflow-x-auto overflow-y-hidden"
         ref={scrollableContainerRef}
       >
-        <div className="relative h-full w-max min-w-full bg-custom-background-90">
+        <div className="relative h-full w-max min-w-full">
           <div className="h-full w-max">
             <KanBan
               groupedIssueIds={groupedIssueIds ?? {}}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { TIssue, TPartialProject } from "@plane/types";
 // plane web imports
@@ -11,6 +24,7 @@ import type { MathematicsExtensionOptions } from "../extensions/mathematics/type
 import type { PiChatEditorMentionAttributes } from "../extensions/pi-chat-editor/mention/types";
 import type { TCommentConfig } from "./comments";
 import type { TEmbedConfig } from "./issue-embed";
+import type { CustomAIBlockExtensionProps } from "../extensions/ai-block/types";
 
 export type IEditorExtensionOptions = {
   [ADDITIONAL_EXTENSIONS.MATHEMATICS]?: Pick<MathematicsExtensionOptions, "onClick">;
@@ -36,7 +50,7 @@ export type IEditorPropsExtended = {
       projectsList: TPartialProject[];
     };
   };
-};
+} & CustomAIBlockExtensionProps;
 
 export type TExtendedEditorCommands =
   | "comment"
@@ -81,5 +95,5 @@ export type ICollaborativeDocumentEditorPropsExtended = {
 };
 
 export type TPiChatEditorApi = {
-  addChatContext: (attributes: PiChatEditorMentionAttributes) => boolean;
+  addChatContext: (attributes: PiChatEditorMentionAttributes, trailingText?: string) => boolean;
 };

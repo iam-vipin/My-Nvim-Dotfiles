@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "Catat ide, tangkap inspirasi, atau rekam pemikiran. Tambahkan catatan untuk memulai.",
     },
     stickies: {
-      title: "Catat ide, tangkap inspirasi, atau rekam pemikiran. Tambahkan catatan untuk memulai.",
-      cta_primary: "Tambahkan catatan",
+      title: "Tangkap ide secara instan",
+      description: "Buat catatan untuk catatan cepat dan daftar tugas, dan bawa bersama Anda ke mana pun Anda pergi.",
+      cta_primary: "Buat catatan pertama",
+      cta_secondary: "Dokumentasi",
     },
     active_cycles: {
       title: "Tidak ada siklus aktif",
@@ -106,11 +121,6 @@ export default {
       description:
         "Kurangi waktu pengaturan dengan membuat templat untuk proyek, item kerja, dan halaman — dan mulai pekerjaan baru dalam hitungan detik.",
       cta_primary: "Buat templat",
-    },
-    webhooks: {
-      title: "Belum ada Webhook yang ditambahkan",
-      description: "Otomatisasi notifikasi ke layanan eksternal ketika peristiwa proyek terjadi.",
-      cta_primary: "Tambahkan webhook",
     },
   },
 } as const;

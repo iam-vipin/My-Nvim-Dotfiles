@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
@@ -52,25 +65,25 @@ export const BusinessPlanFeatures = observer(function BusinessPlanFeatures(props
   return (
     <div className="flex flex-col bg-[#006399] rounded-lg w-[80%] md:w-[60%] md:flex-row">
       <div className="w-full py-6 px-4 flex flex-col gap-4 justify-around md:w-[40%] md:py-9 md:px-8 md:gap-5">
-        <div className="font-medium text-white flex items-center gap-1 justify-center md:gap-2">
+        <div className="font-medium text-on-color flex items-center gap-1 justify-center md:gap-2">
           <PlaneLockup className="h-5 w-auto md:h-6" />{" "}
-          <span className="font-bold text-xl mt-1 md:text-2xl md:mt-2">Business</span>
+          <span className="font-bold text-18 mt-1 md:text-20 md:mt-2">Business</span>
         </div>
         <div className="space-y-0.5 md:space-y-1">
-          <p className="text-white text-center font-medium text-sm md:text-base">Your trial is active now!</p>
-          <p className="text-white/60 text-xs text-center md:text-sm">
+          <p className="text-on-color text-center font-medium text-13 md:text-14">Your trial is active now!</p>
+          <p className="text-on-color/60 text-11 text-center md:text-13">
             Unlock your team&apos;s full potential for 14 days
           </p>
         </div>
         <div className="hidden md:block">
           <img src={tourImage} className="w-full" alt="Welcome" />
         </div>
-        <p className="text-center text-xs text-white/60 md:text-sm">You can use free plan after your trial ends</p>
+        <p className="text-center text-11 text-on-color/60 md:text-13">You can use free plan after your trial ends</p>
       </div>
       <div className="w-full p-2 md:w-[60%]">
-        <div className="bg-custom-background-100 rounded-lg p-3 px-4 h-full flex flex-col justify-between gap-4 items-start md:p-4 md:px-6 md:gap-6">
-          <p className="font-medium text-custom-text-100 text-base md:text-lg">
-            Features you&apos;ll get with <span className="text-custom-primary-90">Business</span> plan
+        <div className="bg-surface-1 rounded-lg p-3 px-4 h-full flex flex-col justify-between gap-4 items-start md:p-4 md:px-6 md:gap-6">
+          <p className="font-medium text-primary text-14 md:text-16">
+            Features you&apos;ll get with <span className="text-accent-secondary">Business</span> plan
           </p>
           <div className="scale-90 md:scale-100 origin-left">
             <Avatar
@@ -80,20 +93,20 @@ export const BusinessPlanFeatures = observer(function BusinessPlanFeatures(props
               shape="square"
             />
           </div>
-          <p className="text-sm md:text-base">
+          <p className="text-13 md:text-14">
             <span className="font-medium">{currentWorkspace?.name}</span> workspace with Business
           </p>
           <table className="w-full">
             <thead>
               <tr>
                 <th className="text-left">
-                  <div className="font-bold bg-custom-background-80/50 text-custom-text-300 p-0.5 px-1.5 rounded-md w-fit text-xs md:p-1 md:px-2 md:text-sm">
+                  <div className="font-bold bg-layer-1/50 text-tertiary p-0.5 px-1.5 rounded-md w-fit text-11 md:p-1 md:px-2 md:text-13">
                     Free
                   </div>
                 </th>
                 <th className="text-left">{""}</th>
                 <th className="text-left">
-                  <div className="font-bold bg-custom-background-80 text-custom-text-200 p-0.5 px-1.5 rounded-md w-fit text-xs md:p-1 md:px-2 md:text-sm">
+                  <div className="font-bold bg-layer-1 text-secondary p-0.5 px-1.5 rounded-md w-fit text-11 md:p-1 md:px-2 md:text-13">
                     Business
                   </div>
                 </th>
@@ -102,11 +115,11 @@ export const BusinessPlanFeatures = observer(function BusinessPlanFeatures(props
             <tbody>
               {BUSINESS_FEATURES.map((feature, index) => (
                 <tr key={index} className="font-medium">
-                  <td className="text-left text-custom-text-400 text-xs py-2 md:text-sm md:py-3">{feature.free}</td>
+                  <td className="text-left text-placeholder text-11 py-2 md:text-13 md:py-3">{feature.free}</td>
                   <td className="text-left py-2 md:py-3">
                     <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
                   </td>
-                  <td className="text-left text-custom-text-200 text-xs py-2 md:text-sm md:py-3">{feature.business}</td>
+                  <td className="text-left text-secondary text-11 py-2 md:text-13 md:py-3">{feature.business}</td>
                 </tr>
               ))}
             </tbody>

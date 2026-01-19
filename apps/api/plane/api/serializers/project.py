@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 import random
 from rest_framework import serializers
@@ -25,7 +36,7 @@ from plane.ee.models import WorkitemTemplate, ProjectFeature
 from plane.payment.flags.flag import FeatureFlag
 
 
-class  ProjectCreateSerializer(BaseSerializer):
+class ProjectCreateSerializer(BaseSerializer):
     """
     Serializer for creating projects with workspace validation.
 
@@ -131,6 +142,7 @@ class  ProjectCreateSerializer(BaseSerializer):
 
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
+
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 

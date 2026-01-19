@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { MutableRefObject } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -50,10 +63,8 @@ export const SpreadsheetProjectRow = observer(function SpreadsheetProjectRow(pro
         as="tr"
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
-        placeholderChildren={
-          <td colSpan={100} className="border-[0.5px] border-transparent border-b-custom-border-200" />
-        }
-        classNames={cn("bg-custom-background-100 transition-[background-color]")}
+        placeholderChildren={<td colSpan={100} className="border-[0.5px] border-transparent border-b-subtle-1" />}
+        classNames={cn("bg-surface-1 transition-[background-color]")}
         verticalOffset={100}
       >
         <ProjectRowDetails
@@ -106,12 +117,12 @@ const ProjectRowDetails = observer(function ProjectRowDetails(props: ProjectRowD
         id={`project-${projectId}`}
         ref={cellRef}
         tabIndex={0}
-        className="sticky left-0 z-10 group/list-block bg-custom-background-100"
+        className="sticky left-0 z-10 group/list-block bg-surface-1"
       >
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/issues`}
           className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-13 after:absolute border-r-[0.5px] z-10 border-subtle-1 bg-transparent group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
             {
               "border-b-[0.5px]": true,
 
@@ -123,16 +134,14 @@ const ProjectRowDetails = observer(function ProjectRowDetails(props: ProjectRowD
           }}
         >
           <div className="flex items-center gap-2 justify-between h-full w-full pr-4 pl-4 truncate">
-            <div className="w-full line-clamp-1 text-sm text-custom-text-100">
+            <div className="w-full line-clamp-1 text-14 text-primary">
               <div className="w-full overflow-hidden">
                 <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile}>
                   <div
-                    className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none flex gap-5"
+                    className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-primary focus:outline-none flex gap-5"
                     tabIndex={-1}
                   >
-                    <span className="text-custom-text-300  w-[60px] text-xs self-center">
-                      {projectDetails.identifier}
-                    </span>
+                    <span className="text-tertiary  w-[60px] text-11 self-center">{projectDetails.identifier}</span>
                     <span className="max-w-[300px] truncate"> {projectDetails.name}</span>
                   </div>
                 </Tooltip>

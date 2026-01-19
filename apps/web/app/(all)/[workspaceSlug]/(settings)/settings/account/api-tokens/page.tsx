@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // component
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -14,7 +26,6 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const apiTokenService = new APITokenService();
@@ -51,9 +62,6 @@ function ApiTokensPage() {
               button={{
                 label: t("workspace_settings.settings.api_tokens.add_token"),
                 onClick: () => {
-                  captureClick({
-                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
-                  });
                   setIsCreateTokenModalOpen(true);
                 },
               }}
@@ -72,9 +80,6 @@ function ApiTokensPage() {
               button={{
                 label: t("workspace_settings.settings.api_tokens.add_token"),
                 onClick: () => {
-                  captureClick({
-                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
-                  });
                   setIsCreateTokenModalOpen(true);
                 },
               }}
@@ -89,9 +94,6 @@ function ApiTokensPage() {
                 {
                   label: t("settings_empty_state.tokens.cta_primary"),
                   onClick: () => {
-                    captureClick({
-                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
-                    });
                     setIsCreateTokenModalOpen(true);
                   },
                 },

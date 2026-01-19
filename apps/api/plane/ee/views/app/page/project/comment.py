@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.utils import timezone
 from django.db import IntegrityError
@@ -57,18 +68,14 @@ class ProjectPageCommentViewSet(BaseViewSet):
         else:
             # fetch all the latest child comments
             latest_child_comments = (
-                PageComment.objects.filter(
-                    workspace__slug=slug, page_id=page_id, parent__isnull=False
-                )
+                PageComment.objects.filter(workspace__slug=slug, page_id=page_id, parent__isnull=False)
                 .order_by("parent_id", "-created_at")
                 .distinct("parent_id")
                 .values_list("id", flat=True)
             )
 
             page_comments = (
-                PageComment.objects.filter(
-                    Q(id__in=latest_child_comments) | Q(parent__isnull=True)
-                )
+                PageComment.objects.filter(Q(id__in=latest_child_comments) | Q(parent__isnull=True))
                 .filter(
                     workspace__slug=slug,
                     project_id=project_id,
@@ -111,17 +118,10 @@ class ProjectPageCommentViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
     def partial_update(self, request, slug, project_id, page_id, comment_id):
-        page_comment = PageComment.objects.get(
-            workspace__slug=slug, page_id=page_id, pk=comment_id
-        )
-        serializer = PageCommentSerializer(
-            page_comment, data=request.data, partial=True
-        )
+        page_comment = PageComment.objects.get(workspace__slug=slug, page_id=page_id, pk=comment_id)
+        serializer = PageCommentSerializer(page_comment, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                "comment_html" in request.data
-                and request.data["comment_html"] != page_comment.comment_html
-            ):
+            if "comment_html" in request.data and request.data["comment_html"] != page_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
             else:
                 serializer.save()
@@ -131,9 +131,7 @@ class ProjectPageCommentViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
     def destroy(self, request, slug, project_id, page_id, comment_id):
-        page_comment = PageComment.objects.get(
-            workspace__slug=slug, page_id=page_id, pk=comment_id
-        )
+        page_comment = PageComment.objects.get(workspace__slug=slug, page_id=page_id, pk=comment_id)
         page_comment.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)

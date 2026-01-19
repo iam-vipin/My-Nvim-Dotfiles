@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.core.management import BaseCommand
 
@@ -15,12 +26,8 @@ class Command(BaseCommand):
         batch_countdown = input("Enter the batch countdown: ")
 
         # Trigger the member sync task with the workspace slug
-        schedule_workspace_billing_task.delay(
-            batch_size=int(batch_size), batch_countdown=int(batch_countdown)
-        )
+        schedule_workspace_billing_task.delay(batch_size=int(batch_size), batch_countdown=int(batch_countdown))
 
         # Print the success message
-        self.stdout.write(
-            self.style.SUCCESS("Successfully triggered the license seat sync task")
-        )
+        self.stdout.write(self.style.SUCCESS("Successfully triggered the license seat sync task"))
         return

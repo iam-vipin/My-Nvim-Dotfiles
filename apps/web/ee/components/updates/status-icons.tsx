@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/propel/icons";
 import { EUpdateStatus } from "@plane/types";
 import { capitalizeFirstLetter, cn, generateIconColors } from "@plane/utils";
@@ -64,10 +77,10 @@ export function UpdateStatusIcons({
           }}
           className={cn(
             sizes[size].container,
-            "flex-shrink-0 place-items-center rounded-full bg-custom-background-80 flex gap-1 p-1 justify-center",
+            "flex-shrink-0 place-items-center rounded-full bg-layer-1 flex gap-1 p-1 justify-center",
             className,
             {
-              "border border-dashed border-custom-border-300": !status,
+              "border border-dashed border-subtle-1": !status,
               "px-2 w-auto": showText,
             }
           )}
@@ -83,7 +96,7 @@ export function UpdateStatusIcons({
             />
           )}
           {showText && (
-            <span className="text-xs font-semibold" style={{ color: iconColor }}>
+            <span className="text-11 font-semibold" style={{ color: iconColor }}>
               {statusType && capitalizeFirstLetter(statusType.replaceAll("-", " ").toLowerCase())}
             </span>
           )}

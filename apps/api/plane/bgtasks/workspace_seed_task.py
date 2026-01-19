@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import os
 import json
@@ -21,7 +32,7 @@ from plane.db.models import (
     WorkspaceMember,
     Project,
     ProjectMember,
-    IssueUserProperty,
+    ProjectUserProperty,
     State,
     Label,
     Issue,
@@ -94,7 +105,7 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
         project_seed.pop("name", None)
         project_seed.pop("identifier", None)
 
-        project = Project.objects.create(
+        project = Project(
             **project_seed,
             workspace=workspace,
             name=workspace.name,  # Use workspace name
@@ -105,58 +116,63 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
             module_view=True,
             issue_views_view=True,
         )
+        project.save(created_by_id=bot_user.id, disable_auto_set_user=True)
 
         # Create project members
-        ProjectMember.objects.bulk_create([
-            ProjectMember(
-                project=project,
-                member_id=workspace_member["member_id"],
-                role=workspace_member["role"],
-                workspace_id=workspace.id,
-                created_by_id=bot_user.id,
-            )
-            for workspace_member in workspace_members
-        ])
+        ProjectMember.objects.bulk_create(
+            [
+                ProjectMember(
+                    project=project,
+                    member_id=workspace_member["member_id"],
+                    role=workspace_member["role"],
+                    workspace_id=workspace.id,
+                    created_by_id=bot_user.id,
+                )
+                for workspace_member in workspace_members
+            ]
+        )
 
         # Create issue user properties
-        IssueUserProperty.objects.bulk_create([
-            IssueUserProperty(
-                project=project,
-                user_id=workspace_member["member_id"],
-                workspace_id=workspace.id,
-                display_filters={
-                    "layout": "list",
-                    "calendar": {"layout": "month", "show_weekends": False},
-                    "group_by": "state",
-                    "order_by": "sort_order",
-                    "sub_issue": True,
-                    "sub_group_by": None,
-                    "show_empty_groups": True,
-                },
-                display_properties={
-                    "key": True,
-                    "link": True,
-                    "cycle": False,
-                    "state": True,
-                    "labels": False,
-                    "modules": False,
-                    "assignee": True,
-                    "due_date": False,
-                    "estimate": True,
-                    "priority": True,
-                    "created_on": True,
-                    "issue_type": True,
-                    "start_date": False,
-                    "updated_on": True,
-                    "customer_count": True,
-                    "sub_issue_count": False,
-                    "attachment_count": False,
-                    "customer_request_count": True,
-                },
-                created_by_id=bot_user.id,
-            )
-            for workspace_member in workspace_members
-        ])
+        ProjectUserProperty.objects.bulk_create(
+            [
+                ProjectUserProperty(
+                    project=project,
+                    user_id=workspace_member["member_id"],
+                    workspace_id=workspace.id,
+                    display_filters={
+                        "layout": "list",
+                        "calendar": {"layout": "month", "show_weekends": False},
+                        "group_by": "state",
+                        "order_by": "sort_order",
+                        "sub_issue": True,
+                        "sub_group_by": None,
+                        "show_empty_groups": True,
+                    },
+                    display_properties={
+                        "key": True,
+                        "link": True,
+                        "cycle": False,
+                        "state": True,
+                        "labels": False,
+                        "modules": False,
+                        "assignee": True,
+                        "due_date": False,
+                        "estimate": True,
+                        "priority": True,
+                        "created_on": True,
+                        "issue_type": True,
+                        "start_date": False,
+                        "updated_on": True,
+                        "customer_count": True,
+                        "sub_issue_count": False,
+                        "attachment_count": False,
+                        "customer_request_count": True,
+                    },
+                    created_by_id=bot_user.id,
+                )
+                for workspace_member in workspace_members
+            ]
+        )
         # update map
         projects_map[project_id] = project.id
         logger.info(f"Task: workspace_seed_task -> Project {project_id} created")
@@ -187,13 +203,13 @@ def create_project_states(
         state_id = state_seed.pop("id")
         project_id = state_seed.pop("project_id")
 
-        state = State.objects.create(
+        state = State(
             **state_seed,
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
         )
-
+        state.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         state_map[state_id] = state.id
         logger.info(f"Task: workspace_seed_task -> State {state_id} created")
     return state_map
@@ -220,12 +236,13 @@ def create_project_labels(
     for label_seed in label_seeds:
         label_id = label_seed.pop("id")
         project_id = label_seed.pop("project_id")
-        label = Label.objects.create(
+        label = Label(
             **label_seed,
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
         )
+        label.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         label_map[label_id] = label.id
 
         logger.info(f"Task: workspace_seed_task -> Label {label_id} created")
@@ -272,13 +289,14 @@ def create_project_issues(
         cycle_id = issue_seed.pop("cycle_id")
         module_ids = issue_seed.pop("module_ids")
 
-        issue = Issue.objects.create(
+        issue = Issue(
             **issue_seed,
             state_id=states_map[state_id],
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
         )
+        issue.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         IssueSequence.objects.create(
             issue=issue,
             project_id=project_map[project_id],
@@ -347,7 +365,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
     for page_seed in page_seeds:
         page_id = page_seed.pop("id")
 
-        page = Page.objects.create(
+        page = Page(
             workspace_id=workspace.id,
             is_global=page_seed.get("type") == "WORKSPACE",
             access=page_seed.get("access", Page.PUBLIC_ACCESS),
@@ -361,16 +379,18 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
             owned_by_id=bot_user.id,
         )
 
+        page.save(created_by_id=bot_user.id, disable_auto_set_user=True)
+
         logger.info(f"Task: workspace_seed_task -> Page {page_id} created")
         if page_seed.get("project_id") and page_seed.get("type") == "PROJECT":
-            ProjectPage.objects.create(
+            project_page = ProjectPage(
                 workspace_id=workspace.id,
                 project_id=project_map[page_seed.get("project_id")],
                 page_id=page.id,
                 created_by_id=bot_user.id,
                 updated_by_id=bot_user.id,
             )
-
+            project_page.save(created_by_id=bot_user.id, disable_auto_set_user=True)
             logger.info(f"Task: workspace_seed_task -> Project Page {page_id} created")
     return
 
@@ -410,7 +430,7 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_u
                 start_date = timezone.now() + timedelta(days=14)
                 end_date = start_date + timedelta(days=14)
 
-        cycle = Cycle.objects.create(
+        cycle = Cycle(
             **cycle_seed,
             start_date=start_date,
             end_date=end_date,
@@ -419,6 +439,7 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_u
             created_by_id=bot_user.id,
             owned_by_id=bot_user.id,
         )
+        cycle.save(created_by_id=bot_user.id, disable_auto_set_user=True)
 
         cycle_map[cycle_id] = cycle.id
         logger.info(f"Task: workspace_seed_task -> Cycle {cycle_id} created")
@@ -446,7 +467,7 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_
         start_date = timezone.now() + timedelta(days=index * 2)
         end_date = start_date + timedelta(days=14)
 
-        module = Module.objects.create(
+        module = Module(
             **module_seed,
             start_date=start_date,
             target_date=end_date,
@@ -454,6 +475,7 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_
             workspace=workspace,
             created_by_id=bot_user.id,
         )
+        module.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         module_map[module_id] = module.id
         logger.info(f"Task: workspace_seed_task -> Module {module_id} created")
     return module_map
@@ -475,13 +497,14 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
     for view_seed in view_seeds:
         project_id = view_seed.pop("project_id")
         view_seed.pop("id")
-        IssueView.objects.create(
+        issue_view = IssueView(
             **view_seed,
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
             owned_by_id=bot_user.id,
         )
+        issue_view.save(created_by_id=bot_user.id, disable_auto_set_user=True)
 
 
 @shared_task
@@ -513,6 +536,14 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
             email=f"bot_user_{workspace.id}@plane.so",
             password=make_password(uuid.uuid4().hex),
             is_password_autoset=True,
+        )
+
+        # Add bot user to workspace as member
+        WorkspaceMember.objects.create(
+            workspace=workspace,
+            member=bot_user,
+            role=20,
+            company_role="",
         )
 
         # Create a project with the same name as workspace

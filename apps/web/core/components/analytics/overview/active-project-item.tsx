@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane package imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
@@ -16,9 +29,10 @@ type Props = {
 };
 
 function CompletionPercentage({ percentage }: { percentage: number }) {
-  const percentageColor = percentage > 50 ? "bg-green-500/30 text-green-500" : "bg-red-500/30 text-red-500";
+  const percentageColor =
+    percentage > 50 ? "bg-success-subtle text-success-primary" : "bg-danger-subtle text-danger-primary";
   return (
-    <div className={cn("flex items-center gap-2 rounded p-1 text-xs", percentageColor)}>
+    <div className={cn("flex items-center gap-2 rounded-sm p-1 text-11", percentageColor)}>
       <span>{percentage}%</span>
     </div>
   );
@@ -36,7 +50,7 @@ function ActiveProjectItem(props: Props) {
   return (
     <div className="flex items-center justify-between gap-2 w-full">
       <div className="flex items-center gap-2 flex-1 overflow-hidden">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-custom-background-80 shrink-0">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-layer-1 shrink-0">
           <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
             {projectDetails?.logo_props ? (
               <Logo logo={projectDetails?.logo_props} size={16} />
@@ -48,7 +62,7 @@ function ActiveProjectItem(props: Props) {
           </span>
         </div>
         <Tooltip tooltipContent={projectDetails?.name} position="top-start">
-          <p className="text-sm font-medium truncate">{projectDetails?.name}</p>
+          <p className="text-13 font-medium truncate">{projectDetails?.name}</p>
         </Tooltip>
       </div>
       <CompletionPercentage

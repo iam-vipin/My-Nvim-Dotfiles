@@ -1,4 +1,16 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 
@@ -25,8 +37,6 @@ export const PageCommentThreadReplyList = observer(function PageCommentThreadRep
   // Get thread display state - single source of truth
   const threadState = page.comments.getThreadDisplayState(threadId, showReplies);
 
-  if (!threadState) return null;
-
   // Only fetch thread comments when showReplies is true (user clicked to expand)
   const { isLoading, data: dataFromServer } = useSWR(
     showReplies && threadId ? `THREAD-COMMENTS-${threadId}` : null,
@@ -40,6 +50,8 @@ export const PageCommentThreadReplyList = observer(function PageCommentThreadRep
       dedupingInterval: 5000,
     }
   );
+
+  if (!threadState) return null;
 
   return (
     <div className="overflow-hidden animate-expand relative">

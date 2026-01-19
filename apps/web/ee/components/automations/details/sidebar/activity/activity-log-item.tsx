@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Repeat } from "lucide-react";
 // plane imports
@@ -37,11 +50,11 @@ export const AutomationDetailsSidebarActivityLogItem = observer(function Automat
 
   return (
     <>
-      <div className="shrink-0 ring-6 size-7 rounded-full overflow-hidden grid place-items-center z-[4] bg-custom-background-80 text-custom-text-200 border-2 border-transparent transition-border duration-1000">
+      <div className="shrink-0 size-7 rounded-full overflow-hidden grid place-items-center z-[4] bg-layer-3 text-secondary border-2 border-transparent transition-border duration-1000">
         <ActivityIcon className="size-3.5" />
       </div>
       <div className="w-full">
-        <div className="text-custom-text-200">
+        <div className="text-secondary">
           <span>{activityActorDetails?.display_name}</span>
           <span> {activityListItemDetails.titleContent} </span>
           <span>
@@ -49,10 +62,7 @@ export const AutomationDetailsSidebarActivityLogItem = observer(function Automat
               isMobile={isMobile}
               tooltipContent={`${renderFormattedDate(activityDetails.created_at)}, ${renderFormattedTime(activityDetails.created_at ?? "")}`}
             >
-              <span className="whitespace-nowrap text-custom-text-350">
-                {" "}
-                {calculateTimeAgo(activityDetails.created_at)}
-              </span>
+              <span className="whitespace-nowrap text-tertiary"> {calculateTimeAgo(activityDetails.created_at)}</span>
             </Tooltip>
           </span>
         </div>

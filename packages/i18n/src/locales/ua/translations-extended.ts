@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Ім'я користувача",
+        placeholder: "Введіть ваше ім'я користувача",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Продовжити з {ldapProviderName}",
+        sub_header: "Введіть ваші облікові дані {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Пі Чат",
     initiatives: "Інішіативз",
@@ -709,6 +736,11 @@ export default {
       worklogs: {
         title: "Ворклоги",
       },
+      identity: {
+        title: "Ідентичність",
+        heading: "Ідентичність",
+        description: "Налаштуйте свій домен і увімкніть єдиний вхід",
+      },
       project_states: {
         title: "Проджект стейти",
       },
@@ -910,6 +942,54 @@ export default {
         heading: "Plane AI",
         description:
           "Переглядайте, як ваша робота стає розумнішою та швидшою завдяки штучному інтелекту, який напряму пов'язаний з вашою роботою та базою знань.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "Імпорт учасників з CSV",
+      description: "Завантажте CSV зі стовпцями: Email, Display Name, First Name, Last Name, Role (5, 15 або 20)",
+      dropzone: {
+        active: "Перетягніть CSV файл сюди",
+        inactive: "Перетягніть або натисніть для завантаження",
+        file_type: "Підтримуються лише файли .csv",
+      },
+      buttons: {
+        cancel: "Скасувати",
+        import: "Імпортувати",
+        try_again: "Спробувати знову",
+        close: "Закрити",
+        done: "Готово",
+      },
+      progress: {
+        uploading: "Завантаження...",
+        importing: "Імпорт...",
+      },
+      summary: {
+        title: {
+          failed: "Імпорт не вдався",
+          complete: "Імпорт завершено",
+        },
+        message: {
+          seat_limit: "Не вдалося імпортувати учасників через обмеження кількості місць.",
+          success: "Успішно додано {count} учасник{plural} до робочого простору.",
+          no_imports: "Учасники не були імпортовані з CSV файлу.",
+        },
+        stats: {
+          successful: "Успішно",
+          failed: "Не вдалося",
+        },
+        download_errors: "Завантажити помилки",
+      },
+      toast: {
+        invalid_file: {
+          title: "Недійсний файл",
+          message: "Підтримуються лише CSV файли.",
+        },
+        import_failed: {
+          title: "Імпорт не вдався",
+          message: "Щось пішло не так.",
+        },
       },
     },
   },
@@ -1381,6 +1461,22 @@ export default {
     choose_entity: "Виберіть Сутність",
     choose_project: "Виберіть Проджект",
     link_plane_project: "Прив'язати проджект Плейн",
+    project_issue_sync: "Синхронізація задач проджекту",
+    project_issue_sync_description: "Синхронізуйте задачі з Gitlab до вашого проджекту Plane",
+    project_issue_sync_empty_state: "Мапінг синхронізації задач проджекту з'явиться тут",
+    configure_project_issue_sync_state: "Налаштувати стан синхронізації задач",
+    select_issue_sync_direction: "Виберіть напрямок синхронізації задач",
+    allow_bidirectional_sync: "Двосторонній - Синхронізувати задачі та коментарі в обох напрямках між Gitlab і Plane",
+    allow_unidirectional_sync: "Односторонній - Синхронізувати задачі та коментарі лише з Gitlab до Plane",
+    allow_unidirectional_sync_warning:
+      "Дані з Gitlab Issue замінять дані в пов'язаному робочому елементі Plane (лише Gitlab → Plane)",
+    remove_project_issue_sync: "Видалити цю синхронізацію задач проджекту",
+    remove_project_issue_sync_confirmation: "Ви впевнені, що хочете видалити цю синхронізацію задач проджекту?",
+    ISSUE_OPEN: "Задача відкрита",
+    ISSUE_CLOSED: "Задача закрита",
+    save: "Зберегти",
+    start_sync: "Почати синхронізацію",
+    choose_repository: "Виберіть репозиторій...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3133,6 +3229,220 @@ export default {
         title: "Автоматизації",
         description: "Автоматизації - це спосіб автоматизувати завдання у вашому проекті.",
         sub_description: "Поверніть 80% свого адміністративного часу, коли використовуєте автоматизації.",
+      },
+    },
+  },
+  sso: {
+    header: "Ідентичність",
+    description: "Налаштуйте свій домен для доступу до функцій безпеки, включаючи єдиний вхід.",
+    domain_management: {
+      header: "Управління доменами",
+      verified_domains: {
+        header: "Перевірені домени",
+        description: "Перевірте право власності на домен електронної пошти, щоб увімкнути єдиний вхід.",
+        button_text: "Додати домен",
+        list: {
+          domain_name: "Назва домену",
+          status: "Статус",
+          status_verified: "Перевірено",
+          status_failed: "Не вдалося",
+          status_pending: "Очікує",
+        },
+        add_domain: {
+          title: "Додати домен",
+          description: "Додайте свій домен для налаштування SSO та його перевірки.",
+          form: {
+            domain_label: "Домен",
+            domain_placeholder: "plane.so",
+            domain_required: "Домен обов&apos;язковий",
+            domain_invalid: "Введіть дійсну назву домену (напр. plane.so)",
+          },
+          primary_button_text: "Додати домен",
+          primary_button_loading_text: "Додавання",
+          toast: {
+            success_title: "Успіх!",
+            success_message: "Домен успішно додано. Будь ласка, перевірте його, додавши запис DNS TXT.",
+            error_message: "Не вдалося додати домен. Будь ласка, спробуйте ще раз.",
+          },
+        },
+        verify_domain: {
+          title: "Перевірте свій домен",
+          description: "Виконайте ці кроки, щоб перевірити свій домен.",
+          instructions: {
+            label: "Інструкції",
+            step_1: "Перейдіть до налаштувань DNS для вашого хостинг-провайдера домену.",
+            step_2: {
+              part_1: "Створіть",
+              part_2: "запис TXT",
+              part_3: "та вставте повне значення запису, вказане нижче.",
+            },
+            step_3: "Це оновлення зазвичай займає кілька хвилин, але може зайняти до 72 годин.",
+            step_4: 'Натисніть "Перевірити домен", щоб підтвердити після оновлення запису DNS.',
+          },
+          verification_code_label: "Значення запису TXT",
+          verification_code_description: "Додайте цей запис до налаштувань DNS",
+          domain_label: "Домен",
+          primary_button_text: "Перевірити домен",
+          primary_button_loading_text: "Перевірка",
+          secondary_button_text: "Зроблю це пізніше",
+          toast: {
+            success_title: "Успіх!",
+            success_message: "Домен успішно перевірено.",
+            error_message: "Не вдалося перевірити домен. Будь ласка, спробуйте ще раз.",
+          },
+        },
+        delete_domain: {
+          title: "Видалити домен",
+          description: {
+            prefix: "Ви впевнені, що хочете видалити",
+            suffix: "? Цю дію неможливо скасувати.",
+          },
+          primary_button_text: "Видалити",
+          primary_button_loading_text: "Видалення",
+          secondary_button_text: "Скасувати",
+          toast: {
+            success_title: "Успіх!",
+            success_message: "Домен успішно видалено.",
+            error_message: "Не вдалося видалити домен. Будь ласка, спробуйте ще раз.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Єдиний вхід",
+      disabled_message: "Додайте перевірений домен для налаштування SSO",
+      configure: {
+        create: "Налаштувати",
+        update: "Редагувати",
+      },
+      switch_alert_modal: {
+        title: "Перемкнути метод SSO на {newProviderShortName}?",
+        content:
+          "Ви збираєтеся увімкнути {newProviderLongName} ({newProviderShortName}). Ця дія автоматично вимкне {activeProviderLongName} ({activeProviderShortName}). Користувачі, які намагаються увійти через {activeProviderShortName}, більше не зможуть отримати доступ до платформи, поки не перемкнуться на новий метод. Ви впевнені, що хочете продовжити?",
+        primary_button_text: "Перемкнути",
+        primary_button_text_loading: "Перемикання",
+        secondary_button_text: "Скасувати",
+      },
+      form_section: {
+        title: "Деталі, надані IdP для {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Збереження",
+        save_changes: "Зберегти зміни",
+        configure_only: "Тільки налаштування",
+        configure_and_enable: "Налаштувати та увімкнути",
+        default: "Зберегти",
+      },
+      setup_details_section: {
+        title: "{workspaceName} деталі, надані для вашого IdP",
+        button_text: "Отримати деталі налаштування",
+      },
+      saml: {
+        header: "Увімкнути SAML",
+        description: "Налаштуйте свого постачальника ідентичності SAML для ввімкнення єдиного входу.",
+        configure: {
+          title: "Увімкнути SAML",
+          description:
+            "Перевірте право власності на домен електронної пошти для доступу до функцій безпеки, включаючи єдиний вхід.",
+          toast: {
+            success_title: "Успіх!",
+            create_success_message: "Постачальник SAML успішно створено.",
+            update_success_message: "Постачальник SAML успішно оновлено.",
+            error_title: "Помилка!",
+            error_message: "Не вдалося зберегти постачальника SAML. Будь ласка, спробуйте ще раз.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Веб-деталі",
+            entity_id: {
+              label: "ID сутності | Аудиторія | Інформація про метадані",
+              description:
+                "Ми згенеруємо цю частину метаданих, яка ідентифікує цю програму Plane як авторизований сервіс у вашому IdP.",
+            },
+            callback_url: {
+              label: "URL єдиного входу",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення входу вашого IdP.",
+            },
+            logout_url: {
+              label: "URL єдиного виходу",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення єдиного виходу вашого IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Мобільні деталі",
+            entity_id: {
+              label: "ID сутності | Аудиторія | Інформація про метадані",
+              description:
+                "Ми згенеруємо цю частину метаданих, яка ідентифікує цю програму Plane як авторизований сервіс у вашому IdP.",
+            },
+            callback_url: {
+              label: "URL єдиного входу",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення входу вашого IdP.",
+            },
+            logout_url: {
+              label: "URL єдиного виходу",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення виходу вашого IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Деталі відображення",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Увімкнути OIDC",
+        description: "Налаштуйте свого постачальника ідентичності OIDC для ввімкнення єдиного входу.",
+        configure: {
+          title: "Увімкнути OIDC",
+          description:
+            "Перевірте право власності на домен електронної пошти для доступу до функцій безпеки, включаючи єдиний вхід.",
+          toast: {
+            success_title: "Успіх!",
+            create_success_message: "Постачальник OIDC успішно створено.",
+            update_success_message: "Постачальник OIDC успішно оновлено.",
+            error_title: "Помилка!",
+            error_message: "Не вдалося зберегти постачальника OIDC. Будь ласка, спробуйте ще раз.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Веб-деталі",
+            origin_url: {
+              label: "URL джерела",
+              description:
+                "Ми згенеруємо це для цієї програми Plane. Додайте це як надійне джерело у відповідне поле вашого IdP.",
+            },
+            callback_url: {
+              label: "URL перенаправлення",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення входу вашого IdP.",
+            },
+            logout_url: {
+              label: "URL виходу",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення виходу вашого IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Мобільні деталі",
+            origin_url: {
+              label: "URL джерела",
+              description:
+                "Ми згенеруємо це для цієї програми Plane. Додайте це як надійне джерело у відповідне поле вашого IdP.",
+            },
+            callback_url: {
+              label: "URL перенаправлення",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення входу вашого IdP.",
+            },
+            logout_url: {
+              label: "URL виходу",
+              description: "Ми згенеруємо це для вас. Додайте це в поле URL перенаправлення виходу вашого IdP.",
+            },
+          },
+        },
       },
     },
   },

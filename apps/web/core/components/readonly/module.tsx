@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Layers } from "lucide-react";
@@ -38,13 +51,14 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
 
   useEffect(() => {
     if (moduleIds.length > 0 && projectId) {
-      fetchModules(workspaceSlug, projectId);
+      void fetchModules(workspaceSlug, projectId);
     }
-  }, [value, projectId, workspaceSlug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, projectId, workspaceSlug, fetchModules]);
 
   if (modules.length === 0) {
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
         <span className="flex-grow truncate">{placeholder ?? t("common.none")}</span>
       </div>
@@ -56,7 +70,7 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
       showCount && modules.length > 1 ? `${modules[0]?.name} +${modules.length - 1}` : modules[0]?.name;
 
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
         <span className="flex-grow truncate">{displayText}</span>
       </div>
@@ -65,7 +79,7 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
 
   const moduleItem = modules[0];
   return (
-    <div className={cn("flex items-center gap-2 text-sm", className)}>
+    <div className={cn("flex items-center gap-2 text-body-xs-regular", className)}>
       {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{moduleItem?.name}</span>
     </div>

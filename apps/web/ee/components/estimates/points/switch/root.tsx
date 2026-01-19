@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { capitalize } from "lodash-es";
@@ -214,25 +227,25 @@ export const EstimatePointSwitchRoot = observer(function EstimatePointSwitchRoot
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </div>
-          <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.switch")}</div>
+          <div className="text-18 font-medium text-secondary">{t("project_settings.estimates.switch")}</div>
         </div>
       </div>
 
       <div className="space-y-3 px-5 pb-5">
-        <div className="text-sm font-medium flex items-center gap-4">
-          <div className="w-full text-custom-text-400">{t("project_settings.estimates.current")}</div>
+        <div className="text-13 font-medium flex items-center gap-4">
+          <div className="w-full text-placeholder">{t("project_settings.estimates.current")}</div>
           <div className="flex-shrink-0 w-4" />
-          <div className="w-full text-custom-text-400">{t("project_settings.estimates.new")}</div>
+          <div className="w-full text-placeholder">{t("project_settings.estimates.new")}</div>
         </div>
 
         <div className="font-medium flex items-center gap-2">
-          <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+          <div className="w-full border border-subtle-1 rounded-sm px-3 py-2 bg-layer-1 text-13">
             {capitalize(estimate?.type)}
           </div>
           <div className="flex-shrink-0 w-4 h-4 relative flex justify-center items-center">
             <MoveRight size={12} />
           </div>
-          <div className="w-full text-sm">
+          <div className="w-full text-13">
             <EstimateSwitchDropdown
               estimateType={estimateSystemSwitchType}
               onChange={(value) => setEstimateSystemSwitchType && setEstimateSystemSwitchType(value)}
@@ -242,7 +255,7 @@ export const EstimatePointSwitchRoot = observer(function EstimatePointSwitchRoot
         </div>
         {estimateSystemSwitchType && (
           <>
-            <div className="border-t-[0.5px] border-custom-border-200" />
+            <div className="border-t-[0.5px] border-subtle-1" />
             <div className="space-y-6">
               {estimatePoints.map((estimateObject, index) => (
                 <div key={estimateObject?.id}>
@@ -263,17 +276,12 @@ export const EstimatePointSwitchRoot = observer(function EstimatePointSwitchRoot
         )}
       </div>
 
-      <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle-1">
+        <Button variant="secondary" onClick={handleClose}>
           {t("common.cancel")}
         </Button>
 
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={handleSwitchEstimate}
-          disabled={switchLoader || !estimateSystemSwitchType}
-        >
+        <Button variant="primary" onClick={handleSwitchEstimate} disabled={switchLoader || !estimateSystemSwitchType}>
           {switchLoader ? t("common.updating") : t("common.update")}
         </Button>
       </div>

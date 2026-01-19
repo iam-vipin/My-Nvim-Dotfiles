@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "ユーザー名",
+        placeholder: "ユーザー名を入力してください",
+      },
+    },
+    ldap: {
+      header: {
+        label: "{ldapProviderName}で続行",
+        sub_header: "{ldapProviderName}の認証情報を入力してください",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "PIチャット",
     initiatives: "イニシアチブ",
@@ -706,6 +733,11 @@ export default {
       worklogs: {
         title: "作業ログ",
       },
+      identity: {
+        title: "アイデンティティ",
+        heading: "アイデンティティ",
+        description: "ドメインを設定し、シングルサインオンを有効にします",
+      },
       project_states: {
         title: "プロジェクトの状態",
       },
@@ -904,6 +936,54 @@ export default {
         title: "Plane AI",
         heading: "Plane AI",
         description: "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "CSVからメンバーをインポート",
+      description: "次の列を含むCSVをアップロード：Email, Display Name, First Name, Last Name, Role（5、15、または20）",
+      dropzone: {
+        active: "CSVファイルをここにドロップ",
+        inactive: "ドラッグ＆ドロップまたはクリックしてアップロード",
+        file_type: ".csvファイルのみサポートされています",
+      },
+      buttons: {
+        cancel: "キャンセル",
+        import: "インポート",
+        try_again: "再試行",
+        close: "閉じる",
+        done: "完了",
+      },
+      progress: {
+        uploading: "アップロード中...",
+        importing: "インポート中...",
+      },
+      summary: {
+        title: {
+          failed: "インポート失敗",
+          complete: "インポート完了",
+        },
+        message: {
+          seat_limit: "シート制限によりメンバーをインポートできません。",
+          success: "{count}人のメンバーをワークスペースに追加しました。",
+          no_imports: "CSVファイルからメンバーがインポートされませんでした。",
+        },
+        stats: {
+          successful: "成功",
+          failed: "失敗",
+        },
+        download_errors: "エラーをダウンロード",
+      },
+      toast: {
+        invalid_file: {
+          title: "無効なファイル",
+          message: "CSVファイルのみサポートされています。",
+        },
+        import_failed: {
+          title: "インポート失敗",
+          message: "問題が発生しました。",
+        },
       },
     },
   },
@@ -1374,6 +1454,22 @@ export default {
     choose_entity: "エンティティを選択",
     choose_project: "プロジェクトを選択",
     link_plane_project: "Planeプロジェクトをリンク",
+    project_issue_sync: "プロジェクト課題同期",
+    project_issue_sync_description: "GitlabからPlaneプロジェクトに課題を同期します",
+    project_issue_sync_empty_state: "マッピングされたプロジェクト課題同期がここに表示されます",
+    configure_project_issue_sync_state: "課題同期状態を設定",
+    select_issue_sync_direction: "課題同期の方向を選択",
+    allow_bidirectional_sync: "双方向 - GitlabとPlane間で課題とコメントを双方向に同期",
+    allow_unidirectional_sync: "一方向 - GitlabからPlaneへのみ課題とコメントを同期",
+    allow_unidirectional_sync_warning:
+      "Gitlab Issueのデータがリンクされた Plane ワークアイテムのデータを置き換えます（Gitlab → Planeのみ）",
+    remove_project_issue_sync: "このプロジェクト課題同期を削除",
+    remove_project_issue_sync_confirmation: "このプロジェクト課題同期を削除してもよろしいですか？",
+    ISSUE_OPEN: "課題オープン",
+    ISSUE_CLOSED: "課題クローズ",
+    save: "保存",
+    start_sync: "同期開始",
+    choose_repository: "リポジトリを選択...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3110,6 +3206,216 @@ export default {
         title: "自動化",
         description: "自動化は、プロジェクト内のタスクを自動化する方法です。",
         sub_description: "自動化を使用すると、管理時間の80%を節約できます。",
+      },
+    },
+  },
+  sso: {
+    header: "アイデンティティ",
+    description: "シングルサインオンを含むセキュリティ機能にアクセスするためにドメインを設定します。",
+    domain_management: {
+      header: "ドメイン管理",
+      verified_domains: {
+        header: "検証済みドメイン",
+        description: "メールドメインの所有権を確認してシングルサインオンを有効にします。",
+        button_text: "ドメインを追加",
+        list: {
+          domain_name: "ドメイン名",
+          status: "ステータス",
+          status_verified: "検証済み",
+          status_failed: "失敗",
+          status_pending: "保留中",
+        },
+        add_domain: {
+          title: "ドメインを追加",
+          description: "SSOを設定して検証するためにドメインを追加します。",
+          form: {
+            domain_label: "ドメイン",
+            domain_placeholder: "plane.so",
+            domain_required: "ドメインは必須です",
+            domain_invalid: "有効なドメイン名を入力してください（例：plane.so）",
+          },
+          primary_button_text: "ドメインを追加",
+          primary_button_loading_text: "追加中",
+          toast: {
+            success_title: "成功！",
+            success_message: "ドメインが正常に追加されました。DNS TXTレコードを追加して検証してください。",
+            error_message: "ドメインの追加に失敗しました。もう一度お試しください。",
+          },
+        },
+        verify_domain: {
+          title: "ドメインを検証",
+          description: "これらの手順に従ってドメインを検証します。",
+          instructions: {
+            label: "手順",
+            step_1: "ドメインホストのDNS設定に移動します。",
+            step_2: {
+              part_1: "",
+              part_2: "TXTレコード",
+              part_3: "を作成し、以下に提供された完全なレコード値を貼り付けます。",
+            },
+            step_3: "この更新は通常数分かかりますが、完了まで最大72時間かかる場合があります。",
+            step_4: "DNSレコードが更新されたら、「ドメインを検証」をクリックして確認します。",
+          },
+          verification_code_label: "TXTレコードの値",
+          verification_code_description: "このレコードをDNS設定に追加してください",
+          domain_label: "ドメイン",
+          primary_button_text: "ドメインを検証",
+          primary_button_loading_text: "検証中",
+          secondary_button_text: "後で行います",
+          toast: {
+            success_title: "成功！",
+            success_message: "ドメインが正常に検証されました。",
+            error_message: "ドメインの検証に失敗しました。もう一度お試しください。",
+          },
+        },
+        delete_domain: {
+          title: "ドメインを削除",
+          description: {
+            prefix: "本当に削除しますか",
+            suffix: "？この操作は元に戻せません。",
+          },
+          primary_button_text: "削除",
+          primary_button_loading_text: "削除中",
+          secondary_button_text: "キャンセル",
+          toast: {
+            success_title: "成功！",
+            success_message: "ドメインが正常に削除されました。",
+            error_message: "ドメインの削除に失敗しました。もう一度お試しください。",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "シングルサインオン",
+      disabled_message: "SSOを設定するには検証済みドメインを追加してください",
+      configure: {
+        create: "設定",
+        update: "編集",
+      },
+      switch_alert_modal: {
+        title: "SSOメソッドを{newProviderShortName}に切り替えますか？",
+        content:
+          "{newProviderLongName}（{newProviderShortName}）を有効にしようとしています。この操作により、{activeProviderLongName}（{activeProviderShortName}）が自動的に無効になります。{activeProviderShortName}経由でサインインしようとするユーザーは、新しいメソッドに切り替えるまでプラットフォームにアクセスできなくなります。続行してもよろしいですか？",
+        primary_button_text: "切り替え",
+        primary_button_text_loading: "切り替え中",
+        secondary_button_text: "キャンセル",
+      },
+      form_section: {
+        title: "{workspaceName}のIdP提供の詳細",
+      },
+      form_action_buttons: {
+        saving: "保存中",
+        save_changes: "変更を保存",
+        configure_only: "設定のみ",
+        configure_and_enable: "設定して有効化",
+        default: "保存",
+      },
+      setup_details_section: {
+        title: "{workspaceName}がIdPに提供する詳細",
+        button_text: "設定詳細を取得",
+      },
+      saml: {
+        header: "SAMLを有効化",
+        description: "SAMLアイデンティティプロバイダーを設定してシングルサインオンを有効にします。",
+        configure: {
+          title: "SAMLを有効化",
+          description: "メールドメインの所有権を確認してシングルサインオンを含むセキュリティ機能にアクセスします。",
+          toast: {
+            success_title: "成功！",
+            create_success_message: "SAMLプロバイダーが正常に作成されました。",
+            update_success_message: "SAMLプロバイダーが正常に更新されました。",
+            error_title: "エラー！",
+            error_message: "SAMLプロバイダーの保存に失敗しました。もう一度お試しください。",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web詳細",
+            entity_id: {
+              label: "エンティティID | オーディエンス | メタデータ情報",
+              description: "このPlaneアプリをIdP上の認証済みサービスとして識別するメタデータのこの部分を生成します。",
+            },
+            callback_url: {
+              label: "シングルサインオンURL",
+              description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
+            },
+            logout_url: {
+              label: "シングルログアウトURL",
+              description: "これを生成します。IdPのシングルログアウトリダイレクトURLフィールドに追加してください。",
+            },
+          },
+          mobile_details: {
+            header: "モバイル詳細",
+            entity_id: {
+              label: "エンティティID | オーディエンス | メタデータ情報",
+              description: "このPlaneアプリをIdP上の認証済みサービスとして識別するメタデータのこの部分を生成します。",
+            },
+            callback_url: {
+              label: "シングルサインオンURL",
+              description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
+            },
+            logout_url: {
+              label: "シングルログアウトURL",
+              description: "これを生成します。IdPのログアウトリダイレクトURLフィールドに追加してください。",
+            },
+          },
+          mapping_table: {
+            header: "マッピング詳細",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "OIDCを有効化",
+        description: "OIDCアイデンティティプロバイダーを設定してシングルサインオンを有効にします。",
+        configure: {
+          title: "OIDCを有効化",
+          description: "メールドメインの所有権を確認してシングルサインオンを含むセキュリティ機能にアクセスします。",
+          toast: {
+            success_title: "成功！",
+            create_success_message: "OIDCプロバイダーが正常に作成されました。",
+            update_success_message: "OIDCプロバイダーが正常に更新されました。",
+            error_title: "エラー！",
+            error_message: "OIDCプロバイダーの保存に失敗しました。もう一度お試しください。",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web詳細",
+            origin_url: {
+              label: "オリジンURL",
+              description:
+                "このPlaneアプリ用にこれを生成します。IdPの対応するフィールドに信頼できるオリジンとして追加してください。",
+            },
+            callback_url: {
+              label: "リダイレクトURL",
+              description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
+            },
+            logout_url: {
+              label: "ログアウトURL",
+              description: "これを生成します。IdPのログアウトリダイレクトURLフィールドに追加してください。",
+            },
+          },
+          mobile_details: {
+            header: "モバイル詳細",
+            origin_url: {
+              label: "オリジンURL",
+              description:
+                "このPlaneアプリ用にこれを生成します。IdPの対応するフィールドに信頼できるオリジンとして追加してください。",
+            },
+            callback_url: {
+              label: "リダイレクトURL",
+              description: "これを生成します。IdPのサインインリダイレクトURLフィールドに追加してください。",
+            },
+            logout_url: {
+              label: "ログアウトURL",
+              description: "これを生成します。IdPのログアウトリダイレクトURLフィールドに追加してください。",
+            },
+          },
+        },
       },
     },
   },

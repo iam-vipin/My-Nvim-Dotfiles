@@ -1,25 +1,57 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 // plane editor types
 import type { IEditorPropsExtended, TCommentConfig } from "@plane/editor";
+import { convertBinaryDataToBase64String } from "@plane/editor";
 // hooks
 import { EIssuesStoreType, EUserPermissions } from "@plane/types";
-import type { TPartialProject, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import type {
+  TPartialProject,
+  TSearchEntityRequestPayload,
+  TSearchResponse,
+  TAIBlockGenerateInputPartial,
+  TFeedback,
+} from "@plane/types";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
+// plane web components
+import { AIBlockWidget } from "@/plane-web/components/pages/editor/ai/ai-block-widget";
 // plane web hooks
 import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 // store
+import { AIService } from "@/plane-web/services/ai.service";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import type { EPageStoreType } from "../store";
 
 export type TExtendedEditorExtensionsConfig = Pick<
   IEditorPropsExtended,
-  "embedHandler" | "commentConfig" | "isSmoothCursorEnabled" | "logoSpinner" | "selectionConversion"
+  | "embedHandler"
+  | "commentConfig"
+  | "isSmoothCursorEnabled"
+  | "logoSpinner"
+  | "selectionConversion"
+  | "aiBlockHandlers"
+  | "widgetCallback"
 >;
+
+const aiService = new AIService();
 
 export type TExtendedEditorExtensionsHookParams = {
   workspaceSlug: string;
@@ -47,6 +79,8 @@ export const useExtendedEditorProps = (
   const {
     issues: { createIssue },
   } = useIssues(EIssuesStoreType.PROJECT);
+  const { getWorkspaceBySlug } = useWorkspace();
+
   // embed props
   const { embedProps } = useEditorEmbeds({
     fetchEmbedSuggestions: fetchEntity,
@@ -56,6 +90,7 @@ export const useExtendedEditorProps = (
     storeType,
     projectId,
   });
+  const workspace = useMemo(() => getWorkspaceBySlug(workspaceSlug), [workspaceSlug]);
 
   const selectionConversionProps: TExtendedEditorExtensionsConfig["selectionConversion"] = useMemo(() => {
     const canCreateWorkItem = projectId ? canPerformAnyCreateAction : true;
@@ -90,6 +125,44 @@ export const useExtendedEditorProps = (
     workspaceSlug,
   ]);
 
+  const aiBlockHandlersProps: IEditorPropsExtended["aiBlockHandlers"] = useMemo(() => {
+    const payload = {
+      entity_id: page.id,
+      entity_type: projectId ? "page" : "wiki",
+      workspace_id: workspace?.id,
+      project_id: projectId,
+    };
+    const generateBlockContent = async (data: TAIBlockGenerateInputPartial) =>
+      await aiService.generateBlockContent({
+        ...data,
+        ...payload,
+      });
+    const revisionBlockContent = async (data: { block_id: string; revision_type: string }) =>
+      await aiService.revisionBlockContent(data);
+    const postFeedback = async (data: TFeedback) => await aiService.postFeedback({ ...data, ...payload });
+    const saveDocument = async () => {
+      const editorRef = page.editor.editorRef;
+      if (!editorRef) return;
+
+      const document = editorRef.getDocument();
+      if (!document) return;
+
+      const payload = {
+        description_binary: document.binary ? convertBinaryDataToBase64String(document.binary) : "",
+        description_html: document.html,
+        description: document.json ?? {},
+      };
+
+      await page.updateDescription(payload);
+    };
+    return {
+      generateBlockContent,
+      revisionBlockContent,
+      postFeedback,
+      saveDocument,
+    };
+  }, [workspace?.id, page.id, projectId, page]);
+
   const extendedEditorProps: TExtendedEditorExtensionsConfig = useMemo(
     () => ({
       embedHandler: embedProps,
@@ -97,8 +170,10 @@ export const useExtendedEditorProps = (
       isSmoothCursorEnabled: is_smooth_cursor_enabled,
       logoSpinner: LogoSpinner,
       selectionConversion: selectionConversionProps,
+      aiBlockHandlers: aiBlockHandlersProps,
+      widgetCallback: AIBlockWidget,
     }),
-    [embedProps, extensionHandlers, is_smooth_cursor_enabled, selectionConversionProps]
+    [embedProps, extensionHandlers, is_smooth_cursor_enabled, selectionConversionProps, aiBlockHandlersProps, page.id]
   );
 
   return extendedEditorProps;

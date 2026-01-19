@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";
@@ -14,7 +27,9 @@ type Props = {
 
 export function ThemeSwitch(props: Props) {
   const { value, onChange } = props;
+  // translation
   const { t } = useTranslation();
+
   return (
     <CustomSelect
       value={value}
@@ -22,7 +37,7 @@ export function ThemeSwitch(props: Props) {
         value ? (
           <div className="flex items-center gap-2 w-full">
             <div
-              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full"
               style={{
                 borderColor: value.icon.border,
               }}
@@ -48,6 +63,7 @@ export function ThemeSwitch(props: Props) {
         )
       }
       onChange={onChange}
+      placement="bottom-end"
       input
     >
       {THEME_OPTIONS.map((themeOption) => (

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -17,7 +30,11 @@ import { GanttChartSidebar, MonthChartView, QuarterChartView, WeekChartView } fr
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components
-import { TimelineDependencyPaths, TimelineDraggablePath } from "@/plane-web/components/gantt-chart";
+import {
+  TimelineDependencyPaths,
+  TimelineDraggablePath,
+  GanttAdditionalLayers,
+} from "@/plane-web/components/gantt-chart";
 import { GanttChartRowList } from "@/plane-web/components/gantt-chart/blocks/block-row-list";
 import { GanttChartBlocksList } from "@/plane-web/components/gantt-chart/blocks/blocks-list";
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-operations";
@@ -167,7 +184,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
               // DO NOT REMOVE THE ID
               id="gantt-container"
               className={cn(
-                "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
+                "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-subtle",
                 {
                   "mb-8": bottomSpacing,
                 }
@@ -185,7 +202,6 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 enableSelection={enableSelection}
                 sidebarToRender={sidebarToRender}
                 title={title}
-                quickAdd={quickAdd}
                 selectionHelpers={helpers}
                 showAllBlocks={showAllBlocks}
                 isEpic={isEpic}
@@ -212,6 +228,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                     />
                     <TimelineDependencyPaths isEpic={isEpic} />
                     <TimelineDraggablePath />
+                    <GanttAdditionalLayers itemsContainerWidth={itemsContainerWidth} blockCount={blockIds.length} />
                     <GanttChartBlocksList
                       blockIds={blockIds}
                       blockToRender={blockToRender}
@@ -227,6 +244,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 )}
               </div>
             </div>
+            {quickAdd ? quickAdd : null}
             <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -50,8 +63,8 @@ export const IssueCycleSelect = observer(function IssueCycleSelect(props: TIssue
         disabled={disableSelect}
         buttonVariant="transparent-with-text"
         className="group w-full"
-        buttonContainerClassName="w-full text-left rounded"
-        buttonClassName={`text-sm justify-between  ${issue?.cycle_id ? "" : "text-custom-text-400"}`}
+        buttonContainerClassName="w-full text-left h-7.5 rounded-sm"
+        buttonClassName={`text-body-xs-medium justify-between ${issue?.cycle_id ? "" : "text-placeholder"}`}
         placeholder={t("cycle.no_cycle")}
         hideIcon
         dropdownArrow

@@ -1,11 +1,21 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { PROJECT_STATE_TRACKER_ELEMENTS, PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
 import { cn } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 
 type TProjectStateMarksAsDefault = { workspaceSlug: string; stateId: string; isDefault: boolean };
@@ -26,20 +36,8 @@ export const ProjectStateMarksAsDefault = observer(function ProjectStateMarksAsD
     try {
       setIsLoading(false);
       await markAsDefault(workspaceSlug, stateId);
-      captureSuccess({
-        eventName: PROJECT_STATE_TRACKER_EVENTS.mark_as_default,
-        payload: {
-          stateId,
-        },
-      });
       setIsLoading(false);
     } catch (error) {
-      captureError({
-        eventName: PROJECT_STATE_TRACKER_EVENTS.mark_as_default,
-        payload: {
-          stateId,
-        },
-      });
       setIsLoading(false);
     }
   };
@@ -47,12 +45,11 @@ export const ProjectStateMarksAsDefault = observer(function ProjectStateMarksAsD
   return (
     <button
       className={cn(
-        "text-sm whitespace-nowrap transition-colors",
-        isDefault ? "text-custom-text-300" : "text-custom-text-200 hover:text-custom-text-100"
+        "text-13 whitespace-nowrap transition-colors",
+        isDefault ? "text-tertiary" : "text-secondary hover:text-primary"
       )}
       disabled={isDefault || isLoading}
       onClick={handleMarkAsDefault}
-      data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_MARK_AS_DEFAULT_BUTTON}
     >
       {isLoading ? "Marking as default" : isDefault ? `Default` : `Mark as default`}
     </button>

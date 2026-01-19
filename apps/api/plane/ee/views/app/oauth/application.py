@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # standard imports
 from django.db.models import (
     BooleanField,
@@ -8,9 +19,6 @@ from django.db.models import (
     Value,
     When,
     Subquery,
-    Func,
-    F,
-    Prefetch,
 )
 from django.utils import timezone
 from django.db import transaction
@@ -42,7 +50,6 @@ from plane.authentication.serializers import (
     ApplicationCategorySerializer,
 )
 from plane.db.models import Workspace, WorkspaceMember
-from plane.ee.models import WorkspaceLicense
 from plane.ee.views.base import BaseAPIView
 from plane.authentication.bgtasks.send_app_uninstall_webhook import (
     send_app_uninstall_webhook,
@@ -57,12 +64,8 @@ class OAuthApplicationEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         client_secret = generate_client_secret()
         request.data["client_secret"] = client_secret
-        request.data["skip_authorization"] = request.data.get(
-            "skip_authorization", False
-        )
-        request.data["client_type"] = request.data.get(
-            "client_type", Application.CLIENT_CONFIDENTIAL
-        )
+        request.data["skip_authorization"] = request.data.get("skip_authorization", False)
+        request.data["client_type"] = request.data.get("client_type", Application.CLIENT_CONFIDENTIAL)
         request.data["authorization_grant_type"] = request.data.get(
             "authorization_grant_type", Application.GRANT_AUTHORIZATION_CODE
         )
@@ -90,9 +93,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 {**serialised_application.data, "client_secret": client_secret},
                 status=status.HTTP_201_CREATED,
             )
-        return Response(
-            serialised_application.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serialised_application.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, slug, app_slug):
         # Define allowed fields for update
@@ -123,18 +124,12 @@ class OAuthApplicationEndpoint(BaseAPIView):
         }
 
         # Filter the request data to only include allowed fields
-        update_data = {
-            key: value for key, value in request.data.items() if key in ALLOWED_FIELDS
-        }
+        update_data = {key: value for key, value in request.data.items() if key in ALLOWED_FIELDS}
 
-        application = Application.objects.filter(
-            slug=app_slug, application_owners__workspace__slug=slug
-        ).first()
+        application = Application.objects.filter(slug=app_slug, application_owners__workspace__slug=slug).first()
 
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ApplicationSerializer(
             application,
@@ -181,9 +176,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 # Annotate with ownership information
                 applications = applications.annotate(
                     is_owned=Case(
-                        When(
-                            application_owners__workspace__slug=slug, then=Value(True)
-                        ),
+                        When(application_owners__workspace__slug=slug, then=Value(True)),
                         default=Value(False),
                         output_field=BooleanField(),
                     )
@@ -216,6 +209,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
                     Q(slug=app_slug, application_owners__workspace__slug=slug)
                     | Q(published_at__isnull=False, slug=app_slug)
                     | Q(
+                        slug=app_slug,
                         workspace_app_installations__workspace__slug=slug,
                         workspace_app_installations__status=WorkspaceAppInstallation.Status.INSTALLED,
                     )
@@ -228,35 +222,25 @@ class OAuthApplicationEndpoint(BaseAPIView):
             )
 
             if not application:
-                return Response(
-                    {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Add ownership and installation info
-            application.is_owned = application.application_owners.filter(
-                workspace__slug=slug
-            ).exists()
+            application.is_owned = application.application_owners.filter(workspace__slug=slug).exists()
             application_installation = WorkspaceAppInstallation.objects.filter(
                 application=application,
                 workspace__slug=slug,
                 status=WorkspaceAppInstallation.Status.INSTALLED,
             ).first()
             application.is_installed = application_installation is not None
-            application.installation_id = (
-                application_installation.id if application_installation else None
-            )
+            application.installation_id = application_installation.id if application_installation else None
 
             serialised_application = ApplicationSerializer(application)
             return Response(serialised_application.data, status=status.HTTP_200_OK)
 
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
         except Application.DoesNotExist:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, slug, app_slug):
         application = Application.objects.filter(slug=app_slug, application_owners__workspace__slug=slug).first()
@@ -269,13 +253,9 @@ class OAuthApplicationRegenerateSecretEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
 
     def patch(self, request, slug, pk):
-        application = Application.objects.filter(
-            id=pk, application_owners__workspace__slug=slug
-        ).first()
+        application = Application.objects.filter(id=pk, application_owners__workspace__slug=slug).first()
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
         client_secret = generate_client_secret()
         serializer = ApplicationSerializer(
             application,
@@ -297,13 +277,9 @@ class OAuthApplicationCheckSlugEndpoint(BaseAPIView):
     def post(self, request, slug):
         app_slug = request.data.get("app_slug")
         if not app_slug:
-            return Response(
-                {"error": "Slug is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Slug is required"}, status=status.HTTP_400_BAD_REQUEST)
         if Application.objects.filter(slug=app_slug).exists():
-            return Response(
-                {"error": "Slug already exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Slug already exists"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_200_OK)
 
 
@@ -314,20 +290,14 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
 
         if not pk:
-            return Response(
-                {"error": "App ID is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "App ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         application = Application.objects.filter(id=pk).first()
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # create or update workspace installation
-        workspace_application = WorkspaceAppInstallation.objects.filter(
-            workspace=workspace, application=pk
-        ).first()
+        workspace_application = WorkspaceAppInstallation.objects.filter(workspace=workspace, application=pk).first()
 
         # check if the application is already installed and if the user is an admin
         is_user_admin = WorkspaceMember.objects.filter(
@@ -364,22 +334,16 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
                 workspace_application_serialiser.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        return Response(
-            workspace_application_serialiser.data, status=status.HTTP_200_OK
-        )
+        return Response(workspace_application_serialiser.data, status=status.HTTP_200_OK)
 
 
 class OAuthApplicationPublishEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
 
     def post(self, request, slug, pk):
-        application = Application.objects.filter(
-            id=pk, application_owners__workspace__slug=slug
-        ).first()
+        application = Application.objects.filter(id=pk, application_owners__workspace__slug=slug).first()
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
         # check if user has permission to publish the application
         workspace_application_owner = ApplicationOwner.objects.filter(
             workspace__slug=slug,
@@ -388,9 +352,7 @@ class OAuthApplicationPublishEndpoint(BaseAPIView):
             deleted_at__isnull=True,
         ).first()
         if not workspace_application_owner:
-            return Response(
-                {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
         serializer = ApplicationSerializer(
             application,
             data={
@@ -407,13 +369,9 @@ class OAuthApplicationPublishEndpoint(BaseAPIView):
 
 class OAuthApplicationClientIdEndpoint(BaseAPIView):
     def get(self, request, client_id):
-        application = Application.objects.filter(
-            client_id=client_id, deleted_at__isnull=True
-        ).first()
+        application = Application.objects.filter(client_id=client_id, deleted_at__isnull=True).first()
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
         serialised_application = ApplicationSerializer(application)
         return Response(serialised_application.data, status=status.HTTP_200_OK)
 
@@ -430,19 +388,11 @@ class OAuthAppInstallationDetailEndpoint(BaseAPIView):
 
     def delete(self, request, slug, pk):
         workspace = Workspace.objects.get(slug=slug)
-        workspace_app_installation = WorkspaceAppInstallation.objects.filter(
-            id=pk, workspace=workspace
-        ).first()
+        workspace_app_installation = WorkspaceAppInstallation.objects.filter(id=pk, workspace=workspace).first()
         if not workspace_app_installation:
-            return Response(
-                {"error": "Installation not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Installation not found"}, status=status.HTTP_404_NOT_FOUND)
         # get the webhook url and application id
-        webhook_url = (
-            workspace_app_installation.webhook.url
-            if workspace_app_installation.webhook
-            else None
-        )
+        webhook_url = workspace_app_installation.webhook.url if workspace_app_installation.webhook else None
         application_id = workspace_app_installation.application.id
 
         # Delete the workspace app installation (cleanup is handled in the model's delete method)
@@ -450,9 +400,7 @@ class OAuthAppInstallationDetailEndpoint(BaseAPIView):
 
         # send webhook within the transaction
         if webhook_url:
-            send_app_uninstall_webhook.delay(
-                webhook_url, workspace.id, application_id, workspace_app_installation.id
-            )
+            send_app_uninstall_webhook.delay(webhook_url, workspace.id, application_id, workspace_app_installation.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -469,14 +417,10 @@ class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
         )
 
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Add ownership and installation info
-        application.is_owned = application.application_owners.filter(
-            workspace__slug=slug
-        ).exists()
+        application.is_owned = application.application_owners.filter(workspace__slug=slug).exists()
 
         application_installation = WorkspaceAppInstallation.objects.filter(
             application=application,
@@ -485,9 +429,7 @@ class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
         ).first()
 
         application.is_installed = application_installation is not None
-        application.installation_id = (
-            application_installation.id if application_installation else None
-        )
+        application.installation_id = application_installation.id if application_installation else None
 
         serialised_application = ApplicationSerializer(application)
         return Response(serialised_application.data, status=status.HTTP_200_OK)
@@ -497,13 +439,9 @@ class OAuthUserAppInstallationDetailEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
 
     def delete(self, request, slug, pk):
-        workspace_app_installation = WorkspaceAppInstallation.objects.filter(
-            id=pk, workspace__slug=slug
-        ).first()
+        workspace_app_installation = WorkspaceAppInstallation.objects.filter(id=pk, workspace__slug=slug).first()
         if not workspace_app_installation:
-            return Response(
-                {"error": "Installation not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Installation not found"}, status=status.HTTP_404_NOT_FOUND)
         application = workspace_app_installation.application
 
         with transaction.atomic():
@@ -519,15 +457,14 @@ class OAuthUserAppInstallationDetailEndpoint(BaseAPIView):
             ).update(revoked=timezone.now())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, application_id):
         application = Application.objects.filter(id=application_id).first()
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
         # get all workspaces where user is a member
         workspace_members = WorkspaceMember.objects.filter(member=request.user)
         # create a map of workspace id and member role
@@ -545,7 +482,8 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
         )
         # create a map of workspace id and installation
         workspace_app_installations_map = {
-            workspace_app_installation.workspace_id: workspace_app_installation for workspace_app_installation in workspace_app_installations
+            workspace_app_installation.workspace_id: workspace_app_installation
+            for workspace_app_installation in workspace_app_installations
         }
 
         # check the role of the user in the workspace
@@ -562,7 +500,7 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
             installation_state = WorkspaceAppInstallation.InstallationState.NOT_ALLOWED
             is_token_present = False
             if user_workspace_member["role"] == ROLE.ADMIN.value or (
-              user_workspace_member["role"] == ROLE.MEMBER.value and is_installed
+                user_workspace_member["role"] == ROLE.MEMBER.value and is_installed
             ):
                 installation_state = WorkspaceAppInstallation.InstallationState.ALLOWED
 
@@ -602,33 +540,28 @@ class OAuthApplicationSupportedWorkspacesEndpoint(BaseAPIView):
         Filters workspaces based on the application's supported_plans field.
         """
         # Get the application
-        application = Application.objects.filter(
-            client_id=client_id, deleted_at__isnull=True
-        ).first()
-        
+        application = Application.objects.filter(client_id=client_id, deleted_at__isnull=True).first()
+
         if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Get supported plans from the application
         supported_plans = application.supported_plans or []
-        
+
         # 1. Get workspace IDs where user is an active member
-        workspace_ids = WorkspaceMember.objects.filter(
-            member=request.user, is_active=True
-        ).values_list("workspace_id", flat=True)
-        
+        workspace_ids = WorkspaceMember.objects.filter(member=request.user, is_active=True).values_list(
+            "workspace_id", flat=True
+        )
+
         # 2. Build filter dictionary based on supported_plans condition
         filter_kwargs = {"id__in": workspace_ids}
         if supported_plans:
             filter_kwargs["license__plan__in"] = supported_plans
-        
+
         # Filter workspaces and get only IDs (convert UUIDs to strings)
         supported_workspace_ids = [
-            str(workspace_id)
-            for workspace_id in Workspace.objects.filter(**filter_kwargs).values_list("id", flat=True)
+            str(workspace_id) for workspace_id in Workspace.objects.filter(**filter_kwargs).values_list("id", flat=True)
         ]
-        
+
         # 3. Return the workspace IDs
         return Response({"workspace_ids": supported_workspace_ids}, status=status.HTTP_200_OK)

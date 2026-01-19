@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
@@ -52,11 +65,11 @@ function CyclesFeatureSettingsPage({ params }: Route.ComponentProps) {
       <div className="mb-4">
         <Link
           href={`/${workspaceSlug}/settings/projects/${projectId}/features`}
-          className="text-sm text-custom-text-300 hover:text-custom-text-200"
+          className="text-13 text-tertiary hover:text-secondary"
         >
           <div className="flex items-center gap-2">
-            <ChevronLeftIcon className="h-4 w-4 text-custom-text-300" />
-            <span className="text-sm text-custom-text-300 font-bold">Back to features</span>
+            <ChevronLeftIcon className="h-4 w-4 text-tertiary" />
+            <span className="text-13 text-tertiary font-bold">Back to features</span>
           </div>
         </Link>
       </div>
@@ -66,13 +79,13 @@ function CyclesFeatureSettingsPage({ params }: Route.ComponentProps) {
         description="Schedule work in flexible periods that adapt to this project's unique rhythm and pace."
       />
 
-      <div className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4">
+      <div className="gap-x-8 gap-y-2 border-b border-subtle bg-surface-1 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">{cyclesIcon}</div>
+            <div className="flex items-center justify-center rounded-sm bg-layer-1 p-3">{cyclesIcon}</div>
             <div>
-              <h4 className="text-sm font-medium leading-5">Enable cycles</h4>
-              <p className="text-sm leading-5 tracking-tight text-custom-text-300">Plan work in focused timeframes.</p>
+              <h4 className="text-13 font-medium leading-5">Enable cycles</h4>
+              <p className="text-13 leading-5 tracking-tight text-tertiary">Plan work in focused timeframes.</p>
             </div>
           </div>
 

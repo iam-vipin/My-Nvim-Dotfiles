@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import {
   Activity,
   Airplay,
@@ -31,7 +44,6 @@ import {
   Camera,
   CameraOff,
   Cast,
-  Check,
   CheckCircle,
   CheckSquare,
   Clipboard,
@@ -49,7 +61,6 @@ import {
   Columns,
   Command,
   Compass,
-  Copy,
   CornerDownLeft,
   CornerDownRight,
   CornerLeftDown,
@@ -76,7 +87,6 @@ import {
   Edit,
   Edit2,
   Edit3,
-  ExternalLink,
   Eye,
   EyeOff,
   Facebook,
@@ -102,7 +112,6 @@ import {
   GitPullRequest,
   Github,
   Gitlab,
-  Globe,
   Grid,
   HardDrive,
   Hash,
@@ -120,11 +129,8 @@ import {
   Layers,
   Layout,
   LifeBuoy,
-  Link,
-  Link2,
   Linkedin,
   Loader,
-  Lock,
   LogIn,
   LogOut,
   Mail,
@@ -146,16 +152,22 @@ import {
   CircleChevronDown,
   UsersRound,
   ToggleLeft,
-  Search,
   User,
 } from "lucide-react";
 import {
-  CalendarLayoutIcon,
-  ListLayoutIcon,
+  LinkIcon,
+  CopyIcon,
+  GlobeIcon,
+  LockIcon,
+  NewTabIcon,
+  CheckIcon,
+  SearchIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  CalendarLayoutIcon,
+  ListLayoutIcon,
 } from "@plane/propel/icons";
 
 export const MATERIAL_ICONS_LIST = [
@@ -799,7 +811,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "CameraOff", element: CameraOff },
   { name: "Cast", element: Cast },
   { name: "CircleChevronDown", element: CircleChevronDown },
-  { name: "Check", element: Check },
+  { name: "Check", element: CheckIcon },
   { name: "CheckCircle", element: CheckCircle },
   { name: "CheckSquare", element: CheckSquare },
   { name: "ChevronDown", element: ChevronDownIcon },
@@ -821,7 +833,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Columns", element: Columns },
   { name: "Command", element: Command },
   { name: "Compass", element: Compass },
-  { name: "Copy", element: Copy },
+  { name: "Copy", element: CopyIcon },
   { name: "CornerDownLeft", element: CornerDownLeft },
   { name: "CornerDownRight", element: CornerDownRight },
   { name: "CornerLeftDown", element: CornerLeftDown },
@@ -848,7 +860,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Edit", element: Edit },
   { name: "Edit2", element: Edit2 },
   { name: "Edit3", element: Edit3 },
-  { name: "ExternalLink", element: ExternalLink },
+  { name: "ExternalLink", element: NewTabIcon },
   { name: "Eye", element: Eye },
   { name: "EyeOff", element: EyeOff },
   { name: "Facebook", element: Facebook },
@@ -874,7 +886,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "GitPullRequest", element: GitPullRequest },
   { name: "Github", element: Github },
   { name: "Gitlab", element: Gitlab },
-  { name: "Globe", element: Globe },
+  { name: "Globe", element: GlobeIcon },
   { name: "Grid", element: Grid },
   { name: "HardDrive", element: HardDrive },
   { name: "Hash", element: Hash },
@@ -892,12 +904,12 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Layers", element: Layers },
   { name: "Layout", element: Layout },
   { name: "LifeBuoy", element: LifeBuoy },
-  { name: "Link", element: Link },
-  { name: "Link2", element: Link2 },
+  { name: "Link", element: LinkIcon },
+  { name: "Link2", element: LinkIcon },
   { name: "Linkedin", element: Linkedin },
   { name: "ListLayoutIcon", element: ListLayoutIcon },
   { name: "Loader", element: Loader },
-  { name: "Lock", element: Lock },
+  { name: "Lock", element: LockIcon },
   { name: "LogIn", element: LogIn },
   { name: "LogOut", element: LogOut },
   { name: "Mail", element: Mail },
@@ -916,7 +928,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Minus", element: Minus },
   { name: "MinusCircle", element: MinusCircle },
   { name: "MinusSquare", element: MinusSquare },
-  { name: "Search", element: Search },
+  { name: "Search", element: SearchIcon },
   { name: "ToggleLeft", element: ToggleLeft },
   { name: "User", element: User },
   { name: "UsersRound", element: UsersRound },

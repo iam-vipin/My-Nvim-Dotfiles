@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ProjectIcon } from "@plane/propel/icons";
@@ -41,9 +54,7 @@ export const ProjectsListHeader = observer(function ProjectsListHeader() {
           {/* bread crumps */}
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink label="Projects" icon={<ProjectIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              component={<BreadcrumbLink label="Projects" icon={<ProjectIcon className="h-4 w-4 text-tertiary" />} />}
             />
             {isArchived && <Breadcrumbs.Item component={<BreadcrumbLink label="Archived" />} />}
           </Breadcrumbs>
@@ -54,10 +65,10 @@ export const ProjectsListHeader = observer(function ProjectsListHeader() {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {/* search */}
           <ProjectSearch />
-          <div className="hidden md:flex gap-4">
+          <div className="hidden md:flex gap-2">
             {/* layout selection */}
             {!isArchived && <ProjectLayoutSelection workspaceSlug={workspaceSlug.toString()} />}{" "}
             {/* attributes dropdown */}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import asyncio
 import contextlib
 import json
@@ -19,13 +30,12 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.api.dependencies import get_current_user
+from pi.app.api.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
 from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
-from pi.app.api.v2.dependencies import validate_plane_token
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
 from pi.app.models.message import MessageFlowStep
@@ -103,7 +113,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
     chatbot = PlaneChatBot(llm=data.llm, token=access_token)
 
     final_response = ""
-    actions_data = {}
+    actions_data_list = []
     clarification_data = {}
     formatted_context = {}
     response_type = "response"
@@ -120,41 +130,58 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
                 continue
             if chunk.startswith("πspecial actions blockπ: "):
                 response_type = "actions"
-                actions_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
+                action_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
+                actions_data_list.append(action_data)
             elif chunk.startswith("πspecial clarification blockπ: "):
                 response_type = "clarification"
                 clarification_data = json.loads(chunk.replace("πspecial clarification blockπ: ", ""))
             final_response += chunk
 
-    if actions_data:
+    if actions_data_list:
         # Validate required fields before creating ActionBatchExecutionRequest
         workspace_id = data.workspace_id
         chat_id = data.chat_id
-        message_id_raw = actions_data.get("message_id")
-        artifact_id_raw = actions_data.get("artifact_id")
         user_id = data.user_id
 
-        if not workspace_id or not chat_id or not message_id_raw or not artifact_id_raw or not user_id:
-            return JSONResponse(
-                status_code=400,
-                content={"detail": "Missing required fields: workspace_id, chat_id, message_id, artifact_id, or user_id"},
-            )
+        # Convert all action blocks to ArtifactData objects
+        artifact_data_objects = []
+        message_id = None
 
-        # Convert message_id to UUID if it's a string
-        if isinstance(message_id_raw, str):
-            message_id = UUID(message_id_raw)
-        elif isinstance(message_id_raw, UUID):
-            message_id = message_id_raw
-        else:
-            return JSONResponse(status_code=400, content={"detail": "Invalid message_id format"})
+        for actions_data in actions_data_list:
+            message_id_raw = actions_data.get("message_id")
+            artifact_id_raw = actions_data.get("artifact_id")
 
-        # Convert artifact_id to UUID if it's a string
-        if isinstance(artifact_id_raw, str):
-            artifact_id = UUID(artifact_id_raw)
-        elif isinstance(artifact_id_raw, UUID):
-            artifact_id = artifact_id_raw
-        else:
-            return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
+            if not workspace_id or not chat_id or not message_id_raw or not artifact_id_raw or not user_id:
+                return JSONResponse(
+                    status_code=400,
+                    content={"detail": "Missing required fields: workspace_id, chat_id, message_id, artifact_id, or user_id"},
+                )
+
+            # Convert message_id to UUID if it's a string
+            if isinstance(message_id_raw, str):
+                current_message_id = UUID(message_id_raw)
+            elif isinstance(message_id_raw, UUID):
+                current_message_id = message_id_raw
+            else:
+                return JSONResponse(status_code=400, content={"detail": "Invalid message_id format"})
+
+            if message_id is None:
+                message_id = current_message_id
+
+            # Convert artifact_id to UUID if it's a string
+            if isinstance(artifact_id_raw, str):
+                artifact_id = UUID(artifact_id_raw)
+            elif isinstance(artifact_id_raw, UUID):
+                artifact_id = artifact_id_raw
+            else:
+                return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
+
+            artifact_data_objects.append(ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data))
+
+        # Type assertions for mypy (validated above)
+        assert workspace_id is not None
+        assert chat_id is not None
+        assert message_id is not None
 
         # Execute batch actions using the service
         service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
@@ -164,7 +191,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
                 workspace_id=workspace_id,
                 chat_id=chat_id,
                 message_id=message_id,
-                artifact_data=[ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data)],
+                artifact_data=artifact_data_objects,
                 access_token=access_token,
             ),
             user_id,
@@ -190,7 +217,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
         status_code=200,
         content={
             "response": final_response,
-            "actions_data": actions_data,
+            "actions_data": actions_data_list,
             "context": formatted_context,
             "response_type": response_type,
             "clarification_data": clarification_data,
@@ -199,7 +226,10 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
 
 
 @router.post("/")
-async def create_response_stream(data: ChatRequest, session: str = Depends(cookie_schema)):
+async def create_response_stream(
+    data: ChatRequest,
+    current_user=Depends(get_current_user),
+):
     """
     Create a streaming AI response to a user query.
 
@@ -229,14 +259,7 @@ async def create_response_stream(data: ChatRequest, session: str = Depends(cooki
         - error: Error messages
         - done: Stream completion
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     data.user_id = user_id
 
@@ -400,7 +423,7 @@ async def create_response_stream(data: ChatRequest, session: str = Depends(cooki
 async def queue_response(
     data: ChatRequest,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Queue a chat request and get a stream token for later streaming (Step 1 of 2).
@@ -454,13 +477,6 @@ async def queue_response(
         - For project chats, workspace_id is resolved from project_id
         - Deprecated V1 endpoint: POST /api/v1/chat/queue-answer/
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     validation_error = validate_chat_request(data)
     if validation_error:
@@ -565,7 +581,7 @@ async def queue_response(
 async def stream_response_by_token(
     token: UUID4 = Path(..., description="Stream token obtained from POST /api/v2/responses/queue"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Stream AI response using a previously queued token (Step 2 of 2).
@@ -619,13 +635,7 @@ async def stream_response_by_token(
         - Workspace details are resolved from project_id if needed
         - Deprecated V1 endpoint: GET /api/v1/chat/stream-answer/{token}
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception:
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     # Locate the queued flow step
     stmt = (
@@ -673,7 +683,7 @@ async def stream_response_by_token(
         # 6. Stream new response (create_response_stream will call process_query_stream)
         #    When process_query_stream calls retrieve_chat_history,
         #    it will NOT see the old response because is_replaced=True
-        return await create_response_stream(data=queued_request, session=session)
+        return await create_response_stream(data=queued_request, current_user=current_user)
 
     else:
         # NORMAL FLOW: QUEUE flow step exists, this is first generation
@@ -721,4 +731,4 @@ async def stream_response_by_token(
             log.warning(f"Failed to attach token_id to queued request context: {e!s}")
 
         # Delegate to existing create_response_stream for streaming
-        return await create_response_stream(data=queued_request, session=session)
+        return await create_response_stream(data=queued_request, current_user=current_user)

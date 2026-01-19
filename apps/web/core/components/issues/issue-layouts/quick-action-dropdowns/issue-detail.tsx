@@ -1,21 +1,28 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { Ellipsis } from "lucide-react";
 // plane imports
-import {
-  ARCHIVABLE_STATE_GROUPS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -29,6 +36,7 @@ import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useWorkItemDetailMenuItems } from "./helper";
+import { IconButton } from "@plane/propel/icon-button";
 
 type TWorkItemDetailQuickActionProps = IQuickActionProps & {
   toggleEditIssueModal?: (value: boolean) => void;
@@ -47,7 +55,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     handleUpdate,
     handleArchive,
     handleRestore,
-    customActionButton,
     portalElement,
     readOnly = false,
     placements = "bottom-end",
@@ -185,7 +192,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
       ...item,
 
       onClick: () => {
-        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
         item.action();
       },
     };
@@ -243,7 +249,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
       <CustomMenu
         ellipsis
         placement={placements}
-        customButton={customActionButton}
+        customButton={<IconButton size="lg" variant="secondary" icon={Ellipsis} />}
         portalElement={portalElement}
         menuItemsClassName="z-[14]"
         maxHeight="lg"
@@ -263,8 +269,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}
@@ -276,7 +282,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                 className={cn(
                   "flex items-center gap-2",
                   {
-                    "text-custom-text-400": item.disabled,
+                    "text-placeholder": item.disabled,
                   },
                   item.className
                 )}
@@ -285,13 +291,12 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
                     onClick={() => {
-                      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
                       nestedItem.action();
                     }}
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": nestedItem.disabled,
+                        "text-placeholder": nestedItem.disabled,
                       },
                       nestedItem.className
                     )}
@@ -302,8 +307,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": nestedItem.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": nestedItem.disabled,
                           })}
                         >
                           {nestedItem.description}
@@ -321,13 +326,12 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
                 item.action();
               }}
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -338,8 +342,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { MutableRefObject } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -6,7 +19,7 @@ import { useParams } from "next/navigation";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
@@ -28,7 +41,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
   const { displayProperties, issueId, isScrolled, spreadsheetColumnsList } = props;
 
   return (
-    <tr className={cn("bg-custom-background-100 transition-[background-color]")}>
+    <tr className="transition-[background-color]">
       {/* first column/ issue name and key column */}
       <IssueRowDetails
         issueId={issueId}
@@ -68,27 +81,21 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
 
   return (
     <>
-      <td
-        id={`issue-${issueId}`}
-        ref={cellRef}
-        tabIndex={0}
-        className="sticky left-0 z-10 group/list-block bg-custom-background-100"
-      >
+      <td id={`issue-${issueId}`} ref={cellRef} tabIndex={0} className="sticky left-0 z-10 group/list-block">
         <Link
           href={`?${queryParam}`}
           onClick={handleIssuePeekOverview}
           className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-13 after:absolute border-[0.5px] z-10 border-subtle-1 bg-layer-transparent hover:bg-layer-transparent-hover group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
             {
-              "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
-              "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issueDetail.id),
+              "border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issueDetail.id),
               "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
             }
           )}
         >
           <div className="flex items-center gap-0.5 min-w-min py-2.5 pl-6">
             <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
-              <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
+              <div className="relative flex cursor-pointer items-center text-center text-11 hover:text-primary">
                 <p className={`flex font-medium leading-7`}>
                   {project_details?.identifier}-{issueDetail.sequence_id}
                 </p>
@@ -97,11 +104,11 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           </div>
 
           <div className="flex items-center gap-2 justify-between h-full w-full pr-4 pl-6 truncate">
-            <div className="w-full line-clamp-1 text-sm text-custom-text-100">
+            <div className="w-full line-clamp-1 text-14 text-primary">
               <div className="w-full overflow-hidden">
                 <Tooltip tooltipContent={issueDetail.name}>
                   <div
-                    className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                    className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-primary focus:outline-none"
                     tabIndex={-1}
                   >
                     {issueDetail.name}

@@ -1,17 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TAutomation } from "@plane/types";
 import { EAutomationScope } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
-// helpers
-import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -56,7 +66,6 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
   const { t } = useTranslation();
 
   const handleClose = () => {
-    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.CREATE_UPDATE_MODAL_CANCEL_BUTTON });
     onClose();
   };
 
@@ -64,19 +73,10 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     if (!canCurrentUserCreateAutomation) return;
     try {
       const res = await createAutomation(workspaceSlug, projectId, payload);
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
-        payload: { id: res?.id },
-      });
       if (res?.redirectionLink) {
         router.push(res?.redirectionLink);
       }
     } catch (error: any) {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
-        error: error?.error || error?.message,
-        payload: { workspace_slug: workspaceSlug, project_id: projectId },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.create.error.title"),
@@ -90,16 +90,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     try {
       const automation = getAutomationById(data.id);
       await automation?.update(payload);
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
-        payload: { id: data.id },
-      });
     } catch (error: any) {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
-        error: error?.error || error?.message,
-        payload: { id: data.id },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.update.error.title"),
@@ -131,7 +122,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {isEditing ? t("automations.create_modal.heading.update") : t("automations.create_modal.heading.create")}
           </h3>
           <div className="space-y-3">
@@ -146,7 +137,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
                   <Input
                     type="text"
                     placeholder={t("automations.create_modal.title.placeholder")}
-                    className="w-full px-2 py-1.5 text-base"
+                    className="w-full px-2 py-1.5 text-14"
                     value={value}
                     onChange={onChange}
                     hasError={Boolean(errors?.name)}
@@ -155,7 +146,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
                   />
                 )}
               />
-              <span className="text-xs text-red-500">{errors?.name?.message}</span>
+              <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
             </div>
             <div>
               <Controller
@@ -166,7 +157,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
                     id="description"
                     name="description"
                     placeholder={t("automations.create_modal.description.placeholder")}
-                    className="w-full text-base resize-none min-h-24"
+                    className="w-full text-14 resize-none min-h-24"
                     hasError={Boolean(errors?.description)}
                     value={value ?? ""}
                     onChange={onChange}
@@ -176,17 +167,11 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+          <Button variant="secondary" size="lg" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            type="submit"
-            loading={isSubmitting}
-            onClick={() => captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.CREATE_UPDATE_MODAL_SUBMIT_BUTTON })}
-          >
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {isEditing
               ? isSubmitting
                 ? t("common.updating")

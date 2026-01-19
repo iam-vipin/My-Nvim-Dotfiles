@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
 import type { IParserExtension } from "../../types";
@@ -12,7 +25,7 @@ export type ExternalMentionParserConfig = {
   // Add new options for fallback handling
   fallbackOptions?: {
     // If the user is not found in the userMap, we can replace the mention with a link
-    replaceWithLink?: (mention: string) => [label: string, url: string];
+    replaceWithLink?: (mention: string) => Promise<[label: string, url: string]>;
   };
 };
 
@@ -49,7 +62,7 @@ export class ExternalMentionParserExtension implements IParserExtension {
 
     // Handle paragraphs with multiple mentions or mixed text and mentions
     if (mentions.length > 1 || text !== mentions[0]) {
-      return this.handleMixedContent(node, mentions);
+      return await this.handleMixedContent(node, mentions);
     }
 
     // If we have just a single mention that's the entire content, use original logic
@@ -62,14 +75,14 @@ export class ExternalMentionParserExtension implements IParserExtension {
       return mention;
     } else if (this.config.fallbackOptions) {
       // User not found - create an external link as fallback
-      return this.handleFallback(node);
+      return await this.handleFallback(node);
     } else {
       // No fallback option - return original node
       return node;
     }
   }
 
-  private handleMixedContent(node: HTMLElement, mentions: string[]): HTMLElement {
+  private async handleMixedContent(node: HTMLElement, mentions: string[]): Promise<HTMLElement> {
     // Use innerHTML to preserve existing HTML elements (like links from previous extensions)
     let html = node.innerHTML || node.textContent;
     // Only process mentions that match THIS extension's symbol
@@ -87,7 +100,7 @@ export class ExternalMentionParserExtension implements IParserExtension {
         html = html.replace(mention, mentionHtml);
       } else if (this.config.fallbackOptions?.replaceWithLink) {
         // Create fallback link
-        const [label, url] = this.config.fallbackOptions.replaceWithLink(mentionText);
+        const [label, url] = await this.config.fallbackOptions.replaceWithLink(mentionText);
         const linkElement = new HTMLElement("a", {}, "");
         linkElement.setAttribute("href", encodeURIComponent(url));
         linkElement.setAttribute("target", "_blank");
@@ -122,7 +135,7 @@ export class ExternalMentionParserExtension implements IParserExtension {
     return mentionComponent;
   }
 
-  private handleFallback(node: HTMLElement): HTMLElement {
+  private async handleFallback(node: HTMLElement): Promise<HTMLElement> {
     if (this.config.fallbackOptions?.replaceWithLink) {
       return this.createExternalLink(node);
     }
@@ -130,12 +143,12 @@ export class ExternalMentionParserExtension implements IParserExtension {
     return node;
   }
 
-  private createExternalLink(node: HTMLElement): HTMLElement {
+  private async createExternalLink(node: HTMLElement): Promise<HTMLElement> {
     if (!this.config.fallbackOptions?.replaceWithLink) {
       return node;
     }
 
-    const [label, url] = this.config.fallbackOptions.replaceWithLink(
+    const [label, url] = await this.config.fallbackOptions.replaceWithLink(
       node.textContent.replace(this.config.mentionSymbol ?? "@", "")
     );
     const linkElement = new HTMLElement("a", {}, "");

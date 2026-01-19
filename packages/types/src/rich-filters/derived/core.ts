@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TFilterValue } from "../expression";
 import type {
   TDateFilterFieldConfig,
@@ -14,23 +27,23 @@ import type { TFilterOperatorHelper } from "./shared";
  * Union type representing all core operators that support single date filter types.
  */
 export type TCoreSupportedSingleDateFilterOperators<V extends TFilterValue = TFilterValue> = {
-  [K in keyof TCoreOperatorSpecificConfigs<V>]: TFilterOperatorHelper<
-    TCoreOperatorSpecificConfigs<V>,
+  [K in keyof TCoreOperatorSpecificConfigs]: TFilterOperatorHelper<
+    TCoreOperatorSpecificConfigs,
     K,
     TDateFilterFieldConfig<V>
   >;
-}[keyof TCoreOperatorSpecificConfigs<V>];
+}[keyof TCoreOperatorSpecificConfigs];
 
 /**
  * Union type representing all core operators that support range date filter types.
  */
 export type TCoreSupportedRangeDateFilterOperators<V extends TFilterValue = TFilterValue> = {
-  [K in keyof TCoreOperatorSpecificConfigs<V>]: TFilterOperatorHelper<
-    TCoreOperatorSpecificConfigs<V>,
+  [K in keyof TCoreOperatorSpecificConfigs]: TFilterOperatorHelper<
+    TCoreOperatorSpecificConfigs,
     K,
     TDateRangeFilterFieldConfig<V>
   >;
-}[keyof TCoreOperatorSpecificConfigs<V>];
+}[keyof TCoreOperatorSpecificConfigs];
 
 /**
  * Union type representing all core operators that support date filter types.
@@ -48,23 +61,23 @@ export type TCoreAllAvailableDateFilterOperatorsForDisplay<V extends TFilterValu
  * Union type representing all core operators that support single select filter types.
  */
 export type TCoreSupportedSingleSelectFilterOperators<V extends TFilterValue = TFilterValue> = {
-  [K in keyof TCoreOperatorSpecificConfigs<V>]: TFilterOperatorHelper<
-    TCoreOperatorSpecificConfigs<V>,
+  [K in keyof TCoreOperatorSpecificConfigs]: TFilterOperatorHelper<
+    TCoreOperatorSpecificConfigs,
     K,
     TSingleSelectFilterFieldConfig<V>
   >;
-}[keyof TCoreOperatorSpecificConfigs<V>];
+}[keyof TCoreOperatorSpecificConfigs];
 
 /**
  * Union type representing all core operators that support multi select filter types.
  */
 export type TCoreSupportedMultiSelectFilterOperators<V extends TFilterValue = TFilterValue> = {
-  [K in keyof TCoreOperatorSpecificConfigs<V>]: TFilterOperatorHelper<
-    TCoreOperatorSpecificConfigs<V>,
+  [K in keyof TCoreOperatorSpecificConfigs]: TFilterOperatorHelper<
+    TCoreOperatorSpecificConfigs,
     K,
     TMultiSelectFilterFieldConfig<V>
   >;
-}[keyof TCoreOperatorSpecificConfigs<V>];
+}[keyof TCoreOperatorSpecificConfigs];
 
 /**
  * Union type representing all core operators that support any select filter types.

@@ -1,24 +1,28 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  E_FEATURE_FLAGS,
-  ETemplateLevel,
-  EUserPermissionsLevel,
-  PAGE_TEMPLATE_TRACKER_ELEMENTS,
-  PROJECT_TEMPLATE_TRACKER_ELEMENTS,
-  WORKITEM_TEMPLATE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { TButtonSizes } from "@plane/propel/button";
+import type { ButtonProps } from "@plane/propel/button";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { ETemplateType, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import type { TCreateTemplateSettingsPathProps } from "@plane/utils";
 import { getCreateUpdateTemplateSettingsPath, getTemplateI18nLabel } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -28,7 +32,7 @@ import { useFlag } from "@/plane-web/hooks/store";
 type TCreateTemplatesButtonProps = {
   workspaceSlug: string;
   buttonI18nLabel?: string;
-  buttonSize?: TButtonSizes;
+  buttonSize?: NonNullable<ButtonProps["size"]>;
   variant: "settings" | "empty_state";
 } & (
   | {
@@ -72,44 +76,11 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
       return createTemplatePathProps;
     };
 
-    const getElementName = (type: ETemplateType) => {
-      if (type === ETemplateType.PROJECT) {
-        return props.variant === "settings"
-          ? PROJECT_TEMPLATE_TRACKER_ELEMENTS.SETTINGS_PAGE_CREATE_BUTTON
-          : PROJECT_TEMPLATE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON;
-      }
-      if (type === ETemplateType.WORK_ITEM) {
-        if (props.variant === "settings") {
-          return props.currentLevel === ETemplateLevel.WORKSPACE
-            ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_SETTINGS_PAGE_CREATE_BUTTON
-            : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_SETTINGS_PAGE_CREATE_BUTTON;
-        }
-        return props.currentLevel === ETemplateLevel.WORKSPACE
-          ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_EMPTY_STATE_CREATE_BUTTON
-          : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_EMPTY_STATE_CREATE_BUTTON;
-      }
-      if (type === ETemplateType.PAGE) {
-        return props.variant === "settings"
-          ? props.currentLevel === ETemplateLevel.WORKSPACE
-            ? PAGE_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_SETTINGS_PAGE_CREATE_BUTTON
-            : PAGE_TEMPLATE_TRACKER_ELEMENTS.PROJECT_SETTINGS_PAGE_CREATE_BUTTON
-          : props.currentLevel === ETemplateLevel.WORKSPACE
-            ? PAGE_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_EMPTY_STATE_CREATE_BUTTON
-            : PAGE_TEMPLATE_TRACKER_ELEMENTS.PROJECT_EMPTY_STATE_CREATE_BUTTON;
-      }
-    };
-
     return [
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.PROJECT),
         onClick: () => {
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PROJECT)));
-          const elementName = getElementName(ETemplateType.PROJECT);
-          if (elementName) {
-            captureClick({
-              elementName,
-            });
-          }
         },
         availableForLevels: [ETemplateLevel.WORKSPACE],
         featureFlagKey: E_FEATURE_FLAGS.PROJECT_TEMPLATES,
@@ -118,10 +89,6 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
         i18n_label: getTemplateI18nLabel(ETemplateType.WORK_ITEM),
         onClick: () => {
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.WORK_ITEM)));
-          const elementName = getElementName(ETemplateType.WORK_ITEM);
-          if (elementName) {
-            captureClick({ elementName });
-          }
         },
         availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
         featureFlagKey: E_FEATURE_FLAGS.WORKITEM_TEMPLATES,
@@ -130,10 +97,6 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
         i18n_label: getTemplateI18nLabel(ETemplateType.PAGE),
         onClick: () => {
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PAGE)));
-          const elementName = getElementName(ETemplateType.PAGE);
-          if (elementName) {
-            captureClick({ elementName });
-          }
         },
         availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
         featureFlagKey: E_FEATURE_FLAGS.PAGE_TEMPLATES,

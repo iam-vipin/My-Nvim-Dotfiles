@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData, TIssuePropertyValues } from "@plane/types";
@@ -15,8 +28,6 @@ import {
   workItemTemplateFormDataToTemplate,
   processWorkItemCustomProperties,
 } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useLabel } from "@/hooks/store/use-label";
@@ -265,24 +276,12 @@ export const CreateUpdateWorkItemTemplate = observer(function CreateUpdateWorkIt
                 templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
               }),
             });
-            captureSuccess({
-              eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.UPDATE,
-              payload: {
-                id: template.id,
-              },
-            });
           })
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("templates.toasts.update.error.title"),
               message: t("templates.toasts.update.error.message"),
-            });
-            captureError({
-              eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.UPDATE,
-              payload: {
-                id: template.id,
-              },
             });
           });
       }
@@ -294,7 +293,7 @@ export const CreateUpdateWorkItemTemplate = observer(function CreateUpdateWorkIt
           ? { level: ETemplateLevel.PROJECT, projectId: props.projectId }
           : { level: ETemplateLevel.WORKSPACE }),
       })
-        .then((template) => {
+        .then(() => {
           resetLocalStates();
           router.push(templateSettingsPagePath);
           setToast({
@@ -305,21 +304,12 @@ export const CreateUpdateWorkItemTemplate = observer(function CreateUpdateWorkIt
               templateType: t(getTemplateTypeI18nName(ETemplateType.WORK_ITEM))?.toLowerCase(),
             }),
           });
-          captureSuccess({
-            eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.CREATE,
-            payload: {
-              id: template?.id,
-            },
-          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("templates.toasts.create.error.title"),
             message: t("templates.toasts.create.error.message"),
-          });
-          captureError({
-            eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.CREATE,
           });
         });
     }

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Loader } from "@plane/ui";
 
 type TImporterTable = {
@@ -11,7 +24,7 @@ function ImporterTable(props: TImporterTable) {
   const { isLoading = false, headerLeft, headerRight, iterator } = props;
   return (
     <div className="w-full min-h-44 max-h-full overflow-y-auto">
-      <div className="relative grid grid-cols-2 items-center p-3 text-sm font-medium border-b border-custom-border-100 text-custom-text-350">
+      <div className="relative grid grid-cols-2 items-center p-3 text-13 font-medium border-b border-subtle text-tertiary">
         <div>{headerLeft}</div>
         <div>{headerRight}</div>
       </div>
@@ -31,8 +44,8 @@ function ImporterTable(props: TImporterTable) {
             (item) =>
               item &&
               item?.id && (
-                <div key={item.id} className="relative grid grid-cols-2 items-center p-3 text-sm">
-                  <div className="text-custom-text-200">{item.name}</div>
+                <div key={item.id} className="relative grid grid-cols-2 items-center p-3 text-13">
+                  <div className="text-secondary">{item.name}</div>
                   {item.value}
                 </div>
               )

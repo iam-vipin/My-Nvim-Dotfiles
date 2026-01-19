@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third Party imports
 from rest_framework import serializers
 
@@ -200,7 +211,7 @@ class ModuleLinkSerializer(BaseSerializer):
 
 
 class ModuleSerializer(DynamicBaseSerializer):
-    member_ids = serializers.ListField(child=serializers.UUIDField(), required=False, allow_null=True)
+    member_ids = serializers.SerializerMethodField(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
@@ -248,6 +259,9 @@ class ModuleSerializer(DynamicBaseSerializer):
             "archived_at",
         ]
         read_only_fields = fields
+    
+    def get_member_ids(self, instance):
+        return [str(member.id) for member in instance.members.filter(modulemember__deleted_at__isnull=True)]
 
 
 class ModuleDetailSerializer(ModuleSerializer):

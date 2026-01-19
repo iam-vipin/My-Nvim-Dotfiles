@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
@@ -11,7 +24,6 @@ import { AlertModalCore, CustomMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 import { WorkflowChangeHistory } from "./change-history";
@@ -49,25 +61,12 @@ export const WorkflowSettingsQuickActions = observer(function WorkflowSettingsQu
           title: t("workflows.toasts.reset.success.title"),
           message: t("workflows.toasts.reset.success.message"),
         });
-        captureSuccess({
-          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_RESET,
-          payload: {
-            project_id: projectId,
-          },
-        });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("workflows.toasts.reset.error.title"),
           message: t("workflows.toasts.reset.error.message"),
-        });
-        captureError({
-          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_RESET,
-          payload: {
-            project_id: projectId,
-          },
-          error: error as Error,
         });
       })
       .finally(() => {
@@ -82,7 +81,6 @@ export const WorkflowSettingsQuickActions = observer(function WorkflowSettingsQu
       title: t("workflows.quick_actions.reset_workflow"),
       action: () => {
         setIsResetWorkflowModalOpen(true);
-        captureClick({ elementName: WORKFLOW_TRACKER_ELEMENTS.WORKFLOW_RESET_BUTTON });
       },
       shouldRender: hasAdminPermission,
     },
@@ -128,7 +126,7 @@ export const WorkflowSettingsQuickActions = observer(function WorkflowSettingsQu
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -138,8 +136,8 @@ export const WorkflowSettingsQuickActions = observer(function WorkflowSettingsQu
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

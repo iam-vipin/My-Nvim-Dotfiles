@@ -1,5 +1,18 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
-import { Link2, Pencil, Trash2 } from "lucide-react";
+import { LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -47,7 +60,7 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
     {
       key: "edit",
       title: "Edit",
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEdit,
       shouldRender: isAdmin,
     },
@@ -55,15 +68,15 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
       key: "copy-link",
       action: handleCopyLink,
       title: "Copy link",
-      icon: Link2,
+      icon: LinkIcon,
       iconClassName: "-rotate-45",
     },
     {
       key: "delete",
       action: () => toggleDeleteRequestModal(requestId),
       title: "Delete",
-      icon: Trash2,
-      className: "text-red-500",
+      icon: TrashIcon,
+      className: "text-danger-primary",
       shouldRender: isAdmin,
     },
   ];
@@ -90,7 +103,7 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -101,8 +114,8 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

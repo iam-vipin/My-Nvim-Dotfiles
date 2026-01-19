@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
@@ -11,8 +24,6 @@ import {
   getTemplateSettingsBasePath,
   getTemplateTypeI18nName,
 } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -69,24 +80,12 @@ export const PublishTemplate = observer(function PublishTemplate<T extends TBase
             templateType: t(getTemplateTypeI18nName(templateInstance.template_type))?.toLowerCase(),
           }),
         });
-        captureSuccess({
-          eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.PUBLISH,
-          payload: {
-            id: templateInstance.id,
-          },
-        });
       } catch (error) {
         console.error("Template update failed:", error);
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("templates.toasts.update.error.title"),
           message: t("templates.toasts.update.error.message"),
-        });
-        captureError({
-          eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.PUBLISH,
-          payload: {
-            id: templateInstance.id,
-          },
         });
       }
     },
@@ -99,8 +98,8 @@ export const PublishTemplate = observer(function PublishTemplate<T extends TBase
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="flex items-center justify-between border-b border-custom-border-200 pb-3 tracking-tight w-full">
-        <h3 className="text-lg font-semibold">{t("templates.settings.form.publish.title")}</h3>
+      <div className="flex items-center justify-between border-b border-subtle pb-3 tracking-tight w-full">
+        <h5 className="text-h5-semibold">{t("templates.settings.form.publish.title")}</h5>
       </div>
       {isInitializing && <PublishTemplateLoader />}
       {!isInitializing && templateInstance && (

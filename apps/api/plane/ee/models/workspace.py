@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import models, transaction
 from django.conf import settings
@@ -6,7 +17,7 @@ from django.contrib.auth import get_user_model
 
 # Module imports
 from plane.db.models.base import BaseModel
-from plane.db.models.workspace import WorkspaceBaseModel
+from plane.db.models.workspace import WorkspaceBaseModel, WorkspaceRole
 
 
 class WorkspaceFeature(BaseModel):
@@ -234,7 +245,8 @@ class WorkspaceMemberActivity(BaseModel):
         ROLE_CHANGED = "ROLE_CHANGED", "Role Changed"
         INVITED = "INVITED", "Invited"
         INVITATION_DELETED = "INVITATION_DELETED", "Invitation Deleted"
-        ACCEPTED_INVITATION = "ACCEPTED_INVITATION", "Accepted Invitation"
+        SEATS_ADDED = "SEATS_ADDED", "Seats Added"
+        SEATS_REMOVED = "SEATS_REMOVED", "Seats Removed"
 
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="member_activities")
     actor = models.ForeignKey(
@@ -243,7 +255,7 @@ class WorkspaceMemberActivity(BaseModel):
         null=True,
         related_name="workspace_member_activities",
     )
-    type = models.CharField(max_length=255, default=WorkspaceMemberActivityType.JOINED)
+    type = models.CharField(max_length=255)
     workspace_member = models.ForeignKey(
         "db.WorkspaceMember", on_delete=models.CASCADE, related_name="activities", null=True, blank=True
     )

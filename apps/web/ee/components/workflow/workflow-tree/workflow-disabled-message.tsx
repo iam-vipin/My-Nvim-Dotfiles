@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CircleStop } from "lucide-react";
@@ -29,10 +42,10 @@ export const WorkFlowDisabledMessage = observer(function WorkFlowDisabledMessage
   if (!parentState || !isWorkflowEnabled) return <></>;
 
   return (
-    <div className={cn("relative w-72 flex flex-col p-3 gap-2 rounded bg-custom-background-100", className)}>
+    <div className={cn("relative w-72 flex flex-col p-3 gap-2 rounded-sm bg-surface-1", className)}>
       <div className="flex gap-1 items-center">
         <CircleStop className="size-3" color="#FA4D56" />
-        <span className="text-xs font-medium">{t("workflows.workflow_disabled.title")}</span>
+        <span className="text-11 font-medium">{t("workflows.workflow_disabled.title")}</span>
       </div>
       <div className="pl-4">
         <WorkflowTree parentStateId={parentStateId} />

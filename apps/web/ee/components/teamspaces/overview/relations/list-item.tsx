@@ -1,10 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo, useRef } from "react";
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { ERelationType } from "@plane/constants";
-import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
 import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { TTeamspaceDependencyWorkItem } from "@plane/types";
 import { Avatar, AvatarGroup } from "@plane/ui";
@@ -12,7 +24,6 @@ import { cn, getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list/list-item";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -73,13 +84,6 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
-        captureClick({
-          elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.WORK_ITEM_RELATION_LIST_ITEM,
-          context: {
-            id: issue.id,
-            type: type,
-          },
-        });
         handleIssuePeekOverview();
       }}
       className="w-full cursor-pointer"
@@ -98,16 +102,15 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
                 issueTypeId={issue.type_id}
                 projectId={issue.project_id}
                 projectIdentifier={projectIdentifier}
-                textContainerClassName="text-xs"
               />
             )}
           </div>
         }
         quickActionElement={
-          <div className="flex flex-shrink-0 items-center justify-center gap-2 text-custom-text-400 font-medium text-sm">
+          <div className="flex flex-shrink-0 items-center justify-center gap-2 text-placeholder text-caption-md-medium">
             {relationText}{" "}
             {issue.related_issues.length > 1 ? (
-              <span className="text-custom-text-100">{issue.related_issues.length} work items</span>
+              <span className="text-primary">{issue.related_issues.length} work items</span>
             ) : (
               issue.related_issues[0] && (
                 <div className="flex flex-shrink-0 items-center justify-center gap-2">
@@ -118,7 +121,7 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
                       issueTypeId={issue.related_issues[0].type_id}
                       projectId={issue.related_issues[0].project_id}
                       projectIdentifier={projectIdentifier}
-                      textContainerClassName="text-xs text-custom-text-100"
+                      variant="primary"
                     />
                   )}
                 </div>
@@ -138,10 +141,7 @@ export const TeamspaceRelationIssueListItem = observer(function TeamspaceRelatio
           </div>
         }
         parentRef={parentRef}
-        className={cn(
-          "min-h-9 rounded",
-          getIsIssuePeeked(issue.id) ? "border border-custom-primary-70" : "border-none"
-        )}
+        className={cn("min-h-9 rounded", getIsIssuePeeked(issue.id) ? "border border-accent-strong" : "border-none")}
         disableLink
       />
     </div>

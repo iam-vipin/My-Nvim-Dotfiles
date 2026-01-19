@@ -1,18 +1,32 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { PanelLeft, SquarePen } from "lucide-react";
+import { History, SquarePen } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { HomeIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Breadcrumbs, Header as HeaderUI } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppHeader } from "@/components/core/app-header";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { BetaBadge } from "../../common/beta";
 import { ModelsDropdown } from "./models-dropdown";
+import { AiSidecarQuickActions } from "./quick-actions";
+import { IconButton } from "@plane/propel/icon-button";
 
 type THeaderProps = {
   isProjectLevel?: boolean;
@@ -21,14 +35,11 @@ type THeaderProps = {
   isSidePanelOpen: boolean;
   toggleSidePanel: (value: boolean) => void;
 };
-
-const buttonClass =
-  "w-auto p-2 rounded-lg text-custom-text-200 grid place-items-center border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-200 hover:shadow-sm hover:text-custom-text-300";
 export const Header = observer(function Header(props: THeaderProps) {
   const router = useRouter();
   const { workspaceSlug } = useParams();
   const { isProjectLevel = false, isFullScreen, toggleSidePanel, isSidePanelOpen } = props;
-  const { initPiChat, activeModel, models, setActiveModel } = usePiChat();
+  const { initPiChat, activeChatId, activeModel, models, setActiveModel } = usePiChat();
   const { t } = useTranslation();
   return (
     <AppHeader
@@ -42,21 +53,23 @@ export const Header = observer(function Header(props: THeaderProps) {
                     <BreadcrumbLink
                       href={"/"}
                       label={t("home.title")}
-                      icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
+                      icon={<HomeIcon className="h-4 w-4 text-tertiary" />}
                     />
                   }
                 />
               )}
               <Breadcrumbs.Item
                 component={
-                  <div className="flex rounded gap-2 items-center">
-                    {isFullScreen && (
-                      <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />
-                    )}
+                  <div className="flex rounded-sm gap-2 items-center">
+                    {isFullScreen && <PiIcon className="size-4 text-icon-primary fill-current m-auto align-center" />}
                     {models?.length > 1 ? (
-                      <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
+                      <ModelsDropdown
+                        models={models}
+                        activeModel={activeModel}
+                        setActiveModel={(model) => setActiveModel(activeChatId, model)}
+                      />
                     ) : (
-                      <span className="font-medium text-sm my-auto">Plane AI</span>
+                      <span className="text-body-xs-medium text-secondary my-auto">Plane AI</span>
                     )}
                     <BetaBadge />
                   </div>
@@ -70,27 +83,31 @@ export const Header = observer(function Header(props: THeaderProps) {
                 <>
                   {!isFullScreen ? (
                     <Tooltip tooltipContent="Start a new chat" position="left">
-                      <button className={cn(buttonClass)} onClick={() => initPiChat()}>
-                        <SquarePen className="flex-shrink-0 size-3.5" />
-                      </button>
+                      <IconButton size="lg" variant={"tertiary"} icon={SquarePen} onClick={() => initPiChat()} />
                     </Tooltip>
                   ) : (
                     <Tooltip tooltipContent="Start a new chat" position="bottom">
                       <Link
                         href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
                         tabIndex={-1}
-                        className={cn(buttonClass)}
+                        className="bg-layer-1 rounded-md px-2 py-[0.5px] h-7 text-icon-tertiary flex items-center justify-center hover:bg-layer-1-hover"
                       >
-                        <SquarePen className="flex-shrink-0 size-3.5" />
+                        <SquarePen className="flex-shrink-0 size-4" />
                       </Link>
                     </Tooltip>
                   )}
                   {!isSidePanelOpen && (
                     <Tooltip tooltipContent="History" position="bottom">
-                      <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
-                        <PanelLeft className="size-3.5" />
-                      </button>
+                      <IconButton size="lg" variant={"tertiary"} icon={History} onClick={() => toggleSidePanel(true)} />
                     </Tooltip>
+                  )}
+
+                  {!isFullScreen && (
+                    <AiSidecarQuickActions
+                      workspaceSlug={workspaceSlug}
+                      chatId={activeChatId}
+                      initPiChat={initPiChat}
+                    />
                   )}
                 </>
               </div>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC, ReactNode } from "react";
 
 type TSidebarContentWrapperProps = {
@@ -9,11 +22,11 @@ type TSidebarContentWrapperProps = {
 export function SidebarContentWrapper(props: TSidebarContentWrapperProps) {
   const { title, children, actionElement } = props;
   return (
-    <div className="flex items-center h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden px-6 pb-6">
+    <div className="flex items-center h-full w-full flex-col divide-y-2 divide-subtle-1 overflow-hidden">
       <div className="flex flex-col gap-3 h-full w-full overflow-y-auto">
         {(title || actionElement) && (
-          <div className="flex items-center justify-between gap-2 h-7">
-            {title && <h5 className="text-sm font-medium">{title}</h5>}
+          <div className="flex items-center justify-between gap-2 ">
+            {title && <h5 className="text-16 font-semibold text-secondary">{title}</h5>}
             {actionElement}
           </div>
         )}

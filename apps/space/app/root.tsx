@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 // assets
@@ -13,6 +26,11 @@ import type { Route } from "./+types/root";
 // local imports
 import ErrorPage from "./error";
 import { AppProviders } from "./providers";
+// fonts
+import "@fontsource-variable/inter";
+import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import "@fontsource/material-symbols-rounded";
+import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane Publish | Make your Plane boards public with one-click";
 const APP_DESCRIPTION = "Plane Publish is a customer feedback management tool built on top of plane.so";
@@ -24,6 +42,13 @@ export const links: Route.LinksFunction = () => [
   { rel: "shortcut icon", href: faviconIco },
   { rel: "manifest", href: siteWebmanifest },
   { rel: "stylesheet", href: globalStyles },
+  {
+    rel: "preload",
+    href: interVariableWoff2,
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
 ];
 
 export const headers: Route.HeadersFunction = () => ({
@@ -72,7 +97,7 @@ export default function Root() {
 
 export function HydrateFallback() {
   return (
-    <div className="relative flex h-screen w-full items-center justify-center">
+    <div className="bg-surface-1 relative flex h-screen w-full items-center justify-center">
       <LogoSpinner />
     </div>
   );

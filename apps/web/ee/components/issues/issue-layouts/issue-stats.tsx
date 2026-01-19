@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CircularProgressIndicator } from "@plane/ui";
@@ -26,7 +39,7 @@ export const IssueStats = observer(function IssueStats(props: Props) {
   return (
     <div className={cn("flex gap-2 items-center", className)}>
       <CircularProgressIndicator size={size} percentage={progress} strokeWidth={3} />
-      <div className="text-xs my-auto w-auto overflow-hidden truncate ">
+      <div className="text-11 my-auto w-auto overflow-hidden truncate ">
         {showProgressText ? (epicStats?.total_issues ? `${completedIssues}/${epicStats?.total_issues}` : `0/0`) : ""}{" "}
         {showLabel && `Work items`}
       </div>

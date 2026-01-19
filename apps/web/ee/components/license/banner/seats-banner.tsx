@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
 // helpers
@@ -47,18 +59,17 @@ export const LicenseSeatsBanner = observer(function LicenseSeatsBanner() {
       : "primary";
 
   return (
-    <div className="flex-shrink-0">
+    <div className="shrink-0">
       <div
         className={cn(
           "relative flex justify-center items-center gap-2 p-2 px-4",
-          currentVariant === "primary" ? "bg-yellow-300/15 text-yellow-500" : "bg-red-500/10 text-red-500"
+          currentVariant === "primary" ? "bg-yellow-300/15 text-yellow-500" : "bg-danger-subtle text-danger-primary"
         )}
       >
-        <div className="text-sm font-medium text-center">{planMessages[currentPlanKey]}</div>
-        <div className="flex-shrink-0">
+        <div className="text-13 font-medium text-center">{planMessages[currentPlanKey]}</div>
+        <div className="shrink-0">
           <Button
-            variant={currentVariant === "primary" ? "primary" : "outline-danger"}
-            size="sm"
+            variant={currentVariant === "primary" ? "primary" : "error-outline"}
             onClick={() => togglePaidPlanModal(true)}
           >
             Upgrade to Pro

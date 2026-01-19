@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import uuid
 from unittest.mock import patch
 from django.test import TestCase
@@ -9,19 +20,11 @@ from plane.db.models import Issue, FileAsset, Workspace, Project, User
 class TestCopyS3ObjectsOfIssueAttachment(TestCase):
     def setUp(self):
         # Create base test data
-        self.user = User.objects.create_user(
-            email="test@plane.so", password="test123", username="test_user"
-        )
-        self.workspace = Workspace.objects.create(
-            name="Test Workspace", owner=self.user
-        )
-        self.project = Project.objects.create(
-            name="Test Project", workspace=self.workspace, project_lead=None
-        )
+        self.user = User.objects.create_user(email="test@plane.so", password="test123", username="test_user")
+        self.workspace = Workspace.objects.create(name="Test Workspace", owner=self.user)
+        self.project = Project.objects.create(name="Test Project", workspace=self.workspace, project_lead=None)
 
-        self.issue = Issue.objects.create(
-            project=self.project, workspace=self.workspace, created_by=self.user
-        )
+        self.issue = Issue.objects.create(project=self.project, workspace=self.workspace, created_by=self.user)
 
     @patch("plane.bgtasks.copy_s3_object.copy_assets")
     def test_copy_issue_attachments_basic(self, mock_copy_assets):
@@ -81,9 +84,7 @@ class TestCopyS3ObjectsOfIssueAttachment(TestCase):
         mock_copy_assets.assert_called_once()
         call_args = mock_copy_assets.call_args[1]
         self.assertEqual(call_args["entity"], self.issue)
-        self.assertEqual(
-            set(call_args["asset_ids"]), set(str(asset.id) for asset in file_assets)
-        )
+        self.assertEqual(set(call_args["asset_ids"]), set(str(asset.id) for asset in file_assets))
         self.assertEqual(call_args["project_id"], self.project.id)
 
     @patch("plane.bgtasks.copy_s3_object.copy_assets")

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -8,8 +21,8 @@ import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
 import { usePageFallback } from "@/hooks/use-page-fallback";
-import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
+import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { PageModals } from "@/plane-web/components/pages";
 import { NestedPagesDownloadBanner } from "@/plane-web/components/wiki/nested-pages-download-banner";
 import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
@@ -66,17 +79,19 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
-  const { isNestedPagesEnabled } = usePageStore(storeType);
+  const { isNestedPagesEnabled: getIsNestedPagesEnabled } = usePageStore(storeType);
   // derived values
   const {
     isContentEditable,
     editor: { setEditorRef },
     fetchEmbedsAndMentions,
   } = page;
-  // fallback logic
+  const isNestedPagesEnabled = getIsNestedPagesEnabled(workspaceSlug);
+  // page fallback
   const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
     fetchPageDescription: handlers.fetchDescriptionBinary,
+    page,
     collaborationState,
     updatePageDescription: handlers.updateDescription,
   });
@@ -143,7 +158,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
   const handleRestoreVersion = useCallback(
     async (descriptionHTML: string) => {
-      if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
+      if (version && isNestedPagesEnabled) {
         page.setVersionToBeRestored(version, descriptionHTML);
         page.setRestorationStatus(true);
         updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
@@ -155,7 +170,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
         editorRef.current?.setEditorValue(descriptionHTML);
       }
     },
-    [version, workspaceSlug, page, handlers, editorRef, isNestedPagesEnabled]
+    [version, page, handlers, editorRef, isNestedPagesEnabled]
   );
   // cleanup
   useEffect(
@@ -179,30 +194,32 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           storeType={storeType}
         />
         <NestedPagesDownloadBanner page={page} storeType={storeType} workspaceSlug={workspaceSlug} />
-        <PageEditorToolbarRoot
-          handleOpenNavigationPane={handleOpenNavigationPane}
-          isNavigationPaneOpen={isNavigationPaneOpen}
-          page={page}
-        />
         {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
-        <PageEditorBody
-          config={config}
-          customRealtimeEventHandlers={mergedCustomEventHandlers}
-          editorReady={editorReady}
-          editorForwardRef={editorRef}
-          handleEditorReady={handleEditorReady}
-          handleOpenNavigationPane={handleOpenNavigationPane}
-          handlers={handlers}
-          isNavigationPaneOpen={isNavigationPaneOpen}
-          page={page}
-          projectId={projectId}
-          storeType={storeType}
-          webhookConnectionParams={webhookConnectionParams}
-          workspaceSlug={workspaceSlug}
-          extendedEditorProps={extendedEditorProps}
-          isFetchingFallbackBinary={isFetchingFallbackBinary}
-          onCollaborationStateChange={setCollaborationState}
-        />
+        <div className="shrink-0 relative size-full flex flex-col overflow-hidden">
+          <PageEditorToolbarRoot
+            handleOpenNavigationPane={handleOpenNavigationPane}
+            isNavigationPaneOpen={isNavigationPaneOpen}
+            page={page}
+          />
+          <PageEditorBody
+            config={config}
+            customRealtimeEventHandlers={mergedCustomEventHandlers}
+            editorReady={editorReady}
+            editorForwardRef={editorRef}
+            handleEditorReady={handleEditorReady}
+            handleOpenNavigationPane={handleOpenNavigationPane}
+            handlers={handlers}
+            isNavigationPaneOpen={isNavigationPaneOpen}
+            page={page}
+            projectId={projectId}
+            storeType={storeType}
+            webhookConnectionParams={webhookConnectionParams}
+            workspaceSlug={workspaceSlug}
+            extendedEditorProps={extendedEditorProps}
+            isFetchingFallbackBinary={isFetchingFallbackBinary}
+            onCollaborationStateChange={setCollaborationState}
+          />
+        </div>
       </div>
       <PageNavigationPaneRoot
         storeType={storeType}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 import uuid
@@ -20,9 +31,10 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module Imports
-from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.db.models import FileAsset, Workspace
+from plane.db.models import FileAsset
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.helpers import get_workspace_async
 from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
 from plane.graphql.types.asset import FileAssetEntityType, FileAssetType
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
@@ -32,14 +44,6 @@ from plane.graphql.types.issues.attachment import (
 from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.utils.roles import Roles
 from plane.settings.storage import S3Storage
-
-
-@sync_to_async
-def get_workspace(slug):
-    try:
-        return Workspace.objects.get(slug=slug)
-    except Workspace.DoesNotExist:
-        return None
 
 
 @sync_to_async
@@ -87,7 +91,7 @@ class IssueAttachmentMutation:
             raise GraphQLError(message, extensions=error_extensions)
 
         # getting the workspace
-        workspace = await get_workspace(slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         if workspace is None:
             message = "Workspace not found."
             error_extensions = {"code": "WORKSPACE_NOT_FOUND", "statusCode": 404}

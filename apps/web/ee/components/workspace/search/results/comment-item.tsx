@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { IWorkspaceCommentEnhancedSearchResult } from "@plane/constants";
 import { Avatar } from "@plane/ui";
 import { getFileURL, sanitizeHTML } from "@plane/utils";
@@ -11,7 +24,7 @@ export function CommentItem({ comment }: { comment: IWorkspaceCommentEnhancedSea
     <div className="space-y-1">
       <div className="flex items-center gap-2">
         <div className="flex gap-2 items-center truncate">
-          <span className="text-custom-text-200 font-semibold">{userDetails?.display_name}</span>
+          <span className="text-secondary font-semibold">{userDetails?.display_name}</span>
           <span>commented on</span>
           <div className="flex gap-2 truncate">
             <IssueIdentifier
@@ -20,13 +33,12 @@ export function CommentItem({ comment }: { comment: IWorkspaceCommentEnhancedSea
               issueTypeId={comment.issue_type_id}
               issueSequenceId={comment.issue_sequence_id}
               size="xs"
-              textContainerClassName="text-xs"
             />
-            <span className="text-custom-text-200 truncate">{comment.issue_name}</span>
+            <span className="text-secondary truncate">{comment.issue_name}</span>
           </div>
         </div>
       </div>
-      <div className="text-custom-text-200 border-l border-custom-border-400 pl-2">{sanitizeHTML(comment.comment)}</div>
+      <div className="text-secondary border-l border-strong-1 pl-2">{sanitizeHTML(comment.comment)}</div>
     </div>
   );
 }

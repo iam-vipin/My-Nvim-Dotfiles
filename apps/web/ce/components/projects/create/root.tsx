@@ -1,24 +1,34 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { PROJECT_TRACKER_EVENTS, RANDOM_EMOJI_CODES } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import type { IProject } from "@plane/types";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
 import type { TProject } from "@/plane-web/types/projects";
-import ProjectAttributes from "./attributes";
+import { ProjectAttributes } from "./attributes";
 import { getProjectFormValues } from "./utils";
 
 export type TCreateProjectFormProps = {
@@ -37,7 +47,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   const { t } = useTranslation();
   const { addProjectToFavorites, createProject, updateProject } = useProject();
   // states
-  const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
+  const [shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier] = useState(true);
   // form info
   const methods = useForm<TProject>({
     defaultValues: { ...getProjectFormValues(), ...data },
@@ -98,12 +108,6 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           await updateCoverImageStatus(res.id, coverImage);
           await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: coverImage });
         }
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),
@@ -117,13 +121,6 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
       })
       .catch((err) => {
         try {
-          captureError({
-            eventName: PROJECT_TRACKER_EVENTS.create,
-            payload: {
-              identifier: formData.identifier,
-            },
-          });
-
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err?.data ?? {};
 
@@ -167,7 +164,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
   const handleClose = () => {
     onClose();
-    setIsChangeInIdentifierRequired(true);
+    setShouldAutoSyncIdentifier(true);
     setTimeout(() => {
       reset();
     }, 300);
@@ -182,8 +179,8 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           <ProjectCommonAttributes
             setValue={setValue}
             isMobile={isMobile}
-            isChangeInIdentifierRequired={isChangeInIdentifierRequired}
-            setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+            shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
+            setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
           />
           <ProjectAttributes isMobile={isMobile} />
         </div>

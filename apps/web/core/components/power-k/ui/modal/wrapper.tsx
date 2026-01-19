@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
@@ -123,7 +136,7 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
         {/* Modal Container */}
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -137,7 +150,7 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative flex w-full max-w-2xl transform flex-col items-center justify-center divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative flex w-full max-w-2xl transform flex-col items-center justify-center divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-surface-1 shadow-raised-200 transition-all">
                 <Command
                   filter={(i18nValue: string, search: string) => {
                     if (i18nValue === "no-results") return 1;

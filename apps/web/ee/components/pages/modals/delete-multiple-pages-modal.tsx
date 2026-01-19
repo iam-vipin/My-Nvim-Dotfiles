@@ -1,17 +1,25 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
-// constants
-import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
-// editor
+// plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { EmptyPageIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// ui
 import { AlertModalCore } from "@plane/ui";
-// helpers
 import { getPageName } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
@@ -48,28 +56,12 @@ export const DeleteMultiplePagesModal = observer(function DeleteMultiplePagesMod
       const deletePromises = pages.map(async (page) => {
         if (!page.id) return;
 
-        return removePage({ pageId: page.id })
-          .then(() => {
-            captureSuccess({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_delete,
-              payload: {
-                ...page,
-                state: "SUCCESS",
-              },
-            });
-
-            // Add to successfully deleted pages
-            successfullyDeletedPageIds.push(page.id as string);
-          })
-          .catch(() => {
-            captureError({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_delete,
-              payload: {
-                ...page,
-                state: "FAILED",
-              },
-            });
-          });
+        try {
+          await removePage({ pageId: page.id });
+          successfullyDeletedPageIds.push(page.id);
+        } catch (_error) {
+          console.error(_error);
+        }
       });
 
       // Wait for all delete operations to complete
@@ -115,20 +107,20 @@ export const DeleteMultiplePagesModal = observer(function DeleteMultiplePagesMod
       title={isMultiplePages ? "Delete pages" : "Delete page"}
       content={
         <div className="space-y-5">
-          <p className="text-sm text-custom-text-200">
+          <p className="text-13 text-secondary">
             {isMultiplePages
               ? "The following pages will be deleted permanently along with their sub pages. This action cannot be undone."
               : "The following page will be deleted permanently. This action cannot be undone."}
           </p>
 
           <div className="max-h-[120px] overflow-y-auto vertical-scrollbar scrollbar-sm">
-            <ul className="text-sm text-custom-text-100 rounded-md border border-custom-border-200 ">
+            <ul className="text-13 text-primary rounded-md border border-subtle-1 ">
               {pages.map((page) => (
                 <li
                   key={page.id}
-                  className="flex items-center gap-3 px-3 py-2.5 border-b last:border-b-0 border-custom-border-200 hover:bg-custom-background-80"
+                  className="flex items-center gap-3 px-3 py-2.5 border-b last:border-b-0 border-subtle-1 hover:bg-layer-1"
                 >
-                  <div className="flex items-center justify-center flex-shrink-0 w-5 h-5 text-custom-text-300">
+                  <div className="flex items-center justify-center flex-shrink-0 w-5 h-5 text-tertiary">
                     {page.logo_props?.in_use ? (
                       <Logo logo={page.logo_props} size={14} type="lucide" />
                     ) : (
@@ -136,14 +128,14 @@ export const DeleteMultiplePagesModal = observer(function DeleteMultiplePagesMod
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-custom-text-100 truncate">{getPageName(page.name)}</p>
+                    <p className="text-13 font-medium text-primary truncate">{getPageName(page.name)}</p>
                   </div>
                 </li>
               ))}
             </ul>
           </div>
           {isMultiplePages && (
-            <p className="text-xs text-custom-text-400 italic">`Total: ${pages.length} pages will be deleted`</p>
+            <p className="text-11 text-placeholder italic">`Total: ${pages.length} pages will be deleted`</p>
           )}
         </div>
       }

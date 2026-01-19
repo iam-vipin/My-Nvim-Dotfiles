@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Control, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import type { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
@@ -51,12 +64,12 @@ export function RichTextField<T extends FieldValues>(props: Props<T>) {
             searchMentionCallback={async (payload) => await searchEntityCallback(payload)}
             dragDropEnabled={false}
             onChange={(_description: object, html: string) => onChange(html)}
-            editorClassName="text-xs"
+            editorClassName="text-11"
             containerClassName={cn(
-              `resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2 resize-none text-sm bg-custom-background-100`,
+              `resize-none min-h-24 text-11 border-[0.5px] border-subtle-1 rounded-md px-3 py-2 resize-none text-13 bg-surface-1`,
               className,
               {
-                "border-red-500": Boolean(error),
+                "border-danger-strong": Boolean(error),
               }
             )}
             displayConfig={{ fontSize: "small-font" }}

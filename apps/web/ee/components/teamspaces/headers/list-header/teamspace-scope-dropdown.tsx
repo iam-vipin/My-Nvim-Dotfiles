@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -22,13 +35,13 @@ export const TeamspaceScopeDropdown = observer(function TeamspaceScopeDropdown()
         <div className="hidden md:flex relative items-center gap-2">
           <div className="flex gap-2 flex-1 my-auto">
             <div className="whitespace-nowrap font-medium my-auto">{selectedScope.label}</div>
-            <div className="px-1.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+            <div className="px-1.5 flex-shrink-0 bg-accent-subtle text-accent-primary text-caption-sm-semibold rounded-xl">
               {selectedScopeCount}
             </div>
           </div>
           <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
         </div>
-        <div className="flex md:hidden text-sm items-center gap-2 neutral-primary text-custom-text-200 justify-center w-full">
+        <div className="flex md:hidden text-body-xs-regular items-center gap-2 text-secondary justify-center w-full">
           <span>{selectedScope?.label}</span>
           <ChevronDownIcon className="h-3 w-3 hidden md:flex" strokeWidth={2} />
         </div>
@@ -43,8 +56,8 @@ export const TeamspaceScopeDropdown = observer(function TeamspaceScopeDropdown()
         className="flex items-center gap-2 truncate"
         onClick={() => updateScope(scope.key)}
       >
-        <div className="truncate font-medium text-xs">{scope?.label}</div>
-        <div className="px-1.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+        <div className="truncate font-medium text-caption-sm-medium">{scope?.label}</div>
+        <div className="px-1.5 flex-shrink-0 bg-accent-subtle text-accent-primary text-caption-sm-semibold rounded-xl">
           {getScopeTeamSpaceIds(scope.key)?.length}
         </div>
       </CustomMenu.MenuItem>
@@ -55,7 +68,7 @@ export const TeamspaceScopeDropdown = observer(function TeamspaceScopeDropdown()
     <CustomMenu
       maxHeight={"md"}
       className={cn(
-        "flex flex-grow justify-center text-xs text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded px-3 py-1.5"
+        "flex flex-grow justify-center text-caption-sm-medium text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1-hover rounded-sm px-3 py-1.5"
       )}
       placement="bottom-start"
       customButton={<DropdownLabel />}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from typing import Optional
@@ -15,15 +26,11 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module imports
-from plane.db.models import IssueLink, Workspace
+from plane.db.models import IssueLink
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.helpers import get_workspace_async
 from plane.graphql.permissions.project import ProjectMemberPermission
 from plane.graphql.types.issues.link import IssueLinkType
-
-
-@sync_to_async
-def get_workspace(slug):
-    return Workspace.objects.get(slug=slug)
 
 
 @sync_to_async
@@ -74,7 +81,7 @@ class IssueLinkMutation:
         except Exception:
             raise ValueError("Invalid URL")
 
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         issue_link = await create_issue_link_sync(workspace, project, issue, url, title)
 
         # Track the issue link activity
@@ -111,7 +118,7 @@ class IssueLinkMutation:
         title: Optional[str] = None,
         url: Optional[str] = None,
     ) -> IssueLinkType:
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         current_issue_link = await get_issue_link(workspace, project, issue, link)
 
         if current_issue_link is None:
@@ -180,7 +187,7 @@ class IssueLinkMutation:
         issue: strawberry.ID,
         link: strawberry.ID,
     ) -> bool:
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         current_issue_link = await get_issue_link(workspace, project, issue, link)
 
         if current_issue_link is None:

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -36,7 +49,7 @@ const SettingsTabs = observer(function SettingsTabs() {
       : TABS.workspace;
 
   return (
-    <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80">
+    <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-2">
       {Object.values(TABS).map((tab) => {
         const isActive = currentTab?.key === tab.key;
         const href = tab.key === TABS.projects.key ? `${tab.href}${joinedProjectIds[0] || ""}` : tab.href;
@@ -45,14 +58,14 @@ const SettingsTabs = observer(function SettingsTabs() {
             key={tab.key}
             href={`/${workspaceSlug}${href}`}
             className={cn(
-              "flex items-center justify-center p-1 min-w-fit w-full font-medium outline-none focus:outline-none cursor-pointer transition-all rounded text-custom-text-200 ",
+              "flex items-center justify-center p-1 min-w-fit w-full font-medium outline-none focus:outline-none cursor-pointer transition-all rounded-sm text-secondary ",
               {
-                "bg-custom-background-100 text-custom-text-100 shadow-sm": isActive,
-                "hover:text-custom-text-100 hover:bg-custom-background-80/60": !isActive,
+                "bg-layer-transparent-active text-primary shadow-sm": isActive,
+                "hover:text-primary hover:bg-layer-transparent-hover": !isActive,
               }
             )}
           >
-            <div className="text-xs font-semibold p-1">{tab.label}</div>
+            <div className="text-11 font-semibold p-1">{tab.label}</div>
           </Link>
         );
       })}

@@ -1,16 +1,25 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { cn } from "@plane/utils";
 // ce imports
 import type { TProjectTemplateSelect } from "@/ce/components/projects/create/template-select";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
@@ -19,7 +28,7 @@ import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creati
 import { useFlag } from "@/plane-web/hooks/store";
 
 export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(props: TProjectTemplateSelect) {
-  const { disabled = false, size = "sm", placeholder, dropDownContainerClassName, handleModalClose } = props;
+  const { disabled = false } = props;
   // router
   const { workspaceSlug } = useParams();
   // plane hooks
@@ -39,24 +48,15 @@ export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(pro
   return (
     <>
       {isTemplatesEnabled && (
-        <div className={cn(dropDownContainerClassName)}>
+        <div>
           <ProjectTemplateDropdown
             workspaceSlug={workspaceSlug?.toString()}
             templateId={projectTemplateId}
             disabled={disabled}
-            size={size}
-            placeholder={placeholder ?? t("templates.dropdown.label.project")}
             customLabelContent={isApplyingTemplate && <Spinner className="size-4 animate-spin" />}
             handleTemplateChange={(templateId) => {
-              captureClick({
-                elementName: PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_PROJECT_MODAL_TEMPLATE_OPTION,
-                context: {
-                  id: templateId,
-                },
-              });
               setProjectTemplateId(templateId);
             }}
-            handleRedirection={handleModalClose}
             showCreateNewTemplate={hasWorkspaceAdminPermission}
           />
         </div>

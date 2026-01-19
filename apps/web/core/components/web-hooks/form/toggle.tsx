@@ -1,12 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // constants
-import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import type { IWebhook } from "@plane/types";
 // ui
 import { ToggleSwitch } from "@plane/ui";
-// hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 
 interface IWebHookToggle {
   control: Control<IWebhook, any>;
@@ -15,7 +25,7 @@ interface IWebHookToggle {
 export function WebhookToggle({ control }: IWebHookToggle) {
   return (
     <div className="flex gap-6">
-      <div className="text-sm font-medium">Enable webhook</div>
+      <div className="text-13 font-medium">Enable webhook</div>
       <Controller
         control={control}
         name="is_active"
@@ -23,9 +33,6 @@ export function WebhookToggle({ control }: IWebHookToggle) {
           <ToggleSwitch
             value={value}
             onChange={(val: boolean) => {
-              captureClick({
-                elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DETAILS_PAGE_TOGGLE_SWITCH,
-              });
               onChange(val);
             }}
             size="sm"

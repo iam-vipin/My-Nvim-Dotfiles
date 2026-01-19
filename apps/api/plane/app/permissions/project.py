@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third Party imports
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 from rest_framework.request import Request
@@ -37,9 +48,7 @@ def check_teamspace_membership(view, request: Request) -> bool:
         ).values_list("team_space_id", flat=True)
 
         # return True if the user is a member of any of the teamspace
-        return TeamspaceMember.objects.filter(
-            member=request.user, team_space_id__in=teamspace_ids
-        ).exists()
+        return TeamspaceMember.objects.filter(member=request.user, team_space_id__in=teamspace_ids).exists()
     return False
 
 

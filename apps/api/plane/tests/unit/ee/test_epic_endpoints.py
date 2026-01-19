@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from django.urls import reverse
 from rest_framework import status
 from plane.db.models import ProjectMember
@@ -9,9 +20,7 @@ class TestEpicEndpoints:
     def test_get_epic(self, api_key_client, workspace, project, epic, create_user):
         """Test that an epic can be retrieved"""
         # Add user as project member to fix 403 error
-        ProjectMember.objects.create(
-            project=project, member=create_user, role=20, is_active=True
-        )
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
         url = reverse(
             "epic-detail",
@@ -21,14 +30,10 @@ class TestEpicEndpoints:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == epic.id
 
-    def test_get_epic_by_identifier(
-        self, api_key_client, workspace, project, epic, create_user
-    ):
+    def test_get_epic_by_identifier(self, api_key_client, workspace, project, epic, create_user):
         """Test that an epic can be retrieved by identifier"""
         # Add user as project member to fix 403 error
-        ProjectMember.objects.create(
-            project=project, member=create_user, role=20, is_active=True
-        )
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
         url = reverse(
             "issue-by-identifier",

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
@@ -20,20 +33,20 @@ function IntakeInfo() {
       buttonRefClassName="flex"
       popoverClassName="w-auto items-center flex"
       popoverButtonRef={popoverButtonRef}
-      buttonClassName="my-auto outline-none text-custom-text-300"
+      buttonClassName="my-auto outline-none text-tertiary"
       button={
-        <Button variant="neutral-primary" size="md">
+        <Button variant="secondary" size="lg">
           {t("intake_forms.how_it_works.title")}
         </Button>
       }
       popperPosition="bottom-end"
-      panelClassName="rounded border-1 border-custom-border-100 bg-custom-background-100 p-3 text-xs shadow-custom-shadow-sm focus:outline-none max-w-lg"
+      panelClassName="rounded-sm border-1 border-subtle bg-surface-1 p-3 text-11 shadow-raised-100 focus:outline-none max-w-lg"
     >
       <div className="p-2">
         <div>
           <div>
-            <div className="text-lg font-semibold">{t("intake_forms.how_it_works.heading")}</div>
-            <div className="text-sm text-custom-text-300">
+            <div className="text-16 font-semibold">{t("intake_forms.how_it_works.heading")}</div>
+            <div className="text-13 text-tertiary">
               {t("intake_forms.how_it_works.description")}
               <Link href="https://plane.so/intake" target="_blank" className="underline">
                 Learn more
@@ -43,12 +56,10 @@ function IntakeInfo() {
           <div className="mt-6 space-y-3">
             {info.map((item, index) => (
               <div key={item} className="flex gap-3 items-center">
-                <span className="w-7 h-7 rounded-full bg-custom-background-80/60 flex items-center justify-center text-sm text-custom-text-300 font-semibold flex-shrink-0 ">
+                <span className="w-7 h-7 rounded-full bg-layer-1/60 flex items-center justify-center text-13 text-tertiary font-semibold flex-shrink-0 ">
                   {index + 1}
                 </span>
-                <span className="text-sm text-custom-text-200">
-                  {t(`intake_forms.how_it_works.steps.step_${index + 1}`)}
-                </span>
+                <span className="text-13 text-secondary">{t(`intake_forms.how_it_works.steps.step_${index + 1}`)}</span>
               </div>
             ))}
           </div>

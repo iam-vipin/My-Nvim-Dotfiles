@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { addDays } from "date-fns";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
@@ -85,13 +98,13 @@ export const ChartAddBlock = observer(function ChartAddBlock(props: Props) {
         <Tooltip tooltipContent={buttonStartDate && renderFormattedDate(buttonStartDate)} isMobile={isMobile}>
           <button
             type="button"
-            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 bg-custom-background-80 p-1.5 rounded border border-custom-border-300 grid place-items-center text-custom-text-200 hover:text-custom-text-100"
+            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 bg-layer-1 p-1.5 rounded-sm border border-strong grid place-items-center text-secondary hover:text-primary"
             style={{
               marginLeft: `${buttonXPosition}px`,
             }}
             onClick={handleButtonClick}
           >
-            <Plus className="h-3.5 w-3.5" />
+            <PlusIcon className="h-3.5 w-3.5" />
           </button>
         </Tooltip>
       )}

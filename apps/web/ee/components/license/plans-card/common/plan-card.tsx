@@ -1,15 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { getSubscriptionTextColor } from "@plane/ui";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TPlanCard = {
   planVariant: EProductSubscriptionEnum;
   planDescription: React.ReactNode;
-  button: React.ReactNode;
+  button?: React.ReactNode;
 };
 
 export const PlanCard = observer(function PlanCard({ planVariant, planDescription, button }: TPlanCard) {
@@ -20,14 +32,14 @@ export const PlanCard = observer(function PlanCard({ planVariant, planDescriptio
 
   return (
     <div className="flex gap-2 font-medium items-center justify-between">
-      <div className="flex flex-col gap-1">
-        <h4 className={cn("text-xl leading-6 font-bold", getSubscriptionTextColor(planVariant))}>
+      <div className="flex flex-col gap-1.5">
+        <h4 className="text-18 leading-6 font-bold text-accent-primary">
           {planName}
           {isInTrialPeriod && " trial"}
         </h4>
-        <div className="text-sm text-custom-text-200 font-medium">{planDescription}</div>
+        <div className="text-13 text-secondary font-medium">{planDescription}</div>
       </div>
-      <div className="flex flex-col gap-1 items-center justify-center">{button}</div>
+      {button && <div className="flex flex-col gap-1 items-center justify-center">{button}</div>}
     </div>
   );
 });

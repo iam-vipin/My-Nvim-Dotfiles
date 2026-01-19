@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { PlainTextOption } from "@slack/types";
 import type { FormField } from "@/types/form/base";
 
@@ -18,10 +31,13 @@ export type TWorkItemFormResult = {
     // Core fields - use actual action IDs
     project: string;
     name: string;
-    description_html: string;
+    description_html?: string;
     state?: string;
     priority?: string;
     labels?: string[];
+    assignees?: string[];
+    start_date?: string;
+    due_date?: string;
     enable_thread_sync?: boolean;
     issue_type?: string;
 

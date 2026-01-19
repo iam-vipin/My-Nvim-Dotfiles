@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -5,14 +18,13 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
 // plane imports
-import { AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
 // helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { decodeEmailFromUrl } from "@/helpers/authentication.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // services
@@ -35,7 +47,8 @@ const authService = new AuthService();
 export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
   // search params
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const encodedEmail = searchParams.get("ctx");
+  const email = decodeEmailFromUrl(encodedEmail);
   // plane hooks
   const { t } = useTranslation();
   // timer
@@ -49,7 +62,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
   } = useForm<TForgotPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
-      email: email?.toString() ?? "",
+      email: email ?? "",
     },
   });
 
@@ -59,12 +72,6 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
         email: formData.email,
       })
       .then(() => {
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.forgot_password,
-          payload: {
-            email: formData.email,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("auth.forgot_password.toast.success.title"),
@@ -73,12 +80,6 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
         setResendCodeTimer(30);
       })
       .catch((err) => {
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.forgot_password,
-          payload: {
-            email: formData.email,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("auth.forgot_password.toast.error.title"),
@@ -92,7 +93,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
       <AuthFormHeader title="Reset password" description="Regain access to your account." />
       <form onSubmit={handleSubmit(handleForgotPassword)} className="space-y-4">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
+          <label className="text-13 font-medium text-tertiary" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <Controller
@@ -112,14 +113,14 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
                 ref={ref}
                 hasError={Boolean(errors.email)}
                 placeholder={t("auth.common.email.placeholder")}
-                className="h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
-                autoComplete="on"
+                className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
+                autoComplete="off"
                 disabled={resendTimerCode > 0}
               />
             )}
           />
           {resendTimerCode > 0 && (
-            <p className="flex items-start w-full gap-1 px-1 text-xs font-medium text-green-700">
+            <p className="flex items-start w-full gap-1 px-1 text-11 font-medium text-success-primary">
               <CircleCheck height={12} width={12} className="mt-0.5" />
               {t("auth.forgot_password.email_sent")}
             </p>
@@ -129,7 +130,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
           type="submit"
           variant="primary"
           className="w-full"
-          size="lg"
+          size="xl"
           disabled={!isValid}
           loading={isSubmitting || resendTimerCode > 0}
         >
@@ -137,7 +138,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
             ? t("auth.common.resend_in", { seconds: resendTimerCode })
             : t("auth.forgot_password.send_reset_link")}
         </Button>
-        <Link href="/" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
+        <Link href="/" className={cn("w-full", getButtonStyling("link", "lg"))}>
           {t("auth.common.back_to_sign_in")}
         </Link>
       </form>

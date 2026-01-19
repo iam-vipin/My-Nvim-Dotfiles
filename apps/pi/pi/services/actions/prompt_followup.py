@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Artifact followup processing service for Plane.
 
@@ -290,7 +301,8 @@ class ArtifactFollowupService:
             access_token = await self.chatbot._get_oauth_token_for_user(db, context["user_id"], context["workspace_id"])
 
             if not access_token:
-                raise ValueError("No access token available for entity resolution")
+                log.warning("No access token available for entity resolution")
+                return {"modified_json": current_artifact_data, "change_summary": "No access token available for entity resolution", "success": False}
 
             # Set up entity resolver
             resolver = EntityResolver(
@@ -305,7 +317,8 @@ class ArtifactFollowupService:
             # Get search tools and execute LLM with tools
             search_tools = await resolver.get_search_tools(access_token)
             if not search_tools:
-                raise ValueError("No search tools available for entity resolution")
+                log.warning("No search tools available for entity resolution")
+                return {"modified_json": current_artifact_data, "change_summary": "No search tools available for entity resolution", "success": False}
 
             # Execute LLM with tools
             modified_data = await self._execute_llm_with_tools(context, search_tools, resolver, db, message_id)
@@ -314,7 +327,7 @@ class ArtifactFollowupService:
 
         except Exception as e:
             log.error(f"Error processing followup query: {e}")
-            raise
+            return {"modified_json": current_artifact_data, "change_summary": "Error processing followup query", "success": False}
 
     def _build_context(self, current_data: Dict[str, Any], query: str, previous_queries: List[str], entity_type: str, user_id: str) -> Dict[str, Any]:
         """Build context for LLM processing."""
@@ -638,7 +651,8 @@ async def generate_followup_artifact_data(
 ) -> Dict[str, Any]:
     """Generate updated artifact data based on followup query using AI assistance."""
     if db is None:
-        raise ValueError("Database session is required but not provided")
+        log.warning("Database session is required but not provided")
+        return {"modified_json": current_artifact_data, "change_summary": "Database session is required but not provided", "success": False}
 
     try:
         # Initialize chatbot and context
@@ -651,7 +665,12 @@ async def generate_followup_artifact_data(
         workspace_slug = await get_workspace_slug(str(workspace_id))
 
         if not workspace_slug:
-            raise ValueError(f"Could not resolve workspace slug for workspace {workspace_id}")
+            log.warning(f"Could not resolve workspace slug for workspace {workspace_id}")
+            return {
+                "modified_json": current_artifact_data,
+                "change_summary": f"Could not resolve workspace slug for workspace {workspace_id}",
+                "success": False,
+            }
 
         # Create and execute followup service
         followup_service = ArtifactFollowupService(chatbot=chatbot, workspace_slug=workspace_slug, project_id=str(project_id) if project_id else None)
@@ -669,8 +688,8 @@ async def generate_followup_artifact_data(
         return result.get("modified_json", current_artifact_data)
 
     except Exception as e:
-        log.error(f"Error in generate_followup_artifact_data: {e}")
-        raise
+        log.error(f"Error generating followup artifact data: {e}")
+        return {"modified_json": current_artifact_data, "change_summary": "Error generating followup artifact data", "success": False}
 
 
 async def handle_artifact_prompt_followup(
@@ -715,7 +734,7 @@ async def handle_artifact_prompt_followup(
             updated_artifact_data = current_artifact_data.copy()
             changes = await _apply_direct_query_modifications(updated_artifact_data, current_query, entity_type, query_analysis, user_message_id, db)
             if not changes:
-                raise ValueError("No modifications could be applied")
+                return {"artifact_data": current_artifact_data, "change_summary": "No modifications could be applied", "success": True}
 
         # Store the followup query
         await add_query_to_artifact(db=db, artifact_id=artifact_id, message_id=user_message_id, new_query=current_query, chat_id=chat_id)
@@ -724,7 +743,7 @@ async def handle_artifact_prompt_followup(
 
     except Exception as e:
         log.error(f"Error handling artifact prompt followup: {e}")
-        raise
+        return {"artifact_data": current_artifact_data, "change_summary": "Error handling artifact prompt followup", "success": False}
 
 
 async def _analyze_query_requirements(

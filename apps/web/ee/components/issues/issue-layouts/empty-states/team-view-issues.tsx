@@ -1,17 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  EUserPermissionsLevel,
-  TEAMSPACE_VIEW_TRACKER_ELEMENTS,
-  TEAMSPACE_VIEW_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-// components
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -39,28 +45,9 @@ export const TeamViewEmptyState = observer(function TeamViewEmptyState() {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleClearAllFilters = () => {
+  const handleClearAllFilters = async () => {
     if (!teamspaceViewWorkItemFilter || !teamspaceId || !viewId) return;
-    teamspaceViewWorkItemFilter
-      .clearFilters()
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.EMPTY_STATE_CLEAR_WORK_ITEM_FILTERS,
-          payload: {
-            teamspace_id: teamspaceId,
-            view_id: viewId,
-          },
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.EMPTY_STATE_CLEAR_WORK_ITEM_FILTERS,
-          payload: {
-            teamspace_id: teamspaceId,
-            view_id: viewId,
-          },
-        });
-      });
+    await teamspaceViewWorkItemFilter.clearFilters();
   };
 
   if (!workspaceSlug || !teamspaceId || !viewId) return null;
@@ -76,13 +63,10 @@ export const TeamViewEmptyState = observer(function TeamViewEmptyState() {
             {
               label: t("teamspace_work_items.empty_state.work_items_empty_filter.secondary_button.text"),
               onClick: () => {
-                captureClick({
-                  elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WORK_ITEM_BUTTON,
-                });
                 handleClearAllFilters();
               },
               disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceViewWorkItemFilter,
-              variant: "outline-primary",
+              variant: "secondary",
             },
           ]}
         />
@@ -95,9 +79,6 @@ export const TeamViewEmptyState = observer(function TeamViewEmptyState() {
             {
               label: t("teamspace_work_items.empty_state.no_work_items.primary_button.text"),
               onClick: () => {
-                captureClick({
-                  elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WORK_ITEM_BUTTON,
-                });
                 toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds);
               },
               disabled: !hasWorkspaceMemberLevelPermissions,

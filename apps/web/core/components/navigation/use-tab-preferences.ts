@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useMember } from "@/hooks/store/use-member";
@@ -23,7 +36,7 @@ export type TTabPreferencesHook = {
  */
 export const useTabPreferences = (workspaceSlug: string, projectId: string): TTabPreferencesHook => {
   const {
-    project: { getProjectMemberPreferences, updateProjectMemberPreferences },
+    project: { getProjectUserProperties, updateProjectUserProperties },
   } = useMember();
   // const { projectUserInfo } = useUserPermissions();
   const { data } = useUser();
@@ -33,21 +46,17 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   const memberId = data?.id || null;
 
   // Get preferences from store
-  const storePreferences = getProjectMemberPreferences(projectId);
+  const storePreferences = getProjectUserProperties(projectId);
+  const defaultTab = storePreferences?.preferences?.navigation?.default_tab || DEFAULT_TAB_KEY;
+  const hideInMoreMenu = storePreferences?.preferences?.navigation?.hide_in_more_menu || [];
 
   // Convert store preferences to component format
   const tabPreferences: TTabPreferences = useMemo(() => {
-    if (storePreferences) {
-      return {
-        defaultTab: storePreferences.default_tab || DEFAULT_TAB_KEY,
-        hiddenTabs: storePreferences.hide_in_more_menu || [],
-      };
-    }
     return {
-      defaultTab: DEFAULT_TAB_KEY,
-      hiddenTabs: [],
+      defaultTab,
+      hiddenTabs: hideInMoreMenu,
     };
-  }, [storePreferences]);
+  }, [defaultTab, hideInMoreMenu]);
 
   const isLoading = !storePreferences && memberId !== null;
 
@@ -55,11 +64,14 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
    * Update preferences via store
    */
   const updatePreferences = async (newPreferences: TTabPreferences) => {
-    if (!memberId) return;
-
-    await updateProjectMemberPreferences(workspaceSlug, projectId, memberId, {
-      default_tab: newPreferences.defaultTab,
-      hide_in_more_menu: newPreferences.hiddenTabs,
+    await updateProjectUserProperties(workspaceSlug, projectId, {
+      preferences: {
+        pages: storePreferences?.preferences?.pages || { block_display: false },
+        navigation: {
+          default_tab: newPreferences.defaultTab,
+          hide_in_more_menu: newPreferences.hiddenTabs,
+        },
+      },
     });
   };
 
@@ -77,6 +89,7 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
           title: "Success!",
           message: "Default tab updated successfully.",
         });
+        return;
       })
       .catch(() => {
         setToast({

@@ -1,9 +1,20 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import type { TClickUpConfig } from "@plane/etl/clickup";
 import type { TJobStatus } from "@plane/etl/core";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
@@ -12,7 +23,6 @@ import { Button } from "@plane/propel/button";
 import type { TImportJob } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useClickUpImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -87,35 +97,14 @@ export const SummaryRoot = observer(function SummaryRoot() {
           status: E_JOB_STATUS.CREATED as TJobStatus,
         };
         const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
-        captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-          payload: {
-            jobId: importerCreateJob?.id,
-            type: E_IMPORTER_KEYS.CLICKUP,
-          },
-        });
         if (importerCreateJob && importerCreateJob?.id) {
           await startJob(importerCreateJob?.id);
-          captureSuccess({
-            eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
-            payload: {
-              jobId: importerCreateJob?.id,
-              type: E_IMPORTER_KEYS.CLICKUP,
-            },
-          });
         }
       }
       // clearing the existing data in the context
       resetImporterData();
     } catch (error) {
       console.error("error", error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-        error: error as Error,
-        payload: {
-          type: E_IMPORTER_KEYS.CLICKUP,
-        },
-      });
     } finally {
       setCreateConfigLoader(false);
     }
@@ -149,11 +138,11 @@ export const SummaryRoot = observer(function SummaryRoot() {
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
+        <div className="relative grid grid-cols-2 items-center bg-layer-1 p-3 text-13 font-medium">
           <div>ClickUp {t("common.entities")}</div>
           <div>{t("importers.migrating")}</div>
         </div>
-        <div className="divide-y divide-custom-border-200">
+        <div className="divide-y divide-subtle-1">
           <StatsTile label={t("projects")} value={importingFolders.length} />
           <StatsTile label={t("work_items")} value={importingTasksCount} />
           {!userSkipToggle && (
@@ -181,12 +170,7 @@ export const SummaryRoot = observer(function SummaryRoot() {
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleOnClickNext}
-            disabled={createConfigLoader || isNextBtnDisabled}
-          >
+          <Button variant="primary" onClick={handleOnClickNext} disabled={createConfigLoader || isNextBtnDisabled}>
             {createConfigLoader ? t("common.configuring") : t("common.confirm")}
           </Button>
         </StepperNavigation>
@@ -197,8 +181,8 @@ export const SummaryRoot = observer(function SummaryRoot() {
 
 function StatsTile({ label, value }: { label: string; value: number }): React.ReactNode {
   return (
-    <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-      <div className="text-custom-text-200">{label}</div>
+    <div className="relative grid grid-cols-2 items-center p-3 text-13">
+      <div className="text-secondary">{label}</div>
       <div>{value}</div>
     </div>
   );

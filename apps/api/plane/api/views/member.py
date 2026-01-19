@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 
@@ -99,7 +110,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
 
 
 class ProjectMemberSiloEndpoint(BaseAPIView):
-    #TODO: Remove this endpoint once the silo is updated to use the new endpoint
+    # TODO: Remove this endpoint once the silo is updated to use the new endpoint
 
     permission_classes = [ProjectMemberPermission]
     use_read_replica = True
@@ -150,10 +161,7 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         # ------------------- Validation -------------------
-        if (
-            request.data.get("email") is None
-            or request.data.get("display_name") is None
-        ):
+        if request.data.get("email") is None or request.data.get("display_name") is None:
             return Response(
                 {
                     "error": "Expected email, display_name, workspace_slug, project_id, one or more of the fields are missing."
@@ -166,9 +174,7 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
         try:
             validate_email(email)
         except ValidationError:
-            return Response(
-                {"error": "Invalid email provided"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid email provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         workspace = Workspace.objects.filter(slug=slug).first()
         project = Project.objects.filter(pk=project_id).first()
@@ -186,14 +192,10 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
 
         if user:
             # Check if user is part of the workspace
-            workspace_member = WorkspaceMember.objects.filter(
-                workspace=workspace, member=user
-            ).first()
+            workspace_member = WorkspaceMember.objects.filter(workspace=workspace, member=user).first()
             if workspace_member:
                 # Check if user is part of the project
-                project_member = ProjectMember.objects.filter(
-                    project=project, member=user
-                ).first()
+                project_member = ProjectMember.objects.filter(project=project, member=user).first()
                 if project_member:
                     return Response(
                         {"error": "User is already part of the workspace and project"},
@@ -236,7 +238,6 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
         user_data = UserLiteSerializer(user).data
 
         return Response(user_data, status=status.HTTP_201_CREATED)
-
 
 
 class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
@@ -305,7 +306,6 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
 
 # API endpoint to get and update a project member
 class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
-
     @extend_schema(
         operation_id="get_project_member",
         summary="Get project member",

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -98,7 +111,7 @@ const CycleProgress = observer(function CycleProgress() {
                 key: "count",
                 label: t("common.completion"),
                 fill: (payload: any) => CYCLE_GROUP_COLORS[payload.status.toLowerCase() as TCycleGroups],
-                textClassName: "text-xs",
+                textClassName: "text-11",
                 stackId: "a",
                 shapeVariant: "lollipop",
               },
@@ -139,7 +152,7 @@ const CycleProgress = observer(function CycleProgress() {
             {Object.entries(CYCLE_GROUP_COLORS).map(([key, value]) => (
               <div key={key} className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: value }} />
-                <span className="text-sm opacity-50">{t(CYCLE_GROUP_I18N_LABELS[key as TCycleGroups])}</span>
+                <span className="text-13 opacity-50">{t(CYCLE_GROUP_I18N_LABELS[key as TCycleGroups])}</span>
               </div>
             ))}
           </div>
@@ -148,7 +161,7 @@ const CycleProgress = observer(function CycleProgress() {
         <EmptyStateCompact
           assetKey="unknown"
           assetClassName="size-20"
-          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
           title={t("workspace_empty_state.analytics_no_cycle.title")}
         />
       )}

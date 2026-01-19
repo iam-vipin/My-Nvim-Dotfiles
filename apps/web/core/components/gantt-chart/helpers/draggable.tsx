@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { RefObject } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -49,7 +62,7 @@ export const ChartDraggable = observer(function ChartDraggable(props: Props) {
         position={block.position}
       />
       <div
-        className={cn("relative z-[6] flex h-8 w-full items-center rounded", {
+        className={cn("relative z-[6] flex h-8 w-full items-center rounded-sm", {
           "pointer-events-none": isMoving,
         })}
         onMouseDown={(e) => enableBlockMove && handleBlockDrag(e, "move")}

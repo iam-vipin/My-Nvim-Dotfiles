@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -47,7 +60,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
                 <BreadcrumbLink
                   label="Intake"
                   href={`/${workspaceSlug}/projects/${projectId}/intake/`}
-                  icon={<IntakeIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<IntakeIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -56,9 +69,9 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
           </Breadcrumbs>
 
           {loader === "pagination-loading" && (
-            <div className="flex items-center gap-1.5 text-custom-text-300">
+            <div className="flex items-center gap-1.5 text-tertiary">
               <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
-              <p className="text-sm">{t("syncing")}...</p>
+              <p className="text-13">{t("syncing")}...</p>
             </div>
           )}
         </div>
@@ -72,8 +85,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
               modalState={createIssueModal}
               handleModalClose={() => setCreateIssueModal(false)}
             />
-
-            <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
+            <Button variant="primary" size="lg" onClick={() => setCreateIssueModal(true)}>
               {t("add_work_item")}
             </Button>
           </div>

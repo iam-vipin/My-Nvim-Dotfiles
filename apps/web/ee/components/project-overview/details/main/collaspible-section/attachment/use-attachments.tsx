@@ -1,9 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 // plane ui
-import { PROJECT_OVERVIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 // hooks
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 // types
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
@@ -46,17 +57,8 @@ export const useAttachmentOperations = (workspaceSlug: string, projectId: string
           });
 
           await attachmentUploadPromise;
-          captureSuccess({
-            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_added,
-            payload: { id: projectId },
-          });
-
           setLastCollapsibleAction("attachments");
         } catch (error) {
-          captureError({
-            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_added,
-            payload: { id: projectId },
-          });
           throw error;
         }
       },
@@ -69,15 +71,7 @@ export const useAttachmentOperations = (workspaceSlug: string, projectId: string
             type: TOAST_TYPE.SUCCESS,
             title: "Attachment removed",
           });
-          captureSuccess({
-            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_removed,
-            payload: { id: projectId, attachment_id: attachmentId },
-          });
-        } catch (error) {
-          captureError({
-            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_removed,
-            payload: { id: projectId, attachment_id: attachmentId },
-          });
+        } catch (_error) {
           setToast({
             message: "The Attachment could not be removed",
             type: TOAST_TYPE.ERROR,

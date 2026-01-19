@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from typing import Optional
 
 from fastapi import APIRouter
@@ -6,8 +17,7 @@ from fastapi.responses import JSONResponse
 from pydantic import UUID4
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.chat import ChatSuggestionTemplate
 from pi.services.chat.templates import tiles_factory
 
@@ -19,7 +29,7 @@ router = APIRouter()
 async def list_templates(
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Get chat suggestion templates for the workspace.
@@ -76,11 +86,6 @@ async def list_templates(
         - Context-aware conversation starters
         - Improve feature discoverability
     """
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     try:
         suggestions = tiles_factory()

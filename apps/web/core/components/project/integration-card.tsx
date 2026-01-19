@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
@@ -79,7 +92,7 @@ export function IntegrationCard({ integration }: Props) {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
+        <div className="flex items-center justify-between gap-2 border-b border-subtle bg-surface-1 px-4 py-6">
           <div className="flex items-start gap-4">
             <div className="h-10 w-10 flex-shrink-0">
               <img
@@ -89,8 +102,8 @@ export function IntegrationCard({ integration }: Props) {
               />
             </div>
             <div>
-              <h3 className="flex items-center gap-4 text-sm font-medium">{integration.integration_detail.title}</h3>
-              <p className="text-sm tracking-tight text-custom-text-200">
+              <h3 className="flex items-center gap-4 text-13 font-medium">{integration.integration_detail.title}</h3>
+              <p className="text-13 tracking-tight text-secondary">
                 {integrationDetails[integration.integration_detail.provider].description}
               </p>
             </div>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -126,7 +139,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
   const peekOverviewIssueClassName = cn(
     "flex flex-col",
     !embedIssue
-      ? "absolute z-[25] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
+      ? "absolute z-[25] overflow-hidden rounded-sm border border-subtle-1 bg-surface-1 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
       "top-0 bottom-0 right-0 w-full lg:w-[1024px] border-0 border-l": peekMode === "side-peek",

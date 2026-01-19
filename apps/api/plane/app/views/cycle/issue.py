@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import copy
 import json
@@ -239,18 +250,14 @@ class CycleIssueViewSet(BaseViewSet):
         existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
         new_issues = list(set(issues) - set(existing_issues))
 
-        issue_cycle_data_added = [
-            {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
-            for issue_id in issues
-        ]
+        issue_cycle_data_added = [{"issue_id": str(issue_id), "cycle_id": str(cycle_id)} for issue_id in issues]
 
-        issues_removed = CycleIssue.objects.filter(
-            issue_id__in=existing_issues, workspace__slug=slug
-        ).values("issue_id", "cycle_id")
+        issues_removed = CycleIssue.objects.filter(issue_id__in=existing_issues, workspace__slug=slug).values(
+            "issue_id", "cycle_id"
+        )
 
         issue_cycle_data_removed = [
-            {"issue_id": str(issue["issue_id"]), "cycle_id": str(issue["cycle_id"])}
-            for issue in issues_removed
+            {"issue_id": str(issue["issue_id"]), "cycle_id": str(issue["cycle_id"])} for issue in issues_removed
         ]
 
         # New issues to create

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -48,9 +61,9 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col justify-between group/project-card rounded border border-custom-border-200 bg-custom-background-100 w-full",
+        "flex flex-col justify-between group/project-card border border-subtle bg-layer-2 hover:shadow-raised-200 hover:border-strong w-full rounded-lg overflow-hidden duration-300 transition-all",
         {
-          "bg-custom-background-80": isArchived,
+          "bg-layer-1": isArchived,
         }
       )}
     >
@@ -93,11 +106,11 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
         className={cn("group/project-card flex flex-col justify-between w-full", {
-          "bg-custom-background-80": isArchived,
+          "bg-layer-1": isArchived,
         })}
       >
         <>
-          <div className="bg-custom-background-100">
+          <div>
             <Details
               project={project}
               workspaceSlug={workspaceSlug.toString()}

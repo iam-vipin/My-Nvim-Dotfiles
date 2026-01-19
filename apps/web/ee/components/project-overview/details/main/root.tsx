@@ -1,12 +1,20 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import useSWR from "swr";
-// helpers
-import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 // local components
-import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { ProjectOverviewCollapsibleSectionRoot } from "./collapsible-section-root";
 import { useLinks } from "./collaspible-section/links/use-links";
 import { ProjectOverviewInfoSectionRoot } from "./info-section-root";
@@ -23,7 +31,6 @@ export function ProjectOverviewMainContentRoot(props: Props) {
   const { workspaceSlug, projectId, disabled } = props;
   // store hooks
   const { fetchAttachments } = useProjectAttachments();
-  const { projectOverviewSidebarCollapsed } = useAppTheme();
   // helper hooks
   const { fetchLinks } = useLinks(workspaceSlug.toString(), projectId.toString());
 
@@ -49,11 +56,7 @@ export function ProjectOverviewMainContentRoot(props: Props) {
   return (
     <div className="h-full w-full flex flex-col overflow-y-auto">
       <ProjectOverviewInfoSectionRoot workspaceSlug={workspaceSlug} projectId={projectId} />
-      <div
-        className={cn("flex flex-col h-full w-full px-10 py-8", {
-          "max-w-2/3": !projectOverviewSidebarCollapsed,
-        })}
-      >
+      <div className="flex flex-col h-full w-full px-10 py-8">
         <ProjectOverviewProgressSectionRoot workspaceSlug={workspaceSlug} projectId={projectId} />
         <ProjectOverviewCollapsibleSectionRoot
           workspaceSlug={workspaceSlug}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Interactive Django management command to create end-to-end automations.
 
@@ -70,14 +81,10 @@ class Command(BaseCommand):
                 return
 
             self.stdout.write(self.style.SUCCESS("🚀 Automation Creation Wizard"))
-            self.stdout.write(
-                "Creating a linear automation: Trigger → [Condition] → Action(s)\n"
-            )
+            self.stdout.write("Creating a linear automation: Trigger → [Condition] → Action(s)\n")
 
             if options.get("dry_run"):
-                self.stdout.write(
-                    self.style.WARNING("🔍 DRY RUN MODE - No changes will be made\n")
-                )
+                self.stdout.write(self.style.WARNING("🔍 DRY RUN MODE - No changes will be made\n"))
 
             # Step 1: Get workspace and project
             self._get_workspace_and_project(options)
@@ -100,18 +107,12 @@ class Command(BaseCommand):
             # Step 7: Publish automation
             self._publish_automation()
 
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"\n✅ Automation '{self.automation.name}' created successfully!"
-                )
-            )
+            self.stdout.write(self.style.SUCCESS(f"\n✅ Automation '{self.automation.name}' created successfully!"))
             self.stdout.write(f"Automation ID: {self.automation.id}")
             self.stdout.write(f"Version: {self.version.version_number}")
 
         except KeyboardInterrupt:
-            self.stdout.write(
-                self.style.ERROR("\n❌ Automation creation cancelled by user.")
-            )
+            self.stdout.write(self.style.ERROR("\n❌ Automation creation cancelled by user."))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"\n❌ Error creating automation: {e}"))
             raise
@@ -139,9 +140,7 @@ class Command(BaseCommand):
 
         # Get project
         if not project_id:
-            project_prompt = (
-                f"📁 Enter Project ID (UUID) for workspace '{self.workspace.name}': "
-            )
+            project_prompt = f"📁 Enter Project ID (UUID) for workspace '{self.workspace.name}': "
             project_id = self._get_safe_input(
                 project_prompt,
                 required=True,
@@ -152,10 +151,7 @@ class Command(BaseCommand):
             self.project = Project.objects.get(id=project_id, workspace=self.workspace)
             self.stdout.write(f"✅ Found project: {self.project.name}")
         except Project.DoesNotExist:
-            error_msg = (
-                f"Project with ID {project_id} not found in workspace "
-                f"{self.workspace.name}"
-            )
+            error_msg = f"Project with ID {project_id} not found in workspace {self.workspace.name}"
             raise CommandError(error_msg)
         except ValueError:
             raise CommandError(f"Invalid project ID format: {project_id}")
@@ -173,9 +169,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO("\n📝 Automation Details"))
 
         name = self._get_safe_input("Enter automation name: ", required=True)
-        description = self._get_safe_input(
-            "Enter automation description (optional): ", required=False
-        )
+        description = self._get_safe_input("Enter automation description (optional): ", required=False)
 
         # Show available scopes
         self.stdout.write("\nAvailable scopes:")
@@ -206,11 +200,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO("\n🎯 Trigger Node"))
 
         # Get available triggers
-        available_triggers = {
-            name: meta
-            for name, meta in self.registry.all().items()
-            if meta.node_type == "trigger"
-        }
+        available_triggers = {name: meta for name, meta in self.registry.all().items() if meta.node_type == "trigger"}
 
         if not available_triggers:
             raise CommandError("No trigger handlers available")
@@ -270,9 +260,7 @@ class Command(BaseCommand):
 
         # Get available conditions
         available_conditions = {
-            name: meta
-            for name, meta in self.registry.all().items()
-            if meta.node_type == "condition"
+            name: meta for name, meta in self.registry.all().items() if meta.node_type == "condition"
         }
 
         if not available_conditions:
@@ -326,11 +314,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO("\n⚡ Action Node(s)"))
 
         # Get available actions
-        available_actions = {
-            name: meta
-            for name, meta in self.registry.all().items()
-            if meta.node_type == "action"
-        }
+        available_actions = {name: meta for name, meta in self.registry.all().items() if meta.node_type == "action"}
 
         if not available_actions:
             raise CommandError("No action handlers available")
@@ -343,9 +327,7 @@ class Command(BaseCommand):
             self.stdout.write("Available actions:")
             for i, (name, meta) in enumerate(available_actions.items(), 1):
                 # Get description from schema if available
-                schema_info = (
-                    meta.schema.schema() if hasattr(meta.schema, "schema") else {}
-                )
+                schema_info = meta.schema.schema() if hasattr(meta.schema, "schema") else {}
                 description = schema_info.get("description", "No description available")
                 self.stdout.write(f"  {i}. {name} - {description}")
 
@@ -485,9 +467,7 @@ class Command(BaseCommand):
             self.automation.is_enabled = True
             self.automation.save()
 
-        self.stdout.write(
-            f"✅ Published automation version {published_version.version_number}"
-        )
+        self.stdout.write(f"✅ Published automation version {published_version.version_number}")
         self.stdout.write("🎉 Automation is now active!")
 
         # Display summary
@@ -497,9 +477,7 @@ class Command(BaseCommand):
         """Display a summary of the created automation."""
         self.stdout.write(self.style.HTTP_INFO("\n📋 Automation Summary"))
         self.stdout.write(f"Name: {self.automation.name}")
-        self.stdout.write(
-            f"Description: {self.automation.description or 'No description'}"
-        )
+        self.stdout.write(f"Description: {self.automation.description or 'No description'}")
         self.stdout.write(f"Scope: {self.automation.scope}")
         self.stdout.write(f"Workspace: {self.workspace.name}")
         self.stdout.write(f"Project: {self.project.name}")
@@ -538,9 +516,7 @@ class Command(BaseCommand):
                     # Get description from schema
                     has_schema = hasattr(meta.schema, "schema")
                     schema_info = meta.schema.schema() if has_schema else {}
-                    description = schema_info.get(
-                        "description", "No description available"
-                    )
+                    description = schema_info.get("description", "No description available")
 
                     # Get required fields
                     properties = schema_info.get("properties", {})
@@ -556,10 +532,7 @@ class Command(BaseCommand):
                             field_type = field_info.get("type", "string")
                             field_desc = field_info.get("description", "")
                             req_marker = " *" if is_required else ""
-                            param_line = (
-                                f"      - {field_name} ({field_type})"
-                                f"{req_marker}: {field_desc}"
-                            )
+                            param_line = f"      - {field_name} ({field_type}){req_marker}: {field_desc}"
                             self.stdout.write(param_line)
                     else:
                         self.stdout.write("    Parameters: None")
@@ -579,9 +552,7 @@ class Command(BaseCommand):
             return default
         return response in ("y", "yes") if not default else response not in ("n", "no")
 
-    def _get_safe_input(
-        self, prompt: str, required: bool = True, validator=None
-    ) -> str:
+    def _get_safe_input(self, prompt: str, required: bool = True, validator=None) -> str:
         """Get user input with validation and error handling."""
         while True:
             try:

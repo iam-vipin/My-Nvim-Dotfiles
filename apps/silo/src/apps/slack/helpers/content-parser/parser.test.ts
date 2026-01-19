@@ -1,8 +1,52 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TSlackContentParserConfig } from ".";
 import { getSlackContentParser } from ".";
+import type { SlackService } from "@plane/etl/slack";
+
+/**
+ * Creates a mock SlackService for testing purposes
+ * Provides stub implementations for getUserInfo and getConversationInfo
+ */
+const createMockSlackService = () =>
+  ({
+    getUserInfo: jest.fn((userId: string) =>
+      Promise.resolve({
+        ok: true,
+        user: {
+          id: userId,
+          real_name: `Mock User ${userId}`,
+          name: `user_${userId}`,
+        },
+      })
+    ),
+    getConversationInfo: jest.fn((channelId: string) =>
+      Promise.resolve({
+        ok: true,
+        channel: {
+          id: channelId,
+          name: channelId.toLowerCase(),
+          is_channel: true,
+          is_member: true,
+        },
+      })
+    ),
+  }) as unknown as SlackService;
 
 describe("Slack Content Parser", () => {
   const mockConfig: TSlackContentParserConfig = {
+    slackService: createMockSlackService(),
     userMap: new Map([
       ["U123456789", "plane-user-id-1"],
       ["U987654321", "plane-user-id-2"],

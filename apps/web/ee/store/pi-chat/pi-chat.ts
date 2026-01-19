@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { update, set, isEmpty } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -8,8 +21,6 @@ import { WorkspaceService } from "@/plane-web/services";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type {
-  EFeedback,
-  IFormattedValue,
   TAiModels,
   TChatHistory,
   TDialogue,
@@ -21,10 +32,17 @@ import type {
   TUpdatedArtifact,
   TFollowUpResponse,
   TInstanceResponse,
+  TSSEDeltaEvent,
+  TSSEReasoningEvent,
+  TSSEActionsEvent,
+  TSSETitleResponse,
+  TTemplate,
 } from "@/plane-web/types";
 import { ESource, EExecutionStatus } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
 import { PiChatAttachmentStore } from "./attachment.store";
+import type { TSearchResults, EAiFeedback } from "@plane/types";
+import { storage } from "@/lib/local-storage";
 
 export interface IPiChatStore {
   isNewChat: boolean;
@@ -34,14 +52,13 @@ export interface IPiChatStore {
   isLoadingThreads: boolean;
   piThreads: string[];
   projectThreads: string[];
-  activeModel: TAiModels | undefined;
+  activeModel: string | undefined;
   models: TAiModels[];
   isAuthorized: boolean;
   isWorkspaceAuthorized: boolean;
   favoriteChats: string[];
   isLoading: boolean;
   isPiTyping: boolean;
-  isPiChatDrawerOpen: boolean;
   isPiArtifactsDrawerOpen: string | undefined;
   artifactsStore: ArtifactsStore;
   attachmentStore: PiChatAttachmentStore;
@@ -54,7 +71,7 @@ export interface IPiChatStore {
   getChatMode: (chatId: string) => string;
   // actions
   initPiChat: (chatId?: string) => void;
-  fetchChatById: (chatId: string, workspaceId: string | undefined) => void;
+  fetchChatById: (chatId: string, workspaceId: string | undefined) => Promise<void>;
   getAnswer: (
     chatId: string,
     query: string,
@@ -65,21 +82,21 @@ export interface IPiChatStore {
     callbackUrl: string,
     attachmentIds: string[],
     aiMode: string
-  ) => Promise<void>;
+  ) => void;
   getInstance: (workspaceId: string) => Promise<TInstanceResponse>;
-  fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
-  searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<IFormattedValue>;
+  fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
+  searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<TSearchResults>;
   sendFeedback: (
     chatId: string,
     message_index: number,
-    feedback: EFeedback,
+    feedback: EAiFeedback,
     workspaceId?: string,
     feedbackMessage?: string
   ) => Promise<void>;
   executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<string[] | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
   abortStream: (chatId: string) => void;
-  setActiveModel: (model: TAiModels) => void;
+  setActiveModel: (chatId: string, model: string) => void;
   createNewChat: (
     focus: TFocus,
     mode: string,
@@ -92,7 +109,6 @@ export interface IPiChatStore {
   unfavoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
   fetchRecentChats: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
   fetchFavoriteChats: (workspaceId: string | undefined) => Promise<void>;
-  togglePiChatDrawer: (value?: boolean) => void;
   togglePiArtifactsDrawer: (value?: string) => void;
   regenerateAnswer: (chatId: string, token: string, workspaceId: string | undefined) => Promise<void>;
   getGroupedArtifactsByDialogue: (
@@ -106,7 +122,7 @@ export interface IPiChatStore {
     artifactId: string,
     query: string,
     messageId: string,
-    projectId: string,
+    projectId: string | undefined,
     workspace_id: string,
     chat_id: string,
     entity_type: string,
@@ -120,6 +136,13 @@ export interface IPiChatStore {
   ) => Promise<{
     page_url: string;
   }>;
+  fetchPrompts: (
+    workspaceId: string,
+    mode: string,
+    projectId: string | undefined,
+    entityId: string | undefined,
+    entityType: string | undefined
+  ) => Promise<{ templates: TTemplate[] }>;
 }
 
 export class PiChatStore implements IPiChatStore {
@@ -127,7 +150,7 @@ export class PiChatStore implements IPiChatStore {
   isNewChat: boolean = false;
   isLoadingThreads: boolean = false;
   models: TAiModels[] = [];
-  activeModel: TAiModels | undefined = undefined;
+  activeModel: string | undefined = undefined;
   isAuthorized = true;
   isWorkspaceAuthorized = true;
   chatMap: Record<string, TChatHistory> = {};
@@ -136,7 +159,6 @@ export class PiChatStore implements IPiChatStore {
   isPiTypingMap: Record<string, boolean> = {};
   isLoadingMap: Record<string, boolean> = {};
   favoriteChats: string[] = [];
-  isPiChatDrawerOpen: boolean = false;
   isPiArtifactsDrawerOpen: string | undefined = undefined;
   eventSources: Record<string, EventSource> = {};
   //services
@@ -164,7 +186,6 @@ export class PiChatStore implements IPiChatStore {
       isWorkspaceAuthorized: observable,
       isLoadingThreads: observable,
       favoriteChats: observable,
-      isPiChatDrawerOpen: observable.ref,
       isPiArtifactsDrawerOpen: observable.ref,
       eventSources: observable,
       // computed
@@ -187,12 +208,12 @@ export class PiChatStore implements IPiChatStore {
       unfavoriteChat: action,
       fetchRecentChats: action,
       fetchFavoriteChats: action,
-      togglePiChatDrawer: action,
       togglePiArtifactsDrawer: action,
       executeAction: action,
       followUp: action,
       convertToPage: action,
       abortStream: action,
+      fetchPrompts: action,
     });
 
     //services
@@ -216,8 +237,13 @@ export class PiChatStore implements IPiChatStore {
     return this.isLoadingMap[this.activeChatId] ?? false;
   }
 
-  setActiveModel = (model: TAiModels) => {
+  setActiveModel = (chatId: string, model: string) => {
     this.activeModel = model;
+    if (!chatId) return;
+    update(this.chatMap, chatId, (chat: TChatHistory) => {
+      chat.llm = model;
+      return chat;
+    });
   };
 
   // computed
@@ -227,7 +253,7 @@ export class PiChatStore implements IPiChatStore {
     if (!workspaceId) return [];
     return (
       this.projectThreads
-        .filter((chatId) => this.chatMap[chatId].workspace_id === workspaceId)
+        .filter((chatId) => this.chatMap[chatId]?.workspace_id === workspaceId)
         .map((chatId) => this.chatMap[chatId]) || []
     );
   });
@@ -296,14 +322,15 @@ export class PiChatStore implements IPiChatStore {
   });
 
   // actions
-  initPiChat = async (chatId?: string) => {
-    // Existing chat
-
+  initPiChat = (chatId?: string) => {
     if (chatId) {
       this.activeChatId = chatId;
       this.isNewChat = false;
+      this.rootStore.theme.updateSidecarChatId(chatId);
     } else {
       this.activeChatId = "";
+      this.isNewChat = true;
+      this.rootStore.theme.updateSidecarChatId("");
     }
     this.isAuthorized = true;
     this.isPiArtifactsDrawerOpen = undefined;
@@ -331,12 +358,14 @@ export class PiChatStore implements IPiChatStore {
 
     const newChatId = await this.piChatService.createChat(payload);
     this.activeChatId = newChatId;
+    this.rootStore.theme.updateSidecarChatId(newChatId);
 
     this.chatMap[newChatId] = {
       chat_id: newChatId,
       dialogue: [],
       dialogueMap: {},
       title: "New Chat",
+      llm: this.activeModel,
       last_modified: new Date().toISOString(),
       is_favorite: false,
       is_focus_enabled: focus.isInWorkspaceContext,
@@ -374,7 +403,7 @@ export class PiChatStore implements IPiChatStore {
       is_temp: false,
       workspace_in_context: focus.isInWorkspaceContext,
       source: ESource.WEB,
-      llm: this.activeModel?.id || "gpt-4.1",
+      llm: this.activeModel || "gpt-4.1",
       context: this.userStore.data
         ? {
             first_name: this.userStore.data.first_name,
@@ -391,8 +420,9 @@ export class PiChatStore implements IPiChatStore {
     if (focus.isInWorkspaceContext) {
       payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
     }
-    if (this.isPiChatDrawerOpen && callbackUrl) {
-      payload = { ...payload, pi_sidebar_open: this.isPiChatDrawerOpen, sidebar_open_url: callbackUrl };
+    const isPiChatSidecarOpen = this.rootStore.theme.activeSidecar === "pi-chat";
+    if (isPiChatSidecarOpen && callbackUrl) {
+      payload = { ...payload, pi_sidebar_open: isPiChatSidecarOpen, sidebar_open_url: callbackUrl };
     }
     return payload;
   };
@@ -403,7 +433,24 @@ export class PiChatStore implements IPiChatStore {
     return response;
   };
 
-  getStreamingAnswer = async (
+  fetchPrompts = async (
+    workspaceId: string,
+    mode: string,
+    projectId: string | undefined,
+    entityId: string | undefined,
+    entityType: string | undefined
+  ): Promise<{ templates: TTemplate[] }> => {
+    const response = await this.piChatService.fetchPrompts({
+      workspace_id: workspaceId,
+      mode: mode,
+      project_id: projectId,
+      entity_id: entityId,
+      entity_type: entityType,
+    });
+    return response;
+  };
+
+  getStreamingAnswer = (
     token: string,
     isNewChat: boolean,
     chatId: string,
@@ -417,10 +464,12 @@ export class PiChatStore implements IPiChatStore {
     });
     this.eventSources[chatId] = eventSource;
 
+    const parseSSEData = <T>(data: string): T => JSON.parse(data) as T;
+
     // 🔹 Handles `delta` chunks
-    eventSource.addEventListener("delta", (event: MessageEvent) => {
+    eventSource.addEventListener("delta", (event: MessageEvent<string>) => {
       try {
-        const data = JSON.parse(event.data);
+        const data = parseSSEData<TSSEDeltaEvent>(event.data);
         if (newDialogue.isPiThinking) newDialogue.isPiThinking = false;
         newDialogue.answer += data.chunk;
         this.updateDialogue(chatId, token, newDialogue);
@@ -430,12 +479,12 @@ export class PiChatStore implements IPiChatStore {
     });
 
     // 🔹 Handles reasoning events
-    eventSource.addEventListener("reasoning", (event: MessageEvent) => {
+    eventSource.addEventListener("reasoning", (event: MessageEvent<string>) => {
       try {
-        const data = JSON.parse(event.data);
+        const data = parseSSEData<TSSEReasoningEvent>(event.data);
         if (!data.header) return;
         newDialogue.current_tick = data.header;
-        newDialogue.reasoning = newDialogue.reasoning + `${data.header}${data.content}`;
+        newDialogue.reasoning = newDialogue.reasoning + `${data.header}${data.content ?? ""}`;
         this.updateDialogue(chatId, token, newDialogue);
       } catch (e) {
         console.error("Reasoning parse error", e);
@@ -443,10 +492,13 @@ export class PiChatStore implements IPiChatStore {
     });
 
     // 🔹 Handles action event
-    eventSource.addEventListener("actions", (event: MessageEvent) => {
-      const data = JSON.parse(event.data);
+    eventSource.addEventListener("actions", (event: MessageEvent<string>) => {
       try {
-        this.artifactsStore.initArtifacts(chatId, data.artifact_id, { ...data, is_editable: true });
+        const data = parseSSEData<TSSEActionsEvent>(event.data);
+        const artifactId = data.artifact_id;
+        if (artifactId) {
+          void this.artifactsStore.initArtifacts(chatId, artifactId, { ...data, is_editable: true });
+        }
         newDialogue.execution_status = EExecutionStatus.PENDING;
         newDialogue.actions = [...(newDialogue.actions || []), data];
         this.updateDialogue(chatId, token, newDialogue);
@@ -456,26 +508,30 @@ export class PiChatStore implements IPiChatStore {
     });
 
     // 🔹 Handles done event
-    eventSource.addEventListener("done", async () => {
+    eventSource.addEventListener("done", () => {
       eventSource.close();
       delete this.eventSources[chatId];
       if (newDialogue.isPiThinking) newDialogue.isPiThinking = false;
       this.isPiTypingMap[chatId] = false;
       // Call the title api if its a new chat
       if (isNewChat) {
-        const title = await this.piChatService.retrieveTitle(chatId, workspaceId);
-        runInAction(() => {
-          this.isNewChat = false;
-          update(this.chatMap, chatId, (chat) => {
-            chat.title = title.title;
-            chat.last_modified = new Date().toISOString();
-            return chat; // same reference, mutated
-          });
-        });
+        this.piChatService
+          .retrieveTitle(chatId, workspaceId)
+          .then((title: TSSETitleResponse) => {
+            runInAction(() => {
+              update(this.chatMap, chatId, (chat: TChatHistory) => {
+                chat.title = title.title;
+                chat.last_modified = new Date().toISOString();
+                return chat; // same reference, mutated
+              });
+            });
+            return undefined;
+          })
+          .catch((e) => console.error("Failed to retrieve title:", e));
       }
     });
 
-    eventSource.addEventListener("error", async (event: MessageEvent) => {
+    eventSource.addEventListener("error", (event: MessageEvent) => {
       console.error("SSE error:", event);
       newDialogue.isPiThinking = false;
       this.isPiTypingMap[chatId] = false;
@@ -495,7 +551,7 @@ export class PiChatStore implements IPiChatStore {
     };
   };
 
-  getAnswer = async (
+  getAnswer = (
     chatId: string,
     query: string,
     focus: TFocus,
@@ -513,7 +569,7 @@ export class PiChatStore implements IPiChatStore {
     const dialogueHistory = this.chatMap[chatId]?.dialogue || [];
     const newDialogue: TDialogue = {
       query,
-      llm: this.activeModel?.id,
+      llm: this.activeModel,
       answer: "",
       current_tick: "",
       reasoning: "",
@@ -525,12 +581,19 @@ export class PiChatStore implements IPiChatStore {
     // Optimistically update conversation with user query
     runInAction(() => {
       this.isPiTypingMap[chatId] = true;
-      update(this.chatMap, chatId, (chat) => {
+      this.isNewChat = false;
+      update(this.chatMap, chatId, (chat: TChatHistory) => {
         if (!chat) {
           chat = {
             chat_id: chatId,
             dialogue: [],
             dialogueMap: {},
+            title: "",
+            last_modified: new Date().toISOString(),
+            is_favorite: false,
+            is_focus_enabled: false,
+            focus_workspace_id: "",
+            focus_project_id: "",
           };
         }
         chat.dialogue = [...dialogueHistory, "latest"];
@@ -556,7 +619,7 @@ export class PiChatStore implements IPiChatStore {
       .retrieveToken(payload)
       .then((token) => {
         runInAction(() => {
-          update(this.chatMap, chatId, (chat) => {
+          update(this.chatMap, chatId, (chat: TChatHistory) => {
             chat.dialogue = [...dialogueHistory, token];
             newDialogue.query_id = token;
             chat.dialogueMap[token] = newDialogue;
@@ -565,14 +628,10 @@ export class PiChatStore implements IPiChatStore {
         });
         try {
           this.getStreamingAnswer(token, isNewChat, chatId, workspaceId, newDialogue);
+          return;
         } catch (e) {
           console.log(e);
-          runInAction(() => {
-            newDialogue.isPiThinking = false;
-            newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
-            this.updateDialogue(chatId, token, newDialogue);
-            this.isPiTypingMap[chatId] = false;
-          });
+          throw e;
         }
       })
       .catch((e) => {
@@ -600,11 +659,11 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  regenerateAnswer = async (chatId: string, token: string, workspaceId: string | undefined) => {
+  regenerateAnswer = (chatId: string, token: string, workspaceId: string | undefined): Promise<void> => {
     // Optimistically update conversation with user query
     const newDialogue: TDialogue = {
       query: this.chatMap[chatId]?.dialogueMap?.[token]?.query,
-      llm: this.activeModel?.id,
+      llm: this.activeModel,
       answer: "",
       current_tick: "",
       reasoning: "",
@@ -625,12 +684,13 @@ export class PiChatStore implements IPiChatStore {
         this.isPiTypingMap[chatId] = false;
       });
     }
+    return Promise.resolve();
   };
 
   updateDialogue = (chatId: string, token: string, newDialogue: TDialogue) => {
     runInAction(() => {
-      update(this.chatMap, chatId, (chat) => {
-        if (!chat) return;
+      update(this.chatMap, chatId, (chat: TChatHistory | undefined) => {
+        if (!chat) return chat;
         chat.dialogueMap[token] = newDialogue;
         return chat; // same reference, mutated
       });
@@ -659,12 +719,16 @@ export class PiChatStore implements IPiChatStore {
             },
             {} as Record<string, TDialogue>
           ),
+          llm: response.results.llm ?? chat?.llm,
         }));
+        if (chatId === this.activeChatId) {
+          this.activeModel = response?.results?.llm || this.models[0]?.id || undefined;
+        }
         this.isLoadingMap[chatId] = false;
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       runInAction(() => {
-        if (e?.status === 403) {
+        if ((e as { status?: number })?.status === 403) {
           this.isAuthorized = false;
         } else {
           this.isNewChat = true;
@@ -682,13 +746,14 @@ export class PiChatStore implements IPiChatStore {
       const response = await this.piChatService.listUserThreads(workspaceId, isProjectChat);
       runInAction(() => {
         response.results.forEach((chat) => {
-          update(this.chatMap, chat.chat_id, (prev) => ({
+          update(this.chatMap, chat.chat_id, (prev: TChatHistory | undefined) => ({
             ...prev,
             chat_id: chat.chat_id,
             title: chat.title,
             last_modified: chat.last_modified,
             is_favorite: chat.is_favorite,
             workspace_id: chat.workspace_id,
+            llm: chat.llm,
           }));
         });
         if (isProjectChat) {
@@ -715,11 +780,12 @@ export class PiChatStore implements IPiChatStore {
       const response = await this.piChatService.listRecentChats(workspaceId);
       runInAction(() => {
         response.results.forEach((chat) => {
-          update(this.chatMap, chat.chat_id, (prev) => ({
+          update(this.chatMap, chat.chat_id, (prev: TChatHistory | undefined) => ({
             ...prev,
             chat_id: chat.chat_id,
             title: chat.title,
             last_modified: chat.last_modified,
+            llm: chat.llm,
           }));
         });
         threads.push(...response.results.map((chat) => chat.chat_id));
@@ -738,18 +804,16 @@ export class PiChatStore implements IPiChatStore {
       const response = await this.piChatService.listAiModels(workspaceId);
       runInAction(() => {
         this.models = response.models;
-        response.models.forEach((model) => {
-          if (model.is_default && !this.activeModel) {
-            this.activeModel = model;
-          }
-        });
+        if (!this.activeModel) {
+          this.activeModel = response.models?.find((model) => model.is_default)?.id;
+        }
       });
     } catch (e) {
       console.error(e);
     }
   };
 
-  searchCallback = async (workspace: string, search: string, focus: TFocus): Promise<IFormattedValue> => {
+  searchCallback = async (workspace: string, search: string, focus: TFocus): Promise<TSearchResults> => {
     const filteredProjectId = focus.entityType === "project_id" ? focus.entityIdentifier : undefined;
     let params: { search: string; project_id?: string } = { search };
     if (filteredProjectId) {
@@ -766,7 +830,7 @@ export class PiChatStore implements IPiChatStore {
   sendFeedback = async (
     chatId: string,
     message_index: number,
-    feedback: EFeedback,
+    feedback: EAiFeedback,
     workspaceId?: string,
     feedbackMessage?: string
   ) => {
@@ -802,7 +866,7 @@ export class PiChatStore implements IPiChatStore {
     const response = await this.piChatService.listFavoriteChats(workspaceId);
     runInAction(() => {
       response.forEach((chat) => {
-        update(this.chatMap, chat.chat_id, (prev) => ({
+        update(this.chatMap, chat.chat_id, (prev: TChatHistory | undefined) => ({
           ...prev,
           chat_id: chat.chat_id,
           title: chat.title,
@@ -817,7 +881,7 @@ export class PiChatStore implements IPiChatStore {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => {
+        update(this.chatMap, chatId, (chat: TChatHistory) => {
           chat.is_favorite = true;
           return chat; // same reference, mutated
         });
@@ -827,7 +891,7 @@ export class PiChatStore implements IPiChatStore {
     } catch (e) {
       console.error(e);
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => {
+        update(this.chatMap, chatId, (chat: TChatHistory) => {
           chat.is_favorite = false;
           return chat; // same reference, mutated
         });
@@ -840,7 +904,7 @@ export class PiChatStore implements IPiChatStore {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => {
+        update(this.chatMap, chatId, (chat: TChatHistory) => {
           chat.is_favorite = false;
           return chat; // same reference, mutated
         });
@@ -850,7 +914,7 @@ export class PiChatStore implements IPiChatStore {
     } catch (e) {
       console.error(e);
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => {
+        update(this.chatMap, chatId, (chat: TChatHistory) => {
           chat.is_favorite = true;
           return chat; // same reference, mutated
         });
@@ -863,7 +927,7 @@ export class PiChatStore implements IPiChatStore {
     const initialState = this.chatMap[chatId]?.title;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => {
+        update(this.chatMap, chatId, (chat: TChatHistory) => {
           chat.title = title;
           return chat; // same reference, mutated
         });
@@ -872,7 +936,7 @@ export class PiChatStore implements IPiChatStore {
     } catch (e) {
       console.error(e);
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => {
+        update(this.chatMap, chatId, (chat: TChatHistory) => {
           chat.title = initialState;
           return chat; // same reference, mutated
         });
@@ -905,10 +969,6 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  togglePiChatDrawer = (value?: boolean) => {
-    this.isPiChatDrawerOpen = value ?? !this.isPiChatDrawerOpen;
-  };
-
   togglePiArtifactsDrawer = (value?: string) => {
     this.isPiArtifactsDrawerOpen = value;
   };
@@ -919,6 +979,8 @@ export class PiChatStore implements IPiChatStore {
     };
     try {
       dialogue.execution_status = EExecutionStatus.EXECUTING;
+      dialogue.action_error = undefined;
+
       this.updateDialogue(chatId, actionId, dialogue);
       // process artifact edits
       const artifactData: {
@@ -975,8 +1037,8 @@ export class PiChatStore implements IPiChatStore {
     } catch (error) {
       console.error(error);
       dialogue.execution_status = EExecutionStatus.COMPLETED;
-      dialogue.action_error =
-        (error as any)?.error ?? (error as any)?.detail ?? (error as any)?.message ?? "Unable to execute action.";
+      const err = error as { error?: string; detail?: string; message?: string } | undefined;
+      dialogue.action_error = err?.error ?? err?.detail ?? err?.message ?? "Unable to execute action.";
       dialogue.action_summary = undefined;
       this.updateDialogue(chatId, actionId, dialogue);
       throw error;
@@ -987,7 +1049,7 @@ export class PiChatStore implements IPiChatStore {
     artifactId: string,
     query: string,
     messageId: string,
-    projectId: string,
+    projectId: string | undefined,
     workspace_id: string,
     chat_id: string,
     entity_type: string,

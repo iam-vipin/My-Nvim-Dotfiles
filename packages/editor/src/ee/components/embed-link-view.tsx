@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/react";
-import { Link, Code, Bookmark } from "lucide-react";
+import { Code, Bookmark } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { EExternalEmbedAttributeNames } from "@/types";
 import { insertExternalEmbed } from "../helpers/editor-commands";
@@ -39,7 +40,7 @@ export function EmbedLinkView(props: EmbedLinkViewProps) {
       {
         key: "url",
         title: "URL",
-        icon: Link,
+        icon: LinkIcon,
         action: handleUrl,
       },
       {
@@ -101,7 +102,7 @@ export function EmbedLinkView(props: EmbedLinkViewProps) {
   return (
     <div
       ref={modalRef}
-      className="my-1 min-w-32 overflow-hidden rounded-md border-[0.5px]  max-w-[12rem] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg animate-in fade-in slide-in-from-bottom-2 focus:outline-none"
+      className="my-1 min-w-32 overflow-hidden rounded-md border-[0.5px]  max-w-[12rem] border-strong bg-layer-1 shadow-raised-200 animate-in fade-in slide-in-from-bottom-2 focus:outline-none"
       tabIndex={-1}
       role="menu"
       aria-label="Paste options"
@@ -118,12 +119,12 @@ export function EmbedLinkView(props: EmbedLinkViewProps) {
         e.stopPropagation();
       }}
     >
-      <div className="px-4 pt-2 text-xs font-medium text-custom-text-300">Paste as</div>
+      <div className="px-4 pt-2 text-11 font-medium text-tertiary">Paste as</div>
       <div className="p-2 space-y-0">
         {menuItems.map((item, index) => (
           <div
             key={item.key}
-            className={`w-full rounded px-2 py-1.5 ${selectedIndex === index ? "bg-custom-background-80" : ""}`}
+            className={`w-full rounded-sm px-2 py-1.5 ${selectedIndex === index ? "bg-layer-1-hover" : ""} hover:bg-layer-1-hover`}
             onMouseEnter={() => setSelectedIndex(index)}
           >
             <button
@@ -133,9 +134,9 @@ export function EmbedLinkView(props: EmbedLinkViewProps) {
                 e.stopPropagation();
                 item.action();
               }}
-              className="w-full flex items-center gap-2 text-left text-xs text-custom-text-200"
+              className="w-full flex items-center gap-2 text-left text-11 text-secondary"
             >
-              <item.icon className="size-3.5 text-custom-text-500" />
+              <item.icon className="size-3.5 text-tertiary" />
               {item.title}
             </button>
           </div>

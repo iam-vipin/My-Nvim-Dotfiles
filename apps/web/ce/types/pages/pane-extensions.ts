@@ -1,16 +1,20 @@
-import type {
-  INavigationPaneExtension as ICoreNavigationPaneExtension,
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+// CE re-exports the core navigation pane extension types directly
+// EE overrides this with specific extension data types
+export type {
+  INavigationPaneExtension,
   INavigationPaneExtensionComponent,
+  INavigationPaneExtensionProps,
 } from "@/components/pages/navigation-pane";
-
-// EE Union/map of extension data types (keyed by extension id)
-export type TNavigationPaneExtensionData = Record<string, unknown>;
-
-// EE Navigation pane extension configuration
-export interface INavigationPaneExtension<
-  T extends keyof TNavigationPaneExtensionData = keyof TNavigationPaneExtensionData,
-> extends Omit<ICoreNavigationPaneExtension<TNavigationPaneExtensionData[T]>, "id" | "data" | "component"> {
-  id: T;
-  component: INavigationPaneExtensionComponent<TNavigationPaneExtensionData[T]>;
-  data?: TNavigationPaneExtensionData[T];
-}

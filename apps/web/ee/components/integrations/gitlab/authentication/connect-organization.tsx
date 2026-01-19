@@ -1,13 +1,24 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { GITLAB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EModalWidth, Loader, ModalCore } from "@plane/ui";
 // plane web hooks
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGitlabIntegration } from "@/plane-web/hooks/store/integrations";
 import { GitlabEnterpriseServerAppForm } from "./server-app-form";
 
@@ -50,13 +61,6 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
       setIsConnectionSetup(true);
       const response = await connectWorkspaceConnection();
       if (response) window.open(response, "_self");
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: `GITLAB_ORGANIZATION${isEnterprise ? "_ENTERPRISE" : ""}`,
-          workspaceConnectionId,
-        },
-      });
     } catch (error) {
       console.error("connectWorkspaceConnection", error);
     } finally {
@@ -68,13 +72,6 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
     try {
       setIsConnectionSetup(true);
       await disconnectWorkspaceConnection();
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITLAB_ORGANIZATION",
-          workspaceConnectionId,
-        },
-      });
     } catch (error) {
       console.error("disconnectWorkspaceConnection", error);
     } finally {
@@ -98,13 +95,13 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
 
   if (error)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("gitlab_integration.connection_fetch_error")}
       </div>
     );
 
   return (
-    <div className="relative flex justify-between items-center gap-4 p-4 border border-custom-border-100 rounded">
+    <div className="relative flex justify-between items-center gap-4 p-4 border border-subtle rounded-md">
       <ModalCore isOpen={isServerAppFormOpen} handleClose={() => setIsServerAppFormOpen(false)} width={EModalWidth.XXL}>
         <GitlabEnterpriseServerAppForm
           handleFormSubmitSuccess={handleServerAppFormSubmitSuccess}
@@ -113,21 +110,21 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
       </ModalCore>
       {workspaceConnection ? (
         <div className="w-full relative flex items-center gap-4">
-          <div className="flex-shrink-0 w-11 h-11 rounded overflow-hidden relative">
+          <div className="flex-shrink-0 w-11 h-11 rounded-sm overflow-hidden relative">
             <img
               src={workspaceConnection?.connection_data?.avatar_url}
               alt={workspaceConnection?.connection_data?.login}
               className="object-contain w-10 h-10 overflow-hidden rounded"
             />
           </div>
-          <div className="text-sm text-custom-text-200 font-medium">
+          <div className="text-body-xs-medium text-secondary">
             {workspaceConnection?.connection_data?.organization || workspaceConnection?.connection_data?.name}
           </div>
         </div>
       ) : (
         <div className="space-y-0.5 w-full">
-          <div className="text-base font-medium">{t("gitlab_integration.connect_org")}</div>
-          <div className="text-sm text-custom-text-200">{t("gitlab_integration.connect_org_description")}</div>
+          <div className="text-body-sm-medium">{t("gitlab_integration.connect_org")}</div>
+          <div className="text-body-xs-regular text-secondary">{t("gitlab_integration.connect_org_description")}</div>
         </div>
       )}
 
@@ -137,12 +134,10 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
         </Loader>
       ) : (
         <Button
-          variant={workspaceConnectionId ? "neutral-primary" : "primary"}
-          size="sm"
+          variant={workspaceConnectionId ? "secondary" : "primary"}
           className="flex-shrink-0"
           onClick={handleGitlabAuth}
           disabled={(isLoading && workspaceConnectionId) || isConnectionSetup || error}
-          data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_ORGANIZATION_BUTTON}
         >
           {(isLoading && workspaceConnectionId) || error
             ? "..."

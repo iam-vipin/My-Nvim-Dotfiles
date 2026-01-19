@@ -1,11 +1,22 @@
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { Database, Paperclip } from "lucide-react";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -13,8 +24,9 @@ import type { TCustomerRequest } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getChangedFields } from "@plane/utils";
+// components
 import { RichTextEditor } from "@/components/editor/rich-text";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
@@ -51,7 +63,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
   // states
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [link, setLink] = useState<string | undefined>();
-  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  const [_uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
 
   // refs
 
@@ -104,43 +116,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
         };
     const operation = data?.id
       ? updateCustomerRequest(workspaceSlug, customerId, data?.id, payload)
-          .then((response) => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-              payload: {
-                id: customerId,
-              },
-            });
-            return response;
-          })
-          .catch((error) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
-              payload: {
-                id: customerId,
-              },
-              error: error as Error,
-            });
-          })
-      : createCustomerRequest(workspaceSlug, customerId, payload)
-          .then((response) => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
-              payload: {
-                id: customerId,
-              },
-            });
-            return response;
-          })
-          .catch((error: any) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
-              payload: {
-                id: customerId,
-                error: error as Error,
-              },
-            });
-          });
+      : createCustomerRequest(workspaceSlug, customerId, payload);
     setSubmitting(true);
     try {
       const response = await operation;
@@ -155,31 +131,13 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
       });
       // add work item to the customer while creating the request
       if (response?.id && !data?.id) {
-        await addWorkItemsToCustomer(workspaceSlug, customerId, [workItemId], response.id)
-          .then(() => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-              payload: {
-                id: customerId,
-                work_item_ids: [workItemId],
-              },
-            });
-          })
-          .catch((error) => {
-            captureError({
-              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-              payload: {
-                id: customerId,
-                work_item_ids: [workItemId],
-              },
-              error: error as Error,
-            });
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: t("customers.requests.toasts.work_item.add.error.title"),
-              message: error.error || t("customers.requests.toasts.work_item.add.error.message"),
-            });
+        await addWorkItemsToCustomer(workspaceSlug, customerId, [workItemId], response.id).catch((error) => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("customers.requests.toasts.work_item.add.error.title"),
+            message: error.error || t("customers.requests.toasts.work_item.add.error.message"),
           });
+        });
       }
       mutate(`WORK_ITEM_CUSTOMERS${workspaceSlug}_${workItemId}`);
       mutate(`WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}`);
@@ -216,7 +174,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
       <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXXL}>
         <SourceCreateUpdateModal id={workItemId} setLinkData={setLink} preloadedData={{ url: link }} />
         <div className="p-4">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {data?.id ? t("customers.requests.update") : t("customers.requests.add")}
           </h3>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -238,7 +196,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                       )}
                     />
                   </div>
-                  <span className="text-xs text-red-500">{errors?.customer_id?.message}</span>
+                  <span className="text-11 text-danger-primary">{errors?.customer_id?.message}</span>
                 </div>
                 <div>
                   <Controller
@@ -260,11 +218,11 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                         onChange={onChange}
                         hasError={Boolean(errors.name)}
                         placeholder={t("customers.requests.form.name.placeholder")}
-                        className={"w-full text-base"}
+                        className={"w-full text-14"}
                       />
                     )}
                   />
-                  <span className="text-xs text-red-500">{errors?.name?.message}</span>
+                  <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
                 </div>
                 <Controller
                   name="description_html"
@@ -286,7 +244,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                           ...payload,
                         })
                       }
-                      containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-custom-border-100"
+                      containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-subtle"
                       uploadFile={async (blockId, file) => {
                         try {
                           const { asset_id } = await uploadEditorAsset({
@@ -300,7 +258,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                           });
                           onAssetUpload?.(asset_id);
                           return asset_id;
-                        } catch (error) {
+                        } catch (_error) {
                           throw new Error("Asset upload failed. Please try again later.");
                         }
                       }}
@@ -313,7 +271,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                             workspaceSlug,
                           });
                           return asset_id;
-                        } catch (error) {
+                        } catch (_error) {
                           throw new Error("Asset duplication failed. Please try again later.");
                         }
                       }}
@@ -322,9 +280,8 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                 />
                 <div className="flex gap-2 flex-wrap items-center">
                   <Button
-                    variant="neutral-primary"
-                    size="sm"
-                    className="text-custom-text-200 bg-custom-background-90 text-sm"
+                    variant="secondary"
+                    className="text-secondary bg-layer-1 text-13"
                     onClick={() => toggleRequestSourceModal(workItemId)}
                   >
                     {link ? (
@@ -348,7 +305,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                 />
               )}
             </div>
-            <div className="border-t border-custom-border-200 flex justify-between items-center p-3">
+            <div className="border-t border-subtle-1 flex justify-between items-center p-3">
               <div>
                 {data?.id && data?.customer_id && (
                   <AddAttachmentButton
@@ -363,8 +320,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
               </div>
               <div className="flex gap-2">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   onClick={() => {
                     resetData();
                     handleClose();
@@ -372,7 +328,7 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
                 >
                   {t("customers.create.cancel")}
                 </Button>
-                <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+                <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
                   {isSubmitting
                     ? data?.id
                       ? t("customers.update.loading")

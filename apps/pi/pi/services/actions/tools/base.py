@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Base classes and shared utilities for Plane API tools.
 """
@@ -77,7 +88,7 @@ class PlaneToolBase:
         """
 
         # Lazy import to avoid circular dependency
-        from pi.agents.sql_agent.tools import extract_entity_from_api_response
+        from pi.agents.sql_agent.helpers import extract_entity_from_api_response
 
         # Extract entity data from response
         entity_data = extract_entity_from_api_response(data, entity_type)
@@ -96,7 +107,7 @@ class PlaneToolBase:
                 # Construct entity URL
                 try:
                     # Lazy import to avoid circular dependency
-                    from pi.agents.sql_agent.tools import construct_action_entity_url
+                    from pi.agents.sql_agent.helpers import construct_action_entity_url
 
                     # Since this method is now async, we can directly await the async function
                     url_info = await construct_action_entity_url(entity_data, entity_type, workspace_slug, frontend_url)
@@ -153,7 +164,7 @@ class PlaneToolBase:
         Structured success payload that also includes constructed entity URL information when available.
         """
         # Lazy import to avoid circular dependency
-        from pi.agents.sql_agent.tools import extract_entity_from_api_response
+        from pi.agents.sql_agent.helpers import extract_entity_from_api_response
         from pi.config import settings as _settings
 
         entity: Dict[str, Any] = {}
@@ -166,7 +177,7 @@ class PlaneToolBase:
                     entity_data["workspace"] = str(context["workspace_id"])
                 if workspace_slug:
                     try:
-                        from pi.agents.sql_agent.tools import construct_action_entity_url
+                        from pi.agents.sql_agent.helpers import construct_action_entity_url
 
                         url_info = await construct_action_entity_url(entity_data, entity_type, workspace_slug, frontend_url)
                         if url_info:
@@ -225,6 +236,27 @@ class PlaneToolBase:
             # If name is too short, pad with 'X' to meet minimum length
             base_identifier = base_identifier.ljust(3, "X")
         return base_identifier
+
+    @staticmethod
+    def generate_fallback_identifier(base_identifier: str) -> str:
+        """Generate a fallback identifier when the base identifier is already taken.
+
+        Keeps length stable and uses uppercase alphanumerics to match Plane identifier conventions.
+        """
+        if not base_identifier:
+            base_identifier = "PROJ"
+
+        ident = "".join(ch for ch in str(base_identifier).upper() if ch.isalnum() or ch == "_")
+        if not ident:
+            ident = "PROJ"
+
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        idx = int(time.time()) % len(alphabet)
+        replacement = alphabet[idx]
+
+        if len(ident) == 1:
+            return replacement
+        return ident[:-1] + replacement
 
     @staticmethod
     def generate_fallback_name_identifier(base_name: str, base_identifier: str) -> Tuple[str, str]:

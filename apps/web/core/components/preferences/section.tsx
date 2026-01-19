@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 interface SettingsSectionProps {
   title: string;
   description: string;
@@ -8,8 +21,8 @@ export function PreferencesSection({ title, description, control }: SettingsSect
   return (
     <div className="flex w-full justify-between gap-4 sm:gap-16">
       <div className="col-span-12 sm:col-span-6">
-        <h4 className="text-base font-medium text-custom-text-100">{title}</h4>
-        <p className="text-sm text-custom-text-200">{description}</p>
+        <h4 className="text-14 font-medium text-primary">{title}</h4>
+        <p className="text-13 text-secondary">{description}</p>
       </div>
       <div className="col-span-12 sm:col-span-6 my-auto">{control}</div>
     </div>

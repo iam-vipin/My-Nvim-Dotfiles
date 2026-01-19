@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from functools import wraps
 from enum import Enum
@@ -75,6 +86,7 @@ def check_workspace_feature_flag(feature_key, slug, user_id=None, default_value=
     )
     # Return the flag
     return flag
+
 
 @cache_function_result(timeout=300, key_prefix="workspace_feature_flags")
 def get_all_workspace_feature_flags(slug) -> dict:

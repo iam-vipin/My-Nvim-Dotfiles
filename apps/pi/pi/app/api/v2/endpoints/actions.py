@@ -1,11 +1,21 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 
 # from pi.services.chat.helpers.action_execution_helpers import execute_batch_actions
 # from pi.services.chat.helpers.action_execution_helpers import format_execution_response
@@ -36,8 +46,8 @@ BATCH_EXECUTION_ERRORS = {
 @router.post("/execute")
 async def execute_batch_actions_endpoint(
     request: ActionBatchExecutionRequest,
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
 ):
     """
     Execute all planned actions in a message as a batch using LLM orchestration.
@@ -124,12 +134,10 @@ async def execute_batch_actions_endpoint(
     """
     try:
         # Validate session and get user
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
+        user_id = current_user.id
 
         build_mode_tool_executor = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
-        result = await build_mode_tool_executor.execute(request, auth.user.id)
+        result = await build_mode_tool_executor.execute(request, user_id)
 
         # Check if service returned an error
         if result.get("error"):

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { CircleDot, XCircle } from "lucide-react";
 import { RelatedIcon, DuplicatePropertyIcon } from "@plane/propel/icons";
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
@@ -9,29 +22,29 @@ export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject
   relates_to: {
     key: "relates_to",
     i18n_label: "issue.relation.relates_to",
-    className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <RelatedIcon height={size} width={size} className="text-custom-text-200" />,
+    className: "bg-layer-1 text-secondary",
+    icon: (size) => <RelatedIcon height={size} width={size} className="text-secondary" />,
     placeholder: "Add related work items",
   },
   duplicate: {
     key: "duplicate",
     i18n_label: "issue.relation.duplicate",
-    className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <DuplicatePropertyIcon width={size} height={size} className="text-custom-text-200" />,
+    className: "bg-layer-1 text-secondary",
+    icon: (size) => <DuplicatePropertyIcon width={size} height={size} className="text-secondary" />,
     placeholder: "None",
   },
   blocked_by: {
     key: "blocked_by",
     i18n_label: "issue.relation.blocked_by",
-    className: "bg-red-500/20 text-red-700",
-    icon: (size) => <CircleDot size={size} className="text-custom-text-200" />,
+    className: "bg-danger-subtle text-danger-primary",
+    icon: (size) => <CircleDot size={size} className="text-secondary" />,
     placeholder: "None",
   },
   blocking: {
     key: "blocking",
     i18n_label: "issue.relation.blocking",
     className: "bg-yellow-500/20 text-yellow-700",
-    icon: (size) => <XCircle size={size} className="text-custom-text-200" />,
+    icon: (size) => <XCircle size={size} className="text-secondary" />,
     placeholder: "None",
   },
 };

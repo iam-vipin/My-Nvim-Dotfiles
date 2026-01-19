@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import type { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -27,7 +40,7 @@ export const PageCommentReplyController = observer(function PageCommentReplyCont
         <div className="relative flex justify-center">
           <button
             onClick={handleShowRepliesToggle}
-            className="bg-custom-background-100 group-hover:bg-custom-background-90 px-3 py-1 text-custom-text-300 hover:text-custom-text-200 transition-colors animate-button-fade-up rounded text-xs font-medium"
+            className="bg-surface-1 group-hover:bg-surface-2 px-3 py-1 text-tertiary hover:text-secondary transition-colors animate-button-fade-up rounded text-11 font-medium"
           >
             {showReplies
               ? "Hide replies"

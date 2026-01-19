@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -74,11 +87,6 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
     logo_props,
     name,
   } = page ?? {};
-
-  const shouldHideListItem = useMemo(
-    () => !isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id,
-    [isNestedPagesEnabled, workspaceSlug, page?.parent_id]
-  );
 
   const isDescriptionEmpty = useMemo(
     () => is_description_empty || description_html === "<p></p>",
@@ -332,9 +340,9 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
       role="button"
       tabIndex={0}
       className={cn(
-        "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90",
+        "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
         {
-          "bg-custom-primary-100/10 hover:bg-custom-primary-100/10 text-custom-primary-100 font-medium": isPageActive,
+          "bg-accent-primary/10 hover:bg-accent-primary/10 text-accent-primary font-medium": isPageActive,
           "cursor-pointer": pageContent?.status.hasAccess && !isPageActive,
           "cursor-default": !pageContent?.status.hasAccess || isPageActive,
         }
@@ -361,7 +369,7 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
             <button
               type="button"
               onClick={handleSubPagesToggle}
-              className="rounded hover:bg-custom-background-80 grid place-items-center"
+              className="rounded-sm hover:bg-layer-transparent-hover grid place-items-center"
               data-prevent-progress
             >
               {isFetchingSubPages ? (
@@ -374,11 +382,11 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
             <span className="grid place-items-center">{pageContent?.logo}</span>
           )}
         </div>
-        <p className="truncate text-sm flex-grow min-w-0">{pageContent?.displayName}</p>
+        <p className="truncate text-13 flex-grow min-w-0">{pageContent?.displayName}</p>
       </div>
       {archived_at && (
         <div className="flex-shrink-0 size-4 grid place-items-center">
-          <ArchiveIcon className="size-3.5 text-custom-text-300" />
+          <ArchiveIcon className="size-3.5 text-tertiary" />
         </div>
       )}
     </div>

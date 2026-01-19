@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
 import type { TUserPermissions } from "./enums";
@@ -32,6 +45,7 @@ export interface IWorkspace {
   current_plan?: EProductSubscriptionEnum;
   is_on_trial?: boolean;
   role: number;
+  timezone: string;
 }
 
 export interface IWorkspaceLite {
@@ -234,7 +248,7 @@ export interface IWorkspaceProgressResponse {
   unstarted_issues: number;
 }
 export interface IWorkspaceAnalyticsResponse {
-  completion_chart: any;
+  completion_chart: Record<string, unknown>;
 }
 
 export type TWorkspacePaginationInfo = TPaginationInfo & {
@@ -332,6 +346,15 @@ export type TWorkspaceCredentialVerification = {
   isOAuthEnabled: boolean;
 };
 
+export type TWorkspaceMemberImportSummary = {
+  total_rows: number;
+  successful: number;
+  failed: number;
+  users_created: number;
+  workspace_members_created: number;
+  errors: Record<number, Record<string, string>> | Array<unknown>;
+};
+
 // Type for verification of both source and target credentials
 export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
   sourceTokenInvalid?: boolean;
@@ -339,4 +362,23 @@ export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
 
 export type TWorkspaceEpicsSearchParams = {
   initiative_id?: string;
+};
+
+export type TWorkspaceSearchResultItem = {
+  id: string;
+  label: string;
+  entity_name: string;
+  entity_identifier: string;
+  target: string;
+  redirect_uri: string;
+  name?: string;
+  project__identifier?: string | null;
+  sequence_id?: string | null;
+  title: string;
+  subTitle: string | undefined;
+  type_id: string | null;
+  project_id: string;
+};
+export type TSearchResults = {
+  [key: string]: Partial<TWorkspaceSearchResultItem>[] | undefined;
 };

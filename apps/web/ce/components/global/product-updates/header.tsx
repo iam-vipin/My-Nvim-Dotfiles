@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import packageJson from "package.json";
 import { useTranslation } from "@plane/i18n";
@@ -9,10 +22,10 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
   return (
     <div className="flex gap-2 mx-6 my-4 items-center justify-between flex-shrink-0">
       <div className="flex w-full items-center">
-        <div className="flex gap-2 text-xl font-medium">{t("whats_new")}</div>
+        <div className="flex gap-2 text-18 font-medium">{t("whats_new")}</div>
         <div
           className={cn(
-            "px-2 mx-2 py-0.5 text-center text-xs font-medium rounded-full bg-custom-primary-100/20 text-custom-primary-100"
+            "px-2 mx-2 py-0.5 text-center text-11 font-medium rounded-full bg-accent-primary/20 text-accent-primary"
           )}
         >
           {t("version")}: v{packageJson.version}

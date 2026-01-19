@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "アイデアをメモしたり、ひらめきを記録したり、思考を記録します。付箋を追加して始めましょう。",
     },
     stickies: {
-      title: "アイデアをメモしたり、ひらめきを記録したり、思考を記録します。付箋を追加して始めましょう。",
-      cta_primary: "付箋を追加",
+      title: "アイデアを即座にキャプチャ",
+      description: "クイックノートやToDoのために付箋を作成し、どこへでも持ち歩きましょう。",
+      cta_primary: "最初の付箋を作成",
+      cta_secondary: "ドキュメント",
     },
     active_cycles: {
       title: "アクティブなサイクルはありません",
@@ -101,11 +116,6 @@ export default {
       description:
         "プロジェクト、作業項目、ページのテンプレートを作成してセットアップ時間を短縮し、数秒で新しい作業を開始します。",
       cta_primary: "テンプレートを作成",
-    },
-    webhooks: {
-      title: "まだWebhookが追加されていません",
-      description: "プロジェクトイベントが発生したときに外部サービスへの通知を自動化します。",
-      cta_primary: "Webhookを追加",
     },
   },
 } as const;

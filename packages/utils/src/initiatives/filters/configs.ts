@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { IUserLite, TInitiativeStates, TFilterProperty, TInitiativeLabel } from "@plane/types";
 import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
@@ -9,6 +22,7 @@ import {
   getMultiSelectConfig,
   getMemberMultiSelectConfig,
   getSupportedDateOperators,
+  getIsNullOperatorConfigEntry,
 } from "../../rich-filters";
 
 // ------------ Initiative filter types ------------
@@ -39,7 +53,7 @@ export type TCreateInitiativeLabelsFilterParams = TCreateFilterConfigParams &
 export const getInitiativeLeadFilterConfig =
   <P extends string>(key: P) =>
   (params: TCreateInitiativeLeadFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Lead",
       icon: params.filterIcon,
@@ -48,6 +62,7 @@ export const getInitiativeLeadFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });
 
@@ -62,7 +77,7 @@ export const getInitiativeLeadFilterConfig =
 export const getInitiativeStatesFilterConfig =
   <P extends string>(key: P) =>
   (params: TCreateInitiativeStatesFilterParams) =>
-    createFilterConfig<P, TInitiativeStates>({
+    createFilterConfig<P>({
       id: key,
       label: "State",
       icon: params.filterIcon,
@@ -104,7 +119,7 @@ export const getInitiativeStatesFilterConfig =
 export const getInitiativeLabelsFilterConfig =
   <P extends string>(key: P) =>
   (params: TCreateInitiativeLabelsFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Labels",
       icon: params.filterIcon,
@@ -128,6 +143,7 @@ export const getInitiativeLabelsFilterConfig =
             }
           )
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });
 
@@ -142,7 +158,7 @@ export const getInitiativeLabelsFilterConfig =
 export const getInitiativeStartDateFilterConfig =
   <P extends TFilterProperty>(key: P) =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "Start date",
       icon: params.filterIcon,
@@ -160,7 +176,7 @@ export const getInitiativeStartDateFilterConfig =
 export const getInitiativeEndDateFilterConfig =
   <P extends TFilterProperty>(key: P) =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "End date",
       icon: params.filterIcon,

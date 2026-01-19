@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { CircleAlert } from "lucide-react";
@@ -44,23 +57,21 @@ export function CancelTrial(props: TProps) {
       <div className="p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <span
           className={cn(
-            "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-custom-primary-100/20 text-custom-primary-100"
+            "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-accent-primary/20 text-accent-primary"
           )}
         >
           <CircleAlert className="size-5" aria-hidden="true" />
         </span>
         <div className="text-center sm:text-left">
-          <h3 className="text-lg font-medium">{t("workspace_settings.settings.cancel_trial.title")}</h3>
-          <p className="mt-1 text-sm text-custom-text-200">
-            {t("workspace_settings.settings.cancel_trial.description")}
-          </p>
+          <h3 className="text-16 font-medium">{t("workspace_settings.settings.cancel_trial.title")}</h3>
+          <p className="mt-1 text-13 text-secondary">{t("workspace_settings.settings.cancel_trial.description")}</p>
         </div>
       </div>
       <div className="px-5 pb-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={() => setActiveSubscriptionModal(false)}>
+        <Button variant="secondary" onClick={() => setActiveSubscriptionModal(false)}>
           {t("workspace_settings.settings.cancel_trial.dismiss")}
         </Button>
-        <Button variant="danger" size="sm" type="submit" loading={isSubmitting} onClick={handleTrialCancellation}>
+        <Button variant="error-fill" type="submit" loading={isSubmitting} onClick={handleTrialCancellation}>
           {isSubmitting ? t("common.cancelling") : t("workspace_settings.settings.cancel_trial.cancel")}
         </Button>
       </div>

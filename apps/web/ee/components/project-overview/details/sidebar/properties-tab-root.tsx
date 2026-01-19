@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -96,7 +109,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
         <SidebarContentWrapper title="Properties">
           <div className={`mb-2 space-y-2.5 ${!isEditingAllowed ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300 my-auto">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary my-auto">
                 <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
@@ -110,12 +123,12 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                 className="w-full"
                 labelIconSize="16"
                 buttonClassName={cn(
-                  "text-custom-text-200 text-sm z-1 h-full p-2 w-full text-left border-none rounded group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
+                  "text-secondary text-13 z-1 h-full p-2 w-full text-left border-none rounded-sm group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
                 )}
               />
             </div>
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300 my-auto">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary my-auto">
                 <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Priority</span>
               </div>
@@ -124,7 +137,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                 onChange={(data: EProjectPriority | undefined) => handleUpdateProject({ priority: data })}
                 buttonVariant="border-with-text"
                 buttonClassName={cn(
-                  "my-auto text-sm px-1 py-1 text-left rounded group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
+                  "my-auto text-13 px-1 py-1 text-left rounded-sm group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
                 )}
                 showTooltip
                 buttonContainerClassName="w-full"
@@ -134,14 +147,14 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
             </div>
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Lead</span>
               </div>
               {lead ? (
-                <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
+                <div className="w-full h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-13 justify-between cursor-not-allowed">
                   <ButtonAvatars showTooltip userIds={lead.id} />
-                  <span className="flex-grow truncate text-sm text-custom-text-200 leading-5">
+                  <span className="flex-grow truncate text-13 text-secondary leading-5">
                     {lead ? lead.display_name : null}
                   </span>
                 </div>
@@ -159,13 +172,13 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                   disabled={!isEditingAllowed || isArchived}
                   showTooltip
                   optionsClassName={"z-[11]"}
-                  button={<div className="px-2 text-custom-text-350 text-sm">None</div>}
+                  button={<div className="px-2 text-tertiary text-13">None</div>}
                 />
               )}
             </div>
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Members</span>
               </div>
@@ -176,7 +189,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                 buttonClassName="cursor-not-allowed"
                 disabled
                 button={
-                  <div className="p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start">
+                  <div className="p-2 rounded-sm text-13 text-secondary hover:bg-layer-1 justify-start flex items-start">
                     {projectMembersIds?.length} member(s)
                   </div>
                 }
@@ -184,16 +197,16 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
             </div>
             {isInitiativesFeatureEnabled && (
               <div className="flex h-8 items-center gap-2">
-                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                   <InitiativeIcon className="h-4 w-4 flex-shrink-0" />
                   <span>Initiatives</span>
                 </div>
                 <Button
-                  variant="link-neutral"
+                  variant="ghost"
                   className={cn(
-                    "p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start w-full font-normal",
+                    "p-2 rounded-sm text-13 text-secondary hover:bg-layer-1 justify-start flex items-start w-full font-normal",
                     {
-                      "text-custom-text-350": !project.initiative_ids?.length,
+                      "text-tertiary": !project.initiative_ids?.length,
                     }
                   )}
                   onClick={() => toggleInitiativeModal(projectId)}
@@ -206,7 +219,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
               </div>
             )}
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Start date</span>
               </div>
@@ -222,14 +235,14 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm ${project?.start_date ? "" : "text-custom-text-400"}`}
+                buttonClassName={`text-13 ${project?.start_date ? "" : "text-placeholder"}`}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
                 maxDate={getDate(project.target_date) ?? undefined}
               />
             </div>
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
@@ -245,11 +258,11 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={cn("text-sm text-custom-text-200", {
-                  "text-custom-text-400": !project.target_date,
+                buttonClassName={cn("text-13 text-secondary", {
+                  "text-placeholder": !project.target_date,
                 })}
                 hideIcon
-                clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+                clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"
                 minDate={getDate(project.start_date) ?? undefined}
               />
             </div>

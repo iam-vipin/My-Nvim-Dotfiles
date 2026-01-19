@@ -1,7 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, Crown, Info } from "lucide-react";
+import { ArrowRight, Crown } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { convertAppSlugToIntegrationKey } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
@@ -105,25 +119,25 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
   }
 
   return (
-    <div className="flex flex-col items-start justify-between border border-custom-border-100 p-4 rounded-md gap-2 h-full">
+    <div className="flex flex-col items-start justify-between border border-subtle p-4 rounded-md gap-2 h-full">
       <div className="flex flex-col space-y-1 flex-1 w-full">
         <div className="flex  gap-2 justify-between w-full">
           <div className="flex flex-col gap-2 w-full">
             <div className="flex flex-1 justify-between">
-              <div className="rounded-md size-12 justify-center items-center flex overflow-hidden w-10 h-10 border border-custom-border-100">
+              <div className="rounded-md size-12 justify-center items-center flex overflow-hidden w-10 h-10 border border-subtle">
                 <AppTileLogo app={app} />
               </div>
               {(!isFreePlan || app.is_owned) && (
                 <div className="flex gap-1 items-center h-fit">
                   {/* Installed Badge */}
                   {app.is_installed && !app.is_default && (
-                    <div className="px-2  text-xs font-medium bg-toast-border-success text-toast-text-success rounded-full h-fit">
+                    <div className="px-2  text-caption-sm-medium bg-toast-border-success text-toast-text-success rounded-full h-fit">
                       {t("workspace_settings.settings.applications.installed")}
                     </div>
                   )}
                   {/* Internal Badge */}
                   {app.is_owned && (
-                    <div className="px-2  text-xs font-medium text-custom-text-300 bg-custom-background-80 rounded-full h-fit">
+                    <div className="px-2  text-caption-sm-medium text-tertiary bg-layer-1 rounded-full h-fit">
                       {t("workspace_settings.settings.applications.internal")}
                     </div>
                   )}
@@ -136,29 +150,28 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
                 </div>
               )}
             </div>
-            <div className="text-lg font-medium">{app.name}</div>
+            <div className="text-body-sm-medium">{app.name}</div>
           </div>
         </div>
 
-        <div className="text-sm text-custom-text-200 flex-1 line-clamp-2">{t(app.short_description)}</div>
+        <div className="text-body-xs-regular text-secondary flex-1 line-clamp-2">{t(app.short_description)}</div>
       </div>
 
       <div className="flex items-center space-x-1 mt-3">
         {isFreePlan && !app.is_owned ? (
-          <div
-            className="cursor-pointer flex items-center gap-1 text-sm font-medium text-custom-primary-200"
+          <button
+            className="cursor-pointer flex items-center gap-1 text-body-xs-medium text-accent-primary"
             onClick={() => togglePaidPlanModal(true)}
           >
             <Crown className="h-3.5 w-3.5" />
-            <div className="mt-1">{t("common.upgrade")}</div>
-          </div>
+            <div>{t("common.upgrade")}</div>
+          </button>
         ) : (
           <>
             {showInstallButton && (
               <Button
-                size="sm"
-                variant={app.is_installed ? "link-neutral" : "neutral-primary"}
-                className={cn(app.is_installed && "p-0 hover:underline font-semibold text-custom-primary-200")}
+                variant={app.is_installed ? "link" : "secondary"}
+                className={cn(app.is_installed && "p-0 hover:underline font-semibold text-accent-primary")}
                 onClick={handleInstall}
               >
                 {app.is_installed
@@ -178,17 +191,16 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
                         })
                   }
                 >
-                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
-                    <Info size={12} />
-                    <div className="text-xs">{t("integrations.not_configured")}</div>
+                  <div className="flex gap-1.5 cursor-help shrink-0 items-center text-secondary">
+                    <InfoIcon height={12} width={12} />
+                    <div className="text-body-xs-medium text-tertiary">{t("integrations.not_configured")}</div>
                   </div>
                 </Tooltip>
               ) : (
                 <Button
-                  size="sm"
-                  variant="link-neutral"
+                  variant="ghost"
                   onClick={handleConfigure}
-                  className="p-0 hover:underline font-semibold"
+                  className="hover:underline"
                   appendIcon={<ArrowRight size={12} />}
                 >
                   {t("workspace_settings.settings.applications.configure")}

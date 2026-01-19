@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane utils
@@ -32,8 +45,8 @@ export const RightResizable = observer(function RightResizable(props: RightResiz
   return (
     <>
       {(isHovering || isRightResizing) && dateString && (
-        <div className="z-[10] absolute flex text-xs font-normal text-custom-text-300 h-full w-32 -right-36 justify-start items-center">
-          <div className="px-2 py-1 bg-custom-primary-20 rounded">{dateString}</div>
+        <div className="z-[10] absolute flex text-11 font-regular text-tertiary h-full w-32 -right-36 justify-start items-center">
+          <div className="px-2 py-1 bg-accent-subtle rounded-sm">{dateString}</div>
         </div>
       )}
       <div
@@ -48,7 +61,7 @@ export const RightResizable = observer(function RightResizable(props: RightResiz
       />
       <div
         className={cn(
-          "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-1 z-[5] rounded-sm bg-custom-background-100 transition-all duration-300 opacity-0 group-hover:opacity-100",
+          "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-1 z-[5] rounded-xs bg-surface-1 transition-all duration-300 opacity-0 group-hover:opacity-100",
           {
             "-right-1.5 opacity-100": isRightResizing,
           }

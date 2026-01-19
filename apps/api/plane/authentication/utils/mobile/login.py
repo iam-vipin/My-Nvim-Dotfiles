@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import json
 import random
 import string
@@ -84,6 +95,7 @@ def mobile_user_login(request, user, is_app=False, is_admin=False, is_space=Fals
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),
         "ip_address": request.META.get("REMOTE_ADDR", ""),
         "domain": base_host(request=request, is_app=is_app, is_admin=is_admin, is_space=is_space),
+        "session_type": "mobile",
     }
     request.session["device_info"] = device_info
     request.session.save()

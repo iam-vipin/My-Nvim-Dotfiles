@@ -1,14 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import {
-  DEFAULT_PRODUCT_BILLING_FREQUENCY,
-  LICENSE_TRACKER_ELEMENTS,
-  LICENSE_TRACKER_EVENTS,
-  SUBSCRIPTION_WITH_BILLING_FREQUENCY,
-} from "@plane/constants";
+import { DEFAULT_PRODUCT_BILLING_FREQUENCY, SUBSCRIPTION_WITH_BILLING_FREQUENCY } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type {
@@ -19,12 +27,11 @@ import type {
   TUpgradeParams,
 } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Loader, getBillingAndPlansCardVariantStyle } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers
 import { SettingsHeading } from "@/components/settings/heading";
 // plane web imports
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import {
   CloudFreePlanCard,
   OnePlanCard,
@@ -69,10 +76,6 @@ export const BillingRoot = observer(function BillingRoot() {
   // derived values
   const isSelfManaged = subscriptionDetail?.is_self_managed;
   const isOfflinePayment = !!subscriptionDetail?.is_offline_payment;
-  const planCardVariantStyle =
-    subscriptionDetail?.product && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE
-      ? getBillingAndPlansCardVariantStyle(subscriptionDetail?.product)
-      : null;
 
   /**
    * Initiates a free trial for a selected subscription plan
@@ -99,12 +102,6 @@ export const BillingRoot = observer(function BillingRoot() {
         price_id: selectedPriceId,
       });
       handleSuccessModalToggle(true);
-      captureSuccess({
-        eventName: LICENSE_TRACKER_EVENTS.trial_started,
-        payload: {
-          plan: selectedSubscriptionType,
-        },
-      });
     } catch (error) {
       const currentError = error as { error: string; detail: string };
       console.error("Error in freeTrialSubscription", error);
@@ -112,12 +109,6 @@ export const BillingRoot = observer(function BillingRoot() {
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: currentError?.detail ?? currentError?.error ?? "Something went wrong. Please try again.",
-      });
-      captureError({
-        eventName: LICENSE_TRACKER_EVENTS.trial_started,
-        payload: {
-          plan: selectedSubscriptionType,
-        },
       });
     } finally {
       setTrialLoader(null);
@@ -145,9 +136,6 @@ export const BillingRoot = observer(function BillingRoot() {
     }
     if (!selectedProductId || !selectedPriceId) {
       setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "Missing product or price ID" });
-      captureError({
-        eventName: LICENSE_TRACKER_EVENTS.upgrade_product_or_price_not_found,
-      });
       return;
     }
     setUpgradeLoader(selectedSubscriptionType);
@@ -158,18 +146,12 @@ export const BillingRoot = observer(function BillingRoot() {
       })
       .then((response) => {
         if (response.url) window.open(response.url, isSelfManaged ? "_blank" : "_self");
-        captureSuccess({
-          eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
-        });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Failed to generate payment link",
-        });
-        captureError({
-          eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
         });
       })
       .finally(() => setUpgradeLoader(null));
@@ -219,9 +201,6 @@ export const BillingRoot = observer(function BillingRoot() {
    */
   const handleSelectedPlanUpgrade = (selectedSubscriptionType: EProductSubscriptionEnum): Promise<void> => {
     const { selectedProduct, selectedPrice } = getSelectedProductAndPrice(selectedSubscriptionType);
-    captureClick({
-      elementName: LICENSE_TRACKER_ELEMENTS.BILLING_PAGE_PLAN_CARD_UPGRADE_BUTTON,
-    });
     return handleUpgradeSubscription({
       selectedSubscriptionType,
       selectedProductId: selectedProduct?.id,
@@ -253,7 +232,7 @@ export const BillingRoot = observer(function BillingRoot() {
       />
       <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
         <div className="py-6">
-          <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg", planCardVariantStyle)}>
+          <div className="p-5 bg-layer-1 rounded-xl">
             {!subscriptionDetail && (
               <Loader className="flex w-full justify-between">
                 <Loader.Item height="30px" width="40%" />
@@ -282,14 +261,12 @@ export const BillingRoot = observer(function BillingRoot() {
                 {subscriptionDetail.product === EProductSubscriptionEnum.BUSINESS && (
                   <BusinessPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
                 )}
-                {subscriptionDetail.product === EProductSubscriptionEnum.ENTERPRISE && (
-                  <EnterprisePlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
-                )}
+                {subscriptionDetail.product === EProductSubscriptionEnum.ENTERPRISE && <EnterprisePlanCard />}
               </>
             )}
           </div>
         </div>
-        <div className="text-xl font-semibold mt-3">All plans</div>
+        <div className="text-18 font-semibold mt-3">All plans</div>
       </div>
       <PlansComparison
         products={data}

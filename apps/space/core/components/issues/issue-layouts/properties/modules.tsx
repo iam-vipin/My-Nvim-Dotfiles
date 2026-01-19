@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane ui
 import { ModuleIcon } from "@plane/propel/icons";
@@ -25,19 +38,19 @@ export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds
         {modules.length <= 1 ? (
           <div
             key={modules?.[0]?.id}
-            className={cn("flex h-full flex-shrink-0 cursor-default items-center rounded-md px-2.5 py-1 text-xs", {
-              "border-[0.5px] border-custom-border-300": shouldShowBorder,
+            className={cn("flex h-full flex-shrink-0 cursor-default items-center rounded-md px-2.5 py-1 text-11", {
+              "border-[0.5px] border-strong": shouldShowBorder,
             })}
           >
-            <div className="flex items-center gap-1.5 text-custom-text-200">
+            <div className="flex items-center gap-1.5 text-secondary">
               <ModuleIcon className="h-3 w-3 flex-shrink-0" />
-              <div className="text-xs">{modules?.[0]?.name ?? "No Modules"}</div>
+              <div className="text-11">{modules?.[0]?.name ?? "No Modules"}</div>
             </div>
           </div>
         ) : (
-          <div className="flex h-full flex-shrink-0 cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs">
-            <div className="flex items-center gap-1.5 text-custom-text-200">
-              <div className="text-xs">{modules.length} Modules</div>
+          <div className="flex h-full flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
+            <div className="flex items-center gap-1.5 text-secondary">
+              <div className="text-11">{modules.length} Modules</div>
             </div>
           </div>
         )}

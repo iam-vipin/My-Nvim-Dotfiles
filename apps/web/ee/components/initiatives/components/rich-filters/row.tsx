@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Loader } from "@plane/ui";
 import { FiltersRow } from "@/components/rich-filters/filters-row";
@@ -8,7 +21,7 @@ const InitiativesFiltersRow = observer(function InitiativesFiltersRow() {
 
   if (!isReady || !filterInstance) {
     return (
-      <div className="px-page-x @container flex flex-wrap justify-between py-2 border-b border-custom-border-200 gap-2 bg-custom-background-100 z-[12]">
+      <div className="px-page-x @container flex flex-wrap justify-between py-2 border-b border-subtle-1 gap-2 bg-surface-1 z-[12]">
         <Loader.Item height="24px" width="100%" />
       </div>
     );
@@ -18,10 +31,10 @@ const InitiativesFiltersRow = observer(function InitiativesFiltersRow() {
     <FiltersRow
       filter={filterInstance}
       buttonConfig={{
-        variant: "neutral-primary",
+        variant: "secondary",
         label: "Filters",
         defaultOpen: false,
-        className: "bg-custom-background-100",
+        className: "bg-surface-1",
       }}
     />
   );

@@ -188,6 +188,74 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 	return licenseNew, data, nil
 }
 
+func RefreshEnterpriseLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license *db.License, tx *gorm.DB) (*db.License, *prime_api.EnterpriseLicenseActivateResponse, error) {
+	// Acquire all the members for the license
+	members := []db.UserLicense{}
+	if err := tx.Where("license_id = ?", license.ID).Find(&members).Error; err != nil {
+		return nil, nil, err
+	}
+
+	workspaceMembers := []prime_api.WorkspaceMember{}
+
+	for _, member := range members {
+		workspaceMembers = append(workspaceMembers, prime_api.WorkspaceMember{
+			UserId:   member.UserID.String(),
+			UserRole: member.Role,
+		})
+	}
+
+	// Get the new data from the license
+	data, err := api.SyncEnterpriseLicense(prime_api.EnterpriseLicenseSyncPayload{
+		LicenceKey:  license.LicenseKey,
+		MembersList: workspaceMembers,
+	})
+
+	verificationThreshhold := LICENSE_VERIFICATION_FAILED_THRESHOLD
+
+	shouldDeactivate := false
+	if api.IsAirgapped() && license.CurrentPeriodEndDate != nil {
+		shouldDeactivate = time.Since(*license.CurrentPeriodEndDate) > 0
+	} else {
+		shouldDeactivate = license.LastVerifiedAt != nil && time.Since(*license.LastVerifiedAt) > verificationThreshhold
+	}
+
+	if err != nil {
+		// The license sync failed, we need to check the last verified date
+		if license.LastVerifiedAt != nil {
+			// Check if the last verified date is greater than 14 days
+			if shouldDeactivate {
+				// In the case of enterprise license, we need to delete the license
+
+				// Delete the existing members
+				if err := tx.Where("license_id = ?", license.ID).Delete(&db.UserLicense{}).Error; err != nil {
+					return nil, nil, err
+				}
+
+				// Delete the existing flags
+				if err := tx.Where("license_id = ?", license.ID).Delete(&db.Flags{}).Error; err != nil {
+					return nil, nil, err
+				}
+
+				// Delete the license
+				if err := tx.Delete(&license).Error; err != nil {
+					return nil, nil, err
+				}
+
+				return nil, nil, nil
+			}
+		}
+
+		// if the license is airgapped, we need to return nil, nil, nil
+		if api.IsAirgapped() {
+			return license, data, nil
+		}
+
+		return nil, nil, fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
+	}
+
+	return license, data, nil
+}
+
 func RefreshLicenseUsers(ctx context.Context, license *db.License, activationReponse prime_api.WorkspaceActivationResponse, tx *gorm.DB) error {
 	// If the license is paid, update the users with the member list provided
 	if activationReponse.ProductType != "FREE" {
@@ -223,8 +291,65 @@ func RefreshLicenseUsers(ctx context.Context, license *db.License, activationRep
 	return nil
 }
 
+func RefreshEnterpriseLicenseUsers(ctx context.Context, license *db.License, activationReponse prime_api.EnterpriseLicenseActivateResponse, tx *gorm.DB) error {
+	members := activationReponse.MemberList
+
+	// Delete the existing members
+	if err := tx.Where("license_id = ?", license.ID).Delete(&db.UserLicense{}).Error; err != nil {
+		return err
+	}
+
+	membersToPush := []db.UserLicense{}
+
+	// Insert the new members
+	for _, member := range members {
+		userUUID, _ := uuid.Parse(member.UserId)
+		memberData := db.UserLicense{
+			UserID:    userUUID,
+			LicenseID: license.ID,
+			Role:      member.UserRole,
+			Synced:    true,
+			IsActive:  member.IsActive,
+		}
+		membersToPush = append(membersToPush, memberData)
+	}
+
+	// Bulk create the members inside the db
+	if err := tx.CreateInBatches(membersToPush, 100).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func RefreshFeatureFlags(ctx context.Context, api prime_api.IPrimeMonitorApi, license db.License, tx *gorm.DB) error {
 	flags, err := api.GetFeatureFlags(license.LicenseKey)
+	if err != nil {
+		return fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
+	}
+
+	flagData := db.Flags{
+		LicenseID:  license.ID,
+		Version:    flags.Version,
+		AesKey:     flags.EncyptedData.AesKey,
+		Nonce:      flags.EncyptedData.Nonce,
+		CipherText: flags.EncyptedData.CipherText,
+		Tag:        flags.EncyptedData.Tag,
+	}
+
+	if err := tx.Where("license_id = ?", license.ID).Delete(&db.Flags{}).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Create(&flagData).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RefreshEnterpriseLicenseFeatureFlags(ctx context.Context, api prime_api.IPrimeMonitorApi, license db.License, tx *gorm.DB) error {
+	flags, err := api.GetEnterpriseFeatureFlags(license.LicenseKey)
 	if err != nil {
 		return fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
@@ -277,6 +402,55 @@ func ConvertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActiva
 		Product:                data.Product,
 		ProductType:            data.ProductType,
 		WorkspaceSlug:          data.WorkspaceSlug,
+		Seats:                  data.Seats,
+		FreeSeats:              data.FreeSeats,
+		Interval:               data.Interval,
+		IsOfflinePayment:       data.IsOfflinePayment,
+		IsCancelled:            data.IsCancelled,
+		Subscription:           data.Subscription,
+		CurrentPeriodEndDate:   currentPeriodEndDate,
+		TrialEndDate:           trialEndDate,
+		HasAddedPaymentMethod:  data.HasAddedPayment,
+		HasActivatedFreeTrial:  data.HasActivatedFree,
+		LastVerifiedAt:         &now,
+		LastPaymentFailedDate:  data.LastPaymentFailedDate,
+		LastPaymentFailedCount: data.LastPaymentFailedCount,
+	}
+
+	return license, nil
+}
+
+func ConvertEnterpriseActivationResponseToLicense(data *prime_api.EnterpriseLicenseActivateResponse) (*db.License, error) {
+	instanceUUID, _ := uuid.Parse(data.InstanceID)
+
+	// Check for the current period end date
+	var currentPeriodEndDate *time.Time
+	if data.CurrentPeriodEndDate.IsZero() {
+		currentPeriodEndDate = nil
+	} else {
+		currentPeriodEndDate = &data.CurrentPeriodEndDate
+	}
+
+	// Check for the trial end date
+	var trialEndDate *time.Time
+	if data.TrialEndDate.IsZero() {
+		trialEndDate = nil
+	} else {
+		trialEndDate = &data.TrialEndDate
+	}
+
+	// Since it is enterprise license, we don't have a workspace UUID and don't care about it
+	workspaceUUID := uuid.New()
+
+	now := time.Now()
+
+	license := &db.License{
+		LicenseKey:             data.LicenceKey,
+		WorkspaceID:            workspaceUUID,
+		WorkspaceSlug:          workspaceUUID.String(),
+		InstanceID:             instanceUUID,
+		Product:                data.Product,
+		ProductType:            data.ProductType,
 		Seats:                  data.Seats,
 		FreeSeats:              data.FreeSeats,
 		Interval:               data.Interval,

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "Проєкти",
@@ -306,7 +319,6 @@ export default {
   drafts: "Чернетки",
   projects: "Проєкти",
   views: "Подання",
-  workspace: "Робочий простір",
   archives: "Архіви",
   settings: "Налаштування",
   failed_to_move_favorite: "Не вдалося перемістити обране",
@@ -1587,6 +1599,7 @@ export default {
         name: "Назва робочого простору",
         company_size: "Розмір компанії",
         url: "URL робочого простору",
+        workspace_timezone: "Часовий пояс робочого простору",
         update_workspace: "Оновити простір",
         delete_workspace: "Видалити цей простір",
         delete_workspace_description: "Видалення простору призведе до втрати всіх даних і ресурсів. Дія незворотна.",

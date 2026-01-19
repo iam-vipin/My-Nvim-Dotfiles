@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -8,7 +21,6 @@ import { scrollIntoViewHelper } from "../helper";
 import { SavePageModal } from "../modals/save-page-modal";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
-import { NewConversation } from "./new-converstaion";
 
 type TProps = {
   isLoading: boolean;
@@ -20,14 +32,7 @@ type TProps = {
 };
 
 export const Messages = observer(function Messages(props: TProps) {
-  const {
-    currentUser,
-    isLoading,
-    isFullScreen,
-    shouldRedirect = true,
-    isProjectLevel = false,
-    setHasMoreMessages,
-  } = props;
+  const { isLoading, setHasMoreMessages } = props;
   // store
   const { activeChat, regenerateAnswer, convertToPage } = usePiChat();
   // ref
@@ -92,40 +97,33 @@ export const Messages = observer(function Messages(props: TProps) {
       (el as HTMLElement).removeEventListener("scroll", checkIfHasMore);
       window.removeEventListener("resize", checkIfHasMore);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!activeChat?.dialogue || activeChat?.dialogue.length === 0) return;
-    handleRegenerateIfTokenExists();
+    void handleRegenerateIfTokenExists();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue]);
 
   useEffect(() => {
     //Always scroll to the latest message
     if (!activeChat?.dialogue) return;
     if (activeChat?.dialogue.length === 0) setHasMoreMessages(false);
-    scrollIntoViewHelper(`${activeChat?.dialogue?.length - 1}`);
+    void scrollIntoViewHelper(`${activeChat?.dialogue?.length - 1}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue?.length]);
 
-  if (!activeChat?.dialogue || activeChat?.dialogue.length === 0)
-    return (
-      <NewConversation
-        currentUser={currentUser}
-        isFullScreen={isFullScreen}
-        shouldRedirect={shouldRedirect}
-        isProjectLevel={isProjectLevel}
-      />
-    );
-
+  if (!activeChat?.dialogue || activeChat?.dialogue.length === 0) return;
   return (
     <div
       ref={containerRef}
-      className={cn("flex flex-col gap-8 max-h-full h-full w-full mx-auto overflow-y-scroll pt-8 pb-[230px]")}
+      className={cn("flex flex-col gap-8 max-h-full h-full w-full mx-auto overflow-y-scroll pt-6 pb-[230px]")}
     >
       {activeChat?.dialogue?.map((query_id: string, index: number) => {
         const message = activeChat?.dialogueMap[query_id];
         return (
-          <div key={index} className="space-y-4">
+          <div key={index} className="space-y-8">
             <MyMessage message={message.query} id={index.toString()} attachments={message.attachment_ids} />
             <AiMessage
               dialogue={message}

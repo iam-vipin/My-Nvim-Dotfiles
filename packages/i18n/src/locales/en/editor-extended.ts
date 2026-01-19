@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   attachmentComponent: {
     uploader: {
@@ -40,6 +53,26 @@ export default {
     },
     error: {
       not_valid_link: "Please enter a valid URL.",
+    },
+  },
+  ai_block: {
+    content: {
+      placeholder: "Describe the content of this block",
+      generated_here: "Your AI content will be generated here",
+    },
+    block_types: {
+      placeholder: "Select block type",
+      summarize_page: "Summarize Page",
+      custom_prompt: "Custom Prompt",
+    },
+    actions: {
+      discard: "Discard",
+      generate: "Generate",
+      generating: "Generating",
+      rewriting: "Rewriting",
+      rewrite: "Rewrite",
+      use_this: "Use this",
+      refine: "Refine",
     },
   },
 };

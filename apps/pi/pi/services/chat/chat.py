@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import asyncio
 import json
 import uuid
@@ -178,6 +189,7 @@ class PlaneChatBot(ChatKit):
         is_project_chat=None,
         pi_sidebar_open=None,
         sidebar_open_url=None,
+        source=None,
     ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
         """Execute tools for build mode"""
         async for chunk in action_planner.execute_tools_for_build_mode(
@@ -200,6 +212,7 @@ class PlaneChatBot(ChatKit):
             is_project_chat,
             pi_sidebar_open,
             sidebar_open_url,
+            source,
         ):
             yield chunk
 
@@ -382,8 +395,9 @@ class PlaneChatBot(ChatKit):
         # Initialize query flow store
         query_flow_store = self._create_query_flow_store(data, workspace_in_context)
 
-        # Parse query to detect target and get clean parsed content
-        _target, parsed_query = parse_query(query)
+        # Parse query to detect mentions/links and get clean parsed content
+        parsed = await parse_query(query, message_id=query_id, workspace_id=workspace_id, db=db)
+        parsed_query = parsed.parsed_content
 
         # Initialize chat and get conversation history
         conversation_history_dict, error = await self._initialize_chat_context(data, chat_exists, db)
@@ -609,6 +623,7 @@ class PlaneChatBot(ChatKit):
                         is_project_chat=data.is_project_chat,
                         pi_sidebar_open=data.pi_sidebar_open,
                         sidebar_open_url=data.sidebar_open_url,
+                        source=getattr(data, "source", None),
                     )
                 else:
                     # Ask mode: Retrieval and answering

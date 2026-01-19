@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 
@@ -7,11 +18,11 @@ from celery import shared_task
 # Third party imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 
 
 # Module imports
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.db.models import ProjectMember
 from plane.db.models import User
@@ -55,7 +66,7 @@ def project_add_user_email(current_site, project_member_id, invitor_id):
 
         # Render the email template
         html_content = render_to_string("emails/notifications/project_addition.html", context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
         # Initialize the connection
         connection = get_connection(
             host=EMAIL_HOST,

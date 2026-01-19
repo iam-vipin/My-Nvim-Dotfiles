@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import io
 import logging
@@ -11,13 +22,12 @@ from celery import shared_task
 # Django imports
 from django.db.models import Prefetch
 from django.utils import timezone
-
 # Module imports
-from plane.db.models import ExporterHistory, Issue, IssueRelation, StateGroup
+from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber, StateGroup
+from plane.utils.exception_logger import log_exception
+from plane.utils.porters import IssueExportSerializer, DataExporter
 from plane.ee.models import CustomerRequestIssue, InitiativeEpic
 from plane.settings.storage import S3Storage
-from plane.utils.exception_logger import log_exception
-from plane.utils.exporters import Exporter, IssueExportSchema
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
@@ -207,20 +217,27 @@ def issue_export_task(
                 "estimate_point",
             )
             .prefetch_related(
-                "labels",
+                "label_issue__label",
                 "issue_cycle__cycle",
                 "issue_module__module",
-                "issue_comments",
                 "assignees",
-                "issue_subscribers",
                 "issue_link",
+                "worklogs",
+                "worklogs__logged_by",
+                "properties",
+                "properties__property",
+                "properties__value_option",
+                Prefetch(
+                    "issue_subscribers",
+                    queryset=IssueSubscriber.objects.select_related("subscriber"),
+                ),
+                Prefetch(
+                    "issue_comments",
+                    queryset=IssueComment.objects.select_related("actor").order_by("created_at"),
+                ),
                 Prefetch(
                     "issue_relation",
                     queryset=IssueRelation.objects.select_related("related_issue", "related_issue__project"),
-                ),
-                Prefetch(
-                    "issue_related",
-                    queryset=IssueRelation.objects.select_related("issue", "issue__project"),
                 ),
                 Prefetch(
                     "parent",
@@ -272,11 +289,7 @@ def issue_export_task(
 
         # Create exporter for the specified format
         try:
-            exporter = Exporter(
-                format_type=provider,
-                schema_class=IssueExportSchema,
-                options={"list_joiner": ", "},
-            )
+            exporter = DataExporter(IssueExportSerializer, format_type=provider)
         except ValueError as e:
             # Invalid format type
             logger.error(

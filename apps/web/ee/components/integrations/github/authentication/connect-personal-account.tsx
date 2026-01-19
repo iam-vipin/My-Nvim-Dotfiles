@@ -1,12 +1,22 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { GITHUB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // plane web hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
 
 interface IConnectPersonalAccountProps {
@@ -42,22 +52,9 @@ export const ConnectPersonalAccount = observer(function ConnectPersonalAccount({
     try {
       setIsConnectionSetup(true);
       const response = await connectGithubUserCredential();
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "GITHUB_USER",
-        },
-      });
-
       if (response) window.open(response, "_self");
     } catch (error) {
       console.error("connectGithubUserCredential", error);
-      captureError({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "GITHUB_USER",
-        },
-      });
     } finally {
       setIsConnectionSetup(false);
     }
@@ -67,22 +64,8 @@ export const ConnectPersonalAccount = observer(function ConnectPersonalAccount({
     try {
       setIsConnectionSetup(true);
       await disconnectGithubUserCredential();
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITHUB_USER",
-          workspaceId,
-        },
-      });
     } catch (error) {
       console.error("disconnectGithubUserCredential", error);
-      captureError({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITHUB_USER",
-          workspaceId,
-        },
-      });
     } finally {
       setIsConnectionSetup(false);
     }
@@ -102,35 +85,33 @@ export const ConnectPersonalAccount = observer(function ConnectPersonalAccount({
 
   if (error)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("github_integration.connection_fetch_error")}
       </div>
     );
 
   return (
-    <div className="relative flex justify-between items-center gap-4 p-4 border border-custom-border-100 rounded">
+    <div className="relative flex justify-between items-center gap-4 p-4 border border-subtle rounded-md">
       {githubUserCredential?.isConnected ? (
         <div className="space-y-1">
-          <div className="text-base font-medium">{t("github_integration.personal_account_connected")}</div>
-          <div className="text-sm text-custom-text-200">
+          <div className="text-body-sm-medium">{t("github_integration.personal_account_connected")}</div>
+          <div className="text-body-xs-regular text-secondary">
             {t("github_integration.personal_account_connected_description")}
           </div>
         </div>
       ) : (
         <div className="space-y-1">
-          <div className="text-base font-medium">{t("github_integration.connect_personal_account")}</div>
-          <div className="text-sm text-custom-text-200">
+          <div className="text-body-sm-medium">{t("github_integration.connect_personal_account")}</div>
+          <div className="text-body-xs-regular text-secondary">
             {t("github_integration.connect_personal_account_description")}
           </div>
         </div>
       )}
       <Button
-        variant="neutral-primary"
-        size="sm"
+        variant="secondary"
         className="flex-shrink-0"
         onClick={handleGithubUserAuth}
         disabled={(isLoading && githubUserCredential) || isConnectionSetup || error}
-        data-ph-element={GITHUB_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_PERSONAL_ACCOUNT_BUTTON}
       >
         {(isLoading && githubUserCredential) || error
           ? "..."

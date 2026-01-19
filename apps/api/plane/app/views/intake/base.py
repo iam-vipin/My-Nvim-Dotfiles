@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -53,9 +64,6 @@ from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
-from plane.ee.models import IntakeResponsibility
-from plane.payment.flags.flag import FeatureFlag
 
 
 class IntakeViewSet(BaseViewSet):

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
@@ -32,9 +45,9 @@ export const DesktopSidebarToggle = observer(function DesktopSidebarToggle() {
             e.currentTarget.blur();
           }}
           className={cn(
-            "ml-2 mr-1 size-6 flex items-center justify-center rounded cursor-pointer text-custom-text-300 hover:text-custom-text-200",
+            "ml-2 mr-1 size-6 flex items-center justify-center rounded-sm cursor-pointer text-tertiary hover:text-secondary",
             {
-              "text-custom-text-200": !isSidebarCollapsed,
+              "text-secondary": !isSidebarCollapsed,
             }
           )}
         >

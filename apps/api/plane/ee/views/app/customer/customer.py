@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -35,9 +46,7 @@ class CustomerEndpoint(BaseAPIView):
         cursor = request.GET.get("cursor", None)
 
         customers = Customer.objects.filter(workspace__slug=slug).annotate(
-            customer_request_count=CustomerRequest.objects.filter(
-                customer_id=OuterRef("id")
-            )
+            customer_request_count=CustomerRequest.objects.filter(customer_id=OuterRef("id"))
             .order_by()
             .annotate(count=Func(F("id"), function="count"))
             .values("count")
@@ -69,9 +78,7 @@ class CustomerEndpoint(BaseAPIView):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_CUSTOMER_ENABLED):
             workspace = Workspace.objects.get(slug=slug)
 
-            customer = Customer.objects.filter(
-                workspace_id=workspace.id, name=request.data["name"]
-            )
+            customer = Customer.objects.filter(workspace_id=workspace.id, name=request.data["name"])
 
             if customer:
                 return Response(

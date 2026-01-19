@@ -1,4 +1,17 @@
-import { ExternalLink } from "lucide-react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { NewTabIcon } from "@plane/propel/icons";
 import type { IURLComponents } from "@plane/utils";
 import { cn } from "@plane/utils";
 
@@ -31,7 +44,7 @@ export function TruncatedUrl({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "inline-flex items-center decoration-[0.5px] underline underline-offset-2 text-custom-text-500",
+        "inline-flex items-center decoration-[0.5px] underline underline-offset-2 text-tertiary",
         className
       )}
       onClick={(e) => {
@@ -39,16 +52,16 @@ export function TruncatedUrl({
         onClick?.(e);
       }}
     >
-      <span className="text-sm">{displayDomain}</span>
+      <span className="text-body-xs-regular">{displayDomain}</span>
       {fullURL.pathname && fullURL.pathname.length > 0 && (
-        <span className="text-sm">
+        <span className="text-body-xs-regular">
           {truncatedDisplayUrl}
           {shouldTruncate && "..."}
         </span>
       )}
       {showLinkIcon && (
         <span className="ml-1 inline-block">
-          <ExternalLink className="h-3 w-3 flex-shrink-0" />
+          <NewTabIcon className="h-3 w-3 flex-shrink-0" />
         </span>
       )}
     </a>

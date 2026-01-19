@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -34,9 +45,7 @@ def create_recurring_workitem_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     recurring_work_item_activities.append(
         RecurringWorkItemTaskActivity(
@@ -167,7 +176,6 @@ def track_priority(
     recurring_work_item_activities,
     epoch,
 ):
-
     if requested_data.get("priority") != current_instance.get("priority"):
         recurring_work_item_activities.append(
             RecurringWorkItemTaskActivity(
@@ -194,7 +202,6 @@ def track_state(
     recurring_work_item_activities,
     epoch,
 ):
-
     if requested_data.get("state").get("id") != current_instance.get("state").get("id"):
         recurring_work_item_activities.append(
             RecurringWorkItemTaskActivity(
@@ -293,9 +300,7 @@ def track_labels(
 ):
     # Get label IDs from both requested and current data
     requested_labels = (
-        set([str(lbl.get("id")) for lbl in requested_data.get("labels", [])])
-        if requested_data is not None
-        else set()
+        set([str(lbl.get("id")) for lbl in requested_data.get("labels", [])]) if requested_data is not None else set()
     )
     current_labels = (
         set([str(lbl.get("id")) for lbl in current_instance.get("labels", [])])
@@ -361,9 +366,7 @@ def track_modules(
 ):
     # Get label IDs from both requested and current data
     requested_modules = (
-        set([str(lbl.get("id")) for lbl in requested_data.get("modules", [])])
-        if requested_data is not None
-        else set()
+        set([str(lbl.get("id")) for lbl in requested_data.get("modules", [])]) if requested_data is not None else set()
     )
     current_modules = (
         set([str(lbl.get("id")) for lbl in current_instance.get("modules", [])])
@@ -427,26 +430,11 @@ def track_type(
     recurring_work_item_activities,
     epoch,
 ):
-
     if requested_data.get("type").get("id") != current_instance.get("type").get("id"):
-        new_type_id = (
-            requested_data.get("type").get("id") if requested_data.get("type") else None
-        )
-        old_type_id = (
-            current_instance.get("type").get("id")
-            if current_instance.get("type")
-            else None
-        )
-        new_type_name = (
-            requested_data.get("type").get("name")
-            if requested_data.get("type")
-            else None
-        )
-        old_type_name = (
-            current_instance.get("type").get("name")
-            if current_instance.get("type")
-            else None
-        )
+        new_type_id = requested_data.get("type").get("id") if requested_data.get("type") else None
+        old_type_id = current_instance.get("type").get("id") if current_instance.get("type") else None
+        new_type_name = requested_data.get("type").get("name") if requested_data.get("type") else None
+        old_type_name = current_instance.get("type").get("name") if current_instance.get("type") else None
         recurring_work_item_activities.append(
             RecurringWorkItemTaskActivity(
                 project_id=project_id,
@@ -501,9 +489,7 @@ def track_description_html(
     recurring_work_item_activities,
     epoch,
 ):
-    if current_instance.get("description_html") != requested_data.get(
-        "description_html"
-    ):
+    if current_instance.get("description_html") != requested_data.get("description_html"):
         recurring_work_item_activities.append(
             RecurringWorkItemTaskActivity(
                 recurring_workitem_task_id=recurring_workitem_task_id,
@@ -529,7 +515,6 @@ def track_properties(
     recurring_work_item_activities,
     epoch,
 ):
-
     # Handle both dictionary and list formats for properties
     requested_properties_data = requested_data.get("properties", [])
     current_properties_data = current_instance.get("properties", [])
@@ -538,16 +523,12 @@ def track_properties(
     # Convert properties to the expected dictionary format
     if isinstance(requested_properties_data, list):
         requested_values = {
-            str(prop.get("id")): prop.get("values", [])
-            for prop in requested_properties_data
-            if prop.get("id")
+            str(prop.get("id")): prop.get("values", []) for prop in requested_properties_data if prop.get("id")
         }
 
     if isinstance(current_properties_data, list):
         current_values = {
-            str(prop.get("id")): prop.get("values", [])
-            for prop in current_properties_data
-            if prop.get("id")
+            str(prop.get("id")): prop.get("values", []) for prop in current_properties_data if prop.get("id")
         }
 
     # Log the activity
@@ -595,11 +576,8 @@ def update_recurring_workitem_activity(
     recurring_work_item_activities,
     epoch,
 ):
-
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     RECURRING_WORKITEM_TEMPLATE_ACTIVITY_MAPPER = {
         "name": track_name,
@@ -621,9 +599,7 @@ def update_recurring_workitem_activity(
     }
 
     if requested_data.get("workitem_blueprint") is not None:
-
         for key in requested_data.get("workitem_blueprint", {}).keys():
-
             func = RECURRING_WORKITEM_TEMPLATE_ACTIVITY_MAPPER.get(key)
             if func is not None:
                 func(
@@ -689,9 +665,7 @@ def recurring_work_item_activity(
             )
 
         # Save all the values to database
-        RecurringWorkItemTaskActivity.objects.bulk_create(
-            recurring_work_item_activities
-        )
+        RecurringWorkItemTaskActivity.objects.bulk_create(recurring_work_item_activities)
 
         return
     except Exception as e:

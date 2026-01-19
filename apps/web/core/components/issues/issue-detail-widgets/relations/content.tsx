@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -138,7 +151,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
               title={
                 <div className={`flex items-center gap-1 px-2.5 py-1 h-9  w-full ${relation.className}`}>
                   <span>{relation.icon ? relation.icon(14) : null}</span>
-                  <span className="text-sm font-medium leading-5">{relation.label}</span>
+                  <span className="text-13 font-medium leading-5">{relation.label}</span>
                 </div>
               }
               defaultOpen

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 
@@ -18,7 +29,7 @@ from plane.db.models import (
     WorkspaceIntegration,
     Label,
     User,
-    IssueUserProperty,
+    ProjectUserProperty,
     UserNotificationPreference,
 )
 
@@ -71,8 +82,7 @@ def service_importer(service, importer_id):
                 email__in=[
                     user.get("email").strip().lower()
                     for user in users
-                    if user.get("import", False) == "invite"
-                    or user.get("import", False) == "map"
+                    if user.get("import", False) == "invite" or user.get("import", False) == "map"
                 ]
             )
 
@@ -113,9 +123,9 @@ def service_importer(service, importer_id):
                 ignore_conflicts=True,
             )
 
-            IssueUserProperty.objects.bulk_create(
+            ProjectUserProperty.objects.bulk_create(
                 [
-                    IssueUserProperty(
+                    ProjectUserProperty(
                         project_id=importer.project_id,
                         workspace_id=importer.workspace_id,
                         user=user,
@@ -144,9 +154,7 @@ def service_importer(service, importer_id):
             GithubRepository.objects.filter(project_id=importer.project_id).delete()
 
             # Create a Label for github
-            label = Label.objects.filter(
-                name="GitHub", project_id=importer.project_id
-            ).first()
+            label = Label.objects.filter(name="GitHub", project_id=importer.project_id).first()
 
             if label is None:
                 label = Label.objects.create(

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -68,9 +79,7 @@ def has_comment_access(request, slug, page_id, comment_id, page_owner_id):
     user_id = request.user.id
     method = request.method
 
-    page_comment = PageComment.objects.filter(
-        id=comment_id, workspace__slug=slug, page_id=page_id
-    ).first()
+    page_comment = PageComment.objects.filter(id=comment_id, workspace__slug=slug, page_id=page_id).first()
 
     if method in ["GET", "POST"]:
         return True
@@ -97,9 +106,7 @@ class WorkspacePagePermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
-        if not WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True
-        ).exists():
+        if not WorkspaceMember.objects.filter(member=request.user, workspace__slug=slug, is_active=True).exists():
             return False
 
         if page_id:
@@ -122,9 +129,7 @@ class WorkspacePagePermission(BasePermission):
                 return False
 
             if comment_id:
-                return has_comment_access(
-                    request, slug, page_id, comment_id, page_owner_id
-                )
+                return has_comment_access(request, slug, page_id, comment_id, page_owner_id)
 
             # If the page is public, check access based on workspace role
             return self._has_public_page_access(request, slug)
@@ -208,9 +213,7 @@ class ProjectPagePermission(BasePermission):
         ).exists()
 
         if not project_member_exists:
-            is_teamspace_member = check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            is_teamspace_member = check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
             if not is_teamspace_member:
                 return False
 
@@ -234,9 +237,7 @@ class ProjectPagePermission(BasePermission):
                 return False
 
             if comment_id:
-                return has_comment_access(
-                    request, slug, page_id, comment_id, page_owner_id
-                )
+                return has_comment_access(request, slug, page_id, comment_id, page_owner_id)
 
             # If the page is public, check access based on workspace role
             # Short-circuit: if project-level access suffices, avoid teamspace check
@@ -300,9 +301,7 @@ class ProjectPagePermission(BasePermission):
         # Deny by default
         return False
 
-    def _has_teamspace_page_access(
-        self, request, slug, page_id, project_id, is_teamspace_member
-    ):
+    def _has_teamspace_page_access(self, request, slug, page_id, project_id, is_teamspace_member):
         """
         Check if the user has permission to access a page in a teamspace
         """
@@ -350,9 +349,7 @@ class TeamspacePagePermission(BasePermission):
                 return False
 
             if comment_id:
-                return has_comment_access(
-                    request, slug, page_id, comment_id, page_owner_id
-                )
+                return has_comment_access(request, slug, page_id, comment_id, page_owner_id)
 
             # Allow access if the user is the owner of the page
             if page_owner_id == user_id:

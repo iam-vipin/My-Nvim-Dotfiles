@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
@@ -64,7 +76,7 @@ export function ListItem(props: IListItemProps) {
     <div ref={parentRef} className="relative">
       <Row
         className={cn(
-          "group min-h-[52px] flex w-full flex-col items-center justify-between gap-3 py-4 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 ",
+          "group min-h-[52px] flex w-full flex-col items-center justify-between gap-3 py-4 text-13 border-b border-subtle bg-layer-transparent hover:bg-layer-transparent-hover",
           { "xl:gap-5 xl:py-0 xl:flex-row": isSidebarOpen, "lg:gap-5 lg:py-0 lg:flex-row": !isSidebarOpen },
           className
         )}
@@ -82,7 +94,7 @@ export function ListItem(props: IListItemProps) {
             <div className={cn("flex items-center gap-4 truncate", leftElementClassName)}>
               {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
               <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
-                <span className="truncate text-sm">{title}</span>
+                <span className="truncate text-13">{title}</span>
               </Tooltip>
             </div>
             {appendTitleElement && (

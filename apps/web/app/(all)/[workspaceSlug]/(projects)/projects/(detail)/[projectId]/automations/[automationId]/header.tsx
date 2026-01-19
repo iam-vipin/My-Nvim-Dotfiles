@@ -1,18 +1,30 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Activity, Repeat } from "lucide-react";
-import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { EAutomationSidebarTab } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Button, Header, Tooltip } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Tooltip } from "@plane/ui";
 // hooks
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // helpers
-import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
@@ -62,10 +74,6 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
     await automationDetails
       .enable()
       .then(() => {
-        captureSuccess({
-          eventName: AUTOMATION_TRACKER_EVENTS.ENABLE,
-          payload: { id: automationId },
-        });
         setToast({
           title: t("automations.toasts.enable.success.title"),
           message: t("automations.toasts.enable.success.message"),
@@ -73,12 +81,6 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
         });
       })
       .catch((err) => {
-        console.error(err);
-        captureError({
-          eventName: AUTOMATION_TRACKER_EVENTS.ENABLE,
-          error: err?.message || "Enable failed",
-          payload: { id: automationId },
-        });
         setToast({
           title: t("automations.toasts.enable.error.title"),
           message: t("automations.toasts.enable.error.message"),
@@ -91,10 +93,6 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
     await automationDetails
       .disable()
       .then(() => {
-        captureSuccess({
-          eventName: AUTOMATION_TRACKER_EVENTS.DISABLE,
-          payload: { id: automationId },
-        });
         setToast({
           title: t("automations.toasts.disable.success.title"),
           message: t("automations.toasts.disable.success.message"),
@@ -103,11 +101,6 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
       })
       .catch((err) => {
         console.error(err);
-        captureError({
-          eventName: AUTOMATION_TRACKER_EVENTS.DISABLE,
-          error: err?.message || "Disable failed",
-          payload: { id: automationId },
-        });
         setToast({
           title: t("automations.toasts.disable.error.title"),
           message: t("automations.toasts.disable.error.message"),
@@ -117,14 +110,12 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
   };
 
   const handleAutomationStatusChange = async () => {
-    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.HEADER_ENABLE_DISABLE_BUTTON });
     setIsUpdatingStatus(true);
     await (automationDetails.is_enabled ? handleDisableAutomation : handleEnableAutomation)();
     setIsUpdatingStatus(false);
   };
 
   const handleOpenActivity = () => {
-    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.HEADER_ACTIVITY_BUTTON });
     sidebarHelper?.setSelectedSidebarConfig({
       tab: EAutomationSidebarTab.ACTIVITY,
       mode: "view",
@@ -141,7 +132,7 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
               <BreadcrumbLink
                 href={automationDetails.settingsLink}
                 label={t("automations.settings.title")}
-                icon={<Repeat className="size-4 text-custom-text-300 hover:text-custom-text-100" />}
+                icon={<Repeat className="size-3 text-tertiary hover:text-primary" />}
               />
             }
           />
@@ -158,7 +149,7 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
                 title={automationDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <Repeat className="size-4 flex-shrink-0 text-custom-text-300" />
+                    <Repeat className="size-4 flex-shrink-0 text-tertiary" />
                   </Breadcrumbs.Icon>
                 }
                 isLast
@@ -169,12 +160,7 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
         </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem className="items-center">
-        <Button
-          variant="neutral-primary"
-          size="sm"
-          onClick={handleOpenActivity}
-          prependIcon={<Activity className="size-3 shrink-0" />}
-        >
+        <Button variant="secondary" onClick={handleOpenActivity} prependIcon={<Activity className="size-3 shrink-0" />}>
           {t("common.activity")}
         </Button>
         <Tooltip
@@ -187,7 +173,6 @@ export const ProjectAutomationDetailsHeader = observer(function ProjectAutomatio
           <span>
             <Button
               variant="primary"
-              size="sm"
               onClick={handleAutomationStatusChange}
               loading={isUpdatingStatus}
               disabled={isUpdatingStatus || (!automationDetails.is_enabled ? !canEnableAutomation : false)}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -27,6 +40,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorAIOpsEnabled =
     useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+  const isEditorAiBlocksEnabled = useFlag(workspaceSlug, "EDITOR_AI_BLOCKS");
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
@@ -69,6 +83,9 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   }
   if (!isEditorAIOpsEnabled) {
     document.disabled.add("ai");
+  }
+  if (!isEditorAiBlocksEnabled) {
+    document.disabled.add("ai-block");
   }
   if (!isCollaborationCursorEnabled) {
     document.disabled.add("collaboration-caret");

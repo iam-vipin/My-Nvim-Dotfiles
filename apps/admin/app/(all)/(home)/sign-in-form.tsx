@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
@@ -128,11 +141,11 @@ export function InstanceSignInForm() {
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
-                Email <span className="text-red-500">*</span>
+              <label className="text-13 text-tertiary font-medium" htmlFor="email">
+                Email <span className="text-danger-primary">*</span>
               </label>
               <Input
-                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
                 id="email"
                 name="email"
                 type="email"
@@ -140,18 +153,18 @@ export function InstanceSignInForm() {
                 placeholder="name@company.com"
                 value={formData.email}
                 onChange={(e) => handleFormChange("email", e.target.value)}
-                autoComplete="on"
+                autoComplete="off"
                 autoFocus
               />
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
-                Password <span className="text-red-500">*</span>
+              <label className="text-13 text-tertiary font-medium" htmlFor="password">
+                Password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
@@ -159,12 +172,12 @@ export function InstanceSignInForm() {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => handleFormChange("password", e.target.value)}
-                  autoComplete="on"
+                  autoComplete="off"
                 />
                 {showPassword ? (
                   <button
                     type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(false)}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -172,7 +185,7 @@ export function InstanceSignInForm() {
                 ) : (
                   <button
                     type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(true)}
                   >
                     <Eye className="h-4 w-4" />
@@ -181,7 +194,7 @@ export function InstanceSignInForm() {
               </div>
             </div>
             <div className="py-2">
-              <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+              <Button type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
                 {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
               </Button>
             </div>

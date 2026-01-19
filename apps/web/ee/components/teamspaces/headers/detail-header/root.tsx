@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -78,7 +91,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
               {teamspaceItem.logo_props ? (
                 <Logo logo={teamspaceItem.logo_props} />
               ) : (
-                <TeamsIcon className="h-4 w-4 text-custom-text-300" />
+                <TeamsIcon className="h-4 w-4 text-tertiary" />
               )}
               <span>{teamspaceItem.name}</span>
             </div>
@@ -194,7 +207,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label="Teamspaces"
-                  icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<TeamsIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -210,7 +223,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
                         teamspace.logo_props ? (
                           <Logo logo={teamspace.logo_props} />
                         ) : (
-                          <TeamsIcon className="h-4 w-4 text-custom-text-300" />
+                          <TeamsIcon className="h-4 w-4 text-tertiary" />
                         )
                       }
                       selectedItem={teamspaceId?.toString() || ""}

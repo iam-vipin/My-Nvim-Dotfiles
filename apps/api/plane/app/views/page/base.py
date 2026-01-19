@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from datetime import datetime
@@ -512,14 +523,12 @@ class PagesDescriptionViewSet(BaseViewSet):
     permission_classes = [ProjectPagePermission]
 
     def retrieve(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.get(
-                Q(owned_by=self.request.user) | Q(access=0),
-                pk=page_id,
-                workspace__slug=slug,
-                projects__id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
         binary_data = page.description_binary
 
@@ -534,14 +543,12 @@ class PagesDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.get(
-                Q(owned_by=self.request.user) | Q(access=0),
-                pk=page_id,
-                workspace__slug=slug,
-                projects__id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
 
         if page.is_locked:

@@ -1,8 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Link2, Sidebar } from "lucide-react";
+import { Sidebar } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
@@ -43,27 +58,25 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
       });
     });
 
-  const commonButtonClassName =
-    "flex-shrink-0 flex items-center justify-center size-6 bg-custom-background-80/70 rounded";
+  const commonButtonClassName = "flex-shrink-0 flex items-center justify-center size-6 bg-layer-1 rounded";
 
   if (!workspaceSlug || !isTeamspaceMember) return;
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       {isSubmitting && <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />}
-      <div className={cn(commonButtonClassName, "hover:bg-custom-background-80")}>
-        <Sidebar
-          className={cn("size-4 cursor-pointer select-none text-custom-primary-100", {
-            "text-custom-text-300 hover:text-custom-text-200": isTeamSidebarCollapsed,
-          })}
-          onClick={() => toggleTeamsSidebar(!isTeamSidebarCollapsed)}
-        />
-      </div>
-      <div className={cn(commonButtonClassName, "hover:bg-custom-background-80")}>
-        <Link2
-          className={cn("-rotate-45 size-4 cursor-pointer select-none text-custom-text-300 hover:text-custom-text-200")}
-          onClick={handleCopyText}
-        />
-      </div>
+
+      <IconButton
+        variant="tertiary"
+        size="lg"
+        icon={Sidebar}
+        onClick={() => toggleTeamsSidebar(!isTeamSidebarCollapsed)}
+        className={cn({
+          "text-accent-primary bg-accent-subtle": !isTeamSidebarCollapsed,
+        })}
+      />
+
+      <IconButton variant="tertiary" size="lg" icon={LinkIcon} onClick={handleCopyText} />
+
       <TeamQuickActions
         teamspaceId={teamspaceId?.toString()}
         workspaceSlug={workspaceSlug?.toString()}

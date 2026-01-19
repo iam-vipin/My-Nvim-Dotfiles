@@ -1,16 +1,27 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // Plane imports
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IWorkItemPeekOverview, TIssue } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -77,17 +88,9 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             .updateIssue(workspaceSlug, projectId, issueId, data)
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
-              captureSuccess({
-                eventName: WORK_ITEM_TRACKER_EVENTS.update,
-                payload: { id: issueId },
-              });
+              return;
             })
-            .catch((error: unknown) => {
-              captureError({
-                eventName: WORK_ITEM_TRACKER_EVENTS.update,
-                payload: { id: issueId },
-                error: error as Error,
-              });
+            .catch((_error) => {
               setToast({
                 title: t("toast.error"),
                 type: TOAST_TYPE.ERROR,
@@ -99,22 +102,14 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           return issues?.removeIssue(workspaceSlug, projectId, issueId).then(() => {
-            captureSuccess({
-              eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-              payload: { id: issueId },
-            });
             removeRoutePeekId();
+            return;
           });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
             message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
-          });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: issueId },
-            error: error as Error,
           });
         }
       },
@@ -122,16 +117,8 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
         try {
           if (!issues?.archiveIssue) return;
           await issues.archiveIssue(workspaceSlug, projectId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-          });
         } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-            error: error as Error,
-          });
+          console.error("Error archiving the issue", error);
         }
       },
       restore: async (workspaceSlug: string, projectId: string, issueId: string) => {
@@ -142,20 +129,11 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             title: t("issue.restore.success.title"),
             message: t("issue.restore.success.message"),
           });
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.restore,
-            payload: { id: issueId },
-          });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
             message: t("issue.restore.failed.message"),
-          });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.restore,
-            payload: { id: issueId },
-            error: error as Error,
           });
         }
       },
@@ -163,40 +141,22 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
         try {
           await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
           fetchActivities(workspaceSlug, projectId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
             message: t("issue.add.cycle.failed"),
-          });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
           });
         }
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
           await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueIds },
-          });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
             message: t("issue.add.cycle.failed"),
-          });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueIds },
-            error: error as Error,
           });
         }
       },
@@ -216,16 +176,8 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           });
           await removeFromCyclePromise;
           fetchActivities(workspaceSlug, projectId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
-          });
+        } catch (_error) {
+          console.error("Error removing issue from cycle", error);
         }
       },
       changeModulesInIssue: async (
@@ -243,10 +195,6 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           removeModuleIds
         );
         fetchActivities(workspaceSlug, projectId, issueId);
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issueId },
-        });
         return promise;
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
@@ -265,16 +213,8 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           });
           await removeFromModulePromise;
           fetchActivities(workspaceSlug, projectId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
         } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
-          });
+          console.error("Error removing issue from module", error);
         }
       },
     }),

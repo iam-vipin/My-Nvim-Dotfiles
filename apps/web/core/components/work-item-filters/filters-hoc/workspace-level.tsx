@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo, useState } from "react";
 import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspaceView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
@@ -10,7 +23,6 @@ import { EUserProjectRoles, EViewAccess } from "@plane/types";
 import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -140,24 +152,12 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
             title: "Success!",
             message: "Your view has been updated successfully.",
           });
-          captureSuccess({
-            eventName: GLOBAL_VIEW_TRACKER_EVENTS.update,
-            payload: {
-              view_id: viewDetails.id,
-            },
-          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Your view could not be updated. Please try again.",
-          });
-          captureError({
-            eventName: GLOBAL_VIEW_TRACKER_EVENTS.update,
-            payload: {
-              view_id: viewDetails.id,
-            },
           });
         });
     },

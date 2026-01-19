@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { enableStaticRendering } from "mobx-react";
 // plane imports
 import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
@@ -102,7 +115,7 @@ export class CoreRootStore {
     this.instance = new InstanceStore();
     this.user = new UserStore(this as unknown as RootStore);
     this.theme = new ThemeStore();
-    this.workspaceRoot = new WorkspaceRootStore(this);
+    this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);
@@ -136,7 +149,7 @@ export class CoreRootStore {
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
     this.user = new UserStore(this as unknown as RootStore);
-    this.workspaceRoot = new WorkspaceRootStore(this);
+    this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);

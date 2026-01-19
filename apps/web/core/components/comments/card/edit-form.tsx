@@ -1,9 +1,21 @@
-import React, { useEffect, useRef } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-import { Check } from "lucide-react";
 import type { EditorRefApi } from "@plane/editor";
-import { CloseIcon } from "@plane/propel/icons";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
@@ -99,53 +111,39 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             return asset_id;
           }}
           projectId={projectId}
-          parentClassName="p-2 bg-custom-background-100"
+          parentClassName="p-2 bg-surface-1"
           displayConfig={{
             fontSize: "small-font",
           }}
         />
       </div>
-      <div className="flex gap-1 self-end">
+      <div className="flex gap-2 self-end">
         {!isEmpty && (
           <button
             type="button"
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
             className={cn(
-              "group rounded border p-2 shadow-md duration-300",
-              isDisabled
-                ? "cursor-not-allowed border-green-500/50 bg-green-500/10"
-                : "border-green-500 bg-green-500/20 hover:bg-green-500"
+              "group rounded-lg border border-success-subtle size-7 grid place-items-center shadow-raised-100 bg-success-subtle duration-300",
+              isDisabled ? "" : "hover:bg-success-subtle-1"
             )}
           >
-            <Check
-              className={cn(
-                "h-3 w-3 duration-300",
-                isDisabled ? "text-green-500/50" : "text-green-500 group-hover:text-white"
-              )}
-            />
+            <CheckIcon className="size-4 text-success-primary" />
           </button>
         )}
         <button
           type="button"
           disabled={isSubmitting}
           className={cn(
-            "group rounded border p-2 shadow-md duration-300",
-            isSubmitting
-              ? "cursor-not-allowed border-red-500/50 bg-red-500/10"
-              : "border-red-500 bg-red-500/20 hover:bg-red-500"
+            "group rounded-lg border border-danger-subtle size-7 grid place-items-center shadow-raised-100 bg-danger-subtle duration-300",
+            isSubmitting ? "" : "hover:bg-danger-subtle-hover"
           )}
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <CloseIcon
-            className={cn(
-              "size-3 duration-300",
-              isSubmitting ? "text-red-500/50" : "text-red-500 group-hover:text-white"
-            )}
-          />
+          <CloseIcon className="size-4 text-danger-primary" />
         </button>
       </div>
     </form>

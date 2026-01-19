@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import zoneinfo
 import logging
@@ -176,10 +187,13 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
 class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePaginator):
     model = None
 
-    authentication_classes = [APIKeyAuthentication]
+    authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
     permission_classes = [
         IsAuthenticated,
+        IsAuthenticatedOrTokenHasScope,
+        OauthApplicationWorkspacePermission,
     ]
+    required_scopes = ["read", "write"]
     use_read_replica = False
 
     def get_queryset(self):
@@ -188,6 +202,22 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         except Exception as e:
             log_exception(e)
             raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
+
+    def get_throttles(self):
+        throttle_classes = super().get_throttles()
+        api_key = self.request.headers.get("X-Api-Key")
+
+        if api_key:
+            service_token = APIToken.objects.filter(token=api_key, is_service=True).first()
+
+            if service_token:
+                throttle_classes.append(ServiceTokenRateThrottle())
+                return throttle_classes
+
+        throttle_classes.append(ApiKeyRateThrottle())
+        throttle_classes.append(OAuthTokenRateThrottle())
+
+        return throttle_classes
 
     def handle_exception(self, exc):
         """

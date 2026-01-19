@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -51,20 +64,20 @@ export const IssuesLayoutsRoot = observer(function IssuesLayoutsRoot(props: Prop
   if (error) return <SomethingWentWrongError />;
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="relative size-full overflow-hidden">
       {peekId && <IssuePeekOverview anchor={anchor} peekId={peekId} />}
       {activeLayout && (
-        <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <div className="relative flex size-full flex-col overflow-hidden">
           {/* applied filters */}
           <IssueAppliedFilters anchor={anchor} />
 
           {activeLayout === "list" && (
-            <div className="relative h-full w-full overflow-y-auto">
+            <div className="relative size-full overflow-y-auto">
               <IssuesListLayoutRoot anchor={anchor} />
             </div>
           )}
           {activeLayout === "kanban" && (
-            <div className="relative mx-auto h-full w-full p-5">
+            <div className="relative mx-auto size-full p-5">
               <IssueKanbanLayoutRoot anchor={anchor} />
             </div>
           )}

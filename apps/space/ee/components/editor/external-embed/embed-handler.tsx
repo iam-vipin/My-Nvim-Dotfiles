@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { memo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -57,7 +70,7 @@ const EmbedHandlerRender = observer(function EmbedHandlerRender(props: ExternalE
   // Handle direct iframe embed
   if (!embedData?.html && [EExternalEmbedEntityType.EMBED] && !isEmbedFailed && !isRichCardView && src) {
     return (
-      <div className="w-full h-[400px] rounded overflow-hidden my-4">
+      <div className="w-full h-[400px] rounded-sm overflow-hidden my-4">
         <iframe src={src} width="100%" height="100%" frameBorder="0" allowFullScreen />
       </div>
     );

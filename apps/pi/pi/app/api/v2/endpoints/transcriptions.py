@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Audio transcription endpoint for converting speech to text."""
 
 from fastapi import APIRouter
@@ -11,8 +22,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.transcription.transcribe import process_transcription
 
@@ -26,7 +36,7 @@ async def create_transcription(
     chat_id: UUID4 = Form(..., description="UUID of the chat conversation"),
     file: UploadFile = File(..., description="Audio file to transcribe"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Create a new transcription from an audio file.
@@ -112,14 +122,7 @@ async def create_transcription(
         - Voice commands and dictation
         - Automatic caption generation
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     # Validate file upload
     if not file:

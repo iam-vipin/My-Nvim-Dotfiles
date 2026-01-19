@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 
@@ -18,7 +31,7 @@ const buildDecorations = (doc: Parameters<typeof DecorationSet.create>[0], highl
   }
 
   const decorations: Decoration[] = [];
-  const highlightClassNames = ["bg-custom-primary-100/20", "transition-all", "duration-300", "rounded"];
+  const highlightClassNames = ["bg-accent-primary/20", "transition-all", "duration-300", "rounded"];
 
   doc.descendants((node, pos) => {
     // Check if this node has the id we're looking for

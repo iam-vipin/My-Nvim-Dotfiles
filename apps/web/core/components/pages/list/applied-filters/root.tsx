@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
@@ -28,7 +41,7 @@ export function PageAppliedFiltersList(props: Props) {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TPageFilterProps;
 
@@ -38,7 +51,7 @@ export function PageAppliedFiltersList(props: Props) {
         return (
           <Tag key={filterKey}>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+              <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {DATE_FILTERS.includes(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
@@ -56,7 +69,7 @@ export function PageAppliedFiltersList(props: Props) {
               {isEditingAllowed && (
                 <button
                   type="button"
-                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
                   <CloseIcon height={12} width={12} strokeWidth={2} />

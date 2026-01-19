@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane helpers
@@ -12,6 +25,7 @@ import useSize from "@/hooks/use-window-size";
 // plane web components
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
 import { AppSidebarToggleButton } from "./sidebar-toggle-button";
+import { IconButton } from "@plane/propel/icon-button";
 
 type TSidebarWrapperProps = {
   title: string;
@@ -48,19 +62,19 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           {/* Workspace switcher and settings */}
 
           <div className="flex items-center justify-between gap-2 px-2">
-            <span className="text-md text-custom-text-200 font-medium pt-1">{title}</span>
-            {title === "Projects" && (
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="flex items-center justify-center size-6 rounded-md text-custom-text-400 hover:text-custom-primary-100 hover:bg-custom-background-90"
+            <span className="text-16 text-primary font-medium pt-1">{title}</span>
+
+            <div className="flex items-center gap-2">
+              {title === "Projects" && (
+                <IconButton
+                  size="base"
+                  variant="ghost"
+                  icon={PreferencesIcon}
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
-                >
-                  <PreferencesIcon className="size-4" />
-                </button>
-                <AppSidebarToggleButton />
-              </div>
-            )}
+                />
+              )}
+              <AppSidebarToggleButton />
+            </div>
           </div>
           {/* Quick actions */}
           {quickActions}
@@ -76,7 +90,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           {children}
         </ScrollArea>
         {/* Help Section */}
-        <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
+        <div className="flex items-center justify-between p-3 border-t border-subtle bg-surface-1 h-12">
           <WorkspaceEditionBadge />
           {/* TODO: To be checked if we need this */}
           {/* <div className="flex items-center gap-2">

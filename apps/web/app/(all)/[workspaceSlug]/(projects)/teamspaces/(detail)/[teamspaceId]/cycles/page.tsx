@@ -1,7 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
-import { Tabs, Loader } from "@plane/ui";
+import { Tabs } from "@plane/propel/tabs";
+import { Loader } from "@plane/ui";
 // plane web components
 import { CyclePeekOverview } from "@/components/cycles/cycle-peek-overview";
 import { TeamCompletedCyclesRoot } from "@/plane-web/components/teamspaces/cycles/completed";
@@ -64,15 +78,24 @@ function TeamspaceCyclesPage({ params }: Route.ComponentProps) {
 
   return (
     <div className="flex w-full h-full">
-      <Tabs
-        tabs={TEAM_CYCLES_TABS}
-        storageKey={`teamspace-cycles-${teamspaceId}`}
-        defaultTab="current"
-        size="sm"
-        tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 divide-x divide-custom-border-200"
-        tabListClassName="my-2 max-w-64"
-        tabPanelClassName="h-full w-full overflow-hidden overflow-y-auto"
-      />
+      <Tabs defaultValue={TEAM_CYCLES_TABS[0].key}>
+        <div className="flex items-center px-6 py-3 border-b border-custom-border-200 divide-x divide-subtle-1">
+          <Tabs.List>
+            {TEAM_CYCLES_TABS.map((tab) => (
+              <Tabs.Trigger key={tab.key} value={tab.key}>
+                {tab.label}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </div>
+        <div className="mt-4">
+          {TEAM_CYCLES_TABS.map((tab) => (
+            <Tabs.Content key={tab.key} value={tab.key}>
+              {tab.content}
+            </Tabs.Content>
+          ))}
+        </div>
+      </Tabs>
       <CyclePeekOverview workspaceSlug={workspaceSlug} isArchived={false} />
     </div>
   );

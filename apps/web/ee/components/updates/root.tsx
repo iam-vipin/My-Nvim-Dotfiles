@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
+import { PlusIcon } from "@plane/propel/icons";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -95,18 +109,13 @@ export const UpdatesWrapper = observer(function UpdatesWrapper({
       {!showInput && updates.length !== 0 && allowNew && (
         <div className="flex justify-between h-7 items-center">
           <button
-            className="flex text-custom-primary-100 text-sm font-medium rounded w-fit py-1 px-2"
+            className="flex text-accent-primary text-13 font-medium rounded w-fit py-1 px-2"
             onClick={() => setShowInput(true)}
           >
-            <Plus size={15} className="my-auto mr-1" />
+            <PlusIcon width={15} height={15} className="my-auto mr-1" />
             <div>{t("updates.add_update")}</div>
           </button>
-          <ActivitySortRoot
-            sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-            toggleSort={toggleSortOrder}
-            className="flex-shrink-0"
-            iconClassName="size-3"
-          />
+          <ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
         </div>
       )}
 

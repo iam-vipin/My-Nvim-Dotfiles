@@ -1,7 +1,19 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import pytz
 from typing import Optional, Any
 from uuid import UUID
+from enum import Enum
 
 # Django imports
 from django.conf import settings
@@ -16,7 +28,19 @@ from plane.utils.color import get_random_color
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
 
 
+class WorkspaceRole(models.IntegerChoices):
+    ADMIN = 20, "Admin"
+    MEMBER = 15, "Member"
+    GUEST = 5, "Guest"
+
+
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+
+
+class ROLE(Enum):
+    ADMIN = 20
+    MEMBER = 15
+    GUEST = 5
 
 
 def get_default_props():
@@ -114,6 +138,38 @@ def get_issue_props():
 def slug_validator(value):
     if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")
+
+
+def get_default_product_tour():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
+    }
+
+
+def get_default_checklist():
+    return {
+        "project_created": False,
+        "project_joined": False,
+        "work_item_created": False,
+        "team_members_invited": False,
+        "page_created": False,
+        "ai_chat_tried": False,
+        "integration_linked": False,
+        "view_created": False,
+        "sticky_created": False,
+    }
+
+
+def get_default_tips():
+    return {"mobile_app_download": False}
+
+
+def get_default_explored_features():
+    return {"github_integrated": False, "slack_integrated": False, "ai_chat_tried": False}
 
 
 class Workspace(BaseModel):
@@ -255,6 +311,9 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    getting_started_checklist = models.JSONField(default=get_default_checklist)
+    tips = models.JSONField(default=get_default_tips)
+    explored_features = models.JSONField(default=get_default_explored_features)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]
@@ -376,6 +435,7 @@ class WorkspaceUserProperties(BaseModel):
         choices=NavigationControlPreference.choices,
         default=NavigationControlPreference.ACCORDION,
     )
+    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]

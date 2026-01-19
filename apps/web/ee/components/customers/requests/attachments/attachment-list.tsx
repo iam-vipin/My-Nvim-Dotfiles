@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
@@ -112,11 +125,11 @@ export const RequestAttachmentsList = observer(function RequestAttachmentsList(p
           >
             <input {...getInputProps()} />
             {isDragActive && (
-              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-custom-background-90/75 z-30 ">
-                <div className="flex items-center justify-center p-1 rounded-md bg-custom-background-100">
-                  <div className="flex flex-col justify-center items-center px-5 py-5 rounded-md border border-dashed border-custom-border-300">
+              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-layer-1/75 z-30 ">
+                <div className="flex items-center justify-center p-1 rounded-md bg-surface-1">
+                  <div className="flex flex-col justify-center items-center px-5 py-5 rounded-md border border-dashed border-subtle-1">
                     <UploadCloud className="size-7" />
-                    <span className="text-sm text-custom-text-300">{t("attachment.drag_and_drop")}</span>
+                    <span className="text-13 text-tertiary">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>
               </div>

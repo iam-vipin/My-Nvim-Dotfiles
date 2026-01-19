@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { range } from "lodash-es";
 export function MembersLayoutLoader() {
   return (
@@ -5,10 +18,10 @@ export function MembersLayoutLoader() {
       {range(5).map((columnIndex) => (
         <div key={columnIndex} className="flex flex-col gap-3">
           <div className={`flex items-center justify-between h-9 ${columnIndex === 0 ? "w-80" : "w-36"}`}>
-            <span className="h-6 w-24 bg-custom-background-80 rounded animate-pulse" />
+            <span className="h-6 w-24 bg-layer-1 rounded-sm animate-pulse" />
           </div>
           {range(2).map((cardIndex) => (
-            <span className="h-8 w-full bg-custom-background-80 rounded animate-pulse" key={cardIndex} />
+            <span className="h-8 w-full bg-layer-1 rounded-sm animate-pulse" key={cardIndex} />
           ))}
         </div>
       ))}

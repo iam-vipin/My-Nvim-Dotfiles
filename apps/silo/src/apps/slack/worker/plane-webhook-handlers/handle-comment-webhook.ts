@@ -1,10 +1,30 @@
-import type { TSlackIssueEntityData } from "@plane/etl/slack";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { E_SLACK_ENTITY_TYPE, E_SLACK_PROJECT_UPDATES_EVENTS } from "@plane/etl/slack";
+import type { TSlackIssueEntityData, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import type { PlaneUser, PlaneWebhookPayload } from "@plane/sdk";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
 import { getSlackMarkdownFromPlaneHtml } from "../../helpers/parse-plane-resources";
-import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
-import { createSyncedSlackCommentBlock } from "../../views/comments";
+import { getPlaneToSlackUserMapFromWC, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
+import { createCommentLinkback, createSyncedSlackCommentBlock } from "../../views/comments";
+import { getAPIClient } from "@/services/client";
+import { fetchWorkItemDisplayInfo } from "../../services/alerts";
+import { getCommentProjectUpdateText } from "../../helpers/activity";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+
+const apiClient = getAPIClient();
 
 export const handleIssueCommentWebhook = async (payload: PlaneWebhookPayload) => {
   await handleCommentSync(payload);
@@ -24,7 +44,8 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
       event: payload.event,
       isEnterprise: false,
     },
-    payload.created_by ?? null
+    payload.created_by ?? null,
+    false
   );
 
   if (!details) {
@@ -36,9 +57,22 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
 
   const { isUser, entityConnection, slackService, workspaceConnection, planeClient } = details;
 
+  const [projectEntityConnection] = await integrationConnectionHelper.getWorkspaceEntityConnections({
+    workspace_connection_id: workspaceConnection.id,
+    entity_type: E_SLACK_ENTITY_TYPE.SLACK_PROJECT_UPDATES,
+  });
+
+  if (!entityConnection && !projectEntityConnection) {
+    logger.info(
+      "[Slack Comment Sync Webhook] Neither entity connection nor project entity connection found for the given issue",
+      payload
+    );
+    return;
+  }
+
   const commentData = await planeClient.issueComment.getComment(
-    entityConnection.workspace_slug,
-    entityConnection.project_id ?? "",
+    workspaceConnection.workspace_slug,
+    payload.project ?? "",
     payload.issue,
     payload.id
   );
@@ -46,11 +80,8 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
   // Return the comment if it's already connected to any exisitng connection
   if (commentData.external_id !== null) return;
 
-  const slackData = entityConnection.entity_data as TSlackIssueEntityData;
-
-  const channel = slackData.channel;
-
   const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
+  const planeToSlackUserMap = getPlaneToSlackUserMapFromWC(workspaceConnection);
   const markdown = await getSlackMarkdownFromPlaneHtml({
     workspaceConnection,
     html: commentData.comment_html,
@@ -62,31 +93,111 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
   if (!isUser) {
     // Fallback logic to get the display name from the user
     if (!displayName) {
-      const users = await planeClient.users.list(entityConnection.workspace_slug, commentData.project);
+      const users = await planeClient.users.list(workspaceConnection.workspace_slug, payload.project);
       const user = users.find((user: PlaneUser) => user.id === commentData.actor);
       displayName = user?.display_name;
     }
   }
 
-  const commentBlocks = createSyncedSlackCommentBlock({
-    comment: markdown,
-    createdById: commentData.actor,
-    createdByDisplayName: displayName,
-    workspaceSlug: entityConnection.workspace_slug,
-    projectId: entityConnection.project_id ?? "",
-    issueId: payload.issue,
-    isUser,
-    userMap,
-  });
+  if (entityConnection) {
+    const slackData = entityConnection.entity_data as TSlackIssueEntityData;
 
-  const response = await slackService.sendThreadMessage(channel, entityConnection.entity_id ?? "", {
-    blocks: commentBlocks,
-  });
+    const channel = slackData.channel;
 
-  logger.info("Slack message sent", {
-    slackMessageId: response.ts,
-    slackChannelId: channel,
-    slackThreadTs: entityConnection.entity_id,
-    slackMessage: markdown,
-  });
+    const commentBlocks = createSyncedSlackCommentBlock({
+      comment: markdown,
+      createdById: commentData.actor,
+      createdByDisplayName: displayName,
+      workspaceSlug: entityConnection.workspace_slug,
+      projectId: entityConnection.project_id ?? "",
+      issueId: payload.issue,
+      isUser,
+      userMap,
+    });
+
+    const response = await slackService.sendThreadMessage(channel, entityConnection.entity_id ?? "", {
+      blocks: commentBlocks,
+    });
+
+    logger.info("Slack message sent", {
+      slackMessageId: response.ts,
+      slackChannelId: channel,
+      slackThreadTs: entityConnection.entity_id,
+      slackMessage: markdown,
+    });
+  }
+
+  if (projectEntityConnection) {
+    const details = await getConnectionDetailsForIssue(
+      {
+        id: payload.issue,
+        workspace: payload.workspace,
+        project: payload.project,
+        issue: payload.issue,
+        event: payload.event,
+        isEnterprise: false,
+      },
+      null,
+      false
+    );
+
+    if (!details) {
+      logger.error("No details found for issue comment webhook", {
+        payload,
+      });
+      return;
+    }
+
+    const { slackService } = details;
+    const channel = projectEntityConnection.entity_id;
+
+    // Get the config, extract out the subscribed events from the config and filter activities according to the subscribed events
+    const projectUpdatesConfig = projectEntityConnection.config as TSlackProjectUpdatesConfig;
+    const subscribedEvents = projectUpdatesConfig?.subscribedEvents as E_SLACK_PROJECT_UPDATES_EVENTS[];
+
+    if (!subscribedEvents) return;
+
+    const includesCommentsUpdateEvent = subscribedEvents.includes(
+      E_SLACK_PROJECT_UPDATES_EVENTS.WORK_ITEM_COMMENT_CREATED
+    );
+    if (!includesCommentsUpdateEvent) {
+      return;
+    }
+
+    const actorDisplayName = displayName ?? commentData.actor;
+    const workItemDisplayInfo = await fetchWorkItemDisplayInfo(
+      planeClient,
+      workspaceConnection.workspace_slug,
+      payload.project,
+      payload.issue
+    );
+    const header = getCommentProjectUpdateText(
+      workspaceConnection.workspace_slug,
+      displayName!,
+      workItemDisplayInfo.identifier,
+      workItemDisplayInfo.url
+    );
+
+    const commentBlocks = createCommentLinkback({
+      blockFormationCtx: {
+        workspaceSlug: workspaceConnection.workspace_slug,
+        planeToSlackMap: planeToSlackUserMap,
+        actorDisplayName: actorDisplayName,
+        parsedMarkdownFromAlert: markdown,
+        workItemDisplayInfo: workItemDisplayInfo,
+      },
+      workItemHyperlink: workItemDisplayInfo.url,
+      projectId: projectEntityConnection.project_id!,
+      issueId: payload.issue,
+      createdBy: actorDisplayName,
+      header: header,
+    });
+
+    const response = await slackService.sendMessageToChannel(channel!, {
+      text: header,
+      blocks: commentBlocks,
+    });
+
+    logger.info("[Slack Project Updates] Pushed activity to slack channel", response);
+  }
 };

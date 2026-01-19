@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect } from "react";
 import { debounce } from "lodash-es";
 import { Controller, useFormContext } from "react-hook-form";
@@ -113,7 +126,7 @@ export function WidgetConfigSidebarBasicConfig(props: Props) {
   );
 
   return (
-    <div className="flex-shrink-0 space-y-3 text-sm">
+    <div className="flex-shrink-0 space-y-3 text-13">
       <Controller
         control={control}
         name="name"
@@ -136,11 +149,11 @@ export function WidgetConfigSidebarBasicConfig(props: Props) {
             buttonContent={
               <>
                 {selectedChartModel && selectedChartType && (
-                  <span className="flex-shrink-0 h-6 aspect-square bg-custom-background-80 rounded grid place-items-center">
+                  <span className="flex-shrink-0 h-6 aspect-square bg-layer-1 rounded-sm grid place-items-center">
                     <WidgetChartTypeIcon
                       chartModel={selectedChartModel}
                       chartType={selectedChartType}
-                      className="size-4 text-custom-text-300"
+                      className="size-4 text-tertiary"
                     />
                   </span>
                 )}

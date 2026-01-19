@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import copy
 
 from plane.app.views.base import BaseAPIView
@@ -27,14 +38,10 @@ class IssueDuplicateEndpoint(BaseAPIView):
     def post(self, request, slug, issue_id):
         project_id = request.data.get("project_id")
 
-        project_exists = Project.objects.filter(
-            id=project_id, workspace__slug=slug
-        ).exists()
+        project_exists = Project.objects.filter(id=project_id, workspace__slug=slug).exists()
 
         if not project_exists:
-            return Response(
-                {"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
 
         project_member_exists = ProjectMember.objects.filter(
             project_id=project_id,
@@ -44,9 +51,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
 
         if not project_member_exists:
             return Response(
-                {
-                    "error": "You don't have permission to duplicate issues in this project"
-                },
+                {"error": "You don't have permission to duplicate issues in this project"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -73,9 +78,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
         duplicated_issue.state_id = state.id
 
         # Fetch all issue types for the destination project once
-        destination_issue_types = IssueType.objects.filter(
-            project_issue_types__project_id=project_id
-        )
+        destination_issue_types = IssueType.objects.filter(project_issue_types__project_id=project_id)
         # Separate epics and regular issue types
         epic_types = [it for it in destination_issue_types if it.is_epic]
         regular_issue_types = [it for it in destination_issue_types if not it.is_epic]
@@ -129,9 +132,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
             .distinct()
         )
 
-        related_issues.append(
-            {"related_issue_id": original_issue.id, "relation_type": "duplicate"}
-        )
+        related_issues.append({"related_issue_id": original_issue.id, "relation_type": "duplicate"})
 
         IssueRelation.objects.bulk_create(
             [
@@ -170,9 +171,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
 
         #  Fetching and returning all the duplicated issue relations.
         issue_relation = (
-            IssueRelation.objects.select_related(
-                "related_issue", "workspace", "project"
-            )
+            IssueRelation.objects.select_related("related_issue", "workspace", "project")
             .select_related("project", "workspace", "related_issue")
             .filter(issue_id=original_issue.id, related_issue_id=duplicated_issue.id)
         ).first()

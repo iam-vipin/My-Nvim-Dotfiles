@@ -1,6 +1,18 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { INITIATIVE_TRACKER_EVENTS, INITIATIVES_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -12,7 +24,6 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -45,9 +56,6 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
 
   const toggleInitiativesFeature = async () => {
     try {
-      captureClick({
-        elementName: INITIATIVES_TRACKER_ELEMENTS.SETTINGS_PAGE_ENABLE_DISABLE_BUTTON,
-      });
       const payload = {
         [EWorkspaceFeatures.IS_INITIATIVES_ENABLED]: !isInitiativesFeatureEnabled,
       };
@@ -65,21 +73,8 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
         },
       });
       await toggleInitiativesFeaturePromise;
-      captureSuccess({
-        eventName: INITIATIVE_TRACKER_EVENTS.TOGGLE,
-        payload: {
-          value: !isInitiativesFeatureEnabled,
-        },
-      });
     } catch (error) {
       console.error(error);
-      captureError({
-        eventName: INITIATIVE_TRACKER_EVENTS.TOGGLE,
-        error: error as Error,
-        payload: {
-          value: !isInitiativesFeatureEnabled,
-        },
-      });
     }
   };
 
@@ -98,14 +93,12 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
         >
           <div className=" py-6 flex items-center justify-between gap-2 w-full">
             <div className="flex items-center gap-4">
-              <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-                <InitiativeIcon className="size-5 text-custom-text-300" />
+              <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
+                <InitiativeIcon className="size-5 text-tertiary" />
               </div>
               <div className="leading-tight">
                 <h5 className="font-medium">{t("project_settings.initiatives.title")}</h5>
-                <span className="text-custom-sidebar-text-400 text-sm">
-                  {t("project_settings.initiatives.description")}
-                </span>
+                <span className="text-placeholder text-13">{t("project_settings.initiatives.description")}</span>
               </div>
             </div>
             <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />

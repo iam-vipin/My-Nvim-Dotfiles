@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { Loader } from "@plane/ui";
 // plane web types
@@ -22,7 +35,7 @@ export function WorklogDownloadLoader(props: TWorklogDownloadLoader) {
       )}
 
       {/* content blocks */}
-      <div className="divide-y divide-custom-border-200">
+      <div className="divide-y divide-subtle-1">
         {Array.from({ length: 10 }).map((_, index) => (
           <Loader key={index} className="flex justify-between items-center gap-2 p-2.5">
             <div className="w-full space-y-1">
@@ -30,7 +43,7 @@ export function WorklogDownloadLoader(props: TWorklogDownloadLoader) {
                 <Loader.Item height="19.1px" width="160px" />
                 <Loader.Item height="19.1px" width="60px" />
               </div>
-              <div className="flex items-center text-custom-text-400 gap-1">
+              <div className="flex items-center text-placeholder gap-1">
                 <Loader.Item height="18px" width="40px" />|<Loader.Item height="18px" width="60px" />
               </div>
             </div>

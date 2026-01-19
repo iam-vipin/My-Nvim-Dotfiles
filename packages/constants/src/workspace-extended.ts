@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { IWorkspaceSidebarNavigationItem } from "./workspace";
 
@@ -22,6 +35,13 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     href: `/settings/worklogs`,
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/worklogs/`,
+  },
+  identity: {
+    key: "identity",
+    i18n_label: "workspace_settings.settings.identity.title",
+    href: `/settings/identity`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/identity/`,
   },
   project_states: {
     key: "project_states",

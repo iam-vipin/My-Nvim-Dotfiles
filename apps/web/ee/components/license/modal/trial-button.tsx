@@ -1,13 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { useParams } from "next/navigation";
-// plane imports
 import { Loader } from "lucide-react";
-import { LICENSE_TRACKER_ELEMENTS, LICENSE_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export type TTrialButtonProps = {
@@ -26,7 +37,7 @@ export function TrialButton(props: TTrialButtonProps) {
   // hooks
   const { freeTrialSubscription, handleSuccessModalToggle } = useWorkspaceSubscription();
 
-  const handleTrial = async (productId: string | undefined, priceId: string | undefined) => {
+  const handleTrial = async () => {
     if (!productId || !priceId) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -41,12 +52,6 @@ export function TrialButton(props: TTrialButtonProps) {
       await freeTrialSubscription(workspaceSlug.toString(), { product_id: productId, price_id: priceId });
       handleClose();
       handleSuccessModalToggle(true);
-      captureSuccess({
-        eventName: LICENSE_TRACKER_EVENTS.trial_started,
-        payload: {
-          plan: variant,
-        },
-      });
     } catch (error) {
       const currentError = error as { error: string; detail: string };
       console.error("Error in freeTrialSubscription", error);
@@ -55,12 +60,6 @@ export function TrialButton(props: TTrialButtonProps) {
         title: "Error!",
         message: currentError?.detail ?? currentError?.error ?? "Something went wrong. Please try again.",
       });
-      captureError({
-        eventName: LICENSE_TRACKER_EVENTS.trial_started,
-        payload: {
-          plan: variant,
-        },
-      });
     } finally {
       setTrialLoader(false);
     }
@@ -68,10 +67,9 @@ export function TrialButton(props: TTrialButtonProps) {
 
   return (
     <button
-      data-element={LICENSE_TRACKER_ELEMENTS.MODAL_TRIAL_BUTTON}
       disabled={trialLoader}
-      className="text-center text-sm text-custom-text-300 hover:text-custom-text-100 font-medium transition-all flex justify-center items-center gap-1.5 -ml-5"
-      onClick={() => handleTrial(productId, priceId)}
+      className="text-center text-body-xs-medium text-tertiary hover:text-primary transition-all flex justify-center items-center gap-1.5 -ml-5"
+      onClick={handleTrial}
     >
       <div className="relative w-3 h-3">
         {trialLoader && <Loader size={12} className={cn("absolute inset-0 animate-spin")} />}

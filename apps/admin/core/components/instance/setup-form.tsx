@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 // icons
@@ -7,7 +20,7 @@ import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
 import { Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
-import { getPasswordStrength } from "@plane/utils";
+import { getPasswordStrength, validatePersonName, validateCompanyName } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import { Banner } from "@/components/common/banner";
@@ -156,46 +169,58 @@ export function InstanceSetupForm() {
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="w-full space-y-1">
-                <label className="text-sm text-custom-text-300 font-medium" htmlFor="first_name">
-                  First name <span className="text-red-500">*</span>
+                <label className="text-13 text-tertiary font-medium" htmlFor="first_name">
+                  First name <span className="text-danger-primary">*</span>
                 </label>
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
                   id="first_name"
                   name="first_name"
                   type="text"
                   inputSize="md"
                   placeholder="Wilber"
                   value={formData.first_name}
-                  onChange={(e) => handleFormChange("first_name", e.target.value)}
-                  autoComplete="on"
+                  onChange={(e) => {
+                    const validation = validatePersonName(e.target.value);
+                    if (validation === true || e.target.value === "") {
+                      handleFormChange("first_name", e.target.value);
+                    }
+                  }}
+                  autoComplete="off"
                   autoFocus
+                  maxLength={50}
                 />
               </div>
               <div className="w-full space-y-1">
-                <label className="text-sm text-custom-text-300 font-medium" htmlFor="last_name">
-                  Last name <span className="text-red-500">*</span>
+                <label className="text-13 text-tertiary font-medium" htmlFor="last_name">
+                  Last name <span className="text-danger-primary">*</span>
                 </label>
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
                   id="last_name"
                   name="last_name"
                   type="text"
                   inputSize="md"
                   placeholder="Wright"
                   value={formData.last_name}
-                  onChange={(e) => handleFormChange("last_name", e.target.value)}
-                  autoComplete="on"
+                  onChange={(e) => {
+                    const validation = validatePersonName(e.target.value);
+                    if (validation === true || e.target.value === "") {
+                      handleFormChange("last_name", e.target.value);
+                    }
+                  }}
+                  autoComplete="off"
+                  maxLength={50}
                 />
               </div>
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
-                Email <span className="text-red-500">*</span>
+              <label className="text-13 text-tertiary font-medium" htmlFor="email">
+                Email <span className="text-danger-primary">*</span>
               </label>
               <Input
-                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
                 id="email"
                 name="email"
                 type="email"
@@ -204,53 +229,59 @@ export function InstanceSetupForm() {
                 value={formData.email}
                 onChange={(e) => handleFormChange("email", e.target.value)}
                 hasError={errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL ? true : false}
-                autoComplete="on"
+                autoComplete="off"
               />
               {errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message && (
-                <p className="px-1 text-xs text-red-500">{errorData.message}</p>
+                <p className="px-1 text-11 text-danger-primary">{errorData.message}</p>
               )}
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="company_name">
-                Company name <span className="text-red-500">*</span>
+              <label className="text-13 text-tertiary font-medium" htmlFor="company_name">
+                Company name <span className="text-danger-primary">*</span>
               </label>
               <Input
-                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
                 id="company_name"
                 name="company_name"
                 type="text"
                 inputSize="md"
                 placeholder="Company name"
                 value={formData.company_name}
-                onChange={(e) => handleFormChange("company_name", e.target.value)}
+                onChange={(e) => {
+                  const validation = validateCompanyName(e.target.value, false);
+                  if (validation === true || e.target.value === "") {
+                    handleFormChange("company_name", e.target.value);
+                  }
+                }}
+                maxLength={80}
               />
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
-                Set a password <span className="text-red-500">*</span>
+              <label className="text-13 text-tertiary font-medium" htmlFor="password">
+                Set a password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
                   id="password"
                   name="password"
                   type={showPassword.password ? "text" : "password"}
                   inputSize="md"
-                  placeholder="New password..."
+                  placeholder="New password"
                   value={formData.password}
                   onChange={(e) => handleFormChange("password", e.target.value)}
                   hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
                   onFocus={() => setIsPasswordInputFocused(true)}
                   onBlur={() => setIsPasswordInputFocused(false)}
-                  autoComplete="on"
+                  autoComplete="new-password"
                 />
                 {showPassword.password ? (
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -259,7 +290,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
                     <Eye className="h-4 w-4" />
@@ -267,14 +298,14 @@ export function InstanceSetupForm() {
                 )}
               </div>
               {errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message && (
-                <p className="px-1 text-xs text-red-500">{errorData.message}</p>
+                <p className="px-1 text-11 text-danger-primary">{errorData.message}</p>
               )}
               <PasswordStrengthIndicator password={formData.password} isFocused={isPasswordInputFocused} />
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
-                Confirm password <span className="text-red-500">*</span>
+              <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
+                Confirm password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -285,15 +316,16 @@ export function InstanceSetupForm() {
                   value={formData.confirm_password}
                   onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                   placeholder="Confirm password"
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
                   onFocus={() => setIsRetryPasswordInputFocused(true)}
                   onBlur={() => setIsRetryPasswordInputFocused(false)}
+                  autoComplete="new-password"
                 />
                 {showPassword.retypePassword ? (
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -302,7 +334,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
                     <Eye className="h-4 w-4" />
@@ -311,7 +343,9 @@ export function InstanceSetupForm() {
               </div>
               {!!formData.confirm_password &&
                 formData.password !== formData.confirm_password &&
-                renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+                renderPasswordMatchError && (
+                  <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>
+                )}
             </div>
 
             <div className="relative flex gap-2">
@@ -324,14 +358,14 @@ export function InstanceSetupForm() {
                   checked={formData.is_telemetry_enabled}
                 />
               </div>
-              <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
+              <label className="text-13 text-tertiary font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
                 Allow Plane to anonymously collect usage events.{" "}
                 <a
                   tabIndex={-1}
                   href="https://developers.plane.so/self-hosting/telemetry"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium text-blue-500 hover:text-blue-600 flex-shrink-0"
+                  className="text-13 font-medium text-blue-500 hover:text-blue-600 flex-shrink-0"
                 >
                   See More
                 </a>
@@ -339,7 +373,7 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="py-2">
-              <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+              <Button type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
                 {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
               </Button>
             </div>

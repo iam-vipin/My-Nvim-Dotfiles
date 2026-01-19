@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 
 # Django imports
@@ -35,14 +46,10 @@ def validate_relation(property, value):
     validate_uuid(property, value)
     # Validate the relation
     if property.relation_type == RelationTypeEnum.ISSUE:
-        if not DraftIssue.objects.filter(
-            workspace_id=property.workspace_id, id=value
-        ).exists():
+        if not DraftIssue.objects.filter(workspace_id=property.workspace_id, id=value).exists():
             raise ValidationError(f"{value} is not a valid issue")
     elif property.relation_type == RelationTypeEnum.USER:
-        if not WorkspaceMember.objects.filter(
-            workspace_id=property.workspace_id, member_id=value
-        ).exists():
+        if not WorkspaceMember.objects.filter(workspace_id=property.workspace_id, member_id=value).exists():
             raise ValidationError(f"{value} is not a valid user")
     else:
         raise ValidationError(f"{property.relation_type} is not a valid relation type")
@@ -51,9 +58,7 @@ def validate_relation(property, value):
 ## Save functions
 
 
-def save_text(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_text(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     if values:
         # Case 1 - The property is updated
         if existing_values and values[0] != existing_values[0]:
@@ -82,9 +87,7 @@ def save_text(
         return []
 
 
-def save_datetime(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_datetime(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -101,9 +104,7 @@ def save_datetime(
     return bulk_issue_prop_values
 
 
-def save_decimal(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_decimal(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -120,9 +121,7 @@ def save_decimal(
     return bulk_issue_prop_values
 
 
-def save_boolean(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_boolean(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -139,9 +138,7 @@ def save_boolean(
     return bulk_issue_prop_values
 
 
-def save_option(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_option(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -158,9 +155,7 @@ def save_option(
     return bulk_issue_prop_values
 
 
-def save_relation(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_relation(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -177,9 +172,7 @@ def save_relation(
     return bulk_issue_prop_values
 
 
-def save_url(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_url(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -196,9 +189,7 @@ def save_url(
     return bulk_issue_prop_values
 
 
-def save_email(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_email(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -215,9 +206,7 @@ def save_email(
     return bulk_issue_prop_values
 
 
-def save_file(
-    issue_property, values, existing_values, draft_issue_id, project_id, workspace_id
-):
+def save_file(issue_property, values, existing_values, draft_issue_id, project_id, workspace_id):
     bulk_issue_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -256,9 +245,7 @@ def property_validators(properties, property_values, existing_prop_values):
 
         # Check if the property type is valid
         if not validator:
-            raise ValidationError(
-                f"{property.property_type} is not a valid property type"
-            )
+            raise ValidationError(f"{property.property_type} is not a valid property type")
 
         # Fetch the value
         values = property_values.get(str(property.id), [])
@@ -304,9 +291,7 @@ def draft_issue_property_savers(
 
         # Check if the property type is valid
         if not saver:
-            raise ValidationError(
-                f"{property.property_type} is not a valid property type"
-            )
+            raise ValidationError(f"{property.property_type} is not a valid property type")
 
         # Fetch the value
         values = property_values.get(str(property.id), [])

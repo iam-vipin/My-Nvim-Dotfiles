@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { AlertCircle } from "lucide-react";
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -31,21 +44,21 @@ export function GroupDragOverlay(props: Props) {
   return (
     <div
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-overlay ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded-sm bg-backdrop ${dragColumnOrientation}`,
         {
-          "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
+          "flex flex-col border-[1px] border-subtle-1 z-[2]": shouldOverlayBeVisible,
         },
         { hidden: !shouldOverlayBeVisible }
       )}
     >
       <div
         className={cn(
-          "p-3 my-8 flex flex-col rounded items-center",
+          "p-3 my-8 flex flex-col rounded-sm items-center",
           {
-            "text-custom-text-200": shouldOverlayBeVisible,
+            "text-secondary": shouldOverlayBeVisible,
           },
           {
-            "text-custom-text-error": isDropDisabled,
+            "text-danger-primary": isDropDisabled,
           }
         )}
       >

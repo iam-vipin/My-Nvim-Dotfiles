@@ -1,14 +1,28 @@
-import { useMemo, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
+import { Loader } from "@plane/ui";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
 import allFiltersLight from "@/app/assets/empty-state/wiki/all-filters-light.svg?url";
@@ -17,10 +31,10 @@ import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -47,6 +61,8 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
     filteredPrivatePageIds,
     filteredSharedPageIds,
     createPage,
+    getPaginationInfo,
+    getPaginationLoader,
   } = pageStore;
   // params
   const router = useAppRouter();
@@ -55,6 +71,15 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
   // derived values
   const resolvedAllFiltersImage = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
   const resolvedNameFilterImage = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
+  // pagination hooks
+  const paginationInfo = getPaginationInfo(pageType);
+  const paginationLoader = getPaginationLoader(pageType);
+  const hasNextPage = paginationInfo.hasNextPage;
+  const isFetchingNextPage = paginationLoader === "pagination";
+  // state for intersection observer element
+  const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
+  // ref for container
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Use SWR to fetch the data but not for rendering
   const { isLoading, data } = useSWR(
@@ -67,11 +92,9 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
   );
 
   // Get the appropriate page IDs based on page type
+  // Use filtered page IDs from store for all cases (including search queries)
+  // so that paginated pages are included in the list
   const pageIds = useMemo(() => {
-    // If there's a search query, use the search results
-    if (debouncedSearchQuery) {
-      return (data?.map((page) => page.id).filter(Boolean) as string[]) || [];
-    }
     switch (pageType) {
       case "public":
         return filteredPublicPageIds;
@@ -84,20 +107,37 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
       default:
         return [];
     }
-  }, [
-    pageType,
-    filteredPublicPageIds,
-    filteredPrivatePageIds,
-    filteredArchivedPageIds,
-    filteredSharedPageIds,
-    data,
-    debouncedSearchQuery,
-  ]);
+  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, filteredSharedPageIds]);
 
   // derived values - memoized for performance
   const hasWorkspaceMemberLevelPermissions = useMemo(
     () => allowPermissions([EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER], EUserPermissionsLevel.WORKSPACE),
     [allowPermissions]
+  );
+
+  // Function to fetch next page
+  const fetchNextPage = useCallback(() => {
+    if (!workspaceSlug || !hasNextPage || isFetchingNextPage) {
+      return;
+    }
+    // Use fetchPagesByType with the search query and cursor from pagination info
+    fetchPagesByType(pageType, debouncedSearchQuery || undefined, paginationInfo.nextCursor ?? undefined);
+  }, [
+    workspaceSlug,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchPagesByType,
+    pageType,
+    debouncedSearchQuery,
+    paginationInfo.nextCursor,
+  ]);
+
+  // Set up intersection observer to trigger loading more pages
+  useIntersectionObserver(
+    containerRef,
+    isFetchingNextPage ? null : intersectionElement,
+    fetchNextPage,
+    `100% 0% 100% 0%`
   );
 
   if (isLoading) return <PageLoader />;
@@ -110,25 +150,11 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
     await createPage(payload)
       .then((res) => {
         if (res?.id) {
-          captureSuccess({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-            payload: {
-              id: res?.id,
-              state: "SUCCESS",
-            },
-          });
           const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
           router.push(pageId);
         }
       })
       .catch((err) => {
-        captureError({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-            error: err?.data?.error,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -220,8 +246,8 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching pages"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="text-18 font-medium mt-7 mb-1">No matching pages</h5>
+          <p className="text-placeholder text-14">
             {debouncedSearchQuery.length > 0
               ? "Remove the search criteria to see all pages"
               : "Remove the filters to see all pages"}
@@ -231,7 +257,7 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
     );
 
   return (
-    <div className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+    <div ref={containerRef} className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
       {pageIds.map((pageId) => (
         <PageListBlockRoot
           key={pageId}
@@ -242,6 +268,21 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
           sectionType={pageType}
         />
       ))}
+      {hasNextPage && (
+        <div ref={setIntersectionElement}>
+          {isFetchingNextPage && (
+            <Loader className="relative flex items-center gap-2 p-3 py-4 border-b border-subtle">
+              <Loader.Item width={`${250 + 10 * Math.floor(Math.random() * 10)}px`} height="22px" />
+              <div className="ml-auto relative flex items-center gap-2">
+                <Loader.Item width="60px" height="22px" />
+                <Loader.Item width="22px" height="22px" />
+                <Loader.Item width="22px" height="22px" />
+                <Loader.Item width="22px" height="22px" />
+              </div>
+            </Loader>
+          )}
+        </div>
+      )}
     </div>
   );
 });

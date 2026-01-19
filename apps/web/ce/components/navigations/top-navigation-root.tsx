@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // components
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
@@ -12,10 +25,12 @@ import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { InboxIcon } from "@plane/propel/icons";
 import useSWR from "swr";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+// local imports
+import { StarUsOnGitHubLink } from "@/app/(all)/[workspaceSlug]/(projects)/star-us-link";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
-  const { workspaceSlug, projectId, workItem } = useParams();
+  const { workspaceSlug } = useParams();
   const pathname = usePathname();
 
   // store hooks
@@ -38,7 +53,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
   return (
     <div
-      className={cn("flex items-center min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
+      className={cn("flex items-center min-h-10 w-full px-3.5 bg-canvas z-[27] transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
@@ -61,7 +76,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                 <div className="relative">
                   <InboxIcon className="size-5" />
                   {totalNotifications > 0 && (
-                    <span className="absolute -top-0 -right-0 size-2 rounded-full bg-red-500" />
+                    <span className="absolute top-0 right-0 size-2 rounded-full bg-danger-primary" />
                   )}
                 </div>
               ),
@@ -70,7 +85,8 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
           />
         </Tooltip>
         <HelpMenuRoot />
-        <div className="flex items-center justify-center size-8 hover:bg-custom-background-80 rounded-md">
+        <StarUsOnGitHubLink />
+        <div className="flex items-center justify-center size-8 hover:bg-layer-1-hover rounded-md">
           <UserMenuRoot size="xs" />
         </div>
       </div>

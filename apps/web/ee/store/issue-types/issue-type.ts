@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { concat, set, uniq, update } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -67,6 +80,7 @@ export class IssueType implements IIssueType {
       // computed
       asJSON: computed,
       activeProperties: computed,
+      sortedProperties: computed,
       // actions
       updateType: action,
       addOrUpdateProperty: action,
@@ -121,11 +135,17 @@ export class IssueType implements IIssueType {
     };
   }
 
+  // Get sorted properties
+  get sortedProperties() {
+    const sortedData = Array.from(this.properties).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    return sortedData;
+  }
+
   /**
    * @description Get active properties
    */
   get activeProperties() {
-    return this.properties.filter((property) => property.is_active);
+    return this.sortedProperties.filter((property) => property.is_active);
   }
 
   // computed function

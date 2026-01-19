@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { unset, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -36,6 +49,7 @@ export interface IBaseUserPermissionStore {
     workspaceSlug: string,
     projectId?: string
   ) => EUserPermissions | undefined;
+  fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
   allowPermissions: (
     allowPermissions: ETempUserRole[],
     level: TUserPermissionsLevel,
@@ -147,6 +161,15 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
     workspaceSlug: string,
     projectId?: string
   ) => EUserPermissions | undefined;
+
+  /**
+   * @description Fetches project-level entities that are not automatically loaded by the project wrapper.
+   * This is used when joining a project to ensure all necessary workspace-level project data is available.
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @returns { Promise<void> }
+   */
+  abstract fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
 
   /**
    * @description Returns whether the user has the permission to access a page
@@ -309,6 +332,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
         runInAction(() => {
           set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], projectMemberRole);
         });
+        void this.fetchWorkspaceLevelProjectEntities(workspaceSlug, projectId);
       }
     } catch (error) {
       console.error("Error user joining the project", error);

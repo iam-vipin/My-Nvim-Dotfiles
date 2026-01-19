@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import uuid
 from urllib.parse import urlencode, urljoin
 
@@ -37,9 +48,7 @@ class GiteaOauthInitiateEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
         try:
             state = uuid.uuid4().hex
@@ -51,9 +60,7 @@ class GiteaOauthInitiateEndpoint(View):
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 
@@ -87,9 +94,7 @@ class GiteaCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GiteaOAuthProvider(
-                request=request, code=code, callback=post_user_auth_workflow
-            )
+            provider = GiteaOAuthProvider(request=request, code=code, callback=post_user_auth_workflow)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -28,9 +39,7 @@ class GithubRepositoriesEndpoint(BaseAPIView):
 
     def get(self, request, slug, workspace_integration_id):
         page = request.GET.get("page", 1)
-        workspace_integration = WorkspaceIntegration.objects.get(
-            workspace__slug=slug, pk=workspace_integration_id
-        )
+        workspace_integration = WorkspaceIntegration.objects.get(workspace__slug=slug, pk=workspace_integration_id)
 
         if workspace_integration.integration.provider != "github":
             return Response(
@@ -39,10 +48,7 @@ class GithubRepositoriesEndpoint(BaseAPIView):
             )
 
         access_tokens_url = workspace_integration.metadata["access_tokens_url"]
-        repositories_url = (
-            workspace_integration.metadata["repositories_url"]
-            + f"?per_page=100&page={page}"
-        )
+        repositories_url = workspace_integration.metadata["repositories_url"] + f"?per_page=100&page={page}"
         repositories = get_github_repos(access_tokens_url, repositories_url)
         return Response(repositories, status=status.HTTP_200_OK)
 
@@ -78,17 +84,11 @@ class GithubRepositorySyncViewSet(BaseViewSet):
             )
 
         # Get the workspace integration
-        workspace_integration = WorkspaceIntegration.objects.get(
-            pk=workspace_integration_id
-        )
+        workspace_integration = WorkspaceIntegration.objects.get(pk=workspace_integration_id)
 
         # Delete the old repository object
-        GithubRepositorySync.objects.filter(
-            project_id=project_id, workspace__slug=slug
-        ).delete()
-        GithubRepository.objects.filter(
-            project_id=project_id, workspace__slug=slug
-        ).delete()
+        GithubRepositorySync.objects.filter(project_id=project_id, workspace__slug=slug).delete()
+        GithubRepository.objects.filter(project_id=project_id, workspace__slug=slug).delete()
 
         # Create repository
         repo = GithubRepository.objects.create(
@@ -122,9 +122,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
         )
 
         # Add bot as a member in the project
-        _ = ProjectMember.objects.get_or_create(
-            member=workspace_integration.actor, role=20, project_id=project_id
-        )
+        _ = ProjectMember.objects.get_or_create(member=workspace_integration.actor, role=20, project_id=project_id)
 
         # Return Response
         return Response(

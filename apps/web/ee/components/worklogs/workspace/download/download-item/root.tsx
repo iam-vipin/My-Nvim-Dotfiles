@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -41,7 +54,7 @@ export const WorkspaceWorklogDownloadItem = observer(function WorkspaceWorklogDo
   const createdFilterDates = worklogDownload.filters?.created_at || [];
   const title =
     createdFilterDates.length > 0 ? (
-      <div className="truncate text-base flex items-center gap-2">
+      <div className="truncate text-14 flex items-center gap-2">
         <div>{renderFormattedDate(createdFilterDates[0].split(";")[0])}</div>
         <ArrowRight size={10} />
         <div>{renderFormattedDate(createdFilterDates[1].split(";")[0])}</div>
@@ -68,19 +81,17 @@ export const WorkspaceWorklogDownloadItem = observer(function WorkspaceWorklogDo
     <div className="flex justify-between items-center gap-2 p-3">
       <div className="w-full space-y-1">
         <div className="flex items-center gap-2">
-          <div className="text-base font-medium">{title}</div>
-          <div className="inline-block rounded bg-custom-background-90 p-1 px-2 text-xs">{filtersCount} filters</div>
+          <div className="text-14 font-medium">{title}</div>
+          <div className="inline-block rounded-sm bg-layer-1 p-1 px-2 text-11">{filtersCount} filters</div>
         </div>
-        <div className="flex items-center text-xs text-custom-text-300 whitespace-nowrap">
+        <div className="flex items-center text-11 text-tertiary whitespace-nowrap">
           <div className="pr-2">{renderFormattedDate(worklogDownload.created_at)}</div>|
           <div className="pl-2">Exported by {createdByName}</div>
         </div>
       </div>
       {worklogDownload.status === "completed" ? (
         <a target="_blank" href={worklogDownload?.url} rel="noopener noreferrer">
-          <Button size="sm" variant="outline-primary">
-            Download
-          </Button>
+          <Button variant="secondary">Download</Button>
         </a>
       ) : (
         <WorklogDownloadStatus

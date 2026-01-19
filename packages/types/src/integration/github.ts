@@ -1,17 +1,18 @@
-import type { IState } from "../state";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "../workspace";
-import type { TStateMap } from "./common";
-
-// entity types
-export enum E_ISSUE_STATE_MAP_KEYS {
-  ISSUE_OPEN = "ISSUE_OPEN",
-  ISSUE_CLOSED = "ISSUE_CLOSED",
-}
-export type TIssueStateMapKeys = keyof typeof E_ISSUE_STATE_MAP_KEYS;
-
-export type TIssueStateMap = {
-  [key in TIssueStateMapKeys]: IState | undefined;
-};
+import type { TStateMap, TIssueStateMap } from "./common";
 
 export type TGithubMergeRequestEvent =
   | "DRAFT_MR_OPENED"

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // plane imports
@@ -32,6 +45,7 @@ export const MarkdownClipboardPlugin = (args: TArgs): Plugin => {
             });
             event.clipboardData?.setData("text/plain", markdown);
             event.clipboardData?.setData("text/html", clipboardHTML);
+            event.clipboardData?.setData("text/plane-editor-html", clipboardHTML);
             return true;
           } catch (error) {
             console.error("Failed to copy markdown content to clipboard:", error);

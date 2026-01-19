@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // icons
 import { CloseIcon } from "@plane/propel/icons";
@@ -24,7 +37,7 @@ export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props
         if (!labelDetails) return null;
 
         return (
-          <div key={labelId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={labelId} className="flex items-center gap-1 rounded-sm bg-layer-3 p-1 text-11">
             <span
               className="h-1.5 w-1.5 rounded-full"
               style={{
@@ -34,7 +47,7 @@ export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props
             <span className="normal-case">{labelDetails.name}</span>
             <button
               type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(labelId)}
             >
               <CloseIcon height={10} width={10} strokeWidth={2} />

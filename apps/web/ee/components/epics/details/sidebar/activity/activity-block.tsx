@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { LayersIcon } from "@plane/propel/icons";
 import type { TBaseActivityVerbs } from "@plane/types";
@@ -35,11 +48,7 @@ export const EpicActivityItem = observer(function EpicActivityItem(props: TEpicA
   // adding this for conversion compatibility
   if (activity.field === null && activity.verb === "created") {
     return (
-      <ActivityBlockComponent
-        icon={<LayersIcon className="size-4 text-sm flex-shrink-0 text-custom-text-300" aria-hidden="true" />}
-        activity={activity}
-        ends={ends}
-      >
+      <ActivityBlockComponent icon={LayersIcon} activity={activity} ends={ends}>
         <span> created the work item.</span>
       </ActivityBlockComponent>
     );

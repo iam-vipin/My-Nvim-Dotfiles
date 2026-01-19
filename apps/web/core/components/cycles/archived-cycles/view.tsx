@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
@@ -35,8 +48,8 @@ export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IA
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching cycles"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching cycles</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="text-18 font-medium mt-7 mb-1">No matching cycles</h5>
+          <p className="text-placeholder text-14">
             {archivedCyclesSearchQuery.trim() === ""
               ? "Remove the filters to see all cycles"
               : "Remove the search criteria to see all cycles"}

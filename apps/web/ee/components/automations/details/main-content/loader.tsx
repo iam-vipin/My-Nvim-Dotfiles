@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Loader } from "@plane/ui";
 
 export function AutomationDetailsMainContentLoader() {
@@ -21,7 +34,7 @@ export function AutomationDetailsMainContentLoader() {
           <Loader.Item height="16px" width="16px" />
         </Loader>
 
-        <Loader className="p-5 space-y-3 bg-custom-background-100 rounded-lg shadow-custom-shadow-2xs border border-transparent">
+        <Loader className="p-5 space-y-3 bg-surface-1 rounded-lg shadow-raised-100 border border-transparent">
           <Loader.Item height="16px" width="60px" />
           <Loader className="flex items-center gap-2">
             <Loader.Item height="48px" width="48px" className="rounded-full" />
@@ -40,7 +53,7 @@ export function AutomationDetailsMainContentLoader() {
         </Loader>
         <Loader className="flex items-start gap-4">
           <Loader.Item height="32px" width="32px" className="rounded-full" />
-          <Loader className="flex-grow p-5 space-y-3 bg-custom-background-100 rounded-lg shadow-custom-shadow-2xs border border-transparent">
+          <Loader className="flex-grow p-5 space-y-3 bg-surface-1 rounded-lg shadow-raised-100 border border-transparent">
             <Loader.Item height="16px" width="20px" />
             <Loader className="flex items-center gap-1.5">
               <Loader.Item height="16px" width="16px" />
@@ -60,7 +73,7 @@ export function AutomationDetailsMainContentLoader() {
         </Loader>
         <Loader className="flex items-start gap-4">
           <Loader.Item height="32px" width="32px" className="rounded-full" />
-          <Loader className="flex-grow p-5 space-y-7 bg-custom-background-100 rounded-lg shadow-custom-shadow-2xs border border-transparent">
+          <Loader className="flex-grow p-5 space-y-7 bg-surface-1 rounded-lg shadow-raised-100 border border-transparent">
             <Loader.Item height="16px" width="40px" />
             <Loader className="flex items-center gap-2">
               <Loader.Item height="48px" width="48px" className="rounded-full" />

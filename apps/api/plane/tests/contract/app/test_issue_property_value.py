@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import pytest
 from uuid import uuid4
@@ -71,9 +82,7 @@ def issue_property_value(db, workspace, project, create_user, issue, issue_prope
 class TestIssuePropertyValueListAPI:
     """Test issue property value list API operations"""
 
-    def get_issue_property_values_url(
-        self, workspace_slug: str, project_id: str, issue_id: str
-    ) -> str:
+    def get_issue_property_values_url(self, workspace_slug: str, project_id: str, issue_id: str) -> str:
         """Construct the issue property values list endpoint URL"""
         return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/issue-properties/values/"
 
@@ -99,9 +108,7 @@ class TestIssuePropertyValueListAPI:
         assert response.data[0]["values"] == ["Test Value"]
 
     @pytest.mark.django_db
-    def test_list_issue_property_values_empty(
-        self, api_key_client, workspace, project, issue, mock_feature_flag
-    ):
+    def test_list_issue_property_values_empty(self, api_key_client, workspace, project, issue, mock_feature_flag):
         mock_feature_flag.return_value = True
         """Test retrieval when no issue property values exist"""
         url = self.get_issue_property_values_url(workspace.slug, project.id, issue.id)
@@ -112,15 +119,11 @@ class TestIssuePropertyValueListAPI:
         assert len(response.data) == 0
 
     @pytest.mark.django_db
-    def test_list_issue_property_values_nonexistent_issue(
-        self, api_key_client, workspace, project, mock_feature_flag
-    ):
+    def test_list_issue_property_values_nonexistent_issue(self, api_key_client, workspace, project, mock_feature_flag):
         mock_feature_flag.return_value = True
         """Test retrieval with non-existent issue ID"""
         fake_issue_id = uuid4()
-        url = self.get_issue_property_values_url(
-            workspace.slug, project.id, fake_issue_id
-        )
+        url = self.get_issue_property_values_url(workspace.slug, project.id, fake_issue_id)
 
         response = api_key_client.get(url)
 
@@ -142,18 +145,14 @@ class TestIssuePropertyValueListAPI:
             identifier="other123",
         )
 
-        url = self.get_issue_property_values_url(
-            workspace.slug, other_project.id, issue.id
-        )
+        url = self.get_issue_property_values_url(workspace.slug, other_project.id, issue.id)
 
         response = api_key_client.get(url)
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.django_db
-    def test_list_issue_property_values_unauthorized(
-        self, api_client, workspace, project, issue, mock_feature_flag
-    ):
+    def test_list_issue_property_values_unauthorized(self, api_client, workspace, project, issue, mock_feature_flag):
         mock_feature_flag.return_value = True
         """Test retrieval without authentication"""
         url = self.get_issue_property_values_url(workspace.slug, project.id, issue.id)

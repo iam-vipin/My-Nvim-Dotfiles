@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import json
 
 from django.utils import timezone
@@ -42,9 +53,7 @@ class TeamspacePageUserEndpoint(BaseAPIView):
 
         # remove owner from the requested users
         requested_user_map = {
-            str(user["user_id"]): user["access"]
-            for user in request.data
-            if str(user["user_id"]) != str(owner_id)
+            str(user["user_id"]): user["access"] for user in request.data if str(user["user_id"]) != str(owner_id)
         }
         requested_user_ids = set(requested_user_map.keys())
 
@@ -90,9 +99,7 @@ class TeamspacePageUserEndpoint(BaseAPIView):
                 users_to_update.append(existing)
 
         if users_to_update:
-            PageUser.objects.bulk_update(
-                users_to_update, ["access", "updated_by", "updated_at"]
-            )
+            PageUser.objects.bulk_update(users_to_update, ["access", "updated_by", "updated_at"])
 
         # Fire shared and unshared events if needed
         if users_to_create or users_to_update:

@@ -1,13 +1,25 @@
-import type { FC } from "react";
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Activity, UsersRound } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { CommentFillIcon, InfoFillIcon } from "@plane/propel/icons";
+import { Tabs } from "@plane/propel/tabs";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Tabs } from "@plane/ui";
+
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -102,7 +114,7 @@ export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props
   return (
     <div
       className={cn(
-        `absolute flex flex-col gap-4 h-full border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:relative transition-[width] ease-linear`,
+        `absolute flex flex-col gap-4 h-full border-l border-subtle-1 bg-surface-1 py-5 sm:relative transition-[width] ease-linear`,
         {
           "w-0 hidden": isTeamSidebarCollapsed,
           "min-w-[300px] w-full sm:w-1/2  md:w-1/3 lg:min-w-80 xl:min-w-96": !isTeamSidebarCollapsed,
@@ -110,14 +122,24 @@ export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props
       )}
       style={isTeamSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
     >
-      <Tabs
-        tabs={TEAM_OVERVIEW_SIDEBAR_TABS}
-        storageKey={`teamspace-overview-sidebar-${teamspaceId}`}
-        defaultTab="properties"
-        containerClassName="gap-4"
-        tabListContainerClassName="px-6"
-        tabPanelClassName="overflow-hidden"
-      />
+      <div className="px-4 flex-1 overflow-hidden">
+        <Tabs defaultValue={TEAM_OVERVIEW_SIDEBAR_TABS[0].key}>
+          <Tabs.List className="shrink-0">
+            {TEAM_OVERVIEW_SIDEBAR_TABS.map((tab) => (
+              <Tabs.Trigger key={tab.key} value={tab.key}>
+                {tab.icon && <tab.icon className="size-4" />}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+          <div className="mt-4 flex-1 overflow-auto">
+            {TEAM_OVERVIEW_SIDEBAR_TABS.map((tab) => (
+              <Tabs.Content key={tab.key} value={tab.key}>
+                {tab.content}
+              </Tabs.Content>
+            ))}
+          </div>
+        </Tabs>
+      </div>
     </div>
   );
 });

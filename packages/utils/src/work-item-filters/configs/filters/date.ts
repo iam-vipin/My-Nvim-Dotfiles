@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { TFilterProperty } from "@plane/types";
 // local imports
@@ -15,7 +28,7 @@ import { createFilterConfig, getSupportedDateOperators } from "../../../rich-fil
 export const getStartDateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig({
       id: key,
       label: "Start date",
       ...params,
@@ -33,9 +46,9 @@ export const getStartDateFilterConfig =
 export const getTargetDateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig({
       id: key,
-      label: "Target date",
+      label: "Due date",
       ...params,
       icon: params.filterIcon,
       allowMultipleFilters: true,
@@ -51,7 +64,7 @@ export const getTargetDateFilterConfig =
 export const getCreatedAtFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig({
       id: key,
       label: "Created at",
       ...params,
@@ -69,7 +82,7 @@ export const getCreatedAtFilterConfig =
 export const getUpdatedAtFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig({
       id: key,
       label: "Updated at",
       ...params,

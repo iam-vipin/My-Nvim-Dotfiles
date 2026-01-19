@@ -1,8 +1,21 @@
-import { Hash, Pencil, Trash2, ArrowRight } from "lucide-react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { Hash, ArrowRight } from "lucide-react";
+import { EditIcon, TrashIcon, PlaneLogo } from "@plane/propel/icons";
 import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PlaneLogo } from "@plane/propel/icons";
 import type { TWorkspaceEntityConnection } from "@plane/types";
 import SlackLogo from "@/app/assets/services/slack.png?url";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
@@ -23,15 +36,15 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
   return (
     <div
       className={`
-      group relative bg-custom-background-100 border border-custom-border-200
+      group relative bg-surface-1 border border-subtle
       rounded-lg overflow-hidden hover:shadow-sm transition-all duration-200
     `}
     >
       {/* Status indicator strip */}
       <div
         className={`
-        absolute top-0 left-0 h-full w-1 bg-custom-primary-100/30
-        group-hover:bg-custom-primary-100 transition-colors duration-300
+        absolute top-0 left-0 h-full w-1 bg-accent-primary/30
+        group-hover:bg-accent-primary transition-colors duration-300
       `}
       />
 
@@ -49,20 +62,20 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
             <div className="flex-1 min-w-0 pr-1">
               <div
                 className={`
-                flex items-center gap-2 bg-custom-background-90 py-2 px-3
-                rounded-lg border border-custom-border-200 shadow-sm
-                transition-all duration-200 group-hover:border-custom-border-300
+                flex items-center gap-2 bg-layer-1 py-2 px-3
+                rounded-lg border border-subtle shadow-sm
+                transition-all duration-200 group-hover:border-subtle
               `}
               >
                 {/* Plane Logo */}
-                <PlaneLogo className="h-5 w-auto flex-shrink-0 text-custom-primary-100" />
+                <PlaneLogo className="h-5 w-auto shrink-0 text-accent-primary" />
 
                 {/* Project Info with Logo */}
                 <div className="flex items-center gap-1.5 flex-1 min-w-0">
                   {/* Project Logo */}
                   <div
                     className={`
-                    h-4 w-4 flex-shrink-0 bg-custom-background-100 rounded
+                    h-4 w-4 shrink-0 bg-surface-1 rounded
                     overflow-hidden flex items-center justify-center
                   `}
                   >
@@ -72,8 +85,8 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
                       <div
                         className={`
                         h-full w-full flex items-center justify-center
-                        text-custom-text-100 font-medium bg-custom-primary-100/10
-                        rounded text-[10px]
+                        text-primary font-medium bg-accent-primary/10
+                        rounded-sm                         text-caption-xs
                       `}
                       >
                         {project?.name?.charAt(0).toUpperCase() || "P"}
@@ -82,27 +95,25 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
                   </div>
 
                   {/* Project Name */}
-                  <span className="text-sm text-custom-text-100 font-medium truncate">
-                    {project?.name || "Project"}
-                  </span>
+                  <span className="text-body-xs-medium text-primary truncate">{project?.name || "Project"}</span>
                 </div>
               </div>
             </div>
 
             {/* Arrow - with reduced margins */}
-            <div className="mx-2 flex-shrink-0">
+            <div className="mx-2 shrink-0">
               <div
                 className={`
                 w-8 h-8 rounded-full flex items-center justify-center
-                bg-gradient-to-r from-custom-background-80 to-custom-background-90
-                border border-custom-border-200 shadow-sm transition-all duration-200
-                group-hover:shadow group-hover:border-custom-primary-100/30
+                bg-gradient-to-r from-layer-1 to-surface-2
+                border border-subtle shadow-raised-100 transition-all duration-200
+                group-hover:shadow group-hover:border-accent-strong/30
               `}
               >
                 <ArrowRight
                   className={`
-                  h-4 w-4 text-custom-text-300
-                  group-hover:text-custom-primary-100 transition-colors duration-300
+                  h-4 w-4 text-tertiary
+                  group-hover:text-accent-primary transition-colors duration-300
                 `}
                 />
               </div>
@@ -112,20 +123,20 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
             <div className="flex-1 min-w-0 pl-1">
               <div
                 className={`
-                flex items-center gap-2 bg-custom-background-90 py-2 px-3
-                rounded-lg border border-custom-border-200 shadow-sm
-                transition-all duration-200 group-hover:border-custom-border-300
+                flex items-center gap-2 bg-layer-1 py-2 px-3
+                rounded-lg border border-subtle shadow-sm
+                transition-all duration-200 group-hover:border-subtle
               `}
               >
                 {/* Slack Logo */}
-                <div className="h-5 w-5 flex-shrink-0 relative">
+                <div className="h-5 w-5 shrink-0 relative">
                   <img src={SlackLogo} alt="Slack" className="w-full h-full object-cover" />
                 </div>
 
                 {/* Channel Info */}
                 <div className="flex items-center gap-1 flex-1 min-w-0">
-                  <Hash className="h-3.5 w-3.5 text-[#E01E5A] flex-shrink-0" />
-                  <span className="text-sm text-custom-text-100 font-medium truncate">{connection.entity_slug}</span>
+                  <Hash className="h-3.5 w-3.5 text-[#E01E5A] shrink-0" />
+                  <span className="text-body-xs-medium text-primary truncate">{connection.entity_slug}</span>
                 </div>
               </div>
             </div>
@@ -140,28 +151,26 @@ export function ConnectionItem({ connection, onEdit, onDelete }: ConnectionItemP
           `}
           >
             <Button
-              variant="neutral-primary"
-              size="sm"
+              variant="secondary"
               className={`
                 h-7 w-7 rounded-md p-0
-                hover:bg-custom-primary-100/10 hover:text-custom-primary-100
+                hover:bg-accent-primary/10 hover:text-accent-primary
                 transition-colors
               `}
               onClick={() => onEdit(connection)}
             >
-              <Pencil className="h-3.5 w-3.5" />
+              <EditIcon className="h-3.5 w-3.5" />
             </Button>
             <Button
-              variant="neutral-primary"
-              size="sm"
+              variant="secondary"
               className={`
                 h-7 w-7 rounded-md p-0
-                hover:bg-red-100/10 hover:text-red-500
+                hover:bg-danger-subtle hover:text-danger-primary
                 transition-colors
               `}
               onClick={() => onDelete(connection)}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <TrashIcon className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>

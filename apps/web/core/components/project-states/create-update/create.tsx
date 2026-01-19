@@ -1,22 +1,32 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { STATE_TRACKER_EVENTS, STATE_GROUPS } from "@plane/constants";
+import { STATE_GROUPS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 // components
 import { StateForm } from "@/components/project-states";
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type TStateCreate = {
   groupKey: TStateGroups;
-  shouldTrackEvents: boolean;
   createStateCallback: TStateOperationsCallbacks["createState"];
   handleClose: () => void;
 };
 
 export const StateCreate = observer(function StateCreate(props: TStateCreate) {
-  const { groupKey, shouldTrackEvents, createStateCallback, handleClose } = props;
+  const { groupKey, createStateCallback, handleClose } = props;
 
   // states
   const [loader, setLoader] = useState(false);
@@ -30,15 +40,7 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
     if (!groupKey) return { status: "error" };
 
     try {
-      const response = await createStateCallback({ ...formData, group: groupKey });
-      if (shouldTrackEvents)
-        captureSuccess({
-          eventName: STATE_TRACKER_EVENTS.create,
-          payload: {
-            state_group: groupKey,
-            id: response.id,
-          },
-        });
+      await createStateCallback({ ...formData, group: groupKey });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -48,13 +50,6 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
       return { status: "success" };
     } catch (error) {
       const errorStatus = error as { status: number; data: { error: string } };
-      if (shouldTrackEvents)
-        captureError({
-          eventName: STATE_TRACKER_EVENTS.create,
-          payload: {
-            state_group: groupKey,
-          },
-        });
       if (errorStatus?.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,

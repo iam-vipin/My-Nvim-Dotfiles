@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { GitLabService as GitLabAPIService } from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
 import type { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
@@ -11,9 +24,18 @@ export class GitlabIntegrationService implements IPullRequestService {
     refresh_token: string,
     refresh_callback: (access_token: string, refresh_token: string) => Promise<void>,
     baseUrl: string = "https://gitlab.com",
-    projectId: string
+    projectId: string,
+    clientId?: string,
+    clientSecret?: string
   ) {
-    this.apiService = new GitLabAPIService(access_token, refresh_token, refresh_callback, baseUrl);
+    this.apiService = new GitLabAPIService(
+      access_token,
+      refresh_token,
+      refresh_callback,
+      baseUrl,
+      clientId,
+      clientSecret
+    );
     this.projectId = projectId;
   }
 

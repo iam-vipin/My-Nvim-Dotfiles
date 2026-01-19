@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { useUserPermissions } from "@/hooks/store/user";
 import { revalidateProjectData } from "@/plane-web/helpers/swr.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TDialogue } from "@/plane-web/types";
@@ -27,6 +41,7 @@ function ActionStatusBlock(props: TProps) {
   // states
   const [isExecutingAction, setIsExecutingAction] = useState(false);
   // store
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getChatFocus, executeAction } = usePiChat();
 
   const chatFocus = getChatFocus(activeChatId);
@@ -37,7 +52,10 @@ function ActionStatusBlock(props: TProps) {
       const actionableEntities = await executeAction(workspaceId, activeChatId, query_id);
       if (actionableEntities && actionableEntities.length > 0 && workspaceSlug) {
         const projectId = chatFocus?.entityType === "project_id" ? chatFocus?.entityIdentifier : undefined;
-        revalidateProjectData(workspaceSlug, actionableEntities, projectId);
+        const currentProjectRole = projectId
+          ? getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId)
+          : undefined;
+        revalidateProjectData(workspaceSlug, actionableEntities, projectId, currentProjectRole);
       }
     } catch (e: any) {
       console.error(e);
@@ -51,7 +69,7 @@ function ActionStatusBlock(props: TProps) {
     }
   };
   if (actions?.length === 0 || !query_id) return null;
-  if (execution_status === "pending") {
+  if (execution_status === EExecutionStatus.PENDING) {
     if (isPiThinking || (isLatest && isPiTyping)) return null;
     if (isLatest) {
       return (
@@ -65,16 +83,16 @@ function ActionStatusBlock(props: TProps) {
       );
     } else
       return (
-        <div className="flex gap-2 text-custom-text-400 text-sm">
-          <Info size={16} className="my-auto" />
+        <div className="flex gap-2 text-placeholder text-13 mb-4">
+          <InfoIcon height={16} width={16} className="my-auto" />
           <div> {actions?.length} action(s) not executed </div>
         </div>
       );
   }
   if (action_summary && action_summary?.completed + action_summary?.failed !== actions?.length)
     return (
-      <div className="flex gap-2 text-custom-text-400 text-sm">
-        <Info size={16} className="my-auto" />
+      <div className="flex gap-2 text-placeholder text-body-sm-regular mb-4">
+        <InfoIcon height={16} width={16} className="my-auto text-icon-tertiary" />
         <div> {actions?.length} action(s) not executed </div>
       </div>
     );
@@ -86,7 +104,15 @@ function ActionStatusBlock(props: TProps) {
   return (
     <div className="flex flex-col gap-2">
       {action_error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{action_error}</div>
+        <ConfirmBlock
+          title="Action failed"
+          summary={action_error}
+          isExecutingAction={isExecutingAction}
+          handleExecuteAction={handleExecuteAction}
+          workspaceId={workspaceId}
+          query_id={query_id}
+          buttonText="Try again"
+        />
       )}
       {shouldShowSummary && (
         <SummaryBlock

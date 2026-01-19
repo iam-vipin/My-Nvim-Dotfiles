@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { PropsWithChildren } from "react";
 import { useState } from "react";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -18,12 +31,12 @@ export function FormSection({ collapsible, title, children }: Props) {
   };
 
   return (
-    <div className="bg-custom-background-90 rounded-lg p-6 flex flex-col gap-6">
+    <div className="bg-layer-1 rounded-lg p-6 flex flex-col gap-6">
       <div
         className={`flex items-center justify-between ${collapsible ? "cursor-pointer" : ""}`}
         onClick={handleToggle}
       >
-        <h3 className="text-lg font-medium">{title}</h3>
+        <h3 className="text-16 font-medium">{title}</h3>
         {collapsible && (
           <div className="flex items-center gap-2">
             <ChevronDownIcon

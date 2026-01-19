@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
-import { Plus, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
-import { CloseIcon } from "@plane/propel/icons";
+import { PlusIcon, CloseIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 // hooks
 import { Input } from "@plane/ui";
@@ -76,11 +89,11 @@ export function LabelCreate(props: ILabelCreate) {
   return (
     <>
       <div
-        className="relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-custom-border-100 p-0.5 px-2 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200"
+        className="relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 text-11 text-tertiary transition-all hover:bg-surface-2 hover:text-secondary"
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">
-          {isCreateToggle ? <CloseIcon className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
+          {isCreateToggle ? <CloseIcon className="h-2.5 w-2.5" /> : <PlusIcon className="h-2.5 w-2.5" />}
         </div>
         <div className="flex-shrink-0">{isCreateToggle ? "Cancel" : "New"}</div>
       </div>
@@ -98,7 +111,7 @@ export function LabelCreate(props: ILabelCreate) {
                       <button type="button" ref={setReferenceElement} className="grid place-items-center outline-none">
                         {value && value?.trim() !== "" && (
                           <span
-                            className="h-5 w-5 rounded"
+                            className="h-5 w-5 rounded-sm"
                             style={{
                               backgroundColor: value ?? "black",
                             }}
@@ -137,24 +150,28 @@ export function LabelCreate(props: ILabelCreate) {
                 ref={ref}
                 hasError={Boolean(errors.name)}
                 placeholder="Title"
-                className="w-full text-xs px-1.5 py-1"
+                className="w-full text-11 px-1.5 py-1"
                 disabled={isSubmitting}
               />
             )}
           />
           <button
             type="button"
-            className="grid place-items-center rounded bg-red-500 p-1"
+            className="grid place-items-center rounded-sm bg-danger-primary p-1"
             onClick={() => setIsCreateToggle(false)}
             disabled={disabled}
           >
-            <CloseIcon className="h-3.5 w-3.5 text-white" />
+            <CloseIcon className="h-3.5 w-3.5 text-on-color" />
           </button>
-          <button type="submit" className="grid place-items-center rounded bg-green-500 p-1" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="grid place-items-center rounded-sm bg-success-primary p-1"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
-              <Loader className="spin h-3.5 w-3.5 text-white" />
+              <Loader className="spin h-3.5 w-3.5 text-on-color" />
             ) : (
-              <Plus className="h-3.5 w-3.5 text-white" />
+              <PlusIcon className="h-3.5 w-3.5 text-on-color" />
             )}
           </button>
         </form>

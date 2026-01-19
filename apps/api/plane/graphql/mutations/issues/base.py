@@ -1,6 +1,17 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
-from typing import Optional
+from typing import Optional, Union
 
 # Third-party imports
 import strawberry
@@ -16,6 +27,8 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module imports
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import (
     CycleIssue,
     Issue,
@@ -25,10 +38,14 @@ from plane.db.models import (
     ModuleIssue,
     Project,
     State,
-    Workspace,
+    UserRecentVisit,
 )
+from plane.ee.bgtasks.entity_issue_state_progress_task import entity_issue_state_activity_task
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
-from plane.graphql.permissions.project import ProjectMemberPermission
+from plane.graphql.helpers import get_work_item_ids_async, get_workspace_async, update_work_item_parent_id_async
+from plane.graphql.helpers.project import get_project_member
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
+from plane.graphql.permissions.project import ProjectMemberPermission, ProjectPermission
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.types.issues.base import (
     IssueCreateInputType,
@@ -37,17 +54,8 @@ from plane.graphql.types.issues.base import (
 )
 from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
+from plane.graphql.utils.roles import Roles
 from plane.graphql.utils.workflow import WorkflowStateManager
-
-
-@sync_to_async
-def get_workspace(slug):
-    try:
-        return Workspace.objects.get(slug=slug)
-    except Workspace.DoesNotExist:
-        message = "Workspace not found"
-        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
-        raise GraphQLError(message, extensions=error_extensions)
 
 
 @sync_to_async
@@ -109,6 +117,53 @@ def validate_workflow_state_issue_update(user_id, slug, project_id, current_stat
     return can_state_update
 
 
+@sync_to_async
+def get_workitem_cycle(workitem_id: Union[str, strawberry.ID]):
+    try:
+        cycle_issue = CycleIssue.objects.filter(issue_id=workitem_id).first()
+        return cycle_issue if cycle_issue else None
+    except CycleIssue.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def remove_cycle_workitem(workitem_id: Union[str, strawberry.ID], workitem_cycle_id: Union[str, strawberry.ID]):
+    try:
+        CycleIssue.objects.filter(issue_id=workitem_id, cycle_id=workitem_cycle_id).delete()
+    except CycleIssue.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def remove_module_workitem(workitem_id: Union[str, strawberry.ID]):
+    try:
+        ModuleIssue.objects.filter(issue_id=workitem_id).delete()
+    except ModuleIssue.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def work_item_user_recent_visit(
+    user_id: Union[str, strawberry.ID],
+    workspace_id: Union[str, strawberry.ID],
+    project_id: Union[str, strawberry.ID],
+    entity_identifier: Union[str, strawberry.ID],
+    entity_name: str,
+):
+    try:
+        return UserRecentVisit.objects.get(
+            user_id=user_id,
+            workspace_id=workspace_id,
+            project_id=project_id,
+            entity_identifier=entity_identifier,
+            entity_name=entity_name,
+        )
+    except UserRecentVisit.DoesNotExist:
+        return None
+    except Exception:
+        return None
+
+
 @strawberry.type
 class IssueMutationV2:
     @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
@@ -118,7 +173,7 @@ class IssueMutationV2:
         user = info.context.user
         user_id = str(user.id)
 
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -258,6 +313,25 @@ class IssueMutationV2:
             requested_data=json.dumps(activity_payload),
         )
 
+        # issue description activity
+        issue_description_version_task.delay(
+            updated_issue=json.dumps(activity_payload),
+            issue_id=issue_id,
+            user_id=user_id,
+            is_creating=True,
+        )
+
+        # issue model activity
+        model_activity.delay(
+            model_name="issue",
+            model_id=issue_id,
+            requested_data=json.dumps(activity_payload),
+            current_instance=None,
+            actor_id=user_id,
+            slug=workspace_slug,
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+        )
+
         # creating the cycle and cycle activity with the cycle id
         if issue_cycle_id is not None:
             created_cycle = await sync_to_async(CycleIssue.objects.create)(
@@ -337,7 +411,7 @@ class IssueMutationV2:
         user = info.context.user
         user_id = str(user.id)
 
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         project_details = await get_project(project)
@@ -493,4 +567,153 @@ class IssueMutationV2:
             requested_data=json.dumps(activity_payload),
         )
 
+        # issue description activity
+        issue_description_version_task.delay(
+            updated_issue=json.dumps(activity_payload),
+            issue_id=issue_id,
+            user_id=user_id,
+        )
+
+        # issue model activity
+        model_activity.delay(
+            model_name="issue",
+            model_id=issue_id,
+            requested_data=json.dumps(activity_payload),
+            current_instance=json.dumps(current_activity_payload),
+            actor_id=user_id,
+            slug=slug,
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+        )
+
+        workitem_cycle = await get_workitem_cycle(workitem_id=issue_id)
+        workitem_cycle_id = workitem_cycle.cycle_id if workitem_cycle else None
+        if workitem_cycle_id and activity_payload.get("state_id"):
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[{"issue_id": issue_id, "cycle_id": workitem_cycle_id}],
+                user_id=user_id,
+                slug=slug,
+                action="UPDATED",
+            )
+
         return issue
+
+
+@strawberry.type
+class WorkItemMutation:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
+    async def delete_work_item(
+        self,
+        info: Info,
+        slug: str,
+        project: str,
+        work_item: str,
+    ) -> bool:
+        user = info.context.user
+        user_id = str(user.id)
+
+        workspace = await get_workspace_async(slug=slug)
+        workspace_id = str(workspace.id)
+        workspace_slug = workspace.slug
+
+        project_details = await get_project(project_id=project)
+        project_id = str(project_details.id)
+
+        workitem = await get_issue(issue_id=work_item)
+        workitem_id = str(workitem.id)
+        work_item_created_by_id = str(workitem.created_by_id)
+
+        # project member check
+        current_user_role = None
+        project_member = await get_project_member(
+            workspace_slug=workspace_slug,
+            project_id=project_id,
+            user_id=user_id,
+            raise_exception=False,
+        )
+        if not project_member:
+            project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+                user_id=user_id,
+                workspace_slug=workspace_slug,
+            )
+            teamspace_project_ids = project_teamspace_filter.teamspace_project_ids
+            if project_id not in teamspace_project_ids:
+                message = "You are not allowed to access this project"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+            current_user_role = Roles.MEMBER.value
+        else:
+            current_user_role = project_member.role
+
+        if current_user_role in [Roles.MEMBER.value, Roles.GUEST.value]:
+            if not work_item_created_by_id or work_item_created_by_id != user_id:
+                message = "You are not allowed to delete this intake work item"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+
+        # handling the cycle issue
+        workitem_cycle = await get_workitem_cycle(workitem_id=workitem_id)
+        workitem_cycle_id = workitem_cycle.cycle_id if workitem_cycle else None
+
+        if workitem_cycle_id:
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[{"issue_id": workitem_id, "cycle_id": workitem_cycle_id}],
+                user_id=user_id,
+                slug=slug,
+                action="REMOVED",
+            )
+
+            # remove cycle issue
+            await remove_cycle_workitem(workitem_id=workitem_id, workitem_cycle_id=workitem_cycle_id)
+
+        # remove module issue
+        await remove_module_workitem(workitem_id=workitem_id)
+
+        # update the parent id to none of the child work items for current work item and update the activity
+        work_item_ids = await get_work_item_ids_async(filters={"parent_id": workitem_id})
+        if len(work_item_ids) > 0:
+            # update the parent id of the issues
+            await update_work_item_parent_id_async(
+                work_item_ids=work_item_ids,
+                parent_id=None,
+            )
+            # update the activity that we have removed the parent from the issues
+            for work_item_id in work_item_ids:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps({"parent_id": None}),
+                    actor_id=user_id,
+                    issue_id=work_item_id,
+                    project_id=project,
+                    current_instance=json.dumps({"parent_id": workitem_id}),
+                    epoch=int(timezone.now().timestamp()),
+                )
+
+        # remove the workitem
+        await sync_to_async(workitem.delete)()
+
+        # track the issue activity
+        issue_activity.delay(
+            type="issue.activity.deleted",
+            requested_data=json.dumps({"issue_id": workitem_id}),
+            actor_id=user_id,
+            project_id=project_id,
+            issue_id=workitem_id,
+            current_instance={},
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+            subscriber=False,
+        )
+
+        # removing the user recent visit
+        user_recent_visit = await work_item_user_recent_visit(
+            user_id=user_id,
+            workspace_id=workspace_id,
+            project_id=project_id,
+            entity_identifier=workitem_id,
+            entity_name="issue",
+        )
+        if user_recent_visit:
+            await sync_to_async(user_recent_visit.delete)(soft=False)
+
+        return True

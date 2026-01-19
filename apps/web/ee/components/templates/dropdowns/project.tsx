@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Plus, Shapes } from "lucide-react";
+import { Shapes } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // ui
 import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -66,7 +80,7 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
         value: template.id,
         query: template.name ?? "",
         content: (
-          <div className="flex w-full gap-2 items-center text-custom-text-200">
+          <div className="flex w-full gap-2 items-center text-secondary">
             <Shapes
               className={cn("flex-shrink-0", {
                 "size-3": size === "xs",
@@ -75,8 +89,8 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
             />
             <div
               className={cn("truncate", {
-                "text-xs": size === "xs",
-                "text-sm font-medium": size === "sm",
+                "text-caption-sm-regular": size === "xs",
+                "text-body-xs-medium": size === "sm",
               })}
             >
               {template.name}
@@ -113,27 +127,22 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
     <CustomSearchSelect
       value={templateId}
       customButton={
-        <div
-          className={cn("flex w-full items-center max-w-52 px-2 py-0.5", {
-            "gap-1": size === "xs",
-            "gap-2": size === "sm",
-          })}
-        >
+        <Button variant="secondary">
           {customLabelContent ? (
             customLabelContent
           ) : (
             <>
               <Shapes
-                className={cn("flex-shrink-0", templateId ? "text-custom-text-200" : "text-custom-text-300", {
+                className={cn("flex-shrink-0", templateId ? "text-secondary" : "text-tertiary", {
                   "size-3": size === "xs",
                   "size-4": size === "sm",
                 })}
               />
               {(currentProjectTemplate?.name || placeholder) && (
                 <div
-                  className={cn("truncate", templateId ? "text-custom-text-200" : "text-custom-text-300", {
-                    "text-xs": size === "xs",
-                    "text-sm font-medium": size === "sm",
+                  className={cn("truncate", templateId ? "text-secondary" : "text-tertiary", {
+                    "text-caption-sm-regular": size === "xs",
+                    "text-body-xs-medium": size === "sm",
                   })}
                 >
                   {templateId ? currentProjectTemplate?.name : placeholder}
@@ -141,27 +150,24 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
               )}
             </>
           )}
-        </div>
+        </Button>
       }
       options={projectTemplateOptions}
       onChange={handleTemplateChange}
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
-      customButtonClassName={cn(
-        "rounded text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300",
-        buttonClassName
-      )}
+      customButtonClassName={cn("rounded-sm text-body-xs-regular", buttonClassName)}
       disabled={disabled}
       noResultsMessage={t("templates.dropdown.no_results.project")}
       footerOption={
         showCreateNewTemplate ? (
           <Button
-            variant="link-neutral"
-            className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded text-xs text-custom-text-200 font-medium hover:bg-custom-background-80"
+            variant="ghost"
+            className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded-sm text-caption-sm-medium text-secondary hover:bg-layer-transparent-hover"
             onClick={redirectToCreateTemplatePage}
             data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_PROJECT_MODAL_CREATE_BUTTON}
           >
-            <Plus className="size-3.5" />
+            <PlusIcon className="size-3.5" />
             {t("templates.dropdown.add.project")}
           </Button>
         ) : undefined

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -57,24 +70,19 @@ const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
       id={`issue-${blockId}`}
       href={`/${workspaceSlug}/projects/${issueData?.project_id}/${isEpic ? "epics" : "issues"}/${issueData?.id}`}
       onClick={handleIssuePeekOverview}
-      className={`relative flex justify-between gap-3 mx-2 p-2 w-auto cursor-pointer overflow-hidden rounded text-custom-text-100 border-[1px] border-custom-border-800 bg-custom-background-100 hover:bg-custom-background-90 ${className}`}
+      className={`relative flex justify-between gap-3 mx-2 p-2 w-auto cursor-pointer overflow-hidden rounded-sm text-primary border-[1px] bg-surface-1 hover:bg-layer-1 ${className}`}
     >
       <div className="h-8 flex gap-3 cursor-pointer items-center flex-shrink-1">
         {issueData?.project_id && (
           <div className="flex-shrink-0">
-            <IssueIdentifier
-              size="xs"
-              issueId={blockId}
-              projectId={issueData.project_id}
-              textContainerClassName="line-clamp-1 w-auto text-xs text-custom-text-300 font-normal"
-            />
+            <IssueIdentifier size="xs" issueId={blockId} projectId={issueData.project_id} variant="tertiary" />
           </div>
         )}
         <Tooltip tooltipContent={issueData?.name} isMobile={isMobile}>
-          <span className="line-clamp-1 text-sm font-medium flex-shrink-1">{issueData?.name}</span>
+          <span className="line-clamp-1 text-13 font-medium flex-shrink-1">{issueData?.name}</span>
         </Tooltip>
       </div>
-      <div className="flex items-center text-custom-text-300 flex-shrink-0 pointer-events-none">
+      <div className="flex items-center text-tertiary flex-shrink-0 pointer-events-none">
         <DateDropdown
           buttonVariant="transparent-with-text"
           icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
@@ -166,7 +174,7 @@ export const DependencyPathModal = observer(function DependencyPathModal(props: 
       {relation && (
         <>
           <div className="relative flex flex-col py-2">
-            <div className="h-6 text-lg flex px-2 mt-2 items-end font-medium">
+            <div className="h-6 text-16 flex px-2 mt-2 items-end font-medium">
               <span>Timeline Relation</span>
             </div>
             <IssueBlock
@@ -178,11 +186,11 @@ export const DependencyPathModal = observer(function DependencyPathModal(props: 
             />
 
             <div
-              className={`relative flex items-center justify-between gap-1 mx-2 px-2 h-14 rounded w-auto !bg-custom-background-100`}
+              className={`relative flex items-center justify-between gap-1 mx-2 px-2 h-14 rounded-sm w-auto !bg-surface-1`}
             >
               <div className="flex items-center gap-1 h-full">
                 <DependencyLineSVG strokeColor={strokeColor} />
-                <span className="text-sm font-medium leading-5" style={{ color: strokeColor }}>
+                <span className="text-13 font-medium leading-5" style={{ color: strokeColor }}>
                   {relationObject?.i18n_label ? t(relationObject?.i18n_label) : ""}
                 </span>
               </div>
@@ -191,7 +199,7 @@ export const DependencyPathModal = observer(function DependencyPathModal(props: 
                 <Spinner />
               ) : (
                 <Tooltip tooltipContent="Remove relation">
-                  <Trash2Icon className="h-5 w-5 cursor-pointer text-custom-text-400" onClick={handleRemoveRelation} />
+                  <Trash2Icon className="h-5 w-5 cursor-pointer text-placeholder" onClick={handleRemoveRelation} />
                 </Tooltip>
               )}
             </div>

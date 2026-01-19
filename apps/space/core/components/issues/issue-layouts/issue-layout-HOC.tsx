@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import type { TLoader } from "@plane/types";
@@ -21,14 +34,14 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
 
   if (getIssueLoader() === "init-loader" || issueCount === undefined) {
     return (
-      <div className="relative flex h-screen w-full items-center justify-center">
+      <div className="relative size-full grid place-items-center">
         <LogoSpinner />
       </div>
     );
   }
 
   if (getGroupIssueCount(undefined, undefined, false) === 0) {
-    return <div className="flex w-full h-full items-center justify-center">No work items Found</div>;
+    return <div className="size-full grid place-items-center text-secondary">No work items found</div>;
   }
 
   return <>{props.children}</>;

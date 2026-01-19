@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import transaction
 
@@ -40,9 +51,7 @@ class DatabaseMigration:
     def migrate_credentials(self):
         print("Migrating credentials...")
 
-        total_count = self._execute_with_error_handling(
-            "SELECT COUNT(*) as count FROM silo.credentials"
-        )[0]["count"]
+        total_count = self._execute_with_error_handling("SELECT COUNT(*) as count FROM silo.credentials")[0]["count"]
 
         total_batches = (total_count + self.batch_size - 1) // self.batch_size
         records_processed = 0
@@ -77,9 +86,7 @@ class DatabaseMigration:
                         )
                         for cred in current_batch
                     ]
-                    WorkspaceCredential.objects.bulk_create(
-                        credentials, ignore_conflicts=True
-                    )
+                    WorkspaceCredential.objects.bulk_create(credentials, ignore_conflicts=True)
 
                 records_processed += len(current_batch)
                 print(
@@ -94,9 +101,9 @@ class DatabaseMigration:
     def migrate_workspace_connections(self):
         print("Migrating workspace connections...")
 
-        total_count = self._execute_with_error_handling(
-            "SELECT COUNT(*) as count FROM silo.workspace_connections"
-        )[0]["count"]
+        total_count = self._execute_with_error_handling("SELECT COUNT(*) as count FROM silo.workspace_connections")[0][
+            "count"
+        ]
 
         total_batches = (total_count + self.batch_size - 1) // self.batch_size
         records_processed = 0
@@ -132,9 +139,7 @@ class DatabaseMigration:
                         )
                         for conn in current_batch
                     ]
-                    WorkspaceConnection.objects.bulk_create(
-                        connections, ignore_conflicts=True
-                    )
+                    WorkspaceConnection.objects.bulk_create(connections, ignore_conflicts=True)
 
                 records_processed += len(current_batch)
                 print(
@@ -149,9 +154,9 @@ class DatabaseMigration:
     def migrate_entity_connections(self):
         print("Migrating entity connections...")
 
-        total_count = self._execute_with_error_handling(
-            "SELECT COUNT(*) as count FROM silo.entity_connections"
-        )[0]["count"]
+        total_count = self._execute_with_error_handling("SELECT COUNT(*) as count FROM silo.entity_connections")[0][
+            "count"
+        ]
 
         total_batches = (total_count + self.batch_size - 1) // self.batch_size
         records_processed = 0
@@ -176,11 +181,7 @@ class DatabaseMigration:
                             project_id=entity["project_id"],
                             workspace_connection_id=entity["workspace_connection_id"],
                             type=entity["connection_type"],
-                            entity_type=(
-                                entity["entity_data"]["type"]
-                                if "type" in entity["entity_data"]
-                                else None
-                            ),
+                            entity_type=(entity["entity_data"]["type"] if "type" in entity["entity_data"] else None),
                             entity_id=entity["entity_id"],
                             entity_slug=entity["entity_slug"],
                             entity_data=entity["entity_data"],
@@ -190,9 +191,7 @@ class DatabaseMigration:
                         )
                         for entity in current_batch
                     ]
-                    WorkspaceEntityConnection.objects.bulk_create(
-                        entities, ignore_conflicts=True
-                    )
+                    WorkspaceEntityConnection.objects.bulk_create(entities, ignore_conflicts=True)
 
                 records_processed += len(current_batch)
                 print(
@@ -207,9 +206,7 @@ class DatabaseMigration:
     def migrate_jobs(self):
         print("Migrating jobs...")
 
-        total_count = self._execute_with_error_handling(
-            "SELECT COUNT(*) as count FROM silo.job_configs"
-        )[0]["count"]
+        total_count = self._execute_with_error_handling("SELECT COUNT(*) as count FROM silo.job_configs")[0]["count"]
 
         report_ids = []
         total_batches = (total_count + self.batch_size - 1) // self.batch_size
@@ -286,11 +283,7 @@ class DatabaseMigration:
                             project_id=job["project_id"],
                             workspace_id=job["workspace_id"],
                             initiator_id=job["initiator_id"],
-                            report_id=(
-                                report_ids[i]
-                                if i < len(report_ids)
-                                else str(uuid.uuid4())
-                            ),
+                            report_id=(report_ids[i] if i < len(report_ids) else str(uuid.uuid4())),
                             status=job["status"],
                             created_at=job["created_at"],
                             updated_at=job["updated_at"],
@@ -304,8 +297,7 @@ class DatabaseMigration:
 
                 records_processed += len(current_batch)
                 print(
-                    f"Processed jobs batch {batch_num + 1}/{total_batches} "
-                    f"({records_processed}/{total_count} records)"
+                    f"Processed jobs batch {batch_num + 1}/{total_batches} ({records_processed}/{total_count} records)"
                 )
 
             except Exception as e:

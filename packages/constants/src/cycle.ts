@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // types
 export const CYCLE_STATUS: {
   i18n_label: string;
@@ -28,15 +41,15 @@ export const CYCLE_STATUS: {
     value: "completed",
     i18n_title: "project_cycles.status.completed",
     color: "#16A34A",
-    textColor: "text-green-600",
-    bgColor: "bg-green-50",
+    textColor: "text-success-primary",
+    bgColor: "bg-success-subtle",
   },
   {
     i18n_label: "project_cycles.status.draft",
     value: "draft",
     i18n_title: "project_cycles.status.draft",
     color: "#525252",
-    textColor: "text-custom-text-300",
-    bgColor: "bg-custom-background-90",
+    textColor: "text-tertiary",
+    bgColor: "bg-surface-2",
   },
 ];

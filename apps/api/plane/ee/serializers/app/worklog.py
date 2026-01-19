@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Module imports
 from rest_framework import serializers
 from plane.app.serializers.base import BaseSerializer
@@ -30,6 +41,4 @@ class ProjectWorklogSummarySerializer(serializers.Serializer):
     """Serializer for project worklog summary with aggregated duration per issue"""
 
     issue_id = serializers.UUIDField(help_text="ID of the work item")
-    duration = serializers.IntegerField(
-        help_text="Total duration logged for this work item in seconds"
-    )
+    duration = serializers.IntegerField(help_text="Total duration logged for this work item in seconds")

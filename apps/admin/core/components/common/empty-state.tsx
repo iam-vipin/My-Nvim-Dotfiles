@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { Button } from "@plane/propel/button";
 
@@ -19,8 +32,8 @@ export function EmptyState({ title, description, image, primaryButton, secondary
     <div className={`flex h-full w-full items-center justify-center`}>
       <div className="flex w-full flex-col items-center text-center">
         {image && <img src={image} className="w-52 sm:w-60" alt={primaryButton?.text || "button image"} />}
-        <h6 className="mb-3 mt-6 text-xl font-semibold sm:mt-8">{title}</h6>
-        {description && <p className="mb-7 px-5 text-custom-text-300 sm:mb-8">{description}</p>}
+        <h6 className="mb-3 mt-6 text-18 font-semibold sm:mt-8">{title}</h6>
+        {description && <p className="mb-7 px-5 text-tertiary sm:mb-8">{description}</p>}
         <div className="flex items-center gap-4">
           {primaryButton && (
             <Button
@@ -28,6 +41,7 @@ export function EmptyState({ title, description, image, primaryButton, secondary
               prependIcon={primaryButton.icon}
               onClick={primaryButton.onClick}
               disabled={disabled}
+              size="lg"
             >
               {primaryButton.text}
             </Button>

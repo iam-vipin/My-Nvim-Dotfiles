@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -81,7 +94,7 @@ function GitlabEnterpriseIntegration() {
       <div className="relative space-y-6">
         {/* header */}
         <GitlabHeader isEnterprise />
-        <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
+        <div className="flex flex-col border border-subtle rounded-sm p-4 mb-2 justify-center">
           {/* Icon and Title Section */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -100,14 +113,14 @@ function GitlabEnterpriseIntegration() {
 
   if (!externalApiToken)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.external_api_unreachable")}
       </div>
     );
 
   if (supportedIntegrationsError)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-secondary relative flex justify-center items-center">
         {t("integrations.error_fetching_supported_integrations")}
       </div>
     );
@@ -116,7 +129,7 @@ function GitlabEnterpriseIntegration() {
     return (
       <div className={"flex h-full flex-col items-center justify-center"}>
         <Cloud size={96} />
-        <div className="text-custom-text-200 text-center text-sm relative flex justify-center items-center">
+        <div className="text-secondary text-center text-body-xs-regular relative flex justify-center items-center">
           {isSelfManaged
             ? t("integrations.not_configured_message_admin", { name: "Gitlab Enterprise" })
             : t("integrations.not_configured_message_support", { name: "Gitlab Enterprise" })}

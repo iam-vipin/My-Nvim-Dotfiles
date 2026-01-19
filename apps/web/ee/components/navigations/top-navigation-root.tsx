@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
@@ -20,8 +33,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 // plane web imports
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useAppRailVisibility } from "@/lib/app-rail/context";
-import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { useFlag, useWorkspaceFeatures, useTheme } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { DesktopHeaderProvider } from "../desktop/root";
 import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
@@ -31,8 +43,10 @@ import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
   const { config } = useInstance();
-  const { togglePiChatDrawer, isPiChatDrawerOpen } = usePiChat();
+  const { activeSidecar, openPiChatSidecar, closeSidecar } = useTheme();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  // derived values
+  const isPiChatSidecarOpen = activeSidecar === "pi-chat";
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
   const { preferences } = useAppRailPreferences();
   const { isEnabled: isAppRailEnabled, isCollapsed: isAppRailCollapsed } = useAppRailVisibility();
@@ -69,14 +83,14 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
   return (
     <div
-      className={cn("desktop-header flex items-center min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
+      className={cn("desktop-header flex items-center min-h-10 w-full px-3.5 z-27 transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
       <div className="flex flex-1 shrink-0 items-center gap-1.5">
         {shouldShowAppSwitcher && <WorkspaceAppSwitcher />}
         {/* Workspace Menu */}
-        <div className="shrink-0 flex-1">
+        <div className="shrink-0">
           {!isDesktopApp && <WorkspaceMenuRoot variant="top-navigation" />}
           {isDesktopApp && <DesktopHeaderProvider />}
         </div>
@@ -86,7 +100,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         {isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}
       </div>
       {/* Additional Actions */}
-      <div className="desktop-header-actions shrink-0 flex-1 flex items-center gap-1 justify-end">
+      <div className="shrink-0 flex-1 flex items-center gap-1 justify-end">
         <Tooltip tooltipContent="Inbox" position="bottom">
           <AppSidebarItem
             variant="link"
@@ -96,7 +110,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                 <div className="relative">
                   <InboxIcon className="size-5" />
                   {totalNotifications > 0 && (
-                    <span className="absolute -top-0 -right-0 size-2 rounded-full bg-red-500" />
+                    <span className="absolute top-0 right-0 size-2 rounded-full bg-danger-primary" />
                   )}
                 </div>
               ),
@@ -110,18 +124,18 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
             <Tooltip tooltipContent="Ask AI" position="bottom">
               <button
                 className={cn(
-                  "flex items-center gap-1.5 transition-colors h-8 py-1.5 px-1 rounded-md  hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 place-items-center w-full",
+                  "flex items-center gap-1.5 transition-colors h-8 py-1.5 px-1 rounded-md  bg-layer-1 text-primary hover:bg-layer-1-hover place-items-center w-full",
                   {
-                    "bg-custom-primary-100/10 !text-custom-primary-200": isPiChatDrawerOpen,
+                    "bg-layer-1-active": isPiChatSidecarOpen,
                   }
                 )}
-                onClick={() => togglePiChatDrawer()}
+                onClick={() => (isPiChatSidecarOpen ? closeSidecar() : openPiChatSidecar())}
                 data-prevent-outside-click
               >
-                <span className="shrink-0 size-5 grid place-items-center">
-                  {isPiChatDrawerOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}
+                <span className="shrink-0 size-5 grid place-items-center text-icon-secondary">
+                  {isPiChatSidecarOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}
                 </span>
-                <span className="text-sm leading-normal font-medium pr-1">AI assistant</span>
+                <span className="text-13 leading-normal font-medium pr-1">AI assistant</span>
               </button>
             </Tooltip>
           </div>

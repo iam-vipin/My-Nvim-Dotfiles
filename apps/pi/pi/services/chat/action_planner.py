@@ -1,10 +1,23 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Action execution logic with retrieval tools."""
 
 import contextlib
 import json
+import re
 from collections.abc import AsyncIterator
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Sequence
 from typing import Union
@@ -15,10 +28,15 @@ from langchain_core.messages import SystemMessage
 
 from pi import logger
 from pi import settings
+from pi.app.models.enums import ExecutionStatus
+from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.chat.utils import get_current_timestamp_context
 from pi.services.chat.utils import reasoning_dict_maker
+from pi.services.llm.cache_utils import create_claude_cached_system_message
+from pi.services.llm.cache_utils import get_claude_bind_kwargs_with_cache
+from pi.services.llm.cache_utils import should_enable_claude_caching
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps as _upsert_message_flow_steps
 from pi.services.schemas.chat import ActionCategorySelection
 
@@ -52,6 +70,85 @@ from .helpers.tool_utils import tool_name_shown_to_user
 
 log = logger.getChild(__name__)
 
+
+async def _inject_urls_into_entities(entities: list[Dict[str, Any]] | str, pending_urls: list[Dict[str, str]]) -> list[Dict[str, Any]]:
+    """Inject URLs into entities by matching IDs (app source only)"""
+
+    # Tool args can be model-provided; be defensive about types.
+    if not entities:
+        return []
+    if isinstance(entities, str):
+        try:
+            entities = json.loads(entities)
+        except Exception:
+            return []
+    if not isinstance(entities, list):
+        return []
+
+    # Create lookup from pending URLs if available
+    url_map = {url_info["id"]: url_info["url"] for url_info in pending_urls} if pending_urls else {}
+
+    # If no pending URLs, fetch them from database
+    # This happens when action tools (not retrieval tools) are used
+    if not url_map:
+        from pi import settings
+        from pi.agents.sql_agent.helpers import construct_entity_urls_from_db
+
+        # Collect entity IDs by type
+        entity_ids_by_type: Dict[str, List[str]] = {"issues": [], "pages": [], "cycles": [], "modules": [], "projects": []}
+
+        type_mapping = {
+            "workitem": "issues",
+            "issue": "issues",
+            "epic": "issues",
+            "page": "pages",
+            "cycle": "cycles",
+            "module": "modules",
+            "project": "projects",
+        }
+
+        for entity in entities:
+            entity_type = entity.get("type", "").lower()
+            entity_id = entity.get("properties", {}).get("id")
+
+            if entity_id and entity_type in type_mapping:
+                key = type_mapping[entity_type]
+                if entity_id not in entity_ids_by_type[key]:
+                    entity_ids_by_type[key].append(entity_id)
+
+        # Fetch URLs from database
+        if any(entity_ids_by_type.values()):
+            try:
+                api_base_url = settings.plane_api.FRONTEND_URL
+                entity_urls = await construct_entity_urls_from_db(entity_ids_by_type, api_base_url)
+                url_map = {url_info["id"]: url_info["url"] for url_info in entity_urls}
+                log.info(f"Fetched {len(url_map)} URLs from database for action tool results")
+            except Exception as e:
+                log.error(f"Failed to fetch URLs from database: {e}")
+
+    # Inject URLs
+    enriched = []
+    for entity in entities:
+        try:
+            # Runtime check needed because entities could be malformed from LLM
+            if not isinstance(entity, dict):
+                continue  # type: ignore[unreachable]
+            entity_copy = entity.copy()
+            entity_copy["properties"] = entity.get("properties", {}).copy()
+
+            entity_id = entity_copy["properties"].get("id")
+            if entity_id and entity_id in url_map:
+                entity_copy["properties"]["url"] = url_map[entity_id]
+
+            enriched.append(entity_copy)
+        except Exception as e:
+            log.error(f"Failed to process entity {entity}: {e}")
+            # Continue processing other entities
+            continue
+
+    return enriched
+
+
 MAX_ACTION_EXECUTOR_ITERATIONS = settings.chat.MAX_ACTION_EXECUTOR_ITERATIONS
 
 
@@ -75,6 +172,7 @@ async def execute_tools_for_build_mode(
     is_project_chat=None,
     pi_sidebar_open=None,
     sidebar_open_url=None,
+    source=None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """
     Execute action planner with access to retrieval tools
@@ -223,6 +321,7 @@ async def execute_tools_for_build_mode(
             conversation_history,
             query_id,
             is_project_chat=is_project_chat,
+            source=source,
         )
 
         combined_tools, all_method_tools, built_categories = build_planning_tools(
@@ -232,6 +331,18 @@ async def execute_tools_for_build_mode(
             context=context,
             fresh_retrieval_tools=fresh_retrieval_tools,
         )
+
+        # Add app response tool if source is 'app'
+        if source == "app":
+            try:
+                from pi.services.actions.tools.app_response import get_app_response_tool
+
+                app_tool = get_app_response_tool()
+                combined_tools.append(app_tool)
+                log.info(f"ChatID: {chat_id} - Added app response tool for source='app'")
+            except Exception as e:
+                log.warning(f"ChatID: {chat_id} - Failed to add app response tool: {e}")
+
         if not combined_tools:
             log.warning("No method or retrieval tools available for selected categories")
             msg = "An unexpected error occurred. Please try again later."
@@ -247,10 +358,9 @@ async def execute_tools_for_build_mode(
             workspace_id,
             enhanced_conversation_history,
             clarification_context=clar_ctx,
+            user_meta=user_meta,
+            source=source,
         )
-
-        date_time_context = await get_current_timestamp_context(user_id)
-        method_prompt = f"{method_prompt}\n\n{date_time_context}"
 
         # Record the tool orchestration context (enhanced conversation history) before planning
         try:
@@ -287,14 +397,34 @@ async def execute_tools_for_build_mode(
         except Exception as e:
             log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
 
-        # Initialize messages for Phase 2 tool orchestration
-        messages = [SystemMessage(content=method_prompt), HumanMessage(content=combined_tool_query)]
+        # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (timestamp) content
+        # Get timestamp context but keep it separate from the static system prompt
+        date_time_context = await get_current_timestamp_context(user_id)
+
+        # Combine dynamic content (timestamp + user query) in the HumanMessage
+        user_message_content = f"{date_time_context}\n\nUser Intent: {combined_tool_query}"
 
         # Re-bind LLM with the full toolset (action methods + retrieval)
         # Some LangChain/OpenAI versions default to no tool calls if not specified.
         # deduplicate tools
         combined_tools = list({tool.name: tool for tool in combined_tools}.values())
-        llm_with_method_tools = chatbot_instance.tool_llm.bind_tools(combined_tools)
+
+        # Enable prompt caching for Claude models when binding tools
+        bind_kwargs = {}
+        if should_enable_claude_caching(chatbot_instance.switch_llm):
+            # For Claude with caching: mark tools for caching via cache_control
+            bind_kwargs = get_claude_bind_kwargs_with_cache()
+
+        llm_with_method_tools = chatbot_instance.tool_llm.bind_tools(combined_tools, **bind_kwargs)
+
+        # Initialize messages with cache control for Claude
+        if should_enable_claude_caching(chatbot_instance.switch_llm):
+            messages = [
+                create_claude_cached_system_message(method_prompt),
+                HumanMessage(content=user_message_content),
+            ]
+        else:
+            messages = [SystemMessage(content=method_prompt), HumanMessage(content=user_message_content)]
         # Set tracking context for method planning LLM calls
         llm_with_method_tools.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_METHOD_PLANNING, chat_id=str(chat_id))
 
@@ -317,6 +447,21 @@ async def execute_tools_for_build_mode(
             _has_tool_calls = hasattr(response, "tool_calls") and bool(getattr(response, "tool_calls", None))
         except Exception:
             _has_tool_calls = False
+
+        # FAILSAFE: Detect if LLM mistakenly put tool_calls in content instead of using API
+        # This can happen with certain models/prompts - detect and handle gracefully
+        response_content = str(getattr(response, "content", "") or "").strip()
+        if not _has_tool_calls and "```tool_calls" in response_content:
+            log.warning(f"ChatID: {chat_id} - DETECTED: LLM output tool_calls as markdown instead of API. Stripping from content.")
+            # Strip the tool_calls markdown block from content to avoid showing JSON to user
+            # Remove ```tool_calls ... ``` blocks from content
+            cleaned_content = re.sub(r"```tool_calls\s*\n?\[[\s\S]*?\]\s*\n?```", "", response_content)
+            cleaned_content = cleaned_content.strip()
+            # Update response content to cleaned version for streaming
+            if hasattr(response, "content"):
+                response.content = cleaned_content
+            log.info(f"ChatID: {chat_id} - Stripped tool_calls markdown. Cleaned content: {cleaned_content[:200]}...")
+
         log.info(f"ChatID: {chat_id} - Has Tool Calls: {_has_tool_calls}")
 
         if _has_tool_calls:
@@ -450,6 +595,87 @@ async def execute_tools_for_build_mode(
                     clarification_requested = True
                     response.tool_calls = [] if hasattr(response, "tool_calls") else None
                     break
+
+                # Special handling for app response tool
+                elif tool_name == "provide_final_answer_for_app":
+                    log.info(f"ChatID: {chat_id} - App response tool called, formatting structured output")
+
+                    # Validate + normalize tool args (tool args are ultimately model-provided).
+                    text_response = ""
+                    entities: list[Dict[str, Any]] = []
+                    try:
+                        from pydantic import ValidationError
+
+                        from pi.services.actions.tools.app_response import AppResponseSchema
+
+                        validated = AppResponseSchema.model_validate(tool_args)
+                        payload = validated.model_dump()
+                        text_response = str(payload.get("text_response") or "")
+                        entities_raw = payload.get("entities") or []
+                        entities = entities_raw if isinstance(entities_raw, list) else []
+                    except (ValidationError, Exception) as e:
+                        log.warning(f"ChatID: {chat_id} - App response args validation failed; falling back. Error: {e}")
+                        text_response = str(tool_args.get("text_response", "") or "")
+                        entities_raw = tool_args.get("entities", [])
+                        if isinstance(entities_raw, str):
+                            try:
+                                entities_raw = json.loads(entities_raw)
+                                log.info(f"ChatID: {chat_id} - Parsed entities from JSON string (fallback)")
+                            except Exception as parse_err:
+                                log.error(f"ChatID: {chat_id} - Failed to parse entities JSON (fallback): {parse_err}")
+                                entities_raw = []
+                        entities = entities_raw if isinstance(entities_raw, list) else []
+
+                    # **NEW: Inject URLs programmatically for app source**
+                    if source == "app" and chatbot_instance and hasattr(chatbot_instance, "pending_entity_urls"):
+                        try:
+                            enriched_entities = await _inject_urls_into_entities(entities=entities, pending_urls=chatbot_instance.pending_entity_urls)
+                            log.info(f"ChatID: {chat_id} - Enriched {len(enriched_entities)} entities with URLs")
+                        finally:
+                            # Clear after use even if enrichment fails to avoid stale URL carryover.
+                            chatbot_instance.pending_entity_urls = []
+                    else:
+                        enriched_entities = entities
+
+                    # Format as object with enriched entities
+                    app_response = {"text": text_response, "entities": enriched_entities}
+
+                    # Stream the JSON response
+                    json_response = json.dumps(app_response, indent=2)
+                    yield json_response
+                    yield "\n"
+
+                    # Record flow step
+                    try:
+                        flow_step = {
+                            "step_order": current_step,
+                            "step_type": FlowStepType.TOOL,
+                            "tool_name": "provide_final_answer_for_app",
+                            "content": text_response[:500],  # Truncate for storage
+                            "execution_data": {"entity_count": len(enriched_entities) if isinstance(enriched_entities, list) else 0},
+                            "is_planned": False,
+                            "is_executed": True,
+                            "execution_success": ExecutionStatus.SUCCESS,
+                        }
+                        tool_flow_steps.append(flow_step)
+                        current_step += 1
+                    except Exception as e:
+                        log.warning(f"ChatID: {chat_id} - Failed to record app response flow step: {e}")
+
+                    # Persist flow steps before exiting
+                    if tool_flow_steps:
+                        with contextlib.suppress(Exception):
+                            async with get_streaming_db_session() as _subdb:
+                                await _upsert_message_flow_steps(
+                                    message_id=query_id,
+                                    chat_id=chat_id,
+                                    flow_steps=tool_flow_steps,
+                                    db=_subdb,
+                                )
+
+                    # Signal completion and exit
+                    yield f"__FINAL_RESPONSE__{json_response}"
+                    return
 
                 # Check if this is an action tool (not a retrieval tool)
                 #
@@ -624,6 +850,20 @@ async def execute_tools_for_build_mode(
             # Add tool results to conversation and continue
             messages.extend(tool_messages)
 
+            # # Log the messages being sent to the LLM (includes tool results)
+            # log.info(f"ChatID: {chat_id} - Build mode LLM iteration {iteration_count} - Messages count: {len(messages)}")
+            # try:
+            #     # Log last few messages for context (tool results + conversation)
+            #     last_messages_preview = []
+            #     for message_preview in messages[-3:]:  # Last 3 messages
+            #         if hasattr(message_preview, "content"):
+            #             content_preview = str(message_preview.content)[:200] + "..." if
+            #                   len(str(message_preview.content)) > 200 else str(message_preview.content)
+            #             last_messages_preview.append(f"{message_preview.__class__.__name__}: {content_preview}")
+            #     log.info(f"ChatID: {chat_id} - Build mode LLM iteration {iteration_count} - Recent messages:\n" + "\n".join(last_messages_preview))
+            # except Exception:
+            #     pass
+
             # Get next response from LLM
             response = await llm_with_method_tools.ainvoke(messages)
 
@@ -647,6 +887,15 @@ async def execute_tools_for_build_mode(
 
             # update _has_tool_calls
             _has_tool_calls = has_more_tool_calls
+
+            # FAILSAFE: Detect if LLM mistakenly put tool_calls in content in iterations
+            if not _has_tool_calls:
+                iter_content = str(getattr(response, "content", "") or "").strip()
+                if "```tool_calls" in iter_content:
+                    log.warning(f"ChatID: {chat_id} - DETECTED (iteration {iteration_count}): LLM output tool_calls as markdown. Stripping.")
+                    cleaned_content = re.sub(r"```tool_calls\s*\n?\[[\s\S]*?\]\s*\n?```", "", iter_content).strip()
+                    if hasattr(response, "content"):
+                        response.content = cleaned_content
 
             # Log planner decisions for this iteration
             try:
@@ -861,9 +1110,17 @@ async def execute_tools_for_build_mode(
     except Exception:
         # Log full traceback for diagnosis
         log.error(f"ChatID: {chat_id} - Error in action execution", exc_info=True)
-        # Emit user-friendly error and final response so caller can persist
+        # Emit structured error for app integrations to detect and handle
         error_msg = "An unexpected error occurred. Please try again later."
+        error_payload = {
+            "error": True,
+            "message": error_msg,
+            "error_type": "execution_error",
+        }
         try:
+            # Emit error block for app integrations
+            yield f"πspecial error blockπ: {json.dumps(error_payload)}"
+            # Also yield plain text for backward compatibility
             yield error_msg
             yield f"__FINAL_RESPONSE__{error_msg}"
         except Exception:

@@ -1,8 +1,18 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.views import View
 from django.utils.http import url_has_allowed_host_and_scheme
 
 # Module imports
@@ -16,9 +26,10 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
 )
 from plane.utils.path_validator import get_safe_redirect_url, validate_next_path, get_allowed_hosts
+from plane.authentication.rate_limit import RateLimitedView
 
 
-class SignInAuthSpaceEndpoint(View):
+class SignInAuthSpaceEndpoint(RateLimitedView):
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -103,7 +114,7 @@ class SignInAuthSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class SignUpAuthSpaceEndpoint(View):
+class SignUpAuthSpaceEndpoint(RateLimitedView):
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration

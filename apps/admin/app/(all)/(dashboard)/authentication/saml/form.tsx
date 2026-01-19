@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
@@ -7,7 +20,6 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceSAMLAuthenticationConfigurationKeys } from "@plane/types";
 import { TextArea } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -47,6 +59,7 @@ export function InstanceSAMLConfigForm(props: Props) {
       SAML_CERTIFICATE: config["SAML_CERTIFICATE"],
       SAML_PROVIDER_NAME: config["SAML_PROVIDER_NAME"],
       ENABLE_SAML_IDP_SYNC: config["ENABLE_SAML_IDP_SYNC"] || "0",
+      SAML_DISABLE_REQUESTED_AUTHN_CONTEXT: config["SAML_DISABLE_REQUESTED_AUTHN_CONTEXT"] ?? "1",
     },
   });
 
@@ -100,10 +113,16 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
   ];
 
-  const SAML_FORM_SWITCH_FIELD: TControllerSwitchFormField<SAMLConfigFormValues> = {
-    name: "ENABLE_SAML_IDP_SYNC",
-    label: "IdP",
-  };
+  const SAML_FORM_SWITCH_FIELDS: TControllerSwitchFormField<SAMLConfigFormValues>[] = [
+    {
+      name: "ENABLE_SAML_IDP_SYNC",
+      label: "Refresh user attributes from IdP during sign in",
+    },
+    {
+      name: "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT",
+      label: "Disable RequestedAuthnContext to allow any authentication method",
+    },
+  ];
 
   const SAML_WEB_SERVICE_DETAILS: TCopyField[] = [
     {
@@ -115,7 +134,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "Callback_URI",
-      label: "Callback URI",
+      label: "SSO URL",
       url: `${originURL}/auth/saml/callback/`,
       description: (
         <>
@@ -127,7 +146,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "Logout_URI",
-      label: "Logout URI",
+      label: "SLO URL",
       url: `${originURL}/auth/saml/logout/`,
       description: (
         <>
@@ -149,7 +168,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "mobile_callback_uri",
-      label: "Callback URI",
+      label: "SSO URL",
       url: `${originURL}/auth/mobile/saml/callback/`,
       description: (
         <>
@@ -161,7 +180,7 @@ export function InstanceSAMLConfigForm(props: Props) {
     },
     {
       key: "mobile_logout_uri",
-      label: "Logout URI",
+      label: "SLO URL",
       url: `${originURL}/auth/mobile/saml/logout/`,
       description: (
         <>
@@ -190,6 +209,8 @@ export function InstanceSAMLConfigForm(props: Props) {
         SAML_CERTIFICATE: response.find((item) => item.key === "SAML_CERTIFICATE")?.value,
         SAML_PROVIDER_NAME: response.find((item) => item.key === "SAML_PROVIDER_NAME")?.value,
         ENABLE_SAML_IDP_SYNC: response.find((item) => item.key === "ENABLE_SAML_IDP_SYNC")?.value,
+        SAML_DISABLE_REQUESTED_AUTHN_CONTEXT:
+          response.find((item) => item.key === "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT")?.value ?? "1",
       });
     } catch (err) {
       console.error(err);
@@ -213,7 +234,7 @@ export function InstanceSAMLConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">IdP-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">IdP-provided details for Plane</div>
             {SAML_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -227,9 +248,8 @@ export function InstanceSAMLConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
-            <ControllerSwitch control={control} field={SAML_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">SAML certificate</h4>
+              <h4 className="text-13">SAML certificate</h4>
               <Controller
                 control={control}
                 name="SAML_CERTIFICATE"
@@ -242,45 +262,45 @@ export function InstanceSAMLConfigForm(props: Props) {
                     onChange={onChange}
                     hasError={Boolean(errors.SAML_CERTIFICATE)}
                     placeholder="---BEGIN CERTIFICATE---\n2yWn1gc7DhOFB9\nr0gbE+\n---END CERTIFICATE---"
-                    className="min-h-[102px] w-full rounded-md font-medium text-sm"
+                    className="min-h-[102px] w-full rounded-md font-medium text-12"
                   />
                 )}
               />
-              <p className="pt-0.5 text-xs text-custom-text-300">
+              <p className="pt-0.5 text-11 text-tertiary">
                 IdP-generated certificate for signing this Plane app as an authorized service provider for your IdP
               </p>
             </div>
+            {SAML_FORM_SWITCH_FIELDS.map((field) => (
+              <ControllerSwitch key={field.name} control={control} field={field} />
+            ))}
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
                 <Button
                   variant="primary"
+                  size="lg"
                   onClick={(e) => void handleSubmit(onSubmit)(e)}
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving..." : "Save changes"}
+                  {isSubmitting ? "Saving" : "Save changes"}
                 </Button>
-                <Link
-                  href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
-                  onClick={handleGoBack}
-                >
+                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
-            <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
+            <div className="pt-2 text-18 font-medium">Plane-provided details for your IdP</div>
 
             <div className="flex flex-col gap-y-4">
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {SAML_WEB_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
@@ -289,11 +309,11 @@ export function InstanceSAMLConfigForm(props: Props) {
 
               {/* mobile service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Smartphone className="w-3 h-3" />
                   Mobile
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {SAML_MOBILE_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
@@ -302,11 +322,11 @@ export function InstanceSAMLConfigForm(props: Props) {
 
               {/* mapping details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Cable className="w-3 h-3" />
                   Mapping
                 </div>
-                <div className="px-6 py-4 bg-custom-background-80">
+                <div className="px-6 py-4 bg-layer-1">
                   <SAMLAttributeMappingTable />
                 </div>
               </div>

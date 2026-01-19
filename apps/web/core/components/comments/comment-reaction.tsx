@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -61,6 +74,12 @@ export const CommentReactions = observer(function CommentReactions(props: TProps
 
   if (!userReactions) return null;
 
+  // Don't render anything if there are no reactions and it's disabled
+  if (reactions.length === 0 && disabled) return null;
+
+  // Don't show the add button if there are no reactions
+  const showAddButton = !disabled && reactions.length > 0;
+
   return (
     <div className="relative">
       <EmojiReactionPicker
@@ -72,7 +91,7 @@ export const CommentReactions = observer(function CommentReactions(props: TProps
           <EmojiReactionGroup
             reactions={reactions}
             onReactionClick={handleReactionClick}
-            showAddButton={!disabled}
+            showAddButton={showAddButton}
             onAddReaction={() => setIsPickerOpen(true)}
           />
         }

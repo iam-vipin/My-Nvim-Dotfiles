@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from itertools import chain
 
@@ -19,6 +30,7 @@ from plane.app.permissions import ProjectEntityPermission, allow_permission, ROL
 from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.agents.models import AgentRun
 
 
 class IssueActivityEndpoint(BaseAPIView):
@@ -61,6 +73,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     "comment_reactions",
                     queryset=CommentReaction.objects.select_related("actor"),
                 ),
+                "comment_agent_runs",
             )
             .distinct()
             .accessible_to(request.user.id, slug)

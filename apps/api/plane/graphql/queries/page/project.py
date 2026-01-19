@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from typing import Optional
 
@@ -58,7 +69,6 @@ class PageQuery:
             .filter(project_teamspace_filter_query)
             .filter(is_global=False)
             .filter(parent__isnull=True)
-            .filter(moved_to_page__isnull=True)
         )
 
         # Get shared page ids for private and shared pages
@@ -75,7 +85,7 @@ class PageQuery:
             page_base_query = page_base_query.filter(archived_at__isnull=False)
 
         # Filter pages by access level for all, public and shared pages
-        if type == "all":
+        if type in ["all", "archived"]:
             page_base_query = page_base_query.filter(Q(access=0) | (Q(access=1) & Q(owned_by_id=user_id)))
         elif type == "public":
             page_base_query = page_base_query.filter(access=0)
@@ -85,6 +95,8 @@ class PageQuery:
             page_base_query = page_base_query.filter(
                 Q(access=1) & (Q(id__in=pages_shared_with_user) | (Q(owned_by_id=user_id) & Q(id__in=shared_page_ids)))
             )
+        else:
+            page_base_query = page_base_query.none()
 
         # Subquery for UserFavorite
         subquery = UserFavorite.objects.filter(
@@ -100,7 +112,7 @@ class PageQuery:
             .select_related("workspace", "owned_by")
             .prefetch_related("projects")
             .annotate(is_favorite=Exists(subquery))
-            .order_by("sort_order", "-updated_at")
+            .order_by("-updated_at", "-created_at", "sort_order")
         )
 
         return paginate(results_object=pages, cursor=cursor)

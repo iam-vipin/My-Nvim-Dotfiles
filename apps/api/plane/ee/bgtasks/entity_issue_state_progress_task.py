@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from celery import shared_task
 from plane.db.models import Issue
 from plane.ee.models import EntityProgress, EntityIssueStateActivity
@@ -40,8 +51,7 @@ def entity_issue_state_activity_task(issue_cycle_data, user_id, slug, action):
                 issue.estimate_point.value
                 if issue.estimate_point
                 and issue.estimate_point.estimate
-                and getattr(issue.estimate_point.estimate, "type", None)
-                in ["points", "time"]
+                and getattr(issue.estimate_point.estimate, "type", None) in ["points", "time"]
                 else None
             )
 
@@ -62,9 +72,7 @@ def entity_issue_state_activity_task(issue_cycle_data, user_id, slug, action):
             )
 
         if activity_records:
-            EntityIssueStateActivity.objects.bulk_create(
-                activity_records, batch_size=10
-            )
+            EntityIssueStateActivity.objects.bulk_create(activity_records, batch_size=10)
 
     except Exception as e:
         log_exception(e)

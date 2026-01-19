@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Test cases for the EventStreamPublisher module.
 
@@ -70,18 +81,13 @@ def mock_rabbitmq():
     mock_basic_props = MagicMock()
 
     # Start the patches for all pika components
-    with patch(
-        "pika.BlockingConnection", return_value=mock_connection
-    ) as mock_blocking_conn, patch(
-        "pika.ConnectionParameters", return_value=mock_connection_params
-    ) as mock_conn_params, patch(
-        "pika.URLParameters", return_value=mock_url_params
-    ) as mock_url_params_patch, patch(
-        "pika.PlainCredentials", return_value=mock_credentials
-    ) as mock_plain_creds, patch(
-        "pika.BasicProperties", return_value=mock_basic_props
-    ) as mock_basic_properties:
-
+    with (
+        patch("pika.BlockingConnection", return_value=mock_connection) as mock_blocking_conn,
+        patch("pika.ConnectionParameters", return_value=mock_connection_params) as mock_conn_params,
+        patch("pika.URLParameters", return_value=mock_url_params) as mock_url_params_patch,
+        patch("pika.PlainCredentials", return_value=mock_credentials) as mock_plain_creds,
+        patch("pika.BasicProperties", return_value=mock_basic_props) as mock_basic_properties,
+    ):
         # Yield all mocked components for test access
         yield {
             "connection": mock_connection,
@@ -138,9 +144,7 @@ class TestEventStreamPublisher:
         publisher = EventStreamPublisher()
 
         # Verify URLParameters was called with the AMQP_URL
-        mock_rabbitmq["url_params"].assert_called_once_with(
-            "amqp://test:test@localhost:5672/test"
-        )
+        mock_rabbitmq["url_params"].assert_called_once_with("amqp://test:test@localhost:5672/test")
 
     @override_settings(
         RABBITMQ_HOST="testhost",
@@ -196,9 +200,7 @@ class TestEventStreamPublisher:
     def test_connect_failure_amqp_connection_error(self, mock_rabbitmq):
         """Test connection failure handling."""
         # Make BlockingConnection raise AMQPConnectionError
-        mock_rabbitmq["blocking_connection"].side_effect = AMQPConnectionError(
-            "Connection failed"
-        )
+        mock_rabbitmq["blocking_connection"].side_effect = AMQPConnectionError("Connection failed")
 
         publisher = EventStreamPublisher()
 
@@ -212,9 +214,7 @@ class TestEventStreamPublisher:
     def test_connect_failure_channel_error(self, mock_rabbitmq):
         """Test channel error during setup."""
         # Make exchange_declare raise AMQPChannelError
-        mock_rabbitmq["channel"].exchange_declare.side_effect = AMQPChannelError(
-            "Channel error"
-        )
+        mock_rabbitmq["channel"].exchange_declare.side_effect = AMQPChannelError("Channel error")
 
         publisher = EventStreamPublisher()
 
@@ -344,9 +344,7 @@ class TestEventStreamPublisher:
         publisher = EventStreamPublisher(max_retries=2, retry_delay=0.1)
 
         # All attempts fail
-        mock_rabbitmq["blocking_connection"].side_effect = AMQPConnectionError(
-            "Connection failed"
-        )
+        mock_rabbitmq["blocking_connection"].side_effect = AMQPConnectionError("Connection failed")
 
         data = {"event_type": "test_event"}
 

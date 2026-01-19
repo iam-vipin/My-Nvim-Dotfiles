@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import os
 import uuid
@@ -83,8 +94,8 @@ class Adapter:
         results = zxcvbn(self.code)
         if results["score"] < 3:
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                error_message="INVALID_PASSWORD",
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
                 payload={"email": email},
             )
         return
@@ -115,7 +126,8 @@ class Adapter:
 
     def check_sync_enabled(self):
         """Check if sync is enabled for the provider"""
-        provider_config_map = {
+
+        provider_config_keys = {
             "google": "ENABLE_GOOGLE_SYNC",
             "github": "ENABLE_GITHUB_SYNC",
             "gitlab": "ENABLE_GITLAB_SYNC",
@@ -123,11 +135,12 @@ class Adapter:
             "oidc": "ENABLE_OIDC_IDP_SYNC",
             "saml": "ENABLE_SAML_IDP_SYNC",
         }
-        config_key = provider_config_map.get(self.provider)
-        if config_key:
-            (enabled,) = get_configuration_value([{"key": config_key, "default": os.environ.get(config_key, "0")}])
-            return enabled == "1"
-        return False
+
+        config_key = provider_config_keys.get(self.provider)
+        if not config_key:
+            return False
+        (enabled_value,) = get_configuration_value([{"key": config_key, "default": os.environ.get(config_key, "0")}])
+        return enabled_value == "1"
 
     def download_and_upload_avatar(self, avatar_url, user):
         """
@@ -335,7 +348,7 @@ class Adapter:
                 avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
                 if avatar_asset:
                     user.avatar_asset = avatar_asset
-                    user.avatar = avatar if avatar else ""
+                    user.avatar = avatar
                 # If avatar upload fails, set the avatar to the original URL
                 else:
                     user.avatar = avatar if avatar else ""

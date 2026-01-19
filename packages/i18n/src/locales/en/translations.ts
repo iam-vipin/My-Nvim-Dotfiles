@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   submit: "Submit",
   cancel: "Cancel",
@@ -141,7 +154,6 @@ export default {
   drafts: "Drafts",
   projects: "Projects",
   views: "Views",
-  workspace: "Workspace",
   archives: "Archives",
   settings: "Settings",
   failed_to_move_favorite: "Failed to move favorite",
@@ -851,7 +863,7 @@ export default {
         label: "Remove parent work item",
       },
     },
-    new: "New Work item",
+    new: "New work item",
     adding: "Adding work item",
     create: {
       success: "Work item created successfully",
@@ -991,7 +1003,7 @@ export default {
     delete: "Delete attachment",
   },
   label: {
-    select: "Select label",
+    select: "Add labels",
     create: {
       success: "Label created successfully",
       failed: "Label creation failed",
@@ -1442,6 +1454,7 @@ export default {
         name: "Workspace name",
         company_size: "Company size",
         url: "Workspace URL",
+        workspace_timezone: "Workspace Timezone",
         update_workspace: "Update workspace",
         delete_workspace: "Delete this workspace",
         delete_workspace_description:

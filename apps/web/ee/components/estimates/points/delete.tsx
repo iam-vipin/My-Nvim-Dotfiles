@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { MoveRight, Trash2 } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { MoveRight } from "lucide-react";
+import { TrashIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TEstimatePointsObject } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";
@@ -98,14 +111,14 @@ export const EstimatePointDelete = observer(function EstimatePointDelete(props: 
     .filter((estimatePoint) => estimatePoint != undefined) as TEstimatePointsObject[];
 
   return (
-    <div className="relative flex items-center gap-2 text-base pr-2.5">
+    <div className="relative flex items-center gap-2 text-14 pr-2.5">
       <div className="flex-grow relative flex items-center gap-3">
-        <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+        <div className="w-full border border-subtle-1 rounded-sm px-3 py-2 bg-layer-1 text-13">
           {estimateSystem === EEstimateSystem.TIME
             ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value))
             : estimatePoint?.value}
         </div>
-        <div className="text-sm first-letter:relative flex justify-center items-center gap-2 whitespace-nowrap">
+        <div className="text-13 first-letter:relative flex justify-center items-center gap-2 whitespace-nowrap">
           Mark as <MoveRight size={14} />
         </div>
         <EstimatePointDropdown
@@ -124,17 +137,17 @@ export const EstimatePointDelete = observer(function EstimatePointDelete(props: 
         </div>
       ) : (
         <div
-          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-red-500"
+          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-danger-primary"
           onClick={handleDelete}
         >
-          <Trash2 size={14} />
+          <TrashIcon width={14} height={14} />
         </div>
       )}
       <div
-        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
         onClick={handleClose}
       >
-        <CloseIcon height={14} width={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-secondary" />
       </div>
     </div>
   );

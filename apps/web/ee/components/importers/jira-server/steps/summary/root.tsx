@@ -1,8 +1,20 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import type { TJobStatus } from "@plane/etl/core";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import type { JiraConfig } from "@plane/etl/jira";
@@ -11,7 +23,6 @@ import { Button } from "@plane/propel/button";
 import type { TImportJob } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
 import { useJiraServerImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
@@ -84,22 +95,8 @@ export const SummaryRoot = observer(function SummaryRoot() {
             status: E_JOB_STATUS.CREATED as TJobStatus,
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
-          captureSuccess({
-            eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-            payload: {
-              jobId: importerCreateJob?.id,
-              type: E_IMPORTER_KEYS.JIRA_SERVER,
-            },
-          });
           if (importerCreateJob && importerCreateJob?.id) {
             await startJob(importerCreateJob?.id);
-            captureSuccess({
-              eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
-              payload: {
-                jobId: importerCreateJob?.id,
-                type: E_IMPORTER_KEYS.JIRA_SERVER,
-              },
-            });
             handleDashboardView();
             // clearing the existing data in the context
             resetImporterData();
@@ -109,13 +106,6 @@ export const SummaryRoot = observer(function SummaryRoot() {
         }
       } catch (error) {
         console.error("error", error);
-        captureError({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
-          error: error as Error,
-          payload: {
-            type: E_IMPORTER_KEYS.JIRA_SERVER,
-          },
-        });
       } finally {
         setCreateConfigLoader(false);
       }
@@ -216,12 +206,7 @@ export const SummaryRoot = observer(function SummaryRoot() {
         {/* stepper button */}
         <div className="flex-shrink-0 relative flex items-center gap-2">
           <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleOnClickNext}
-              disabled={createConfigLoader || isNextBtnDisabled}
-            >
+            <Button variant="primary" onClick={handleOnClickNext} disabled={createConfigLoader || isNextBtnDisabled}>
               {createConfigLoader ? t("common.configuring") : t("common.confirm")}
             </Button>
           </StepperNavigation>

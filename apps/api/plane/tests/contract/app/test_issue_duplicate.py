@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import pytest
 from django.urls import reverse
 from rest_framework import status
@@ -16,9 +27,7 @@ class TestIssueDuplicateEndpointContrasts:
     @pytest.fixture
     def base_setup(self, session_client, create_user):
         """Base setup for all tests"""
-        workspace = Workspace.objects.create(
-            name="Test Workspace", slug="test-workspace", owner=create_user
-        )
+        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=create_user)
 
         source_project = Project.objects.create(
             name="Source Project",
@@ -53,15 +62,11 @@ class TestIssueDuplicateEndpointContrasts:
 
             return wrapper
 
-        with patch(
-            "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
-        ) as mock:
+        with patch("plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator) as mock:
             yield mock
 
     @pytest.mark.django_db
-    def test_contrast_issue_duplicate(
-        self, session_client, base_setup, mock_feature_flag
-    ):
+    def test_contrast_issue_duplicate(self, session_client, base_setup, mock_feature_flag):
         """
         Contrast test between duplicating issues
         """

@@ -1,23 +1,36 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EditorRefApi, CollaborationState } from "@plane/editor";
 // plane editor
 import { convertBinaryDataToBase64String, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
-// plane propel
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane types
 import type { TDocumentPayload } from "@plane/types";
 // hooks
 import useAutoSave from "@/hooks/use-auto-save";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type TArgs = {
   editorRef: React.RefObject<EditorRefApi>;
   fetchPageDescription: () => Promise<ArrayBuffer>;
   collaborationState: CollaborationState | null;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;
+  page: TPageInstance;
 };
 
 export const usePageFallback = (args: TArgs) => {
-  const { editorRef, fetchPageDescription, collaborationState, updatePageDescription } = args;
+  const { editorRef, fetchPageDescription, collaborationState, updatePageDescription, page } = args;
   const hasShownFallbackToast = useRef(false);
 
   const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] = useState(false);
@@ -32,11 +45,7 @@ export const usePageFallback = (args: TArgs) => {
 
     // Show toast notification when fallback mechanism kicks in (only once)
     if (!hasShownFallbackToast.current) {
-      setToast({
-        type: TOAST_TYPE.WARNING,
-        title: "Connection lost",
-        message: "Your changes are being saved using backup mechanism. ",
-      });
+      console.warn("Websocket Connection lost, your changes are being saved using backup mechanism.");
       hasShownFallbackToast.current = true;
     }
 
@@ -48,7 +57,11 @@ export const usePageFallback = (args: TArgs) => {
       if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
         latestDecodedDescription = new Uint8Array(latestEncodedDescription);
       } else {
-        latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString("<p></p>");
+        const pageDescriptionHtml = page.description_html;
+        latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString(
+          pageDescriptionHtml ?? "<p></p>",
+          page.name
+        );
       }
 
       editor.setProviderDocument(latestDecodedDescription);
@@ -62,15 +75,11 @@ export const usePageFallback = (args: TArgs) => {
         description: json,
       });
     } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: `Failed to update description using backup mechanism, ${error?.message}`,
-      });
+      console.error(error);
     } finally {
       setIsFetchingFallbackBinary(false);
     }
-  }, [editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription]);
+  }, [editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription, page.description_html, page.name]);
 
   useEffect(() => {
     if (hasConnectionFailed) {

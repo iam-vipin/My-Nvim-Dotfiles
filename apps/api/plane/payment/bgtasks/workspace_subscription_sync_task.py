@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import requests
 import os
@@ -25,9 +36,9 @@ def workspace_billing_task(batch_size=5000, batch_countdown=300, offset=0):
     end_offset = min(offset + batch_size, total_workspaces)
 
     # Get the workspaces that are not free
-    workspace_licenses = WorkspaceLicense.objects.filter(~Q(plan="FREE"))[
-        offset:end_offset
-    ].values("workspace_id", "workspace__slug")
+    workspace_licenses = WorkspaceLicense.objects.filter(~Q(plan="FREE"))[offset:end_offset].values(
+        "workspace_id", "workspace__slug"
+    )
 
     # Loop through the workspace licenses
     for workspace_license in workspace_licenses:
@@ -39,9 +50,7 @@ def workspace_billing_task(batch_size=5000, batch_countdown=300, offset=0):
 
             # Get all active workspace members
             workspace_members = (
-                WorkspaceMember.objects.filter(
-                    workspace_id=workspace_id, is_active=True, member__is_bot=False
-                )
+                WorkspaceMember.objects.filter(workspace_id=workspace_id, is_active=True, member__is_bot=False)
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # python imports
 from typing import Any, Optional
 
@@ -52,56 +63,6 @@ class WorkspaceBasePermission(IsAuthenticated):
 
         return await sync_to_async(
             WorkspaceMember.objects.filter(workspace__slug=kwargs.get("slug"), member=self.user, is_active=True).exists,
-            thread_sensitive=True,
-        )()
-
-
-class WorkspaceMemberPermission(IsAuthenticated):
-    message = "Workspace admins or members can perform this action"
-    error_extensions = {
-        "code": "UNAUTHORIZED",
-        "statusCode": ERROR_CODES["USER_NOT_AUTHORIZED"],
-    }
-
-    async def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
-        # First, check if the user is authenticated by calling the parent class's method
-        if not await super().has_permission(source, info, **kwargs):
-            self.message = IsAuthenticated.message
-            self.error_extensions = IsAuthenticated.error_extensions
-            return False
-
-        return await sync_to_async(
-            WorkspaceMember.objects.filter(
-                workspace__slug=kwargs.get("slug"),
-                member=self.user,
-                role__in=[Admin, Member],
-                is_active=True,
-            ).exists,
-            thread_sensitive=True,
-        )()
-
-
-class WorkspaceAdminPermission(IsAuthenticated):
-    message = "Only workspace admins can perform this action"
-    error_extensions = {
-        "code": "UNAUTHORIZED",
-        "statusCode": ERROR_CODES["USER_NOT_AUTHORIZED"],
-    }
-
-    async def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
-        # First, check if the user is authenticated by calling the parent class's method
-        if not await super().has_permission(source, info, **kwargs):
-            self.message = IsAuthenticated.message
-            self.error_extensions = IsAuthenticated.error_extensions
-            return False
-
-        return await sync_to_async(
-            WorkspaceMember.objects.filter(
-                workspace__slug=kwargs.get("slug"),
-                member=self.user,
-                role=Admin,
-                is_active=True,
-            ).exists,
             thread_sensitive=True,
         )()
 

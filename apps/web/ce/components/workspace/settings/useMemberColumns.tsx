@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel, LOGIN_MEDIUM_LABELS } from "@plane/constants";
@@ -62,9 +75,7 @@ export const useMemberColumns = () => {
       key: "Display name",
       content: t("workspace_settings.settings.members.details.display_name"),
       tdRender: (rowData: RowData) => (
-        <div className={`w-32 ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
-          {rowData.member.display_name}
-        </div>
+        <div className={`w-32 ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.display_name}</div>
       ),
       thRender: () => (
         <MemberHeaderColumn
@@ -79,9 +90,7 @@ export const useMemberColumns = () => {
       key: "Email address",
       content: t("workspace_settings.settings.members.details.email_address"),
       tdRender: (rowData: RowData) => (
-        <div className={`w-48 truncate ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
-          {rowData.member.email}
-        </div>
+        <div className={`w-48 truncate ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.email}</div>
       ),
       thRender: () => (
         <MemberHeaderColumn

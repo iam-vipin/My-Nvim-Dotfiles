@@ -172,8 +172,8 @@ export function IntakePublishForm({
             <div className="z-5 absolute bottom-2 flex w-full items-end justify-between gap-3 px-4">
               <div className="flex flex-grow gap-3 truncate items-center">
                 {projectLogo && <ProjectLogo logo={projectLogo} className="my-auto text-[24px]" />}
-                <div className="flex flex-col gap-1 truncate text-white items-center">
-                  <span className="truncate text-lg font-semibold">{projectName}</span>
+                <div className="flex flex-col gap-1 truncate text-on-color items-center">
+                  <span className="truncate text-16 font-semibold">{projectName}</span>
                 </div>
               </div>
             </div>
@@ -181,17 +181,17 @@ export function IntakePublishForm({
 
           {/* Form Title */}
           <div className="mb-6">
-            <h3 className="text-xl font-medium text-custom-text-200">{formTitle || "Create a work item"}</h3>
-            <div className="text-sm text-custom-text-300 flex gap-2 mt-1">
+            <h3 className="text-18 font-medium text-secondary">{formTitle || "Create a work item"}</h3>
+            <div className="text-13 text-tertiary flex gap-2 mt-1">
               <span>Let the team know what you would like them to work on.</span>
             </div>
           </div>
 
           {/* Name Field */}
           <div className="w-full">
-            <div className="text-sm text-custom-text-300 mb-1 font-medium">
+            <div className="text-13 text-tertiary mb-1 font-medium">
               Name
-              <span className="ml-0.5 text-red-500">*</span>
+              <span className="ml-0.5 text-danger-primary">*</span>
             </div>
             <Controller
               control={control}
@@ -213,20 +213,22 @@ export function IntakePublishForm({
                   hasError={Boolean(errors.username)}
                   placeholder="Jason Ray"
                   disabled={isPreview}
-                  className={cn("w-full focus:border-blue-400 text-base border-custom-border-300", {
+                  className={cn("w-full focus:border-blue-400 text-14 border-subtle-1", {
                     "cursor-not-allowed opacity-60": isPreview,
                   })}
                 />
               )}
             />
-            {errors.username && <span className="text-xs text-red-500">{errors.username.message as string}</span>}
+            {errors.username && (
+              <span className="text-11 text-danger-primary">{errors.username.message as string}</span>
+            )}
           </div>
 
           {/* Email Field */}
           <div className="w-full">
-            <div className="text-sm text-custom-text-300 mb-1 font-medium">
+            <div className="text-13 text-tertiary mb-1 font-medium">
               Email
-              <span className="ml-0.5 text-red-500">*</span>
+              <span className="ml-0.5 text-danger-primary">*</span>
             </div>
             <Controller
               control={control}
@@ -248,20 +250,20 @@ export function IntakePublishForm({
                   hasError={Boolean(errors.email)}
                   placeholder="jason.ray@company.com"
                   disabled={isPreview}
-                  className={cn("w-full focus:border-blue-400 text-base border-custom-border-300", {
+                  className={cn("w-full focus:border-blue-400 text-14 border-subtle-1", {
                     "cursor-not-allowed opacity-60": isPreview,
                   })}
                 />
               )}
             />
-            {errors.email && <span className="text-xs text-red-500">{errors.email.message as string}</span>}
+            {errors.email && <span className="text-11 text-danger-primary">{errors.email.message as string}</span>}
           </div>
 
           {/* Title Field */}
           <div className="w-full">
-            <div className="text-sm text-custom-text-300 mb-1 font-medium">
+            <div className="text-13 text-tertiary mb-1 font-medium">
               What&apos;s this work item about?
-              <span className="ml-0.5 text-red-500">*</span>
+              <span className="ml-0.5 text-danger-primary">*</span>
             </div>
             <Controller
               control={control}
@@ -283,18 +285,18 @@ export function IntakePublishForm({
                   hasError={Boolean(errors.name)}
                   placeholder="e.g., Improve vertical scroll, Approve laptop purchase"
                   disabled={isPreview}
-                  className={cn("w-full focus:border-blue-400 text-base border-custom-border-300", {
+                  className={cn("w-full focus:border-blue-400 text-14 border-subtle-1", {
                     "cursor-not-allowed opacity-60": isPreview,
                   })}
                 />
               )}
             />
-            {errors.name && <span className="text-xs text-red-500">{errors.name.message as string}</span>}
+            {errors.name && <span className="text-11 text-danger-primary">{errors.name.message as string}</span>}
           </div>
 
           {/* Description Field */}
           <div className="w-full">
-            <div className="text-sm text-custom-text-300 mb-1 font-medium">Describe what should happen</div>
+            <div className="text-13 text-tertiary mb-1 font-medium">Describe what should happen</div>
             {EditorComponent ? (
               <Controller
                 name="description_html"
@@ -317,7 +319,7 @@ export function IntakePublishForm({
                     placeholder="Add as much detail as you'd like to help the team identify your exact situation and needs."
                     disabled={isPreview}
                     className={cn(
-                      "w-full px-3 py-2 rounded-md border border-custom-border-300 bg-custom-background-100 text-sm placeholder-custom-text-400 focus:outline-none min-h-[120px] resize-none",
+                      "w-full px-3 py-2 rounded-md border border-subtle-1 bg-surface-1 text-13 focus:outline-none min-h-[120px] resize-none",
                       {
                         "cursor-not-allowed opacity-60": isPreview,
                       }
@@ -333,10 +335,10 @@ export function IntakePublishForm({
 
           {/* Attachments Field */}
           <div className="w-full">
-            <div className="text-sm text-custom-text-300 mb-1 font-medium">Attachments</div>
+            <div className="text-13 text-tertiary mb-1 font-medium">Attachments</div>
             <div
               className={cn(
-                "rounded-md border-2 border-dashed border-custom-border-300 p-4 text-center cursor-pointer hover:border-custom-border-400 transition-colors",
+                "rounded-md border-2 border-dashed border-subtle-1 p-4 text-center cursor-pointer hover:border-strong-1 transition-colors",
                 {
                   "cursor-not-allowed opacity-60": isPreview,
                 }
@@ -360,7 +362,7 @@ export function IntakePublishForm({
                   e.target.value = "";
                 }}
               />
-              <p className="text-sm text-custom-text-300">Click to upload or drag and drop files</p>
+              <p className="text-13 text-tertiary">Click to upload or drag and drop files</p>
             </div>
             <AttachmentPreviewList items={attachmentPreviews} />
           </div>

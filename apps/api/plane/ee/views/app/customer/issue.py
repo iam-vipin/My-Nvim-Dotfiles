@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,9 +32,7 @@ class IssueCustomerEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, work_item_id):
         customer_ids = (
-            CustomerRequestIssue.objects.filter(
-                issue_id=work_item_id, workspace__slug=slug
-            )
+            CustomerRequestIssue.objects.filter(issue_id=work_item_id, workspace__slug=slug)
             .order_by("customer_id")
             .distinct("customer_id")
         ).values_list("customer_id", flat=True)
@@ -40,15 +49,12 @@ class IssueCustomerRequestEndpoint(BaseAPIView):
 
         customer_requests = (
             CustomerRequest.objects.filter(
-                Q(customer_request_issues__issue_id=work_item_id)
-                & Q(customer_request_issues__deleted_at__isnull=True),
+                Q(customer_request_issues__issue_id=work_item_id) & Q(customer_request_issues__deleted_at__isnull=True),
                 workspace__slug=slug,
             ).annotate(
                 attachment_count=Subquery(
                     FileAsset.objects.filter(
-                        entity_identifier=Cast(
-                            OuterRef("id"), output_field=CharField()
-                        ),
+                        entity_identifier=Cast(OuterRef("id"), output_field=CharField()),
                         entity_type=FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT,
                     )
                     .order_by()

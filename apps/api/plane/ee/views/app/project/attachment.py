@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 import json
@@ -84,9 +95,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
         return Response(
             {
@@ -101,9 +110,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
     def delete(self, request, slug, project_id, pk):
-        attachment = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
+        attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         attachment.is_deleted = True
         attachment.deleted_at = timezone.now()
         attachment.save()
@@ -126,9 +133,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         if pk:
             # Get the asset
-            asset = FileAsset.objects.get(
-                id=pk, workspace__slug=slug, project_id=project_id
-            )
+            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
 
             # Check if the asset is uploaded
             if not asset.is_uploaded:
@@ -159,9 +164,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, pk):
-        attachments = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
+        attachments = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         serializer = ProjectAttachmentSerializer(attachments)
 
         # Send this activity only if the attachment is not uploaded before

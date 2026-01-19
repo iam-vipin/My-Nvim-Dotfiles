@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export * from "./root";
 
 import { getWeekOfMonth, isValid } from "date-fns";
@@ -36,9 +49,9 @@ export const commonWidgetClassName = (args: TArgs) => {
   const { className, isEditingEnabled, isSelected, isResizingDisabled } = args;
 
   const commonClassName = cn(
-    "group/widget dashboard-widget-item size-full rounded-lg bg-custom-background-100 border border-custom-border-200 transition-colors",
+    "group/widget dashboard-widget-item size-full rounded-lg bg-surface-1 border border-subtle-1 transition-colors",
     {
-      "selected border-custom-primary-100": isSelected,
+      "selected border-accent-strong": isSelected,
       "cursor-pointer": isEditingEnabled,
       disabled: isResizingDisabled,
     },

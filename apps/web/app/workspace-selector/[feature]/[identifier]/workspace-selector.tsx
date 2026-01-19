@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -183,13 +196,13 @@ export const WorkspaceSelector = observer(function WorkspaceSelector(props: TWor
   return (
     <div className="relative flex flex-col gap-4 h-full w-full justify-center px-8 pb-14 items-center">
       <div className="flex flex-col gap-2.5 items-center">
-        <div className="text-3xl font-bold text-center">Choose a workspace to continue</div>
-        <div className="font-medium text-custom-text-300 max-w-[450px] text-center">
+        <div className="text-28 font-bold text-center">Choose a workspace to continue</div>
+        <div className="font-medium text-tertiary max-w-[450px] text-center">
           {getFeatureName(feature)} that work with Plane must connect to a workspace where you are an admin.
         </div>
       </div>
       <div className="overflow-y-auto vertical-scrollbar scrollbar-sm mt-2 mb-4 w-full md:w-fit">
-        <div className="w-full flex flex-col md:w-[450px] bg-custom-background-90 rounded p-4 gap-2 border-[0.5px] border-custom-border-200">
+        <div className="w-full flex flex-col md:w-[450px] bg-layer-1 rounded-sm p-4 gap-2 border-[0.5px] border-subtle-1">
           {loader ? (
             <Loader className="w-full flex flex-col gap-2">
               {Array.from({ length: 4 }).map((_, index) => (

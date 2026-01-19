@@ -11,9 +11,8 @@ import {
 import type { JSONContent } from "@tiptap/core";
 import type { Editor } from "@tiptap/react";
 import type { LucideIcon } from "lucide-react";
-import { Copy, Link2, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-// plane imports
+import { CopyIcon, TrashIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
@@ -189,46 +188,9 @@ export function BlockMenu(props: Props) {
     }
   }, [isOpen]);
 
-  const MENU_ITEMS: MenuItem[] = [
+  const MENU_ITEMS: BlockMenuOption[] = [
     {
-      icon: Link2,
-      key: "copy-link",
-      label: "Copy link",
-      isDisabled: disabledExtensions?.includes("copy-block-link"),
-      onClick: () => {
-        const { selection, tr } = editor.state;
-        const selectedNode = selection.content().content.firstChild;
-        let nodeId = selectedNode?.attrs?.[UniqueIDAttribute];
-        if (!nodeId) {
-          nodeId = generateUniqueID();
-          tr.setNodeMarkup(selection.from, undefined, {
-            ...selectedNode?.attrs,
-            [UniqueIDAttribute]: nodeId,
-          });
-        }
-        tr.setMeta("addToHistory", false);
-        editor.view.dispatch(tr);
-
-        let urlToCopy: string;
-        const currentPageUrl = window.location.href.split("#")[0];
-        const baseWorkItemUrl = originUrl;
-        if (baseWorkItemUrl) {
-          urlToCopy = nodeId ? `${baseWorkItemUrl}#${nodeId}` : baseWorkItemUrl;
-        } else {
-          urlToCopy = nodeId ? `${currentPageUrl}#${nodeId}` : currentPageUrl;
-        }
-
-        copyUrlToClipboard(urlToCopy).then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Link Copied!",
-            message: "Link copied to clipboard.",
-          });
-        });
-      },
-    },
-    {
-      icon: Trash2,
+      icon: TrashIcon,
       key: "delete",
       label: "Delete",
       onClick: (_e) => {
@@ -237,7 +199,7 @@ export function BlockMenu(props: Props) {
       },
     },
     {
-      icon: Copy,
+      icon: CopyIcon,
       key: "duplicate",
       label: "Duplicate",
       isDisabled:
@@ -319,7 +281,7 @@ export function BlockMenu(props: Props) {
           zIndex: 100,
         }}
         className={cn(
-          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-custom-border-200 bg-custom-background-100 p-1.5 shadow-custom-shadow-rg",
+          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle bg-surface-1 p-1.5 shadow-raised-200",
           "transition-all duration-300 transform origin-top-right",
           isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
         )}
@@ -332,7 +294,7 @@ export function BlockMenu(props: Props) {
             <button
               key={item.key}
               type="button"
-              className="flex w-full items-center gap-1.5 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-90"
+              className="flex w-full items-center gap-1.5 truncate rounded-sm px-1 py-1.5 text-11 text-secondary hover:bg-layer-1"
               onClick={(e) => {
                 item.onClick(e);
                 e.preventDefault();

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -94,12 +107,12 @@ export const WorkspaceActiveCyclesList = observer(function WorkspaceActiveCycles
       ))}
       {cyclesInView < cycles.length && cycles.length > 0 && (
         <div ref={setElementRef} className="p-5">
-          <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
+          <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded-sm md:px-1 px-4 py-1.5 bg-layer-1 animate-pulse" />
         </div>
       )}
       {pageCount + 1 < totalPages && cycles.length !== 0 && (
-        <div className="flex items-center justify-center gap-4 text-xs w-full py-5">
-          <Button variant="outline-primary" size="sm" onClick={handleLoadMore}>
+        <div className="flex items-center justify-center gap-4 text-11 w-full py-5">
+          <Button variant="secondary" onClick={handleLoadMore}>
             Load More
           </Button>
         </div>

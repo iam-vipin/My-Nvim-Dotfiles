@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
-import { ArrowLeft, Check, Settings, UploadCloud } from "lucide-react";
-import { ListLayoutIcon, MembersPropertyIcon } from "@plane/propel/icons";
+import { ArrowLeft, Settings, UploadCloud } from "lucide-react";
+import { ListLayoutIcon, CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
@@ -70,7 +83,7 @@ const integrationWorkflowData = [
   {
     title: "Confirm",
     key: "import-confirm",
-    icon: Check,
+    icon: CheckIcon,
   },
 ];
 
@@ -156,13 +169,13 @@ export function GithubImporterRoot() {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="mt-4 space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-13 font-medium text-secondary hover:text-primary">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </span>
         </Link>
 
-        <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
+        <div className="space-y-4 rounded-[10px] border border-subtle bg-surface-1 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
               <img src={GithubLogo} className="w-full h-full object-cover" alt="GitHubLogo" />
@@ -173,23 +186,23 @@ export function GithubImporterRoot() {
                   <div
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                       index <= activeIntegrationState()
-                        ? `border-custom-primary bg-custom-primary ${
+                        ? `border-accent-strong ${
                             index === activeIntegrationState()
-                              ? "border-opacity-100 bg-opacity-100"
-                              : "border-opacity-80 bg-opacity-80"
+                              ? "border-opacity-100 bg-accent-primary"
+                              : "border-opacity-80 bg-accent-primary/80"
                           }`
-                        : "border-custom-border-200"
+                        : "border-subtle"
                     }`}
                   >
                     <integration.icon
-                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
+                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-on-color" : "text-placeholder"}`}
                     />
                   </div>
                   {index < integrationWorkflowData.length - 1 && (
                     <div
                       key={index}
                       className={`border-b px-7 ${
-                        index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-custom-border-200`
+                        index <= activeIntegrationState() - 1 ? `border-accent-strong` : `border-subtle`
                       }`}
                     >
                       {" "}

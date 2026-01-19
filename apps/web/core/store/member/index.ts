@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
@@ -5,10 +18,9 @@ import type { IUserLite } from "@plane/types";
 // plane web imports
 import type { IProjectMemberStore } from "@/plane-web/store/member/project-member.store";
 import { ProjectMemberStore } from "@/plane-web/store/member/project-member.store";
+import type { IWorkspaceMemberStore } from "@/plane-web/store/member/workspace-member.store";
+import { WorkspaceMemberStore } from "@/plane-web/store/member/workspace-member.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-// local imports
-import type { IWorkspaceMemberStore } from "./workspace/workspace-member.store";
-import { WorkspaceMemberStore } from "./workspace/workspace-member.store";
 
 export interface IMemberRootStore {
   // observables

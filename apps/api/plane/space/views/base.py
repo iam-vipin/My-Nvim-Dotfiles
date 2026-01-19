@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 import zoneinfo
@@ -26,6 +37,7 @@ from plane.authentication.session import BaseSessionAuthentication
 
 
 logger = logging.getLogger("plane.api")
+
 
 class TimezoneMixin:
     """
@@ -83,8 +95,8 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                     extra={
                         "error_code": "VALIDATION_ERROR",
                         "error_message": str(e),
-                    }
-                )                
+                    },
+                )
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -96,7 +108,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                     extra={
                         "error_code": "OBJECT_DOES_NOT_EXIST",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required object does not exist."},
@@ -109,7 +121,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                     extra={
                         "error_code": "KEY_ERROR",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required key does not exist."},
@@ -188,8 +200,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                     extra={
                         "error_code": "VALIDATION_ERROR",
                         "error_message": str(e),
-                    }
-                )                
+                    },
+                )
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -201,7 +213,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                     extra={
                         "error_code": "OBJECT_DOES_NOT_EXIST",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required object does not exist."},
@@ -214,7 +226,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                     extra={
                         "error_code": "KEY_ERROR",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required key does not exist."},

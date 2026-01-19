@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -59,13 +72,13 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
       >
         <Row
           className={cn(
-            `flex flex-col gap-2 relative border border-t-transparent border-l-transparent border-r-transparent border-b-custom-border-200 py-4 hover:bg-custom-primary/5 cursor-pointer transition-all`,
-            { "border-custom-primary-100 border": selectedInboxIssueId === issue.id }
+            `flex flex-col gap-2 relative border border-t-transparent border-l-transparent border-r-transparent border-b-subtle-1 py-4 hover:bg-accent-primary/5 cursor-pointer transition-all`,
+            { "border-accent-strong border": selectedInboxIssueId === issue.id }
           )}
         >
           <div className="space-y-1">
             <div className="relative flex items-center justify-between gap-2">
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div className="flex-shrink-0 text-11 font-medium text-tertiary">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
@@ -73,7 +86,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
               </div>
             </div>
-            <h3 className="truncate w-full text-sm">{issue.name}</h3>
+            <h3 className="truncate w-full text-13">{issue.name}</h3>
           </div>
 
           <div className="flex items-center justify-between">
@@ -83,10 +96,10 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
                 isMobile={isMobile}
               >
-                <div className="text-xs text-custom-text-200">{renderFormattedDate(issue.created_at ?? "")}</div>
+                <div className="text-11 text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
               </Tooltip>
 
-              <div className="border-2 rounded-full border-custom-border-400" />
+              <div className="border-2 rounded-full border-strong-1" />
 
               {issue.priority && (
                 <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
@@ -95,7 +108,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
               )}
 
               {issue.label_ids && issue.label_ids.length > 3 ? (
-                <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs">
+                <div className="relative !h-[17.5px] flex items-center gap-1 rounded-sm border border-strong px-1 text-11">
                   <span className="h-2 w-2 rounded-full bg-orange-400" />
                   <span className="normal-case max-w-28 truncate">{`${issue.label_ids.length} labels`}</span>
                 </div>
@@ -107,7 +120,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                     return (
                       <div
                         key={labelId}
-                        className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs"
+                        className="relative !h-[17.5px] flex items-center gap-1 rounded-sm border border-strong px-1 text-11"
                       >
                         <span
                           className="h-2 w-2 rounded-full"

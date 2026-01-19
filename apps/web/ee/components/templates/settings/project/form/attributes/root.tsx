@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
@@ -50,7 +63,7 @@ export const ProjectAttributes = observer(function ProjectAttributes(props: TPro
 
   if (!currentWorkspace) return null;
   return (
-    <div className="flex flex-wrap items-center gap-2 pb-6 border-b border-custom-border-200">
+    <div className="flex flex-wrap items-center gap-2 pb-6 border-b border-subtle">
       {isProjectGroupingEnabled && (
         <Controller
           name="project.state_id"
@@ -114,7 +127,7 @@ export const ProjectAttributes = observer(function ProjectAttributes(props: TPro
                         {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
-                      <span className="text-custom-text-400">Select network</span>
+                      <span className="text-placeholder">Select network</span>
                     )}
                   </div>
                 }
@@ -131,7 +144,7 @@ export const ProjectAttributes = observer(function ProjectAttributes(props: TPro
                       <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
                         <p>{t(network.i18n_label)}</p>
-                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
+                        <p className="text-caption-sm-regular text-placeholder">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>

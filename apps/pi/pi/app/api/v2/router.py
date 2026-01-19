@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from fastapi import APIRouter
 
 from pi.app.api.v2.endpoints import actions
@@ -5,7 +16,6 @@ from pi.app.api.v2.endpoints import artifacts
 from pi.app.api.v2.endpoints import attachments
 from pi.app.api.v2.endpoints import chats
 from pi.app.api.v2.endpoints import conversations
-from pi.app.api.v2.endpoints import docs
 from pi.app.api.v2.endpoints import dupes
 from pi.app.api.v2.endpoints import feedback
 from pi.app.api.v2.endpoints import health
@@ -16,6 +26,7 @@ from pi.app.api.v2.endpoints import responses
 from pi.app.api.v2.endpoints import templates
 from pi.app.api.v2.endpoints import titles
 from pi.app.api.v2.endpoints import transcriptions
+from pi.app.api.v2.endpoints.mobile import mobile_router
 
 # Router for endpoints
 plane_v2_router = APIRouter()
@@ -35,5 +46,5 @@ plane_v2_router.include_router(artifacts.router, prefix="/artifacts", tags=["art
 plane_v2_router.include_router(dupes.router, prefix="/dupes", tags=["dupes"])
 plane_v2_router.include_router(oauth.router, prefix="/oauth", tags=["oauth"])
 plane_v2_router.include_router(pages.router, prefix="/pages", tags=["pages"])
-plane_v2_router.include_router(docs.router, prefix="/docs", tags=["docs"])
 plane_v2_router.include_router(health.router, tags=["health"])
+plane_v2_router.include_router(mobile_router, prefix="/mobile", tags=["mobile"])

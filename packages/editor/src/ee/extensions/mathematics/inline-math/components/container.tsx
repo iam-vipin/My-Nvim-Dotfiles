@@ -20,12 +20,12 @@ export function InlineMathContainer({
   isEditable = true,
 }: TInlineMathContainerProps) {
   const baseClasses =
-    "inline-flex items-center justify-center gap-1 px-2 h-6 rounded transition-colors overflow-hidden leading-none";
+    "inline-flex items-center justify-center gap-1 px-2 h-6 rounded-sm transition-colors overflow-hidden leading-none";
 
   const variantClasses = {
-    empty: `bg-custom-background-90 text-custom-text-300 ${isEditable ? "hover:bg-custom-background-80 hover:text-custom-text-200 cursor-pointer" : "cursor-default"}`,
-    error: `bg-red-500/10 text-red-500 ${isEditable ? "hover:bg-red-500/20 cursor-pointer" : "cursor-default"}`,
-    content: `${isEditable ? "hover:bg-custom-background-90 cursor-pointer" : "cursor-default"}`,
+    empty: `bg-layer-1 text-tertiary ${isEditable ? "hover:bg-layer-1-hover hover:text-secondary cursor-pointer" : "cursor-default"}`,
+    error: `bg-danger-subtle text-danger-primary ${isEditable ? "hover:bg-danger-subtle-hover cursor-pointer" : "cursor-default"}`,
+    content: `${isEditable ? "hover:bg-layer-1-hover cursor-pointer" : "cursor-default"}`,
   };
 
   return (

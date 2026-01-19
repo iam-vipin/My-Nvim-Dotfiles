@@ -1,10 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon, InitiativeIcon } from "@plane/propel/icons";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -26,21 +36,17 @@ export const AutomationDetailsSidebarFooter = observer(function AutomationDetail
   return (
     <footer className="flex-shrink-0 px-6 pb-6">
       {sidebarHelper.isPublishAlertOpen && (
-        <div
-          className="bg-custom-background-80 text-custom-text-200 rounded-lg p-3 flex items-start gap-2.5"
-          role="status"
-        >
+        <div className="bg-layer-1 text-secondary rounded-lg p-3 flex items-start gap-2.5" role="status">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <InitiativeIcon className="size-3" />
           </span>
-          <p className="text-xs">{t("automations.enable.alert")}</p>
+          <p className="text-11">{t("automations.enable.alert")}</p>
           <button
             type="button"
             onClick={() => {
-              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_ALERT_CLOSE_BUTTON });
               sidebarHelper.setIsPublishAlertOpen(false);
             }}
-            className="flex-shrink-0 size-4 grid place-items-center hover:text-custom-text-100 transition-colors"
+            className="flex-shrink-0 size-4 grid place-items-center hover:text-primary transition-colors"
             aria-label="Close alert"
           >
             <CloseIcon className="size-3" />

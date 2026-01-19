@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import Link from "next/link";
 import { getButtonStyling } from "@plane/propel/button";
@@ -30,11 +43,11 @@ export function ActiveCycleHeader(props: ActiveCycleHeaderProps) {
   const cycleAssignee = (cycle.distribution?.assignees ?? []).filter((assignee) => assignee.display_name);
 
   return (
-    <div className="flex items-center justify-between px-3 py-1.5 rounded border-[0.5px] border-custom-border-100 bg-custom-background-90">
+    <div className="flex items-center justify-between px-3 py-1.5 rounded-sm border-[0.5px] border-subtle bg-layer-1">
       <div className="flex items-center gap-2 cursor-default">
         <CycleGroupIcon cycleGroup={currentCycleStatus} className="h-4 w-4" />
         <Tooltip tooltipContent={cycle.name} position="top-start">
-          <h3 className="break-words text-lg font-medium">{truncateText(cycle.name, 70)}</h3>
+          <h3 className="break-words text-16 font-medium">{truncateText(cycle.name, 70)}</h3>
         </Tooltip>
         <Tooltip
           tooltipContent={`Start date: ${renderFormattedDate(cycle.start_date ?? "")} Due Date: ${renderFormattedDate(
@@ -42,14 +55,14 @@ export function ActiveCycleHeader(props: ActiveCycleHeaderProps) {
           )}`}
           position="top-start"
         >
-          <span className="flex gap-1 whitespace-nowrap rounded-sm text-custom-text-400 font-semibold text-sm leading-5">
+          <span className="flex gap-1 whitespace-nowrap rounded-sm text-placeholder font-semibold text-13 leading-5">
             {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}
           </span>
         </Tooltip>
       </div>
       <div className="flex items-center gap-4">
-        <div className="rounded-sm text-sm">
-          <div className="flex gap-2 divide-x spac divide-x-border-300 text-sm whitespace-nowrap text-custom-text-300 font-medium">
+        <div className="rounded-sm text-13">
+          <div className="flex gap-2 divide-x spac divide-x-border-300 text-13 whitespace-nowrap text-tertiary font-medium">
             <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
             {cycleAssignee.length > 0 && (
               <span className="pl-2">
@@ -69,7 +82,7 @@ export function ActiveCycleHeader(props: ActiveCycleHeaderProps) {
         </div>
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
-          className={`${getButtonStyling("outline-primary", "sm")} cursor-pointer`}
+          className={`${getButtonStyling("secondary", "base")} cursor-pointer`}
         >
           View cycle
         </Link>

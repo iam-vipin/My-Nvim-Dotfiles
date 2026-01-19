@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Nome utente",
+        placeholder: "Inserisci il tuo nome utente",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Continua con {ldapProviderName}",
+        sub_header: "Inserisci le tue credenziali {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Plane AI",
     initiatives: "Iniziative",
@@ -711,6 +738,11 @@ export default {
       worklogs: {
         title: "Registrazioni di lavoro",
       },
+      identity: {
+        title: "Identità",
+        heading: "Identità",
+        description: "Configura il tuo dominio e abilita Single sign-on",
+      },
       project_states: {
         title: "Stati del progetto",
       },
@@ -909,6 +941,54 @@ export default {
         heading: "Plane AI",
         description:
           "Vedi il tuo lavoro diventare più intelligente e più veloce con l'IA che è connessa in modo nativo al tuo lavoro e alla tua base di conoscenza.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "Importa membri da CSV",
+      description: "Carica un CSV con colonne: Email, Display Name, First Name, Last Name, Role (5, 15 o 20)",
+      dropzone: {
+        active: "Rilascia il file CSV qui",
+        inactive: "Trascina e rilascia o fai clic per caricare",
+        file_type: "Sono supportati solo file .csv",
+      },
+      buttons: {
+        cancel: "Annulla",
+        import: "Importa",
+        try_again: "Riprova",
+        close: "Chiudi",
+        done: "Fatto",
+      },
+      progress: {
+        uploading: "Caricamento...",
+        importing: "Importazione...",
+      },
+      summary: {
+        title: {
+          failed: "Importazione fallita",
+          complete: "Importazione completata",
+        },
+        message: {
+          seat_limit: "Impossibile importare membri a causa di restrizioni sui posti disponibili.",
+          success: "{count} membr{plural} aggiunt{plural} con successo allo spazio di lavoro.",
+          no_imports: "Nessun membro è stato importato dal file CSV.",
+        },
+        stats: {
+          successful: "Riusciti",
+          failed: "Falliti",
+        },
+        download_errors: "Scarica errori",
+      },
+      toast: {
+        invalid_file: {
+          title: "File non valido",
+          message: "Sono supportati solo file CSV.",
+        },
+        import_failed: {
+          title: "Importazione fallita",
+          message: "Qualcosa è andato storto.",
+        },
       },
     },
   },
@@ -1388,6 +1468,23 @@ export default {
     choose_entity: "Scegli entità",
     choose_project: "Scegli progetto",
     link_plane_project: "Collega progetto Plane",
+    project_issue_sync: "Sincronizzazione Issue Progetto",
+    project_issue_sync_description: "Sincronizza le issue da Gitlab al tuo progetto Plane",
+    project_issue_sync_empty_state: "La sincronizzazione issue del progetto mappata apparirà qui",
+    configure_project_issue_sync_state: "Configura Stato Sincronizzazione Issue",
+    select_issue_sync_direction: "Seleziona la direzione di sincronizzazione issue",
+    allow_bidirectional_sync:
+      "Bidirezionale - Sincronizza issue e commenti in entrambe le direzioni tra Gitlab e Plane",
+    allow_unidirectional_sync: "Unidirezionale - Sincronizza issue e commenti solo da Gitlab a Plane",
+    allow_unidirectional_sync_warning:
+      "I dati dalla Issue Gitlab sostituiranno i dati nell'Elemento di Lavoro Plane collegato (solo Gitlab → Plane)",
+    remove_project_issue_sync: "Rimuovi questa Sincronizzazione Issue Progetto",
+    remove_project_issue_sync_confirmation: "Sei sicuro di voler rimuovere questa sincronizzazione issue del progetto?",
+    ISSUE_OPEN: "Issue Aperta",
+    ISSUE_CLOSED: "Issue Chiusa",
+    save: "Salva",
+    start_sync: "Avvia Sincronizzazione",
+    choose_repository: "Scegli Repository...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3147,6 +3244,230 @@ export default {
         title: "Automazioni",
         description: "Le automazioni sono un modo per automatizzare le attività nel tuo progetto.",
         sub_description: "Recupera l'80% del tuo tempo amministrativo quando usi le Automazioni.",
+      },
+    },
+  },
+  sso: {
+    header: "Identità",
+    description:
+      "Configura il tuo dominio per accedere alle funzionalità di sicurezza inclusa l&apos;autenticazione singola.",
+    domain_management: {
+      header: "Gestione domini",
+      verified_domains: {
+        header: "Domini verificati",
+        description: "Verifica la proprietà di un dominio email per abilitare l&apos;autenticazione singola.",
+        button_text: "Aggiungi dominio",
+        list: {
+          domain_name: "Nome dominio",
+          status: "Stato",
+          status_verified: "Verificato",
+          status_failed: "Fallito",
+          status_pending: "In attesa",
+        },
+        add_domain: {
+          title: "Aggiungi dominio",
+          description: "Aggiungi il tuo dominio per configurare SSO e verificarlo.",
+          form: {
+            domain_label: "Dominio",
+            domain_placeholder: "plane.so",
+            domain_required: "Il dominio è obbligatorio",
+            domain_invalid: "Inserisci un nome di dominio valido (es. plane.so)",
+          },
+          primary_button_text: "Aggiungi dominio",
+          primary_button_loading_text: "Aggiunta in corso",
+          toast: {
+            success_title: "Successo!",
+            success_message: "Dominio aggiunto con successo. Si prega di verificarlo aggiungendo il record DNS TXT.",
+            error_message: "Impossibile aggiungere il dominio. Riprova.",
+          },
+        },
+        verify_domain: {
+          title: "Verifica il tuo dominio",
+          description: "Segui questi passaggi per verificare il tuo dominio.",
+          instructions: {
+            label: "Istruzioni",
+            step_1: "Vai alle impostazioni DNS per il tuo host di dominio.",
+            step_2: {
+              part_1: "Crea un",
+              part_2: "record TXT",
+              part_3: "e incolla il valore completo del record fornito di seguito.",
+            },
+            step_3:
+              "Questo aggiornamento di solito richiede alcuni minuti ma può richiedere fino a 72 ore per essere completato.",
+            step_4: 'Clicca su "Verifica dominio" per confermare una volta che il tuo record DNS è stato aggiornato.',
+          },
+          verification_code_label: "Valore del record TXT",
+          verification_code_description: "Aggiungi questo record alle tue impostazioni DNS",
+          domain_label: "Dominio",
+          primary_button_text: "Verifica dominio",
+          primary_button_loading_text: "Verifica in corso",
+          secondary_button_text: "Lo farò più tardi",
+          toast: {
+            success_title: "Successo!",
+            success_message: "Dominio verificato con successo.",
+            error_message: "Impossibile verificare il dominio. Riprova.",
+          },
+        },
+        delete_domain: {
+          title: "Elimina dominio",
+          description: {
+            prefix: "Sei sicuro di voler eliminare",
+            suffix: "? Questa azione non può essere annullata.",
+          },
+          primary_button_text: "Elimina",
+          primary_button_loading_text: "Eliminazione in corso",
+          secondary_button_text: "Annulla",
+          toast: {
+            success_title: "Successo!",
+            success_message: "Dominio eliminato con successo.",
+            error_message: "Impossibile eliminare il dominio. Riprova.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Accesso singolo",
+      disabled_message: "Aggiungi un dominio verificato per configurare SSO",
+      configure: {
+        create: "Configura",
+        update: "Modifica",
+      },
+      switch_alert_modal: {
+        title: "Passare al metodo SSO {newProviderShortName}?",
+        content:
+          "Stai per abilitare {newProviderLongName} ({newProviderShortName}). Questa azione disabiliterà automaticamente {activeProviderLongName} ({activeProviderShortName}). Gli utenti che tentano di accedere tramite {activeProviderShortName} non saranno più in grado di accedere alla piattaforma fino a quando non passeranno al nuovo metodo. Sei sicuro di voler procedere?",
+        primary_button_text: "Passa",
+        primary_button_text_loading: "Passaggio in corso",
+        secondary_button_text: "Annulla",
+      },
+      form_section: {
+        title: "Dettagli forniti da IdP per {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Salvataggio in corso",
+        save_changes: "Salva modifiche",
+        configure_only: "Solo configurazione",
+        configure_and_enable: "Configura e abilita",
+        default: "Salva",
+      },
+      setup_details_section: {
+        title: "{workspaceName} dettagli forniti per il tuo IdP",
+        button_text: "Ottieni dettagli di configurazione",
+      },
+      saml: {
+        header: "Abilita SAML",
+        description: "Configura il tuo provider di identità SAML per abilitare l&apos;autenticazione singola.",
+        configure: {
+          title: "Abilita SAML",
+          description:
+            "Verifica la proprietà di un dominio email per accedere alle funzionalità di sicurezza inclusa l&apos;autenticazione singola.",
+          toast: {
+            success_title: "Successo!",
+            create_success_message: "Provider SAML creato con successo.",
+            update_success_message: "Provider SAML aggiornato con successo.",
+            error_title: "Errore!",
+            error_message: "Impossibile salvare il provider SAML. Riprova.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Dettagli web",
+            entity_id: {
+              label: "Entity ID | Audience | Informazioni metadati",
+              description:
+                "Genereremo questa parte dei metadati che identifica questa app Plane come un servizio autorizzato sul tuo IdP.",
+            },
+            callback_url: {
+              label: "URL di accesso singolo",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
+            },
+            logout_url: {
+              label: "URL di logout singolo",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout singolo del tuo IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Dettagli mobile",
+            entity_id: {
+              label: "Entity ID | Audience | Informazioni metadati",
+              description:
+                "Genereremo questa parte dei metadati che identifica questa app Plane come un servizio autorizzato sul tuo IdP.",
+            },
+            callback_url: {
+              label: "URL di accesso singolo",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
+            },
+            logout_url: {
+              label: "URL di logout singolo",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout del tuo IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Dettagli di mappatura",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Abilita OIDC",
+        description: "Configura il tuo provider di identità OIDC per abilitare l&apos;autenticazione singola.",
+        configure: {
+          title: "Abilita OIDC",
+          description:
+            "Verifica la proprietà di un dominio email per accedere alle funzionalità di sicurezza inclusa l&apos;autenticazione singola.",
+          toast: {
+            success_title: "Successo!",
+            create_success_message: "Provider OIDC creato con successo.",
+            update_success_message: "Provider OIDC aggiornato con successo.",
+            error_title: "Errore!",
+            error_message: "Impossibile salvare il provider OIDC. Riprova.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Dettagli web",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "Genereremo questo per questa app Plane. Aggiungilo come origine attendibile nel campo corrispondente del tuo IdP.",
+            },
+            callback_url: {
+              label: "URL di reindirizzamento",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
+            },
+            logout_url: {
+              label: "URL di logout",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout del tuo IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Dettagli mobile",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "Genereremo questo per questa app Plane. Aggiungilo come origine attendibile nel campo corrispondente del tuo IdP.",
+            },
+            callback_url: {
+              label: "URL di reindirizzamento",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di accesso del tuo IdP.",
+            },
+            logout_url: {
+              label: "URL di logout",
+              description:
+                "Genereremo questo per te. Aggiungilo nel campo URL di reindirizzamento di logout del tuo IdP.",
+            },
+          },
+        },
       },
     },
   },

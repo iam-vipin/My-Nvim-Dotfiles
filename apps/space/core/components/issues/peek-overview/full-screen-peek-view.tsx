@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
@@ -19,7 +32,7 @@ export const FullScreenPeekView = observer(function FullScreenPeekView(props: Pr
   const { anchor, handleClose, issueDetails } = props;
 
   return (
-    <div className="grid h-full w-full grid-cols-10 divide-x divide-custom-border-200 overflow-hidden">
+    <div className="grid h-full w-full grid-cols-10 divide-x divide-subtle-1 overflow-hidden">
       <div className="col-span-7 flex h-full w-full flex-col overflow-hidden">
         <div className="w-full p-5">
           <PeekOverviewHeader handleClose={handleClose} issueDetails={issueDetails} />
@@ -31,7 +44,7 @@ export const FullScreenPeekView = observer(function FullScreenPeekView(props: Pr
               <PeekOverviewIssueDetails anchor={anchor} issueDetails={issueDetails} />
             </div>
             {/* divider */}
-            <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
+            <div className="my-5 h-[1] w-full border-t border-subtle" />
             {/* issue activity/comments */}
             <div className="w-full pb-5">
               <PeekOverviewIssueActivity anchor={anchor} issueDetails={issueDetails} />

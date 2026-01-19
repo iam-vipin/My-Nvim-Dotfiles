@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Helper functions for ask mode processing to keep the main flow clean."""
 
 import asyncio
@@ -19,9 +30,10 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
+from pi.services.chat.helpers.tool_utils import batch_llm_stream_by_words
+from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 from pi.services.chat.utils import StandardAgentResponse
 from pi.services.chat.utils import get_current_timestamp_context
-from pi.services.chat.utils import mask_uuids_in_text
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.chat.utils import resolve_workspace_slug
 from pi.services.chat.utils import standardize_flow_step_content
@@ -388,10 +400,15 @@ async def record_preset_routing_step(*, query_id: UUID4, chat_id: UUID4, step_or
 
 async def process_preset_reasoning_messages(reasoning_messages: List[str], reasoning_container: dict) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """Yield preset reasoning messages as special reasoning blocks."""
+    log.info(f"Reasoning messages: {reasoning_messages}")
+
     for reasoning_msg in reasoning_messages:
-        masked_reasoning_msg = mask_uuids_in_text(reasoning_msg)
-        stage = "ask_preset_reasoning"
-        reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=masked_reasoning_msg)
+        reasoning_chunk_dict = {
+            "chunk_type": "reasoning",
+            "header": reasoning_msg,
+            "content": "",
+            "stage": "ask_preset_reasoning",
+        }
         reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
         yield reasoning_chunk_dict
 
@@ -553,9 +570,12 @@ async def construct_enhanced_prompt_and_context(
     custom_prompt = ""
 
     # Inject enhanced conversation history if available to guide orchestration
+    address_user_by_name = True
     try:
         if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
             custom_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n"
+            custom_prompt += HISTORY_FRESHNESS_WARNING
+            address_user_by_name = False
     except Exception:
         pass
 
@@ -581,15 +601,33 @@ async def construct_enhanced_prompt_and_context(
                 "- Use this to resolve pronouns like 'me', 'my', 'assigned to me'.\n"
             )
 
-        # Date/time context
+            if address_user_by_name:
+                # Include user's first name if available from user_meta
+                if user_meta and isinstance(user_meta, dict):
+                    first_name = user_meta.get("first_name") or user_meta.get("firstName")
+                    if first_name:
+                        context_block += f"- User's first name: {first_name}\n"
+
+                    last_name = user_meta.get("last_name") or user_meta.get("lastName")
+                    if last_name:
+                        context_block += f", and last name: {last_name}\n"
+
+                    email = user_meta.get("email")
+                    if email:
+                        context_block += f"- User's email: {email}\n"
+
+                    context_block += "\n use the user's name (primarily first name) to address them in your responses.\n"
+                    context_block += "- You can reveal the user's name and email to them if requested. The name details here are primarily for greeting purposes. Use the user_id in tool calls if you need to get more user details.\n"  # noqa: E501
+            else:
+                context_block += "\nSkip greetings and get straight to the point."
+
+        # Date/time context - MOVED TO custom_prompt to avoid breaking cache
         dt_ctx = None
         try:
             if user_id:
                 dt_ctx = await get_current_timestamp_context(user_id)
         except Exception:
             dt_ctx = None
-        if dt_ctx:
-            custom_prompt += f"\n{dt_ctx}\n"
     except Exception:
         # Non-fatal; continue without context block if any error occurs
         pass
@@ -597,6 +635,10 @@ async def construct_enhanced_prompt_and_context(
     # CRITICAL: Inject clarification context if this is a follow-up to ask_for_clarification
     if user_meta and isinstance(user_meta, dict) and user_meta.get("clarification_context"):
         custom_prompt += build_clarification_context_block(user_meta.get("clarification_context"))
+
+    # Add timestamp context AFTER all other content (dynamic, goes in HumanMessage)
+    if dt_ctx:
+        custom_prompt += f"\n{dt_ctx}\n"
 
     return custom_prompt, context_block
 
@@ -732,8 +774,8 @@ Be helpful, concise, and professional."""
         reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
     yield reasoning_chunk_dict
 
-    # Stream LLM response
-    # Marker used by collector to start capturing final response
-    async for chunk in llm.astream(messages):
-        if getattr(chunk, "content", None):
-            yield str(chunk.content)
+    # Stream LLM response with batching to avoid overwhelming browser with individual token events
+
+    # Wrap the LLM stream with batching (10 words per batch)
+    async for batched_chunk in batch_llm_stream_by_words(llm.astream(messages), words_per_batch=15):
+        yield batched_chunk

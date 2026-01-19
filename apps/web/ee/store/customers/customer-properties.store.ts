@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { concat, uniq, update, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -23,6 +36,7 @@ export interface ICustomerPropertiesStore {
   loader: boolean;
   properties: IIssueProperty<EIssuePropertyType>[];
   // computed
+  sortedProperties: IIssueProperty<EIssuePropertyType>[];
   activeProperties: IIssueProperty<EIssuePropertyType>[];
   // computed function
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
@@ -59,6 +73,7 @@ export class CustomerProperties implements ICustomerPropertiesStore {
       deleteProperty: action,
       // computed
       activeProperties: computed,
+      sortedProperties: computed,
     });
     // root
     this.rootStore = _root;
@@ -71,7 +86,13 @@ export class CustomerProperties implements ICustomerPropertiesStore {
    * @description Get active properties
    */
   get activeProperties() {
-    return this.properties.filter((property) => property.is_active);
+    return this.sortedProperties.filter((property) => property.is_active);
+  }
+
+  // Get sorted properties
+  get sortedProperties() {
+    const sortedData = Array.from(this.properties).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    return sortedData;
   }
 
   // computed function

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.utils import timezone
 from django.apps import apps
@@ -106,7 +117,7 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
 def soft_delete_pages_on_project_deletion(project_id):
     from plane.db.models import Page
 
-    pages = Page.objects.filter(project_pages__project_id=project_id)
+    pages = Page.objects.filter(project_pages__project_id=project_id, project_pages__deleted_at__isnull=True)
 
     for page in pages:
         page.deleted_at = timezone.now()

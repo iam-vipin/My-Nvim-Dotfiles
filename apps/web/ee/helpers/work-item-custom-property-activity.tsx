@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { EIssuePropertyType, IIssueProperty, TBaseActivityVerbs, TIssuePropertyTypeKeys } from "@plane/types";
 import { getIssuePropertyTypeKey, joinUrlPath, renderFormattedDate } from "@plane/utils";
@@ -27,12 +40,12 @@ export const getWorkItemTextPropertyActivityMessage: TGetWorkItemAdditionalPrope
       {newValue ? (
         <>
           {action === "created" ? "set " : "changed "}
-          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{`"${newValue}"`}.</span>
+          <span className="font-medium text-primary">{propertyName}</span> to{" "}
+          <span className="font-medium text-primary">{`"${newValue}"`}.</span>
         </>
       ) : (
         <>
-          cleared the previous text in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          cleared the previous text in <span className="font-medium text-primary">{propertyName}</span>.
         </>
       )}
     </>
@@ -50,12 +63,12 @@ export const getWorkItemNumberPropertyActivityMessage: TGetWorkItemAdditionalPro
       {newValue ? (
         <>
           {action === "created" ? "set " : "changed "}
-          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{newValue}.</span>
+          <span className="font-medium text-primary">{propertyName}</span> to{" "}
+          <span className="font-medium text-primary">{newValue}.</span>
         </>
       ) : (
         <>
-          removed the previous number in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          removed the previous number in <span className="font-medium text-primary">{propertyName}</span>.
         </>
       )}
     </>
@@ -73,34 +86,25 @@ export const getWorkItemDropdownPropertyActivityMessage: TGetWorkItemAdditionalP
       {action === "created" && newValue ? (
         <>
           selected{" "}
-          <span className="font-medium text-custom-text-100">
-            {propertyDetail?.getPropertyOptionById(newValue)?.name}
-          </span>{" "}
-          as value(s) for <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          <span className="font-medium text-primary">{propertyDetail?.getPropertyOptionById(newValue)?.name}</span> as
+          value(s) for <span className="font-medium text-primary">{propertyName}</span>.
         </>
       ) : (
         action === "deleted" &&
         oldValue && (
           <>
             deselected{" "}
-            <span className="font-medium text-custom-text-100">
-              {propertyDetail?.getPropertyOptionById(oldValue)?.name}
-            </span>{" "}
-            from the previous selection in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+            <span className="font-medium text-primary">{propertyDetail?.getPropertyOptionById(oldValue)?.name}</span>{" "}
+            from the previous selection in <span className="font-medium text-primary">{propertyName}</span>.
           </>
         )
       )}
       {action === "updated" && oldValue && newValue && (
         <>
           changed{" "}
-          <span className="font-medium text-custom-text-100">
-            {propertyDetail?.getPropertyOptionById(oldValue)?.name}
-          </span>{" "}
-          to{" "}
-          <span className="font-medium text-custom-text-100">
-            {propertyDetail?.getPropertyOptionById(newValue)?.name}
-          </span>{" "}
-          in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          <span className="font-medium text-primary">{propertyDetail?.getPropertyOptionById(oldValue)?.name}</span> to{" "}
+          <span className="font-medium text-primary">{propertyDetail?.getPropertyOptionById(newValue)?.name}</span> in{" "}
+          <span className="font-medium text-primary">{propertyName}</span>.
         </>
       )}
     </>
@@ -118,8 +122,8 @@ export const getWorkItemBooleanPropertyActivityMessage: TGetWorkItemAdditionalPr
       {newValue && (
         <>
           {action === "created" ? "set " : "updated "}
-          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{newValue === "true" ? "True" : "False"}.</span>
+          <span className="font-medium text-primary">{propertyName}</span> to{" "}
+          <span className="font-medium text-primary">{newValue === "true" ? "True" : "False"}.</span>
         </>
       )}
     </>
@@ -135,20 +139,20 @@ export const getWorkItemDatePropertyActivityMessage: TGetWorkItemAdditionalPrope
     <>
       {action === "created" && (
         <>
-          set <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{renderFormattedDate(newValue)}.</span>
+          set <span className="font-medium text-primary">{propertyName}</span> to{" "}
+          <span className="font-medium text-primary">{renderFormattedDate(newValue)}.</span>
         </>
       )}
       {action === "updated" && (
         <>
-          changed <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{renderFormattedDate(newValue)}</span> from{" "}
-          <span className="font-medium text-custom-text-100">{renderFormattedDate(oldValue)}.</span>{" "}
+          changed <span className="font-medium text-primary">{propertyName}</span> to{" "}
+          <span className="font-medium text-primary">{renderFormattedDate(newValue)}</span> from{" "}
+          <span className="font-medium text-primary">{renderFormattedDate(oldValue)}.</span>{" "}
         </>
       )}
       {action === "deleted" && (
         <>
-          removed <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          removed <span className="font-medium text-primary">{propertyName}</span>.
         </>
       )}
     </>
@@ -166,7 +170,7 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
   function MemberDetail({ id }: { id: string }) {
     const userDetail = getUserDetails(id);
     const memberDetailContent = (
-      <span className="font-medium text-custom-text-100">{userDetail?.first_name + " " + userDetail?.last_name}</span>
+      <span className="font-medium text-primary">{userDetail?.first_name + " " + userDetail?.last_name}</span>
     );
 
     return workspaceDetail?.slug && id ? (
@@ -174,7 +178,7 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
         href={joinUrlPath(workspaceDetail?.slug, "profile", id)}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center font-medium text-custom-text-100 hover:underline capitalize"
+        className="inline-flex items-center font-medium text-primary hover:underline capitalize"
       >
         {memberDetailContent}
       </a>
@@ -188,21 +192,21 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
       {action === "created" && newValue ? (
         <>
           selected <MemberDetail id={newValue} /> as member(s) for{" "}
-          <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          <span className="font-medium text-primary">{propertyName}</span>.
         </>
       ) : (
         action === "deleted" &&
         oldValue && (
           <>
             deselected <MemberDetail id={oldValue} /> from the previous selection in{" "}
-            <span className="font-medium text-custom-text-100">{propertyName}</span>.
+            <span className="font-medium text-primary">{propertyName}</span>.
           </>
         )
       )}
       {action === "updated" && oldValue && newValue && (
         <>
           changed <MemberDetail id={oldValue} /> to <MemberDetail id={newValue} /> in{" "}
-          <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          <span className="font-medium text-primary">{propertyName}</span>.
         </>
       )}
     </>
@@ -219,12 +223,12 @@ export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalProper
       {newValue ? (
         <>
           {action === "created" ? "set " : "changed "}
-          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
-          <span className="font-medium text-custom-text-100">{newValue}.</span>
+          <span className="font-medium text-primary">{propertyName}</span> to{" "}
+          <span className="font-medium text-primary">{newValue}.</span>
         </>
       ) : (
         <>
-          removed the previous URL in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+          removed the previous URL in <span className="font-medium text-primary">{propertyName}</span>.
         </>
       )}
     </>

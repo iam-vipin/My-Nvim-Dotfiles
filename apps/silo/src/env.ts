@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import * as dotenvx from "@dotenvx/dotenvx";
 import { z } from "zod";
 import { logger } from "@plane/logger";
@@ -40,7 +53,7 @@ const envSchema = z.object({
     .default("")
     .transform((str) => str.replace(/\/$/, "")),
   IS_MULTI_TENANT: z.string().default("0"),
-  SILO_BASE_PATH: z.string().default(""),
+  SILO_BASE_PATH: z.string().default("/silo"),
   WEBHOOK_SECRET: z.string().default("plane-silo"),
   MQ_PREFETCH_COUNT: z.string().default("5"),
   SILO_HMAC_SECRET_KEY: z.string().default(""),

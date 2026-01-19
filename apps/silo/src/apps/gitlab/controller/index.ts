@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Request, Response } from "express";
 import { Controller, Delete, Get, Post } from "@plane/decorators";
 import { E_SILO_ERROR_CODES } from "@plane/etl/core";
@@ -9,9 +22,15 @@ import type {
   GitlabWebhookEvent,
   IGitlabEntity,
 } from "@plane/etl/gitlab";
-import { createGitLabAuth, createGitLabService, EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
+import {
+  createGitLabAuth,
+  createGitLabService,
+  EConnectionType,
+  EGitlabEntityConnectionType,
+  GitlabEntityType,
+} from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
-import type { ExIssueLabel } from "@plane/sdk";
+import type { ExIssue, ExIssueComment, ExIssueLabel, PlaneWebhookPayloadBase } from "@plane/sdk";
 import type { TWorkspaceEntityConnection } from "@plane/types";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
@@ -25,6 +44,8 @@ import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { verifyGitlabToken } from "../helpers";
 import { getGitlabClientService, gitlabAuthService } from "../services";
+import { GITLAB_ISSUE_OBJECT_KINDS } from "../helpers/constants";
+import { GITLAB_LABEL } from "@/helpers/constants";
 
 const apiClient = getAPIClient();
 
@@ -346,40 +367,61 @@ export default class GitlabController {
     try {
       // Get the event types and delivery id
       const eventType = req.headers["x-plane-event"];
-
-      const id = req.body.data.id;
       const event = req.body.event;
-      const workspace = req.body.data.workspace;
-      const project = req.body.data.project;
-      const issue = req.body.data.issue;
 
-      if (event == "issue") {
-        const labels = req.body.data.labels as ExIssueLabel[] | undefined;
-        // If labels doesn't include gitlab label, then we don't need to process this event
-        if (!labels || !labels.find((label) => label.name === E_INTEGRATION_KEYS.GITLAB)) {
-          return res.status(202).send({
-            message: "Webhook received",
-          });
-        }
-      }
+      if (event == "issue" || event == "issue_comment") {
+        const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
 
-      // Forward the event to the task manager to process
-      await integrationTaskManager.registerStoreTask(
-        {
-          route: "plane-gitlab-webhook",
-          jobId: eventType as string,
-          type: eventType as string,
-        },
-        {
-          id,
+        const id = payload.data.id;
+        const workspace = payload.data.workspace;
+        const project = payload.data.project;
+        // @ts-expect-error - fix this
+        const issue = payload.data.issue;
+
+        const log = {
+          eventType,
           event,
+          id,
           workspace,
           project,
-          issue,
-        },
-        Number(env.DEDUP_INTERVAL)
-      );
+        };
 
+        logger.info("Plane webhook received", log);
+
+        if (event == "issue") {
+          const labels = req.body.data.labels as ExIssueLabel[] | undefined;
+          // If labels doesn't include gitlab label, then we don't need to process this event
+          if (!labels || !labels.find((label) => label.name === GITLAB_LABEL)) {
+            return res.status(202).send({
+              message: "Webhook received",
+            });
+          }
+          // Reject the activity, that is not useful
+          const skipFields = ["priority", "state", "start_date", "target_date", "cycles", "parent", "modules", "link"];
+          if (payload.activity.field && skipFields.includes(payload.activity.field)) {
+            return res.status(202).send({
+              message: "Webhook received",
+            });
+          }
+        }
+
+        // Forward the event to the task manager to process
+        await integrationTaskManager.registerStoreTask(
+          {
+            route: "plane-gitlab-webhook",
+            jobId: eventType as string,
+            type: eventType as string,
+          },
+          {
+            id,
+            event,
+            workspace,
+            project,
+            issue,
+          },
+          Number(env.DEDUP_INTERVAL)
+        );
+      }
       return res.status(202).send({
         message: "Webhook received",
       });
@@ -414,15 +456,21 @@ export default class GitlabController {
       }
 
       // Add webhook to gitlab
-      const { url, token } = await this.getWorkspaceWebhookData(workspaceId);
+      const { url, token } = getWorkspaceWebhookData(workspaceId);
       const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
 
       // based on enum either add to project or group
       let webhookId;
       if (entity_type === GitlabEntityType.PROJECT) {
-        const { id: hookId } = await gitlabClientService.addWebhookToProject(entity_id, url, token);
+        const events: Map<string, boolean> = new Map([
+          ["push_events", true],
+          ["merge_requests_events", true],
+          ["pipeline_events", true],
+          ["tag_push_events", true],
+        ]);
+        const { id: hookId } = await gitlabClientService.addWebhookToProject(entity_id, url, token, events);
         webhookId = hookId;
-      } else {
+      } else if (entity_type === GitlabEntityType.GROUP) {
         const { id: hookId } = await gitlabClientService.addWebhookToGroup(entity_id, url, token);
         webhookId = hookId;
       }
@@ -442,6 +490,92 @@ export default class GitlabController {
       });
 
       res.status(200).json(connection);
+    } catch (error) {
+      console.error(error);
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/entity-connections/v2/:workspaceId/:workspaceConnectionId")
+  @useValidateUserAuthentication()
+  async addEntityConnectionV2(req: Request, res: Response) {
+    try {
+      const { workspaceId, workspaceConnectionId } = req.params;
+
+      const {
+        type: connectionType,
+        entity_id,
+        entity_type,
+        entity_slug,
+        entity_data,
+        config,
+        project_id,
+      } = req.body as TWorkspaceEntityConnection;
+
+      if (
+        !workspaceId ||
+        !workspaceConnectionId ||
+        !entity_id ||
+        !entity_type ||
+        !entity_slug ||
+        !entity_data ||
+        !connectionType ||
+        !project_id
+      ) {
+        return res.status(400).send({
+          message:
+            "Bad Request, expected workspaceId, workspaceConnectionId, connectionType, entityId, entityType, entitySlug, and entityData to be present.",
+        });
+      }
+
+      // Check for existing connections
+      const connections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnectionId,
+        entity_id: entity_id,
+        project_id: project_id,
+        type: connectionType,
+        entity_type: entity_type,
+      });
+
+      if (connections.length > 0) {
+        return res.status(201).json({ error: "Entity connection already exists" });
+      }
+
+      // Add webhook to gitlab
+      const isIssueSync = connectionType === EGitlabEntityConnectionType.PROJECT_ISSUE_SYNC;
+      const { url, token } = getWorkspaceWebhookData(workspaceId, isIssueSync);
+      const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
+
+      // based on enum either add to project or group
+      let webhookId;
+      if (connectionType === EGitlabEntityConnectionType.PROJECT_ISSUE_SYNC) {
+        const events: Map<string, boolean> = new Map([
+          ["note_events", true],
+          ["confidential_note_events", true],
+          ["issues_events", true],
+          ["confidential_issues_events", true],
+        ]);
+        const { id: hookId } = await gitlabClientService.addWebhookToProject(entity_id, url, token, events);
+        webhookId = hookId;
+      }
+
+      const entityConnection = await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
+        workspace_id: workspaceId,
+        workspace_connection_id: workspaceConnectionId,
+        type: connectionType,
+        entity_id: entity_id,
+        entity_type: entity_type,
+        entity_slug: entity_slug,
+        entity_data: {
+          id: entity_id,
+          type: connectionType,
+          webhookId,
+        },
+        project_id: project_id,
+        config,
+      });
+
+      res.status(200).json(entityConnection);
     } catch (error) {
       return responseHandler(res, 500, error);
     }
@@ -508,11 +642,14 @@ export default class GitlabController {
       );
       const entityData = entityConnection.entity_data as GitlabEntityData;
 
-      if (entityConnection.type === EConnectionType.ENTITY) {
-        if (entityData.type === GitlabEntityType.PROJECT) {
-          await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId?.toString());
-        } else if (entityData.type === GitlabEntityType.GROUP) {
+      if (
+        entityConnection.type === EConnectionType.ENTITY ||
+        entityConnection.type === EGitlabEntityConnectionType.PROJECT_ISSUE_SYNC
+      ) {
+        if (entityData.type === GitlabEntityType.GROUP) {
           await gitlabClientService.removeWebhookFromGroup(entityData.id, entityData.webhookId?.toString());
+        } else {
+          await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId?.toString());
         }
       }
 
@@ -525,6 +662,54 @@ export default class GitlabController {
 
   @Post("/webhook/:workspaceId")
   async webhook(req: Request, res: Response) {
+    try {
+      const workspaceId = req.params.workspaceId;
+      const webhookSecret = req.headers["x-gitlab-token"]?.toString();
+
+      if (!gitlabAuthService.verifyGitlabWebhookSecret(workspaceId, webhookSecret ?? "")) {
+        return res.status(400).send({
+          message: "Webhook received",
+        });
+      } else {
+        res.status(202).send({
+          message: "Webhook received",
+        });
+
+        const webhookEvent = req.body as GitlabWebhookEvent;
+
+        // Generate a unique job ID
+        const jobId = `gitlab-${webhookEvent.object_kind}-${Date.now()}`;
+        const objectKind = webhookEvent.object_kind;
+
+        // this is needed for old webhook attachments which also had issue_events scope
+        if (GITLAB_ISSUE_OBJECT_KINDS.includes(objectKind)) {
+          logger.info(
+            "Issue type webhook received on old webhook endpoint, ignoring and will be handled by the issue-sync webhook",
+            {
+              jobId,
+              objectKind,
+            }
+          );
+          return;
+        }
+
+        // Forward the event to the task manager to process
+        await integrationTaskManager.registerTask(
+          {
+            route: "gitlab-webhook",
+            jobId: jobId,
+            type: webhookEvent.object_kind,
+          },
+          webhookEvent
+        );
+      }
+    } catch (error) {
+      responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/webhook/issue-sync/:workspaceId")
+  async issueSyncWebhook(req: Request, res: Response) {
     try {
       const workspaceId = req.params.workspaceId;
       const webhookSecret = req.headers["x-gitlab-token"]?.toString();
@@ -593,7 +778,7 @@ export default class GitlabController {
       const entities = [];
       const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
 
-      const projects = await gitlabClientService.getProjects();
+      const projects = await gitlabClientService.getAllProjects();
       if (projects.length) {
         entities.push(
           ...projects.map((project: IGitlabEntity) => ({
@@ -610,24 +795,25 @@ export default class GitlabController {
       return responseHandler(res, 500, error);
     }
   }
-
-  getWorkspaceWebhookData(workspaceId: string) {
-    try {
-      if (!workspaceId) {
-        throw new Error("workspaceId is not defined");
-      }
-      const workspaceWebhookSecret = gitlabAuthService.getWorkspaceWebhookSecret(workspaceId);
-      const webhookURL = `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/webhook/${workspaceId}`;
-      const gitlabWebhook: GitlabWebhook = {
-        url: webhookURL,
-        token: workspaceWebhookSecret,
-      };
-      return gitlabWebhook;
-    } catch (error) {
-      logger.error("error getWorkspaceWebhook", error);
-      throw error;
-    }
-  }
 }
 
+function getWorkspaceWebhookData(workspaceId: string, isIssueSync: boolean = false) {
+  try {
+    if (!workspaceId) {
+      throw new Error("workspaceId is not defined");
+    }
+    const workspaceWebhookSecret = gitlabAuthService.getWorkspaceWebhookSecret(workspaceId);
+    const webhookURL = isIssueSync
+      ? `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/webhook/issue-sync/${workspaceId}`
+      : `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/webhook/${workspaceId}`;
+    const gitlabWebhook: GitlabWebhook = {
+      url: webhookURL,
+      token: workspaceWebhookSecret,
+    };
+    return gitlabWebhook;
+  } catch (error) {
+    logger.error("error getWorkspaceWebhook", error);
+    throw error;
+  }
+}
 export { GitlabController };

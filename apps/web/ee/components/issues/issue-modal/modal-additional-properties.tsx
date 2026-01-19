@@ -1,4 +1,16 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports
@@ -24,7 +36,7 @@ export const WorkItemModalAdditionalProperties = observer(function WorkItemModal
   // form context
   const { watch } = useFormContext<TIssue>();
   // modal context
-  const { getActiveAdditionalPropertiesLength } = useIssueModal();
+  const { workItemTemplateId, getActiveAdditionalPropertiesLength } = useIssueModal();
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
     projectId: projectId,
     workspaceSlug: workspaceSlug,
@@ -48,6 +60,7 @@ export const WorkItemModalAdditionalProperties = observer(function WorkItemModal
           issueTypeId={watch("type_id")}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
+          shouldLoadDefaultValues={!workItemTemplateId} // Skip loading default values when template is applied (preloaded in provider)
         />
       )}
       <TemplateSubWorkitemsList />

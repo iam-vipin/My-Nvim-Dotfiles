@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDownIcon } from "lucide-react";
@@ -44,11 +57,7 @@ export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
   };
 
   return (
-    <div
-      className={cn(
-        "@container flex flex-col rounded-xl bg-custom-background-90 transition-all duration-500 ease-in-out"
-      )}
-    >
+    <div className={cn("@container flex flex-col rounded-xl bg-layer-1 transition-all duration-500 ease-in-out mb-4")}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
@@ -62,10 +71,10 @@ export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
             <div className="flex gap-2 items-center shimmer">Taking required actions</div>{" "}
           </div>
         ) : (
-          <div className="font-medium">{getSummary()}</div>
+          <div className="text-body-sm-medium text-primary">{getSummary()}</div>
         )}
         <ChevronDownIcon
-          className={`size-3 text-custom-text-300 transition-transform duration-500 ease-in-out ${isOpen ? "transform rotate-180" : ""}`}
+          className={`size-3 text-tertiary transition-transform duration-500 ease-in-out ${isOpen ? "transform rotate-180" : ""}`}
         />
       </button>
       {summary && (
@@ -79,11 +88,11 @@ export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
         >
           <div className="m-4 mt-0">
             {groupedArtifacts.successful.length > 0 && (
-              <div className="flex flex-col relative items-start gap-2 border-l-2 border-custom-border-200 pl-4 pb-4">
-                <div className="p-1 bg-custom-background-90 absolute top-0 -left-3 rounded-full flex items-center justify-center">
-                  <FilledCheck width={16} height={16} className="text-green-500" />
+              <div className="flex flex-col relative items-start gap-2 border-l-2 border-subtle-1 pl-4 pb-4">
+                <div className="p-1 bg-layer-1 absolute top-0 -left-3 rounded-full flex items-center justify-center">
+                  <FilledCheck width={16} height={16} className="text-success-primary" />
                 </div>
-                <div className="text-base">
+                <div className="text-body-sm-regular text-primary">
                   {summary.completed} successful {summary.completed > 1 ? "actions" : "action"}{" "}
                 </div>
                 <div className="grid @lg:grid-cols-3 @md:grid-cols-2 @sm:grid-cols-1 gap-2 flex-wrap w-full">
@@ -92,34 +101,37 @@ export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
                       key={artifact.artifact_id}
                       url={artifact.entity_url}
                       type={artifact.artifact_type}
-                      name={artifact.entity_name || "Unknown"}
+                      name={artifact.entity_name || artifact.artifact_type}
                       data={artifact}
+                      action={artifact.action}
                     />
                   ))}
                 </div>
               </div>
             )}
             {groupedArtifacts.failed.length > 0 && (
-              <div className="flex flex-col relative items-start gap-2 border-l-2 border-custom-border-200 pl-4">
-                <div className="p-1 bg-custom-background-90 absolute top-0 -left-3 rounded-full flex items-center justify-center">
+              <div className="flex flex-col relative items-start gap-2 border-l-2 border-subtle-1 pl-4">
+                <div className="p-1 bg-layer-1 absolute top-0 -left-3 rounded-full flex items-center justify-center">
                   <FilledCross width={16} height={16} />
                 </div>
-                <div className="text-base">
+                <div className="text-body-sm-regular text-primary">
                   {summary.failed} failed {summary.failed > 1 ? "actions" : "action"}
                 </div>
-                <div className="flex flex-col gap-3 text-xs text-custom-text-300">
+                <div className="flex flex-col gap-3 text-11 text-tertiary">
                   {groupedArtifacts.failed.map((artifact) => (
                     <div className="flex flex-col gap-1" key={artifact.artifact_id}>
                       {(artifact.entity_name || artifact.action) && (
                         <div className="flex items-center gap-2">
-                          <div>{getIcon(artifact.artifact_type, "", "text", "text-sm")}</div>
-                          <div className="text-sm font-medium line-clamp-2 text-start text-custom-text-300">
-                            {artifact.entity_name}
+                          <div>{getIcon(artifact.artifact_type, "", "text", "text-13")}</div>
+                          <div className="text-13 font-medium line-clamp-2 text-start text-tertiary">
+                            {artifact.entity_name || artifact.artifact_type}
                           </div>
                         </div>
                       )}
                       {artifact.error && (
-                        <div className="rounded-md px-2 text-sm text-red-600 whitespace-pre-line">{artifact.error}</div>
+                        <div className="rounded-md text-body-sm-regular text-danger-primary whitespace-pre-line">
+                          {artifact.error}
+                        </div>
                       )}
                     </div>
                   ))}

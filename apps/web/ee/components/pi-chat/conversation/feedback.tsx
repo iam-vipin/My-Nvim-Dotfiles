@@ -1,19 +1,34 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Copy, FilePlus2, ThumbsDown, ThumbsUp, Repeat2 } from "lucide-react";
+import { FilePlus2, ThumbsDown, ThumbsUp, Repeat2 } from "lucide-react";
+import { CopyIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { cn, Tooltip } from "@plane/ui";
+import { cn } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { copyTextToClipboard } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { EFeedback } from "@/plane-web/types";
 import { FeedbackModal } from "../input/feedback-modal";
+import { EAiFeedback } from "@plane/types";
 
 export type TProps = {
   answer: string;
   activeChatId: string;
   id: string;
   workspaceId: string | undefined;
-  feedback: EFeedback | undefined;
+  feedback: EAiFeedback | undefined;
   queryId: string | undefined;
   isLatest: boolean;
   handleConvertToPage?: () => void;
@@ -28,15 +43,16 @@ export const Feedback = observer(function Feedback(props: TProps) {
   const { isWorkspaceAuthorized, sendFeedback, regenerateAnswer } = usePiChat();
   // handlers
   const handleCopyLink = () => {
-    copyTextToClipboard(answer).then(() => {
+    void copyTextToClipboard(answer).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Response copied!",
         message: "Response to clipboard.",
       });
+      return;
     });
   };
-  const handleFeedback = async (feedback: EFeedback, feedbackMessage?: string) => {
+  const handleFeedback = async (feedback: EAiFeedback, feedbackMessage?: string) => {
     try {
       await sendFeedback(activeChatId, parseInt(id), feedback, workspaceId, feedbackMessage);
       setToast({
@@ -44,7 +60,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
         title: "Feedback sent!",
         message: "Feedback sent!",
       });
-    } catch (e) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Feedback failed!",
@@ -65,40 +81,47 @@ export const Feedback = observer(function Feedback(props: TProps) {
     <div className="flex gap-4">
       {/* Copy */}
       <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
-        <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-custom-text-300" />
+        <CopyIcon
+          height={16}
+          width={16}
+          onClick={handleCopyLink}
+          className="my-auto cursor-pointer text-icon-secondary"
+        />
       </Tooltip>
 
       {/* Good response */}
-      {(!feedback || feedback === EFeedback.POSITIVE) && (
+      {(!feedback || feedback === EAiFeedback.POSITIVE) && (
         <Tooltip tooltipContent="Good response" position="bottom" className="mb-4">
           <button
             className={cn({
-              "cursor-default": feedback === EFeedback.POSITIVE,
+              "cursor-default": feedback === EAiFeedback.POSITIVE,
             })}
-            onClick={() => !feedback && handleFeedback(EFeedback.POSITIVE)}
+            onClick={() => {
+              if (!feedback) void handleFeedback(EAiFeedback.POSITIVE);
+            }}
           >
             <ThumbsUp
               size={16}
-              fill={feedback === EFeedback.POSITIVE ? "currentColor" : "none"}
-              className="my-auto text-custom-text-300 transition-colors	"
+              fill={feedback === EAiFeedback.POSITIVE ? "currentColor" : "none"}
+              className="my-auto text-icon-secondary transition-colors	"
             />
           </button>
         </Tooltip>
       )}
 
       {/* Bad response */}
-      {(!feedback || feedback === EFeedback.NEGATIVE) && (
+      {(!feedback || feedback === EAiFeedback.NEGATIVE) && (
         <Tooltip tooltipContent="Bad response" position="bottom" className="mb-4">
           <button
             className={cn({
-              "!cursor-default": feedback === EFeedback.NEGATIVE,
+              "!cursor-default": feedback === EAiFeedback.NEGATIVE,
             })}
             onClick={() => !feedback && setIsFeedbackModalOpen(true)}
           >
             <ThumbsDown
               size={16}
-              fill={feedback === EFeedback.NEGATIVE ? "currentColor" : "none"}
-              className="my-auto text-custom-text-300 transition-colors	"
+              fill={feedback === EAiFeedback.NEGATIVE ? "currentColor" : "none"}
+              className="my-auto text-icon-secondary transition-colors	"
             />
           </button>
         </Tooltip>
@@ -106,20 +129,20 @@ export const Feedback = observer(function Feedback(props: TProps) {
       <FeedbackModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}
-        onSubmit={(feedbackMessage) => handleFeedback(EFeedback.NEGATIVE, feedbackMessage)}
+        onSubmit={(feedbackMessage) => void handleFeedback(EAiFeedback.NEGATIVE, feedbackMessage)}
       />
 
       {/* Rewrite */}
       {isLatest && (
         <Tooltip tooltipContent="Rewrite" position="bottom" className="mb-4">
-          <button onClick={handleRewrite}>
-            <Repeat2 strokeWidth={1.5} size={20} className="my-auto text-custom-text-300 transition-colors" />
+          <button onClick={() => void handleRewrite()}>
+            <Repeat2 strokeWidth={1.5} size={20} className="my-auto text-icon-secondary transition-colors" />
           </button>
         </Tooltip>
       )}
 
       {/* Convert to page */}
-      <div className="flex text-sm font-medium gap-1 cursor-pointer">
+      <div className="flex text-13 font-medium gap-1 cursor-pointer">
         <Tooltip
           tooltipContent={isWorkspaceAuthorized ? "Convert to page" : "Authorize workspace to convert to page"}
           position="bottom"
@@ -128,8 +151,8 @@ export const Feedback = observer(function Feedback(props: TProps) {
           <button onClick={() => isWorkspaceAuthorized && handleConvertToPage?.()}>
             <FilePlus2
               size={16}
-              className={cn("my-auto text-custom-text-300 transition-colors", {
-                "cursor-not-allowed text-custom-text-400": !isWorkspaceAuthorized,
+              className={cn("my-auto text-icon-secondary transition-colors", {
+                "cursor-not-allowed text-placeholder": !isWorkspaceAuthorized,
               })}
             />
           </button>

@@ -1,68 +1,31 @@
-import { useEffect, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { ExternalLink } from "lucide-react";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
 // helpers
 import { renderFormattedDate } from "@plane/utils";
 // plane web imports
-import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
-import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
+import { PlanCard } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { PaymentService } from "@/plane-web/services/payment.service";
 
-const paymentService = new PaymentService();
-
-type TEnterprisePlanCardProps = {
-  upgradeLoader: EProductSubscriptionEnum | null;
-  handleUpgrade: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
-};
-
-export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TEnterprisePlanCardProps) {
-  const { upgradeLoader, handleUpgrade } = props;
-  // params
-  const { workspaceSlug } = useParams();
-  // states
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export const EnterprisePlanCard = observer(function EnterprisePlanCard() {
   // hooks
-  const {
-    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
-    isSubscriptionManagementEnabled,
-    getIsInTrialPeriod,
-  } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
-  const isSelfManaged = subscriptionDetail?.is_self_managed;
   const startDate = subscriptionDetail?.current_period_start_date;
   const endDate = subscriptionDetail?.current_period_end_date;
   const isSubscriptionCancelled = subscriptionDetail?.is_cancelled;
-  const isInTrialPeriod = getIsInTrialPeriod(true);
-
-  useEffect(() => {
-    setIsLoading(upgradeLoader === EProductSubscriptionEnum.ENTERPRISE);
-  }, [upgradeLoader]);
-
-  const handleSubscriptionPageRedirection = () => {
-    setIsLoading(true);
-    paymentService
-      .getWorkspaceSubscriptionPageLink(workspaceSlug.toString())
-      .then((response) => {
-        if (response.url) {
-          window.open(response.url, "_blank");
-        }
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to redirect to subscription page. Please try again.",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
 
   if (!subscriptionDetail) return null;
   return (
@@ -70,50 +33,36 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard(props: TE
       planVariant={EProductSubscriptionEnum.ENTERPRISE}
       planDescription={
         <>
-          <div>Unlimited members, Unlimited Guests, Custom Workflows, Advanced Analytics, and more</div>
+          <div className="text-body-xs-medium text-secondary">
+            Unlimited members, Unlimited Guests, Custom Workflows, Advanced Analytics, and more
+          </div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isSubscriptionCancelled ? (
-                <div className="text-red-500 ">Your billing cycle ends on {renderFormattedDate(endDate)}.</div>
+                <div className="text-body-xs-medium text-danger-secondary">
+                  Your billing cycle ends on {renderFormattedDate(endDate)}.
+                </div>
               ) : (
-                <div>
+                <div className="text-body-xs-medium text-secondary">
                   {startDate
                     ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                     : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
                   • Billable seats: {subscriptionDetail?.purchased_seats}
                 </div>
               )}
+              <div className="text-body-xs-medium text-secondary">
+                To manage your subscription or seats, please contact your instance admin.
+              </div>
             </>
           ) : (
-            <div>
+            <div className="text-body-xs-medium text-secondary">
               To manage your subscription, please{" "}
-              <a className="text-custom-primary-300 hover:underline" href="mailto:support@plane.so">
+              <a className="text-accent-primary hover:underline" href="mailto:support@plane.so">
                 contact support.
               </a>
             </div>
           )}
-          <SelfManagedLicenseActions />
         </>
-      }
-      button={
-        isSubscriptionManagementEnabled && (
-          <div className="flex items-center gap-2.5">
-            <Button
-              variant="link-neutral"
-              className="cursor-pointer px-3 py-1.5 text-center text-xs font-medium outline-none"
-              onClick={
-                !isSelfManaged && isInTrialPeriod
-                  ? () => handleUpgrade(EProductSubscriptionEnum.ENTERPRISE)
-                  : handleSubscriptionPageRedirection
-              }
-              disabled={isLoading}
-            >
-              {isLoading ? "Redirecting to Stripe" : "Manage subscription"}
-              <ExternalLink className="h-3 w-3" strokeWidth={2} />
-            </Button>
-            <BillingActionsButton canPerformWorkspaceAdminActions />
-          </div>
-        )
       }
     />
   );

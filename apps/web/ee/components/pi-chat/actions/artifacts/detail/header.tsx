@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
@@ -11,7 +24,7 @@ import type { TArtifact } from "@/plane-web/types";
 import { getIcon } from "../../preview-block";
 
 const buttonClass =
-  "w-auto p-2 rounded-lg text-custom-text-200 grid place-items-center border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-200 hover:shadow-sm hover:text-custom-text-300";
+  "w-auto p-2 rounded-lg text-secondary grid place-items-center border-[0.5px] border-strong bg-layer-2 hover:shadow-sm hover:text-tertiary";
 export const Header = observer(function Header(props: { artifact: TArtifact }) {
   const { artifact } = props;
   const { toggleSidebar } = useAppTheme();
@@ -22,14 +35,14 @@ export const Header = observer(function Header(props: { artifact: TArtifact }) {
   } = usePiChat();
   const artifacts = getArtifactsByChatId(activeChatId);
   return (
-    <Row className={cn("h-header flex gap-2 w-full items-center rounded-tl-lg rounded-tr-lg flex-shrink-0")}>
+    <Row className={cn("py-2 flex gap-2 w-full items-center rounded-tl-lg rounded-tr-lg shrink-0")}>
       <HeaderUI className="bg-transparent">
         <HeaderUI.LeftItem>
           <CustomSelect
             value={artifact}
             label={
-              <Tooltip position="bottom" className="ml-4 max-w-[200px] font-medium text-custom-text-300">
-                <div className="flex gap-2 items-center text-sm font-medium overflow-hidden">
+              <Tooltip position="bottom" className="ml-4 max-w-[200px] font-medium text-tertiary">
+                <div className="flex gap-2 items-center text-body-sm-medium overflow-hidden">
                   <div className="flex-shrink-0"> {getIcon(artifact.artifact_type)}</div>
                   <div className="truncate">{artifact.parameters?.name || "Unknown"}</div>
                 </div>
@@ -46,16 +59,16 @@ export const Header = observer(function Header(props: { artifact: TArtifact }) {
             )}
             optionsClassName="max-h-[70vh] overflow-y-auto"
           >
-            <div className="flex flex-col divide-y divide-custom-border-100 space-y-2 max-w-[192px] max-h-full">
+            <div className="flex flex-col divide-y divide-subtle space-y-2 max-w-[192px] max-h-full">
               <div>
                 {artifacts &&
                   uniqBy(artifacts, "artifact_id").map((artifactData) => (
                     <CustomSelect.Option
                       key={artifactData?.artifact_id}
                       value={artifactData}
-                      className="text-sm text-custom-text-200 font-medium"
+                      className="text-13 text-secondary font-medium"
                     >
-                      <div className="flex gap-2 items-center text-sm font-medium overflow-hidden">
+                      <div className="flex gap-2 items-center text-13 font-medium overflow-hidden">
                         <div className="flex-shrink-0"> {getIcon(artifactData?.artifact_type || "")}</div>
                         <div className="truncate">{artifactData?.parameters?.name || "Unknown"}</div>
                       </div>

@@ -1,13 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Eye, Pencil, Plus } from "lucide-react";
+import { Eye } from "lucide-react";
+import { EditIcon, PlusIcon, DashboardIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DashboardIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { EWidgetChartModels, EWidgetChartTypes, ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Button, getButtonStyling, Header } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
@@ -81,7 +95,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
               <BreadcrumbLink
                 href={`/${workspaceSlug}/dashboards`}
                 label={t("workspace_dashboards")}
-                icon={<DashboardIcon className="size-4 text-custom-text-300" />}
+                icon={<DashboardIcon className="size-4 text-tertiary" />}
               />
             }
           />
@@ -96,7 +110,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
                 title={dashboardDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <DashboardIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                    <DashboardIcon className="size-4 flex-shrink-0 text-tertiary" />
                   </Breadcrumbs.Icon>
                 }
                 isLast
@@ -110,10 +124,10 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
         <Header.RightItem className="items-center">
           {!isViewModeEnabled && canCurrentUserCreateWidget && (
             <DashboardWidgetChartTypesDropdown
-              buttonClassName={getButtonStyling("neutral-primary", "sm")}
+              buttonClassName={getButtonStyling("secondary", "base")}
               buttonContent={
                 <>
-                  {!isAddingWidget && <Plus className="flex-shrink-0 size-3.5" />}
+                  {!isAddingWidget && <PlusIcon className="flex-shrink-0 size-3.5" />}
                   {t(isAddingWidget ? "common.adding" : "dashboards.widget.common.add_widget")}
                 </>
               }
@@ -123,9 +137,9 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
           )}
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             onClick={() => toggleViewingMode?.()}
-            prependIcon={isViewModeEnabled ? <Pencil className="size-3.5" /> : <Eye className="size-3.5" />}
+            prependIcon={isViewModeEnabled ? <EditIcon className="size-3.5" /> : <Eye className="size-3.5" />}
             disabled={!canCurrentUserEditDashboard}
           >
             {t(isViewModeEnabled ? "common.edit" : "common.view")}
@@ -134,7 +148,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
             dashboardId={dashboardId.toString()}
             parentRef={parentRef}
             showEdit={false}
-            customClassName="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70 size-[26px]"
+            customClassName="p-1 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70 size-[26px]"
           />
         </Header.RightItem>
       )}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import asyncio
 
@@ -19,8 +30,11 @@ llm_id_map = {
     "gpt-5-standard": "c5d6e7f8-a9b0-1234-5678-90abcdef1234",
     "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
     "gpt-5.1": "e8f9a0b1-c2d3-4567-8901-abcdef123456",
+    "gpt-5.2": "f9a0b1c2-d3e4-5678-9012-bcdef2345678",
     "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
     "claude-sonnet-4-0": "60cf738d-3f6b-4fe4-b088-8c902528657f",
+    "gpt-5-mini": "5e5d7fa1-0a75-4318-87c6-7595c7b7133d",
+    "gpt-5-nano": "0394e887-8140-4505-b4f9-5e9c59b40396",
     "claude-sonnet-4-5": "6a14a494-dc87-42cc-9d7c-1f82faa3d018",
 }
 
@@ -83,6 +97,14 @@ LLMS_DATA = [
         "max_tokens": 200000,
     },
     {
+        "id": llm_id_map["gpt-5.2"],
+        "name": "GPT-5.2",
+        "description": "OpenAI's GPT-5.2 model - enhanced reasoning with extended context.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5.2",
+        "max_tokens": 400000,
+    },
+    {
         "id": llm_id_map["claude-sonnet-4"],
         "name": "Claude Sonnet 4",
         "description": "Anthropic's Claude Sonnet 4 model.",
@@ -97,6 +119,22 @@ LLMS_DATA = [
         "provider": "Anthropic",
         "model_key": "claude-sonnet-4-0",
         "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["gpt-5-mini"],
+        "name": "GPT-5 Mini",
+        "description": "A faster, cheaper version of GPT-5 for well-defined tasks.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5-mini",
+        "max_tokens": 400000,
+    },
+    {
+        "id": llm_id_map["gpt-5-nano"],
+        "name": "GPT-5 Nano",
+        "description": "The fastest, cheapest version of GPT-5",
+        "provider": "OpenAI",
+        "model_key": "gpt-5-nano",
+        "max_tokens": 400000,
     },
     {
         "id": llm_id_map["claude-sonnet-4-5"],

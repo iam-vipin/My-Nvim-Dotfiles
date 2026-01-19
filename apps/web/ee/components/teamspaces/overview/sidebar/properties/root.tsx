@@ -1,9 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { Loader as Spinner, Users } from "lucide-react";
-import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { CycleIcon, WorkItemsIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -11,7 +23,6 @@ import { cn } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import type { Props } from "@/components/icons/types";
 // hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -63,45 +74,10 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
 
   const handleTeamspaceLeadChange = useCallback(
     (val: string | null) => {
-      captureClick({
-        elementName: TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_LEAD_DROPDOWN,
-      });
       if (val && val !== teamspace.lead_id) {
-        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val })
-          .then(() => {
-            captureSuccess({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_UPDATED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          })
-          .catch(() => {
-            captureError({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_UPDATED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          });
+        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val });
       } else {
-        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined })
-          .then(() => {
-            captureSuccess({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_REMOVED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          })
-          .catch(() => {
-            captureError({
-              eventName: TEAMSPACE_TRACKER_EVENTS.LEAD_REMOVED,
-              payload: {
-                id: teamspaceId,
-              },
-            });
-          });
+        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined });
       }
     },
     [teamspaceId, teamspace.lead_id, updateTeamspace, workspaceSlug]
@@ -122,7 +98,7 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
             buttonVariant="transparent-with-text"
             buttonContainerClassName={cn(
               "flex-shrink-0 w-full text-left",
-              teamspace.lead_id ? "text-custom-text-200" : "text-custom-text-400"
+              teamspace.lead_id ? "text-secondary" : "text-placeholder"
             )}
             placeholder="Select team lead"
             showUserDetails
@@ -182,10 +158,10 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 px-6 divide-y divide-custom-border-100">
-      <div className="py-2 flex flex-col">
+    <div className="relative flex flex-col gap-y-2 divide-y divide-custom-border-100">
+      <div className=" flex flex-col gap-2">
         <div className="flex gap-2 justify-between">
-          <span className="text-sm font-semibold">Properties</span>
+          <span className="text-body-xs-semibold">Properties</span>
           {teamspaceEntitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
         </div>
         <TeamsPropertiesList>
@@ -201,9 +177,9 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
       </div>
       {/* Linked entities */}
       <div className="pt-3">
-        <div className="flex gap-4 text-sm">
+        <div className="flex gap-4 text-body-xs-regular">
           <span className="font-semibold">Linked entities</span>
-          {linkedEntitiesCount === 0 ? <span className="text-custom-text-300">{linkedEntitiesCount}</span> : null}
+          {linkedEntitiesCount === 0 ? <span className="text-tertiary">{linkedEntitiesCount}</span> : null}
         </div>
         {teamspaceEntitiesLoader === "init-loader" ? (
           <TeamspaceEntitiesLoader count={4} />
@@ -223,9 +199,9 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
       </div>
       {/* Teamspace's entities */}
       <div className="pt-3">
-        <div className="flex gap-4 text-sm">
+        <div className="flex gap-4 text-body-xs-regular">
           <span className="font-semibold">Entities in the teamspace</span>
-          {teamspaceEntitiesCount === 0 ? <span className="text-custom-text-300">{teamspaceEntitiesCount}</span> : null}
+          {teamspaceEntitiesCount === 0 ? <span className="text-tertiary">{teamspaceEntitiesCount}</span> : null}
         </div>
         {teamspaceEntitiesLoader === "init-loader" ? (
           <TeamspaceEntitiesLoader count={2} />

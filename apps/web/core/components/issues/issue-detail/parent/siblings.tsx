@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import type { TIssue } from "@plane/types";
@@ -35,7 +48,7 @@ export const IssueParentSiblings = observer(function IssueParentSiblings(props: 
   return (
     <div className="my-1">
       {isLoading ? (
-        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
+        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-11 text-secondary">
           Loading
         </div>
       ) : subIssueIds && subIssueIds.length > 0 ? (
@@ -46,7 +59,7 @@ export const IssueParentSiblings = observer(function IssueParentSiblings(props: 
             )
         )
       ) : (
-        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
+        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-11 text-secondary">
           No sibling work items
         </div>
       )}

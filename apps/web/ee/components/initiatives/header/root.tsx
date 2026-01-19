@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -134,7 +147,7 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
                     {initiativesDetails?.logo_props?.in_use ? (
                       <Logo logo={initiativesDetails?.logo_props} size={16} type="lucide" />
                     ) : (
-                      <InitiativeIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                      <InitiativeIcon className="size-4 flex-shrink-0 text-tertiary" />
                     )}
                   </Breadcrumbs.Icon>
                 }
@@ -162,7 +175,6 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
               workspaceSlug={workspaceSlug.toString()}
               parentRef={parentRef}
               initiative={initiativesDetails}
-              customClassName="p-2 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
             />
           </div>
         )}

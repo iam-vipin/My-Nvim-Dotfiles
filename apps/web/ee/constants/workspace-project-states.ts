@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane web types
 import type { TIssuePriorities } from "@plane/constants";
 import type {
@@ -55,7 +68,7 @@ export const WORKSPACE_PROJECT_STATE_PRIORITY: {
 } = {
   urgent: {
     title: "Urgent",
-    colorClassName: "text-red-600",
+    colorClassName: "text-danger-primary",
     background: "#FAD7D5",
   },
   high: {
@@ -70,12 +83,12 @@ export const WORKSPACE_PROJECT_STATE_PRIORITY: {
   },
   low: {
     title: "Low",
-    colorClassName: "text-custom-primary-100",
+    colorClassName: "text-accent-primary",
     background: "#D9E3FF",
   },
   none: {
     title: "None",
-    colorClassName: "text-custom-text-200",
+    colorClassName: "text-secondary",
     background: "#BBC5EB",
   },
 };

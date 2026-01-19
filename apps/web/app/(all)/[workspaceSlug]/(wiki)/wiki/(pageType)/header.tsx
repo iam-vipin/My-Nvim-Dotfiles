@@ -1,9 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { WORKSPACE_PAGE_TRACKER_EVENTS, EPageAccess } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -16,8 +29,6 @@ import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { PageFiltersSelection } from "@/components/pages/list/filters";
 import { PageOrderByDropdown } from "@/components/pages/list/order-by";
 import { PageSearchInput } from "@/components/pages/list/search-input";
-// event tracker
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
@@ -39,7 +50,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { createPage, filters, updateFilters, clearAllFilters } = usePageStore(EPageStoreType.WORKSPACE);
+  const { createPage, filters, updateFilters } = usePageStore(EPageStoreType.WORKSPACE);
   // derived values
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
   // handle page create
@@ -52,24 +63,10 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
         const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
-        captureError({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-            error: err?.data?.error,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -79,10 +76,10 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
       .finally(() => setIsCreatingPage(false));
   };
 
+  // Clear search query on tab change, but preserve filters
   useEffect(() => {
-    clearAllFilters();
     updateFilters("searchQuery", "");
-  }, [clearAllFilters, pathname, updateFilters]);
+  }, [pathname, updateFilters]);
 
   return (
     <Header>
@@ -94,7 +91,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/pages`}
                   label="Pages"
-                  icon={<PageIcon className="size-4 text-custom-text-300" />}
+                  icon={<PageIcon className="size-4 text-tertiary" />}
                 />
               }
             />
@@ -133,13 +130,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
             memberIds={workspaceMemberIds ?? undefined}
           />
         </FiltersDropdown>
-        <Button
-          variant="primary"
-          size="sm"
-          className="flex-shrink-0"
-          onClick={handleCreatePage}
-          loading={isCreatingPage}
-        >
+        <Button variant="primary" className="flex-shrink-0" onClick={handleCreatePage} loading={isCreatingPage}>
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>
       </Header.RightItem>

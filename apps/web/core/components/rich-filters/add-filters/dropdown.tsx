@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -29,10 +42,10 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
   const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
     value: config.id,
     content: (
-      <div className="flex items-center justify-between gap-2 text-custom-text-200 transition-all duration-200 ease-in-out">
+      <div className="flex items-center justify-between gap-2 text-secondary transition-all duration-200 ease-in-out">
         <div className="flex items-center gap-2">
           {config.icon && (
-            <config.icon className="size-4 text-custom-text-300 transition-transform duration-200 ease-in-out" />
+            <config.icon className="size-4 text-tertiary transition-transform duration-200 ease-in-out" />
           )}
           <span>{config.label}</span>
         </div>
@@ -48,7 +61,7 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
     ? [
         {
           value: "all_filters_applied",
-          content: <div className="text-custom-text-400 italic">All filters applied</div>,
+          content: <div className="text-placeholder italic">All filters applied</div>,
           query: "all filters applied",
           disabled: true,
         },

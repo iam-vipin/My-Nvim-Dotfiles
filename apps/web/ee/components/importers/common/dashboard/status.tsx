@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { TJobStatus } from "@plane/etl/core";
@@ -19,10 +32,10 @@ const STATUS_CLASSNAMES: { [key in TJobStatus]: string } = {
   [E_JOB_STATUS.PROGRESSING]: "text-yellow-500 border border-yellow-500 bg-yellow-500/10",
   [E_JOB_STATUS.TRANSFORMING]: "text-orange-500 border border-orange-500 bg-orange-500/10",
   [E_JOB_STATUS.TRANSFORMED]: "text-orange-500 border border-orange-500 bg-orange-500/10",
-  [E_JOB_STATUS.PUSHING]: "text-green-500 border border-green-500 bg-green-500/10",
-  [E_JOB_STATUS.FINISHED]: "text-green-500 border border-green-500 bg-green-500/10",
-  [E_JOB_STATUS.ERROR]: "text-red-500 border border-red-500 bg-red-500/10",
-  [E_JOB_STATUS.CANCELLED]: "text-red-500 border border-red-500 bg-red-500/10",
+  [E_JOB_STATUS.PUSHING]: "text-success-primary border border-success-strong bg-success-subtle",
+  [E_JOB_STATUS.FINISHED]: "text-success-primary border border-success-strong bg-success-subtle",
+  [E_JOB_STATUS.ERROR]: "text-danger-primary border border-danger-strong bg-danger-subtle",
+  [E_JOB_STATUS.CANCELLED]: "text-danger-primary border border-danger-strong bg-danger-subtle",
 };
 
 export const SyncJobStatus = observer(function SyncJobStatus(props: TSyncJobStatusProps) {
@@ -32,7 +45,7 @@ export const SyncJobStatus = observer(function SyncJobStatus(props: TSyncJobStat
   return (
     <div
       className={cn(
-        "inline-flex text-xs px-2 py-[1px] rounded-full overflow-hidden whitespace-nowrap font-medium",
+        "inline-flex text-11 px-2 py-[1px] rounded-full overflow-hidden whitespace-nowrap font-medium",
         STATUS_CLASSNAMES[status]
       )}
     >

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -14,7 +27,7 @@ import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // helpers
-import { authErrorHandler } from "@/helpers/authentication.helper";
+import { authErrorHandler, passwordErrors } from "@/helpers/authentication.helper";
 import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
@@ -54,6 +67,7 @@ function SecurityPage() {
     control,
     handleSubmit,
     watch,
+    setError,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormValues>({ defaultValues });
@@ -98,6 +112,13 @@ function SecurityPage() {
         message:
           typeof errorInfo?.message === "string" ? errorInfo.message : t("auth.common.password.toast.error.message"),
       });
+
+      if (code && passwordErrors.includes(code as EAuthenticationErrorCodes)) {
+        setError("new_password", {
+          type: "manual",
+          message: errorInfo?.message?.toString() || t("auth.common.password.toast.error.message"),
+        });
+      }
     }
   };
 
@@ -125,7 +146,7 @@ function SecurityPage() {
           <div className="flex flex-col gap-10 w-full max-w-96">
             {oldPasswordRequired && (
               <div className="space-y-1">
-                <h4 className="text-sm">{t("auth.common.password.current_password.label")}</h4>
+                <h4 className="text-13">{t("auth.common.password.current_password.label")}</h4>
                 <div className="relative flex items-center rounded-md">
                   <Controller
                     control={control}
@@ -142,26 +163,29 @@ function SecurityPage() {
                         placeholder={t("old_password")}
                         className="w-full"
                         hasError={Boolean(errors.old_password)}
+                        autoComplete="current-password"
                       />
                     )}
                   />
                   {showPassword?.oldPassword ? (
                     <EyeOff
-                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                       onClick={() => handleShowPassword("oldPassword")}
                     />
                   ) : (
                     <Eye
-                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                       onClick={() => handleShowPassword("oldPassword")}
                     />
                   )}
                 </div>
-                {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
+                {errors.old_password && (
+                  <span className="text-11 text-danger-primary">{errors.old_password.message}</span>
+                )}
               </div>
             )}
             <div className="space-y-1">
-              <h4 className="text-sm">{t("auth.common.password.new_password.label")}</h4>
+              <h4 className="text-13">{t("auth.common.password.new_password.label")}</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
                   control={control}
@@ -180,28 +204,34 @@ function SecurityPage() {
                       hasError={Boolean(errors.new_password)}
                       onFocus={() => setIsPasswordInputFocused(true)}
                       onBlur={() => setIsPasswordInputFocused(false)}
+                      autoComplete="new-password"
                     />
                   )}
                 />
                 {showPassword?.password ? (
                   <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                     onClick={() => handleShowPassword("password")}
                   />
                 ) : (
                   <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                     onClick={() => handleShowPassword("password")}
                   />
                 )}
               </div>
               {passwordSupport}
+              {errors.new_password && (
+                <span className="text-11 text-danger-primary">{errors.new_password.message}</span>
+              )}
               {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
-                <span className="text-xs text-red-500">{t("new_password_must_be_different_from_old_password")}</span>
+                <span className="text-11 text-danger-primary">
+                  {t("new_password_must_be_different_from_old_password")}
+                </span>
               )}
             </div>
             <div className="space-y-1">
-              <h4 className="text-sm">{t("auth.common.password.confirm_password.label")}</h4>
+              <h4 className="text-13">{t("auth.common.password.confirm_password.label")}</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
                   control={control}
@@ -220,23 +250,24 @@ function SecurityPage() {
                       hasError={Boolean(errors.confirm_password)}
                       onFocus={() => setIsRetryPasswordInputFocused(true)}
                       onBlur={() => setIsRetryPasswordInputFocused(false)}
+                      autoComplete="new-password"
                     />
                   )}
                 />
                 {showPassword?.confirmPassword ? (
                   <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                     onClick={() => handleShowPassword("confirmPassword")}
                   />
                 ) : (
                   <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                     onClick={() => handleShowPassword("confirmPassword")}
                   />
                 )}
               </div>
               {!!confirmPassword && password !== confirmPassword && renderPasswordMatchError && (
-                <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+                <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
               )}
             </div>
           </div>

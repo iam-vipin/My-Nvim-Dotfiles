@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
@@ -124,11 +137,11 @@ export const MapPriorityRoot = observer(function MapPriorityRoot() {
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
+        <div className="relative grid grid-cols-2 items-center bg-layer-1 p-3 text-13 font-medium">
           <div>ClickUp Priorities</div>
           <div>Plane Priorities</div>
         </div>
-        <div className="divide-y divide-custom-border-200">
+        <div className="divide-y divide-subtle-1">
           {clickUpPriorityForSpace &&
             priorities &&
             clickUpPriorityForSpace.map(
@@ -151,7 +164,7 @@ export const MapPriorityRoot = observer(function MapPriorityRoot() {
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
+          <Button variant="primary" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
             {t("common.next")}
           </Button>
         </StepperNavigation>

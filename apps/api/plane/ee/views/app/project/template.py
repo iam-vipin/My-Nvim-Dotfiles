@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 import uuid
@@ -21,7 +32,7 @@ from plane.db.models.asset import FileAsset
 from plane.ee.bgtasks.template_task import create_project_from_template
 from plane.db.models import (
     Workspace,
-    IssueUserProperty,
+    ProjectUserProperty,
     ProjectMember,
     State,
     UserFavorite,
@@ -75,9 +86,7 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
 
         return self.filter_queryset(
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
-            )
+            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
             .annotate(
                 is_favorite=Exists(
                     UserFavorite.objects.filter(
@@ -157,18 +166,13 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
 
         return False
 
-    def handle_project_asset(
-        self, project_template: ProjectTemplate, project: Project, request: Request
-    ):
+    def handle_project_asset(self, project_template: ProjectTemplate, project: Project, request: Request):
         # Using external API to fetch a random image
         if project.cover_image:
             return project
 
         # If the project cover asset is not set or is different from the template cover asset
-        if (
-            project.cover_image_asset
-            and project.cover_image_asset != project_template.cover_asset
-        ):
+        if project.cover_image_asset and project.cover_image_asset != project_template.cover_asset:
             return project
 
         # If the template cover asset is a url we need not do anything
@@ -216,9 +220,7 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
 
             workspace = Workspace.objects.get(slug=slug)
 
-            serializer = ProjectSerializer(
-                data={**request.data}, context={"workspace_id": workspace.id}
-            )
+            serializer = ProjectSerializer(data={**request.data}, context={"workspace_id": workspace.id})
             if serializer.is_valid():
                 serializer.save()
 
@@ -228,23 +230,14 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                     member=request.user,
                     role=ROLE.ADMIN.value,
                 )
-                # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"], user=request.user
-                )
 
-                if serializer.data["project_lead"] is not None and str(
-                    serializer.data["project_lead"]
-                ) != str(request.user.id):
+                if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
+                    request.user.id
+                ):
                     ProjectMember.objects.create(
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
                         role=20,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.data["id"],
-                        user_id=serializer.data["project_lead"],
                     )
 
                 # Get all states from templates
@@ -277,9 +270,7 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                     default_value=False,
                 ):
                     # validating the is_project_grouping_enabled workspace feature is enabled
-                    if check_workspace_feature(
-                        slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
-                    ):
+                    if check_workspace_feature(slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED):
                         state_id = request.data.get("state_id", None)
                         priority = request.data.get("priority", "none")
                         start_date = request.data.get("start_date", None)
@@ -287,18 +278,14 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
 
                         if state_id is None:
                             state_id = (
-                                ProjectState.objects.filter(
-                                    workspace=workspace, default=True
-                                )
+                                ProjectState.objects.filter(workspace=workspace, default=True)
                                 .values_list("id", flat=True)
                                 .first()
                             )
 
                         # Get the project state
                         if project_template.project_state:
-                            pstate = ProjectState.objects.filter(
-                                id=project_template.project_state["id"]
-                            ).first()
+                            pstate = ProjectState.objects.filter(id=project_template.project_state["id"]).first()
 
                         else:
                             pstate = None
@@ -321,16 +308,10 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                 project.issue_views_view = project_template.issue_views_view
                 project.page_view = project_template.page_view
                 project.intake_view = project_template.intake_view
-                project.is_time_tracking_enabled = (
-                    project_template.is_time_tracking_enabled
-                )
-                project.guest_view_all_features = (
-                    project_template.guest_view_all_features
-                )
+                project.is_time_tracking_enabled = project_template.is_time_tracking_enabled
+                project.guest_view_all_features = project_template.guest_view_all_features
 
-                project = self.handle_project_asset(
-                    project=project, project_template=project_template, request=request
-                )
+                project = self.handle_project_asset(project=project, project_template=project_template, request=request)
                 project.save()
 
                 # Create the intake settings if intake view is enabled
@@ -347,21 +328,9 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                             intake_id=intake.id,
                             project_id=project.id,
                             workspace_id=workspace.id,
-                            is_in_app_enabled=(
-                                project_template.intake_settings.get(
-                                    "is_in_app_enabled", False
-                                )
-                            ),
-                            is_email_enabled=(
-                                project_template.intake_settings.get(
-                                    "is_email_enabled", False
-                                )
-                            ),
-                            is_form_enabled=(
-                                project_template.intake_settings.get(
-                                    "is_form_enabled", False
-                                )
-                            ),
+                            is_in_app_enabled=(project_template.intake_settings.get("is_in_app_enabled", False)),
+                            is_email_enabled=(project_template.intake_settings.get("is_email_enabled", False)),
+                            is_form_enabled=(project_template.intake_settings.get("is_form_enabled", False)),
                         )
                         if intake_setting.is_form_enabled:
                             DeployBoard.objects.create(
@@ -425,13 +394,9 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_409_CONFLICT,
                 )
-            return Response(
-                {"error": "payload is invalid"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "payload is invalid"}, status=status.HTTP_400_BAD_REQUEST)
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},

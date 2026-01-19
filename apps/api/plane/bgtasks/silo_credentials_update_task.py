@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from time import timezone
 from plane.bgtasks.silo_data_migration_task import DatabaseMigration
@@ -19,9 +30,7 @@ class CredentialsUpdate(DatabaseMigration):
     def update_credentials(self):
         print("Updating credentials...")
 
-        total_count = self._execute_with_error_handling(
-            "SELECT COUNT(*) as count FROM silo.credentials"
-        )[0]["count"]
+        total_count = self._execute_with_error_handling("SELECT COUNT(*) as count FROM silo.credentials")[0]["count"]
 
         total_batches = (total_count + self.batch_size - 1) // self.batch_size
         records_processed = 0

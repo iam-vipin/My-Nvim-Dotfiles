@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard Library imports
 import logging
 from typing import Dict, Any
@@ -64,9 +75,7 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
         with transaction.atomic():
             # Mark event as processing
             # TODO: Do we need this logic? (might be required when we have multiple consumers running)
-            updated_count = ProcessedAutomationEvent.mark_processing(
-                event_id=event_id, task_id=self.request.id
-            )
+            updated_count = ProcessedAutomationEvent.mark_processing(event_id=event_id, task_id=self.request.id)
 
             if updated_count == 0:
                 # Event might have been processed by another task or doesn't exist
@@ -85,9 +94,7 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
 
             # Check if any automations were triggered
             if automation_results and len(automation_results) > 0:
-                logger.info(
-                    f"Event {event_id} triggered {len(automation_results)} automations"
-                )
+                logger.info(f"Event {event_id} triggered {len(automation_results)} automations")
 
                 # Mark as completed
                 ProcessedAutomationEvent.mark_completed(event_id)
@@ -96,9 +103,7 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
                     "success": True,
                     "event_id": event_id,
                     "automations_triggered": len(automation_results),
-                    "automation_runs": [
-                        result.get("automation_run_id") for result in automation_results
-                    ],
+                    "automation_runs": [result.get("automation_run_id") for result in automation_results],
                 }
             else:
                 # No automations triggered, but still successful
@@ -119,9 +124,7 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
 
         # Mark as failed
         try:
-            ProcessedAutomationEvent.mark_failed(
-                event_id=event_id, error_message=str(e), increment_retry=True
-            )
+            ProcessedAutomationEvent.mark_failed(event_id=event_id, error_message=str(e), increment_retry=True)
         except Exception as mark_error:
             logger.error(f"Failed to mark event {event_id} as failed: {mark_error}")
 

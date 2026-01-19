@@ -3,12 +3,11 @@ package prime_api
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/makeplane/plane-ee/monitor/lib/feat_flag"
 )
 
@@ -16,15 +15,6 @@ type AirgappedPrimeApi struct {
 	PRIVATE_KEY  string
 	API_HOSTNAME string
 	APP_VERSION  string
-}
-
-const (
-	WORKSPACE_ACTIVATION_FILE_PATH = "%s/api/payments/workspaces/%s/license-file/"
-)
-
-type WorkspaceActivationFileResponse struct {
-	URL         string            `json:"url"`
-	MembersList []WorkspaceMember `json:"members_list"`
 }
 
 type EncryptedFlagsWithVersion struct {
@@ -144,51 +134,6 @@ func (a *AirgappedPrimeApi) SyncWorkspace(payload WorkspaceSyncPayload) (*Worksp
 	response.MemberList = payload.MembersList
 
 	return response, nil
-}
-
-// Helper method to get workspace activation file URL and members list
-func (a *AirgappedPrimeApi) getWorkspaceActivationFile(workspaceSlug string) (*WorkspaceActivationFileResponse, error) {
-	// Construct the API endpoint URL
-	url := fmt.Sprintf(WORKSPACE_ACTIVATION_FILE_PATH, a.API_HOSTNAME, workspaceSlug)
-
-	// Make HTTP GET request
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("failed to make request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("server returned status %d", resp.StatusCode)
-	}
-
-	// Parse the response
-	var fileResponse WorkspaceActivationFileResponse
-	if err := json.NewDecoder(resp.Body).Decode(&fileResponse); err != nil {
-		return nil, fmt.Errorf("failed to decode response: %w", err)
-	}
-
-	return &fileResponse, nil
-}
-
-// Helper method to download file content from URL
-func (a *AirgappedPrimeApi) downloadFileFromURL(url string) ([]byte, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("failed to download file: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to download file, status: %d", resp.StatusCode)
-	}
-
-	content, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file content: %w", err)
-	}
-
-	return content, nil
 }
 
 // Helper method to process (decrypt and parse) the activation file
@@ -337,4 +282,103 @@ func GetMockWorkspaceActivationResponse(payload LicenseDeactivatePayload, isFree
 	}
 
 	return response
+}
+
+func (a *AirgappedPrimeApi) EnterpriseLicenseActivate(payload EnterpriseLicenseActivatePayload) (*EnterpriseLicenseActivateResponse, *APIError) {
+	return nil, &APIError{
+		Error:   "Enterprise license activation not supported, running in airgapped mode",
+		Success: false,
+	}
+}
+
+func (a *AirgappedPrimeApi) SyncEnterpriseLicense(payload EnterpriseLicenseSyncPayload) (*EnterpriseLicenseActivateResponse, *APIError) {
+	// Step 1: Read the file from the local system
+	fileContent, err := os.ReadFile(fmt.Sprintf("%s_%s.json", "enterprise", a.AppVersion()))
+	if err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Failed to read activation file: %v", err),
+			Success: false,
+		}
+	}
+	// Step 2: Process the file content (decrypt and parse)
+	licensePayload, err := a.processActivationFile(fileContent)
+	if err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Failed to process activation file: %v", err),
+			Success: false,
+		}
+	}
+
+	// Step 4: Set workspace information and return response
+	licensePayload.WorkspaceID = uuid.New().String()
+	licensePayload.WorkspaceSlug = uuid.New().String()
+
+	licensePayload.WorkspaceActivationResponse.MemberList = payload.MembersList
+
+	// Initialize the response
+	response := &EnterpriseLicenseActivateResponse{
+		WorkspaceID:            licensePayload.WorkspaceID,
+		WorkspaceSlug:          licensePayload.WorkspaceSlug,
+		LicenceKey:             licensePayload.WorkspaceActivationResponse.LicenceKey,
+		Product:                licensePayload.WorkspaceActivationResponse.Product,
+		ProductType:            licensePayload.WorkspaceActivationResponse.ProductType,
+		MemberList:             licensePayload.WorkspaceActivationResponse.MemberList,
+		OwnerEmail:             licensePayload.WorkspaceActivationResponse.OwnerEmail,
+		Seats:                  licensePayload.WorkspaceActivationResponse.Seats,
+		UserCount:              licensePayload.WorkspaceActivationResponse.UserCount,
+		InstanceID:             licensePayload.WorkspaceActivationResponse.InstanceID,
+		Interval:               licensePayload.WorkspaceActivationResponse.Interval,
+		FreeSeats:              licensePayload.WorkspaceActivationResponse.FreeSeats,
+		IsOfflinePayment:       licensePayload.WorkspaceActivationResponse.IsOfflinePayment,
+		IsCancelled:            licensePayload.WorkspaceActivationResponse.IsCancelled,
+		Subscription:           licensePayload.WorkspaceActivationResponse.Subscription,
+		CurrentPeriodEndDate:   licensePayload.WorkspaceActivationResponse.CurrentPeriodEndDate,
+		TrialEndDate:           licensePayload.WorkspaceActivationResponse.TrialEndDate,
+		HasAddedPayment:        licensePayload.WorkspaceActivationResponse.HasAddedPayment,
+		HasActivatedFree:       licensePayload.WorkspaceActivationResponse.HasActivatedFree,
+		LastPaymentFailedDate:  licensePayload.WorkspaceActivationResponse.LastPaymentFailedDate,
+		LastPaymentFailedCount: licensePayload.WorkspaceActivationResponse.LastPaymentFailedCount,
+		Flags:                  &licensePayload.Flags,
+	}
+
+	return response, nil
+}
+
+func (a *AirgappedPrimeApi) GetEnterpriseFeatureFlags(licenseKey string) (*FlagDataResponse, *APIError) {
+	return nil, &APIError{
+		Error:   "Enterprise feature flags not supported, running in airgapped mode",
+		Success: false,
+	}
+}
+
+func (a *AirgappedPrimeApi) DeactivateEnterpriseLicense(payload LicenseDeactivatePayload) *APIError {
+
+	// Delete the license file from the local system
+	err := os.Remove(fmt.Sprintf("%s_%s.json", "enterprise", a.AppVersion()))
+	if err != nil {
+		fmt.Println("Failed to delete license file", err)
+	}
+
+	return nil
+}
+
+func (a *AirgappedPrimeApi) UpdateEnterpriseLicenseSeats(payload UpdateEnterpriseLicenseSeatsPayload) (*SeatUpdateResponse, *APIError) {
+	return nil, &APIError{
+		Error:   "Update enterprise license seats not supported, running in airgapped mode",
+		Success: false,
+	}
+}
+
+func (a *AirgappedPrimeApi) GetEnterpriseLicensePortal() (*EnterpriseLicensePortalResponse, *APIError) {
+	return nil, &APIError{
+		Error:   "Enterprise license portal url generation not supported, running in airgapped mode",
+		Success: false,
+	}
+}
+
+func (a *AirgappedPrimeApi) GetEnterpriseLicenseProrationPreview(payload UpdateEnterpriseLicenseSeatsPayload) (*ProrationPreviewResponse, *APIError) {
+	return nil, &APIError{
+		Error:   "Proration preview not supported, running in airgapped mode",
+		Success: false,
+	}
 }

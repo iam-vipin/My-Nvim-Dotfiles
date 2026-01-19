@@ -1,10 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import {
-  E_FEATURE_FLAGS,
-  PLANE_INTELLIGENCE_TRACKER_ELEMENTS,
-  PLANE_INTELLIGENCE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PiIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -16,7 +25,6 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
@@ -47,9 +55,6 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
 
   const toggleTeamsFeature = async () => {
     try {
-      captureClick({
-        elementName: PLANE_INTELLIGENCE_TRACKER_ELEMENTS.SETTINGS_PAGE_TOGGLE_BUTTON,
-      });
       const payload = {
         [EWorkspaceFeatures.IS_PI_ENABLED]: !isPlaneIntelligenceFeatureEnabled,
       };
@@ -66,22 +71,8 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
         },
       });
       await toggleTeamsFeaturePromise;
-      captureSuccess({
-        eventName: PLANE_INTELLIGENCE_TRACKER_EVENTS.TOGGLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-          type: isPlaneIntelligenceFeatureEnabled ? "disable" : "enable",
-        },
-      });
     } catch (error) {
       console.error(error);
-      captureError({
-        eventName: PLANE_INTELLIGENCE_TRACKER_EVENTS.TOGGLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-          type: isPlaneIntelligenceFeatureEnabled ? "disable" : "enable",
-        },
-      });
     }
   };
 
@@ -94,16 +85,14 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
         fallback={<PiChatUpgrade />}
         workspaceSlug={workspaceSlug}
       >
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100 w-full">
+        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle w-full">
           <div className="flex items-center gap-4">
-            <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-              <PiIcon className="size-5 text-custom-text-300" />
+            <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
+              <PiIcon className="size-5 text-tertiary" />
             </div>
             <div className="leading-tight">
               <h5 className="font-medium">Turn on AI for this workspace.</h5>
-              <span className="text-custom-sidebar-text-400 text-sm">
-                Your new smart teammate, ready when you are.{" "}
-              </span>
+              <span className="text-placeholder text-13">Your new smart teammate, ready when you are. </span>
             </div>
           </div>
 

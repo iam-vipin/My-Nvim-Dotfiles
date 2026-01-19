@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -32,14 +45,14 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
   return (
     <div
       className={cn("group/list-block", {
-        "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
+        "rounded-l border border-r-0 border-accent-strong": getIsIssuePeeked(block.data.id),
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
     >
       <div
         className={cn("group w-full flex items-center gap-2 pl-2 pr-4", {
-          "bg-custom-background-90": isBlockHoveredOn,
+          "bg-layer-transparent-hover": isBlockHoveredOn,
         })}
         style={{
           height: `${BLOCK_HEIGHT}px`,
@@ -50,7 +63,7 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
             <IssueGanttSidebarBlock issueId={block.data.id} />
           </div>
           {duration && (
-            <div className="flex-shrink-0 text-sm text-custom-text-200">
+            <div className="flex-shrink-0 text-13 text-secondary">
               <span>
                 {duration} day{duration > 1 ? "s" : ""}
               </span>

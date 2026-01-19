@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -59,11 +72,11 @@ export const DateValueSelect = observer(function DateValueSelect(props: TDateVal
         className="w-full flex-grow group"
         buttonContainerClassName="w-full text-left"
         buttonClassName={cn(
-          "text-sm bg-custom-background-100",
+          "text-sm bg-surface-1",
           {
-            "text-custom-text-400": !data?.length,
-            "border-custom-border-200": variant === "create",
-            "border-red-500": Boolean(error),
+            "text-placeholder": !data?.length,
+            "border-subtle-1": variant === "create",
+            "border-danger-strong": Boolean(error),
           },
           buttonClassName
         )}
@@ -72,7 +85,7 @@ export const DateValueSelect = observer(function DateValueSelect(props: TDateVal
         formatToken={displayFormat}
       />
       {Boolean(error) && (
-        <span className="text-xs font-medium text-red-500">
+        <span className="text-caption-md-medium text-danger-primary">
           {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
         </span>
       )}

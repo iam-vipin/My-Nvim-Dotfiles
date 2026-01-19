@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -27,7 +40,7 @@ export const EpicsUpgrade = observer(function EpicsUpgrade() {
         <a
           href="https://prime.plane.so/"
           target="_blank"
-          className={getButtonStyling("primary", "md")}
+          className={getButtonStyling("primary", "base")}
           rel="noreferrer"
         >
           Upgrade to higher subscription
@@ -43,7 +56,7 @@ export const EpicsUpgrade = observer(function EpicsUpgrade() {
   };
 
   return (
-    <div className="divide-y divide-custom-border-100">
+    <div className="divide-y divide-subtle">
       <SettingsHeading
         title={t("project_settings.epics.heading")}
         description={t("project_settings.epics.description")}
@@ -51,14 +64,13 @@ export const EpicsUpgrade = observer(function EpicsUpgrade() {
       <div
         className={cn("flex flex-col md:flex-row rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
-            !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-strong-1": !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="w-full xl:max-w-[300px]">
-            <div className="text-2xl font-semibold">Track multi-module, multi-cycle work from one place.</div>
-            <div className="text-sm my-6 ">
+            <div className="text-20 font-semibold">Track multi-module, multi-cycle work from one place.</div>
+            <div className="text-13 my-6 ">
               Epics are great for housing work that spans several cycles and modules so you can track overall progress
               from one place.
             </div>

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.core.management import BaseCommand, CommandError
 
@@ -12,9 +23,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # Positional argument
         parser.add_argument("--email", type=str, help="user email", required=True)
-        parser.add_argument(
-            "--workspace_slug", type=str, help="workspace slug", required=True
-        )
+        parser.add_argument("--workspace_slug", type=str, help="workspace slug", required=True)
 
     def handle(self, *args, **options):
         # get the user email from console
@@ -37,29 +46,21 @@ class Command(BaseCommand):
 
         # Raise error if the workspace is not present
         if not workspace:
-            raise CommandError(
-                f"Error: Workspace with {workspace_slug} does not exists"
-            )
+            raise CommandError(f"Error: Workspace with {workspace_slug} does not exists")
 
         # Change the ownership of the workspace
         workspace.owner = user
         workspace.save(update_fields=["owner"])
 
         # Add the user to the workspace
-        workspace_member = WorkspaceMember.objects.filter(
-            workspace=workspace, member=user
-        ).first()
+        workspace_member = WorkspaceMember.objects.filter(workspace=workspace, member=user).first()
 
         # If the user is not present in the workspace, create the user
         if not workspace_member:
-            workspace_member = WorkspaceMember.objects.create(
-                workspace=workspace, member=user, role=20
-            )
+            workspace_member = WorkspaceMember.objects.create(workspace=workspace, member=user, role=20)
         else:
             workspace_member.role = 20
             workspace_member.save(update_fields=["role"])
 
         # Print the success message
-        self.stdout.write(
-            self.style.SUCCESS("Workspace ownership changed successfully")
-        )
+        self.stdout.write(self.style.SUCCESS("Workspace ownership changed successfully"))

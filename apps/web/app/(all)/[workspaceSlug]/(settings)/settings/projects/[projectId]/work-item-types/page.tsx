@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -12,8 +25,12 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { IssueTypesRoot } from "@/plane-web/components/issue-types";
+// types
+import type { Route } from "./+types/page";
 
-function WorkItemTypesSettingsPage() {
+function WorkItemTypesSettingsPage({ params }: Route.ComponentProps) {
+  // router params
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -33,7 +50,7 @@ function WorkItemTypesSettingsPage() {
     <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full`}>
-        <IssueTypesRoot />
+        <IssueTypesRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
     </SettingsContentWrapper>
   );

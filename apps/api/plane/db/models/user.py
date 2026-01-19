@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import random
 import string
@@ -95,7 +106,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_password_autoset = models.BooleanField(default=False)
-
+    is_password_reset_required = models.BooleanField(default=False)
     # random token generated
     token = models.CharField(max_length=64, blank=True)
 
@@ -158,6 +169,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.cover_image
         return None
 
+    @property
+    def full_name(self):
+        """Return user's full name (first + last)."""
+        return f"{self.first_name} {self.last_name}".strip()
+
     def save(self, *args, **kwargs):
         self.email = self.email.lower().strip()
         self.mobile_number = self.mobile_number
@@ -198,6 +214,10 @@ class Profile(TimeAuditModel):
     FRIDAY = 5
     SATURDAY = 6
 
+    class NotificationViewMode(models.TextChoices):
+        FULL = "full", "Full"
+        COMPACT = "compact", "Compact"
+
     START_OF_THE_WEEK_CHOICES = (
         (SUNDAY, "Sunday"),
         (MONDAY, "Monday"),
@@ -227,7 +247,9 @@ class Profile(TimeAuditModel):
     billing_address = models.JSONField(null=True)
     has_billing_address = models.BooleanField(default=False)
     company_name = models.CharField(max_length=255, blank=True)
-
+    notification_view_mode = models.CharField(
+        max_length=255, choices=NotificationViewMode.choices, default=NotificationViewMode.FULL
+    )
     is_smooth_cursor_enabled = models.BooleanField(default=False)
     # mobile
     is_mobile_onboarded = models.BooleanField(default=False)
@@ -239,8 +261,12 @@ class Profile(TimeAuditModel):
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
+    # navigation tour
+    is_navigation_tour_completed = models.BooleanField(default=False)
+
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
+    is_subscribed_to_changelog = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Profile"

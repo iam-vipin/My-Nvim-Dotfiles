@@ -1,11 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
 import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { getSubscriptionName } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // plane web hooks
@@ -40,15 +52,12 @@ export const DashboardWidgetUpgradeRequiredState = observer(function DashboardWi
           title={t("dashboards.widget.upgrade_required.title")}
           assetPath={shouldShowIcon ? resolvedPath : undefined}
         />
-        <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+        <p className="text-13 text-placeholder text-center whitespace-pre-line">
           Upgrade to{" "}
           <button
             type="button"
             onClick={() => togglePaidPlanModal(true)}
-            className={cn(
-              "px-0.5 py-px rounded outline-none",
-              getSubscriptionTextAndBackgroundColor(EProductSubscriptionEnum.BUSINESS)
-            )}
+            className="px-0.5 py-px rounded-sm outline-none bg-accent-primary text-accent-primary"
           >
             {getSubscriptionName(EProductSubscriptionEnum.BUSINESS)}
           </button>{" "}

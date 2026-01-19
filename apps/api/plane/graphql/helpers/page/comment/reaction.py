@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from typing import Optional
 
@@ -16,7 +27,7 @@ from plane.graphql.types.page.comment.reaction import PageCommentReactionType
 
 # Local Imports
 from .feature_flag import is_page_comment_feature_flagged
-from ...workspace import _get_workspace
+from ...workspace import get_workspace
 from ...project import _get_project
 
 
@@ -143,7 +154,7 @@ def add_page_comment_reaction(
             }
             raise GraphQLError(message, extensions=error_extensions)
 
-        workspace = _get_workspace(workspace_slug=workspace_slug)
+        workspace = get_workspace(slug=workspace_slug)
         workspace_id = workspace.id
 
         comment_reaction_data = {

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -18,9 +31,10 @@ export default {
         "Notieren Sie eine Idee, erfassen Sie einen Aha-Moment oder halten Sie einen Geistesblitz fest. Fügen Sie einen Haftnotiz hinzu, um zu beginnen.",
     },
     stickies: {
-      title:
-        "Notieren Sie eine Idee, erfassen Sie einen Aha-Moment oder halten Sie einen Geistesblitz fest. Fügen Sie einen Haftnotiz hinzu, um zu beginnen.",
-      cta_primary: "Haftnotiz hinzufügen",
+      title: "Ideen sofort festhalten",
+      description: "Erstellen Sie Haftnotizen für schnelle Notizen und Aufgaben und behalten Sie sie überall bei sich.",
+      cta_primary: "Erste Haftnotiz erstellen",
+      cta_secondary: "Dokumentation",
     },
     active_cycles: {
       title: "Keine aktiven Zyklen",
@@ -108,11 +122,6 @@ export default {
       description:
         "Reduzieren Sie die Einrichtungszeit, indem Sie Vorlagen für Projekte, Arbeitselemente und Seiten erstellen — und starten Sie neue Arbeit in Sekunden.",
       cta_primary: "Vorlage erstellen",
-    },
-    webhooks: {
-      title: "Noch kein Webhook hinzugefügt",
-      description: "Automatisieren Sie Benachrichtigungen an externe Dienste, wenn Projektereignisse auftreten.",
-      cta_primary: "Webhook hinzufügen",
     },
   },
 } as const;

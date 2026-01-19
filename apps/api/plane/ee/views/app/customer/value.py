@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import F, Value, Case, When
@@ -87,15 +98,11 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
         )
 
         # Annotate the query
-        customer_property_values = self.query_annotator(
-            customer_property_values
-        ).values("property_id", "values")
+        customer_property_values = self.query_annotator(customer_property_values).values("property_id", "values")
 
         # Create dictionary of property_id and value
         response = {
-            str(customer_property_value["property_id"]): customer_property_value[
-                "values"
-            ]
+            str(customer_property_value["property_id"]): customer_property_value["values"]
             for customer_property_value in customer_property_values
         }
 
@@ -115,9 +122,7 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
                 customer_id=customer_id,
             )
 
-            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
-                "property_id", "values"
-            )
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values("property_id", "values")
 
             # Get customer
             customer = Customer.objects.get(pk=customer_id)
@@ -145,14 +150,10 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
             )
 
             # Delete the old values
-            existing_prop_queryset.filter(
-                property_id__in=customer_property_ids
-            ).delete()
+            existing_prop_queryset.filter(property_id__in=customer_property_ids).delete()
 
             # Bulk create the customer property values
-            CustomerPropertyValue.objects.bulk_create(
-                bulk_customer_property_values, batch_size=10
-            )
+            CustomerPropertyValue.objects.bulk_create(bulk_customer_property_values, batch_size=10)
 
             return Response(status=status.HTTP_201_CREATED)
         except (ValidationError, ValueError) as e:
@@ -161,9 +162,7 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def patch(self, request, slug, customer_id, property_id):
         try:
-            customer_property = CustomerProperty.objects.get(
-                workspace__slug=slug, pk=property_id
-            )
+            customer_property = CustomerProperty.objects.get(workspace__slug=slug, pk=property_id)
 
             existing_prop_queryset = CustomerPropertyValue.objects.filter(
                 workspace__slug=slug, customer_id=customer_id, property_id=property_id
@@ -173,14 +172,9 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
             values = request.data.get("values", [])
 
             # Check if the property is required
-            if customer_property.is_required and (
-                not values or not [v for v in values if v]
-            ):
+            if customer_property.is_required and (not values or not [v for v in values if v]):
                 return Response(
-                    {
-                        "error": customer_property.display_name
-                        + " is a required property"
-                    },
+                    {"error": customer_property.display_name + " is a required property"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -208,9 +202,7 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
                 # Delete the old values
                 existing_prop_queryset.filter(property_id=property_id).delete()
                 # Bulk create the issue property values
-                CustomerPropertyValue.objects.bulk_create(
-                    property_values, batch_size=10
-                )
+                CustomerPropertyValue.objects.bulk_create(property_values, batch_size=10)
 
             else:
                 raise ValidationError("Invalid property type")

@@ -1,10 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/ui";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 
 type TProps = {
   nextButton?: {
@@ -29,19 +39,17 @@ export function AutomationDetailsSidebarActionButtons(props: TProps) {
   return (
     <div
       className={cn("space-y-2 px-4", {
-        "pt-4 border-t border-custom-border-200": borderPosition === "top",
-        "pb-4 border-b border-custom-border-200": borderPosition === "bottom",
+        "pt-4 border-t border-subtle-1": borderPosition === "top",
+        "pb-4 border-b border-subtle-1": borderPosition === "bottom",
       })}
     >
       <div className="flex items-center justify-end gap-3">
         {previousButton && (
           <Button
-            variant="neutral-primary"
-            size="sm"
+            variant="secondary"
             prependIcon={previousButton.renderIcon === false ? undefined : <ChevronLeftIcon className="size-5" />}
             disabled={previousButton.isDisabled}
             onClick={() => {
-              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_PREVIOUS_BUTTON });
               previousButton.onClick?.();
             }}
           >
@@ -52,11 +60,9 @@ export function AutomationDetailsSidebarActionButtons(props: TProps) {
           <Button
             type={nextButton.type ?? "button"}
             variant="primary"
-            size="sm"
             appendIcon={nextButton.renderIcon === false ? undefined : <ChevronRightIcon className="size-5" />}
             disabled={nextButton.isDisabled}
             onClick={() => {
-              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_NEXT_BUTTON });
               nextButton.onClick?.();
             }}
           >

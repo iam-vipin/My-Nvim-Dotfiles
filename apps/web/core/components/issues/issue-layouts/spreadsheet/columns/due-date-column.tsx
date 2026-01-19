@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { DueDatePropertyIcon } from "@plane/propel/icons";
@@ -25,7 +38,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
   const stateDetails = getStateById(issue.state_id);
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle">
       <DateDropdown
         value={issue.target_date}
         minDate={getDate(issue.start_date)}
@@ -46,13 +59,13 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn(
-          "rounded-none text-left group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x",
+          "rounded-none text-left group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x",
           {
-            "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
           }
         )}
         optionsClassName="z-[9]"
-        clearIconClassName="!text-custom-text-100"
+        clearIconClassName="!text-primary"
         onClose={onClose}
       />
     </div>

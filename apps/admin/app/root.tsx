@@ -1,15 +1,33 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { ReactNode } from "react";
-import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
+import * as Sentry from "@sentry/react-router";
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
 import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import globalStyles from "@/styles/globals.css?url";
+import { AppProviders } from "@/providers";
 import type { Route } from "./+types/root";
-import { AppProviders } from "./providers";
+// fonts
+import "@fontsource-variable/inter";
+import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import "@fontsource/material-symbols-rounded";
+import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 const APP_DESCRIPTION =
@@ -22,6 +40,13 @@ export const links: LinksFunction = () => [
   { rel: "shortcut icon", href: faviconIco },
   { rel: "manifest", href: `/site.webmanifest.json` },
   { rel: "stylesheet", href: globalStyles },
+  {
+    rel: "preload",
+    href: interVariableWoff2,
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -56,7 +81,11 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export default function Root() {
-  return <Outlet />;
+  return (
+    <div className="bg-canvas min-h-screen">
+      <Outlet />
+    </div>
+  );
 }
 
 export function HydrateFallback() {

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Request, RequestHandler, Response } from "express";
 import { Controller, Delete, Get, Middleware, Post, Put } from "@plane/decorators";
 import { E_ENTITY_CONNECTION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
@@ -29,7 +42,7 @@ import { Store } from "@/worker/base";
 import { authenticateSlackRequestMiddleware, slackAuth } from "../auth/auth";
 import { isValidIssueUpdateActivity } from "../helpers/activity";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
-import { ACTIONS } from "../helpers/constants";
+import { ACTIONS, WO_INPUT_SUFFIX } from "../helpers/constants";
 import { convertToSlackOptions } from "../helpers/slack-options";
 import {
   extractSlackDMAlertConfigForPlaneUser,
@@ -790,7 +803,18 @@ export default class SlackController {
         return res.status(200).json({});
       }
 
-      const [projectId, fieldId] = values;
+      let [projectId, fieldId] = values;
+
+      if (fieldId === WO_INPUT_SUFFIX) {
+        const externalRef = payload.view.external_ref;
+
+        if (!externalRef) return res.status(200).json({});
+
+        const identifiers = externalRef.id.split(":");
+
+        projectId = identifiers[0];
+        fieldId = payload.block_id === "status" ? "state" : payload.block_id;
+      }
 
       const details = await getConnectionDetails(payload.team.id, {
         id: payload.user.id,
@@ -965,7 +989,13 @@ export default class SlackController {
             entity_type: E_INTEGRATION_KEYS.SLACK,
           });
 
-          if (!entityConnection) {
+          const [projectEntityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+            workspace_id: workspace,
+            project_id: project,
+            entity_type: E_SLACK_ENTITY_TYPE.SLACK_PROJECT_UPDATES,
+          });
+
+          if (!entityConnection && !projectEntityConnection) {
             return res.sendStatus(200);
           }
 

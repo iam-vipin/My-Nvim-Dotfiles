@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Tên người dùng",
+        placeholder: "Nhập tên người dùng của bạn",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Tiếp tục với {ldapProviderName}",
+        sub_header: "Nhập thông tin đăng nhập {ldapProviderName} của bạn",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Plane AI",
     initiatives: "Sáng kiến",
@@ -698,6 +725,11 @@ export default {
       worklogs: {
         title: "Nhật ký công việc",
       },
+      identity: {
+        title: "Danh tính",
+        heading: "Danh tính",
+        description: "Cấu hình miền của bạn và bật Đăng nhập một lần",
+      },
       project_states: {
         title: "Trạng thái dự án",
       },
@@ -896,6 +928,54 @@ export default {
         heading: "Plane AI",
         description:
           "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "Nhập thành viên từ CSV",
+      description: "Tải lên CSV với các cột: Email, Display Name, First Name, Last Name, Role (5, 15 hoặc 20)",
+      dropzone: {
+        active: "Thả tệp CSV vào đây",
+        inactive: "Kéo & thả hoặc nhấp để tải lên",
+        file_type: "Chỉ hỗ trợ tệp .csv",
+      },
+      buttons: {
+        cancel: "Hủy",
+        import: "Nhập",
+        try_again: "Thử lại",
+        close: "Đóng",
+        done: "Hoàn tất",
+      },
+      progress: {
+        uploading: "Đang tải lên...",
+        importing: "Đang nhập...",
+      },
+      summary: {
+        title: {
+          failed: "Nhập thất bại",
+          complete: "Nhập hoàn tất",
+        },
+        message: {
+          seat_limit: "Không thể nhập thành viên do hạn chế số ghế.",
+          success: "Đã thêm thành công {count} thành viên vào không gian làm việc.",
+          no_imports: "Không có thành viên nào được nhập từ tệp CSV.",
+        },
+        stats: {
+          successful: "Thành công",
+          failed: "Thất bại",
+        },
+        download_errors: "Tải xuống lỗi",
+      },
+      toast: {
+        invalid_file: {
+          title: "Tệp không hợp lệ",
+          message: "Chỉ hỗ trợ tệp CSV.",
+        },
+        import_failed: {
+          title: "Nhập thất bại",
+          message: "Đã xảy ra lỗi.",
+        },
       },
     },
   },
@@ -1367,6 +1447,22 @@ export default {
     choose_entity: "Chọn thực thể",
     choose_project: "Chọn dự án",
     link_plane_project: "Liên kết dự án Plane",
+    project_issue_sync: "Đồng bộ vấn đề dự án",
+    project_issue_sync_description: "Đồng bộ vấn đề từ Gitlab sang dự án Plane của bạn",
+    project_issue_sync_empty_state: "Đồng bộ vấn đề dự án đã ánh xạ sẽ xuất hiện ở đây",
+    configure_project_issue_sync_state: "Cấu hình trạng thái đồng bộ vấn đề",
+    select_issue_sync_direction: "Chọn hướng đồng bộ vấn đề",
+    allow_bidirectional_sync: "Hai chiều - Đồng bộ vấn đề và bình luận cả hai chiều giữa Gitlab và Plane",
+    allow_unidirectional_sync: "Một chiều - Chỉ đồng bộ vấn đề và bình luận từ Gitlab sang Plane",
+    allow_unidirectional_sync_warning:
+      "Dữ liệu từ Gitlab Issue sẽ thay thế dữ liệu trong Mục công việc Plane được liên kết (chỉ Gitlab → Plane)",
+    remove_project_issue_sync: "Xóa đồng bộ vấn đề dự án này",
+    remove_project_issue_sync_confirmation: "Bạn có chắc muốn xóa đồng bộ vấn đề dự án này không?",
+    ISSUE_OPEN: "Vấn đề mở",
+    ISSUE_CLOSED: "Vấn đề đóng",
+    save: "Lưu",
+    start_sync: "Bắt đầu đồng bộ",
+    choose_repository: "Chọn kho lưu trữ...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3101,6 +3197,226 @@ export default {
         title: "Tự động hóa",
         description: "Tự động hóa là cách để tự động hóa các tác vụ trong dự án của bạn.",
         sub_description: "Lấy lại 80% thời gian quản trị của bạn khi sử dụng Tự động hóa.",
+      },
+    },
+  },
+  sso: {
+    header: "Danh tính",
+    description: "Cấu hình miền của bạn để truy cập các tính năng bảo mật bao gồm đăng nhập một lần.",
+    domain_management: {
+      header: "Quản lý miền",
+      verified_domains: {
+        header: "Miền đã xác minh",
+        description: "Xác minh quyền sở hữu miền email để bật đăng nhập một lần.",
+        button_text: "Thêm miền",
+        list: {
+          domain_name: "Tên miền",
+          status: "Trạng thái",
+          status_verified: "Đã xác minh",
+          status_failed: "Thất bại",
+          status_pending: "Đang chờ",
+        },
+        add_domain: {
+          title: "Thêm miền",
+          description: "Thêm miền của bạn để cấu hình SSO và xác minh nó.",
+          form: {
+            domain_label: "Miền",
+            domain_placeholder: "plane.so",
+            domain_required: "Miền là bắt buộc",
+            domain_invalid: "Nhập tên miền hợp lệ (ví dụ: plane.so)",
+          },
+          primary_button_text: "Thêm miền",
+          primary_button_loading_text: "Đang thêm",
+          toast: {
+            success_title: "Thành công!",
+            success_message: "Miền đã được thêm thành công. Vui lòng xác minh bằng cách thêm bản ghi DNS TXT.",
+            error_message: "Không thể thêm miền. Vui lòng thử lại.",
+          },
+        },
+        verify_domain: {
+          title: "Xác minh miền của bạn",
+          description: "Làm theo các bước sau để xác minh miền của bạn.",
+          instructions: {
+            label: "Hướng dẫn",
+            step_1: "Đi tới cài đặt DNS cho máy chủ miền của bạn.",
+            step_2: {
+              part_1: "Tạo một",
+              part_2: "bản ghi TXT",
+              part_3: "và dán giá trị bản ghi đầy đủ được cung cấp bên dưới.",
+            },
+            step_3: "Bản cập nhật này thường mất vài phút nhưng có thể mất tới 72 giờ để hoàn thành.",
+            step_4: 'Nhấp vào "Xác minh miền" để xác nhận sau khi bản ghi DNS của bạn được cập nhật.',
+          },
+          verification_code_label: "Giá trị bản ghi TXT",
+          verification_code_description: "Thêm bản ghi này vào cài đặt DNS của bạn",
+          domain_label: "Miền",
+          primary_button_text: "Xác minh miền",
+          primary_button_loading_text: "Đang xác minh",
+          secondary_button_text: "Tôi sẽ làm sau",
+          toast: {
+            success_title: "Thành công!",
+            success_message: "Miền đã được xác minh thành công.",
+            error_message: "Không thể xác minh miền. Vui lòng thử lại.",
+          },
+        },
+        delete_domain: {
+          title: "Xóa miền",
+          description: {
+            prefix: "Bạn có chắc chắn muốn xóa",
+            suffix: "? Hành động này không thể hoàn tác.",
+          },
+          primary_button_text: "Xóa",
+          primary_button_loading_text: "Đang xóa",
+          secondary_button_text: "Hủy",
+          toast: {
+            success_title: "Thành công!",
+            success_message: "Miền đã được xóa thành công.",
+            error_message: "Không thể xóa miền. Vui lòng thử lại.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Đăng nhập một lần",
+      disabled_message: "Thêm miền đã xác minh để cấu hình SSO",
+      configure: {
+        create: "Cấu hình",
+        update: "Chỉnh sửa",
+      },
+      switch_alert_modal: {
+        title: "Chuyển phương thức SSO sang {newProviderShortName}?",
+        content:
+          "Bạn sắp bật {newProviderLongName} ({newProviderShortName}). Hành động này sẽ tự động tắt {activeProviderLongName} ({activeProviderShortName}). Người dùng cố gắng đăng nhập qua {activeProviderShortName} sẽ không thể truy cập nền tảng cho đến khi họ chuyển sang phương thức mới. Bạn có chắc chắn muốn tiếp tục?",
+        primary_button_text: "Chuyển",
+        primary_button_text_loading: "Đang chuyển",
+        secondary_button_text: "Hủy",
+      },
+      form_section: {
+        title: "Chi tiết do IdP cung cấp cho {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Đang lưu",
+        save_changes: "Lưu thay đổi",
+        configure_only: "Chỉ cấu hình",
+        configure_and_enable: "Cấu hình và bật",
+        default: "Lưu",
+      },
+      setup_details_section: {
+        title: "{workspaceName} chi tiết được cung cấp cho IdP của bạn",
+        button_text: "Lấy chi tiết thiết lập",
+      },
+      saml: {
+        header: "Bật SAML",
+        description: "Cấu hình nhà cung cấp danh tính SAML của bạn để bật đăng nhập một lần.",
+        configure: {
+          title: "Bật SAML",
+          description: "Xác minh quyền sở hữu miền email để truy cập các tính năng bảo mật bao gồm đăng nhập một lần.",
+          toast: {
+            success_title: "Thành công!",
+            create_success_message: "Nhà cung cấp SAML đã được tạo thành công.",
+            update_success_message: "Nhà cung cấp SAML đã được cập nhật thành công.",
+            error_title: "Lỗi!",
+            error_message: "Không thể lưu nhà cung cấp SAML. Vui lòng thử lại.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Chi tiết web",
+            entity_id: {
+              label: "ID thực thể | Đối tượng | Thông tin siêu dữ liệu",
+              description:
+                "Chúng tôi sẽ tạo phần siêu dữ liệu này xác định ứng dụng Plane này như một dịch vụ được ủy quyền trên IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL đăng nhập một lần",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất một lần",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất đơn của IdP của bạn.",
+            },
+          },
+          mobile_details: {
+            header: "Chi tiết di động",
+            entity_id: {
+              label: "ID thực thể | Đối tượng | Thông tin siêu dữ liệu",
+              description:
+                "Chúng tôi sẽ tạo phần siêu dữ liệu này xác định ứng dụng Plane này như một dịch vụ được ủy quyền trên IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL đăng nhập một lần",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất một lần",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+            },
+          },
+          mapping_table: {
+            header: "Chi tiết ánh xạ",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Bật OIDC",
+        description: "Cấu hình nhà cung cấp danh tính OIDC của bạn để bật đăng nhập một lần.",
+        configure: {
+          title: "Bật OIDC",
+          description: "Xác minh quyền sở hữu miền email để truy cập các tính năng bảo mật bao gồm đăng nhập một lần.",
+          toast: {
+            success_title: "Thành công!",
+            create_success_message: "Nhà cung cấp OIDC đã được tạo thành công.",
+            update_success_message: "Nhà cung cấp OIDC đã được cập nhật thành công.",
+            error_title: "Lỗi!",
+            error_message: "Không thể lưu nhà cung cấp OIDC. Vui lòng thử lại.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Chi tiết web",
+            origin_url: {
+              label: "URL nguồn gốc",
+              description:
+                "Chúng tôi sẽ tạo điều này cho ứng dụng Plane này. Thêm điều này như một nguồn gốc đáng tin cậy vào trường tương ứng của IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL chuyển hướng",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+            },
+          },
+          mobile_details: {
+            header: "Chi tiết di động",
+            origin_url: {
+              label: "URL nguồn gốc",
+              description:
+                "Chúng tôi sẽ tạo điều này cho ứng dụng Plane này. Thêm điều này như một nguồn gốc đáng tin cậy vào trường tương ứng của IdP của bạn.",
+            },
+            callback_url: {
+              label: "URL chuyển hướng",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng nhập của IdP của bạn.",
+            },
+            logout_url: {
+              label: "URL đăng xuất",
+              description:
+                "Chúng tôi sẽ tạo điều này cho bạn. Thêm điều này vào trường URL chuyển hướng đăng xuất của IdP của bạn.",
+            },
+          },
+        },
       },
     },
   },

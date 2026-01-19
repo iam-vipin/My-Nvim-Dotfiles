@@ -1,8 +1,20 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
-import type { EPageSharedUserAccess } from "@plane/types";
-import { Avatar, Collapsible } from "@plane/ui";
+import type { EPageSharedUserAccess, IWorkspaceMember } from "@plane/types";
+import { Avatar, Collapsible, Loader } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import type { TPageShareFormUser } from "../../../hooks/pages/use-page-share-form";
 import { UserListItem } from "./user-list-item";
@@ -11,11 +23,12 @@ type TExistingUsersSectionProps = {
   existingUsers: TPageShareFormUser[];
   onUpdateAccess: (userId: string, access: EPageSharedUserAccess) => void;
   onRemove: (userId: string) => void;
-  getMemberDetails: (userId: string) => any;
+  getMemberDetails: (userId: string) => IWorkspaceMember | undefined;
   isUserModified: (userId: string) => boolean;
   isAccordionOpen: boolean;
   onToggleAccordion: () => void;
   canCurrentUserChangeAccess?: boolean;
+  isLoading?: boolean;
 };
 
 export function ExistingUsersSection({
@@ -27,7 +40,27 @@ export function ExistingUsersSection({
   isAccordionOpen,
   onToggleAccordion,
   canCurrentUserChangeAccess = true,
+  isLoading = false,
 }: TExistingUsersSectionProps) {
+  // Show skeleton while loading and no existing users
+  if (isLoading && existingUsers.length === 0) {
+    return (
+      <div className="mt-3 space-y-2 transition-all duration-300 ease-in-out">
+        <Loader className="space-y-2">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div key={index} className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <Loader.Item height="24px" width="24px" className="rounded-full" />
+                <Loader.Item height="16px" width="120px" />
+              </div>
+              <Loader.Item height="24px" width="70px" className="rounded-md" />
+            </div>
+          ))}
+        </Loader>
+      </div>
+    );
+  }
+
   if (existingUsers.length === 0) return null;
 
   return (
@@ -36,7 +69,7 @@ export function ExistingUsersSection({
         isOpen={isAccordionOpen}
         onToggle={onToggleAccordion}
         title={
-          <div className="flex items-center justify-between w-full p-1">
+          <div className="flex items-center justify-between w-full p-1 hover:bg-layer-transparent-hover">
             <div className="flex items-center gap-3">
               {!isAccordionOpen && (
                 <div className="flex items-center transition-all duration-300 ease-in-out">
@@ -48,7 +81,7 @@ export function ExistingUsersSection({
                         className={`relative ${index > 0 ? "-ml-2.5" : ""} transition-all duration-200 ease-in-out`}
                         style={{ zIndex: index + 1 }}
                       >
-                        <div className="ring-2 ring-custom-background-100 rounded-full">
+                        <div className="rounded-full">
                           <Avatar
                             name={memberDetails?.member?.display_name || "Unknown User"}
                             src={getFileURL(memberDetails?.member?.avatar_url || "")}
@@ -60,7 +93,7 @@ export function ExistingUsersSection({
                   })}
                   {existingUsers.length > 3 && (
                     <div
-                      className="flex items-center justify-center w-5 h-5 -ml-2 rounded-full bg-custom-background-80 text-custom-text-200 text-xs font-normal ring-2 ring-custom-background-100 transition-all duration-200 ease-in-out"
+                      className="flex items-center justify-center w-5 h-5 -ml-2 rounded-full bg-layer-1 text-secondary text-11 font-normal transition-all duration-200 ease-in-out"
                       style={{ zIndex: 4 }}
                     >
                       +{existingUsers.length - 3}
@@ -68,19 +101,19 @@ export function ExistingUsersSection({
                   )}
                 </div>
               )}
-              <h4 className="text-sm font-medium text-custom-text-300">Visible to</h4>
+              <h4 className="text-13 font-medium text-tertiary">Visible to</h4>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-custom-text-400">
+              <span className="text-11 text-placeholder">
                 {existingUsers.length} {existingUsers.length === 1 ? "member" : "members"}
               </span>
               <ChevronDownIcon
-                className={`h-3 w-3 text-custom-text-400 transition-transform duration-200 ${isAccordionOpen ? "rotate-180" : ""}`}
+                className={`h-3 w-3 text-placeholder transition-transform duration-200 ${isAccordionOpen ? "rotate-180" : ""}`}
               />
             </div>
           </div>
         }
-        buttonClassName="w-full hover:bg-custom-background-90 rounded transition-colors"
+        buttonClassName="w-full hover:bg-layer-1 rounded-sm transition-colors"
       >
         {/* User list */}
         <div className="mt-2 space-y-2 transition-all duration-300 ease-in-out">
@@ -100,7 +133,7 @@ export function ExistingUsersSection({
                 onUpdateAccess={canCurrentUserChangeAccess ? onUpdateAccess : () => {}}
                 onRemove={canCurrentUserChangeAccess ? onRemove : () => {}}
                 canCurrentUserChangeAccess={canCurrentUserChangeAccess}
-                className="hover:bg-custom-background-80 rounded transition-colors p-1"
+                className="hover:bg-layer-1 rounded-sm transition-colors p-1"
               />
             );
           })}

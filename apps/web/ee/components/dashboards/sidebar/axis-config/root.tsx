@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
@@ -32,13 +45,13 @@ export function WidgetConfigSidebarAxisConfig(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex-shrink-0 space-y-3 text-sm">
+    <div className="flex-shrink-0 space-y-3 text-13">
       <Collapsible
         isOpen={isCollapsibleIcon}
         onToggle={() => setIsCollapsibleIcon((prev) => !prev)}
         title={
-          <div className="flex items-center gap-0.5 p-1 -ml-1 hover:bg-custom-background-80 rounded transition-colors">
-            <h6 className="font-semibold text-custom-text-200">{t("dashboards.widget.common.widget_configuration")}</h6>
+          <div className="flex items-center gap-0.5 p-1 -ml-1 hover:bg-layer-1 rounded-sm transition-colors">
+            <h6 className="font-semibold text-secondary">{t("dashboards.widget.common.widget_configuration")}</h6>
             <div className="flex-shrink-0 size-4 grid place-items-center">
               <ChevronRightIcon
                 className={cn("size-2.5 transition-all", {

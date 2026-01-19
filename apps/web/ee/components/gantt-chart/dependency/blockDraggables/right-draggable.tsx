@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -138,7 +151,7 @@ export const RightDependencyDraggable = observer(function RightDependencyDraggab
         <div
           ref={rightDraggableRef}
           className={cn(
-            "absolute z-[5] right-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded bg-custom-primary-100 transition-all duration-300 opacity-0",
+            "absolute z-[5] right-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-sm bg-accent-primary transition-all duration-300 opacity-0",
             {
               "group-hover:-right-3.5 group-hover:opacity-100": !isDragging,
               "-right-3.5 opacity-100": isCurrentDependencyDragging,

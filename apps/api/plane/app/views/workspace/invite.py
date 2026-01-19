@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from datetime import datetime
 import uuid
@@ -15,7 +26,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.app.permissions import WorkSpaceAdminPermission, WorkspaceOwnerPermission
 from plane.app.serializers import (
     WorkSpaceMemberInviteSerializer,
     WorkSpaceMemberSerializer,
@@ -26,10 +37,11 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
-from plane.utils.ip_address import get_client_ip
+from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
 from plane.payment.utils.member_payment_count import workspace_member_check
+from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):
@@ -38,7 +50,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -137,6 +149,30 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 current_site,
                 request.user.email,
             )
+            track_event.delay(
+                user_id=request.user.id,
+                event_name=USER_INVITED_TO_WORKSPACE,
+                slug=slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": workspace.id,
+                    "workspace_slug": workspace.slug,
+                    "invitee_role": invitation.role,
+                    "invited_at": str(timezone.now()),
+                    "invitee_email": invitation.email,
+                },
+            )
+
+        for email in emails:
+            workspace_members_activity.delay(
+                type="workspace_member.activity.invited",
+                requested_data={"email": email.get("email").strip().lower()},
+                current_instance=None,
+                actor_id=request.user.id,
+                workspace_id=workspace.id,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+            )
 
         return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
 
@@ -161,6 +197,16 @@ class WorkspaceInvitationsViewset(BaseViewSet):
     def destroy(self, request, slug, pk):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         workspace_member_invite.delete()
+
+        workspace_members_activity.delay(
+            type="workspace_member.activity.invitation_deleted",
+            requested_data={"email": workspace_member_invite.email},
+            current_instance=None,
+            actor_id=request.user.id,
+            workspace_id=workspace_member_invite.workspace.id,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -180,10 +226,10 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
 
-        email = request.data.get("email", "")
+        token = request.data.get("token", "")
 
-        # Check the email
-        if email == "" or workspace_invite.email != email:
+        # Validate the token to verify the user received the invitation email
+        if not token or workspace_invite.token != token:
             return Response(
                 {"error": "You do not have permission to join the workspace"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -197,7 +243,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
             if workspace_invite.accepted:
                 # Check if the user created account after invitation
-                user = User.objects.filter(email=email).first()
+                user = User.objects.filter(email=workspace_invite.email).first()
 
                 # If the user is present then create the workspace member
                 if user is not None:
@@ -220,24 +266,21 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
+                    track_event.delay(
+                        user_id=user.id,
+                        event_name=USER_JOINED_WORKSPACE,
+                        slug=slug,
+                        event_properties={
+                            "user_id": user.id,
+                            "workspace_id": workspace_invite.workspace.id,
+                            "workspace_slug": workspace_invite.workspace.slug,
+                            "role": workspace_invite.role,
+                            "joined_at": str(timezone.now()),
+                        },
+                    )
 
                     # Delete the invitation
                     workspace_invite.delete()
-
-                # Send event
-                track_event.delay(
-                    email=email,
-                    event_name="MEMBER_ACCEPTED",
-                    properties={
-                        "event_id": uuid.uuid4().hex,
-                        "user": {"email": email, "id": str(user)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR", None),
-                            "user_agent": request.META.get("HTTP_USER_AGENT", None),
-                        },
-                        "accepted_from": "EMAIL",
-                    },
-                )
 
                 # sync workspace members
                 member_sync_task.delay(slug)
@@ -281,6 +324,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             pk__in=invitations, email=request.user.email
         ).order_by("-created_at")
 
+        workspace_members_to_create = []
         # If the user is already a member of workspace and was deactivated then activate the user
         for invitation in workspace_invitations:
             invalidate_cache_directly(
@@ -289,27 +333,54 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
                 request=request,
                 multiple=True,
             )
+
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
                 is_active=True, role=invitation.role
             )
 
-        # Bulk create the user for all the workspaces
-        WorkspaceMember.objects.bulk_create(
-            [
+            # Track event
+            track_event.delay(
+                user_id=request.user.id,
+                event_name=USER_JOINED_WORKSPACE,
+                slug=invitation.workspace.slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": invitation.workspace.id,
+                    "workspace_slug": invitation.workspace.slug,
+                    "role": invitation.role,
+                    "joined_at": str(timezone.now()),
+                },
+            )
+
+            # Bulk create the user for all the workspaces
+            workspace_members_to_create.append(
                 WorkspaceMember(
                     workspace=invitation.workspace,
                     member=request.user,
                     role=invitation.role,
                     created_by=request.user,
                 )
-                for invitation in workspace_invitations
-            ],
+            )
+
+        WorkspaceMember.objects.bulk_create(
+            workspace_members_to_create,
             ignore_conflicts=True,
         )
 
         # Sync workspace members
         [member_sync_task.delay(invitation.workspace.slug) for invitation in workspace_invitations]
+
+        for invitation in workspace_invitations:
+            workspace_members_activity.delay(
+                type="workspace_member.activity.joined",
+                requested_data=None,
+                current_instance=None,
+                actor_id=request.user.id,
+                workspace_id=invitation.workspace.id,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+            )
 
         # Delete joined workspace invites
         workspace_invitations.delete()

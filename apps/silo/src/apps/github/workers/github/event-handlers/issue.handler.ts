@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { GithubIssueDedupPayload, WebhookGitHubIssue } from "@plane/etl/github";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { logger } from "@plane/logger";
@@ -204,7 +217,7 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
       );
       // Set key with Plane issue ID so Plane->GitHub handler can detect and skip
       // Use 5 second TTL to allow the webhook loop back but expire quickly
-      await store.set(`silo:issue:plane:${issue.id}`, "true", 5);
+      await store.set(`silo:issue:plane:${issue.id}`, "true", 60);
     } else {
       const createdIssue = await planeClient.issue.create(
         entityConnection.workspace_slug,
@@ -241,8 +254,7 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
       };
 
       // Set key with Plane issue ID so Plane->GitHub handler can detect and skip
-      // Use 5 second TTL to allow the webhook loop back but expire quickly
-      await Promise.all([createLink(), createLinkBack(), store.set(`silo:issue:plane:${createdIssue.id}`, "true", 5)]);
+      await Promise.all([createLink(), createLinkBack(), store.set(`silo:issue:plane:${createdIssue.id}`, "true", 60)]);
     }
   } catch (error) {
     logger.error("Error syncing issue with Plane", error);

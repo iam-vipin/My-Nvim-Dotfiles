@@ -1,14 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2 } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TOperationMode } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web imports
-import { captureClick } from "@/helpers/event-tracker.helper";
 // local imports
 import { DeleteConfirmationModal } from "./delete-confirmation-modal";
 
@@ -38,24 +49,18 @@ export const IssuePropertyQuickActions = observer(function IssuePropertyQuickAct
     {
       key: "edit",
       action: () => {
-        captureClick({
-          elementName: trackers?.quickActions?.button || "",
-        });
         onIssuePropertyOperationMode("update");
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
     },
     {
       key: "delete",
       action: () => {
-        captureClick({
-          elementName: trackers?.quickActions?.button || "",
-        });
         setIsDeleteModalOpen(true);
       },
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
     },
   ];
 
@@ -68,7 +73,7 @@ export const IssuePropertyQuickActions = observer(function IssuePropertyQuickAct
         onDisable={onDisable}
         onDelete={onDelete}
       />
-      <CustomMenu placement="bottom-end" menuItemsClassName="z-20" buttonClassName="!p-0.5" closeOnSelect ellipsis>
+      <CustomMenu placement="bottom-end" menuItemsClassName="z-20" buttonClassName="p-0.5" closeOnSelect ellipsis>
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
@@ -78,9 +83,7 @@ export const IssuePropertyQuickActions = observer(function IssuePropertyQuickAct
             className={cn("flex items-center gap-2")}
           >
             {item.icon && <item.icon className={cn("h-3 w-3")} />}
-            <div>
-              <h5>{item.title}</h5>
-            </div>
+            <div className="text-caption-xs-regular">{item.title}</div>
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>

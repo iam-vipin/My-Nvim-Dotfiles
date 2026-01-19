@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -18,18 +29,14 @@ class IssueViewEEViewSet(BaseViewSet):
     permission_classes = [ProjectEntityPermission]
 
     def lock(self, request, slug, project_id, pk):
-        issue_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        ).first()
+        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project_id=project_id).first()
 
         issue_view.is_locked = True
         issue_view.save(update_fields=["is_locked"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, pk):
-        issue_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        ).first()
+        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project_id=project_id).first()
 
         issue_view.is_locked = False
         issue_view.save(update_fields=["is_locked"])
@@ -40,9 +47,7 @@ class IssueViewEEViewSet(BaseViewSet):
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 1)
 
-        issue_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        ).first()
+        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project_id=project_id).first()
 
         if issue_view.owned_by != request.user:
             return Response(

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # python imports
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -41,6 +52,9 @@ class IntakeWorkItemCommentActivityType:
     project: strawberry.ID
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
+    edited_at: Optional[datetime]
+    parent: Optional[str]
+    deleted_at: Optional[datetime]
 
     @strawberry.field
     def workspace(self) -> int:
@@ -63,6 +77,10 @@ class IntakeWorkItemCommentActivityType:
     @strawberry.field
     def issue(self) -> int:
         return self.issue_id
+
+    @strawberry.field
+    def parent(self) -> Optional[str]:
+        return self.parent_id if self.parent_id else None
 
     @strawberry.field
     def created_by(self) -> Optional[strawberry.ID]:

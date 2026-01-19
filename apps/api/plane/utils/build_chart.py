@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from typing import Dict, Any, Tuple, Optional, List, Union
 
 
@@ -51,7 +62,7 @@ def get_x_axis_field() -> Dict[str, Tuple[str, str, Optional[Dict[str, Any]]]]:
             "assignees__display_name",
             {"issue_assignee__deleted_at__isnull": True},
         ),
-        "ESTIMATE_POINTS": ("estimate_point__value", "estimate_point__key", None),
+        "ESTIMATE_POINTS": ("estimate_point__key", "estimate_point__value", None),
         "CYCLES": (
             "issue_cycle__cycle_id",
             "issue_cycle__cycle__name",
@@ -79,17 +90,19 @@ def process_grouped_data(
 
     for item in data:
         key = item["key"]
-        if key not in response:
-            response[key] = {
-                "key": key if key else "none",
+        # Normalize falsy keys to uppercase "None" for consistency with group_key
+        normalized_key = str(key) if key is not None else "None"
+        if normalized_key not in response:
+            response[normalized_key] = {
+                "key": normalized_key,
                 "name": (item.get("display_name", key) if item.get("display_name", key) else "None"),
                 "count": 0,
             }
-        group_key = str(item["group_key"]) if item["group_key"] else "none"
+        group_key = str(item["group_key"]) if item["group_key"] is not None else "None"
         schema[group_key] = item.get("group_name", item["group_key"])
         schema[group_key] = schema[group_key] if schema[group_key] else "None"
-        response[key][group_key] = response[key].get(group_key, 0) + item["count"]
-        response[key]["count"] += item["count"]
+        response[normalized_key][group_key] = response[normalized_key].get(group_key, 0) + item["count"]
+        response[normalized_key]["count"] += item["count"]
 
     return list(response.values()), schema
 

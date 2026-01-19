@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import type {
@@ -85,6 +98,7 @@ export const extractProjectTemplateFormData = async (
     intake_view: projectData.intake_view,
     intake_settings: projectData.intake_settings,
     is_time_tracking_enabled: projectData.is_time_tracking_enabled,
+    is_milestone_enabled: projectData.is_milestone_enabled,
     is_issue_type_enabled: projectData.is_issue_type_enabled,
     is_project_updates_enabled: projectData.is_project_updates_enabled,
     is_epic_enabled: projectData.is_epic_enabled,

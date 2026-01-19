@@ -1,7 +1,20 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import type { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import { E_SLACK_PROJECT_UPDATES_EVENTS } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -15,7 +28,12 @@ import { SlackProjectChannelForm } from "./channel-map";
  */
 export interface ProjectUpdatesFormProps {
   modal: boolean;
-  handleSubmit: (projectId: string, channelId: string, channelName: string) => Promise<void>;
+  handleSubmit: (
+    projectId: string,
+    channelId: string,
+    channelName: string,
+    events: E_SLACK_PROJECT_UPDATES_EVENTS[]
+  ) => Promise<void>;
   projectConnection?: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>;
   handleModal: (modal: boolean) => void;
 }
@@ -24,7 +42,7 @@ export interface SlackProjectNotificationMap {
   projectId?: string;
   channelId?: string;
   channelName?: string;
-  events: string[];
+  events: E_SLACK_PROJECT_UPDATES_EVENTS[];
 }
 
 /**
@@ -45,7 +63,7 @@ function ProjectUpdatesForm({
     projectId: projectConnection?.project_id || undefined,
     channelId: projectConnection?.entity_id || undefined,
     channelName: projectConnection?.entity_slug || undefined,
-    events: projectConnection?.config?.events || [],
+    events: projectConnection?.config?.subscribedEvents || [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
   });
 
   // Update form data when projectConnection changes (important for edit mode)
@@ -55,7 +73,7 @@ function ProjectUpdatesForm({
         projectId: projectConnection.project_id || undefined,
         channelId: projectConnection.entity_id || undefined,
         channelName: projectConnection.entity_slug || undefined,
-        events: projectConnection.config?.events || [],
+        events: projectConnection.config?.subscribedEvents || [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
       });
     }
   }, [projectConnection]);
@@ -69,7 +87,7 @@ function ProjectUpdatesForm({
           projectId: undefined,
           channelId: undefined,
           channelName: undefined,
-          events: [],
+          events: [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
         });
       }
     }
@@ -113,7 +131,7 @@ function ProjectUpdatesForm({
     if (!formData.projectId || !formData.channelId || !formData.channelName) return;
 
     try {
-      await handleSubmitProp(formData.projectId, formData.channelId, formData.channelName);
+      await handleSubmitProp(formData.projectId, formData.channelId, formData.channelName, formData.events);
       handleModal(false);
     } catch (error) {
       setToast({
@@ -131,7 +149,7 @@ function ProjectUpdatesForm({
       projectId: projectConnection?.project_id || undefined,
       channelId: projectConnection?.entity_id || undefined,
       channelName: projectConnection?.entity_slug || undefined,
-      events: projectConnection?.config?.events || [],
+      events: projectConnection?.config?.subscribedEvents || [E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED],
     });
 
     handleModal(false);
@@ -142,13 +160,13 @@ function ProjectUpdatesForm({
     return (
       <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
         <div className="p-7 space-y-4">
-          <div className="text-base font-medium">Project Updates Notifications</div>
+          <div className="text-body-sm-medium">Project Updates Notifications</div>
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="text-custom-text-200 mb-2">{t("common.error")}</div>
-            <div className="text-sm text-custom-text-400">
+            <div className="text-secondary mb-2">{t("common.error")}</div>
+            <div className="text-body-xs-regular text-placeholder">
               {t("slack_integration.project_updates.project_updates_form.failed_to_load_channels")}
             </div>
-            <Button variant="primary" size="sm" onClick={() => handleModal(false)} className="mt-4">
+            <Button variant="primary" onClick={() => handleModal(false)} className="mt-4">
               Close
             </Button>
           </div>
@@ -170,7 +188,7 @@ function ProjectUpdatesForm({
             </div>
 
             {/* Form container */}
-            <div className="border border-custom-border-200 rounded-lg p-4 space-y-4">
+            <div className="border border-subtle rounded-lg p-4 space-y-4">
               {/* Project and channel dropdowns row */}
               <div className="flex items-center gap-4">
                 {/* Project dropdown */}
@@ -208,10 +226,8 @@ function ProjectUpdatesForm({
       <div className="space-y-5 p-7">
         {/* Header */}
         <div className="space-y-1">
-          <div className="text-base font-medium">
-            {t("slack_integration.project_updates.project_updates_form.title")}
-          </div>
-          <div className="text-sm text-custom-text-200">
+          <div className="text-body-sm-medium">{t("slack_integration.project_updates.project_updates_form.title")}</div>
+          <div className="text-body-xs-regular text-secondary">
             {t("slack_integration.project_updates.project_updates_form.description")}
           </div>
         </div>
@@ -228,15 +244,10 @@ function ProjectUpdatesForm({
 
           {/* Action Buttons */}
           <div className="relative flex justify-end items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleCancel}>
+            <Button variant="secondary" onClick={handleCancel}>
               {t("cancel")}
             </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleSubmit}
-              disabled={!formData?.projectId || !formData?.channelId}
-            >
+            <Button variant="primary" onClick={handleSubmit} disabled={!formData?.projectId || !formData?.channelId}>
               {t("save")}
             </Button>
           </div>

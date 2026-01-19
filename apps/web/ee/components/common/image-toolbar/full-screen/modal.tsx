@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { Download, ExternalLink, Minus, Plus } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { Download, Minus } from "lucide-react";
+import { NewTabIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -212,7 +225,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
           className="absolute top-10 right-10 size-8 grid place-items-center"
           aria-label="Close image viewer"
         >
-          <CloseIcon className="size-8 text-white/60 hover:text-white transition-colors" />
+          <CloseIcon className="size-8 text-on-color/60 hover:text-on-color transition-colors" />
         </button>
         <img
           ref={setImageRef}
@@ -238,29 +251,29 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
               onClick={(e) => {
                 handleMagnification("decrease");
               }}
-              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              className="size-6 grid place-items-center text-on-color/60 hover:text-on-color disabled:text-on-color/30 transition-colors duration-200"
               disabled={magnification <= MIN_ZOOM}
               aria-label="Zoom out"
             >
               <Minus className="size-4" />
             </button>
-            <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
+            <span className="text-13 w-12 text-center text-on-color">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
               onClick={(e) => {
                 handleMagnification("increase");
               }}
-              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              className="size-6 grid place-items-center text-on-color/60 hover:text-on-color disabled:text-on-color/30 transition-colors duration-200"
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
             >
-              <Plus className="size-4" />
+              <PlusIcon className="size-4" />
             </button>
           </div>
           <button
             type="button"
             onClick={() => window.open(downloadSrc, "_blank")}
-            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+            className="flex-shrink-0 size-8 grid place-items-center text-on-color/60 hover:text-on-color transition-colors duration-200"
             aria-label="Download image"
           >
             <Download className="size-4" />
@@ -268,10 +281,10 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
           <button
             type="button"
             onClick={() => window.open(src, "_blank")}
-            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+            className="flex-shrink-0 size-8 grid place-items-center text-on-color/60 hover:text-on-color transition-colors duration-200"
             aria-label="Open image in new tab"
           >
-            <ExternalLink className="size-4" />
+            <NewTabIcon className="size-4" />
           </button>
         </div>
       </div>

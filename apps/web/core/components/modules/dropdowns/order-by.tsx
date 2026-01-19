@@ -1,8 +1,21 @@
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
@@ -29,8 +42,8 @@ export function ModuleOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-          {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
+        <div className={cn(getButtonStyling("secondary", "lg"), "px-2 text-tertiary")}>
+          {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
           <ChevronDownIcon className="size-3" strokeWidth={2} />
         </div>
@@ -49,12 +62,12 @@ export function ModuleOrderByDropdown(props: Props) {
           }}
         >
           {t(option.i18n_label)}
-          {value?.includes(option.key) && <Check className="h-3 w-3" />}
+          {value?.includes(option.key) && <CheckIcon className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
       {!isManual && (
         <>
-          <hr className="my-2 border-custom-border-200" />
+          <hr className="my-2 border-subtle" />
           <CustomMenu.MenuItem
             className="flex items-center justify-between gap-2"
             onClick={() => {
@@ -62,7 +75,7 @@ export function ModuleOrderByDropdown(props: Props) {
             }}
           >
             Ascending
-            {!isDescending && <Check className="h-3 w-3" />}
+            {!isDescending && <CheckIcon className="h-3 w-3" />}
           </CustomMenu.MenuItem>
           <CustomMenu.MenuItem
             className="flex items-center justify-between gap-2"
@@ -71,7 +84,7 @@ export function ModuleOrderByDropdown(props: Props) {
             }}
           >
             Descending
-            {isDescending && <Check className="h-3 w-3" />}
+            {isDescending && <CheckIcon className="h-3 w-3" />}
           </CustomMenu.MenuItem>
         </>
       )}

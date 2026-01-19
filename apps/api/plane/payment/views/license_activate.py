@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import requests
 import uuid
@@ -33,9 +44,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
         try:
             # Check the multi-tenant environment
             if settings.IS_MULTI_TENANT:
-                return Response(
-                    {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
-                )
+                return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
             workspace = Workspace.objects.get(slug=slug)
             response = requests.get(
@@ -61,9 +70,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
         license_key = request.data.get("license_key", False)
 
         if not license_key:
-            return Response(
-                {"error": "license_key is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "license_key is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         if settings.PAYMENT_SERVER_BASE_URL:
             # Send request to payment server to activate the license
@@ -71,9 +78,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
 
             # Get all active workspace members
             workspace_members = (
-                WorkspaceMember.objects.filter(
-                    workspace_id=workspace.id, is_active=True, member__is_bot=False
-                )
+                WorkspaceMember.objects.filter(workspace_id=workspace.id, is_active=True, member__is_bot=False)
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
@@ -111,12 +116,8 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                 return Response(response.json(), status=status.HTTP_200_OK)
             except requests.exceptions.RequestException as e:
                 if hasattr(e, "response") and e.response.status_code == 400:
-                    return Response(
-                        e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                    )
-                return Response(
-                    {"error": "Invalid license key"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                    return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Invalid license key"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
                 {"error": "Payment server is not configured"},
@@ -173,15 +174,9 @@ class LicenseDeActivateEndpoint(BaseAPIView):
                 # Return the response
                 return Response(response.json(), status=status.HTTP_200_OK)
             except requests.exceptions.RequestException as e:
-                if (
-                    hasattr(e, "response")
-                    and e.response.status_code == 400
-                    or e.response.status_code == 500
-                ):
+                if hasattr(e, "response") and e.response.status_code == 400 or e.response.status_code == 500:
                     return Response(e.response.json(), status=e.response.status_code)
-                return Response(
-                    {"error": "Invalid license key"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Invalid license key"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
                 {"error": "Payment server is not configured"},
@@ -213,9 +208,7 @@ class LicenseActivateUploadEndpoint(BaseAPIView):
         # Get the file from request
         file = request.FILES.get("license_file")
         if not file:
-            return Response(
-                {"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Read file content first before any operations
         file_content = file.read()
@@ -262,9 +255,7 @@ class LicenseActivateUploadEndpoint(BaseAPIView):
 
         # Get all active workspace members
         workspace_members = (
-            WorkspaceMember.objects.filter(
-                workspace_id=workspace.id, is_active=True, member__is_bot=False
-            )
+            WorkspaceMember.objects.filter(workspace_id=workspace.id, is_active=True, member__is_bot=False)
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),
@@ -308,11 +299,7 @@ class LicenseActivateUploadEndpoint(BaseAPIView):
             # Return the response
             return Response(payment_response.json(), status=status.HTTP_200_OK)
         except requests.exceptions.RequestException as e:
-            if (
-                hasattr(e, "response")
-                and e.response.status_code == 400
-                or e.response.status_code == 500
-            ):
+            if hasattr(e, "response") and e.response.status_code == 400 or e.response.status_code == 500:
                 return Response(e.response.json(), status=e.response.status_code)
             return Response(
                 {"error": "Failed to forward file to payment server"},
@@ -352,9 +339,7 @@ class LicenseFileFetchEndpoint(BaseAPIView):
 
         if not license_file:
             logger.error(f"License file not found for workspace: {slug}")
-            return Response(
-                {"error": "License file not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "License file not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Get the file from S3
         s3_storage = S3Storage(request=request, is_server=True)
@@ -366,9 +351,7 @@ class LicenseFileFetchEndpoint(BaseAPIView):
 
         # Get all active workspace members
         workspace_members = (
-            WorkspaceMember.objects.filter(
-                workspace_id=workspace.id, is_active=True, member__is_bot=False
-            )
+            WorkspaceMember.objects.filter(workspace_id=workspace.id, is_active=True, member__is_bot=False)
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),

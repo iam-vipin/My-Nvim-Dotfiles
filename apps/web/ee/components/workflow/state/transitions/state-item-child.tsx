@@ -1,10 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
 // plane imports
-import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
+import { InfoIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IState } from "@plane/types";
 import { Collapsible, ToggleSwitch } from "@plane/ui";
@@ -12,7 +23,6 @@ import { cn } from "@plane/utils";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { StateItemContent } from "./state-item-content";
@@ -46,21 +56,7 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
   const currentTransitionIds = Object.keys(currentTransitionMap ?? {});
 
   const handleToggleAllowWorkItemCreation = async () => {
-    await toggleAllowWorkItemCreationLogic(workspaceSlug, state.id)
-      .then(() => {
-        captureSuccess({
-          eventName: WORKFLOW_TRACKER_EVENTS.TOGGLE_WORK_ITEM_CREATION,
-          payload: {
-            project_id: projectId,
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: WORKFLOW_TRACKER_EVENTS.TOGGLE_WORK_ITEM_CREATION,
-          error: error as Error,
-        });
-      });
+    await toggleAllowWorkItemCreationLogic(workspaceSlug, state.id);
   };
 
   return (
@@ -71,7 +67,7 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
         className="w-full"
         buttonClassName="w-full"
         title={
-          <div className="flex w-full items-center gap-2 py-2.5 px-3 bg-custom-background-90">
+          <div className="flex w-full items-center gap-2 py-2.5 px-3 bg-layer-1">
             <div className="w-fit flex-shrink-0">
               <StateItemTitle
                 setUpdateStateModal={() => {}}
@@ -85,10 +81,10 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
               <StateTransitionCount currentTransitionMap={currentTransitionMap} />
               <div className="flex w-full items-center justify-end gap-3">
                 <div className="flex gap-1.5">
-                  <span className="text-xs text-custom-text-400 font-medium">
+                  <span className="text-11 text-placeholder font-medium">
                     {isDefaultState ? (
                       <Tooltip position="left" tooltipContent={t("workflows.workflow_states.default_state")}>
-                        <Info className="flex-shrink-0 size-4 text-custom-text-400 hover:text-custom-text-300 cursor-help" />
+                        <InfoIcon className="flex-shrink-0 size-4 text-placeholder hover:text-tertiary cursor-help" />
                       </Tooltip>
                     ) : (
                       <>{t("workflows.workflow_states.work_item_creation")}</>
@@ -101,14 +97,13 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
                       onChange={() => handleToggleAllowWorkItemCreation()}
                       label={t("workflows.workflow_states.work_item_creation")}
                       disabled={isDefaultState}
-                      data-ph-element={WORKFLOW_TRACKER_ELEMENTS.ADD_NEW_WORK_ITEMS_TOGGLE_BUTTON}
                     />
                   )}
                 </div>
                 <ChevronDownIcon
                   strokeWidth={2}
-                  className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
-                    "rotate-180 text-custom-text-200": isOpen,
+                  className={cn("transition-all size-4 text-placeholder hover:text-tertiary", {
+                    "rotate-180 text-secondary": isOpen,
                   })}
                 />
               </div>

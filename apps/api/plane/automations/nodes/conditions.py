@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Condition nodes for the Plane Automation Engine.
 
@@ -46,36 +57,30 @@ class ConditionNode(BaseAutomationNode):
     def _hydrate_related_ids(self, event: dict, field_path: str) -> Any:
         """Fetch related IDs from DB when not present in payload."""
         try:
-            issue_id = event.get("entity_id") or (
-                event.get("payload", {}).get("data", {}).get("id")
-            )
+            issue_id = event.get("entity_id") or (event.get("payload", {}).get("data", {}).get("id"))
             if not issue_id:
                 return None
 
             if field_path == "payload.data.assignee_ids":
                 ids = list(
-                    IssueAssignee.objects.filter(
-                        issue_id=issue_id, deleted_at__isnull=True
-                    ).values_list("assignee_id", flat=True)
+                    IssueAssignee.objects.filter(issue_id=issue_id, deleted_at__isnull=True).values_list(
+                        "assignee_id", flat=True
+                    )
                 )
                 result = [str(x) for x in ids]
                 # Persist into event to avoid repeated queries
-                event.setdefault("payload", {}).setdefault("data", {})[
-                    "assignee_ids"
-                ] = result
+                event.setdefault("payload", {}).setdefault("data", {})["assignee_ids"] = result
                 return result
 
             if field_path == "payload.data.label_ids":
                 ids = list(
-                    IssueLabel.objects.filter(
-                        issue_id=issue_id, deleted_at__isnull=True
-                    ).values_list("label_id", flat=True)
+                    IssueLabel.objects.filter(issue_id=issue_id, deleted_at__isnull=True).values_list(
+                        "label_id", flat=True
+                    )
                 )
                 result = [str(x) for x in ids]
                 # Persist into event to avoid repeated queries
-                event.setdefault("payload", {}).setdefault("data", {})[
-                    "label_ids"
-                ] = result
+                event.setdefault("payload", {}).setdefault("data", {})["label_ids"] = result
                 return result
 
             return None
@@ -146,9 +151,7 @@ class JSONFilterParams(BaseModel):
             elif "field" in node:
                 # Field comparison
                 if "operator" not in node or "value" not in node:
-                    raise ValueError(
-                        "Field comparison must have 'operator' and 'value'"
-                    )
+                    raise ValueError("Field comparison must have 'operator' and 'value'")
 
                 valid_operators = {
                     # New preferred operator (can accept single value or array)
@@ -163,13 +166,9 @@ class JSONFilterParams(BaseModel):
                     "lte",
                 }
                 if node["operator"] not in valid_operators:
-                    raise ValueError(
-                        f"Invalid operator '{node['operator']}'. Valid operators: {valid_operators}"
-                    )
+                    raise ValueError(f"Invalid operator '{node['operator']}'. Valid operators: {valid_operators}")
             else:
-                raise ValueError(
-                    "Filter node must contain 'and', 'or', 'not', or 'field'"
-                )
+                raise ValueError("Filter node must contain 'and', 'or', 'not', or 'field'")
 
         validate_node(v)
         return v
@@ -193,9 +192,7 @@ class JSONFilterCondition(ConditionNode):
     def execute(self, event: dict, context: dict) -> Dict[str, Any]:
         """Evaluate the JSON filter and return consistent success/failure format."""
         try:
-            filter_result = self._evaluate_filter_node(
-                self.params.filter_expression, event, context
-            )
+            filter_result = self._evaluate_filter_node(self.params.filter_expression, event, context)
 
             if filter_result:
                 return {
@@ -227,28 +224,20 @@ class JSONFilterCondition(ConditionNode):
                 },
             }
 
-    def _evaluate_filter_node(
-        self, node: Dict[str, Any], event: dict, context: dict
-    ) -> bool:
+    def _evaluate_filter_node(self, node: Dict[str, Any], event: dict, context: dict) -> bool:
         """Recursively evaluate a filter node."""
         if "and" in node:
             conditions = node["and"]
             # Vacuous truth: AND over empty set is True
             if isinstance(conditions, list) and len(conditions) == 0:
                 return True
-            return all(
-                self._evaluate_filter_node(condition, event, context)
-                for condition in conditions
-            )
+            return all(self._evaluate_filter_node(condition, event, context) for condition in conditions)
         elif "or" in node:
             conditions = node["or"]
             # Identity for OR over empty set is False
             if isinstance(conditions, list) and len(conditions) == 0:
                 return False
-            return any(
-                self._evaluate_filter_node(condition, event, context)
-                for condition in conditions
-            )
+            return any(self._evaluate_filter_node(condition, event, context) for condition in conditions)
         elif "not" in node:
             condition = node["not"]
             if isinstance(condition, list):
@@ -257,10 +246,7 @@ class JSONFilterCondition(ConditionNode):
                 # consider empty NOT as True (no-op)
                 if len(condition) == 0:
                     return True
-                return not all(
-                    self._evaluate_filter_node(cond, event, context)
-                    for cond in condition
-                )
+                return not all(self._evaluate_filter_node(cond, event, context) for cond in condition)
             return not self._evaluate_filter_node(condition, event, context)
         elif "field" in node:
             field_path = node["field"]
@@ -271,18 +257,13 @@ class JSONFilterCondition(ConditionNode):
         else:
             return False
 
-    def _compare_values(
-        self, field_value: Any, operator: str, expected_value: Any
-    ) -> bool:
+    def _compare_values(self, field_value: Any, operator: str, expected_value: Any) -> bool:
         """Compare field value against expected value using the specified operator."""
         try:
             if operator == "is":
                 # Accept both single value and list of values
                 if isinstance(expected_value, list):
-                    return any(
-                        self._equals_comparison(field_value, val)
-                        for val in expected_value
-                    )
+                    return any(self._equals_comparison(field_value, val) for val in expected_value)
                 return self._equals_comparison(field_value, expected_value)
 
             if operator == "equals":
@@ -291,19 +272,14 @@ class JSONFilterCondition(ConditionNode):
             elif operator == "in":
                 if not isinstance(expected_value, list):
                     return False
-                return any(
-                    self._equals_comparison(field_value, val) for val in expected_value
-                )
+                return any(self._equals_comparison(field_value, val) for val in expected_value)
 
             elif operator == "contains":
                 if field_value is None:
                     return False
                 # If the field value is a list, check any item's string contains expected_value
                 if isinstance(field_value, list):
-                    return any(
-                        str(expected_value).lower() in str(item).lower()
-                        for item in field_value
-                    )
+                    return any(str(expected_value).lower() in str(item).lower() for item in field_value)
                 return str(expected_value).lower() in str(field_value).lower()
 
             elif operator in ["gt", "gte", "lt", "lte"]:
@@ -322,12 +298,8 @@ class JSONFilterCondition(ConditionNode):
 
         # If either side is a list, treat as set-like overlap: any pair equals
         if isinstance(field_value, list) or isinstance(expected_value, list):
-            field_items = (
-                field_value if isinstance(field_value, list) else [field_value]
-            )
-            expected_items = (
-                expected_value if isinstance(expected_value, list) else [expected_value]
-            )
+            field_items = field_value if isinstance(field_value, list) else [field_value]
+            expected_items = expected_value if isinstance(expected_value, list) else [expected_value]
             for field_item in field_items:
                 for expected_item in expected_items:
                     if self._equals_comparison(field_item, expected_item):
@@ -339,17 +311,13 @@ class JSONFilterCondition(ConditionNode):
             return self._date_equals_comparison(field_value, expected_value)
 
         # Handle numeric comparisons (int/float)
-        if isinstance(field_value, (int, float)) and isinstance(
-            expected_value, (int, float)
-        ):
+        if isinstance(field_value, (int, float)) and isinstance(expected_value, (int, float)):
             return field_value == expected_value
 
         # String comparison (case-insensitive)
         return str(field_value).lower() == str(expected_value).lower()
 
-    def _numeric_comparison(
-        self, field_value: Any, operator: str, expected_value: Any
-    ) -> bool:
+    def _numeric_comparison(self, field_value: Any, operator: str, expected_value: Any) -> bool:
         """Perform numeric comparison with type coercion."""
         try:
             # Handle date comparisons
@@ -377,9 +345,7 @@ class JSONFilterCondition(ConditionNode):
 
         return False
 
-    def _date_comparison(
-        self, field_value: Any, operator: str, expected_value: Any
-    ) -> bool:
+    def _date_comparison(self, field_value: Any, operator: str, expected_value: Any) -> bool:
         """Perform date comparison with flexible parsing."""
         try:
             field_date = self._parse_date(field_value)

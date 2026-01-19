@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { CustomersIcon } from "@plane/propel/icons";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
@@ -20,7 +33,7 @@ export function CustomerRequestActivity(props: TCustomerRequestActivityProps) {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<CustomersIcon className="h-3 w-3 flex-shrink-0 text-custom-text-300" />}
+      icon={<CustomersIcon className="h-3 w-3 flex-shrink-0 text-tertiary" />}
       activityId={activityId}
       ends={ends}
     >
@@ -32,7 +45,7 @@ export function CustomerRequestActivity(props: TCustomerRequestActivityProps) {
               href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -44,7 +57,7 @@ export function CustomerRequestActivity(props: TCustomerRequestActivityProps) {
               href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate"> {activity.old_value}</span>
             </a>

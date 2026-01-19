@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -8,6 +21,7 @@ import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { IssueWorklogPropertyButton } from "./button";
 
 type TIssueWorklogProperty = {
@@ -40,19 +54,11 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
 
   if (!isWorklogsEnabledByProjectId(projectId)) return <></>;
   return (
-    <div className="flex w-full items-center gap-3 min-h-8">
-      <div
-        className={`flex items-center gap-1 flex-shrink-0 text-sm text-custom-text-300 ${isPeekOverview ? "w-1/4" : "w-2/5"}`}
-      >
-        <Timer className="h-4 w-4 flex-shrink-0" />
-        <span>Tracked time</span>
-      </div>
-      <div className="relative h-full min-h-8 w-full flex-grow flex items-center">
-        <IssueWorklogPropertyButton
-          content={convertMinutesToHoursMinutesString(totalMinutes).trim()}
-          isLoading={isLoading}
-        />
-      </div>
-    </div>
+    <SidebarPropertyListItem icon={Timer} label="Tracked time" childrenClassName="px-2">
+      <IssueWorklogPropertyButton
+        content={convertMinutesToHoursMinutesString(totalMinutes).trim()}
+        isLoading={isLoading}
+      />
+    </SidebarPropertyListItem>
   );
 });

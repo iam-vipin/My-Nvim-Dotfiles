@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import uuid
 from enum import Enum
 from typing import Any
@@ -111,11 +122,14 @@ class ChatType(Enum):
     PAGES = "pages"
     MODULES = "modules"
     CYCLES = "cycles"
+    INITIATIVES = "initiatives"
+    WORKSPACES = "workspaces"
 
 
 class ChatSuggestion(BaseModel):
     text: str | None = None
     type: ChatType
+    mode: Literal["ask", "build"] = "ask"
     id: list[UUID4]
 
 
@@ -139,6 +153,17 @@ class ChatFeedback(BaseModel):
     feedback_message: Optional[str] = None
     workspace_id: Optional[UUID4] = None
     workspace_slug: Optional[str] = None
+
+
+class AIFeatureFeedback(BaseModel):
+    """Feedback schema for AI-powered features (ai_block, floaty_ai, ask_ai, etc.)"""
+
+    usage_id: Optional[UUID4] = Field(None, description="ID of the AI feature instance (e.g., ai_block_id)")
+    entity_type: Optional[str] = Field(None, description="Type of entity where feature is used: 'page', 'wiki', etc.")
+    entity_id: Optional[UUID4] = Field(None, description="ID of the entity (e.g., page_id)")
+    feedback: FeedbackType = Field(..., description="positive or negative feedback")
+    feedback_message: Optional[str] = Field(None, description="Optional detailed feedback message")
+    workspace_id: UUID4 = Field(..., description="Workspace ID")
 
 
 class ModelInfo(BaseModel):
@@ -252,3 +277,26 @@ class ChatInitResponse(BaseModel):
     is_authorized: bool = Field(description="Whether user has valid authorization for workspace")
     templates: List[Any] = Field(default_factory=list, description="Chat suggestion templates")
     oauth_url: Optional[str] = Field(None, description="OAuth authorization URL if not authorized")
+
+
+class ChatAuthCheckResponse(BaseModel):
+    """Response for auth check - OAuth status only, no templates"""
+
+    is_authorized: bool = Field(description="Whether user has valid authorization for workspace")
+    oauth_url: Optional[str] = Field(None, description="OAuth authorization URL if not authorized")
+
+
+class PresetQuestionsRequest(BaseModel):
+    """Request schema for getting contextual preset questions"""
+
+    workspace_id: UUID4 = Field(description="Workspace ID")
+    mode: Literal["ask", "build"] = Field(description="Chat mode: ask or build")
+    entity_type: Optional[str] = Field(None, description="Type of focus entity (workspace, project, cycle, module, etc.)")
+    entity_id: Optional[UUID4] = Field(None, description="ID of the focus entity")
+    project_id: Optional[UUID4] = Field(None, description="Project ID if applicable")
+
+
+class PresetQuestionsResponse(BaseModel):
+    """Response with contextual preset questions/templates"""
+
+    templates: List[Any] = Field(default_factory=list, description="Contextual chat suggestion templates")

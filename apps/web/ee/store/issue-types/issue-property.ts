@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { uniq, concat, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -167,7 +180,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    * @description Update property data
    * @param {TIssueProperty<EIssuePropertyType>} propertyData
    */
-  updatePropertyData = (propertyData: TIssueProperty<EIssuePropertyType>) => {
+  updatePropertyData = (propertyData: Partial<TIssueProperty<EIssuePropertyType>>) => {
     for (const key in propertyData) {
       if (propertyData.hasOwnProperty(key)) {
         const propertyKey = key as keyof TIssueProperty<T>;
@@ -239,6 +252,11 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !this.id) return undefined;
 
+    const dataBeforeUpdate = { ...this.asJSON };
+    runInAction(() => {
+      this.updatePropertyData(propertyData);
+    });
+
     try {
       const issuePropertyResponse = await this.service.update({
         workspaceSlug,
@@ -248,13 +266,15 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
         data: propertyData,
       });
       runInAction(() => {
-        const { options, ...issuePropertyData } = issuePropertyResponse;
-        this.updatePropertyData(issuePropertyData);
+        const { options } = issuePropertyResponse;
         if (options && options.length) {
           this.addOrUpdatePropertyOptions(options);
         }
       });
     } catch (error) {
+      runInAction(() => {
+        this.updatePropertyData(dataBeforeUpdate);
+      });
       console.error("IssueProperty -> updateProperty -> error", error);
       throw error;
     }

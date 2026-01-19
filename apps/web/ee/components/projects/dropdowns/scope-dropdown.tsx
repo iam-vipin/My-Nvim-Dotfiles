@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { ChevronDownIcon } from "@plane/propel/icons";
-import { CustomMenu, Loader } from "@plane/ui";
+import { CustomMenu, getButtonStyling, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web constants
 import { PROJECT_SCOPES } from "@/plane-web/constants/project";
@@ -10,6 +23,7 @@ import { PROJECT_SCOPES } from "@/plane-web/constants/project";
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types
 import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { Button } from "@plane/propel/button";
 
 export type TProjectScopeDropdown = {
   workspaceSlug: string;
@@ -29,18 +43,18 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
   function DropdownLabel() {
     return (
       <>
-        <div className="hidden md:flex relative items-center gap-2 w-[150px]">
+        <div className="hidden md:flex relative items-center gap-2">
           <div className="flex gap-2 flex-1 my-auto">
             <div className="whitespace-nowrap font-medium my-auto">
               {(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}
             </div>
-            <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+            <div className="px-2 py-0.5 flex-shrink-0 bg-accent-primary/20 text-accent-primary text-11 font-semibold rounded-xl">
               {selectedScopeCount}
             </div>
           </div>
           <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
         </div>
-        <div className="flex md:hidden text-sm items-center gap-2 neutral-primary text-custom-text-200 justify-center w-full">
+        <div className="flex md:hidden text-13 items-center gap-2 text-secondary justify-center w-full">
           <span>{(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}</span>
           <ChevronDownIcon className="h-3 w-3 hidden md:flex" strokeWidth={2} />
         </div>
@@ -64,8 +78,8 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
             updateLayout(workspaceSlug, EProjectLayouts.GALLERY);
         }}
       >
-        <div className="truncate font-medium text-xs">{scope?.label}</div>
-        <div className="px-2 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+        <div className="truncate font-medium text-11">{scope?.label}</div>
+        <div className="px-2 py-0.5 flex-shrink-0 bg-accent-primary/20 text-accent-primary text-11 font-semibold rounded-xl">
           {scopeProjectsCount?.[scope.key]}
         </div>
       </CustomMenu.MenuItem>
@@ -75,12 +89,13 @@ export const ProjectScopeDropdown = observer(function ProjectScopeDropdown(props
   return selectedScope ? (
     <CustomMenu
       maxHeight={"md"}
-      className={cn(
-        "flex flex-grow justify-center text-xs text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded px-3 py-1.5",
-        className
-      )}
+      // className={cn(getButtonStyling("secondary", "lg"), className)}
       placement="bottom-start"
-      customButton={<DropdownLabel />}
+      customButton={
+        <Button variant="secondary" size="lg">
+          <DropdownLabel />
+        </Button>
+      }
       customButtonClassName="flex flex-grow justify-center"
       closeOnSelect
     >

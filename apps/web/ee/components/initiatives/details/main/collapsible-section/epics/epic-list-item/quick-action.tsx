@@ -1,5 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
-import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { LinkIcon, TrashIcon } from "@plane/propel/icons";
 // Plane
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -79,7 +93,7 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
           });
         }),
       title: t("common.remove"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: !disabled,
     },
   ];
@@ -88,11 +102,11 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
     <>
       <CustomMenu
         customButton={
-          <span className="grid place-items-center p-0.5  rounded my-auto">
+          <span className="grid place-items-center p-0.5  rounded-sm my-auto">
             <MoreHorizontal className="size-4" />
           </span>
         }
-        className={cn("flex justify-center items-center pointer-events-auto flex-shrink-0 my-auto rounded  ")}
+        className={cn("flex justify-center items-center pointer-events-auto flex-shrink-0 my-auto rounded-sm  ")}
         customButtonClassName="grid place-items-center"
         placement="bottom-start"
       >

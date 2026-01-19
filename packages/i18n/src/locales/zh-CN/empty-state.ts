@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   common_empty_state: {
     progress: {
@@ -176,6 +189,11 @@ export default {
       title: "暂无个人令牌",
       description: "生成安全的 API 令牌以将工作空间与外部系统和应用程序连接。",
       cta_primary: "添加 API 令牌",
+    },
+    webhooks: {
+      title: "尚未添加 Webhook",
+      description: "在项目事件发生时自动向外部服务发送通知。",
+      cta_primary: "添加 webhook",
     },
   },
 } as const;

@@ -1,6 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Copy } from "lucide-react";
+import { CopyIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
@@ -29,19 +42,19 @@ function CopyField(props: Props) {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-xs font-medium text-custom-text-300">{label}</h4>
+      <h4 className="text-11 font-medium text-tertiary">{label}</h4>
       <div className="relative">
         <div
-          className="group flex items-center justify-between py-1 px-2 border border-custom-border-200 rounded-md cursor-pointer hover:bg-custom-background-90"
+          className="group flex items-center justify-between py-1 px-2 border border-subtle-1 rounded-md cursor-pointer hover:bg-layer-1"
           onClick={handleCopy}
         >
-          <p className="text-xs font-medium text-custom-text-200 truncate pr-2">{value}</p>
-          <Button variant="link-neutral" size="sm" className="flex-shrink-0 p-1 h-auto">
-            <Copy className="size-4 text-custom-text-200 group-hover:text-custom-text-100" />
+          <p className="text-11 font-medium text-secondary truncate pr-2">{value}</p>
+          <Button variant="ghost" className="flex-shrink-0 p-1 h-auto">
+            <CopyIcon className="size-4 text-secondary group-hover:text-primary" />
           </Button>
         </div>
       </div>
-      {description && <div className="text-xs text-custom-text-300">{description}</div>}
+      {description && <div className="text-11 text-tertiary">{description}</div>}
     </div>
   );
 }
@@ -114,8 +127,8 @@ export const InstanceDetailsForLicenseActivation = observer(function InstanceDet
   return (
     <div className="py-4">
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-custom-text-100">{PLANE_PROVIDED_DETAILS.title}</h3>
-        <p className="text-xs text-custom-text-300">{PLANE_PROVIDED_DETAILS.description}</p>
+        <h3 className="text-13 font-semibold text-primary">{PLANE_PROVIDED_DETAILS.title}</h3>
+        <p className="text-11 text-tertiary">{PLANE_PROVIDED_DETAILS.description}</p>
       </div>
       <div className="flex flex-col gap-y-3 gap-x-6">
         {PLANE_PROVIDED_DETAILS.fields.map((row) => (

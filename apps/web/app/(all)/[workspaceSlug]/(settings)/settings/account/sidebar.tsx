@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { CircleUser, Activity, Bell, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
+import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks } from "lucide-react";
 // plane imports
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
+import { LockIcon } from "@plane/propel/icons";
 import { getFileURL } from "@plane/utils";
 // components
 import { SettingsSidebar } from "@/components/settings/sidebar";
@@ -11,7 +25,7 @@ import { useUser } from "@/hooks/store/user";
 
 const ICONS = {
   profile: CircleUser,
-  security: Lock,
+  security: LockIcon,
   activity: Activity,
   preferences: Settings2,
   notifications: Bell,
@@ -49,7 +63,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         <div className="flex items-center gap-2">
           <div className="flex-shrink-0">
             {!currentUser?.avatar_url || currentUser?.avatar_url === "" ? (
-              <span className="relative flex size-8 items-center justify-center rounded-full bg-[#028375] capitalize text-white text-sm">
+              <span className="relative flex size-8 items-center justify-center rounded-full bg-[#028375] capitalize text-on-color text-13">
                 {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
               </span>
             ) : (
@@ -63,8 +77,8 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
             )}
           </div>
           <div className="w-full overflow-hidden">
-            <div className="text-base font-medium text-custom-text-200 truncate">{currentUser?.display_name}</div>
-            <div className="text-sm text-custom-text-300 truncate">{currentUser?.email}</div>
+            <div className="text-14 font-medium text-secondary truncate">{currentUser?.display_name}</div>
+            <div className="text-13 text-tertiary truncate">{currentUser?.email}</div>
           </div>
         </div>
       }

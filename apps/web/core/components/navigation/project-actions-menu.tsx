@@ -1,10 +1,23 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { LinkIcon, LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
+import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
 // plane imports
 import { MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { LinkIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
 type Props = {
@@ -42,7 +55,7 @@ export function ProjectActionsMenu({
       customButton={
         <span
           ref={actionSectionRef}
-          className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded"
+          className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
           onClick={() => setIsMenuActive(!isMenuActive)}
         >
           <MoreHorizontal className="size-4" />
@@ -60,7 +73,7 @@ export function ProjectActionsMenu({
       {isAdmin && (
         <CustomMenu.MenuItem onClick={onPublishModal}>
           <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-            <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
+            <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
               <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
             </div>
             <div>{t("publish_project")}</div>

@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const AppSidebarToggleButton = observer(function AppSidebarToggleButton() {
   // store hooks
@@ -10,14 +24,14 @@ export const AppSidebarToggleButton = observer(function AppSidebarToggleButton()
 
   if (!isSidebarToggleVisible()) return null;
   return (
-    <button
-      className="flex items-center justify-center size-6 rounded-md text-custom-text-400 hover:text-custom-primary-100 hover:bg-custom-background-90"
+    <IconButton
+      size="base"
+      variant="ghost"
+      icon={PanelLeft}
       onClick={() => {
         if (sidebarPeek) toggleSidebarPeek(false);
         toggleSidebar();
       }}
-    >
-      <PanelLeft className="size-4" />
-    </button>
+    />
   );
 });

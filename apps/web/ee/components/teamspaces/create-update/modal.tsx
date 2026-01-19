@@ -1,14 +1,24 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TTeamspace } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getRandomEmoji } from "@plane/utils";
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports
@@ -89,11 +99,7 @@ export const CreateOrUpdateTeamspaceModal = observer(function CreateOrUpdateTeam
     if (!teamFormData) return;
     setIsSubmitting(true);
     await createTeamspace(workspaceSlug?.toString(), teamFormData)
-      .then((teamspace) => {
-        captureSuccess({
-          eventName: TEAMSPACE_TRACKER_EVENTS.CREATE,
-          payload: { id: teamspace.id },
-        });
+      .then(() => {
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -102,10 +108,6 @@ export const CreateOrUpdateTeamspaceModal = observer(function CreateOrUpdateTeam
         });
       })
       .catch((error) => {
-        captureError({
-          eventName: TEAMSPACE_TRACKER_EVENTS.CREATE,
-          error: error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -122,11 +124,7 @@ export const CreateOrUpdateTeamspaceModal = observer(function CreateOrUpdateTeam
 
     setIsSubmitting(true);
     await updateTeamspace(workspaceSlug?.toString(), teamspaceId, teamFormData)
-      .then((teamspace) => {
-        captureSuccess({
-          eventName: TEAMSPACE_TRACKER_EVENTS.UPDATE,
-          payload: { id: teamspace.id },
-        });
+      .then(() => {
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -135,11 +133,6 @@ export const CreateOrUpdateTeamspaceModal = observer(function CreateOrUpdateTeam
         });
       })
       .catch((error) => {
-        captureError({
-          eventName: TEAMSPACE_TRACKER_EVENTS.UPDATE,
-          error: error,
-          payload: { id: teamspaceId },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -38,7 +51,7 @@ export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(p
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        "absolute h-full z-[21] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm",
+        "absolute h-full z-[21] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-surface-1 border-r border-subtle p-4 shadow-sm",
         {
           "opacity-100": isExtendedSidebarOpened,
           "opacity-0 hidden": !isExtendedSidebarOpened,

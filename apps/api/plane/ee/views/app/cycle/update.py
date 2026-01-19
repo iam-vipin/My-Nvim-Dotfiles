@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models import Subquery, OuterRef, Sum, Prefetch, F, Func
 
@@ -83,9 +94,7 @@ class CycleUpdatesViewSet(BaseViewSet):
         workspace = Workspace.objects.get(slug=slug)
         cycle_issues = EntityIssueStateActivity.objects.filter(
             id=Subquery(
-                EntityIssueStateActivity.objects.filter(
-                    cycle_id=cycle_id, entity_type="CYCLE", issue=OuterRef("issue")
-                )
+                EntityIssueStateActivity.objects.filter(cycle_id=cycle_id, entity_type="CYCLE", issue=OuterRef("issue"))
                 .order_by("-created_at")
                 .values("id")[:1]
             ),
@@ -93,23 +102,18 @@ class CycleUpdatesViewSet(BaseViewSet):
         ).filter(action__in=["ADDED", "UPDATED"])
         total_issues = cycle_issues.count()
         total_estimate_points = (
-            cycle_issues.aggregate(total_estimate_points=Sum("estimate_value"))[
+            cycle_issues.aggregate(total_estimate_points=Sum("estimate_value"))["total_estimate_points"] or 0
+        )
+        completed_issues = cycle_issues.filter(state_group="completed").count()
+        completed_estimate_points = (
+            cycle_issues.filter(state_group="completed").aggregate(total_estimate_points=Sum("estimate_value"))[
                 "total_estimate_points"
             ]
             or 0
         )
-        completed_issues = cycle_issues.filter(state_group="completed").count()
-        completed_estimate_points = (
-            cycle_issues.filter(state_group="completed").aggregate(
-                total_estimate_points=Sum("estimate_value")
-            )["total_estimate_points"]
-            or 0
-        )
         update_status = None
         if request.data.get("parent"):
-            parent_update = EntityUpdates.objects.get(
-                pk=request.data.get("parent"), entity_type="CYCLE"
-            )
+            parent_update = EntityUpdates.objects.get(pk=request.data.get("parent"), entity_type="CYCLE")
             update_status = parent_update.status
 
         serializer = UpdatesSerializer(data=request.data)
@@ -129,9 +133,7 @@ class CycleUpdatesViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def partial_update(self, request, slug, project_id, cycle_id, pk):
-        cycle_update = EntityUpdates.objects.get(
-            workspace__slug=slug, project_id=project_id, cycle_id=cycle_id, pk=pk
-        )
+        cycle_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, cycle_id=cycle_id, pk=pk)
         serializer = UpdatesSerializer(cycle_update, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -141,8 +143,6 @@ class CycleUpdatesViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def destroy(self, request, slug, project_id, cycle_id, pk):
-        cycle_update = EntityUpdates.objects.get(
-            workspace__slug=slug, project_id=project_id, cycle_id=cycle_id, pk=pk
-        )
+        cycle_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, cycle_id=cycle_id, pk=pk)
         cycle_update.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

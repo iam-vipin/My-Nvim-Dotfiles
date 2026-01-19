@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { AtSign, Briefcase } from "lucide-react";
 // plane imports
@@ -7,9 +20,9 @@ import {
   CycleGroupIcon,
   CycleIcon,
   ModuleIcon,
+  StatePropertyIcon,
   PriorityIcon,
   StateGroupIcon,
-  StatePropertyIcon,
   MembersPropertyIcon,
   LabelPropertyIcon,
   StartDatePropertyIcon,
@@ -22,7 +35,6 @@ import type {
   IState,
   IUserLite,
   TFilterConfig,
-  TFilterValue,
   IIssueLabel,
   IModule,
   IProject,
@@ -75,9 +87,9 @@ export type TUseWorkItemFiltersConfigProps = {
 
 export type TWorkItemFiltersConfig = {
   areAllConfigsInitialized: boolean;
-  configs: TFilterConfig<TWorkItemFilterProperty, TFilterValue>[];
+  configs: TFilterConfig<TWorkItemFilterProperty>[];
   configMap: {
-    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty, TFilterValue>;
+    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty>;
   };
   isFilterEnabled: (key: TWorkItemFilterProperty) => boolean;
   members: IUserLite[];

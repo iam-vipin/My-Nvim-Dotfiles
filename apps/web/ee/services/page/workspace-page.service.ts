@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import type {
@@ -10,9 +23,15 @@ import type {
   TEditorMentionsResponse,
   TEditorMentionType,
   TPagesSummary,
+  TPaginationInfo,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
+
+// Paginated response type for pages
+export type TPagePaginatedResponse = TPaginationInfo & {
+  results: TPage[];
+};
 
 export class WorkspacePageService extends APIService {
   constructor() {
@@ -35,9 +54,20 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async fetchPagesByType(workspaceSlug: string, type: string, searchQuery?: string): Promise<TPage[]> {
+  async fetchPagesByType(
+    workspaceSlug: string,
+    type: string,
+    searchQuery?: string,
+    cursor?: string,
+    perPage: number = 20
+  ): Promise<TPagePaginatedResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/`, {
-      params: { search: searchQuery, type },
+      params: {
+        search: searchQuery,
+        type,
+        cursor,
+        per_page: perPage,
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {

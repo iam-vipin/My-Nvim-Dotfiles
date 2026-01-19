@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -48,9 +59,7 @@ def delete_automation_activity(
     automation_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     automation_activities.append(
         AutomationActivity(
             automation=automation,
@@ -106,9 +115,7 @@ def update_automation_activity(
     TRACKED_FIELDS = ["name", "description", "status", "scope", "is_enabled"]
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     # Track changes for each field present in the requested data
     for field_name in requested_data:
@@ -194,9 +201,7 @@ def update_automation_node_activity(
     TRACKED_FIELDS = ["name", "node_type", "is_enabled", "handler_name", "config"]
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     for field_name in requested_data:
         if field_name in TRACKED_FIELDS:
@@ -287,14 +292,10 @@ def track_automation_edge_field_change(
                 old_value=current_instance.get(field_name),
                 new_value=requested_data.get(field_name),
                 old_identifier=(
-                    current_instance.get(field_name)
-                    if field_name in ["target_node", "source_node"]
-                    else None
+                    current_instance.get(field_name) if field_name in ["target_node", "source_node"] else None
                 ),
                 new_identifier=(
-                    requested_data.get(field_name)
-                    if field_name in ["target_node", "source_node"]
-                    else None
+                    requested_data.get(field_name) if field_name in ["target_node", "source_node"] else None
                 ),
                 epoch=epoch,
             )
@@ -313,9 +314,7 @@ def update_automation_edge_activity(
 ):
     TRACKED_FIELDS = ["target_node", "source_node", "execution_order"]
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     for field_name in requested_data:
         if field_name in TRACKED_FIELDS:

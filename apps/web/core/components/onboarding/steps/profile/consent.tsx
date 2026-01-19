@@ -1,5 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
-import { Check } from "lucide-react";
+
+import { CheckIcon } from "@plane/propel/icons";
 
 type Props = {
   isChecked: boolean;
@@ -12,13 +26,13 @@ export function MarketingConsent({ isChecked, handleChange }: Props) {
       <button
         type="button"
         onClick={() => handleChange(!isChecked)}
-        className={`size-4 rounded border-2 flex items-center justify-center ${
-          isChecked ? "bg-custom-primary-100 border-custom-primary-100" : "border-custom-border-300"
+        className={`size-4 rounded-sm border-2 flex items-center justify-center ${
+          isChecked ? "bg-accent-primary border-accent-strong" : "border-strong"
         }`}
       >
-        {isChecked && <Check className="w-3 h-3 text-white" />}
+        {isChecked && <CheckIcon className="w-3 h-3 text-on-color" />}
       </button>
-      <span className="text-sm text-custom-text-300">I agree to Plane marketing communications</span>
+      <span className="text-13 text-tertiary">I agree to Plane marketing communications</span>
     </div>
   );
 }

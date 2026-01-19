@@ -1,10 +1,19 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.views import View
 from django.utils.http import url_has_allowed_host_and_scheme
 
-# Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -22,10 +31,16 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.path_validator import get_safe_redirect_url, validate_next_path, get_allowed_hosts
+from plane.authentication.rate_limit import AuthenticationLimitedThrottle
+from plane.authentication.rate_limit import RateLimitedView
 
 
 class MagicGenerateSpaceEndpoint(APIView):
     permission_classes = [AllowAny]
+
+    throttle_classes = [
+        AuthenticationLimitedThrottle,
+    ]
 
     def post(self, request):
         # Check if instance is configured
@@ -49,7 +64,7 @@ class MagicGenerateSpaceEndpoint(APIView):
             return Response(e.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
 
-class MagicSignInSpaceEndpoint(View):
+class MagicSignInSpaceEndpoint(RateLimitedView):
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
@@ -108,7 +123,7 @@ class MagicSignInSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class MagicSignUpSpaceEndpoint(View):
+class MagicSignUpSpaceEndpoint(RateLimitedView):
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()

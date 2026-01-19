@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
@@ -74,7 +87,7 @@ export const IssuePropertyOptionsRoot = observer(function IssuePropertyOptionsRo
 
   return (
     <>
-      <div className="text-xs font-medium text-custom-text-300">
+      <div className="text-caption-sm-medium text-tertiary">
         {t("work_item_types.settings.properties.attributes.option.create_update.label")}
       </div>
       <div ref={containerRef} className="flex flex-col items-center -ml-2 -mr-1.5 space-y-1.5">
@@ -85,7 +98,7 @@ export const IssuePropertyOptionsRoot = observer(function IssuePropertyOptionsRo
               <div key={propertyOption.id} className="flex group w-full items-center">
                 <Tooltip tooltipContent="Drag to rearrange">
                   <div className="rounded-sm flex-shrink-0 w-3 relative flex justify-center items-center transition-colors cursor-grab">
-                    <GripVertical size={12} className="hidden group-hover:block text-custom-text-200" />
+                    <GripVertical size={12} className="hidden group-hover:block text-secondary" />
                   </div>
                 </Tooltip>
                 <IssuePropertyOptionItem
@@ -116,7 +129,7 @@ export const IssuePropertyOptionsRoot = observer(function IssuePropertyOptionsRo
           <div key={issuePropertyOption.key} className="flex group w-full items-center">
             <Tooltip tooltipContent="Save to enable drag-and-rearrange">
               <div className="rounded-sm flex-shrink-0 w-3 relative flex justify-center items-center transition-colors cursor-not-allowed">
-                <GripVertical size={12} className="hidden group-hover:block text-custom-text-400" />
+                <GripVertical size={12} className="hidden group-hover:block text-placeholder" />
               </div>
             </Tooltip>
             <IssuePropertyCreateOptionItem

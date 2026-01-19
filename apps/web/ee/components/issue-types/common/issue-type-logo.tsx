@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 // plane imports
 import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
@@ -54,7 +67,7 @@ export function IssueTypeLogo(props: Props) {
           backgroundColor: isEpic ? "transparent" : background,
         }}
         className={cn(
-          "flex-shrink-0 grid place-items-center rounded bg-custom-background-80",
+          "flex-shrink-0 grid place-items-center rounded-sm bg-layer-1",
           {
             "bg-transparent": isEpic,
           },
@@ -65,7 +78,7 @@ export function IssueTypeLogo(props: Props) {
           <EpicIcon
             width={containerSizeMap[size]}
             height={containerSizeMap[size]}
-            className="text-custom-text-300 group-hover/kanban-block:text-custom-text-200"
+            className="text-tertiary group-hover/kanban-block:text-secondary"
             color={foreground}
           />
         ) : renderDefaultIcon ? (

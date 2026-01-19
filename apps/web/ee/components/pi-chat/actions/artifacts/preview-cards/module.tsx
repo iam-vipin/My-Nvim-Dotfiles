@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { DiceIcon, ModuleStatusIcon, StatePropertyIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
@@ -17,14 +30,14 @@ export const ModulePreviewCard = observer(function ModulePreviewCard(props: TPro
   return (
     <WithPreviewHOC artifactId={artifactId}>
       <div className="flex gap-2 items-start">
-        <DiceIcon className="size-4 text-custom-text-100 my-0.5 flex-shrink-0" />
-        <div className="flex flex-col gap-2">
-          <div className="truncate text-sm font-medium text-start capitalize">{data.name || "Unknown"}</div>
+        <DiceIcon className="size-4 text-primary my-0.5 shrink-0" />
+        <div className="flex flex-col">
+          <div className="truncate text-body-sm-medium text-start capitalize">{data.name || "Unknown"}</div>
           {/* properties */}
           <WithPreviewHOC.PreviewProperties>
-            <div className={`flex items-center justify-center gap-2 text-sm py-0.5 capitalize`}>
+            <div className={`flex items-center justify-center gap-2 text-body-sm-regular py-0.5 capitalize`}>
               {data.status ? <ModuleStatusIcon status={data.status} /> : <StatePropertyIcon className={`h-3 w-3 `} />}
-              {data.status ?? <span className={`text-custom-text-200`}>Status</span>}
+              {data.status ?? <span className={`text-secondary`}>Status</span>}
             </div>
             {data.member_ids && data.member_ids?.length > 0 && (
               <ReadonlyMember
@@ -40,7 +53,7 @@ export const ModulePreviewCard = observer(function ModulePreviewCard(props: TPro
             {(data.start_date || data.target_date) && (
               <div
                 className={cn(
-                  "flex flex-wrap gap-2 items-center [&>*]:p-0 [&>*]:hover:bg-transparent text-sm text-custom-text-300"
+                  "flex flex-wrap gap-2 items-center [&>*]:p-0 [&>*]:hover:bg-transparent text-body-sm-regular text-tertiary"
                 )}
               >
                 <DisplayDates startDate={data.start_date ?? null} endDate={data.target_date ?? null} />

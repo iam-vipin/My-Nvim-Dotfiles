@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard Library imports
 import json
 import logging
@@ -28,9 +39,7 @@ class AutomationConsumer:
             "AUTOMATION_EVENT_STREAM_QUEUE_NAME",
             "plane.event_stream.automations",
         )
-        self.exchange_name = getattr(
-            settings, "AUTOMATION_EXCHANGE_NAME", "plane.event_stream"
-        )
+        self.exchange_name = getattr(settings, "AUTOMATION_EXCHANGE_NAME", "plane.event_stream")
         self.prefetch_count = prefetch_count
 
         # Consumer state
@@ -130,9 +139,7 @@ class AutomationConsumer:
         # Bind to fanout exchange
         channel.queue_bind(exchange=self.exchange_name, queue=self.queue_name)
 
-        logger.info(
-            f"Queue '{self.queue_name}' bound to exchange '{self.exchange_name}'"
-        )
+        logger.info(f"Queue '{self.queue_name}' bound to exchange '{self.exchange_name}'")
 
     def _should_process(self, event_type: str) -> bool:
         """Check if event should be processed for automations."""
@@ -175,22 +182,16 @@ class AutomationConsumer:
 
             # Ensure exactly-once processing with retry on connection issues
             try:
-                ProcessedAutomationEvent.objects.create(
-                    event_id=event_id, event_type=event_type, status="pending"
-                )
+                ProcessedAutomationEvent.objects.create(event_id=event_id, event_type=event_type, status="pending")
             except IntegrityError:
                 logger.debug(f"Event {event_id} already processed")
                 return True
             except OperationalError as e:
                 # Retry once on database connection issues
-                logger.warning(
-                    f"Database error creating ProcessedAutomationEvent, retrying: {e}"
-                )
+                logger.warning(f"Database error creating ProcessedAutomationEvent, retrying: {e}")
                 self.ensure_database_connection()
                 try:
-                    ProcessedAutomationEvent.objects.create(
-                        event_id=event_id, event_type=event_type, status="pending"
-                    )
+                    ProcessedAutomationEvent.objects.create(event_id=event_id, event_type=event_type, status="pending")
                 except IntegrityError:
                     logger.debug(f"Event {event_id} already processed on retry")
                     return True
@@ -202,24 +203,16 @@ class AutomationConsumer:
 
             # Update with task_id, also with retry logic
             try:
-                ProcessedAutomationEvent.objects.filter(event_id=event_id).update(
-                    task_id=task_result.id
-                )
+                ProcessedAutomationEvent.objects.filter(event_id=event_id).update(task_id=task_result.id)
             except OperationalError as e:
-                logger.warning(
-                    f"Database error updating ProcessedAutomationEvent, retrying: {e}"
-                )
+                logger.warning(f"Database error updating ProcessedAutomationEvent, retrying: {e}")
                 self.ensure_database_connection()
-                ProcessedAutomationEvent.objects.filter(event_id=event_id).update(
-                    task_id=task_result.id
-                )
+                ProcessedAutomationEvent.objects.filter(event_id=event_id).update(task_id=task_result.id)
 
             logger.info(f"Dispatched automation for {event_id} ({event_type})")
             return True
         except OperationalError as e:
-            logger.warning(
-                f"Database connection lost permanently, stopping consumer: {e}"
-            )
+            logger.warning(f"Database connection lost permanently, stopping consumer: {e}")
             sys.exit(1)
         except Exception as e:
             logger.error(f"Error processing message: {e}")
@@ -248,9 +241,7 @@ class AutomationConsumer:
                             if success:
                                 ch.basic_ack(delivery_tag=method.delivery_tag)
                             else:
-                                ch.basic_nack(
-                                    delivery_tag=method.delivery_tag, requeue=False
-                                )
+                                ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
                         self._consumer_tag = channel.basic_consume(
                             queue=self.queue_name, on_message_callback=message_callback
@@ -275,9 +266,7 @@ class AutomationConsumer:
             except KeyboardInterrupt:
                 self._should_stop = True
             except OperationalError:
-                logger.warning(
-                    "Database connection lost permanently, stopping consumer"
-                )
+                logger.warning("Database connection lost permanently, stopping consumer")
                 sys.exit(1)
             except Exception as e:
                 log_exception(e)

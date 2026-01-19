@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TFilterValue } from "../expression";
 import type { TBaseFilterFieldConfig } from "./shared";
 
@@ -9,6 +22,7 @@ export const EXTENDED_FILTER_FIELD_TYPE = {
   TEXT: "text",
   NUMBER: "number",
   NUMBER_RANGE: "number_range",
+  WITH_VALUE: "with_value",
 } as const;
 
 // -------- BOOLEAN FILTER CONFIGURATIONS --------
@@ -68,6 +82,17 @@ export type TNumberRangeFilterFieldConfig<V extends TFilterValue> = TBaseNumberF
   defaultValue?: V[];
 };
 
+// -------- FILTER WITH VALUE CONFIGURATIONS --------
+
+/**
+ * Filter with value configuration - for filtering with a specific value.
+ * - value: The value to filter with
+ */
+export type TWithValueFilterFieldConfig<V extends TFilterValue> = TBaseFilterFieldConfig & {
+  type: typeof EXTENDED_FILTER_FIELD_TYPE.WITH_VALUE;
+  value: V;
+};
+
 // -------- UNION TYPES --------
 
 /**
@@ -77,4 +102,5 @@ export type TExtendedFilterFieldConfigs<V extends TFilterValue = TFilterValue> =
   | TTextFilterFieldConfig<V>
   | TBooleanFilterFieldConfig
   | TNumberFilterFieldConfig<V>
-  | TNumberRangeFilterFieldConfig<V>;
+  | TNumberRangeFilterFieldConfig<V>
+  | TWithValueFilterFieldConfig<V>;

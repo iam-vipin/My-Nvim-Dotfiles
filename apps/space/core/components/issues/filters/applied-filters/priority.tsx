@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { CloseIcon, PriorityIcon } from "@plane/propel/icons";
 import type { TIssuePriorities } from "@plane/propel/icons";
 
@@ -11,21 +24,19 @@ export function AppliedPriorityFilters(props: Props) {
 
   return (
     <>
-      {values &&
-        values.length > 0 &&
-        values.map((priority) => (
-          <div key={priority} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
-            <PriorityIcon priority={priority} className={`h-3 w-3`} />
-            {priority}
-            <button
-              type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-              onClick={() => handleRemove(priority)}
-            >
-              <CloseIcon height={10} width={10} strokeWidth={2} />
-            </button>
-          </div>
-        ))}
+      {values?.map((priority) => (
+        <div key={priority} className="flex items-center gap-1 rounded-sm bg-layer-3 p-1 text-11">
+          <PriorityIcon priority={priority} className={`h-3 w-3`} />
+          {priority}
+          <button
+            type="button"
+            className="grid place-items-center text-tertiary hover:text-secondary"
+            onClick={() => handleRemove(priority)}
+          >
+            <CloseIcon height={10} width={10} strokeWidth={2} />
+          </button>
+        </div>
+      ))}
     </>
   );
 }

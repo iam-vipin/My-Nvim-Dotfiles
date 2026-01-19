@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core";
 import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
@@ -29,8 +42,8 @@ import type {
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
-  TExtendedCommandExtraProps,
   TExtendedEditorRefApi,
+  TExtendedCommandExtraProps,
 } from "@/types";
 
 export type TEditorCommands =
@@ -60,6 +73,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "ai-block"
   | "page-embed"
   | "attachment"
   | "emoji"
@@ -134,6 +148,7 @@ export type CoreEditorRefApi = {
   getDocumentInfo: () => TDocumentInfo;
   getHeadings: () => IMarking[];
   getMarkDown: () => string;
+  copyMarkdownToClipboard: () => void;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isAnyDropbarOpen: () => boolean;
@@ -187,6 +202,7 @@ export type IEditorProps = {
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  showPlaceholderOnEmpty?: boolean;
   tabIndex?: number;
   value?: Content | null;
   extendedEditorProps: IEditorPropsExtended;

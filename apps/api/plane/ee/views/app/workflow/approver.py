@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -41,12 +52,8 @@ class WorkflowTransitionApproverEndpoint(BaseAPIView):
             ).values_list("approver_id", flat=True)
         ]
         # Remove the actors and add the new ones
-        removed_approver_ids = list(
-            set(existing_approver_ids) - set(requested_approver_ids)
-        )
-        added_approver_ids = list(
-            set(requested_approver_ids) - set(existing_approver_ids)
-        )
+        removed_approver_ids = list(set(existing_approver_ids) - set(requested_approver_ids))
+        added_approver_ids = list(set(requested_approver_ids) - set(existing_approver_ids))
         # Remove the actors
         WorkflowTransitionApprover.objects.filter(
             workflow_transition_id=workflow_transition_id,
@@ -77,9 +84,7 @@ class WorkflowTransitionApproverEndpoint(BaseAPIView):
             workflow_transition_id=workflow_transition.id,
             workflow_id=workflow_transition.workflow_id,
         )
-        serializer = WorkflowTransitionActorSerializer(
-            workflow_transition_actors, many=True
-        )
+        serializer = WorkflowTransitionActorSerializer(workflow_transition_actors, many=True)
         workflow_activity.delay(
             type="workflow_approver.activity.updated",
             requested_data=json.dumps(

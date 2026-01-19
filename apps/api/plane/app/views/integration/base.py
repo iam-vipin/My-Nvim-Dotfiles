@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python improts
 import uuid
 
@@ -72,12 +83,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
     permission_classes = [WorkSpaceAdminPermission]
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("integration")
-        )
+        return super().get_queryset().filter(workspace__slug=self.kwargs.get("slug")).select_related("integration")
 
     def create(self, request, slug, provider):
         workspace = Workspace.objects.get(slug=slug)
@@ -97,9 +103,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             code = request.data.get("code", False)
 
             if not code:
-                return Response(
-                    {"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST)
 
             slack_response = slack_oauth(code=code)
 
@@ -121,9 +125,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             is_password_autoset=True,
             is_bot=True,
             first_name=integration.title,
-            avatar=(
-                integration.avatar_url if integration.avatar_url is not None else ""
-            ),
+            avatar=(integration.avatar_url if integration.avatar_url is not None else ""),
         )
 
         # Create an API Token for the bot user
@@ -143,18 +145,14 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
         )
 
         # Add bot user as a member of workspace
-        _ = WorkspaceMember.objects.create(
-            workspace=workspace_integration.workspace, member=bot_user, role=20
-        )
+        _ = WorkspaceMember.objects.create(workspace=workspace_integration.workspace, member=bot_user, role=20)
         return Response(
             WorkspaceIntegrationSerializer(workspace_integration).data,
             status=status.HTTP_201_CREATED,
         )
 
     def destroy(self, request, slug, pk):
-        workspace_integration = WorkspaceIntegration.objects.get(
-            pk=pk, workspace__slug=slug
-        )
+        workspace_integration = WorkspaceIntegration.objects.get(pk=pk, workspace__slug=slug)
 
         if workspace_integration.integration.provider == "github":
             installation_id = workspace_integration.config.get("installation_id", False)

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -288,9 +301,9 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
           role="button"
           data-drag-handle
           className={cn(
-            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-custom-background-90 ease",
+            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-layer-1 ease",
             {
-              "bg-custom-background-80": draggedInside && isDroppable,
+              "bg-layer-1": draggedInside && isDroppable,
             },
             displayState.bgColor
           )}
@@ -312,7 +325,7 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
         >
           {pageEmbedLogo}
           <div className="flex-shrink-0 flex items-center gap-3">
-            <p className="not-prose text-[--font-size-regular] font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
+            <p className="not-prose text-(--font-size-regular) font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
               {displayState.text}
             </p>
             {displayState?.badge}

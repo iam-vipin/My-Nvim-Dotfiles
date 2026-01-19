@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -8,17 +21,15 @@ import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { Loader, Plus } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
+import { PlusIcon, PageIcon } from "@plane/propel/icons";
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PageIcon } from "@plane/propel/icons";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -208,14 +219,6 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
 
         const newPage = await createPage(payload);
 
-        captureSuccess({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
-          payload: {
-            id: newPage?.id,
-            state: "SUCCESS",
-          },
-        });
-
         // Redirect to the newly created page
         if (newPage?.id) {
           // Get the new page instance which has the getRedirectionLink method
@@ -226,12 +229,6 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
           }
         }
       } catch (error) {
-        captureError({
-          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
-          payload: {
-            state: "ERROR",
-          },
-        });
         console.error("Failed to create page:", error);
       } finally {
         setIsCreatingPage(false);
@@ -261,7 +258,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="w-[225px] flex items-center gap-1 py-1.5 truncate rounded-md text-custom-sidebar-text-200 bg-custom-sidebar-background-80 opacity-40">
+                <div className="w-[225px] flex items-center gap-1 py-1.5 truncate rounded-md text-secondary bg-layer-1 opacity-40">
                   <div className="size-4 flex-shrink-0 grid place-items-center">
                     <span className="grid place-items-center">
                       {page.logo_props?.in_use ? (
@@ -271,7 +268,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
                       )}
                     </span>
                   </div>
-                  <p className="truncate text-sm flex-grow min-w-0">{getPageName(page.name)}</p>
+                  <p className="truncate text-13 flex-grow min-w-0">{getPageName(page.name)}</p>
                 </div>
               );
               return () => root.unmount();
@@ -402,12 +399,12 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         {isHovered && canShowAddButton && (
           <button
             type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-100 transition-all duration-200 ease-in-out z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-layer-transparent-hover text-tertiary hover:text-primary transition-all duration-200 ease-in-out z-10"
             onClick={handleCreatePage}
             data-prevent-progress
             disabled={isCreatingPage}
           >
-            {isCreatingPage ? <Loader className="size-3 animate-spin" /> : <Plus className="size-3" />}
+            {isCreatingPage ? <Loader className="size-3 animate-spin" /> : <PlusIcon className="size-3" />}
           </button>
         )}
       </div>

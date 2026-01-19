@@ -65,14 +65,14 @@ export function ErrorState({ error, code, theme }: ErrorStateProps) {
   return (
     <div
       className={cn(
-        "flex items-center rounded-lg border border-custom-border-200 bg-custom-background-50 h-20 my-2 transition-all duration-500",
+        "flex items-center rounded-lg border border-subtle-1 bg-layer-1 h-20 my-2 transition-all duration-500",
         isVisible ? "animate-fade-in opacity-100" : "opacity-0 translate-y-2.5"
       )}
     >
       <div className="mx-3 flex-shrink-0 flex items-center justify-center">{IconComponent}</div>
       <div className="flex-1">
-        <h3 className="text-base font-medium text-custom-text-100 mb-1">{title}</h3>
-        <p className="text-sm text-custom-text-200">{error}</p>
+        <h3 className="text-14 font-medium text-primary mb-1">{title}</h3>
+        <p className="text-13 text-secondary">{error}</p>
       </div>
     </div>
   );

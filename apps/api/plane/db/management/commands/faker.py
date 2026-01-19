@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from typing import Any
 from django.core.management.base import BaseCommand, CommandError
@@ -23,9 +34,7 @@ class Command(BaseCommand):
             creator = input("Your email: ")
 
             if creator == "" or not User.objects.filter(email=creator).exists():
-                raise CommandError(
-                    "User email is required and should be existing in Database"
-                )
+                raise CommandError("User email is required and should be existing in Database")
 
             user = User.objects.get(email=creator)
 
@@ -37,9 +46,7 @@ class Command(BaseCommand):
             module_count = int(input("Number of modules to be created: "))
 
             # Create workspace
-            workspace = Workspace.objects.create(
-                slug=workspace_slug, name=workspace_name, owner=user
-            )
+            workspace = Workspace.objects.create(slug=workspace_slug, name=workspace_name, owner=user)
             # Create workspace member
             WorkspaceMember.objects.create(workspace=workspace, role=20, member=user)
 

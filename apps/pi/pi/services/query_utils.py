@@ -1,40 +1,124 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Query parsing utilities to avoid circular imports."""
 
+from typing import Any
+from typing import Dict
+from typing import List
 from typing import Optional
-from typing import Tuple
+from typing import Union
+from uuid import UUID
 
 from bs4 import BeautifulSoup
+from pydantic import UUID4
+
+from pi import logger
 
 # Import MENTION_TAGS from settings to avoid circular import
 from pi import settings
 
+# from pi.services.retrievers.pg_store.message import create_message_mentions
+
 MENTION_TAGS = settings.chat.MENTION_TAGS
+log = logger.getChild(__name__)
 
 
-def parse_query(query: str) -> Tuple[Optional[str], str]:
+class ParsedQuery:
+    """Container for parsed query results."""
+
+    def __init__(self, parsed_content: str, mentions: List[Dict[str, str]], links: List[str]):
+        self.parsed_content = parsed_content
+        self.mentions = mentions
+        self.links = links
+
+    @property
+    def has_links(self) -> bool:
+        """Check if the query contains any links."""
+        return len(self.links) > 0
+
+
+async def parse_query(
+    query: str,
+    message_id: Optional[UUID4] = None,
+    workspace_id: Optional[Union[UUID4, str]] = None,
+    db: Optional[Any] = None,
+) -> ParsedQuery:
     """
-    Parse HTML query to extract text and mention components.
+    Parse HTML query to extract text, mentions, and links.
 
     Handles any HTML structure (p, pre, code, div, etc.) and recursively
-    extracts text while identifying mention-component tags.
+    extracts text while identifying mention-component tags and links.
+
+    If message_id, workspace_id, and db are provided, stores mentions in the database.
 
     Args:
-        query: HTML string that may contain mention-component tags
+        query: HTML string that may contain mention-component tags and links
+        message_id: Optional message ID for database storage
+        workspace_id: Optional workspace ID (UUID or string) for database storage
+        db: Optional database session for storing mentions
 
     Returns:
-        Tuple of (mention_target, reformatted_query) where:
-        - mention_target: The 'target' attribute of the last mention found (or None)
-        - reformatted_query: Plain text with mentions replaced by descriptive text
+        ParsedQuery object containing:
+        - parsed_content: Plain text with mentions replaced by descriptive text
+        - mentions: List of mention dictionaries
+        - links: List of URLs found in anchor tags
+    """
+    parsed = _parse_query_internal(query)
+
+    from pi.services.retrievers.pg_store.message import create_message_mentions
+
+    # Store mentions in database if message_id, workspace_id, and db are provided
+    if message_id and workspace_id and db and parsed.mentions:
+        # Convert workspace_id to UUID if it's a string
+        ws_id = UUID(workspace_id) if isinstance(workspace_id, str) else workspace_id
+        # Prepare mention data for database
+        mention_records = []
+        for mention in parsed.mentions:
+            try:
+                mention_id_uuid = UUID(mention["entity_id"])
+                mention_records.append({
+                    "message_id": message_id,
+                    "workspace_id": ws_id,
+                    "mention_type": mention["mention_type"],
+                    "mention_id": mention_id_uuid,
+                })
+            except Exception as e:
+                log.error(f"Failed to store mentions in database: {e}")
+                continue
+
+        await create_message_mentions(db, message_id, ws_id, mention_records)
+
+    return parsed
+
+
+def _parse_query_internal(query: str) -> ParsedQuery:
+    """
+    Internal function to parse HTML query and extract text, mentions, and links.
+
+    Args:
+        query: HTML string that may contain mention-component tags and links
+
+    Returns:
+        ParsedQuery object containing parsed content, mentions, and links
     """
     soup = BeautifulSoup(query, "html.parser")
 
-    # Track last mention for return value
-    last_mention_target = None
-    last_mention_entity_id = None
+    # Track all mentions and links
+    mentions = []
+    links = []
 
     def extract_text_recursive(element) -> str:
         """
-        Recursively extract text from an element, handling mention-components specially.
+        Recursively extract text from an element, handling special tags.
 
         Args:
             element: BeautifulSoup element to process
@@ -42,7 +126,7 @@ def parse_query(query: str) -> Tuple[Optional[str], str]:
         Returns:
             Extracted text with mentions replaced by descriptive text
         """
-        nonlocal last_mention_target, last_mention_entity_id
+        nonlocal mentions, links
 
         text_parts = []
 
@@ -55,15 +139,31 @@ def parse_query(query: str) -> Tuple[Optional[str], str]:
             # Prefer entity_identifier; fall back to id for backward compatibility
             entity_id = element.get("entity_identifier") or element.get("id")
             mention_target = element.get("target")
+            entity_name = element.get("entity_name", "")
+            label = element.get("label", "")
 
             if entity_id and mention_target:
                 mention_tag_name = MENTION_TAGS.get(mention_target, mention_target)
-                # Store last mention for return value
-                last_mention_target = mention_target
-                last_mention_entity_id = entity_id
+
+                # Store mention details
+                mentions.append({
+                    "mention_type": mention_target,
+                    "entity_id": entity_id,
+                    "entity_name": entity_name,
+                    "label": label,
+                })
+
                 return f"{mention_tag_name} with id: {entity_id}"
-            # If mention is malformed, just skip it
             return ""
+
+        # Handle anchor tags (links)
+        if hasattr(element, "name") and element.name == "a":
+            href = element.get("href", "")
+            if href:
+                links.append(href)
+                # Return the link text or URL
+                link_text = element.get_text(strip=True)
+                return link_text or href
 
         # For all other tags, recursively process children
         if hasattr(element, "children"):
@@ -75,12 +175,9 @@ def parse_query(query: str) -> Tuple[Optional[str], str]:
         return "".join(text_parts)
 
     # Extract text from the entire document
-    reformatted_query = extract_text_recursive(soup)
+    parsed_content = extract_text_recursive(soup)
 
     # Clean up whitespace: collapse multiple spaces/newlines into single spaces
-    reformatted_query = " ".join(reformatted_query.split())
+    parsed_content = " ".join(parsed_content.split())
 
-    # Return based on whether we found any mentions
-    if last_mention_target and last_mention_entity_id:
-        return last_mention_target, reformatted_query
-    return None, reformatted_query
+    return ParsedQuery(parsed_content=parsed_content, mentions=mentions, links=links)

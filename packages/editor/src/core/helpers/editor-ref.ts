@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import { findChildren } from "@tiptap/core";
 import type { Editor } from "@tiptap/core";
@@ -95,6 +108,27 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         metaData,
       });
       return markdown;
+    },
+    copyMarkdownToClipboard: () => {
+      if (!editor) return;
+
+      const html = editor.getHTML();
+      const metaData = getEditorMetaData(html);
+      const markdown = convertHTMLToMarkdown({
+        description_html: html,
+        metaData,
+      });
+
+      const copyHandler = (event: ClipboardEvent) => {
+        event.preventDefault();
+        event.clipboardData?.setData("text/plain", markdown);
+        event.clipboardData?.setData("text/html", html);
+        event.clipboardData?.setData("text/plane-editor-html", html);
+        document.removeEventListener("copy", copyHandler);
+      };
+
+      document.addEventListener("copy", copyHandler);
+      document.execCommand("copy");
     },
     isAnyDropbarOpen: () => {
       if (!editor) return false;

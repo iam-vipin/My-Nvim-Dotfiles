@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
+import { TriangleAlert } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type {
@@ -13,7 +27,7 @@ import type {
   TPropertyValueVariant,
   TTextAttributeDisplayOptions,
 } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader, LUCIDE_ICONS_LIST } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -26,6 +40,7 @@ import { NumberValueInput } from "./components/number-input";
 import { OptionValueSelect } from "./components/option-select";
 import { TextValueInput } from "./components/text-input";
 import { UrlValueInput } from "./components/url-input";
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -61,20 +76,27 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
       <>
         <div className="flex-shrink-0 grid place-items-center">
           {propertyDetail?.logo_props?.in_use && (
-            <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-custom-text-300" />
+            <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-tertiary" />
           )}
         </div>
-        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
+        <span
+          className={cn(
+            "w-full cursor-default truncate",
+            variant === "create" && "text-body-xs-regular text-secondary"
+          )}
+        >
           <span className="flex gap-0.5 items-center">
             <span className="truncate">{propertyDetail?.display_name}</span>
-            {propertyDetail?.is_required && <span className="text-red-500">*</span>}
+            {propertyDetail?.is_required && <span className="text-danger-primary">*</span>}
             {propertyDetail.description && (
               <Tooltip
                 tooltipContent={propertyDetail?.description}
                 position="right"
                 disabled={!propertyDetail?.description}
               >
-                <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
+                <span className="flex-shrink-0">
+                  <InfoIcon className=" w-3 h-3 mx-0.5 text-tertiary cursor-pointer" />
+                </span>
               </Tooltip>
             )}
           </span>
@@ -203,24 +225,17 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         </div>
       )}
       {variant === "update" && (
-        <div className={cn("flex w-full items-start gap-y-1 min-h-8")}>
-          <div
-            className={cn(
-              "flex items-center h-8 gap-1 flex-shrink-0 text-sm text-custom-text-300",
-              isPeekOverview ? "w-1/4" : "w-2/5"
-            )}
-          >
-            <IssuePropertyDetail />
-          </div>
-          <div
-            className={cn("relative h-full min-h-8 flex flex-col gap-0.5 pl-3", {
-              "w-3/4": isPeekOverview,
-              "w-3/5": !isPeekOverview,
-            })}
+        <>
+          <SidebarPropertyListItem
+            icon={
+              LUCIDE_ICONS_LIST.find((item) => item.name === propertyDetail?.logo_props?.icon?.name)?.element ??
+              TriangleAlert
+            }
+            label={propertyDetail?.display_name ?? ""}
           >
             {CurrentPropertyAttribute}
-          </div>
-        </div>
+          </SidebarPropertyListItem>
+        </>
       )}
     </>
   );

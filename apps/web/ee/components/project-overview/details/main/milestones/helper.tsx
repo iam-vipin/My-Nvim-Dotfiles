@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
-import { MILESTONE_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -10,7 +23,6 @@ import { CustomMenu, cn } from "@plane/ui";
 // helper
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { CreateUpdateMilestoneModal } from "./create-update-modal";
@@ -36,13 +48,18 @@ export const useMilestonesWorkItemOperations = (
     () => ({
       copyText: (text: string) => {
         const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-        copyTextToClipboard(`${originURL}${text}`).then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("common.link_copied"),
-            message: t("entity.link_copied_to_clipboard", { entity: entityName }),
+        copyTextToClipboard(`${originURL}${text}`)
+          .then(() => {
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: t("common.link_copied"),
+              message: t("entity.link_copied_to_clipboard", { entity: entityName }),
+            });
+            return;
+          })
+          .catch(() => {
+            console.error("Failed to copy text");
           });
-        });
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
@@ -64,21 +81,14 @@ export const useMilestonesWorkItemOperations = (
       removeRelation: async (workspaceSlug: string, projectId: string, workItemId: string) => {
         try {
           return removeWorkItemFromMilestone(workspaceSlug, projectId, milestoneId, workItemId).then(() => {
-            captureSuccess({
-              eventName: MILESTONE_TRACKER_EVENTS.remove_work_items_from_milestone,
-            });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
               message: "Work item removed from milestone successfully",
             });
+            return;
           });
-        } catch (error) {
-          captureError({
-            eventName: MILESTONE_TRACKER_EVENTS.remove_work_items_from_milestone,
-
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -92,14 +102,6 @@ export const useMilestonesWorkItemOperations = (
   );
 
   return issueOperations;
-};
-
-// Utils
-export const getMilestoneVariant = (progress: number) => {
-  if (progress === 100) return "done";
-  if (progress === 0) return "not_started_yet";
-  if (progress > 0 && progress < 100) return "in_progress";
-  return "started_no_progress";
 };
 
 // Components
@@ -139,7 +141,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
         setIsCreateUpdateMilestoneModalOpen(true);
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
     },
     {
       key: "delete",
@@ -147,8 +149,8 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
         handleDeleteMilestone();
       },
       title: t("common.actions.delete"),
-      icon: Trash2,
-      iconClassName: "text-red-500",
+      icon: TrashIcon,
+      iconClassName: "text-danger-primary",
     },
   ];
 

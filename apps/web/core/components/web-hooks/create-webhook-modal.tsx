@@ -1,7 +1,19 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { useParams } from "next/navigation";
 // types
-import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
@@ -10,7 +22,6 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { csvDownload } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import useKeypress from "@/hooks/use-keypress";
 // components
 import { WebhookForm } from "./form";
@@ -68,12 +79,6 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
 
     await createWebhook(workspaceSlug.toString(), payload)
       .then(({ webHook, secretKey }) => {
-        captureSuccess({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_created,
-          payload: {
-            webhook: formData?.url,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.webhooks.toasts.created.title"),
@@ -86,13 +91,6 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
         csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
       })
       .catch((error) => {
-        captureError({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_created,
-          payload: {
-            webhook: formData?.url,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("workspace_settings.settings.webhooks.toasts.not_created.title"),

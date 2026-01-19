@@ -1,8 +1,26 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { clone, set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
-import type { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigation } from "@plane/types";
+import type {
+  IWorkspaceSidebarNavigationItem,
+  IWorkspace,
+  IWorkspaceSidebarNavigation,
+  IWorkspaceUserPropertiesResponse,
+} from "@plane/types";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
@@ -23,6 +41,7 @@ export interface IWorkspaceRootStore {
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
+  projectNavigationPreferencesMap: Record<string, IWorkspaceUserPropertiesResponse>;
   getWorkspaceRedirectionUrl: () => string;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
@@ -45,6 +64,12 @@ export interface IWorkspaceRootStore {
     data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
   ) => Promise<void>;
   getNavigationPreferences: (workspaceSlug: string) => IWorkspaceSidebarNavigation | undefined;
+  getProjectNavigationPreferences: (workspaceSlug: string) => IWorkspaceUserPropertiesResponse | undefined;
+  fetchProjectNavigationPreferences: (workspaceSlug: string) => Promise<void>;
+  updateProjectNavigationPreferences: (
+    workspaceSlug: string,
+    data: Partial<IWorkspaceUserPropertiesResponse>
+  ) => Promise<void>;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
@@ -56,6 +81,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   // observables
   workspaces: Record<string, IWorkspace> = {};
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation> = {};
+  projectNavigationPreferencesMap: Record<string, IWorkspaceUserPropertiesResponse> = {};
   // services
   workspaceService;
   // root store
@@ -72,6 +98,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       // observables
       workspaces: observable,
       navigationPreferencesMap: observable,
+      projectNavigationPreferencesMap: observable,
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
@@ -87,6 +114,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       fetchSidebarNavigationPreferences: action,
       updateSidebarPreference: action,
       updateBulkSidebarPreferences: action,
+      fetchProjectNavigationPreferences: action,
+      updateProjectNavigationPreferences: action,
     });
 
     // services
@@ -205,7 +234,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param {string} workspaceSlug
    * @param {string} logoURL
    */
-  updateWorkspaceLogo = async (workspaceSlug: string, logoURL: string) => {
+  updateWorkspaceLogo = (workspaceSlug: string, logoURL: string) => {
     const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
     if (!workspaceId) {
       throw new Error("Workspace not found");
@@ -219,15 +248,19 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * delete workspace using the workspace slug
    * @param workspaceSlug
    */
-  deleteWorkspace = async (workspaceSlug: string) =>
-    await this.workspaceService.deleteWorkspace(workspaceSlug).then(() => {
+  deleteWorkspace = async (workspaceSlug: string) => {
+    try {
+      await this.workspaceService.deleteWorkspace(workspaceSlug);
       const updatedWorkspacesList = this.workspaces;
       const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
       delete updatedWorkspacesList[`${workspaceId}`];
       runInAction(() => {
         this.workspaces = updatedWorkspacesList;
       });
-    });
+    } catch (error) {
+      console.error("Failed to delete workspace:", error);
+    }
+  };
 
   fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {
     try {
@@ -306,6 +339,51 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
         this.navigationPreferencesMap[workspaceSlug] = beforeUpdateData;
       });
       console.error("Failed to update bulk sidebar preferences:", error);
+      throw error;
+    }
+  };
+
+  getProjectNavigationPreferences = computedFn(
+    (workspaceSlug: string): IWorkspaceUserPropertiesResponse | undefined =>
+      this.projectNavigationPreferencesMap[workspaceSlug]
+  );
+
+  fetchProjectNavigationPreferences = async (workspaceSlug: string) => {
+    try {
+      const response = await this.workspaceService.fetchWorkspaceFilters(workspaceSlug);
+
+      runInAction(() => {
+        this.projectNavigationPreferencesMap[workspaceSlug] = response;
+      });
+    } catch (error) {
+      console.error("Failed to fetch project navigation preferences:", error);
+      throw error;
+    }
+  };
+
+  updateProjectNavigationPreferences = async (
+    workspaceSlug: string,
+    data: Partial<IWorkspaceUserPropertiesResponse>
+  ) => {
+    const beforeUpdateData = clone(this.projectNavigationPreferencesMap[workspaceSlug]);
+
+    try {
+      // Optimistically update store
+      runInAction(() => {
+        this.projectNavigationPreferencesMap[workspaceSlug] = {
+          ...this.projectNavigationPreferencesMap[workspaceSlug],
+          ...data,
+        };
+      });
+
+      // Call API to persist changes
+      await this.workspaceService.patchWorkspaceFilters(workspaceSlug, data);
+    } catch (error) {
+      // Rollback on failure
+      runInAction(() => {
+        this.projectNavigationPreferencesMap[workspaceSlug] = beforeUpdateData;
+      });
+      console.error("Failed to update project navigation preferences:", error);
       throw error;
     }
   };

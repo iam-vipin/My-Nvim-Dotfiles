@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import os
 import requests
@@ -63,9 +74,7 @@ def update_change_log(release_notes=[]):
                 tags=note.get("tags", []),
                 version=note.get("version_detail", {}).get("name", ""),
                 release_date=note.get("release_date", timezone.now()),
-                is_release_candidate=note.get("version_detail", {}).get(
-                    "is_pre_release", False
-                ),
+                is_release_candidate=note.get("version_detail", {}).get("is_pre_release", False),
             )
             for note in release_notes
         ],
@@ -92,9 +101,7 @@ def version_check():
             # Update the instance data
             update_instance(instance, data)
             # Update the release notes
-            release_notes = get_instance_release_notes(
-                machine_signature, license_key, prime_host
-            )
+            release_notes = get_instance_release_notes(machine_signature, license_key, prime_host)
             # Update the change log
             update_change_log(release_notes)
             return

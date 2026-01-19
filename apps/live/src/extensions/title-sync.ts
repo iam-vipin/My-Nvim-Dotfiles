@@ -1,25 +1,39 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // hocuspocus
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { TiptapTransformer } from "@hocuspocus/transformer";
-import type * as Y from "yjs";
+import type { AnyExtension, JSONContent } from "@tiptap/core";
+import { XmlFragment } from "yjs";
+import type { YEvent, XmlElement, XmlText } from "yjs";
 // editor extensions
-import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent } from "@plane/editor";
+import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent, generateTitleProsemirrorJson } from "@plane/editor";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 // helpers
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
-import { generateTitleProsemirrorJson } from "@/utils";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
-import { extractTextFromHTML } from "./title-update/title-utils";
+import { extractTextFromXmlFragment } from "./title-update/title-utils";
 
 /**
  * Hocuspocus extension for synchronizing document titles
  */
 export class TitleSyncExtension implements Extension {
   // Maps document names to their observers and update managers
-  private titleObservers: Map<string, (events: Y.YEvent<any>[]) => void> = new Map();
+  private titleObservers: Map<string, (events: YEvent<XmlElement | XmlText>[]) => void> = new Map();
   private titleUpdateManagers: Map<string, TitleUpdateManager> = new Map();
   // Store minimal data needed for each document's title observer (prevents closure memory leaks)
   private titleObserverData: Map<
@@ -41,15 +55,11 @@ export class TitleSyncExtension implements Extension {
       // in the yjs binary
       if (document.isEmpty("title")) {
         const service = getPageService(context.documentType, context);
-        // const title = await service.fe
-        const title = (await service.fetchDetails?.(documentName)).name;
+        const pageDetails = await service.fetchDetails(documentName);
+        const title = pageDetails.name;
         if (title == null) return;
-        const titleField = TiptapTransformer.toYdoc(
-          generateTitleProsemirrorJson(title),
-          "title",
-          // editor
-          TITLE_EDITOR_EXTENSIONS as any
-        );
+        const titleJson = (generateTitleProsemirrorJson as (text: string) => JSONContent)(title);
+        const titleField = TiptapTransformer.toYdoc(titleJson, "title", TITLE_EDITOR_EXTENSIONS as AnyExtension[]);
         document.merge(titleField);
       }
     } catch (error) {
@@ -99,10 +109,12 @@ export class TitleSyncExtension implements Extension {
    * Handle title changes for a document
    * This is a separate method to avoid closure memory leaks
    */
-  private handleTitleChange(documentName: string, events: Y.YEvent<any>[]) {
+  private handleTitleChange(documentName: string, events: YEvent<XmlElement | XmlText>[]) {
     let title = "";
     events.forEach((event) => {
-      title = extractTextFromHTML(event.currentTarget.toJSON());
+      if (event.currentTarget instanceof XmlFragment) {
+        title = extractTextFromXmlFragment(event.currentTarget);
+      }
     });
 
     // Get the manager for this document
@@ -123,7 +135,7 @@ export class TitleSyncExtension implements Extension {
       });
 
       // Use the instance from stored data (guaranteed to be set)
-      broadcastMessageToPage(data.instance, data.parentId, event);
+      void broadcastMessageToPage(data.instance, data.parentId, event);
     }
 
     // Schedule the title update

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
@@ -43,8 +56,8 @@ export function CommentBlock(props: TProps) {
         <div className="flex-1">
           <div className="flex w-full">
             <div className="flex-1">
-              <div className="text-sm">{creator?.display_name}</div>
-              <div className="text-xs text-custom-text-350">{renderFormattedDate(commentData?.updated_at)}</div>
+              <div className="text-13">{creator?.display_name}</div>
+              <div className="text-11 text-tertiary">{renderFormattedDate(commentData?.updated_at)}</div>
             </div>
             {/* quick actions */}
             {isProjectAdmin && (
@@ -59,7 +72,7 @@ export function CommentBlock(props: TProps) {
               />
             )}
           </div>
-          <div className="text-base mb-2">{commentData?.description}</div>
+          <div className="text-14 mb-2">{commentData?.description}</div>
           <UpdateReaction
             workspaceSlug={workspaceSlug}
             projectId={projectId}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from celery import shared_task
 
 
@@ -11,9 +22,7 @@ def app_webhook_url_updates(application_id: str):
     application = Application.objects.get(id=application_id)
     if not application:
         return
-    app_installations = WorkspaceAppInstallation.objects.filter(
-        application_id=application_id
-    )
+    app_installations = WorkspaceAppInstallation.objects.filter(application_id=application_id)
     if not application.webhook_url:
         # Delete webhooks for all app installations
         for app_installation in app_installations:

@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Tab } from "@headlessui/react";
+import { Tabs } from "@plane/propel/tabs";
 import type { TUpdate, EUpdateStatus } from "@plane/types";
 import { EUpdateEntityType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -37,7 +50,7 @@ function UpdateListTabs(props: TUpdateListTabs) {
   return (
     updates &&
     updates.length > 0 && (
-      <div className="flex flex-col divide-y divide-custom-border-200 max-h-[500px] overflow-y-auto">
+      <div className="flex flex-col divide-y divide-subtle-1 max-h-[500px] overflow-y-auto">
         {updates.map((updateData) => (
           <div key={updateData.id} className={cn("relative py-4 pb-0 w-full", className)}>
             <div className="flex items-center w-full">
@@ -45,19 +58,19 @@ function UpdateListTabs(props: TUpdateListTabs) {
               <div className="flex-1 overflow-hidden">
                 {customTitle?.(updateData) || (
                   <div
-                    className={cn(`text-[${StatusOptions[updateData.status].color}] font-semibold text-sm capitalize`)}
+                    className={cn(`text-[${StatusOptions[updateData.status].color}] font-semibold text-13 capitalize`)}
                   >
                     {updateData.status?.toLowerCase().replaceAll("-", " ")}
                   </div>
                 )}
-                <div className="text-custom-text-350 font-regular text-xs">
+                <div className="text-tertiary font-regular text-11">
                   {renderFormattedDate(updateData.updated_at)} • {getUserDetails(updateData?.created_by)?.display_name}
                 </div>
               </div>
             </div>
 
             {/* Update */}
-            <div className="text-base my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
+            <div className="text-14 my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
           </div>
         ))}
       </div>
@@ -81,11 +94,11 @@ export const UpdateList = observer(function UpdateList(props: TUpdateList) {
   const projectsCount = updates?.project_updates?.length ?? 0;
   const epicsCount = updates?.epic_updates?.length ?? 0;
   const shouldRenderTabHeader = projectsCount > 0 && epicsCount > 0;
-  const defaultTabIndex = shouldRenderTabHeader ? 0 : projectsCount > 0 ? 0 : 1;
+  const defaultTab = shouldRenderTabHeader ? "project" : projectsCount > 0 ? "project" : "epic";
 
   if (isLoading) {
     return (
-      <div className="flex flex-col divide-y divide-custom-border-200">
+      <div className="flex flex-col divide-y divide-subtle-1">
         <Loader className="space-y-4 p-3">
           {[...Array(2)].map((_, index) => (
             <div key={index} className="w-full space-y-3">
@@ -114,14 +127,14 @@ export const UpdateList = observer(function UpdateList(props: TUpdateList) {
     return (
       <div className="flex flex-col gap-3 p-4">
         <div className="flex items-center gap-2">
-          <div className="text-custom-text-350 font-regular text-xs italic">No updates found</div>
+          <div className="text-tertiary font-regular text-11 italic">No updates found</div>
         </div>
       </div>
     );
   if (!showTabs)
     return (
       <>
-        <div className="font-semibold text-base capitalize p-4 pb-0 text-custom-text-200">
+        <div className="font-semibold text-14 capitalize p-4 pb-0 text-secondary">
           {`${entityType === EUpdateEntityType.PROJECT ? "Project" : "Epic"} updates`}
         </div>
         <UpdateListTabs
@@ -133,74 +146,47 @@ export const UpdateList = observer(function UpdateList(props: TUpdateList) {
     );
 
   return (
-    <div className="flex flex-col p-4 overflow-hidden bg-custom-background-100  border border-custom-border-200 rounded-lg">
-      <div className="font-semibold text-base capitalize text-custom-text-200 mb-2">
+    <div className="flex flex-col p-4 overflow-hidden bg-surface-1  border border-subtle-1 rounded-lg">
+      <div className="font-semibold text-14 capitalize text-secondary mb-2">
         {shouldRenderTabHeader ? "Updates" : projectsCount > 0 ? "Project updates" : "Epic updates"}
       </div>
-      <Tab.Group
-        onChange={(index) => {
-          handleTabChange(index === 0 ? "project" : "epic");
-        }}
-        defaultIndex={defaultTabIndex}
-      >
+      <Tabs defaultValue={defaultTab} onValueChange={(value) => handleTabChange(value as "project" | "epic")}>
         {shouldRenderTabHeader && (
-          <Tab.List className="relative border-[0.5px] border-custom-border-200 rounded bg-custom-background-80 p-[1px] flex w-fit">
-            <Tab
-              className={({ selected }) =>
-                cn(
-                  "relative z-[1] font-semibold text-xs rounded-[3px] text-custom-text-400 focus:outline-none transition duration-500 px-2 py-1 ",
-                  {
-                    "text-custom-text-200 bg-custom-background-100": selected,
-                    "hover:text-custom-text-300": !selected,
-                  }
-                )
-              }
-            >
+          <Tabs.List>
+            <Tabs.Trigger value="project">
               <div className="flex items-center gap-2">
-                <div className="font-regular text-xs ">Project updates</div>
+                <div className="font-regular text-11 ">Project updates</div>
                 <div
-                  className={cn("font-regular text-xs px-2 py-0.5 rounded-full bg-transparent", {
-                    "text-custom-text-200 bg-custom-background-80": entityType === EUpdateEntityType.PROJECT,
+                  className={cn("font-regular text-11 px-2 py-0.5 rounded-full bg-transparent", {
+                    "text-secondary bg-layer-1": entityType === EUpdateEntityType.PROJECT,
                   })}
                 >
                   {projectsCount}
                 </div>
               </div>
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                cn(
-                  "relative z-[1] font-semibold text-xs rounded-[3px] text-custom-text-400 focus:outline-none transition duration-500 px-2 py-1 ",
-                  {
-                    "text-custom-text-200 bg-custom-background-100": selected,
-                    "hover:text-custom-text-300": !selected,
-                  }
-                )
-              }
-            >
+            </Tabs.Trigger>
+            <Tabs.Trigger value="epic">
               <div className="flex items-center gap-2">
-                <div className="font-regular text-xs ">Epic updates</div>
+                <div className="font-regular text-11 ">Epic updates</div>
                 <div
-                  className={cn("font-regular text-xs px-2 py-0.5 rounded-full bg-transparent", {
-                    "text-custom-text-200 bg-custom-background-80": entityType === EUpdateEntityType.EPIC,
+                  className={cn("font-regular text-11 px-2 py-0.5 rounded-full bg-transparent", {
+                    "text-secondary bg-layer-1": entityType === EUpdateEntityType.EPIC,
                   })}
                 >
                   {epicsCount}
                 </div>
               </div>
-            </Tab>
-          </Tab.List>
+            </Tabs.Trigger>
+          </Tabs.List>
         )}
 
-        <Tab.Panels>
-          <Tab.Panel>
-            <UpdateListTabs updates={updates?.project_updates} customTitle={customTitle} />
-          </Tab.Panel>
-          <Tab.Panel>
-            <UpdateListTabs updates={updates?.epic_updates} customTitle={customTitle} />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+        <Tabs.Content value="project">
+          <UpdateListTabs updates={updates?.project_updates} customTitle={customTitle} />
+        </Tabs.Content>
+        <Tabs.Content value="epic">
+          <UpdateListTabs updates={updates?.epic_updates} customTitle={customTitle} />
+        </Tabs.Content>
+      </Tabs>
     </div>
   );
 });

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 
@@ -5,7 +16,6 @@ import logging
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 
 # Third party imports
 from celery import shared_task
@@ -14,6 +24,7 @@ from celery import shared_task
 from plane.db.models import Page, User
 from plane.ee.models import PageUser
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 
@@ -66,11 +77,8 @@ def share_page_notification(page_id, user_id, newly_shared_user_ids, slug):
                 "page_url": page_url,
                 "workspace": workspace,
                 "page_name": page.name,
-                "page_description": page.description_stripped
-                or "No description available",
-                "shared_by_name": f"{user.first_name} {user.last_name}".strip()
-                or user.display_name
-                or user.email,
+                "page_description": page.description_stripped or "No description available",
+                "shared_by_name": f"{user.first_name} {user.last_name}".strip() or user.display_name or user.email,
                 "shared_to_name": (
                     f"{newly_shared_user.first_name} {newly_shared_user.last_name}".strip()  # noqa: E501
                     or newly_shared_user.display_name
@@ -82,10 +90,8 @@ def share_page_notification(page_id, user_id, newly_shared_user_ids, slug):
 
             # Create email subject and content
             subject = f"{context['shared_by_name']} shared a page with you"
-            html_content = render_to_string(
-                "emails/notifications/share_page.html", context
-            )
-            text_content = strip_tags(html_content)
+            html_content = render_to_string("emails/notifications/share_page.html", context)
+            text_content = generate_plain_text_from_html(html_content)
 
             # Configure email connection
             connection = get_connection(

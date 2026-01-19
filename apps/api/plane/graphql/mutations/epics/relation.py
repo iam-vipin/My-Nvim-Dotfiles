@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -19,7 +30,7 @@ from plane.graphql.helpers import (
     get_epic,
     get_project,
     get_work_item_relation_type,
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
     is_timeline_dependency_feature_flagged_async,
@@ -55,7 +66,7 @@ class EpicRelationMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = str(workspace.slug)
         workspace_id = str(workspace.id)
 
@@ -87,6 +98,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else epic_id
                 ),
@@ -97,6 +109,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else related_work_item_id
                 ),
@@ -170,6 +183,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else issue
                 ),
@@ -180,6 +194,7 @@ class EpicRelationMutation:
                         WorkItemRelationTypes.BLOCKING.value,
                         WorkItemRelationTypes.START_AFTER.value,
                         WorkItemRelationTypes.FINISH_AFTER.value,
+                        WorkItemRelationTypes.IMPLEMENTED_BY.value,
                     ]
                     else related_issue
                 ),

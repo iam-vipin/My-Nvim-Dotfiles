@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -10,7 +23,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import type { Route } from "./+types/page";
 import { ESupportedFeatures, WorkspaceSelector } from "./workspace-selector";
 
-const NOT_FOUND_CLASSNAME = "flex items-center justify-center h-full text-custom-text-100 text-lg font-medium";
+const NOT_FOUND_CLASSNAME = "flex items-center justify-center h-full text-primary text-16 font-medium";
 
 function isValidFeature(feature: string): feature is ESupportedFeatures {
   return Object.values(ESupportedFeatures).includes(feature as ESupportedFeatures);
@@ -38,10 +51,10 @@ function WorkspacePickerPage({ params }: Route.ComponentProps) {
     <AuthenticationWrapper>
       <div className="flex flex-col h-full gap-y-2 pb-20">
         <div className="flex items-center justify-between p-10 lg:px-20 xl:px-36">
-          <Link href="/" className="bg-custom-background-100 px-3">
-            <PlaneLockup className="h-7 w-auto text-custom-text-100" />
+          <Link href="/" className="bg-surface-1 px-3">
+            <PlaneLockup className="h-7 w-auto text-primary" />
           </Link>
-          <div className="text-sm text-custom-text-100">{currentUser?.email}</div>
+          <div className="text-13 text-primary">{currentUser?.email}</div>
         </div>
         {content}
       </div>

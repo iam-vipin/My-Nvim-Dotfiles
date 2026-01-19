@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { memo } from "react";
 import { Search } from "lucide-react";
 import { CustomSearchSelect, Avatar } from "@plane/ui";
@@ -41,7 +54,7 @@ export function MemberSearch({ memberOptions, onSelectMember, canCurrentUserChan
     <CustomSearchSelect
       value=""
       customButton={
-        <span className="w-full flex items-center gap-1 text-custom-text-400 p-2 rounded border-[0.5px] border-custom-border-300">
+        <span className="w-full flex items-center gap-1 text-placeholder p-2 rounded-sm border-[0.5px] border-subtle-1">
           <span className="shrink-0 size-4 grid place-items-center">
             <Search className="size-3.5" />
           </span>

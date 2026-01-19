@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { ReactNode } from "react";
 // plane imports
 import type { TAuthErrorInfo } from "@plane/constants";
@@ -218,6 +231,10 @@ const errorCodeMessages: {
   [EAuthErrorCodes.INVALID_PASSWORD_TOKEN]: {
     title: `Invalid password token`,
     message: () => `Invalid password token. Please try again.`,
+  },
+  [EAuthErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Password too weak. Please try again.`,
   },
   [EAuthErrorCodes.EXPIRED_PASSWORD_TOKEN]: {
     title: `Expired password token`,

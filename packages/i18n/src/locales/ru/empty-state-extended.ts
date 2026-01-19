@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "Запишите идею, зафиксируйте озарение или запомните внезапную мысль. Добавьте стикер, чтобы начать.",
     },
     stickies: {
-      title: "Запишите идею, зафиксируйте озарение или запомните внезапную мысль. Добавьте стикер, чтобы начать.",
-      cta_primary: "Добавить стикер",
+      title: "Фиксируйте идеи мгновенно",
+      description: "Создавайте стикеры для быстрых заметок и задач, и держите их при себе, куда бы вы ни пошли.",
+      cta_primary: "Создать первый стикер",
+      cta_secondary: "Документация",
     },
     active_cycles: {
       title: "Нет активных циклов",
@@ -106,11 +121,6 @@ export default {
       description:
         "Сократите время настройки, создавая шаблоны для проектов, рабочих элементов и страниц — и начинайте новую работу за секунды.",
       cta_primary: "Создать шаблон",
-    },
-    webhooks: {
-      title: "Вебхуков пока не добавлено",
-      description: "Автоматизируйте уведомления внешних сервисов при возникновении событий проекта.",
-      cta_primary: "Добавить вебхук",
     },
   },
 } as const;

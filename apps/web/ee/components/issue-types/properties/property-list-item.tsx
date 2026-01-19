@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { isEmpty, cloneDeep, omitBy, uniqBy, isEqual } from "lodash-es";
 import { observer } from "mobx-react";
@@ -17,8 +30,6 @@ import type {
 } from "@plane/types";
 import { EIssuePropertyType } from "@plane/types";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
 // local imports
@@ -31,6 +42,7 @@ import { PropertyTypeDropdown } from "./dropdowns/property-type";
 import { PropertyMandatoryFieldCheckbox } from "./mandatory-field";
 import { IssuePropertyQuickActions } from "./quick-actions";
 import type { TIssuePropertyCreateList } from "./root";
+import { GripVertical } from "lucide-react";
 
 export type TCustomPropertyOperations = {
   getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;
@@ -188,14 +200,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
       options: optionsPayload,
     })
       .then(async (response) => {
-        if (trackers?.create?.eventName) {
-          captureSuccess({
-            eventName: trackers.create.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("work_item_types.settings.properties.toast.create.success.title"),
@@ -206,15 +210,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
         return response;
       })
       .catch((error) => {
-        if (trackers?.create?.eventName) {
-          captureError({
-            eventName: trackers.create.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-            error: error,
-          });
-        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("work_item_types.settings.properties.toast.create.error.title"),
@@ -265,14 +260,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
       options: optionsPayload,
     })
       .then(() => {
-        if (trackers?.update?.eventName) {
-          captureSuccess({
-            eventName: trackers.update.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         if (showToast)
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -283,15 +270,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
           });
       })
       .catch((error) => {
-        if (trackers?.update?.eventName) {
-          captureError({
-            eventName: trackers.update.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-            error: error,
-          });
-        }
         if (showToast)
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -326,14 +304,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     setIsSubmitting(true);
     await deleteProperty(propertyId)
       .then(() => {
-        if (trackers?.delete?.eventName) {
-          captureSuccess({
-            eventName: trackers.delete.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("work_item_types.settings.properties.toast.delete.success.title"),
@@ -343,14 +313,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
         });
       })
       .catch(() => {
-        if (trackers?.delete?.eventName) {
-          captureError({
-            eventName: trackers.delete.eventName,
-            payload: {
-              name: issuePropertyData?.display_name,
-            },
-          });
-        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("work_item_types.settings.properties.toast.delete.error.title"),
@@ -463,38 +425,37 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     return (
       <div
         className={cn(
-          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-200 cursor-default overflow-hidden"
+          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-surface-2 border border-subtle-1 cursor-default overflow-hidden"
         )}
         onDoubleClick={() => setIssuePropertyOperationMode("update")}
       >
-        <div className="flex items-center gap-1 text-sm font-medium">
+        <div className="flex items-center gap-1 text-body-xs-medium">
+          {/* Drag handle */}
+          <Tooltip tooltipContent="Drag to rearrange">
+            <GripVertical className="size-5 text-placeholder cursor-grab" />
+          </Tooltip>
           {issuePropertyData?.logo_props && (
-            <div className="flex-shrink-0 size-5 grid place-items-center">
+            <div className="shrink-0 size-5 grid place-items-center">
               <IssuePropertyLogo
                 icon_props={issuePropertyData.logo_props.icon}
-                colorClassName={issuePropertyData.is_active ? "text-custom-text-200" : "text-custom-text-300"}
+                colorClassName={issuePropertyData.is_active ? "text-secondary" : "text-tertiary"}
               />
             </div>
           )}
           <div className="flex gap-1 w-full max-w-48 sm:max-w-[30vw] items-center">
-            <span
-              className={cn(
-                "px-1 truncate",
-                issuePropertyData.is_active ? "text-custom-text-200" : "text-custom-text-300"
-              )}
-            >
+            <span className={cn("px-1 truncate", issuePropertyData.is_active ? "text-secondary" : "text-tertiary")}>
               {issuePropertyData.display_name ?? ""}
             </span>
             {issuePropertyData.description && (
               <Tooltip tooltipContent={issuePropertyData.description} position="right">
-                <span className="flex-shrink-0">
-                  <InfoIcon className="size-3 stroke-black cursor-help outline-none" stroke="black" />
+                <span className="shrink-0">
+                  <InfoIcon className="size-3 text-secondary cursor-help outline-none" />
                 </span>
               </Tooltip>
             )}
           </div>
         </div>
-        <div className="flex flex-shrink-0 items-center justify-end gap-2.5 transition-all duration-200">
+        <div className="flex shrink-0 items-center justify-end gap-2.5 transition-all duration-200">
           <div className="flex items-center gap-2.5 select-none">
             {i18nAttributeDisplayNameKey && <AttributePill data={t(i18nAttributeDisplayNameKey)} />}
             {issuePropertyData.is_required && <AttributePill data={t("common.mandatory")} />}
@@ -502,16 +463,13 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
               <AttributePill data={t("common.default")} />
             )}
             {issuePropertyData.is_active && (
-              <AttributePill data={t("common.active")} className="bg-green-500/15 text-green-600" />
+              <AttributePill data={t("common.active")} className="bg-success-subtle text-success-primary" />
             )}
             {!issuePropertyData.is_active && (
-              <AttributePill data={t("common.disabled")} className="bg-red-500/15 text-red-600" />
+              <AttributePill data={t("common.disabled")} className="bg-danger-subtle text-danger-primary" />
             )}
           </div>
-          <div
-            className="flex-shrink-0 border-l border-custom-border-200 pl-2"
-            onDoubleClick={(e) => e.stopPropagation()}
-          >
+          <div className="shrink-0 border-l border-subtle-1 pl-2" onDoubleClick={(e) => e.stopPropagation()}>
             <IssuePropertyQuickActions
               isPropertyDisabled={!issuePropertyData.is_active}
               onDisable={async () => handlePropertyDataChange("is_active", false, true)}
@@ -528,10 +486,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
   return (
     <div
       className={cn(
-        "w-full flex flex-col items-center justify-center my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-200 divide-y divide-custom-border-200 cursor-default"
+        "w-full flex flex-col items-center justify-center my-2.5 rounded-lg bg-surface-1 border border-subtle-1 divide-y divide-subtle cursor-default"
       )}
     >
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-x sm:divide-y-0 divide-custom-border-200 ease-out transition-all duration-500">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-x sm:divide-y-0 divide-subtle ease-out transition-all duration-500">
         <div className="p-3">
           <PropertyTitleDescriptionInput
             propertyDetail={issuePropertyData}
@@ -570,10 +528,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
           <PropertyActiveCheckbox value={!!issuePropertyData.is_active} onEnableDisable={handleEnableDisable} />
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleDiscard} disabled={isSubmitting} className="py-1">
+          <Button variant="secondary" onClick={handleDiscard} disabled={isSubmitting} className="py-1">
             {issuePropertyOperationMode === "create" ? t("common.cancel") : t("common.discard")}
           </Button>
-          <Button variant="primary" size="sm" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
+          <Button variant="primary" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
             {isSubmitting
               ? t("common.confirming")
               : issuePropertyOperationMode === "create"

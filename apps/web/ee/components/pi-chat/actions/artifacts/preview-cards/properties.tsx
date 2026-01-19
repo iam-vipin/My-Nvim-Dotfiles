@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Dice4, Group, SignalHigh, Tags, User, Users } from "lucide-react";
 import { CalendarLayoutIcon, ProjectIcon, ProjectStatesIcon } from "@plane/propel/icons";
 import { cn } from "@plane/propel/utils";
@@ -10,10 +23,10 @@ import { DisplayPriority } from "@/components/properties/priority";
 import { DisplayProject } from "@/components/properties/project";
 import { DisplayState } from "@/components/properties/state";
 
-function hasAtLeastOneValidKey(obj: any) {
+function hasAtLeastOneValidKey(obj: Record<string, unknown>) {
   if (typeof obj !== "object" || obj === null) return false;
 
-  return Object.values(obj).some((value) => {
+  return Object.values(obj).some((value: unknown) => {
     if (value === undefined) return false;
 
     if (typeof value === "object" && value !== null && Object.keys(value).length === 0) {
@@ -69,13 +82,13 @@ function PropertyWrapper(props: {
   const { children, title, Icon = ProjectIcon, showContainer } = props;
   if (!showContainer) return <>{children({ className: "" })}</>;
   return (
-    <div className="flex gap-2 border-[0.5px] border-custom-border-200 rounded-md py-1 px-2">
-      <div className="flex gap-1 items-center text-custom-text-300">
+    <div className="flex gap-2 border-[0.5px] border-subtle-1 rounded-md py-1 px-2">
+      <div className="flex gap-1 items-center text-tertiary">
         <Icon className="size-3" strokeWidth={2} />
-        <span className="text-sm">{title}</span>
+        <span className="text-13">{title}</span>
       </div>
-      <div className="flex text-custom-text-100 font-medium items-center">
-        {children({ className: "text-custom-text-100 font-medium" })}
+      <div className="flex text-primary font-medium items-center">
+        {children({ className: "text-primary font-medium" })}
       </div>
     </div>
   );
@@ -103,7 +116,7 @@ export function Properties(props: TProps) {
         "[&>*:not(:last-child)]:after:content-['']",
         "[&>*:not(:last-child)]:after:inline-block",
         "[&>*:not(:last-child)]:after:w-1 [&>*:not(:last-child)]:after:h-1",
-        "[&>*:not(:last-child)]:after:bg-custom-background-80",
+        "[&>*:not(:last-child)]:after:bg-layer-1",
         "[&>*:not(:last-child)]:after:rounded-full",
         "[&>*:not(:last-child)]:after:mx-1",
         "[&>*:not(:last-child)]:after:align-middle",
@@ -131,7 +144,7 @@ export function Properties(props: TProps) {
       {group && (
         <PropertyWrapper title="Group" Icon={Group} showContainer={showContainer}>
           {({ className }) => (
-            <div className={cn("text-custom-text-300 text-sm capitalize", className)}>{group.name}</div>
+            <div className={cn("text-tertiary text-body-sm-regular capitalize", className)}>{group.name}</div>
           )}
         </PropertyWrapper>
       )}
@@ -148,8 +161,8 @@ export function Properties(props: TProps) {
       {assignees && (
         <PropertyWrapper title="Assignees" Icon={Users} showContainer={showContainer}>
           {(className) => (
-            <div className={cn("flex items-center gap-1 text-custom-text-300", className)}>
-              <ButtonAvatars userIds={assignees.map((assignee) => assignee.id)} showTooltip size="sm" />
+            <div className={cn("flex items-center gap-1 text-tertiary", className)}>
+              <ButtonAvatars userIds={assignees.map((assignee) => assignee.id)} showTooltip />
             </div>
           )}
         </PropertyWrapper>

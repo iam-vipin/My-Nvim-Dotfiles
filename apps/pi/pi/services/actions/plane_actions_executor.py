@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Plane Actions Executor
 Main orchestrator class that provides unified access to all Plane API categories.
@@ -11,6 +22,8 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Union
+
+from plane.errors import HttpError  # type: ignore[attr-defined]
 
 from .plane_sdk_adapter import PlaneSDKAdapter
 from .registry import get_available_categories
@@ -51,6 +64,11 @@ class PlaneActionsExecutor:
         self.states = self.sdk_adapter
         self.users = self.sdk_adapter
         self.workitems = self.sdk_adapter
+        self.workspaces = self.sdk_adapter
+        self.initiatives = self.sdk_adapter
+        self.teamspaces = self.sdk_adapter
+        self.stickies = self.sdk_adapter
+        self.customers = self.sdk_adapter
 
     def get_api_categories(self) -> Dict[str, str]:
         """
@@ -93,6 +111,31 @@ class PlaneActionsExecutor:
             result = method_func(**kwargs)
 
             return {"success": True, "category": category, "method": method, "data": result}
+
+        except HttpError as e:
+            # Centralized handling for auth errors (401/403)
+            status_code = getattr(e, "status_code", None)
+            if status_code in (401, 403):
+                log.warning(f"Auth error ({status_code}) in {category}.{method}: {e}")
+                return {
+                    "success": False,
+                    "error": "unauthorized",
+                    "message": "Authentication or authorization failed. Please check your credentials and try again.",
+                    "status_code": status_code,
+                    "category": category,
+                    "method": method,
+                }
+            # Non-auth HTTP errors
+            error_msg = f"HTTP error executing {category}.{method}: {str(e)}"
+            log.error(error_msg)
+            return {
+                "success": False,
+                "category": category,
+                "method": method,
+                "error": error_msg,
+                "error_type": "HttpError",
+                "status_code": status_code,
+            }
 
         except Exception as e:
             error_msg = f"Error executing {category}.{method}: {str(e)}"

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
@@ -57,7 +70,7 @@ export const PageFormRoot = observer(function PageFormRoot(props: Props) {
         <div className="size-full">
           <div className="w-full max-w-4xl">
             {/* Page Logo */}
-            <div className="size-10 -ml-[4px] grid place-items-center rounded hover:bg-custom-background-80 transition-colors">
+            <div className="size-10 -ml-[4px] grid place-items-center rounded-sm hover:bg-layer-1 transition-colors">
               <Controller
                 control={control}
                 name="logo_props"
@@ -73,7 +86,7 @@ export const PageFormRoot = observer(function PageFormRoot(props: Props) {
                         {value?.in_use ? (
                           <Logo logo={value} size={36} type="lucide" />
                         ) : (
-                          <PageIcon className="size-9 text-custom-text-300" />
+                          <PageIcon className="size-9 text-tertiary" />
                         )}
                       </span>
                     }

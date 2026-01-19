@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { cn, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
@@ -31,7 +44,7 @@ export function EpicLayoutQuickActions(props: Props) {
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"
-        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
       >
         {items.map((item) => {
           if (item.shouldRender === false) return null;
@@ -40,7 +53,7 @@ export function EpicLayoutQuickActions(props: Props) {
               key={item.key}
               onClick={item.action}
               className={cn("flex items-center gap-2", {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               })}
               disabled={item.disabled}
             >

@@ -11,7 +11,6 @@ import { CollaborationProvider, useCollaboration } from "@/contexts/collaboratio
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
-// constants
 import { DocumentEditorSideEffects } from "@/plane-editor/components/document-editor-side-effects";
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";

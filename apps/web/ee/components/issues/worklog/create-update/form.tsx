@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC, FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { Timer } from "lucide-react";
@@ -69,9 +82,9 @@ export function WorklogFormRoot(props: TWorklogFormRoot) {
     <form onSubmit={formSubmit} className="space-y-2">
       <div className="space-y-2">
         {/* Timer */}
-        <div className="inline-flex justify-between items-center gap-1 bg-custom-background-90 text-custom-text-300 rounded-full px-2.5 py-1.5 ">
+        <div className="inline-flex justify-between items-center gap-1 bg-layer-1 text-tertiary rounded-full px-2.5 py-1.5 ">
           <Timer className="w-3 h-3" />
-          <div className="font-medium text-xs leading-3">
+          <div className="font-medium text-11 leading-3">
             {formData?.hours || 0}h {formData?.minutes || 0}m
           </div>
         </div>
@@ -113,16 +126,16 @@ export function WorklogFormRoot(props: TWorklogFormRoot) {
           value={formData?.description}
           onChange={(e) => handleFormData("description", e.target.value)}
           hasError={(errors && Boolean(errors.description)) || false}
-          className="w-full text-base resize-none min-h-24"
+          className="w-full text-14 resize-none min-h-24"
         />
       </div>
 
       {/* buttons */}
       <div className="flex justify-end items-center gap-2">
-        <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
+        <Button type="button" variant="secondary" disabled={buttonDisabled} onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" variant="primary" size="sm" disabled={buttonDisabled}>
+        <Button type="submit" variant="primary" disabled={buttonDisabled}>
           {buttonTitle}
         </Button>
       </div>

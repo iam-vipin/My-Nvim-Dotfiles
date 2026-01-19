@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
@@ -30,9 +43,9 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
         return (
           <div
             key={filterKey}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-subtle px-2 py-1 capitalize"
           >
-            <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "priority" && (
                 <AppliedPriorityFilters
@@ -50,7 +63,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
 
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemoveFilter(filterKey, null)}
               >
                 <CloseIcon height={12} width={12} strokeWidth={2} />
@@ -62,7 +75,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
       <button
         type="button"
         onClick={handleRemoveAllFilters}
-        className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
+        className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1 text-11 text-tertiary hover:text-secondary"
       >
         {t("common.clear_all")}
         <CloseIcon height={12} width={12} strokeWidth={2} />

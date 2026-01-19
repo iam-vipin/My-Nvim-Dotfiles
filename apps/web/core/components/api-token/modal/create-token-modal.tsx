@@ -1,7 +1,19 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
-import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
@@ -9,8 +21,6 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { renderFormattedDate, csvDownload } from "@plane/utils";
 // constants
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // local imports
 import { CreateApiTokenForm } from "./form";
 import { GeneratedTokenDetails } from "./generated-token-details";
@@ -66,22 +76,12 @@ export function CreateApiTokenModal(props: Props) {
           },
           false
         );
-        captureSuccess({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_created,
-          payload: {
-            token: res.id,
-          },
-        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.message || err.detail,
-        });
-
-        captureError({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_created,
         });
 
         throw err;

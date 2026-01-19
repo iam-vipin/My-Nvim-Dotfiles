@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -44,12 +57,12 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
       {paginationInfo && paginationInfo?.next_page_results && (
         <>
           {loader === ENotificationLoader.PAGINATION_LOADER ? (
-            <div className="py-4 flex justify-center items-center text-sm font-medium">
-              <div className="text-custom-primary-90">Loading...</div>
+            <div className="py-4 flex justify-center items-center text-body-xs-medium">
+              <div className="text-accent-primary">Loading</div>
             </div>
           ) : (
-            <div className="py-4 flex justify-center items-center text-sm font-medium" onClick={getNextNotifications}>
-              <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">
+            <div className="py-4 flex justify-center items-center text-body-xs-medium" onClick={getNextNotifications}>
+              <div className="text-accent-primary hover:text-accent-primary transition-all cursor-pointer">
                 Load more
               </div>
             </div>

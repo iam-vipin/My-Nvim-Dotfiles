@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "아이디어를 적고, 영감을 포착하거나, 번뜩이는 생각을 기록하세요. 스티커를 추가하여 시작하세요.",
     },
     stickies: {
-      title: "아이디어를 적고, 영감을 포착하거나, 번뜩이는 생각을 기록하세요. 스티커를 추가하여 시작하세요.",
-      cta_primary: "스티커 추가",
+      title: "아이디어를 즉시 캡처",
+      description: "빠른 메모와 할 일을 위한 스티커를 만들고 어디를 가든 함께 가지고 다니세요.",
+      cta_primary: "첫 번째 스티커 만들기",
+      cta_secondary: "문서",
     },
     active_cycles: {
       title: "활성 사이클 없음",
@@ -100,11 +115,6 @@ export default {
       description:
         "프로젝트, 작업 항목 및 페이지에 대한 템플릿을 생성하여 설정 시간을 줄이고 몇 초 만에 새 작업을 시작하세요.",
       cta_primary: "템플릿 생성",
-    },
-    webhooks: {
-      title: "아직 웹훅이 추가되지 않았습니다",
-      description: "프로젝트 이벤트가 발생할 때 외부 서비스에 대한 알림을 자동화하세요.",
-      cta_primary: "웹훅 추가",
     },
   },
 } as const;

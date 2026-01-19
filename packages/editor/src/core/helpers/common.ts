@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { EditorState, Selection } from "@tiptap/pm/state";
 // plane imports
@@ -15,8 +28,8 @@ export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassNam
   cn(
     "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
     {
-      "border border-custom-border-200": !noBorder,
-      "focus:border border-custom-border-300": borderOnFocus,
+      "border border-subtle-1": !noBorder,
+      "focus:border border-strong": borderOnFocus,
     },
     containerClassName
   );

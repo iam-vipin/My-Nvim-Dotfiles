@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -89,7 +102,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
             tabIndex={-1}
             href="https://id.atlassian.com/manage-profile/security/api-tokens"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             {t("jira_importer.atlassian_security_settings")}
@@ -157,7 +170,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
             {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Jira" })}
           </Button>
-          <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
+          <Button variant="ghost" className="font-medium" onClick={clearFromData} disabled={isLoading}>
             {t("common.clear")}
           </Button>
         </div>

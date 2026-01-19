@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from typing import Any
 from typing import Optional
 
@@ -10,8 +21,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.chat import ChatInitializationRequest
 from pi.app.utils import validate_chat_initialization
 from pi.app.utils.background_tasks import schedule_chat_deletion
@@ -34,7 +44,7 @@ router = APIRouter()
 async def create_chat(
     data: ChatInitializationRequest,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Create a new chat conversation.
@@ -81,14 +91,7 @@ async def create_chat(
         - Chat initialization is lightweight and completes quickly
         - Workspace details can be backfilled later during first message
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     # Validate request data
     validation_error = validate_chat_initialization(data)
@@ -132,7 +135,7 @@ async def search_chats(
     cursor: Optional[str] = Query(None, description="Cursor for pagination"),
     per_page: int = Query(30, ge=1, le=100, description="Number of results per page"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Search chats by title and message content.
@@ -232,14 +235,7 @@ async def search_chats(
         - Building a chat search UI with infinite scroll
         - Finding previous discussions about issues/features
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     # Validate query parameters
     if not q or not q.strip():
@@ -285,7 +281,7 @@ async def get_chat(
     workspace_id: Optional[UUID4] = Query(None, description="Optional workspace UUID for context"),
     workspace_slug: Optional[str] = Query(None, description="Optional workspace slug for context"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Get chat history and details by ID.
@@ -358,15 +354,7 @@ async def get_chat(
         - Deprecated V1 endpoint: GET /api/v1/chat/get-chat-history/
     """
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         log.info(f"chat history retrieve request received for chat_id: {chat_id}")
 
         # Determine if we need dialogue objects or strings
@@ -445,7 +433,7 @@ async def delete_chat(
     workspace_id: Optional[UUID4] = Query(None, description="Optional workspace UUID for context"),
     workspace_slug: Optional[str] = Query(None, description="Optional workspace slug for context"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Delete a chat conversation (soft delete).
@@ -485,11 +473,6 @@ async def delete_chat(
         - Deleted chats are hidden from user's chat list
         - Deprecated V1 endpoint: DELETE /api/v1/chat/delete-chat/
     """
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     result = await soft_delete_chat(chat_id=chat_id, db=db)
 
@@ -508,7 +491,7 @@ async def update_chat(
     workspace_id: Optional[UUID4] = Query(None, description="Optional workspace UUID for context"),
     workspace_slug: Optional[str] = Query(None, description="Optional workspace slug for context"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Update chat properties (currently supports title updates).
@@ -549,11 +532,6 @@ async def update_chat(
         - Future versions may support updating other properties via request body
         - Deprecated V1 endpoint: POST /api/v1/chat/rename-chat/
     """
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     result = await rename_chat_title(chat_id=chat_id, new_title=title, db=db)
 
@@ -570,7 +548,7 @@ async def mark_chat_favorite(
     workspace_id: Optional[UUID4] = Query(None, description="Optional workspace UUID for context"),
     workspace_slug: Optional[str] = Query(None, description="Optional workspace slug for context"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Mark a chat as favorite.
@@ -609,11 +587,6 @@ async def mark_chat_favorite(
         - Favorited chats are retrievable via GET /api/v2/chats/favorites
         - Deprecated V1 endpoint: POST /api/v1/chat/favorite-chat/
     """
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     result = await favorite_chat(chat_id=chat_id, db=db)
 
@@ -627,7 +600,7 @@ async def unmark_chat_favorite(
     workspace_id: Optional[UUID4] = Query(None, description="Optional workspace UUID for context"),
     workspace_slug: Optional[str] = Query(None, description="Optional workspace slug for context"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Remove a chat from favorites.
@@ -664,11 +637,6 @@ async def unmark_chat_favorite(
         - Unfavoriting a non-favorited chat is idempotent (no error)
         - Deprecated V1 endpoint: POST /api/v1/chat/unfavorite-chat/
     """
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     result = await unfavorite_chat(chat_id=chat_id, db=db)
 
@@ -682,7 +650,7 @@ async def list_favorite_chats(
     workspace_id: Optional[UUID4] = Query(None, description="Optional workspace UUID for filtering"),
     workspace_slug: Optional[str] = Query(None, description="Optional workspace slug for filtering"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     List all favorite chats for the authenticated user.
@@ -744,15 +712,7 @@ async def list_favorite_chats(
         - Workspace filtering is optional
         - Deprecated V1 endpoint: GET /api/v1/chat/get-favorite-chats/
     """
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+    user_id = current_user.id
 
     result = await get_favorite_chats(user_id=user_id, db=db, workspace_id=workspace_id)
 

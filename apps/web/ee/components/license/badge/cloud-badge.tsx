@@ -1,13 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // plane imports
-import { LICENSE_TRACKER_EVENTS } from "@plane/constants";
 import { PlaneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // hooks
-import { captureView } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
@@ -41,16 +52,10 @@ export const CloudEditionBadge = observer(function CloudEditionBadge() {
 
   const handlePaidPlanPurchaseModalOpen = () => {
     togglePaidPlanModal(true);
-    captureView({
-      elementName: LICENSE_TRACKER_EVENTS.purchase_modal_opened,
-    });
   };
 
   const handlePaidPlanSuccessModalOpen = () => {
     handleSuccessModalToggle(true);
-    captureView({
-      elementName: LICENSE_TRACKER_EVENTS.success_modal_opened,
-    });
   };
 
   const renderButtonText = () => {

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React, { useEffect } from "react";
 import type { FieldValues } from "react-hook-form";
@@ -32,15 +45,15 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
   const createdByDetails = getUserDetails(customer.created_by);
 
   return (
-    <div className="space-y-2">
-      <p className="text-sm font-medium mb-2">{t("customers.sidebar.properties")}</p>
+    <div className="flex flex-col gap-2">
+      <p className="text-13 font-medium mb-2">{t("customers.sidebar.properties")}</p>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">
-            {t("customers.properties.default.email.name")} <span className="text-red-500">*</span>
+          <span className="text-13 text-secondary">
+            {t("customers.properties.default.email.name")} <span className="text-danger-primary">*</span>
           </span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.email}
             key={"email"}
@@ -61,9 +74,9 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.website_url.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.website_url.name")}</span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.website_url}
             updateProperty={(value) => {
@@ -81,9 +94,9 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.size.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.size.name")}</span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.employees}
             updateProperty={(value) => {
@@ -103,9 +116,9 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.domain.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.domain.name")}</span>
         </div>
-        <div className="w-3/5 flex-grow">
+        <div className="flex-grow">
           <PropertyField
             value={customer.domain}
             updateProperty={(value) => {
@@ -118,7 +131,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.contract_status.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.contract_status.name")}</span>
         </div>
         <ContractStatusDropDown
           value={customer.contract_status}
@@ -126,14 +139,14 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             updateProperty({ contract_status: value });
           }}
           className="flex-grow w-3/5"
-          buttonClassName="group border-none w-3/5 flex-grow w-full px-3 py-2"
+          buttonClassName="group border-none flex-grow w-full px-3 py-2"
           chevronClassName="hidden group-hover:inline"
           disabled={isDisabled}
         />
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.stage.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.stage.name")}</span>
         </div>
         <StageDropDown
           value={customer.stage}
@@ -141,14 +154,14 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             updateProperty({ stage: value });
           }}
           className="flex-grow w-3/5"
-          buttonClassName="group border-none w-3/5 flex-grow w-full px-3 py-2"
+          buttonClassName="group border-none flex-grow w-full px-3 py-2"
           chevronClassName="hidden group-hover:inline"
           disabled={isDisabled}
         />
       </div>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.revenue.name")}</span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.revenue.name")}</span>
         </div>
         <PropertyField
           value={customer.revenue}
@@ -169,11 +182,11 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       {createdByDetails && (
         <div className="flex h-8 gap-2 items-center">
           <div className="w-2/5 flex-shrink-0">
-            <span className="text-sm text-custom-text-200">{t("common.created_by")}</span>
+            <span className="text-13 text-secondary">{t("common.created_by")}</span>
           </div>
-          <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
+          <div className="w-full h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-13 justify-between cursor-not-allowed">
             <ButtonAvatars showTooltip userIds={createdByDetails.id} />
-            <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+            <span className="flex-grow truncate text-11 leading-5">{createdByDetails?.display_name}</span>
           </div>
         </div>
       )}
@@ -233,10 +246,7 @@ function PropertyField(props: TPropertyFiledProps) {
           onBlur={handleBlur}
           disabled={disabled}
           placeholder={placeholder}
-          className={cn(
-            "w-full border-none truncate hover:bg-custom-background-80 focus:bg-custom-background-80 rounded-md",
-            disabled && "cursor-not-allowed"
-          )}
+          className="w-full"
         />
       )}
     />

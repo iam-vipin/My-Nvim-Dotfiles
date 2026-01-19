@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -40,7 +53,7 @@ export function JoinButton(props: Props) {
           href={`/${workspaceSlug}/projects/${project.id}/issues`}
           tabIndex={-1}
           className={cn(
-            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none my-0 flex-end bg-green-500/20 text-green-500 hover:bg-green-500/10 hover:text-green-500 focus:bg-green-500/20",
+            "w-auto cursor-pointer rounded-sm px-3 py-1.5 text-center text-13 font-medium outline-none my-0 flex-end bg-success-subtle text-success-primary hover:bg-success-subtle-1 focus:bg-success-subtle-1",
             className
           )}
           onClick={(e) => {
@@ -58,9 +71,9 @@ export function JoinButton(props: Props) {
       ) : (
         <Button
           tabIndex={-1}
-          variant="accent-primary"
+          variant="secondary"
           className={cn(
-            "w-auto cursor-pointer rounded px-3 py-1.5 text-center text-sm font-medium outline-none my-0 flex-end",
+            "w-auto cursor-pointer rounded-sm px-3 py-1.5 text-center text-13 font-medium outline-none my-0 flex-end",
             className
           )}
           onClick={(e) => {

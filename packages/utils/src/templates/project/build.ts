@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type {
   IIssueLabel,
@@ -71,6 +84,7 @@ export const buildProjectTemplateBlueprint = (
     intake_view: project.intake_view,
     intake_settings: project.intake_settings,
     is_time_tracking_enabled: project.is_time_tracking_enabled,
+    is_milestone_enabled: project.is_milestone_enabled,
     is_issue_type_enabled: project.is_issue_type_enabled,
     is_project_updates_enabled: project.is_project_updates_enabled,
     is_epic_enabled: project.is_epic_enabled,

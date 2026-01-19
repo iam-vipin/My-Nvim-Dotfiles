@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
@@ -83,19 +96,19 @@ export const BlockRow = observer(function BlockRow(props: Props) {
       }}
     >
       <div
-        className={cn("relative h-full", {
-          "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
-          "bg-custom-background-90": isBlockHoveredOn,
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isBlockSelected,
-          "bg-custom-primary-100/10": isBlockSelected && isBlockHoveredOn,
-          "border border-r-0 border-custom-border-400": isBlockFocused,
+        className={cn("relative h-full bg-layer-transparent hover:bg-layer-transparent-hover", {
+          "rounded-l-sm border border-r-0 border-accent-strong": getIsIssuePeeked(block.data.id),
+          "bg-layer-transparent-hover": isBlockHoveredOn,
+          "bg-accent-primary/5 hover:bg-accent-primary/10": isBlockSelected,
+          "bg-accent-primary/10": isBlockSelected && isBlockHoveredOn,
+          "border border-r-0 border-strong-1": isBlockFocused,
         })}
       >
         {isBlockVisibleOnChart
           ? isHidden && (
               <button
                 type="button"
-                className="sticky z-[5] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+                className="sticky z-[5] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded-sm border border-strong bg-layer-1 text-secondary hover:text-primary"
                 style={{
                   left: `${SIDEBAR_WIDTH + 4}px`,
                 }}

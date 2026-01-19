@@ -1,5 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef, useState } from "react";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -34,7 +48,7 @@ export function UpdateQuickActions(props: TProps) {
         customButton={
           <span
             ref={actionSectionRef}
-            className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
+            className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm my-auto"
             onClick={() => {
               setIsMenuActive(!isMenuActive);
             }}
@@ -49,7 +63,7 @@ export function UpdateQuickActions(props: TProps) {
         {allowEdit && (
           <CustomMenu.MenuItem onClick={() => operations.update()}>
             <button className="flex items-center justify-start gap-2">
-              <Pencil className="h-3.5 w-3.5 stroke-[1.5]" />
+              <EditIcon className="h-3.5 w-3.5 stroke-[1.5]" />
               <span>{t("edit")}</span>
             </button>
           </CustomMenu.MenuItem>
@@ -57,7 +71,7 @@ export function UpdateQuickActions(props: TProps) {
         {allowDelete && (
           <CustomMenu.MenuItem onClick={() => setDeleteModalId(updateId)}>
             <button className="flex items-center justify-start gap-2">
-              <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
+              <TrashIcon className="h-3.5 w-3.5 stroke-[1.5]" />
               <span>{t("delete")}</span>
             </button>
           </CustomMenu.MenuItem>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -96,15 +109,18 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
                     return (
                       <div
                         className={cn("group/list-block", {
-                          "rounded bg-custom-background-80": isDragging,
+                          "rounded-sm bg-layer-1": isDragging,
                         })}
                         onMouseEnter={() => updateActiveBlockId(blockId)}
                         onMouseLeave={() => updateActiveBlockId(null)}
                       >
                         <Row
-                          className={cn("group w-full flex items-center gap-2 pr-4", {
-                            "bg-custom-background-90": isBlockHoveredOn,
-                          })}
+                          className={cn(
+                            "group w-full flex items-center gap-2 pr-4 bg-layer-transparent hover:bg-layer-transparent-hover",
+                            {
+                              "bg-layer-transparent-hover": isBlockHoveredOn,
+                            }
+                          )}
                           style={{
                             height: `${BLOCK_HEIGHT}px`,
                           }}
@@ -112,7 +128,7 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
                           <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                             <div className="flex-grow truncate">{renderItem(item)}</div>
                             {duration && (
-                              <div className="flex-shrink-0 text-sm text-custom-text-200">
+                              <div className="flex-shrink-0 text-13 text-secondary">
                                 <span>
                                   {duration} day{duration > 1 ? "s" : ""}
                                 </span>
@@ -129,7 +145,7 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
           })}
           {canLoadMoreBlocks && (
             <div ref={setIntersectionElement} className="p-2">
-              <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
+              <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded-sm md:px-1 px-4 py-1.5 bg-layer-1 animate-pulse" />
             </div>
           )}
         </>

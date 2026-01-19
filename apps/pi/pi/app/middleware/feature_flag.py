@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import json
 import logging
 from typing import Dict
@@ -8,8 +19,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
 from pi import settings
-from pi.app.api.v1.dependencies import is_jwt_valid
-from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.dependencies import is_jwt_valid
+from pi.app.api.dependencies import is_valid_session
 from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
 from pi.services.feature_flags import FeatureFlagContext
 from pi.services.feature_flags import feature_flag_service

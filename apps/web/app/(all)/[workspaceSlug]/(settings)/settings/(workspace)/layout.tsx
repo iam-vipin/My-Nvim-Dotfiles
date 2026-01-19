@@ -1,26 +1,45 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
-// constants
-import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
-import type { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile";
+// plane imports
+import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
+import type { EUserWorkspaceRoles } from "@plane/types";
+// plane web components
+import { WorkspaceRightSidebar } from "@/plane-web/components/workspace/right-sidebar";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
-function WorkspaceSettingLayout() {
+import type { Route } from "./+types/layout";
+
+const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params }: Route.ComponentProps) {
+  // router
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
   const pathname = usePathname();
   // derived values
-  const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const { accessKey } = pathnameToAccessKey(pathname);
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
   let isAuthorized: boolean | string = false;
   if (pathname && workspaceSlug && userWorkspaceRole) {
@@ -42,11 +61,12 @@ function WorkspaceSettingLayout() {
             <div className="w-full h-full overflow-y-scroll md:pt-page-y">
               <Outlet />
             </div>
+            <WorkspaceRightSidebar workspaceSlug={workspaceSlug} />
           </div>
         )}
       </div>
     </>
   );
-}
+});
 
-export default observer(WorkspaceSettingLayout);
+export default WorkspaceSettingLayout;

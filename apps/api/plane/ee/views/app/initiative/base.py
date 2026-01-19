@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from collections import defaultdict
@@ -34,7 +45,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
-from plane.db.models import State, IssueAssignee, IssueActivity
+from plane.db.models import IssueAssignee, IssueActivity
 from plane.utils.filters import ComplexFilterBackend, InitiativeFilterSet
 
 

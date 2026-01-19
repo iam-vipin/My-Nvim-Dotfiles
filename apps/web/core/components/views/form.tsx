@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -102,9 +115,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
-          {data ? t("view.update.label") : t("view.create.label")}
-        </h3>
+        <h3 className="text-18 font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
             <EmojiPicker
@@ -114,12 +125,12 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
               className="flex items-center justify-center flex-shrink0"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+                <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
                   <>
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <ViewsIcon className="h-4 w-4 text-custom-text-300" />
+                      <ViewsIcon className="h-4 w-4 text-tertiary" />
                     )}
                   </>
                 </span>
@@ -167,13 +178,13 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                     onChange={onChange}
                     hasError={Boolean(errors.name)}
                     placeholder={t("common.title")}
-                    className="w-full text-base"
+                    className="w-full text-14"
                     tabIndex={getIndex("name")}
                     autoFocus
                   />
                 )}
               />
-              <span className="text-xs text-red-500">{errors?.name?.message?.toString()}</span>
+              <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
             </div>
           </div>
           <div>
@@ -185,7 +196,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   id="description"
                   name="description"
                   placeholder={t("common.description")}
-                  className="w-full text-base resize-none min-h-24"
+                  className="w-full text-14 resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
@@ -275,11 +286,11 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("common.cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
+        <Button variant="primary" size="lg" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
           {data
             ? isSubmitting
               ? t("common.updating")

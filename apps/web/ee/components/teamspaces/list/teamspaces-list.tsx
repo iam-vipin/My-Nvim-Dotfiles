@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { useTheme } from "next-themes";
@@ -13,7 +26,6 @@ import nameFilterLight from "@/app/assets/empty-state/project/name-filter-light.
 // components
 import { ListLayout } from "@/components/core/list/list-root";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
@@ -58,7 +70,6 @@ export const TeamspacesList = observer(function TeamspacesList(props: TTeamspace
           {
             label: t("workspace_empty_state.teamspaces.cta_primary"),
             onClick: () => {
-              captureClick({ elementName: TEAMSPACE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON });
               toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
             },
             disabled: !hasWorkspaceAdminLevelPermissions,
@@ -76,8 +87,8 @@ export const TeamspacesList = observer(function TeamspacesList(props: TTeamspace
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching teamspace"
           />
-          <h5 className="mb-1 mt-7 text-xl font-medium">No matching teamspace</h5>
-          <p className="whitespace-pre-line text-base text-custom-text-400">
+          <h5 className="mb-1 mt-7 text-h5-medium">No matching teamspace</h5>
+          <p className="whitespace-pre-line text-body-sm-regular text-placeholder">
             {searchQuery.trim() === ""
               ? "Remove the filters to see all teamspaces"
               : "No teamspace detected with the matching criteria.\nCreate a new teamspace instead"}

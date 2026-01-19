@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
 // plane imports
@@ -28,7 +41,7 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
 
   if (members.length === 0) {
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         {<ButtonAvatars showTooltip={false} userIds={value} icon={Icon} />}
         <span className="flex-grow truncate">{placeholder ?? t("common.none")}</span>
       </div>
@@ -37,9 +50,9 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
 
   if (multiple) {
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         {!hideIcon && Icon && <Icon className="h-3 w-3 flex-shrink-0" />}
-        <ButtonAvatars showTooltip={false} userIds={memberIds} size="sm" />
+        <ButtonAvatars showTooltip={false} userIds={memberIds} />
       </div>
     );
   }
@@ -47,11 +60,11 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
   const member = members[0];
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
       {!hideIcon && Icon && <Icon className="size-4 flex-shrink-0" />}
       <div className="flex items-center gap-2">
-        <div className="size-4 rounded-full bg-custom-background-80 flex items-center justify-center">
-          <span className="text-sm font-medium">
+        <div className="size-4 rounded-full bg-layer-1 flex items-center justify-center">
+          <span className="text-body-xs-medium">
             {member?.display_name?.charAt(0) ?? member?.email?.charAt(0) ?? "?"}
           </span>
         </div>

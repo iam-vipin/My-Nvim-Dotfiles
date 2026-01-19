@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
 import type { GithubIssue, GithubService, WebhookGitHubUser } from "@plane/etl/github";
 import { logger } from "@plane/logger";
@@ -126,7 +139,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
 
     // Set key with GitHub issue number so GitHub->Plane handler can detect and skip
     // Use 5 second TTL to allow the webhook loop back but expire quickly
-    await store.set(`silo:issue:gh:${githubIssue?.data.number}`, "true", 5);
+    await store.set(`silo:issue:gh:${githubIssue?.data.number}`, "true", 60);
   } catch (error) {
     logger.error("[Plane][Github] Error handling issue create/update event", {
       error,

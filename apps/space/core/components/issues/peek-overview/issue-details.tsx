@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
@@ -21,10 +34,10 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
 
   return (
     <div className="space-y-2">
-      <h6 className="text-base font-medium text-custom-text-400">
+      <h6 className="text-14 font-medium text-placeholder">
         {project_details?.identifier}-{issueDetails?.sequence_id}
       </h6>
-      <h4 className="break-words text-2xl font-medium">{issueDetails.name}</h4>
+      <h4 className="break-words text-20 font-medium">{issueDetails.name}</h4>
       {description && description !== "" && description !== "<p></p>" && (
         <RichTextEditor
           editable={false}

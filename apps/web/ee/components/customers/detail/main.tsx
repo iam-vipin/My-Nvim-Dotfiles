@@ -1,21 +1,30 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { NewTabIcon } from "@plane/propel/icons";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Tabs } from "@plane/propel/tabs";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { TCustomerPayload } from "@plane/types";
 // components
-import { Tabs } from "@plane/ui";
 import { formatURLForDisplay } from "@plane/utils";
 // components
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
@@ -61,7 +70,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           <div className="flex items-center gap-2">
             <span>{t("customers.requests.label", { count: 2 })}</span>
             {requestCount > 0 ? (
-              <span className="rounded-full text-xs bg-custom-background-90 h-5 w-5 flex items-center justify-center">
+              <span className="rounded-full text-11 bg-layer-1 h-5 w-5 flex items-center justify-center">
                 {requestCount}
               </span>
             ) : null}
@@ -75,7 +84,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           <div className="flex items-center gap-2">
             <span>{t("customers.linked_work_items.label")}</span>
             {workItemCount > 0 ? (
-              <span className="rounded-full text-xs bg-custom-background-90 h-5 w-5 flex items-center justify-center">
+              <span className="rounded-full text-11 bg-layer-1 h-5 w-5 flex items-center justify-center">
                 {workItemCount}
               </span>
             ) : null}
@@ -120,26 +129,12 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
 
   const handleUpdateCustomer = async (data: Partial<TCustomerPayload>) => {
     await updateCustomer(workspaceSlug, customerId, data)
-      .then(() => {
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-        });
-      })
-      .catch((error) => {
+      .then(() => {})
+      .catch((_error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("customers.toasts.update.error.title"),
-          message: error.error || t("customers.toasts.update.error.message"),
-        });
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-          error: error as Error,
+          message: _error?.error || t("customers.toasts.update.error.message"),
         });
       });
   };
@@ -167,7 +162,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           />
           {customer.website_url && (
             <Link
-              className="text-sm text-custom-text-300 cursor-pointer hover:underline flex gap-1 items-center w-fit"
+              className="text-13 text-tertiary cursor-pointer hover:underline flex gap-1 items-center w-fit"
               data-prevent-progress
               href={customer.website_url}
               onClick={(e) => {
@@ -176,14 +171,14 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
               target="_blank"
               rel="noopener noreferrer"
             >
-              <ExternalLink className="text-custom-text-300 size-3" />
+              <NewTabIcon className="text-tertiary size-3" />
               {formatURLForDisplay(customer.website_url)}
             </Link>
           )}
         </div>
       </div>
       {/* Description Editor */}
-      <div className="border-custom-border-200 border-b-[0.5px] pb-3">
+      <div className="border-subtle-1 border-b-[0.5px] pb-3">
         <DescriptionInput
           containerClassName="border-none min-h-[88px]"
           disabled={!isEditable}
@@ -191,23 +186,32 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           entityId={customerId}
           fileAssetType={EFileAssetType.CUSTOMER_DESCRIPTION}
           initialValue={customer.description_html}
-          onSubmit={async (value: string) => {
-            await handleUpdateCustomer({ description_html: value });
+          onSubmit={async (value) => {
+            await handleUpdateCustomer({ description_html: value.description_html });
           }}
           setIsSubmitting={setIsSubmitting}
           swrDescription={customer.description_html}
           workspaceSlug={workspaceSlug}
         />
       </div>
-      <Tabs
-        tabs={CUSTOMER_TABS}
-        defaultTab="requests"
-        tabListClassName="w-36"
-        tabListContainerClassName="justify-between pb-4 pt-6"
-        tabClassName="px-2 py-1"
-        storeInLocalStorage={false}
-        actions={<></>}
-      />
+      <div className="mt-4">
+        <Tabs defaultValue={CUSTOMER_TABS[0].key}>
+          <Tabs.List>
+            {CUSTOMER_TABS.map((tab) => (
+              <Tabs.Trigger key={tab.key} value={tab.key} size="sm">
+                {tab.label}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+          <div className="mt-2">
+            {CUSTOMER_TABS.map((tab) => (
+              <Tabs.Content key={tab.key} value={tab.key}>
+                {tab.content}
+              </Tabs.Content>
+            ))}
+          </div>
+        </Tabs>
+      </div>
     </MainWrapper>
   );
 });

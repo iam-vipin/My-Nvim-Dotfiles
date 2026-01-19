@@ -1,4 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
@@ -45,6 +58,8 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
   const [isFetchingSubPages, setIsFetchingSubPages] = useState(false);
   // refs
   const parentRef = useRef(null);
+  // params
+  const { workspaceSlug } = useParams();
   // hooks
   const router = useAppRouter();
   const page = usePage({
@@ -53,13 +68,9 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
   });
   const { isMobile } = usePlatformOS();
   // handle page check
+  const { isNestedPagesEnabled: getIsNestedPagesEnabled } = usePageStore(storeType);
   // derived values
-  const { workspaceSlug } = useParams();
-  const { isNestedPagesEnabled } = usePageStore(storeType);
-  const isNestedPagesDisabledForPage = useMemo(
-    () => !isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id,
-    [isNestedPagesEnabled, workspaceSlug, page?.parent_id]
-  );
+  const isNestedPagesEnabled = getIsNestedPagesEnabled(workspaceSlug) && page?.parent_id;
 
   const handleSubPagesToggle = useCallback(async () => {
     handleToggleExpanded();
@@ -85,7 +96,6 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
   const { name, logo_props, getRedirectionLink, sub_pages_count, deleted_at, canCurrentUserAccessPage } = page;
 
   const shouldShowSubPagesButton = sub_pages_count !== undefined && sub_pages_count > 0;
-  const pageTitle = !isNestedPagesDisabledForPage ? getPageName(name) : `Page upgrade to view page`;
 
   if (deleted_at) {
     return null;
@@ -99,13 +109,7 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
       })}
     >
       <ListItem
-        title={
-          isNestedPagesDisabledForPage
-            ? "Please upgrade to view page"
-            : canCurrentUserAccessPage
-              ? pageTitle
-              : "Restricted Access"
-        }
+        title={canCurrentUserAccessPage ? getPageName(name) : "Restricted Access"}
         itemLink={getRedirectionLink?.()}
         onItemClick={() => router.push(getRedirectionLink?.() ?? "")}
         leftElementClassName="gap-2"
@@ -114,7 +118,7 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
         })}
         prependTitleElement={
           <div
-            className="flex-shrink-0 flex items-center gap-1"
+            className="shrink-0 flex items-center gap-1"
             style={{
               paddingLeft: `${paddingLeft}px`,
             }}
@@ -122,11 +126,11 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
             {shouldShowSubPagesButton ? (
               <button
                 type="button"
-                className="flex-shrink-0 size-5 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                className="shrink-0 size-5 grid place-items-center rounded-sm text-placeholder hover:text-tertiary"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  handleSubPagesToggle();
+                  void handleSubPagesToggle();
                 }}
                 disabled={isFetchingSubPages}
                 data-prevent-progress
@@ -145,23 +149,21 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
             ) : (
               <span className="size-5" />
             )}
-            <div className="flex-shrink-0 size-6 grid place-items-center">
-              {canCurrentUserAccessPage && !isNestedPagesDisabledForPage ? (
+            <div className="shrink-0 size-6 grid place-items-center">
+              {canCurrentUserAccessPage ? (
                 logo_props?.in_use ? (
                   <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
-                  <PageIcon className="size-4 text-custom-text-300" />
+                  <PageIcon className="size-4 text-tertiary" />
                 )
               ) : (
-                <RestrictedPageIcon className="size-4 text-custom-text-300 mb-1" />
+                <RestrictedPageIcon className="size-4 text-tertiary mb-1" />
               )}
             </div>
           </div>
         }
         actionableItems={
-          !isNestedPagesDisabledForPage ? (
-            <BlockItemAction page={page} parentRef={parentRef} storeType={storeType} />
-          ) : undefined
+          isNestedPagesEnabled ? <BlockItemAction page={page} parentRef={parentRef} storeType={storeType} /> : undefined
         }
         isMobile={isMobile}
         parentRef={parentRef}

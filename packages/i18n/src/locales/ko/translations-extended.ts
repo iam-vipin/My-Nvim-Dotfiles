@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "사용자 이름",
+        placeholder: "사용자 이름을 입력하세요",
+      },
+    },
+    ldap: {
+      header: {
+        label: "{ldapProviderName}로 계속",
+        sub_header: "{ldapProviderName} 자격 증명을 입력하세요",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "파이 챗",
     initiatives: "이니셔티브스",
@@ -705,6 +732,11 @@ export default {
       worklogs: {
         title: "워크로그",
       },
+      identity: {
+        title: "신원",
+        heading: "신원",
+        description: "도메인을 구성하고 Single sign-on을 활성화하세요",
+      },
       project_states: {
         title: "프로젝트 스테이트",
       },
@@ -899,6 +931,54 @@ export default {
         title: "Plane AI",
         heading: "Plane AI",
         description: "작업이 더 똑똑하고 빨리 진행되도록 네이티브로 연결된 AI를 사용하세요.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "CSV에서 구성원 가져오기",
+      description: "다음 열이 포함된 CSV 업로드: Email, Display Name, First Name, Last Name, Role (5, 15 또는 20)",
+      dropzone: {
+        active: "CSV 파일을 여기에 놓으세요",
+        inactive: "드래그 앤 드롭 또는 클릭하여 업로드",
+        file_type: ".csv 파일만 지원됩니다",
+      },
+      buttons: {
+        cancel: "취소",
+        import: "가져오기",
+        try_again: "다시 시도",
+        close: "닫기",
+        done: "완료",
+      },
+      progress: {
+        uploading: "업로드 중...",
+        importing: "가져오는 중...",
+      },
+      summary: {
+        title: {
+          failed: "가져오기 실패",
+          complete: "가져오기 완료",
+        },
+        message: {
+          seat_limit: "시트 제한으로 인해 구성원을 가져올 수 없습니다.",
+          success: "{count}명의 구성원을 워크스페이스에 추가했습니다.",
+          no_imports: "CSV 파일에서 구성원을 가져오지 못했습니다.",
+        },
+        stats: {
+          successful: "성공",
+          failed: "실패",
+        },
+        download_errors: "오류 다운로드",
+      },
+      toast: {
+        invalid_file: {
+          title: "잘못된 파일",
+          message: "CSV 파일만 지원됩니다.",
+        },
+        import_failed: {
+          title: "가져오기 실패",
+          message: "문제가 발생했습니다.",
+        },
       },
     },
   },
@@ -1365,6 +1445,22 @@ export default {
     choose_entity: "엔티티 선택",
     choose_project: "프로젝트 선택",
     link_plane_project: "플레인 프로젝트 연결",
+    project_issue_sync: "프로젝트 이슈 동기화",
+    project_issue_sync_description: "Gitlab에서 Plane 프로젝트로 이슈를 동기화하세요",
+    project_issue_sync_empty_state: "매핑된 프로젝트 이슈 동기화가 여기에 표시됩니다",
+    configure_project_issue_sync_state: "이슈 동기화 상태 구성",
+    select_issue_sync_direction: "이슈 동기화 방향 선택",
+    allow_bidirectional_sync: "양방향 - Gitlab과 Plane 간에 이슈와 댓글을 양방향으로 동기화",
+    allow_unidirectional_sync: "단방향 - Gitlab에서 Plane으로만 이슈와 댓글을 동기화",
+    allow_unidirectional_sync_warning:
+      "Gitlab Issue의 데이터가 연결된 Plane 작업 항목의 데이터를 대체합니다 (Gitlab → Plane만)",
+    remove_project_issue_sync: "이 프로젝트 이슈 동기화 제거",
+    remove_project_issue_sync_confirmation: "이 프로젝트 이슈 동기화를 제거하시겠습니까?",
+    ISSUE_OPEN: "이슈 열림",
+    ISSUE_CLOSED: "이슈 닫힘",
+    save: "저장",
+    start_sync: "동기화 시작",
+    choose_repository: "레포지토리 선택...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3087,6 +3183,214 @@ export default {
         title: "자동화",
         description: "자동화는 프로젝트의 작업을 자동화하는 방법입니다.",
         sub_description: "자동화를 사용하면 관리 시간의 80%를 절약할 수 있습니다.",
+      },
+    },
+  },
+  sso: {
+    header: "신원",
+    description: "단일 로그인을 포함한 보안 기능에 액세스하려면 도메인을 구성하세요.",
+    domain_management: {
+      header: "도메인 관리",
+      verified_domains: {
+        header: "확인된 도메인",
+        description: "단일 로그인을 활성화하려면 이메일 도메인의 소유권을 확인하세요.",
+        button_text: "도메인 추가",
+        list: {
+          domain_name: "도메인 이름",
+          status: "상태",
+          status_verified: "확인됨",
+          status_failed: "실패",
+          status_pending: "대기 중",
+        },
+        add_domain: {
+          title: "도메인 추가",
+          description: "SSO를 구성하고 확인하기 위해 도메인을 추가하세요.",
+          form: {
+            domain_label: "도메인",
+            domain_placeholder: "plane.so",
+            domain_required: "도메인이 필요합니다",
+            domain_invalid: "유효한 도메인 이름을 입력하세요 (예: plane.so)",
+          },
+          primary_button_text: "도메인 추가",
+          primary_button_loading_text: "추가 중",
+          toast: {
+            success_title: "성공!",
+            success_message: "도메인이 성공적으로 추가되었습니다. DNS TXT 레코드를 추가하여 확인하세요.",
+            error_message: "도메인 추가에 실패했습니다. 다시 시도해 주세요.",
+          },
+        },
+        verify_domain: {
+          title: "도메인 확인",
+          description: "다음 단계에 따라 도메인을 확인하세요.",
+          instructions: {
+            label: "지침",
+            step_1: "도메인 호스트의 DNS 설정으로 이동하세요.",
+            step_2: {
+              part_1: "",
+              part_2: "TXT 레코드",
+              part_3: "를 만들고 아래에 제공된 전체 레코드 값을 붙여넣으세요.",
+            },
+            step_3: "이 업데이트는 일반적으로 몇 분이 걸리지만 완료하는 데 최대 72시간이 걸릴 수 있습니다.",
+            step_4: 'DNS 레코드가 업데이트되면 "도메인 확인"을 클릭하여 확인하세요.',
+          },
+          verification_code_label: "TXT 레코드 값",
+          verification_code_description: "이 레코드를 DNS 설정에 추가하세요",
+          domain_label: "도메인",
+          primary_button_text: "도메인 확인",
+          primary_button_loading_text: "확인 중",
+          secondary_button_text: "나중에 하기",
+          toast: {
+            success_title: "성공!",
+            success_message: "도메인이 성공적으로 확인되었습니다.",
+            error_message: "도메인 확인에 실패했습니다. 다시 시도해 주세요.",
+          },
+        },
+        delete_domain: {
+          title: "도메인 삭제",
+          description: {
+            prefix: "정말로 삭제하시겠습니까",
+            suffix: "? 이 작업은 취소할 수 없습니다.",
+          },
+          primary_button_text: "삭제",
+          primary_button_loading_text: "삭제 중",
+          secondary_button_text: "취소",
+          toast: {
+            success_title: "성공!",
+            success_message: "도메인이 성공적으로 삭제되었습니다.",
+            error_message: "도메인 삭제에 실패했습니다. 다시 시도해 주세요.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "단일 로그인",
+      disabled_message: "SSO를 구성하려면 확인된 도메인을 추가하세요",
+      configure: {
+        create: "구성",
+        update: "편집",
+      },
+      switch_alert_modal: {
+        title: "SSO 방법을 {newProviderShortName}로 전환하시겠습니까?",
+        content:
+          "{newProviderLongName}({newProviderShortName})을(를) 활성화하려고 합니다. 이 작업은 {activeProviderLongName}({activeProviderShortName})을(를) 자동으로 비활성화합니다. {activeProviderShortName}을(를) 통해 로그인하려는 사용자는 새 방법으로 전환할 때까지 플랫폼에 액세스할 수 없습니다. 계속하시겠습니까?",
+        primary_button_text: "전환",
+        primary_button_text_loading: "전환 중",
+        secondary_button_text: "취소",
+      },
+      form_section: {
+        title: "{workspaceName}에 대한 IdP 제공 세부 정보",
+      },
+      form_action_buttons: {
+        saving: "저장 중",
+        save_changes: "변경 사항 저장",
+        configure_only: "구성만",
+        configure_and_enable: "구성 및 활성화",
+        default: "저장",
+      },
+      setup_details_section: {
+        title: "{workspaceName}이(가) IdP에 제공하는 세부 정보",
+        button_text: "설정 세부 정보 가져오기",
+      },
+      saml: {
+        header: "SAML 활성화",
+        description: "SAML 신원 공급자를 구성하여 단일 로그인을 활성화하세요.",
+        configure: {
+          title: "SAML 활성화",
+          description: "단일 로그인을 포함한 보안 기능에 액세스하려면 이메일 도메인의 소유권을 확인하세요.",
+          toast: {
+            success_title: "성공!",
+            create_success_message: "SAML 공급자가 성공적으로 생성되었습니다.",
+            update_success_message: "SAML 공급자가 성공적으로 업데이트되었습니다.",
+            error_title: "오류!",
+            error_message: "SAML 공급자 저장에 실패했습니다. 다시 시도해 주세요.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "웹 세부 정보",
+            entity_id: {
+              label: "엔티티 ID | 대상 | 메타데이터 정보",
+              description: "이 Plane 앱을 IdP의 승인된 서비스로 식별하는 메타데이터의 이 부분을 생성합니다.",
+            },
+            callback_url: {
+              label: "단일 로그인 URL",
+              description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
+            },
+            logout_url: {
+              label: "단일 로그아웃 URL",
+              description: "이를 생성합니다. IdP의 단일 로그아웃 리디렉션 URL 필드에 추가하세요.",
+            },
+          },
+          mobile_details: {
+            header: "모바일 세부 정보",
+            entity_id: {
+              label: "엔티티 ID | 대상 | 메타데이터 정보",
+              description: "이 Plane 앱을 IdP의 승인된 서비스로 식별하는 메타데이터의 이 부분을 생성합니다.",
+            },
+            callback_url: {
+              label: "단일 로그인 URL",
+              description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
+            },
+            logout_url: {
+              label: "단일 로그아웃 URL",
+              description: "이를 생성합니다. IdP의 로그아웃 리디렉션 URL 필드에 추가하세요.",
+            },
+          },
+          mapping_table: {
+            header: "매핑 세부 정보",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "OIDC 활성화",
+        description: "OIDC 신원 공급자를 구성하여 단일 로그인을 활성화하세요.",
+        configure: {
+          title: "OIDC 활성화",
+          description: "단일 로그인을 포함한 보안 기능에 액세스하려면 이메일 도메인의 소유권을 확인하세요.",
+          toast: {
+            success_title: "성공!",
+            create_success_message: "OIDC 공급자가 성공적으로 생성되었습니다.",
+            update_success_message: "OIDC 공급자가 성공적으로 업데이트되었습니다.",
+            error_title: "오류!",
+            error_message: "OIDC 공급자 저장에 실패했습니다. 다시 시도해 주세요.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "웹 세부 정보",
+            origin_url: {
+              label: "원본 URL",
+              description: "이 Plane 앱에 대해 이를 생성합니다. IdP의 해당 필드에 신뢰할 수 있는 원본으로 추가하세요.",
+            },
+            callback_url: {
+              label: "리디렉션 URL",
+              description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
+            },
+            logout_url: {
+              label: "로그아웃 URL",
+              description: "이를 생성합니다. IdP의 로그아웃 리디렉션 URL 필드에 추가하세요.",
+            },
+          },
+          mobile_details: {
+            header: "모바일 세부 정보",
+            origin_url: {
+              label: "원본 URL",
+              description: "이 Plane 앱에 대해 이를 생성합니다. IdP의 해당 필드에 신뢰할 수 있는 원본으로 추가하세요.",
+            },
+            callback_url: {
+              label: "리디렉션 URL",
+              description: "이를 생성합니다. IdP의 로그인 리디렉션 URL 필드에 추가하세요.",
+            },
+            logout_url: {
+              label: "로그아웃 URL",
+              description: "이를 생성합니다. IdP의 로그아웃 리디렉션 URL 필드에 추가하세요.",
+            },
+          },
+        },
       },
     },
   },

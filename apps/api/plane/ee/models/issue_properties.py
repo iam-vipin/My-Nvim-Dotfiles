@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import models
 from django.conf import settings
@@ -7,6 +18,7 @@ from django.contrib.postgres.fields import ArrayField
 
 # Module imports
 from plane.db.models import WorkspaceBaseModel
+from plane.db.mixins import ChangeTrackerMixin
 
 
 class PropertyTypeEnum(models.TextChoices):
@@ -26,45 +38,46 @@ class RelationTypeEnum(models.TextChoices):
     USER = "USER", "User"
 
 
-class IssueProperty(WorkspaceBaseModel):
+class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
     name = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     logo_props = models.JSONField(blank=True, default=dict)
     sort_order = models.FloatField(default=65535)
     property_type = models.CharField(max_length=255, choices=PropertyTypeEnum.choices)
-    relation_type = models.CharField(
-        max_length=255, blank=True, null=True, choices=RelationTypeEnum.choices
-    )
+    relation_type = models.CharField(max_length=255, blank=True, null=True, choices=RelationTypeEnum.choices)
     is_required = models.BooleanField(default=False)
     default_value = ArrayField(models.TextField(), blank=True, default=list)
     settings = models.JSONField(blank=True, default=dict)
     is_active = models.BooleanField(default=True)
     issue_type = models.ForeignKey(
-        "db.IssueType", on_delete=models.CASCADE, related_name="properties"
+        "db.IssueType", on_delete=models.CASCADE, related_name="properties", null=True, blank=True
     )
     is_multi = models.BooleanField(default=False)
     validation_rules = models.JSONField(blank=True, default=dict)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
+    TRACKED_FIELDS = [
+        "is_required",
+        "default_value",
+        "is_active",
+        "sort_order",
+        "external_source",
+        "external_id",
+        "deleted_at",
+    ]
+
     class Meta:
         ordering = ["sort_order"]
-        unique_together = ["name", "issue_type", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["name", "issue_type"],
-                condition=Q(deleted_at__isnull=True),
-                name="issue_property_unique_name_project_when_deleted_at_null",
-            )
-        ]
         db_table = "issue_properties"
 
     def save(self, *args, **kwargs):
         self.name = slugify(self.display_name)
-        if self._state.adding:
+        created = self._state.adding
+        if created:
             # Get the maximum sequence value from the database
-            last_id = IssueProperty.objects.filter(project=self.project).aggregate(
+            last_id = IssueProperty.objects.filter(issue_type=self.issue_type_id, project_id=self.project_id).aggregate(
                 largest=models.Max("sort_order")
             )["largest"]
             # if last_id is not None
@@ -73,22 +86,67 @@ class IssueProperty(WorkspaceBaseModel):
 
         super(IssueProperty, self).save(*args, **kwargs)
 
+        if self.issue_type:
+            # Use _changes_on_save which is captured by ChangeTrackerMixin.save()
+            self.sync_to_issue_type_properties(created=created, changed_fields=self._changes_on_save)
+
+    def sync_to_issue_type_properties(self, created=False, changed_fields=None):
+        issue_type = self.issue_type
+        if created:
+            IssueTypeProperty.objects.create(
+                workspace_id=self.workspace_id,
+                issue_type=issue_type,
+                property=self,
+                is_required=self.is_required,
+                default_value=self.default_value,
+                is_active=self.is_active,
+                sort_order=self.sort_order,
+                external_source=self.external_source,
+                external_id=self.external_id,
+            )
+        else:
+            if changed_fields:
+                fields_to_update = {field: getattr(self, field) for field in changed_fields}
+                IssueTypeProperty.objects.filter(issue_type=issue_type, property=self).update(**fields_to_update)
+
     def __str__(self):
         return self.display_name
+
+
+class IssueTypeProperty(WorkspaceBaseModel):
+    issue_type = models.ForeignKey("db.IssueType", on_delete=models.CASCADE, related_name="issue_type_properties")
+    property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="issue_type_properties")
+    is_required = models.BooleanField(default=False)
+    default_value = ArrayField(models.TextField(), blank=True, default=list)
+    is_active = models.BooleanField(default=True)
+    sort_order = models.FloatField(default=65535)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ["sort_order"]
+        unique_together = ["issue_type", "property", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue_type", "property"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_type_property_unique_issue_type_property_when_deleted_at_null",
+            )
+        ]
+        db_table = "issue_type_properties"
+
+    def __str__(self):
+        return f"{self.issue_type.name} - {self.property.display_name}"
 
 
 class IssuePropertyOption(WorkspaceBaseModel):
     name = models.CharField(max_length=255)
     sort_order = models.FloatField(default=65535)
-    property = models.ForeignKey(
-        IssueProperty, on_delete=models.CASCADE, related_name="options"
-    )
+    property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="options")
     description = models.TextField(blank=True)
     logo_props = models.JSONField(blank=True, default=dict)
     is_active = models.BooleanField(default=True)
-    parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, related_name="children", null=True, blank=True
-    )
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="children", null=True, blank=True)
     is_default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
@@ -108,9 +166,9 @@ class IssuePropertyOption(WorkspaceBaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = IssuePropertyOption.objects.filter(
-                project=self.project, property=self.property
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            last_id = IssuePropertyOption.objects.filter(workspace=self.workspace, property=self.property).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sort_order = last_id + 10000
@@ -122,12 +180,8 @@ class IssuePropertyOption(WorkspaceBaseModel):
 
 
 class IssuePropertyValue(WorkspaceBaseModel):
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="properties"
-    )
-    property = models.ForeignKey(
-        IssueProperty, on_delete=models.CASCADE, related_name="values"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="properties")
+    property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="values")
     value_text = models.TextField(blank=True)
     value_boolean = models.BooleanField(default=False)
     value_decimal = models.FloatField(default=0)
@@ -156,12 +210,8 @@ class IssuePropertyActivity(WorkspaceBaseModel):
     new_value = models.TextField(blank=True)
     old_identifier = models.UUIDField(blank=True, null=True)
     new_identifier = models.UUIDField(blank=True, null=True)
-    property = models.ForeignKey(
-        IssueProperty, on_delete=models.CASCADE, related_name="activities"
-    )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="activities"
-    )
+    property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="activities")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="activities")
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

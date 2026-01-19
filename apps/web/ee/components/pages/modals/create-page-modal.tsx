@@ -1,16 +1,25 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
 import type { EPageAccess } from "@plane/constants";
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import type { TPage } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { PageForm } from "@/components/pages/modals/page-form";
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -53,23 +62,11 @@ export const WikiCreatePageModal = observer(function WikiCreatePageModal(props: 
     try {
       const pageData = await createPage(pageFormData);
       if (pageData) {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            ...pageData,
-            state: "SUCCESS",
-          },
-        });
         handleStateClear();
         if (redirectionEnabled) router.push(`/${workspaceSlug}/wiki/${pageData.id}`);
       }
-    } catch {
-      captureError({
-        eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-        payload: {
-          state: "FAILED",
-        },
-      });
+    } catch (_error) {
+      console.error(_error);
     }
   };
 

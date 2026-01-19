@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // ui
@@ -26,7 +39,7 @@ export const WorkItemEmbedCard = observer(function WorkItemEmbedCard(props: Prop
 
   if (!hasLoadedEmbedsAndMentions)
     return (
-      <Loader className="rounded-md bg-custom-background-90 p-3 my-2">
+      <Loader className="rounded-md bg-layer-1 p-3 my-2">
         <Loader.Item height="30px" />
         <div className="mt-3 space-y-2">
           <Loader.Item height="20px" width="70%" />
@@ -39,16 +52,16 @@ export const WorkItemEmbedCard = observer(function WorkItemEmbedCard(props: Prop
     return (
       <div className="flex items-center gap-2 rounded-md border border-orange-500 bg-orange-500/10 text-orange-500 px-4 py-3 my-2">
         <AlertTriangle className="text-orange-500 size-5" />
-        <p className="!text-sm">This work item embed could not be found. It might have been deleted.</p>
+        <p className="!text-13">This work item embed could not be found. It might have been deleted.</p>
       </div>
     );
 
   return (
-    <div className="issue-embed space-y-2 rounded-md bg-custom-background-90 p-3 my-2 cursor-default">
-      <h5 className="!text-xs !font-normal !mt-0 text-custom-text-300">
+    <div className="issue-embed space-y-2 rounded-md bg-layer-1 p-3 my-2 cursor-default">
+      <h5 className="!text-11 !font-normal !mt-0 text-tertiary">
         {workItemDetails?.project__identifier}-{workItemDetails?.sequence_id}
       </h5>
-      <h4 className="!text-sm !font-medium !mt-1 line-clamp-2 break-words">{workItemDetails?.name}</h4>
+      <h4 className="!text-13 !font-medium !mt-1 line-clamp-2 break-words">{workItemDetails?.name}</h4>
       <div className="hide-horizontal-scrollbar relative flex w-full flex-grow items-end gap-2 overflow-x-scroll">
         {/* state */}
         <div className="flex-shrink-0 h-5">

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -74,9 +85,7 @@ class EpicReactionViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=json.dumps(
-                {"reaction": str(reaction_code), "identifier": str(epic_reaction.id)}
-            ),
+            current_instance=json.dumps({"reaction": str(reaction_code), "identifier": str(epic_reaction.id)}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

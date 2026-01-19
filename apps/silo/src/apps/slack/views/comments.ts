@@ -1,5 +1,17 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { encapsulateInQuoteBlock } from "@/helpers/utils";
-import { getCommentDmAlertText } from "../helpers/activity";
 import { ACTIONS, ENTITIES } from "../helpers/constants";
 import { getUserMarkdown } from "../helpers/user";
 import type { TSlackDMBlockFormationCtx } from "../types/alerts";
@@ -12,17 +24,17 @@ type TSlackCommentLinkbackProps = {
   projectId: string;
   issueId: string;
   createdBy: string;
+  header: string;
 };
 
 export const createCommentLinkback = (props: TSlackCommentLinkbackProps) => {
-  const { blockFormationCtx, workItemHyperlink, projectId, issueId } = props;
-  const { workspaceSlug, actorDisplayName } = blockFormationCtx;
+  const { blockFormationCtx, header, projectId, issueId } = props;
   return [
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: getCommentDmAlertText(workspaceSlug, actorDisplayName, workItemHyperlink),
+        text: header,
       },
     },
     {

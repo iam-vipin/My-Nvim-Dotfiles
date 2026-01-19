@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { convertIntegrationKeyToProvider } from "@/services/oauth/helpers";
@@ -39,4 +52,8 @@ export const getWorkspacePageUrl = (workspaceSlug: string, pageId: string) =>
 export const getIntegrationPageUrl = (workspaceSlug: string, integrationKey: E_INTEGRATION_KEYS) => {
   const provider = convertIntegrationKeyToProvider(integrationKey);
   return `${env.APP_BASE_URL}/${workspaceSlug}/settings/integrations/${provider}`;
+};
+
+export const getProfileConnectionPageUrl = (workspaceSlug: string, workspaceId: string) => {
+  return `${env.APP_BASE_URL}/${workspaceSlug}/settings/account/connections?workspaceId=${workspaceId}`;
 };

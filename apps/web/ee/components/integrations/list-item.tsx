@@ -1,6 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import Link from "next/link";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -32,25 +45,23 @@ export function IntegrationListItem(props: IntegrationListItemProps) {
   return (
     <div
       key={provider.key}
-      className="flex flex-col max-w-[300px] justify-between gap-2 rounded-md border border-custom-border-100 bg-custom-background-100  px-4 py-6 flex-shrink-0"
+      className="flex flex-col max-w-[300px] justify-between gap-2 rounded-md border border-subtle bg-surface-1  px-4 py-6 flex-shrink-0"
     >
-      <div className="relative h-12 w-12 flex-shrink-0 bg-custom-background-90 rounded flex items-center justify-center">
+      <div className="relative h-12 w-12 flex-shrink-0 bg-layer-1 rounded-sm flex items-center justify-center">
         <img src={provider.logo} alt={`${provider.key} Logo`} className="w-full h-full object-cover" />
       </div>
 
       <div className="relative flex items-center gap-2">
-        <h3 className="flex items-center gap-4 text-sm font-medium">{t(`${provider.key}_integration.name`)}</h3>
+        <h3 className="flex items-center gap-4 text-body-xs-medium">{t(`${provider.key}_integration.name`)}</h3>
         {provider.beta && <BetaBadge />}
       </div>
-      <p className="text-sm tracking-tight text-custom-text-300">{t(`${provider.key}_integration.description`)}</p>
+      <p className="text-body-xs-regular text-tertiary">{t(`${provider.key}_integration.description`)}</p>
 
       {isSupported ? (
         <div className="flex-shrink-0">
           <Link href={`/${workspaceSlug}/settings/integrations/${provider.urlSlug}`}>
             <span>
-              <Button variant="accent-primary" size="sm">
-                {t("integrations.configure")}
-              </Button>
+              <Button variant="secondary">{t("integrations.configure")}</Button>
             </span>
           </Link>
         </div>
@@ -64,9 +75,9 @@ export function IntegrationListItem(props: IntegrationListItemProps) {
                 })
           }
         >
-          <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
-            <Info size={12} />
-            <div className="text-xs">{t("integrations.not_configured")}</div>
+          <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
+            <InfoIcon height={12} width={12} />
+            <div className="text-caption-sm-regular">{t("integrations.not_configured")}</div>
           </div>
         </Tooltip>
       )}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
@@ -31,7 +44,7 @@ function ProjectAttributes(props: Props) {
   // plane imports
   const { t } = useTranslation();
   // react-hook-form
-  const { control } = useFormContext<TProject>();
+  const { control, setValue } = useFormContext<TProject>();
   // store
   const { defaultState } = useWorkspaceProjectStates();
 
@@ -78,7 +91,7 @@ function ProjectAttributes(props: Props) {
                         {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
-                      <span className="text-custom-text-400">Select network</span>
+                      <span className="text-placeholder">Select network</span>
                     )}
                   </div>
                 }
@@ -94,7 +107,7 @@ function ProjectAttributes(props: Props) {
                       <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
                         <p>{t(network.i18n_label)}</p>
-                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
+                        <p className="text-11 text-placeholder">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>
@@ -168,7 +181,11 @@ function ProjectAttributes(props: Props) {
                 <MemberDropdown
                   value={value ?? null}
                   onChange={(lead) => {
-                    onChange(lead === value ? null : lead);
+                    const newLead = lead === value ? null : lead;
+                    // Use setValue with shouldDirty to explicitly mark form as dirty
+                    setValue("project_lead", newLead, { shouldDirty: true });
+                    // Update Controller's field value to keep it in sync
+                    onChange(newLead);
                     handleFormOnChange?.();
                   }}
                   placeholder="Lead"

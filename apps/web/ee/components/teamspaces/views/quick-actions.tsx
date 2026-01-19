@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { NewTabIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TTeamspaceView } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -10,7 +23,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
@@ -61,26 +73,26 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
       key: "edit",
       action: () => setCreateUpdateViewModal(true),
       title: "Edit",
-      icon: Pencil,
+      icon: EditIcon,
       shouldRender: isOwner,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in new tab",
-      icon: ExternalLink,
+      icon: NewTabIcon,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy link",
-      icon: Link,
+      icon: LinkIcon,
     },
     {
       key: "delete",
       action: () => setDeleteViewModal(true),
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isOwner || isAdmin,
     },
   ];
@@ -90,9 +102,6 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
   const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
     ...item,
     action: () => {
-      captureClick({
-        elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
       item.action();
     },
   }));
@@ -127,15 +136,12 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.LIST_ITEM_QUICK_ACTIONS,
-                });
                 item.action();
               }}
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -146,8 +152,8 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

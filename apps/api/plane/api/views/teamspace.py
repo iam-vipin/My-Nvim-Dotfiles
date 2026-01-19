@@ -1,5 +1,17 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from rest_framework.response import Response
 from rest_framework import status
+from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
 from plane.api.views.base import BaseViewSet
 from plane.api.serializers import TeamspaceSerializer, ProjectSerializer, UserLiteSerializer
@@ -7,12 +19,7 @@ from plane.ee.models import Teamspace, TeamspaceProject, TeamspaceMember
 from plane.db.models import Workspace, Project, User
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.api.permissions import TeamspaceFeatureFlagPermission
-
-
-# OpenAPI imports
 from plane.utils.openapi.decorators import teamspace_docs, teamspace_entity_docs
-
-from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 from plane.utils.openapi import (
     TEAMSPACE_EXAMPLE,
     create_paginated_response,
@@ -22,7 +29,7 @@ from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     TEAMSPACE_ID_PARAMETER,
     CURSOR_PARAMETER,
-    PER_PAGE_PARAMETER
+    PER_PAGE_PARAMETER,
 )
 
 
@@ -160,15 +167,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="add_teamspace_projects",
         summary="Add projects to a teamspace",
         description="Add projects to a teamspace",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "project_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "project_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,
@@ -203,15 +215,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="remove_teamspace_projects",
         summary="Remove projects from a teamspace",
         description="Remove projects from a teamspace by its ID",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "project_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "project_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,
@@ -256,15 +273,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="add_teamspace_members",
         summary="Add members to a teamspace",
         description="Add members to a teamspace",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "member_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "member_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,
@@ -297,15 +319,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="remove_teamspace_members",
         summary="Delete members from a teamspace",
         description="Delete members from a teamspace by its ID",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "member_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "member_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,

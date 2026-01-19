@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 // components
 import { Tooltip } from "@plane/propel/tooltip";
@@ -17,10 +30,10 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
             {labelDetails.map((label) => (
               <div
                 key={label.id}
-                className="flex flex-shrink-0 cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
+                className="flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11 shadow-sm"
               >
                 <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name} isMobile={isMobile}>
-                  <div className="flex items-center gap-1.5 text-custom-text-200">
+                  <div className="flex items-center gap-1.5 text-secondary">
                     <span
                       className="h-2 w-2 flex-shrink-0 rounded-full"
                       style={{
@@ -34,15 +47,15 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
             ))}
           </>
         ) : (
-          <div className="flex flex-shrink-0 cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
+          <div className="flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11 shadow-sm">
             <Tooltip
               position="top"
               tooltipHeading="Labels"
               tooltipContent={labelDetails.map((l) => l.name).join(", ")}
               isMobile={isMobile}
             >
-              <div className="flex items-center gap-1.5 text-custom-text-200">
-                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+              <div className="flex items-center gap-1.5 text-secondary">
+                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
                 {`${labelDetails.length} Labels`}
               </div>
             </Tooltip>

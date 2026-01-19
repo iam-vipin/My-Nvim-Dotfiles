@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef, useState, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { v4 as uuidv4 } from "uuid";
@@ -132,7 +145,7 @@ export const CollaboratorsList = observer(function CollaboratorsList(props: Coll
               }}
             >
               <Tooltip tooltipContent={memberDetails.display_name} position="bottom" disabled={!isGroupHovered}>
-                <div className="ring-2 ring-custom-background-100 rounded-full transition-all duration-200">
+                <div className="rounded-full transition-all duration-200">
                   <Avatar
                     name={memberDetails.display_name}
                     src={getFileURL(memberDetails.avatar_url)}
@@ -151,7 +164,7 @@ export const CollaboratorsList = observer(function CollaboratorsList(props: Coll
             position="bottom"
           >
             <div
-              className={`flex items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 text-xs font-medium ring-2 ring-custom-background-100 transition-all duration-200 ease-out ${
+              className={`flex items-center justify-center rounded-full bg-layer-1 text-secondary text-11 font-medium transition-all duration-200 ease-out ${
                 isGroupHovered
                   ? "w-6 h-6 ml-1 opacity-100 translate-x-0 scale-100"
                   : "-ml-2.5 opacity-100 translate-x-0 scale-100 w-6 h-6"

@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 interface ProBadgeProps {
@@ -11,8 +9,7 @@ export function ProBadge({ className }: ProBadgeProps): ReactNode {
   return (
     <div
       className={cn(
-        getSubscriptionTextAndBackgroundColor(EProductSubscriptionEnum.PRO),
-        "w-fit rounded text-center font-medium text-sm px-2 shrink-0",
+        "w-fit rounded text-center text-caption-md-medium px-2 py-0.5 shrink-0 bg-plans-brand-subtle text-plans-brand-primary",
         className
       )}
     >

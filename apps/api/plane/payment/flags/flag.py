@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from enum import Enum
 
 
@@ -93,14 +104,22 @@ class FeatureFlag(Enum):
     AUTO_SCHEDULE_CYCLES = "AUTO_SCHEDULE_CYCLES"
     # Exports
     ADVANCED_EXPORTS = "ADVANCED_EXPORTS"
+    # WORKSPACE_MEMBER_ACTIVITY
+    WORKSPACE_MEMBER_ACTIVITY = "WORKSPACE_MEMBER_ACTIVITY"
     # Intake responsibility
     INTAKE_RESPONSIBILITY = "INTAKE_RESPONSIBILITY"
     # Intake form workitem types
     WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM"
     # PI Chat
     PI_CHAT = "PI_CHAT"
+    # Project member activity
+    PROJECT_MEMBER_ACTIVITY = "PROJECT_MEMBER_ACTIVITY"
+    # CLOUD_SSO
+    CLOUD_SSO = "CLOUD_SSO"
 
 
 class AdminFeatureFlag(Enum):
     # OIDC SAML Auth
     OIDC_SAML_AUTH = "OIDC_SAML_AUTH"
+    # LDAP Auth
+    LDAP_AUTH = "LDAP_AUTH"

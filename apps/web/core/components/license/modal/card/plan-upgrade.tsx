@@ -1,10 +1,21 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { TALK_TO_SALES_URL } from "@plane/constants";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getDiscountPillStyle } from "@plane/ui";
-import { calculateYearlyDiscount, cn, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
+import { calculateYearlyDiscount, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";
 // local components
@@ -73,7 +84,7 @@ export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgr
         <>
           Yearly
           {yearlyDiscount > 0 && (
-            <span className={cn(getDiscountPillStyle(planVariant), "rounded-full px-1.5 py-0.5 ml-1 text-xs")}>
+            <span className="rounded-full px-1.5  ml-1 text-xs h-5 leading-tight flex items-center justify-center">
               -{yearlyDiscount}%
             </span>
           )}

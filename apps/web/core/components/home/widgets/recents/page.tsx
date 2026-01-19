@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRouter } from "next/navigation";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
@@ -38,22 +51,22 @@ export function RecentPage(props: BlockProps) {
       title={getPageName(pageDetails?.name)}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
+          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
             {pageDetails?.logo_props?.in_use ? (
               <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
             ) : (
-              <PageIcon className="size-4 text-custom-text-350" />
+              <PageIcon className="size-4 text-tertiary" />
             )}
           </div>
           {pageDetails?.project_identifier && (
-            <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
+            <div className="font-medium text-placeholder text-13 whitespace-nowrap">
               {pageDetails?.project_identifier}
             </div>
           )}
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+        <div className="flex-shrink-0 font-medium text-11 text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
@@ -64,8 +77,8 @@ export function RecentPage(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-transparent my-auto !px-2 border-none py-3"
-      itemClassName="my-auto"
+      className="my-auto !px-2 border-none py-3"
+      itemClassName="my-auto bg-layer-transparent"
       onItemClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -1,5 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 // helpers
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // types
@@ -71,15 +85,19 @@ function BorderButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <div
+      <Button
+        variant="ghost"
+        size="sm"
         className={cn(
-          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          { "bg-custom-background-80": isActive },
+          "h-full w-full flex items-center justify-start gap-1.5 border-[0.5px] border-strong",
+          {
+            "bg-layer-transparent-active": isActive,
+          },
           className
         )}
       >
         {children}
-      </div>
+      </Button>
     </Tooltip>
   );
 }
@@ -95,14 +113,16 @@ function BackgroundButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <div
+      <Button
+        variant="ghost"
+        size="sm"
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          "h-full w-full flex items-center justify-between gap-1.5 bg-layer-3 hover:bg-layer-1-hover",
           className
         )}
       >
         {children}
-      </div>
+      </Button>
     </Tooltip>
   );
 }
@@ -118,15 +138,19 @@ function TransparentButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <div
+      <Button
+        variant="ghost"
+        size="sm"
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          { "bg-custom-background-80": isActive },
+          "h-full w-full flex items-center justify-between gap-1.5",
+          {
+            "bg-layer-transparent-active": isActive,
+          },
           className
         )}
       >
         {children}
-      </div>
+      </Button>
     </Tooltip>
   );
 }

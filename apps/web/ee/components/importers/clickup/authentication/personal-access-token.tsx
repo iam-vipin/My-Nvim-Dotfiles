@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -81,7 +94,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
             tabIndex={-1}
             href="http://help.clickup.com/hc/en-us/articles/6303426241687-Use-the-ClickUp-API#personal-api-key"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             ClickUp App Settings.
@@ -125,7 +138,7 @@ export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth
           />
         ))}
         <div className="relative flex justify-end gap-4">
-          <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
+          <Button variant="ghost" className="font-medium" onClick={clearFromData} disabled={isLoading}>
             {t("common.clear")}
           </Button>
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>

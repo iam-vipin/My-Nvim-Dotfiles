@@ -1,3 +1,17 @@
+import type { TWorkObjectTagColor } from "../types/workobjects";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export const ACTIONS = {
   PROJECT: "project",
   ISSUE_OBJECT_TYPE_SELECTION: "issue_object_type_selection",
@@ -19,6 +33,8 @@ export const ACTIONS = {
   CREATE_REPLY_COMMENT: "create_reply_comment",
   ENABLE_THREAD_SYNC: "enable_thread_sync",
   ASSIGN_TO_ME: "assign_to_me",
+  ASSIGN_TO_ME_WO: "assign_to_me_wo",
+  VIEW_IN_PLANE: "view_in_plane",
   UPDATE_WORK_ITEM: "update_work_item",
 
   LINK_WORK_ITEM: "link_work_item",
@@ -30,6 +46,8 @@ export enum E_ISSUE_OBJECT_TYPE_SELECTION {
   WORK_ITEM = "work_item",
   INTAKE = "intake",
 }
+
+export const WO_INPUT_SUFFIX = "input";
 
 export type EntityType = keyof typeof ENTITIES;
 export type EntityTypeValue = (typeof ENTITIES)[keyof typeof ENTITIES];
@@ -89,3 +107,19 @@ export const IGNORED_FIELD_UPDATES = [
   "link",
   "reaction",
 ];
+
+export const WORKOBJECT_STATE_TAG_COLOR_MAP = new Map<string, TWorkObjectTagColor>([
+  ["backlog", "gray"],
+  ["unstarted", "blue"],
+  ["started", "yellow"],
+  ["completed", "green"],
+  ["cancelled", "red"],
+]);
+
+export const WORKOBJECT_PRIORITY_TAG_COLOR_MAP = new Map<string, TWorkObjectTagColor>([
+  ["urgent", "red"],
+  ["high", "red"],
+  ["medium", "yellow"],
+  ["low", "blue"],
+  ["none", "gray"],
+]);

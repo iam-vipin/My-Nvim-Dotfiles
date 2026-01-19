@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { Info, Minus } from "lucide-react";
+import { Minus } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -61,19 +75,19 @@ export const DashboardListItemActions = observer(function DashboardListItemActio
           <Avatar src={getFileURL(creatorDetails?.avatar_url ?? "")} name={creatorDetails?.display_name} />
         </Tooltip>
       </div>
-      {/* <div className="cursor-default text-custom-text-300">
+      {/* <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
-          {access === 0 ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+          {access === 0 ? <Earth className="h-4 w-4" /> : <LockIcon className="h-4 w-4" />}
         </Tooltip>
       </div> */}
       {/* dashboard info */}
       <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
         <span className="size-4 grid place-items-center cursor-default">
-          <Info className="size-4 text-custom-text-300" />
+          <InfoIcon className="size-4 text-tertiary" />
         </span>
       </Tooltip>
       {/* vertical divider */}
-      <Minus className="size-5 text-custom-text-400 rotate-90 -mx-3" strokeWidth={1} />
+      <Minus className="size-5 text-placeholder rotate-90 -mx-3" strokeWidth={1} />
 
       {/* favorite/unfavorite */}
       {canCurrentUserFavoriteDashboard && (

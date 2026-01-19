@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -18,9 +31,10 @@ export default {
         "Notați o idee, capturați un moment de inspirație sau înregistrați o idee genială. Adăugați un notă pentru a începe.",
     },
     stickies: {
-      title:
-        "Notați o idee, capturați un moment de inspirație sau înregistrați o idee genială. Adăugați un notă pentru a începe.",
-      cta_primary: "Adăugați notă",
+      title: "Capturați idei instantaneu",
+      description: "Creați note pentru notițe rapide și sarcini, și păstrați-le cu dvs. oriunde mergeți.",
+      cta_primary: "Creați prima notă",
+      cta_secondary: "Documentație",
     },
     active_cycles: {
       title: "Niciun ciclu activ",
@@ -108,11 +122,6 @@ export default {
       description:
         "Reduceți timpul de configurare prin crearea de șabloane pentru proiecte, elemente de lucru și pagini — și începeți munca nouă în câteva secunde.",
       cta_primary: "Creați șablon",
-    },
-    webhooks: {
-      title: "Încă nu s-a adăugat niciun Webhook",
-      description: "Automatizați notificările către servicii externe când apar evenimente ale proiectului.",
-      cta_primary: "Adăugați webhook",
     },
   },
 } as const;

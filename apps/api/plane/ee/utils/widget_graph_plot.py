@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from typing import Dict, Any, Tuple, Optional, List, Union
 from datetime import date
 
@@ -17,7 +28,7 @@ from django.db.models import (
     QuerySet,
     Aggregate,
 )
-from django.db.models.functions import Cast, TruncDay, TruncWeek, TruncMonth, TruncYear
+from django.db.models.functions import Cast, TruncDay, TruncWeek, TruncMonth, TruncYear, Coalesce
 from django.db import models
 
 from plane.ee.models import Widget
@@ -30,19 +41,11 @@ def get_y_axis_filter(y_axis: str) -> Dict[str, Any]:
     today = timezone.now().date()
     filter_mapping = {
         Widget.YAxisMetricEnum.WORK_ITEM_COUNT: {"id": F("id")},
-        Widget.YAxisMetricEnum.ESTIMATE_POINT_COUNT: {
-            "estimate_point__value": F("estimate_point__value")
-        },
-        Widget.YAxisMetricEnum.IN_PROGRESS_WORK_ITEM_COUNT: {
-            "state__group__in": ["unstarted", "started"]
-        },
+        Widget.YAxisMetricEnum.ESTIMATE_POINT_COUNT: {"estimate_point__value": F("estimate_point__value")},
+        Widget.YAxisMetricEnum.IN_PROGRESS_WORK_ITEM_COUNT: {"state__group__in": ["unstarted", "started"]},
         Widget.YAxisMetricEnum.COMPLETED_WORK_ITEM_COUNT: {"state__group": "completed"},
-        Widget.YAxisMetricEnum.PENDING_WORK_ITEM_COUNT: {
-            "state__group__in": ["unstarted", "started", "backlog"]
-        },
-        Widget.YAxisMetricEnum.BLOCKED_WORK_ITEM_COUNT: {
-            "issue_relation__relation_type": "blocked_by"
-        },
+        Widget.YAxisMetricEnum.PENDING_WORK_ITEM_COUNT: {"state__group__in": ["unstarted", "started", "backlog"]},
+        Widget.YAxisMetricEnum.BLOCKED_WORK_ITEM_COUNT: {"issue_relation__relation_type": "blocked_by"},
         Widget.YAxisMetricEnum.WORK_ITEM_DUE_TODAY_COUNT: {"target_date": today},
         Widget.YAxisMetricEnum.WORK_ITEM_DUE_THIS_WEEK_COUNT: {
             "target_date__gte": today - timezone.timedelta(days=today.weekday()),
@@ -66,7 +69,7 @@ def get_x_axis_field() -> Dict[str, Tuple[str, str, Optional[Dict[str, Any]]]]:
             "assignees__display_name",
             {"issue_assignee__deleted_at__isnull": True},
         ),
-        "ESTIMATE_POINTS": ("estimate_point__value", "estimate_point__key", None),
+        "ESTIMATE_POINTS": ("estimate_point__key", "estimate_point__value", None),
         "CYCLES": (
             "issue_cycle__cycle_id",
             "issue_cycle__cycle__name",
@@ -97,21 +100,27 @@ def process_grouped_data(
 
     for item in data:
         key = item["key"]
-        if key not in response:
-            response[key] = {
-                "key": key if key else "none",
-                "name": (
-                    item.get("display_name", key)
-                    if item.get("display_name", key)
-                    else "None"
-                ),
+        project_id_for_ordering = item.get("project_id_for_ordering")
+        response_key = (project_id_for_ordering, key) if project_id_for_ordering is not None else key
+
+        estimate_type = item.get("estimate_type")
+        display_name = item.get("display_name", key) if item.get("display_name", key) else "None"
+
+        # Format display_name if estimate type is "time"
+        if estimate_type == "time":
+            display_name = format_time_estimate(display_name) if display_name else "None"
+
+        if response_key not in response:
+            response[response_key] = {
+                "key": key if key else "None",
+                "name": display_name,
                 "count": 0,
             }
-        group_key = str(item["group_key"]) if item["group_key"] else "none"
+        group_key = str(item["group_key"]) if item["group_key"] is not None else "None"
         schema[group_key] = item.get("group_name", item["group_key"])
         schema[group_key] = schema[group_key] if schema[group_key] else "None"
-        response[key][group_key] = response[key].get(group_key, 0) + item["count"]
-        response[key]["count"] += item["count"]
+        response[response_key][group_key] = response[response_key].get(group_key, 0) + item["count"]
+        response[response_key]["count"] += item["count"]
 
     return list(response.values()), schema
 
@@ -136,9 +145,7 @@ def apply_date_grouping(
     return queryset, id_field, name_field
 
 
-def fill_missing_dates(
-    response: List[Dict[str, Any]], start_date: date, end_date: date, date_grouping: str
-) -> None:
+def fill_missing_dates(response: List[Dict[str, Any]], start_date: date, end_date: date, date_grouping: str) -> None:
     current_date = start_date
     delta = timezone.timedelta(days=1)
 
@@ -160,15 +167,54 @@ def fill_missing_dates(
     response.sort(key=lambda x: x["key"])
 
 
+def format_time_estimate(value: Union[str, int, float]) -> str:
+    """
+    Convert numeric minutes to "Xh Ym" format.
+    Handles: numeric minutes (int/float), string numbers.
+    Returns formatted string like "1h 2m" or "None" if invalid.
+
+    Examples:
+        - 62 -> "1h 2m"
+        - 90 -> "1h 30m"
+        - 30 -> "30m"
+        - 120 -> "2h"
+    """
+
+    try:
+        # Convert to float to handle both int and string inputs
+        minutes = float(value)
+
+        # Handle zero or negative values
+        if minutes <= 0:
+            return "0m"
+
+        # Calculate hours and remaining minutes
+        hours = int(minutes // 60)
+        remaining_minutes = int(minutes % 60)
+
+        # Build the formatted string
+        parts = []
+        if hours > 0:
+            parts.append(f"{hours}h")
+        if remaining_minutes > 0:
+            parts.append(f"{remaining_minutes}m")
+
+        # If both are zero (shouldn't happen due to check above, but just in case)
+        if not parts:
+            return "0m"
+
+        return " ".join(parts)
+    except (ValueError, TypeError):
+        return "None"
+
+
 def build_number_chart_response(
     queryset: QuerySet[Issue],
     y_axis_filter: Dict[str, Any],
     y_axis: str,
     aggregate_func: Aggregate,
 ) -> List[Dict[str, Any]]:
-    count = (
-        queryset.filter(**y_axis_filter).aggregate(total=aggregate_func).get("total", 0)
-    )
+    count = queryset.filter(**y_axis_filter).aggregate(total=aggregate_func).get("total", 0)
     return [{"key": y_axis, "name": y_axis, "count": count}]
 
 
@@ -180,17 +226,46 @@ def build_grouped_chart_response(
     group_name_field: str,
     aggregate_func: Aggregate,
 ) -> Tuple[List[Dict[str, Any]], Dict[str, str]]:
-    data = (
-        queryset.annotate(
-            key=F(id_field),
-            group_key=F(group_field),
-            group_name=F(group_name_field),
-            display_name=F(name_field) if name_field else F(id_field),
+    display_field = F(name_field) if name_field else F(id_field)
+
+    # Check if id_field is estimate_point__key to handle estimate type
+    if id_field == "estimate_point__key":
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            group_key=Coalesce(Cast(F(group_field), CharField()), Value("None"), output_field=CharField()),
+            group_name=Coalesce(Cast(F(group_name_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
+            estimate_type=F("estimate_point__estimate__type"),
         )
-        .values("key", "group_key", "group_name", "display_name")
-        .annotate(count=aggregate_func)
-        .order_by("-count")
-    )
+        # Set project_id to NULL for None values so they group together
+        # regardless of project (only for estimate_point__key)
+        queryset = queryset.annotate(
+            project_id_for_ordering=Case(
+                When(key="None", then=Value(None)),
+                default=F("project_id"),
+                output_field=models.UUIDField(null=True),
+            ),
+        )
+        data = (
+            queryset.values(
+                "project_id_for_ordering", "key", "group_key", "group_name", "display_name", "estimate_type"
+            )
+            .annotate(count=aggregate_func)
+            .order_by("project_id_for_ordering", "-count")
+        )
+    else:
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            group_key=Coalesce(Cast(F(group_field), CharField()), Value("None"), output_field=CharField()),
+            group_name=Coalesce(Cast(F(group_name_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
+        )
+        # For non-estimate charts, don't include project_id_for_ordering to combine items across projects
+        data = (
+            queryset.values("key", "group_key", "group_name", "display_name")
+            .annotate(count=aggregate_func)
+            .order_by("-count")
+        )
     return process_grouped_data(data)
 
 
@@ -211,24 +286,60 @@ def build_simple_chart_response(
             output_field=models.CharField(),
         )
 
+    # perform this only when the id_field is estimate_point__key
+    if id_field == "estimate_point__key":
+        # Cast integer field to string before coalescing with "None"
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
+            estimate_type=F("estimate_point__estimate__type"),
+        )
+        # Set project_id to NULL for None values so they group together
+        # (only for estimate_point__key)
+        queryset = queryset.annotate(
+            project_id_for_ordering=Case(
+                When(key="None", then=Value(None)),
+                default=F("project_id"),
+                output_field=models.UUIDField(null=True),
+            ),
+        )
+        data = (
+            queryset.values("project_id_for_ordering", "key", "display_name", "estimate_type")
+            .annotate(count=aggregate_func)
+            .order_by("project_id_for_ordering", "-count")
+        )
     else:
-        display_field = display_field
+        queryset = queryset.annotate(
+            key=Coalesce(Cast(F(id_field), CharField()), Value("None"), output_field=CharField()),
+            display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
+        )
+        # For non-estimate charts, don't include project_id_for_ordering to combine items across projects
+        data = queryset.values("key", "display_name").annotate(count=aggregate_func).order_by("key")
 
-    data = (
-        queryset.annotate(key=F(id_field), display_name=display_field)
-        .values("key", "display_name")
-        .annotate(count=aggregate_func)
-        .order_by("key")
-    )
+    result = []
+    for item in data:
+        estimate_type = item.get("estimate_type")
 
-    return [
-        {
-            "key": item["key"] if item["key"] else "None",
-            "name": item["display_name"] if item["display_name"] else "None",
-            "count": item["count"],
-        }
-        for item in data
-    ]
+        # Check if estimate type is "time" and format accordingly
+        if estimate_type == "time":
+            result.append(
+                {
+                    "key": item["key"] if item["key"] else "None",
+                    "name": format_time_estimate(item["display_name"]) if item["display_name"] else "None",
+                    "count": item["count"],
+                }
+            )
+            continue
+
+        result.append(
+            {
+                "key": item["key"] if item["key"] else "None",
+                "name": item["display_name"] if item["display_name"] else "None",
+                "count": item["count"],
+            }
+        )
+
+    return result
 
 
 def build_widget_chart(
@@ -254,12 +365,8 @@ def build_widget_chart(
     field_mapping = get_x_axis_field()
     y_axis_filter = get_y_axis_filter(y_axis)
 
-    id_field, name_field, additional_filter = field_mapping.get(
-        x_axis, (None, None, {})
-    )
-    group_field, group_name_field, group_additional_filter = field_mapping.get(
-        group_by, (None, None, {})
-    )
+    id_field, name_field, additional_filter = field_mapping.get(x_axis, (None, None, {}))
+    group_field, group_name_field, group_additional_filter = field_mapping.get(group_by, (None, None, {}))
 
     if x_axis == "EPICS" or group_by == "EPICS":
         # Get all epic IDs
@@ -308,9 +415,7 @@ def build_widget_chart(
 
     if chart_type == "NUMBER":
         return {
-            "data": build_number_chart_response(
-                queryset, y_axis_filter, y_axis, aggregate_func
-            ),
+            "data": build_number_chart_response(queryset, y_axis_filter, y_axis, aggregate_func),
             "schema": {},
         }
 
@@ -320,9 +425,7 @@ def build_widget_chart(
         "CREATED_AT",
         "COMPLETED_AT",
     ]:
-        queryset, id_field, name_field = apply_date_grouping(
-            queryset, x_axis, x_axis_date_grouping, id_field
-        )
+        queryset, id_field, name_field = apply_date_grouping(queryset, x_axis, x_axis_date_grouping, id_field)
 
     if group_field:
         response, schema = build_grouped_chart_response(
@@ -334,9 +437,7 @@ def build_widget_chart(
             aggregate_func,
         )
     else:
-        response = build_simple_chart_response(
-            queryset, id_field, name_field, aggregate_func
-        )
+        response = build_simple_chart_response(queryset, id_field, name_field, aggregate_func)
         schema = {}
 
     return {"data": response, "schema": schema}

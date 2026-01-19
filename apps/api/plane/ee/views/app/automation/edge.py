@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 import uuid
 import json
@@ -25,7 +36,6 @@ from plane.ee.bgtasks.automation_activity_task import automation_activity
 
 
 class AutomationEdgeEndpoint(AutomationBaseEndpoint):
-
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     def get(
@@ -104,12 +114,8 @@ class AutomationEdgeEndpoint(AutomationBaseEndpoint):
             project_id=project_id,
             workspace__slug=slug,
         )
-        current_instance = json.dumps(
-            AutomationEdgeReadSerializer(edge).data, cls=DjangoJSONEncoder
-        )
-        serializer = AutomationEdgeWriteSerializer(
-            edge, data=request.data, partial=True, context={"version": version}
-        )
+        current_instance = json.dumps(AutomationEdgeReadSerializer(edge).data, cls=DjangoJSONEncoder)
+        serializer = AutomationEdgeWriteSerializer(edge, data=request.data, partial=True, context={"version": version})
         if serializer.is_valid():
             serializer.save()
             automation_activity.delay(

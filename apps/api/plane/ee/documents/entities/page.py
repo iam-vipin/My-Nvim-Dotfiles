@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from django.conf import settings as django_settings
 from django.db.models import Prefetch
 from django_opensearch_dsl import fields
@@ -62,9 +73,7 @@ class PageDocument(BaseDocument):
             "index": {"knn": True},
         }
         name = (
-            f"{django_settings.OPENSEARCH_INDEX_PREFIX}_pages"
-            if django_settings.OPENSEARCH_INDEX_PREFIX
-            else "pages"
+            f"{django_settings.OPENSEARCH_INDEX_PREFIX}_pages" if django_settings.OPENSEARCH_INDEX_PREFIX else "pages"
         )
 
     class Django:
@@ -79,9 +88,7 @@ class PageDocument(BaseDocument):
 
     def apply_related_to_queryset(self, qs):
         return qs.select_related("workspace").prefetch_related(
-            Prefetch(
-                "projects", queryset=Project.objects.filter(archived_at__isnull=True)
-            ),
+            Prefetch("projects", queryset=Project.objects.filter(archived_at__isnull=True)),
             Prefetch(
                 "workspace__workspace_member",
                 queryset=WorkspaceMember.objects.filter(is_active=True),
@@ -127,27 +134,15 @@ class PageDocument(BaseDocument):
             project_member_ids = []
             for project in instance.projects.all():
                 if hasattr(project, "project_members"):
-                    project_member_ids.extend(
-                        [member.member_id for member in project.project_members]
-                    )
+                    project_member_ids.extend([member.member_id for member in project.project_members])
                 else:
-                    project_member_ids.extend(
-                        [
-                            member.member_id
-                            for member in project.project_projectmember.all()
-                        ]
-                    )
+                    project_member_ids.extend([member.member_id for member in project.project_projectmember.all()])
             return project_member_ids
         else:
             if hasattr(instance.workspace, "workspace_members"):
-                return [
-                    member.member_id for member in instance.workspace.workspace_members
-                ]
+                return [member.member_id for member in instance.workspace.workspace_members]
             else:
-                return [
-                    member.member_id
-                    for member in instance.workspace.workspace_member.all()
-                ]
+                return [member.member_id for member in instance.workspace.workspace_member.all()]
 
     def prepare_is_deleted(self, instance):
         """

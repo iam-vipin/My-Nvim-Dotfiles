@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Tool utilities shared across planning and execution.
 
@@ -15,6 +26,8 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
+
+from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 
 log = logging.getLogger(__name__)
 
@@ -65,11 +78,12 @@ TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
     "pages_create_project_page": {"entity_type": "page", "action_type": "create", "front_facing_name": "Create Project Page"},
     "pages_create_workspace_page": {"entity_type": "page", "action_type": "create", "front_facing_name": "Create Workspace Page"},
     # Projects
-    "projects_archive": {"entity_type": "project", "action_type": "archive", "front_facing_name": "Archive Project"},
     "projects_create": {"entity_type": "project", "action_type": "create", "front_facing_name": "Create Project"},
-    "projects_unarchive": {"entity_type": "project", "action_type": "unarchive", "front_facing_name": "Unarchive Project"},
+    "projects_delete": {"entity_type": "project", "action_type": "delete", "front_facing_name": "Delete Project"},
     "projects_update": {"entity_type": "project", "action_type": "update", "front_facing_name": "Update Project"},
     "projects_retrieve": {"entity_type": "project", "action_type": "retrieve", "front_facing_name": "Retrieve Project"},
+    "projects_get_features": {"entity_type": "project", "action_type": "get", "front_facing_name": "Get Project Features"},
+    "projects_update_features": {"entity_type": "project", "action_type": "update", "front_facing_name": "Update Project Features"},
     # Properties
     "properties_create": {"entity_type": "property", "action_type": "create", "front_facing_name": "Create Property"},
     "properties_create_option": {"entity_type": "property", "action_type": "create_option", "front_facing_name": "Create Property Option"},
@@ -85,6 +99,52 @@ TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
     "types_create": {"entity_type": "type", "action_type": "create", "front_facing_name": "Create Type"},
     "types_delete": {"entity_type": "type", "action_type": "delete", "front_facing_name": "Delete Type"},
     "types_update": {"entity_type": "type", "action_type": "update", "front_facing_name": "Update Type"},
+    # Initiatives (SDK v0.2.1)
+    "initiatives_create": {"entity_type": "initiative", "action_type": "create", "front_facing_name": "Create Initiative"},
+    "initiatives_list": {"entity_type": "initiative", "action_type": "list", "front_facing_name": "List Initiatives"},
+    "initiatives_retrieve": {"entity_type": "initiative", "action_type": "retrieve", "front_facing_name": "Retrieve Initiative"},
+    "initiatives_update": {"entity_type": "initiative", "action_type": "update", "front_facing_name": "Update Initiative"},
+    "initiatives_delete": {"entity_type": "initiative", "action_type": "delete", "front_facing_name": "Delete Initiative"},
+    "initiatives_create_label": {"entity_type": "initiative_label", "action_type": "create", "front_facing_name": "Create Initiative Label"},
+    "initiatives_list_labels": {"entity_type": "initiative_label", "action_type": "list", "front_facing_name": "List Initiative Labels"},
+    "initiatives_retrieve_label": {"entity_type": "initiative_label", "action_type": "retrieve", "front_facing_name": "Retrieve Initiative Label"},
+    "initiatives_update_label": {"entity_type": "initiative_label", "action_type": "update", "front_facing_name": "Update Initiative Label"},
+    "initiatives_delete_label": {"entity_type": "initiative_label", "action_type": "delete", "front_facing_name": "Delete Initiative Label"},
+    "initiatives_add_labels": {"entity_type": "initiative", "action_type": "add", "front_facing_name": "Add Labels to Initiative"},
+    "initiatives_remove_labels": {"entity_type": "initiative", "action_type": "remove", "front_facing_name": "Remove Labels from Initiative"},
+    "initiatives_add_projects": {"entity_type": "initiative", "action_type": "add", "front_facing_name": "Add Projects to Initiative"},
+    "initiatives_list_projects": {"entity_type": "initiative", "action_type": "list", "front_facing_name": "List Initiative Projects"},
+    "initiatives_remove_projects": {"entity_type": "initiative", "action_type": "remove", "front_facing_name": "Remove Projects from Initiative"},
+    "initiatives_add_epics": {"entity_type": "initiative", "action_type": "add", "front_facing_name": "Add Epics to Initiative"},
+    "initiatives_list_epics": {"entity_type": "initiative", "action_type": "list", "front_facing_name": "List Initiative Epics"},
+    "initiatives_remove_epics": {"entity_type": "initiative", "action_type": "remove", "front_facing_name": "Remove Epics from Initiative"},
+    # Teamspaces (SDK v0.2.1)
+    "teamspaces_create": {"entity_type": "teamspace", "action_type": "create", "front_facing_name": "Create Teamspace"},
+    "teamspaces_list": {"entity_type": "teamspace", "action_type": "list", "front_facing_name": "List Teamspaces"},
+    "teamspaces_retrieve": {"entity_type": "teamspace", "action_type": "retrieve", "front_facing_name": "Retrieve Teamspace"},
+    "teamspaces_update": {"entity_type": "teamspace", "action_type": "update", "front_facing_name": "Update Teamspace"},
+    "teamspaces_delete": {"entity_type": "teamspace", "action_type": "delete", "front_facing_name": "Delete Teamspace"},
+    "teamspaces_add_members": {"entity_type": "teamspace", "action_type": "add", "front_facing_name": "Add Members to Teamspace"},
+    "teamspaces_list_members": {"entity_type": "teamspace", "action_type": "list", "front_facing_name": "List Teamspace Members"},
+    "teamspaces_remove_members": {"entity_type": "teamspace", "action_type": "remove", "front_facing_name": "Remove Members from Teamspace"},
+    "teamspaces_add_projects": {"entity_type": "teamspace", "action_type": "add", "front_facing_name": "Add Projects to Teamspace"},
+    "teamspaces_list_projects": {"entity_type": "teamspace", "action_type": "list", "front_facing_name": "List Teamspace Projects"},
+    "teamspaces_remove_projects": {"entity_type": "teamspace", "action_type": "remove", "front_facing_name": "Remove Projects from Teamspace"},
+    # Stickies (SDK v0.2.1)
+    "stickies_create": {"entity_type": "sticky", "action_type": "create", "front_facing_name": "Create Sticky Note"},
+    "stickies_list": {"entity_type": "sticky", "action_type": "list", "front_facing_name": "List Sticky Notes"},
+    "stickies_retrieve": {"entity_type": "sticky", "action_type": "retrieve", "front_facing_name": "Retrieve Sticky Note"},
+    "stickies_update": {"entity_type": "sticky", "action_type": "update", "front_facing_name": "Update Sticky Note"},
+    "stickies_delete": {"entity_type": "sticky", "action_type": "delete", "front_facing_name": "Delete Sticky Note"},
+    # Customers (SDK v0.2.1)
+    "customers_create": {"entity_type": "customer", "action_type": "create", "front_facing_name": "Create Customer"},
+    "customers_list": {"entity_type": "customer", "action_type": "list", "front_facing_name": "List Customers"},
+    "customers_retrieve": {"entity_type": "customer", "action_type": "retrieve", "front_facing_name": "Retrieve Customer"},
+    "customers_update": {"entity_type": "customer", "action_type": "update", "front_facing_name": "Update Customer"},
+    "customers_delete": {"entity_type": "customer", "action_type": "delete", "front_facing_name": "Delete Customer"},
+    # Workspaces (SDK v0.2.2 - features)
+    "workspaces_get_features": {"entity_type": "workspace", "action_type": "get", "front_facing_name": "Get Workspace Features"},
+    "workspaces_update_features": {"entity_type": "workspace", "action_type": "update", "front_facing_name": "Update Workspace Features"},
     # Workitems and Epics
     "create_epic": {"entity_type": "epic", "action_type": "create", "front_facing_name": "Create Epic"},
     "update_epic": {"entity_type": "epic", "action_type": "update", "front_facing_name": "Update Epic"},
@@ -532,6 +592,178 @@ def log_toolset_details(tools: List[Any], chat_id: str) -> None:
 # - Even for simple searches, explain your thinking (e.g., "Searching for project 'Mobile' to get its UUID for creating workitems...")
 # - Provide this in the content field surrounding your tool_calls"""  # noqa: E501
 
+app_response_instructions = """
+
+**CRITICAL - APP INTEGRATION RESPONSE:**
+You have access to a special tool: `provide_final_answer_for_app`
+
+**WHEN TO USE THIS TOOL:**
+- After you have gathered all necessary information via retrieval tools
+- When you have completed answering the user's question
+- ONLY for retrieval/informational queries (NOT for modification requests with actions)
+
+**HOW TO USE:**
+Call `provide_final_answer_for_app` with:
+1. **text_response**: Your comprehensive natural language answer in PLAIN TEXT ONLY (absolutely NO markdown formatting - no bold, italic, headers, lists, etc.)
+2. **entities**: List of relevant entities from the retrieval results
+
+**Entity format for each item:**
+- **type**: Entity type (workitem, project, cycle, module, page, user, label, state, etc.)
+- **name**: Entity name/title
+- **properties**: Dictionary containing relevant fields:
+  - id: Entity UUID (when available)
+  - identifier: Human-readable ID like PROJECT-123 (for workitems)
+  - state: Current state (for workitems)
+  - priority: Priority level (for workitems)
+  - assignee: Assigned user name (for workitems)
+  - status: Status (for cycles/modules)
+  - ... other relevant fields based on entity type
+
+NOTE: Do NOT include 'url' in properties - URLs are added automatically by the system.
+
+**Example:**
+```
+provide_final_answer_for_app(
+    text_response="You have 3 high priority work items assigned to you:\nFix login bug (PROJ-123) - In Progress\nUpdate documentation (PROJ-124) - Todo\nRefactor API (PROJ-125) - In Progress",
+    entities=[
+        {
+            "type": "workitem",
+            "name": "Fix login bug",
+            "properties": {
+                "id": "abc-123-uuid",
+                "identifier": "PROJ-123",
+                "state": "In Progress",
+                "priority": "high",
+                "assignee": "John Doe"
+            }
+        },
+        {
+            "type": "workitem",
+            "name": "Update documentation",
+            "properties": {
+                "id": "def-456-uuid",
+                "identifier": "PROJ-124",
+                "state": "Todo",
+                "priority": "high",
+                "assignee": "John Doe"
+            }
+        },
+        {
+            "type": "workitem",
+            "name": "Refactor API",
+            "properties": {
+                "id": "ghi-789-uuid",
+                "identifier": "PROJ-125",
+                "state": "In Progress",
+                "priority": "high",
+                "assignee": "John Doe"
+            }
+        }
+    ]
+)
+```
+
+**This will be formatted as:**
+```json
+{
+  "text": "You have 3 high priority work items assigned to you:\nFix login bug (PROJ-123) - In Progress\nUpdate documentation (PROJ-124) - Todo\nRefactor API (PROJ-125) - In Progress",
+  "entities": [{"type": "workitem", "name": "Fix login bug", "properties": {"url": "https://...", "identifier": "PROJ-123", ...}}]
+}
+```
+**CRITICAL - REGARDING ENTITIES:**
+- Extract entity information from retrieval tool results
+- Only include entities if they are the **actual subject** of the user's query. Do not include supporting/contextual entities.
+- Do NOT include entities that are merely context or filters for the query.
+- Only include entities that are the direct answer to what the user asked for.
+- If no specific entities are the direct answer, pass an empty list for entities
+- This structured format enables rich display in external applications like Slack
+"""  # noqa E501
+
+work_tree_instructions_normal_response = """
+**IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
+1. Use retrieval/search tools to gather the requested information
+2. Provide a detailed, elaborate, and neatly formatted answer in the content section based on the retrieved data. Do NOT be brief.
+3. Do NOT plan any modifying actions - just invoke retrieval tools, then answer in your content
+4. **Formatting Requirements**:
+    While formatting the answer in the final content section, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
+    - Use tables for multi-attribute data (suppress UUIDs, apply URL rules)
+5. The requirement for an elaborate answer doesn't apply to modification requests - those require action planning followed by a very brief summary.
+
+**IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
+1. Use retrieval/search tools to gather necessary information (IDs, etc.)
+2. **AND** invoke at least one MODIFYING ACTION tool (create, update, delete, add, remove, move, etc.)
+3. You CANNOT stop after just searching/retrieving - you MUST invoke the modifying action tools
+4. Provide a very brief summary of what you planned in your content
+5. **Formatting Requirements**:
+    While formatting the action plan in the final content section, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
+
+
+**IF the user's request cannot be fulfilled with available tools:**
+- Examples: Analytics/visualizations, external integrations, bulk operations, administrative functions, file uploads
+- Use retrieval tools if relevant to understand the request
+- Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
+- Do NOT create workaround entities (like workitems) to satisfy these requests
+- Do NOT plan any actions - just provide the explanation in your content
+
+Note: The system detects when you stop invoking tools and delivers your content as the final answer. For modification requests, you MUST invoke at least one write action tool.
+"""  # noqa E501
+
+work_tree_instructions_app_response = f"""
+**IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
+1. Use retrieval/search tools to gather the requested information
+2. Provide a detailed, and elaborate answer in PLAIN TEXT ONLY in the 'text' field in the provide_final_answer_for_app tool based on the retrieved data. Do NOT be brief.
+3. Do NOT plan any modifying actions - just invoke retrieval tools, then call provide_final_answer_for_app
+4. **Formatting Requirements - CRITICAL FOR EXTERNAL APP (e.g., Slack) RENDERING**:
+    While generating the answer in the 'text' field in the provide_final_answer_for_app tool, use the following rules:
+    - **ABSOLUTELY NO MARKDOWN FORMATTING**: Do not use **bold**, *italic*, headers, or any markdown syntax
+    - **NO STRUCTURED LISTS**: Do not use numbered lists (1. 2. 3.) or bullet points (- * •)
+    - **NO MARKDOWN LINKS**: Do not create markdown links like [text](url) in the text field
+    - **NO TABLES, CODE BLOCKS, OR SPECIAL CHARACTERS**: Just plain text with newlines
+    - Use simple line breaks (\n) to separate items instead of numbered/bulleted lists
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - URLs are added programmatically to entity properties - you must NOT include them in text
+    - You can reference entities by identifier (e.g., "PROJ-123") but NOT as markdown links
+    - Use plain text references only: "Fix login bug (PROJ-123)" not "[PROJ-123](url)"
+    - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - The external app (e.g., Slack) will receive this as plain text - any markdown will render as literal characters, not formatted text.
+
+5. The requirement for an elaborate answer doesn't apply to modification requests - those require action planning followed by a very brief summary.
+
+{app_response_instructions}
+
+**IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
+1. Use retrieval/search tools to gather necessary information (IDs, etc.)
+2. **AND** invoke at least one MODIFYING ACTION tool (create, update, delete, add, remove, move, etc.)
+3. You CANNOT stop after just searching/retrieving - you MUST invoke the modifying action tools
+4. Provide a very brief summary of what you planned in your content
+5. **Formatting Requirements**:
+    While formatting the action plan in the final content section, use the following rules:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
+
+**IF the user's request cannot be fulfilled with available tools:**
+- Examples: Analytics/visualizations, external integrations, bulk operations, administrative functions, file uploads
+- Use retrieval tools if relevant to understand the request
+- Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
+- Do NOT create workaround entities (like workitems) to satisfy these requests
+- Do NOT plan any actions - just provide the explanation in your content
+
+Note: This is a response for consumption by an external app. Calling provide_final_answer_for_app signals completion for retrieval-only requests. For modification requests, you MUST invoke at least one write action tool.
+"""  # noqa E501
+
 
 # Build the planning method prompt used by the executor
 def build_method_prompt(
@@ -541,9 +773,15 @@ def build_method_prompt(
     workspace_id: Optional[str],
     enhanced_conversation_history: Optional[str],
     clarification_context: Optional[Dict[str, Any]] = None,
+    user_meta: Optional[Dict[str, Any]] = None,
+    source: Optional[str] = None,
 ) -> str:
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
     from pi.services.chat.prompts import plane_context
+
+    address_user_by_name = True
+
+    WORK_TREE_INSTRUCTIONS = work_tree_instructions_app_response if source == "app" else work_tree_instructions_normal_response
 
     method_prompt = f"""You are an AI assistant that helps users perform actions in Plane.
 
@@ -564,6 +802,14 @@ Context about Plane:
 
 Use retrieval tools to gather information, then plan the modifying actions based on that information.
 
+**DATA FRESHNESS RULE (CRITICAL — WORKSPACE DATA IS VOLATILE):**
+- Workspace, project, cycle, module, label, state, and work-item data is LIVE and can change at any moment.
+- Users or automations may create, update, or delete entities at any time during the conversation.
+- Therefore, you MUST NOT assume that prior retrieval results are still valid.
+- Whenever the user asks to "check again", "retry", "verify now", "refresh", or otherwise implies that data may have changed, you MUST perform fresh retrieval tool calls.
+- Only static, non-user-modifiable information (documentation, product descriptions, or system defaults) may be reused from memory.
+- For ALL modifying requests in PLANNING mode, retrieval should ALWAYS reflect the most recent state—never rely solely on earlier tool outputs.
+
 **CRITICAL: PLANNING DEPENDENT ACTIONS**
 - You must plan ALL actions including dependent ones that link created entities
 - For dependent actions, use logical parameter references that show the relationship
@@ -578,6 +824,32 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - Do not try to execute actions - only plan them
 - For multi-property updates, resolve all required IDs first, then set all properties in a single tool call
 
+**MANDATORY REASONING AND COMMUNICATION (CRITICAL - REQUIRED FOR EVERY TOOL CALL):**
+- **BEFORE EACH TOOL CALL**: You MUST explain your reasoning and intent
+  - State what information you're trying to gather or what action you're planning
+  - Explain why this tool is necessary for completing the user's request
+  - Describe what you expect to get from the tool and how you'll use it
+  - Example: "The user wants to check workitems assigned to Anil. First, I need to search for the user 'Anil' to get their ID, then I'll use that ID to filter workitems." # noqa: E501
+- **AFTER EACH TOOL CALL**: You MUST provide a brief summary of what you learned
+  - Summarize key information obtained from the tool
+  - Explain how this information helps with the next step
+  - If the tool returned unexpected results, explain how you'll adapt
+  - Example: "Found user Anil Kumar with ID xyz-123. Now I'll use this ID to search for workitems assigned to them." # noqa: E501
+- **THINKING OUT LOUD**: Express your thought process naturally
+  - Share your understanding of the user's request
+  - Explain your strategy for accomplishing the task
+  - Mention any assumptions you're making
+- This reasoning is MANDATORY and helps with debugging and understanding your decision-making process
+- NEVER skip the reasoning - it's essential for transparency and troubleshooting
+
+**CRITICAL: OPTIONAL PARAMETERS POLICY (APPLIES TO ALL TOOLS):**
+- Only provide optional parameters that are EXPLICITLY requested by the user or clearly implied by their intent
+- DO NOT auto-fill optional fields with "sensible defaults" or inferred values
+- **DO NOT ask the user for clarification if optional parameters are missing.**
+- **IF an optional parameter is not provided, you MUST leave it empty and let the API use its default.**
+- This applies to ALL optional fields across ALL entity types (description, priority, state, assignees, dates, etc.)
+- When in doubt, omit the field.
+
 **WORKSPACE-LEVEL QUERIES (EFFICIENCY):**
 |- When query is related to workitems and spans ALL projects without specifying a particular project or projects
 |  - DO NOT: call `list_member_projects` then query each project with `structured_db_tool` separately
@@ -588,28 +860,76 @@ Use retrieval tools to gather information, then plan the modifying actions based
 |- For project-specific queries, include the specific `project_id`
 
 **PROJECT FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING PROJECT-SCOPED ENTITIES):**
-- Cycles, modules, pages, workitem types, views, intake, and time-tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
-- **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, modules_create, pages_create_*, worklogs_create, etc.), you MUST:
-    1. First get the project_id (via search_project_by_name or search_project_by_identifier if not already known)
-    2. **THEN** call `projects_retrieve` with that project_id to check if the feature is enabled
-    3. **AFTER checking**: You MUST plan the required actions using tool_calls:
-       - If the feature IS enabled: Plan the creation action (e.g., `cycles_create`, `modules_create`, `worklogs_create`)
-       - If the feature is NOT enabled: Plan BOTH `projects_update` (to enable the feature) AND the creation action (e.g., `cycles_create`, `modules_create`, `worklogs_create`)
-    4. **CRITICAL**: After `projects_retrieve` completes, you CANNOT stop - you MUST continue planning the modifying actions. Do NOT return only text - you MUST return tool_calls for the planned actions.
-    5. **REMEMBER**: `projects_retrieve` is ONLY for information gathering. The user's actual request (create cycle/module/page/worklog) is NOT complete until you plan the creation action with tool_calls. Do NOT stop after retrieval - the task is incomplete without planning the creation.
-- **CRITICAL**: This check is NON-NEGOTIABLE. Never skip the `projects_retrieve` step when creating cycles, modules, pages, or other project-scoped features.
-- **CRITICAL**: After retrieving project features, you MUST plan the actions - do NOT stop after retrieval. The user requested a modification (create cycle/module/page/worklog), so you MUST plan it with tool_calls.
-- **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID, do NOT call `projects_retrieve` during planning. Use placeholders for downstream actions and defer any feature checks until after execution or when working with an existing project that has a UUID.
+- Cycles, modules, pages, workitem types, views, intake, epics (a special workitem type), and time-tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
+- **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, create_epic, modules_create, pages_create_*, worklogs_create, intake_create, etc.), you MUST:
+    1. First get the project_id (UUID) (via search_project_by_name or search_project_by_identifier (Identifier looks like 'PROJ', 'WEB' etc. It is not a UUID) if not already known)
+    2. **THEN** call `projects_retrieve` with that project_id to check if the feature is enabled.
+       - **WARNING**: Do NOT stop to ask for clarification on optional entity fields (e.g., description, priority) before this check.
+       - **WARNING**: You must perform this check even if you think you need more information for the creaton.
+       - **WARNING**: You must perform this check even if you already have all required IDs (issue_id, project_id, etc.). Having IDs does NOT exempt you from checking if the feature is enabled.
+    3. **AFTER checking**: You MUST invoke the required action tools:
+       - If the feature IS enabled: Plan the creation action (e.g., `cycles_create`, `create_epic`, `modules_create`, `types_create`, `worklogs_create`, `intake_create`, etc.)
+       - If the feature is NOT enabled: Plan BOTH `projects_update` (to enable the feature) AND the creation action (e.g., `cycles_create`, `create_epic`, `modules_create`, `types_create`, `worklogs_create`, `intake_create`, etc.)
+    4. **CRITICAL**: After `projects_retrieve` completes, you CANNOT stop - you MUST continue invoking the modifying action tools. Do NOT return only text - you MUST invoke the action tools.
+- **CRITICAL**: This check is NON-NEGOTIABLE. Never skip the `projects_retrieve` step when creating cycles, modules, pages, types, intake items, or other project-scoped features.
+- **CONSEQUENCE**: Skipping `projects_retrieve` and directly calling creation tools (e.g., worklogs_create, cycles_create, intake_create) WILL result in a 404 error if the feature is disabled. Always check first.
+- **MULTI-ACTION REQUESTS**: When handling requests with multiple actions, if ANY action requires a feature check, you MUST call `projects_retrieve` FIRST before planning any of the actions.
+- **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID:
+    - Do NOT call `projects_retrieve` during planning (the project doesn't exist yet to retrieve)
+    - Instead, you MUST enable the required feature flag during `projects_create` itself
+    - **Example**: If planning to create a project AND a cycle in the same plan:
+        1. Call `projects_create` with `cycle_view=True` (to enable cycles feature)
+        2. Call `cycles_create` with `project_id="<id of project: project-name>"`
+    - **Available feature flags for projects_create**:
+        - `epics` (boolean): Enable epics feature
+        - `cycle_view` (boolean): Enable cycles feature
+        - `module_view` (boolean): Enable modules feature
+        - `page_view` (boolean): Enable pages feature
+        - `intake_view` (boolean): Enable intake feature
+        - `is_issue_type_enabled` (boolean): Enable workitem types feature
+        - `is_time_tracking_enabled` (boolean): Enable time-tracking (worklogs) feature
+        - `issue_views_view` (boolean): Enable workitem views feature
 - Available tools:
-    - `projects_retrieve` tool to get details of the project features (MUST call before creating project-scoped entities)
-    - `projects_update` tool to update the project features (MUST include in plan if feature needs to be enabled)
-    - `projects_create` tool to create a new project with any/all of these features based on the user's request
+    - `projects_retrieve` tool to get details of the project features (MUST call before creating project-scoped entities for EXISTING projects)
+    - `projects_update` tool to update the project features (MUST include in plan if feature needs to be enabled for EXISTING projects)
+    - `projects_create` tool to create a new project with any/all of these features enabled based on the user's request
 
-**HARD CONSTRAINTS FOR TOOL CALLS (NON-NEGOTIABLE):**
-- If the request involves modification of data like creating, updating, adding, removing, moving, assigning, archiving, or unarchiving: you MUST return one or more tool_calls for the corresponding action tools (e.g., cycles_create, workitems_create, modules_add_work_items). Returning only text is incorrect.
+**WORKSPACE FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING WORKSPACE-SCOPED ENTITIES):**
+- Workspace-level features are enabled/disabled on a per-workspace basis and fall into two categories:
+  - **Features with entity operations**: initiatives, teams (teamspaces), customers - these have create/update/delete tools
+  - **Feature toggles only**: wiki, Plane AI (formerly, Pi - Plane Intelligence), project_grouping - these are settings without entity operations
+- **MANDATORY WORKFLOW for features with entity operations** (initiatives, teams, customers):
+    Before creating entities via `initiatives_create`, `teamspaces_create`, or `customers_create`, you MUST:
+    1. **FIRST** call `workspaces_get_features` to check if the required feature is enabled
+    2. **AFTER checking**: You MUST invoke the required action tools:
+       - If the feature IS enabled: Plan the creation action (e.g., `initiatives_create`, `teamspaces_create`, `customers_create`)
+       - If the feature is NOT enabled: Plan BOTH `workspaces_update_features` (to enable the feature) AND the creation action
+    3. **CRITICAL**: After `workspaces_get_features` completes, you CANNOT stop - you MUST continue invoking the modifying action tools. Do NOT return only text - you MUST invoke the action tools.
+- **CRITICAL**: This check is NON-NEGOTIABLE. Never skip the `workspaces_get_features` step when creating initiatives, teamspaces, or customers.
+- **Feature-to-Entity/Operation Mapping**:
+    - `initiatives` feature → `initiatives_create`, `initiatives_update`, `initiatives_delete`, `initiatives_add_projects`, etc.
+    - `teams` feature → `teamspaces_create`, `teamspaces_update`, `teamspaces_delete`, `teamspaces_add_members`, etc.
+    - `customers` feature → `customers_create`, `customers_update`, `customers_delete`, etc.
+    - `wiki` feature → Feature toggle only (enables wiki functionality in UI, no entity operations available)
+    - `pi` feature → Feature toggle only (enables Plane AI in UI, no entity operations available)
+    - `project_grouping` feature → Feature toggle only (allows grouping projects in workspace UI, no entity operations available)
+- **Available feature flags for workspaces_update_features**:
+    - `initiatives` (boolean): Enable/disable initiatives feature
+    - `teams` (boolean): Enable/disable teamspaces feature
+    - `customers` (boolean): Enable/disable customers feature
+    - `wiki` (boolean): Enable/disable wiki feature toggle
+    - `pi` (boolean): Enable/disable Plane AI feature toggle
+    - `project_grouping` (boolean): Enable/disable project grouping feature toggle
+- Available tools:
+    - `workspaces_get_features`: Get current workspace feature flags (MUST call before creating initiatives/teamspaces/customers)
+    - `workspaces_update_features`: Enable/disable workspace features (MUST include in plan if feature needs to be enabled)
+
+
+**HARD CONSTRAINTS FOR TOOL INVOCATION (NON-NEGOTIABLE):**
+- If the request involves modification of data like creating, updating, adding, removing, moving, assigning, archiving, or unarchiving: you MUST invoke the corresponding action tools (e.g., cycles_create, workitems_create, modules_add_work_items). Returning only text is incorrect.
     - For modification requests, keep text content brief - do NOT provide meta commentary like "I will plan..." or ask user to click 'Confirm'
     - System handles approval automatically
-    - If required information is missing, call ask_for_clarification instead of skipping tool_calls.
+    - If required information is missing, call ask_for_clarification instead of skipping tool invocation.
 
 
 **RETRIEVAL RESULT RELEVANCE IN PLANNING ACTIONS FOR MODIFYING REQUESTS (CRITICAL):**
@@ -630,6 +950,8 @@ Use retrieval tools to gather information, then plan the modifying actions based
 
 **ENTITY SEARCH FALLBACK AND DISAMBIGUATION RULES:**
 - **Lookup fallback**: If one of the search tools for a given entity type fails or returns "Invalid identifier format", immediately try the next search tool for that entity type with the same query
+    If the that too fails with an error, fallback to the structured_db_tool with an appropriate natural language query
+- **Tool failures → structured_db_tool**: If any retrieval tool (search_*, *_list, *_get, *_retrieve) fails with an error, immediately try `structured_db_tool` with an equivalent natural language query before asking for clarification
 - **Multiple matches**: If the search tool for a given entity type returns multiple candidates (users, work-items, etc.), call `ask_for_clarification` with:
   - `reason`: "Multiple matches found for [entity_type]"
   - `questions`: ["Which [entity] did you mean?"]
@@ -641,7 +963,6 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **MISSING PROJECT FOR PROJECT-SCOPED ENTITIES**: If you need a project list for scope selection or disambiguation:
   - **PREFER** `list_member_projects` to get active (unarchived, undeleted) projects the user is a member of
   - THEN call `ask_for_clarification` with `disambiguation_options` containing these filtered projects
-  - **AVOID** using `structured_db_tool` or `projects_list` for project selection - they may include archived projects
 - **No identical retries**: Do not call the same retrieval tool with the exact same parameters more than once. If it returns no/invalid results, proceed to the next fallback (within the same entity type) or ask for clarification.
   - **Do not loop the same call.**
 
@@ -758,7 +1079,13 @@ After resolving project_id for cycles/modules/pages creation:
 
 **EFFICIENCY RULE**: Always try to set as many properties as possible during creation to minimize API calls.
 
-
+**MANDATORY REQUIREMENT - REASONING FOR EVERY TOOL CALL:**
+You MUST provide clear reasoning in your response content BEFORE and AFTER each tool call:
+- BEFORE: Explain what you're about to do and why (e.g., "Let me first find user Anil's details to get their ID...")
+- AFTER: Summarize what you found and your next step (e.g., "Found Anil Kumar (ID: xyz-123). Now searching for workitems assigned to them...")
+- This reasoning is NOT optional - it's required for transparency and helps users understand your process
+- Even for simple searches, explain your thinking (e.g., "Searching for project 'Mobile' to get its UUID for creating workitems...")
+- Provide this in the content field surrounding your tool invocations
 
 **IMPORTANT**: Analyze the user's request carefully to identify ALL required actions, not just the obvious ones.
 
@@ -767,40 +1094,11 @@ After resolving project_id for cycles/modules/pages creation:
 **Execution Guidelines:**
 - Use search tools for entity resolution, NOT vector_search_tool
 - Do NOT provide workspace_slug - auto-provided from context
-- search_workitem_by_identifier requires format: PROJECT-123
-
-
+- search_workitem_by_identifier requires format: PROJECT-123 as input argument
 
 **WORKFLOW DECISION TREE:**
 
-**IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
-1. Use retrieval/search tools to gather the requested information
-2. Provide a detailed, elaborate, and neatly formatted answer based on the retrieved data. Do NOT be brief.
-3. Do NOT plan any modifying actions - just return tool_calls for retrieval, then answer in your content
-4. **Formatting Requirements**:
-    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
-    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
-    - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
-    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
-    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
-    - Use tables for multi-attribute data (suppress UUIDs, apply URL rules)
-5. This formatting doesn't apply to modification requests - those require action planning.
-
-Note: The system uses absence of tool_calls as the signal to stop and deliver your content as the final answer. For modification requests, include at least one write tool_call in your plan.
-
-**IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
-1. Use retrieval/search tools to gather necessary information (IDs, etc.)
-2. **AND** plan at least one MODIFYING ACTION using tool_calls (create, update, delete, add, remove, move, etc.)
-3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions with tool_calls
-4. Provide a very brief summary of what you planned in your content
-
-
-**IF the user's request cannot be fulfilled with available tools:**
-- Examples: Analytics/visualizations, external integrations, bulk operations, administrative functions, file uploads
-- Use retrieval tools if relevant to understand the request
-- Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
-- Do NOT create workaround entities (like workitems) to satisfy these requests
-- Do NOT plan any actions - just provide the explanation in your content
+{WORK_TREE_INSTRUCTIONS}
 """  # noqa: E501
 
     if project_id:
@@ -809,11 +1107,30 @@ Note: The system uses absence of tool_calls as the signal to stop and deliver yo
         # Workspace-level context (no specific project)
         method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use list_member_projects (with a high limit) to get ALL projects in the workspace\n- Iterate through projects ONLY for entities that are inherently project-scoped (cycles/modules/states/labels). For workspace-wide work-item queries, use a SINGLE structured_db_tool call WITHOUT project_id (it will scope via workspace_id)\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
 
+    if enhanced_conversation_history and enhanced_conversation_history.strip():
+        method_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n\nBased on this conversation history, you can reference previously mentioned entity IDs and use them as parameters in your tool calls. However, if the user asks for entity DATA/details, you still MUST call the appropriate retrieval tools - conversation history provides IDs for PARAMETERS, not complete entity data."  # noqa: E501
+        method_prompt += HISTORY_FRESHNESS_WARNING
+        address_user_by_name = False
+
     if user_id:
         method_prompt += f"\n\n**USER CONTEXT:**\nUser ID: {user_id}\nUse this when user refers to him/herself or 'I' or 'me' or 'my' or 'mine' or any other personal pronoun or any derivative of these words."  # noqa: E501
 
-    if enhanced_conversation_history and enhanced_conversation_history.strip():
-        method_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n\nBased on this conversation history, you can reference previously created entities, their IDs, and project context without needing to search for them again."  # noqa: E501
+    if address_user_by_name:
+        # Include user's first name if available from user_meta
+        if user_meta and isinstance(user_meta, dict):
+            first_name = user_meta.get("first_name") or user_meta.get("firstName")
+            if first_name:
+                method_prompt += f"\nUser's first name: {first_name}"
+            last_name = user_meta.get("last_name") or user_meta.get("lastName")
+            if last_name:
+                method_prompt += f", and last name: {last_name}"
+            email = user_meta.get("email")
+            if email:
+                method_prompt += f"\nUser's email: {email}"
+            method_prompt += "\nUse the user's name (primarily first name) to address them in your responses.\n"
+            method_prompt += "\nYou can reveal the user's name and email to them if requested. The name details here are primarily for greeting purposes. Use the user_id in tool calls if you need to get more user details.\n"  # noqa: E501
+    else:
+        method_prompt += "\nSkip greetings and get straight to the point."
 
     log.info(f"ENHANCED_CONVERSATION_HISTORY being sent to LLM:\n{enhanced_conversation_history}")
 
@@ -1732,3 +2049,51 @@ async def stream_content_in_chunks(content: str, words_per_chunk: int = 15, dela
     # Yield remaining content
     if current_chunk:
         yield "".join(current_chunk)
+
+
+async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_batch: int = 10) -> AsyncIterator[str]:
+    """
+    Batch LLM stream chunks in real-time by word count to reduce browser event overhead.
+
+    This function collects chunks from an LLM stream as they arrive and batches them
+    by word count before yielding. Unlike stream_content_in_chunks which operates on
+    complete content with artificial delays, this performs true real-time batching
+    without delays.
+
+    Args:
+        llm_stream: Async iterator of LLM chunks (e.g., from llm.astream())
+        words_per_batch: Number of words to accumulate before yielding a batch (default: 10)
+
+    Yields:
+        Batched content chunks as strings
+    """
+    current_batch = []
+    word_count = 0
+
+    async for chunk in llm_stream:
+        # Extract content from LLM chunk (handles different LLM response formats)
+        chunk_content = getattr(chunk, "content", None)
+        if not chunk_content:
+            continue
+
+        chunk_str = str(chunk_content)
+
+        # Split the chunk into tokens (words and whitespace)
+        # Using the same pattern as stream_content_in_chunks to preserve formatting
+        tokens = re.split(r"(\s+)", chunk_str)
+
+        for token in tokens:
+            current_batch.append(token)
+            # Count non-whitespace tokens as words
+            if token and not token.isspace():
+                word_count += 1
+
+            # Yield batch when word count threshold is reached
+            if word_count >= words_per_batch:
+                yield "".join(current_batch)
+                current_batch = []
+                word_count = 0
+
+    # Yield any remaining content
+    if current_batch:
+        yield "".join(current_batch)

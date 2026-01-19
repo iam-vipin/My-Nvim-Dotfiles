@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -6,10 +19,12 @@ import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import { LeadIcon, TeamsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { EFileAssetType } from "@plane/types";
 import { AvatarGroup, Avatar } from "@plane/ui";
 // plane utils
 import { getFileURL } from "@plane/utils";
 // components
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
@@ -18,7 +33,6 @@ import { AddTeamspaceMembersButton } from "@/plane-web/components/teamspaces/act
 import { UpdateTeamspaceProjectsButton } from "@/plane-web/components/teamspaces/actions/projects/button";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports
-import { TeamspaceDescriptionInput } from "./description-input";
 import { TeamNameInput } from "./name-input";
 
 type TTeamsOverviewPropertiesProps = {
@@ -34,7 +48,8 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   // hooks
   const { getUserDetails } = useMember();
-  const { isCurrentUserMemberOfTeamspace, getTeamspaceById, updateTeamspace } = useTeamspaces();
+  const { isCurrentUserMemberOfTeamspace, getTeamspaceById, updateTeamspace, updateTeamspaceNameDescriptionLoader } =
+    useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
@@ -56,11 +71,11 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
         isOpen={isEmojiPickerOpen}
         handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
         label={
-          <div className="flex flex-shrink-0 size-12 items-center justify-center rounded-md bg-custom-background-90">
+          <div className="flex flex-shrink-0 size-12 items-center justify-center rounded-md bg-layer-1">
             {teamspace.logo_props ? (
               <Logo logo={teamspace.logo_props} size={24} />
             ) : (
-              <TeamsIcon className="size-6 text-custom-text-300" />
+              <TeamsIcon className="size-6 text-tertiary" />
             )}
           </div>
         }
@@ -87,15 +102,24 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
         teamspaceId={teamspaceId}
         disabled={!isEditingAllowed}
       />
-      <TeamspaceDescriptionInput
+      <DescriptionInput
+        key={teamspaceId}
         initialValue={teamspaceDescription}
-        workspaceSlug={workspaceSlug.toString()}
-        teamspaceId={teamspaceId}
+        workspaceSlug={workspaceSlug}
+        onSubmit={async (value) => {
+          await updateTeamspace(workspaceSlug, teamspaceId, {
+            description_html: value.description_html ?? "<p></p>",
+            description_json: value.description_json,
+          });
+        }}
+        entityId={teamspaceId}
         disabled={!isEditingAllowed}
         containerClassName="-ml-3 border-none"
+        fileAssetType={EFileAssetType.TEAM_SPACE_DESCRIPTION}
+        setIsSubmitting={(value) => updateTeamspaceNameDescriptionLoader(teamspaceId, value)}
       />
       <div className="flex items-center justify-between gap-x-2 py-1.5">
-        <div className="flex items-center gap-x-2">
+        <div className="flex items-center gap-x-1.5">
           {teamLead && (
             <Tooltip tooltipContent={`${teamLead.first_name} ${teamLead.last_name} (Lead)`} position="bottom">
               <span className="flex-shrink-0 relative">
@@ -103,8 +127,7 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
                   key={teamLead.id}
                   name={teamLead.display_name}
                   src={getFileURL(teamLead.avatar_url)}
-                  size={26}
-                  className="text-xs"
+                  size={28}
                   showTooltip={false}
                 />
                 <LeadIcon className="flex-shrink-0 absolute top-0 -left-2.5 size-4 rounded-full" />

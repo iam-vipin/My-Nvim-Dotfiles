@@ -1,14 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { Zap } from "lucide-react";
 // plane imports
-import {
-  AUTOMATION_TRIGGER_SELECT_OPTIONS,
-  DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION,
-  AUTOMATION_TRACKER_ELEMENTS,
-  AUTOMATION_TRACKER_EVENTS,
-} from "@plane/constants";
+import { AUTOMATION_TRIGGER_SELECT_OPTIONS, DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownIcon } from "@plane/propel/icons";
 // helpers
@@ -20,7 +28,6 @@ import type {
 import { EAutomationSidebarTab } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, generateConditionPayload } from "@plane/utils";
-import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
@@ -86,16 +93,8 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
             },
           },
         });
-        captureSuccess({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_CREATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       } catch (error) {
         console.error("Failed to create trigger:", error);
-        captureError({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_CREATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       }
       return;
     }
@@ -106,16 +105,8 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
         await triggerNode.update({
           handler_name: selectedTriggerNodeHandlerName,
         });
-        captureSuccess({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_UPDATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       } catch (error) {
         console.error("Failed to update trigger handler:", error);
-        captureError({
-          eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_UPDATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
-        });
       }
     }
   };
@@ -181,26 +172,25 @@ export const AutomationDetailsSidebarTriggerRoot = observer(function AutomationD
   return (
     <section className="flex-grow space-y-4 pt-2">
       <div className="space-y-2 px-4">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 text-tertiary">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <Zap className="size-3" />
           </span>
-          <p className="text-xs font-medium">{t("automations.trigger.input_label")}</p>
+          <p className="text-11 font-medium">{t("automations.trigger.input_label")}</p>
         </div>
         <CustomSearchSelect
           options={AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT}
           value={selectedTriggerNodeHandlerName}
           onChange={(value: TTriggerNodeHandlerName) => {
-            captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.TRIGGER_CONDITION_DROPDOWN });
             setSelectedTriggerNodeHandlerName(value);
           }}
           customButtonClassName="w-full"
           customButton={
             <span
               className={cn(
-                "w-full px-4 py-1.5 rounded-md border-[0.5px] border-custom-border-200 hover:bg-custom-background-80 text-left flex items-center gap-2 cursor-pointer transition-colors",
+                "w-full px-4 py-1.5 rounded-md border-[0.5px] border-subtle-1 hover:bg-layer-transparent-hover text-left flex items-center gap-2 cursor-pointer transition-colors",
                 {
-                  "text-custom-text-400 border border-custom-primary-200": !selectedTriggerNodeHandlerName,
+                  "text-placeholder border-accent-strong": !selectedTriggerNodeHandlerName,
                 }
               )}
             >

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -48,12 +61,12 @@ export const DashboardWidgetEmptyState = observer(function DashboardWidgetEmptyS
         />
         {canCurrentUserEditWidget &&
           (isViewModeEnabled ? (
-            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+            <p className="text-13 text-placeholder text-center whitespace-pre-line">
               {t("dashboards.empty_state.widget_data.description")}
             </p>
           ) : (
-            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
-              <Button onClick={handleRefresh} variant="link-primary" size="sm" className="w-fit inline-flex p-0">
+            <p className="text-13 text-placeholder text-center whitespace-pre-line">
+              <Button onClick={handleRefresh} variant="link" className="w-fit inline-flex p-0">
                 Refresh
               </Button>{" "}
               or add data to see it here.

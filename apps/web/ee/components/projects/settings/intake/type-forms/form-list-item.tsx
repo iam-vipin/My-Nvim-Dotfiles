@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { CloseIcon, PencilLeftIcon } from "@plane/propel/icons";
@@ -59,7 +72,7 @@ export const TypeFormListItem = observer(function TypeFormListItem(props: Props)
       title: "Remove",
       icon: CloseIcon,
       action: handleRemove,
-      className: "text-red-500",
+      className: "text-danger-primary",
     },
   ];
 
@@ -100,13 +113,13 @@ export const TypeFormListItem = observer(function TypeFormListItem(props: Props)
     />
   ) : (
     <>
-      <div className="p-3 bg-custom-background-100 rounded-md border border-custom-border-100 space-y-2">
+      <div className="p-3 bg-surface-1 rounded-md border border-subtle space-y-2">
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-base text-custom-text-200 font-medium">{typeFormDetails.name}</span>
-            <div className="p-1  border border-custom-border-200 rounded-md flex items-center gap-2">
+            <span className="text-14 text-secondary font-medium">{typeFormDetails.name}</span>
+            <div className="p-1  border border-subtle-1 rounded-md flex items-center gap-2">
               <IssueTypeIdentifier issueTypeId={workItemType.id} size={"xs"} />
-              <span className="text-custom-text-200 text-xs">{workItemType.name}</span>
+              <span className="text-secondary text-11">{workItemType.name}</span>
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -119,10 +132,10 @@ export const TypeFormListItem = observer(function TypeFormListItem(props: Props)
                 <Menu.MenuItem
                   key={item.key}
                   onClick={item.action}
-                  className={cn("flex items-center gap-2 text-custom-text-200", item.className)}
+                  className={cn("flex items-center gap-2 text-secondary", item.className)}
                 >
                   {item.icon && <item.icon className="size-4" />}
-                  <span className=" text-xs">{item.title}</span>
+                  <span className=" text-11">{item.title}</span>
                 </Menu.MenuItem>
               ))}
             </Menu>

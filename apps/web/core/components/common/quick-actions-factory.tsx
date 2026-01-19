@@ -1,6 +1,19 @@
-import { Pencil, ExternalLink, Link, Trash2, ArchiveRestoreIcon, Globe2, Lock } from "lucide-react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { ArchiveRestoreIcon } from "lucide-react";
+import { EditIcon, NewTabIcon, LinkIcon, GlobeIcon, LockIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 
 /**
@@ -14,7 +27,7 @@ export const useQuickActionsFactory = () => {
     createEditMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "edit",
       title: t("edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handler,
       shouldRender,
     }),
@@ -22,14 +35,14 @@ export const useQuickActionsFactory = () => {
     createOpenInNewTabMenuItem: (handler: () => void): TContextMenuItem => ({
       key: "open-new-tab",
       title: t("open_in_new_tab"),
-      icon: ExternalLink,
+      icon: NewTabIcon,
       action: handler,
     }),
 
     createCopyLinkMenuItem: (handler: () => void): TContextMenuItem => ({
       key: "copy-link",
       title: t("copy_link"),
-      icon: Link,
+      icon: LinkIcon,
       action: handler,
     }),
 
@@ -59,7 +72,7 @@ export const useQuickActionsFactory = () => {
     createDeleteMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "delete",
       title: t("delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       action: handler,
       shouldRender,
     }),
@@ -68,14 +81,14 @@ export const useQuickActionsFactory = () => {
     createOpenInNewTab: (handler: () => void): TContextMenuItem => ({
       key: "open-in-new-tab",
       title: "Open in new tab",
-      icon: ExternalLink,
+      icon: NewTabIcon,
       action: handler,
     }),
 
     createCopyLayoutLinkMenuItem: (handler: () => void): TContextMenuItem => ({
       key: "copy-link",
       title: "Copy link",
-      icon: Link,
+      icon: LinkIcon,
       action: handler,
     }),
 
@@ -83,7 +96,7 @@ export const useQuickActionsFactory = () => {
     createCommentEditMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "edit",
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handler,
       shouldRender,
     }),
@@ -91,7 +104,7 @@ export const useQuickActionsFactory = () => {
     createCommentCopyLinkMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "copy_link",
       title: t("common.actions.copy_link"),
-      icon: Link,
+      icon: LinkIcon,
       action: handler,
       shouldRender,
     }),
@@ -103,7 +116,7 @@ export const useQuickActionsFactory = () => {
     ): TContextMenuItem => ({
       key: "access_specifier",
       title: isInternal ? t("issue.comments.switch.public") : t("issue.comments.switch.private"),
-      icon: isInternal ? Globe2 : Lock,
+      icon: isInternal ? GlobeIcon : LockIcon,
       action: handler,
       shouldRender,
     }),
@@ -111,7 +124,7 @@ export const useQuickActionsFactory = () => {
     createCommentDeleteMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "delete",
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       action: handler,
       shouldRender,
     }),

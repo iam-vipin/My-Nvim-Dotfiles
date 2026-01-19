@@ -1,28 +1,36 @@
-import type { FC } from "react";
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { difference } from "lodash-es";
 import { observer } from "mobx-react";
 import { mutate } from "swr";
-import { PlusIcon } from "lucide-react";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { CustomersIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { cn } from "@plane/utils";
 // plane web imports
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { CustomerDropDown } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+
 type TProps = {
+  customButtonClassName?: string;
   workItemId: string;
   value: string[] | null;
   workspaceSlug: string;
-  compact?: boolean;
 };
 
 export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
-  const { workItemId, value, workspaceSlug, compact = false } = props;
+  const { workItemId, value, workspaceSlug, customButtonClassName } = props;
   // hooks
   const {
     workItems: { addWorkItemsToCustomer, removeWorkItemFromCustomer },
@@ -33,78 +41,40 @@ export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
     const addedCustomerIds = difference(_value, value || []);
     const removedCustomerIds = difference(value || [], _value);
     if (addedCustomerIds.length) {
-      addWorkItemsToCustomer(workspaceSlug, addedCustomerIds[0], [workItemId])
-        .then(() => {
-          captureSuccess({
-            eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-            payload: {
-              id: addedCustomerIds[0],
-              work_item_ids: [workItemId],
-            },
-          });
-        })
-        .catch((error) => {
-          captureError({
-            eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-            payload: {
-              id: addedCustomerIds[0],
-              work_item_ids: [workItemId],
-            },
-            error: error as Error,
-          });
-          setToast({
-            title: t("toast.error"),
-            type: TOAST_TYPE.ERROR,
-            message: t("customers.toasts.work_item.add.error.message"),
-          });
+      addWorkItemsToCustomer(workspaceSlug, addedCustomerIds[0], [workItemId]).catch(() => {
+        setToast({
+          title: t("toast.error"),
+          type: TOAST_TYPE.ERROR,
+          message: t("customers.toasts.work_item.add.error.message"),
         });
+      });
     }
     if (removedCustomerIds.length) {
-      await removeWorkItemFromCustomer(workspaceSlug, removedCustomerIds[0], workItemId)
-        .then(() => {
-          captureSuccess({
-            eventName: CUSTOMER_TRACKER_EVENTS.remove_work_items_from_customer,
-            payload: {
-              id: removedCustomerIds[0],
-              work_item_ids: [workItemId],
-            },
-          });
-        })
-        .catch((error) => {
-          captureError({
-            eventName: CUSTOMER_TRACKER_EVENTS.remove_work_items_from_customer,
-            payload: {
-              id: removedCustomerIds[0],
-              work_item_ids: [workItemId],
-            },
-            error: error as Error,
-          });
-          setToast({
-            title: t("toast.error"),
-            type: TOAST_TYPE.ERROR,
-            message: t("customers.toasts.work_item.remove.error.message"),
-          });
+      await removeWorkItemFromCustomer(workspaceSlug, removedCustomerIds[0], workItemId).catch(() => {
+        setToast({
+          title: t("toast.error"),
+          type: TOAST_TYPE.ERROR,
+          message: t("customers.toasts.work_item.remove.error.message"),
         });
-      mutate(`WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}`);
+      });
+      await mutate(`WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}`);
     }
   };
 
   return (
     <CustomerDropDown
       customButton={
-        <Button variant="neutral-primary" size="sm" className="rounded-full p-0 border-custom-border-100">
-          {compact ? (
-            <div className="p-1">
-              <PlusIcon className="text-custom-text-300 size-2.5" />
-            </div>
-          ) : (
-            <div className="flex gap-2 px-2 py-0.5 items-center">
-              <CustomersIcon className="text-custom-text-300 size-2" />
-              <span className="text-xs text-custom-text-300">{t("customers.dropdown.placeholder")}</span>
-            </div>
+        <button
+          type="button"
+          className={cn(
+            "w-full rounded-sm px-2 py-0.5 bg-layer-transparent hover:bg-layer-transparent-hover text-body-xs-regular text-placeholder",
+            customButtonClassName
           )}
-        </Button>
+        >
+          {t("customers.dropdown.placeholder")}
+        </button>
       }
+      className="w-full"
       customButtonClassName="hover:bg-transparent"
       value={value || []}
       multiple

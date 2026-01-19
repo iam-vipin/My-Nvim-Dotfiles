@@ -13,7 +13,7 @@ x-plane-commercial: &plane
 x-monitor-env: &monitor-env
   SERVICE_HTTP_WEB: web:3000
   SERVICE_HTTP_API: api:8000
-  SERVICE_HTTP_LIVE: live:3000
+  SERVICE_HTTP_LIVE: live:3000/live/health
   SERVICE_HTTP_PROXY: proxy:80
   SERVICE_HTTP_MINIO: plane-minio:9090
   SERVICE_TCP_REDIS: plane-redis:6379
@@ -53,6 +53,13 @@ x-redis-env: &redis-env
   REDIS_HOST: ${REDIS_HOST:-plane-redis}
   REDIS_PORT: ${REDIS_PORT:-6379}
   REDIS_URL: redis://${REDIS_HOST:-plane-redis}:${REDIS_PORT:-6379}/
+
+x-opensearch-env: &opensearch-env
+  OPENSEARCH_ENABLED: ${OPENSEARCH_ENABLED:-0}
+  OPENSEARCH_URL: ${OPENSEARCH_URL}
+  OPENSEARCH_USERNAME: ${OPENSEARCH_USERNAME}
+  OPENSEARCH_PASSWORD: ${OPENSEARCH_PASSWORD}
+  OPENSEARCH_INDEX_PREFIX: ${OPENSEARCH_INDEX_PREFIX}
 
 x-docstore-env: &docstore-env
   USE_MINIO: ${USE_MINIO:-1}
@@ -99,6 +106,7 @@ x-silo-env: &silo-env
   # Slack Envs
   SLACK_CLIENT_ID: ${SLACK_CLIENT_ID}
   SLACK_CLIENT_SECRET: ${SLACK_CLIENT_SECRET}
+
 
 x-app-env: &app-env
   WEB_URL: ${SERVICE_URL_PLANE}
@@ -209,7 +217,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-api-ee.sh
     environment:
-      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env ]
     deploy:
       replicas: ${API_REPLICAS:-1}
       restart_policy:
@@ -224,7 +232,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-worker.sh
     environment:
-      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env ]
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
       restart_policy:
@@ -240,7 +248,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-beat.sh
     environment:
-      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env ]
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
       restart_policy:
@@ -256,7 +264,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-migrator.sh
     environment:
-      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env ]
     deploy:
       replicas: 1
       restart_policy:
@@ -338,7 +346,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-automation-consumer.sh
     environment:
-      <<: [ *automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [ *automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env ]
     deploy:
       replicas: ${AUTOMATION_CONSUMER_REPLICAS:-1}
       restart_policy:
@@ -351,7 +359,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-outbox-poller.sh
     environment:
-      <<: [ *outbox-poller-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [ *outbox-poller-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env ]
     deploy:
       replicas: ${OUTBOX_POLLER_REPLICAS:-1}
       restart_policy:

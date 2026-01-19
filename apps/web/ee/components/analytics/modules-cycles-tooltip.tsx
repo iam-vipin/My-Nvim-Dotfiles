@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { StartDatePropertyIcon } from "@plane/propel/icons";
@@ -49,7 +62,7 @@ function ModulesCyclesTooltip({
         </div>
         <div className="flex items-center gap-2  opacity-50 ">
           <StartDatePropertyIcon className="w-3 h-3" />
-          <div className="flex gap-1  text-xs">
+          <div className="flex gap-1  text-11">
             {renderFormattedDate(startDate) ?? "-"}
             <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
             {renderFormattedDate(endDate) ?? "-"}
@@ -58,7 +71,7 @@ function ModulesCyclesTooltip({
       </div>
       <div className="flex flex-col gap-2">
         {rows.map((row) => (
-          <div key={row.label} className="flex justify-between text-xs text-text-300">
+          <div key={row.label} className="flex justify-between text-11 text-text-300">
             <div>{row.label}</div>
             <div>{row.value}</div>
           </div>

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """File attachment management endpoints for chat messages."""
 
 import uuid
@@ -15,8 +26,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.attachment import AttachmentDetailResponse
 from pi.app.utils.attachments import allowed_attachment_types
@@ -40,7 +50,7 @@ S3_BUCKET = settings.AWS_S3_BUCKET
 async def list_attachments(
     chat_id: str = Query(..., description="Filter attachments by chat UUID"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     List attachments for a chat.
@@ -110,10 +120,7 @@ async def list_attachments(
         - Load attachments for chat context
     """
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
+        user_id = current_user.id
     except Exception as e:
         log.error(f"Error validating session: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
@@ -171,18 +178,11 @@ async def create_attachment(
     workspace_id: str = Form(...),
     chat_id: str = Form(...),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """Receive file, scan for security, then upload to S3 if safe"""
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-    try:
+        user_id = current_user.id
         # Read file into memory
         file_data = await file.read()
         file_size = len(file_data)
@@ -271,7 +271,7 @@ async def update_attachment(
     attachment_id: UUID4 = Path(..., description="UUID of the attachment"),
     chat_id: UUID4 = Query(..., description="UUID of the chat"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Complete attachment upload after S3 upload finishes.
@@ -332,15 +332,7 @@ async def update_attachment(
         - Deprecated V1 endpoint: PATCH /api/v1/attachments/complete-upload/
     """
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         # Get attachment
         stmt = select(MessageAttachment).where(
             MessageAttachment.id == attachment_id,
@@ -404,7 +396,7 @@ async def get_attachment(
     attachment_id: UUID4 = Path(..., description="UUID of the attachment"),
     chat_id: UUID4 = Query(..., description="UUID of the chat"),
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Get attachment metadata and pre-signed URLs.
@@ -466,15 +458,7 @@ async def get_attachment(
         - Generate shareable links
     """
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-    try:
+        user_id = current_user.id
         # Get attachment owned by this user
         stmt = select(MessageAttachment).where(
             MessageAttachment.id == attachment_id,
@@ -516,82 +500,3 @@ async def get_attachment(
     except Exception as e:
         log.error(f"Error generating attachment URLs: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
-
-
-# @router.delete("/{attachment_id}")
-# async def delete_attachment(
-#     attachment_id: UUID4 = Path(..., description="UUID of the attachment to delete"),
-#     chat_id: UUID4 = Query(..., description="UUID of the chat"),
-#     db: AsyncSession = Depends(get_async_session),
-#     session: str = Depends(cookie_schema),
-# ):
-#     """
-#     Delete an attachment (soft delete).
-
-#     This endpoint performs a soft delete on an attachment, marking it as deleted
-#     without removing the actual file from S3. The attachment will no longer appear
-#     in chat attachment lists but the file remains for potential recovery.
-
-#     Args:
-#         attachment_id: UUID of the attachment to delete (path parameter)
-#         chat_id: UUID of the chat (query parameter for verification)
-#         db: Database session (injected)
-#         session: Session cookie for authentication (injected)
-
-#     Returns:
-#         JSON response with:
-#         - detail: Success message
-
-#     Status Codes:
-#         - 200: Attachment deleted successfully
-#         - 401: Invalid or missing authentication
-#         - 404: Attachment not found
-#         - 500: Internal server error
-
-#     Example Request:
-#         DELETE /api/v2/attachments/att-001?chat_id=xyz-789
-
-#     Example Response:
-#         {
-#             "detail": "Attachment deleted successfully"
-#         }
-
-#     Notes:
-#         - This is a soft delete (file remains in S3)
-#         - Deleted attachments don't appear in list endpoints
-#         - User must own the attachment
-#         - Deleted attachments can potentially be recovered
-#         - For hard delete, manual S3 cleanup is required
-#         - Deprecated V1 endpoint: DELETE /api/v1/attachments/delete-attachment/ (was commented out)
-#     """
-#     try:
-#         auth = await is_valid_session(session)
-#         if not auth.user:
-#             return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-#         user_id = auth.user.id
-#     except Exception as e:
-#         log.error(f"Error validating session: {e!s}")
-#         return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
-#     try:
-#         # Get attachment
-#         stmt = select(MessageAttachment).where(
-#             MessageAttachment.id == attachment_id,
-#             MessageAttachment.chat_id == chat_id,
-#             MessageAttachment.user_id == user_id,
-#         )
-#         result = await db.execute(stmt)
-#         attachment = result.scalar_one_or_none()
-
-#         if not attachment:
-#             return JSONResponse(status_code=404, content={"detail": "Attachment not found"})
-
-#         # Soft delete
-#         attachment.soft_delete()
-#         await db.commit()
-
-#         return JSONResponse(content={"detail": "Attachment deleted successfully"})
-
-#     except Exception as e:
-#         log.error(f"Error deleting attachment: {e!s}")
-#         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})

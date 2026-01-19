@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -42,10 +55,10 @@ export function UserGreetingsView(props: IUserGreetingsView) {
 
   return (
     <div className="flex flex-col items-center my-6">
-      <h2 className="text-2xl font-semibold text-center">
+      <h2 className="text-20 font-semibold text-center">
         {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
       </h2>
-      <h5 className="flex items-center gap-2 font-medium text-custom-text-400">
+      <h5 className="flex items-center gap-2 font-medium text-placeholder">
         <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
         <div>
           {weekDay}, {date} {timeString}

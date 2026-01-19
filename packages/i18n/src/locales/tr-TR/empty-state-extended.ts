@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -19,9 +32,11 @@ export default {
         "Bir fikir yazın, bir aha anını yakalayın veya bir beyin dalgasını kaydedin. Başlamak için yapışkan not ekleyin.",
     },
     stickies: {
-      title:
-        "Bir fikir yazın, bir aha anını yakalayın veya bir beyin dalgasını kaydedin. Başlamak için yapışkan not ekleyin.",
-      cta_primary: "Yapışkan not ekle",
+      title: "Fikirleri anında yakalayın",
+      description:
+        "Hızlı notlar ve yapılacaklar için yapışkan notlar oluşturun ve onları nereye giderseniz gidin yanınızda taşıyın.",
+      cta_primary: "İlk yapışkan notu oluştur",
+      cta_secondary: "Belgeler",
     },
     active_cycles: {
       title: "Aktif döngü yok",
@@ -108,11 +123,6 @@ export default {
       description:
         "Projeler, iş öğeleri ve sayfalar için şablonlar oluşturarak kurulum süresini azaltın — ve saniyeler içinde yeni çalışmaya başlayın.",
       cta_primary: "Şablon oluştur",
-    },
-    webhooks: {
-      title: "Henüz Webhook eklenmedi",
-      description: "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",
-      cta_primary: "Webhook ekle",
     },
   },
 } as const;

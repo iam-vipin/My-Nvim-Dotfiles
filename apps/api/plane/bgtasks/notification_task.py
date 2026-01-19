@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third Party imports
 from celery import shared_task
 
@@ -18,7 +29,7 @@ def process_workitem_notifications(
     requested_data=None,
     current_instance=None,
     subscriber=False,
-    notification_type=""
+    notification_type="",
 ):
     """
     Process notifications for issue activities.
@@ -39,13 +50,13 @@ def process_workitem_notifications(
             requested_data=requested_data,
             current_instance=current_instance,
             subscriber=subscriber,
-            notification_type=notification_type
+            notification_type=notification_type,
         )
-        
+
         # Process notifications
         handler = WorkItemNotificationHandler(context)
         payload = handler.process()
-        
+
         return {
             "success": True,
             "in_app_count": len(payload.in_app_notifications),
@@ -53,7 +64,4 @@ def process_workitem_notifications(
         }
     except Exception as e:
         log_exception(e)
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        return {"success": False, "error": str(e)}

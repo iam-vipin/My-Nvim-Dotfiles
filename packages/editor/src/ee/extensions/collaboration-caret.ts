@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import { CollaborationCursor } from "@tiptap/extension-collaboration-cursor";
 // types
@@ -18,7 +31,7 @@ const renderUserCursor = (user: TUserDetails): HTMLSpanElement => {
   label.dataset.collaboratorId = user?.id;
 
   label.classList.value =
-    "custom-collaboration-caret absolute rounded-[3px_3px_3px_0] text-[#0d0d0d] text-xs font-semibold leading-normal -top-[1.3rem] -left-[1px] py-0.5 px-1.5 select-none whitespace-nowrap";
+    "custom-collaboration-caret absolute rounded-[3px_3px_3px_0] text-[#0d0d0d] text-11 font-semibold leading-normal -top-[1.3rem] -left-[1px] py-0.5 px-1.5 select-none whitespace-nowrap";
   label.setAttribute("style", `background-color: ${user.color}`);
   label.insertBefore(document.createTextNode(user.name), null);
 

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Helpers to modularize Build-mode orchestration.
 
 These helpers mirror the approach used for Ask mode and keep the core
@@ -38,6 +49,7 @@ from pi.services.actions.registry import get_available_categories
 from pi.services.actions.registry import get_category_methods
 from pi.services.actions.tools.entity_search import get_entity_search_tools
 from pi.services.chat.helpers.action_property_mapper import map_tool_properties
+from pi.services.chat.helpers.planning_enrichment import enrich_planning_payload
 from pi.services.chat.helpers.tool_utils import TOOL_NAME_TO_CATEGORY_MAP
 from pi.services.chat.helpers.tool_utils import category_display_name
 from pi.services.chat.helpers.tool_utils import clean_tool_args_for_storage
@@ -284,6 +296,7 @@ def build_planning_tools(
         "module",
         "worklogs",
         "worklog",
+        "workitems",  # Added to support epic feature checking via projects_retrieve
         "epics",
         "epic",
         "intake",
@@ -295,6 +308,15 @@ def build_planning_tools(
         "pages",
         "page",
     ]
+    workspace_scoped_cats = [
+        "initiatives",
+        "initiative",
+        "teamspaces",
+        "teamspace",
+        "customers",
+        "customer",
+    ]
+
     all_method_tools: List[Any] = []
     built_categories: List[str] = []
     for sel in selections_list:
@@ -318,6 +340,14 @@ def build_planning_tools(
                 # remove all tools except projects_retrieve and projects_update
                 tools_for_project = [t for t in tools_for_project if getattr(t, "name", "") in ["projects_retrieve", "projects_update"]]
                 all_method_tools.extend(tools_for_project)
+
+            if cat in workspace_scoped_cats:
+                tools_for_workspace = chatbot_instance._build_planning_method_tools("workspaces", method_executor, context)
+                # remove all tools except workspaces_get_features and workspaces_update_features
+                tools_for_workspace = [
+                    t for t in tools_for_workspace if getattr(t, "name", "") in ["workspaces_get_features", "workspaces_update_features"]
+                ]
+                all_method_tools.extend(tools_for_workspace)
 
         except Exception as e:
             log.warning(f"Failed to build tools for category {cat}: {e}")
@@ -513,23 +543,27 @@ async def plan_action_and_prepare_outputs(
         tool_args["project_id"] = project_id
         _tool_args["project_id"] = project_id
 
-    if workspace_slug and "workspace_slug" not in tool_args:
+    if workspace_slug:
+        # Always inject workspace_slug if we have it
+        # This fixes the issue where LLM passes workspace_id as workspace_slug
         tool_args["workspace_slug"] = workspace_slug
         _tool_args["workspace_slug"] = workspace_slug
+
+    category = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {"action_type": "unknown", "entity_type": "unknown"})
+    action_type = category["action_type"]
+    artifact_type = category["entity_type"]
+
+    extras = await enrich_planning_payload(tool_args=tool_args, shadow_args=_tool_args, action_type=action_type, entity_type=artifact_type)
 
     cleaned_args = clean_tool_args_for_storage(tool_args)
 
     action_summary: Dict[str, Any] = {}
 
-    # Extract root keys from tool_name itself
-    category = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {"action_type": "unknown", "entity_type": "unknown"})
-    action_type = category["action_type"]
-    artifact_type = category["entity_type"]
-
     action_summary = {
         "action": action_type,
         "artifact_type": artifact_type,
         "tool_name": tool_name,
+        **(extras or {}),
     }
 
     # Build parameters from tool_args
@@ -1003,13 +1037,20 @@ async def build_method_executor_and_context(
         "is_project_chat": is_project_chat,
     }
 
-    # Create method executor
-    if access_token and access_token.startswith("plane_api_"):
-        actions_executor = PlaneActionsExecutor(api_key=access_token, base_url=settings.plane_api.HOST)
+    # Create method executor only if we have a valid token
+    method_executor = None
+    if access_token:
+        # Create method executor with the available token
+        if access_token.startswith("plane_api_"):
+            actions_executor = PlaneActionsExecutor(api_key=access_token, base_url=settings.plane_api.HOST)
+        else:
+            actions_executor = PlaneActionsExecutor(access_token=access_token, base_url=settings.plane_api.HOST)
+        method_executor = MethodExecutor(actions_executor)
     else:
-        actions_executor = PlaneActionsExecutor(access_token=access_token, base_url=settings.plane_api.HOST)
-
-    method_executor = MethodExecutor(actions_executor)
+        # No token available - method_executor will be None
+        # This is acceptable for ask mode where tools may not need workspace API access
+        # (e.g., simple greetings, general questions without workspace data)
+        log.warning(f"ChatID: {chat_id} - No OAuth token available, method_executor will be None")
 
     return method_executor, context, final_workspace_slug or ""
 

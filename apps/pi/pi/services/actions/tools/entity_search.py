@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Entity Search Tools for Plane
 Provides search functionality for all major entities using database queries.
@@ -500,7 +511,6 @@ def get_entity_search_tools(method_executor, context):
 
             # Fallback broadening with smart splitting: if only display_name is provided
             # - If it looks like a full name (contains space or comma), split into first/last
-            # - Else (single token like 'sunder'), search in first_name and last_name as well
             if display_name and not first_name and not last_name:
                 dn = str(display_name).strip()
                 if "," in dn:
@@ -599,11 +609,16 @@ def get_entity_search_tools(method_executor, context):
 
     @tool
     async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
-        """Search for a work item by its unique identifier (e.g., 'WEB-821') and return its details.
-        Don't call this tool if the 'identifier' string is not in the format 'PROJECT-SEQUENCE'.
+        """Search for a work item by its unique identifier or UUID and return its details.
+
+        This tool accepts two formats:
+        1. PROJECT-SEQUENCE format (e.g., 'WEB-821', 'NEWDESIGNS-2')
+        2. UUID format (e.g., 'dd65d302-5714-49f3-af4f-2fe84d8010d0')
+
+        Use this tool when the user provides a work item identifier in either format.
 
         Args:
-            identifier: Work item identifier to search for (required, e.g., 'WEB-821')
+            identifier: Work item identifier to search for (required, e.g., 'WEB-821' or UUID)
             workspace_slug: Workspace slug (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided

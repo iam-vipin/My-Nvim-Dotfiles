@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef } from "react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -52,9 +65,9 @@ export function FilterItemContainer(props: FilterItemContainerProps) {
     <Tooltip tooltipContent={tooltipContent} position="bottom" disabled={!tooltipContent}>
       <div
         ref={itemRef}
-        className={cn("flex h-7 items-stretch rounded overflow-hidden border transition-all duration-200", {
-          "border-custom-border-200 bg-custom-background-100": variant === "default",
-          "border-red-500 bg-custom-background-90": variant === "error",
+        className={cn("flex h-7 items-stretch rounded-sm overflow-hidden border transition-all duration-200", {
+          "border-subtle bg-surface-1": variant === "default",
+          "border-danger-strong bg-surface-2": variant === "error",
         })}
       >
         {children}

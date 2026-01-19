@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import requests
 import json
 from bs4 import BeautifulSoup
@@ -21,7 +32,6 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.exception_logger import log_exception
-from plane.ee.bgtasks.move_page import move_page
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids

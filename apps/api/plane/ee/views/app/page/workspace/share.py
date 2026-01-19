@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -45,9 +56,7 @@ class WorkspacePageUserViewSet(BaseViewSet):
 
         # remove owner from the requested users
         requested_user_map = {
-            str(user["user_id"]): user["access"]
-            for user in request.data
-            if str(user["user_id"]) != str(owner_id)
+            str(user["user_id"]): user["access"] for user in request.data if str(user["user_id"]) != str(owner_id)
         }
         requested_user_ids = set(requested_user_map.keys())
 
@@ -73,9 +82,7 @@ class WorkspacePageUserViewSet(BaseViewSet):
         # 2. Users to delete (in existing but not in request)
         deleted_user_ids = existing_user_ids - requested_user_ids
         if deleted_user_ids:
-            PageUser.objects.filter(
-                page_id=page_id, user_id__in=deleted_user_ids, workspace__slug=slug
-            ).delete()
+            PageUser.objects.filter(page_id=page_id, user_id__in=deleted_user_ids, workspace__slug=slug).delete()
 
         # 3. Users to update access
         common_user_ids = requested_user_ids & existing_user_ids
@@ -90,20 +97,12 @@ class WorkspacePageUserViewSet(BaseViewSet):
                 users_to_update.append(existing)
 
         if users_to_update:
-            PageUser.objects.bulk_update(
-                users_to_update, ["access", "updated_by", "updated_at"]
-            )
+            PageUser.objects.bulk_update(users_to_update, ["access", "updated_by", "updated_at"])
 
         # Fire shared and unshared events if needed
         if users_to_create or users_to_update:
-            create_user_access = [
-                {"user_id": str(user.user_id), "access": user.access}
-                for user in users_to_create
-            ]
-            update_user_access = [
-                {"user_id": str(user.user_id), "access": user.access}
-                for user in users_to_update
-            ]
+            create_user_access = [{"user_id": str(user.user_id), "access": user.access} for user in users_to_create]
+            update_user_access = [{"user_id": str(user.user_id), "access": user.access} for user in users_to_update]
             nested_page_update.delay(
                 page_id=page.id,
                 action=PageAction.SHARED,
@@ -142,9 +141,7 @@ class WorkspacePageUserViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
     def destroy(self, request, slug, page_id, user_id):
-        page_user = PageUser.objects.filter(
-            page_id=page_id, user_id=user_id, workspace__slug=slug
-        ).first()
+        page_user = PageUser.objects.filter(page_id=page_id, user_id=user_id, workspace__slug=slug).first()
 
         if not page_user:
             return Response(

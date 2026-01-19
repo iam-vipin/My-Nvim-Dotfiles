@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { set, update } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
@@ -159,6 +172,7 @@ export class ProjectStore implements IProjectStore {
           is_epic_enabled: template.template_data.is_epic_enabled,
           is_issue_type_enabled: template.template_data.is_issue_type_enabled,
           is_time_tracking_enabled: template.template_data.is_time_tracking_enabled,
+          is_milestone_enabled: template.template_data.is_milestone_enabled,
           is_workflow_enabled: template.template_data.is_workflow_enabled,
           project_id: response.id,
         });

@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useRef } from "react";
 import type { EditorRefApi } from "@plane/editor";
 
 type CommentMarkInteractionHook = {
   handleMouseEnter: () => void;
   handleMouseLeave: () => void;
-  handleThreadClick: (e: React.MouseEvent) => void;
+  handleThreadClick: (e: React.MouseEvent | React.KeyboardEvent) => void;
 };
 
 type UseCommentMarkInteractionParams = {
@@ -35,8 +48,8 @@ export function useCommentMarkInteraction({
   }, [clearHover]);
 
   const handleThreadClick = useCallback(
-    (e: React.MouseEvent) => {
-      const target = e.target as HTMLElement;
+    (e: React.MouseEvent | React.KeyboardEvent) => {
+      const target = e.currentTarget as HTMLElement;
       if (
         target.tagName === "BUTTON" ||
         target.closest("button") ||

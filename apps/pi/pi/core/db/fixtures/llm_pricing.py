@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import asyncio
 
@@ -64,6 +75,13 @@ PRICING_DATA = [
         "cached_text_input_price": 0.125,
     },
     {
+        "id": "39bdcf93-feec-4fb6-813d-b8168abcf127",
+        "llm_model_id": llm_id_map["gpt-5.2"],
+        "text_input_price": 1.75,
+        "text_output_price": 14.00,
+        "cached_text_input_price": 0.175,
+    },
+    {
         "id": "7d9e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a",
         "llm_model_id": llm_id_map["claude-sonnet-4"],
         "text_input_price": 3.00,
@@ -76,6 +94,20 @@ PRICING_DATA = [
         "text_input_price": 3.00,
         "text_output_price": 15.00,
         "cached_text_input_price": 1.50,
+    },
+    {
+        "id": "23b1da39-603e-4963-bbe9-945576a33645",
+        "llm_model_id": llm_id_map["gpt-5-mini"],
+        "text_input_price": 0.25,
+        "text_output_price": 2,
+        "cached_text_input_price": 0.025,
+    },
+    {
+        "id": "07b6902b-2dae-4baf-b701-86cea826364d",
+        "llm_model_id": llm_id_map["gpt-5-nano"],
+        "text_input_price": 0.05,
+        "text_output_price": 0.4,
+        "cached_text_input_price": 0.005,
     },
     {
         "id": "b3b17125-1ef2-4bb1-8dda-d57c4575ef90",

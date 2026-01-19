@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -104,17 +117,17 @@ export const NavbarControls = observer(function NavbarControls(props: NavbarCont
   return (
     <>
       {/* issue views */}
-      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
+      <div className="shrink-0">
         <IssuesLayoutSelection anchor={anchor} />
       </div>
 
       {/* issue filters */}
-      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
+      <div className="shrink-0">
         <IssueFiltersDropdown anchor={anchor} />
       </div>
 
       {/* theming */}
-      <div className="relative flex-shrink-0">
+      <div className="shrink-0">
         <NavbarTheme />
       </div>
 

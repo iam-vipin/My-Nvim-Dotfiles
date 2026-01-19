@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -54,21 +67,21 @@ export const WorkspaceDisabledPage = observer(function WorkspaceDisabledPage() {
         isSubmitting={false}
       />
       <div className="relative flex h-full w-full overflow-hidden">
-        <main className="relative flex h-full w-full flex-col justify-center items-center overflow-hidden bg-custom-background-100">
+        <main className="relative flex h-full w-full flex-col justify-center items-center overflow-hidden bg-surface-1">
           <div className="flex flex-col gap-12 items-center justify-center py-6 max-w-lg">
-            <PlaneLockup className="h-5 w-auto text-custom-text-100" />
+            <PlaneLockup className="h-5 w-auto text-primary" />
             <div className="flex flex-col gap-2">
-              <span className="text-lg font-medium text-custom-text-200 text-center">Your payment needs attention</span>
-              <p className="text-sm text-custom-text-300 text-center">
+              <span className="text-16 font-medium text-secondary text-center">Your payment needs attention</span>
+              <p className="text-13 text-tertiary text-center">
                 {`Your payment for ${workspace?.name} couldn't be processed. Update your payment method to keep all your Business features.`}
               </p>
             </div>
             {isWorkspaceAdmin && (
               <div className="flex flex-col items-center justify-center gap-4 max-w-64">
-                <Button size="md" className="w-full" onClick={() => togglePaidPlanModal(true)}>
+                <Button size="lg" className="w-full" onClick={() => togglePaidPlanModal(true)}>
                   Select your plan
                 </Button>
-                <Button size="md" className="w-full" variant="link-neutral" onClick={() => toggleDowngradeModal(true)}>
+                <Button size="lg" className="w-full" variant="ghost" onClick={() => toggleDowngradeModal(true)}>
                   Downgrade to free plan with 12 users
                 </Button>
               </div>

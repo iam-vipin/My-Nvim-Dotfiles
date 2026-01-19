@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { LoaderIcon } from "lucide-react";
 import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
@@ -37,15 +49,17 @@ export const TrialDetails = observer(function TrialDetails(props: TTrialDetailsP
     return (
       <Button
         data-ph-element={LICENSE_TRACKER_ELEMENTS.BILLING_PAGE_TRIAL_BUTTON}
-        variant="link-neutral"
-        size="sm"
+        variant="ghost"
+        size="lg"
         onClick={() => handleTrial(subscriptionType)}
-        className="w-full -ml-3"
+        className="w-full"
         disabled={!!trialLoader || !!upgradeLoader}
       >
-        <div className="w-3 h-3">
-          {trialLoader === subscriptionType && <LoaderIcon size={12} className="animate-spin" />}
-        </div>
+        {trialLoader === subscriptionType && (
+          <div className="w-3 h-3">
+            <LoaderIcon size={12} className="animate-spin" />
+          </div>
+        )}
         <span>Start free trial</span>
       </Button>
     );
@@ -54,8 +68,8 @@ export const TrialDetails = observer(function TrialDetails(props: TTrialDetailsP
   if (isOnTrialPeriod && subscriptionDetail) {
     return (
       <span
-        className={cn("w-full py-1 text-center text-custom-text-300 text-xs", {
-          "text-red-500": subscriptionDetail.show_trial_banner,
+        className={cn("w-full py-1 text-center text-caption-sm-regular text-tertiary", {
+          "text-danger-secondary": subscriptionDetail.show_trial_banner,
         })}
       >
         {planName} trial ends{" "}
@@ -65,7 +79,11 @@ export const TrialDetails = observer(function TrialDetails(props: TTrialDetailsP
   }
 
   if (isTrialEnded) {
-    return <div className="w-full px-2 py-1 text-center text-xs text-red-500 font-medium">{planName} trial ended</div>;
+    return (
+      <div className="w-full px-2 py-1 text-center text-caption-sm-regular text-danger-secondary">
+        {planName} trial ended
+      </div>
+    );
   }
 
   return null;

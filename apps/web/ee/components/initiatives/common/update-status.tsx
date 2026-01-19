@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePopper } from "react-popper";
@@ -77,13 +90,13 @@ export function UpdateStatusPills(props: TStatusPills) {
           <Popover className={cn("relative flex h-full items-center justify-center")} key={status}>
             <Popover.Button
               ref={setReferenceElement}
-              className={cn("my-auto outline-none text-custom-text-300")}
+              className={cn("my-auto outline-none text-tertiary")}
               onClick={(e) => e.stopPropagation()}
             >
               <Tooltip tooltipContent={status && capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase())}>
-                <button className="flex items-center gap-1 border border-custom-border-300 rounded-md px-1 py-1 bg-custom-background-100">
+                <button className="flex items-center gap-1 border border-subtle-1 rounded-md px-1 py-1 bg-surface-1">
                   <UpdateStatusIcons size="xs" statusType={status as EUpdateStatus} showBackground={false} />
-                  <span className="text-xs font-semibold text-custom-text-300">
+                  <span className="text-11 font-semibold text-tertiary">
                     {count} {getStatusText(status)}
                   </span>
                 </button>
@@ -92,7 +105,7 @@ export function UpdateStatusPills(props: TStatusPills) {
 
             <Popover.Panel
               className={cn(
-                "absolute left-0 top-full z-20 w-screen mt-2 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none max-w-[320px]"
+                "absolute left-0 top-full z-20 w-screen mt-2 rounded-md border-[0.5px] border-subtle-1 bg-surface-1 text-11 shadow-raised-200 focus:outline-none max-w-[320px]"
               )}
               ref={setPopperElement}
               style={styles.popper}
@@ -115,15 +128,15 @@ export function UpdateStatusPills(props: TStatusPills) {
                   return (
                     <Link href={route} className={cn(`font-medium capitalize flex gap-2`)} target="_blank">
                       {initiativeUpdate.epic_id && (
-                        <div className="flex gap-2 text-custom-text-350 items-center">
+                        <div className="flex gap-2 text-tertiary items-center">
                           <EpicIcon className="size-4 my-auto flex-shrink-0" />
-                          <div className="text-[11px] flex flex-shrink-0 gap-1">
+                          <div className="text-11 flex flex-shrink-0 gap-1">
                             <span>{initiativeUpdate.project__identifier}</span>
                             <span>{initiativeUpdate.epic__sequence_id}</span>
                           </div>
                         </div>
                       )}
-                      <span className="truncate font-semibold min-w-[0] text-sm text-custom-text-300 my-auto flex-1">
+                      <span className="truncate font-semibold min-w-[0] text-13 text-tertiary my-auto flex-1">
                         {initiativeUpdate.epic__name || initiativeUpdate.project__name}
                       </span>
                       <UpdateStatusIcons

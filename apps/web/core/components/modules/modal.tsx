@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-// types
-import { MODULE_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IModule } from "@plane/types";
-// ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { ModuleForm } from "@/components/modules";
-// constants
-// helpers
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
@@ -64,21 +72,12 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
           title: "Success!",
           message: "Module created successfully.",
         });
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.create,
-          payload: { id: res.id },
-        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? err?.error ?? "Module could not be created. Please try again.",
-        });
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.create,
-          payload: { id: data?.id },
-          error: err,
         });
       });
   };
@@ -96,21 +95,12 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
           title: "Success!",
           message: "Module updated successfully.",
         });
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { id: res.id },
-        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? err?.error ?? "Module could not be updated. Please try again.",
-        });
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { id: data.id },
-          error: err,
         });
       });
   };

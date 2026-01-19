@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 
@@ -91,7 +104,7 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
+          className="rounded-sm bg-layer-2 hover:bg-layer-2-hover px-2.5 py-1 text-11 font-medium text-secondary hover:text-primary"
           onClick={handleToday}
         >
           Today

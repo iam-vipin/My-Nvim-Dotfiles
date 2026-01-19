@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "Projekty",
@@ -304,7 +317,6 @@ export default {
   drafts: "Szkice",
   projects: "Projekty",
   views: "Widoki",
-  workspace: "Przestrzeń robocza",
   archives: "Archiwa",
   settings: "Ustawienia",
   failed_to_move_favorite: "Nie udało się przenieść ulubionego",
@@ -1583,6 +1595,7 @@ export default {
         name: "Nazwa przestrzeni roboczej",
         company_size: "Rozmiar firmy",
         url: "URL przestrzeni roboczej",
+        workspace_timezone: "Strefa czasowa przestrzeni roboczej",
         update_workspace: "Zaktualizuj przestrzeń",
         delete_workspace: "Usuń tę przestrzeń",
         delete_workspace_description:

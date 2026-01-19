@@ -1,4 +1,18 @@
-import { Minus, Plus } from "lucide-react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { Minus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { Input } from "@plane/ui";
 
@@ -44,16 +58,16 @@ export function NumberInputWithControls({
           type="button"
           onClick={() => handleSeatChange("decrease")}
           disabled={isDecreaseDisabled}
-          className="flex items-center justify-center size-8 bg-custom-background-80 rounded-l disabled:text-custom-text-400 cursor-pointer select-none"
+          className="flex items-center justify-center size-8 bg-layer-3 rounded-l disabled:text-placeholder cursor-pointer select-none"
         >
-          <Minus className="size-4 text-custom-text-100" />
+          <Minus className="size-4 text-primary" />
         </button>
         <Input
           type="text"
           value={value}
           onChange={handleChange}
           onWheel={(e) => e.currentTarget.blur()}
-          className="w-12 h-8 text-center rounded-none border border-custom-background-80 bg-custom-background-100"
+          className="w-12 h-8 text-center rounded-none border border-subtle bg-layer-2"
           hasError={Boolean(error)}
           inputSize="xs"
           tabIndex={-1}
@@ -62,12 +76,12 @@ export function NumberInputWithControls({
           type="button"
           onClick={() => handleSeatChange("increase")}
           disabled={isIncreaseDisabled}
-          className="flex items-center justify-center size-8 bg-custom-background-80 rounded-r disabled:text-custom-text-400 cursor-pointer select-none"
+          className="flex items-center justify-center size-8 bg-layer-3 rounded-r disabled:text-placeholder cursor-pointer select-none"
         >
-          <Plus className="size-4 text-custom-text-100" />
+          <PlusIcon className="size-4 text-primary" />
         </button>
       </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-11 text-danger-primary">{error}</p>}
     </div>
   );
 }

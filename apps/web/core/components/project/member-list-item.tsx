@@ -1,10 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Table } from "@plane/ui";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -45,21 +55,8 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           router.push(`/${workspaceSlug}/projects`);
-          captureSuccess({
-            eventName: MEMBER_TRACKER_EVENTS.project.leave,
-            payload: {
-              project: projectId,
-            },
-          });
         })
         .catch((err) => {
-          captureError({
-            eventName: MEMBER_TRACKER_EVENTS.project.leave,
-            payload: {
-              project: projectId,
-            },
-            error: err,
-          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "You can’t leave this project yet.",
@@ -91,10 +88,10 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
         columns={columns}
         data={(memberDetails?.filter((member): member is IProjectMemberDetails => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
-        tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
+        tHeadClassName="border-b border-subtle"
+        thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
+        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
         tHeadTrClassName="divide-x-0"
       />
     </>

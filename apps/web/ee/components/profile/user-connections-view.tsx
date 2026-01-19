@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -5,10 +18,9 @@ import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
 import type { TUserConnection } from "@plane/constants";
-import { INTEGRATION_TRACKER_EVENTS, USER_CONNECTION_PROVIDERS, E_INTEGRATION_KEYS } from "@plane/constants";
+import { USER_CONNECTION_PROVIDERS, E_INTEGRATION_KEYS } from "@plane/constants";
 import type { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 
@@ -48,8 +60,8 @@ export const UserConnectionsView = observer(function UserConnectionsView() {
           <>
             <div className="w-full py-6 sm:gap-16">
               <div className="col-span-12">
-                <h4 className="text-lg font-medium text-custom-text-100">Connect Account</h4>
-                <p className="text-sm text-custom-text-200">
+                <h4 className="text-16 font-medium text-primary">Connect Account</h4>
+                <p className="text-13 text-secondary">
                   Connecting personal account unlocks new possibilities with connected workspace integrations.
                 </p>
               </div>
@@ -63,9 +75,9 @@ export const UserConnectionsView = observer(function UserConnectionsView() {
           </>
         ) : (
           <div className="w-full py-6 sm:gap-16">
-            <div className="flex gap-2 items-center col-span-12 p-4 border border-custom-border-100 rounded-md">
-              <Grid2x2X size={16} className="text-custom-primary-300" />
-              <p className="text-sm text-custom-text-200 col-span-12 font-medium">
+            <div className="flex gap-2 items-center col-span-12 p-4 border border-subtle rounded-md">
+              <Grid2x2X size={16} className="text-accent-secondary" />
+              <p className="text-13 text-secondary col-span-12 font-medium">
                 No integration is currently connected to the selected workspace.
               </p>
             </div>
@@ -115,23 +127,9 @@ export const ConnectionMapper = observer(function ConnectionMapper(props: {
         user.data?.id,
         true
       );
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "GITHUB_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
       if (response) window.open(response, "_self");
     } else if (source === E_INTEGRATION_KEYS.SLACK) {
       const response = await connectUser(selectedWorkspace.id, selectedWorkspace.slug, true);
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-        payload: {
-          type: "SLACK_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
       if (response) window.open(response, "_self");
     } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
       const response = await connectGithubEnterpriseUserCredential(
@@ -147,22 +145,8 @@ export const ConnectionMapper = observer(function ConnectionMapper(props: {
   const handleDisconnection = async (source: TUserConnection) => {
     if (source === E_INTEGRATION_KEYS.GITHUB) {
       await disconnectGithubUserCredential(selectedWorkspace.id, user.data?.id);
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "GITHUB_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
     } else if (source === E_INTEGRATION_KEYS.SLACK) {
       await disconnectUser(selectedWorkspace.id);
-      captureSuccess({
-        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-        payload: {
-          type: "SLACK_USER",
-          workspaceId: selectedWorkspace.id,
-        },
-      });
     } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
       await disconnectGithubEnterpriseUserCredential(selectedWorkspace.id, user.data?.id);
     }

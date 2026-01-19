@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { EEstimateSystem } from "@plane/constants";
@@ -35,13 +48,13 @@ export const EstimateListItem = observer(function EstimateListItem(props: TEstim
   return (
     <div
       className={cn(
-        "relative border-b border-custom-border-200 flex justify-between items-center gap-3 py-3.5",
-        isAdmin && isEditable && isEstimateEnabled ? `text-custom-text-100` : `text-custom-text-200`
+        "relative border-b border-subtle flex justify-between items-center gap-3 py-3.5",
+        isAdmin && isEditable && isEstimateEnabled ? `text-primary` : `text-secondary`
       )}
     >
       <div className="space-y-1">
-        <h3 className="font-medium text-base">{currentEstimate?.name}</h3>
-        <p className="text-xs">
+        <h3 className="font-medium text-14">{currentEstimate?.name}</h3>
+        <p className="text-11">
           {estimatePointValues
             ?.map((estimatePointValue) => {
               if (currentEstimate?.type === EEstimateSystem.TIME) {

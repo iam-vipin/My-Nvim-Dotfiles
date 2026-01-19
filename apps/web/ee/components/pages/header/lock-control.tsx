@@ -1,9 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LockKeyhole, LockKeyholeOpen, FolderLock, FolderOpen } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
+import { IconButton } from "@plane/propel/icon-button";
+import { Button } from "@plane/propel/button";
 // utils
 import { cn } from "@plane/utils";
 // hooks
@@ -160,20 +175,14 @@ export const PageLockControl = observer(function PageLockControl({ page, storeTy
   }, []);
 
   // Common button/text styles to ensure consistent sizing
-  const buttonBaseClass =
-    "h-6 min-w-[76px] flex items-center justify-center gap-1.5 px-2 rounded transition-colors duration-200 ease-in-out";
-  const textBaseClass = "text-xs font-medium leading-none flex items-center relative top-[1px]";
+  const textBaseClass = "text-caption-sm-medium leading-none flex items-center relative top-[1px]";
 
   if (is_locked && !canCurrentUserLockPage) {
     return (
       <Tooltip tooltipContent="You don't have the permission to unlock this page" position="bottom">
-        <div
-          className={cn(buttonBaseClass, "text-custom-primary-100 bg-custom-primary-100/20 cursor-default")}
-          aria-label="Locked"
-        >
-          <LockKeyhole className="flex-shrink-0 size-3.5" />
-          <span className={textBaseClass}>Locked</span>
-        </div>
+        <Button variant="tertiary" size="sm" prependIcon={<LockKeyhole />} disabled>
+          Locked
+        </Button>
       </Tooltip>
     );
   }
@@ -189,80 +198,79 @@ export const PageLockControl = observer(function PageLockControl({ page, storeTy
       {/* Render the correct button based on display state, inlined */}
       {displayState === "neutral" && (
         <Tooltip tooltipContent="Lock page" position="bottom" disabled={canShowRecursiveOptions && showLockOptions}>
-          <button
-            type="button"
+          <IconButton
+            variant={canShowRecursiveOptions && showLockOptions ? "tertiary" : "ghost"}
+            size="lg"
+            icon={LockKeyhole}
             onClick={handleButtonClick}
-            className={cn(
-              "flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors",
-              {
-                "bg-custom-background-80 text-custom-text-100": canShowRecursiveOptions && showLockOptions,
-              }
-            )}
             aria-label="Lock"
-          >
-            <LockKeyhole className="size-3.5" />
-          </button>
+          />
         </Tooltip>
       )}
       {displayState === "locked" && (
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          size="lg"
           onClick={handleButtonClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className={cn(
-            buttonBaseClass,
-            "text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30",
-            {
-              "bg-custom-primary-100/30": canShowRecursiveOptions && showLockOptions,
-            }
-          )}
+          // className={cn("text-accent-primary bg-accent-primary/20 hover:bg-accent-primary/30", {
+          //   "bg-accent-primary/30": canShowRecursiveOptions && showLockOptions,
+          // })}
+          prependIcon={
+            shouldShowHoverEffect || (canShowRecursiveOptions && showLockOptions) ? (
+              <LockKeyholeOpen />
+            ) : (
+              <LockKeyhole />
+            )
+          }
           aria-label={shouldShowHoverEffect ? "Unlock" : "Locked"}
         >
-          {/* Simple icon display - show one or the other */}
-          {shouldShowHoverEffect || (canShowRecursiveOptions && showLockOptions) ? (
-            <LockKeyholeOpen className="size-3.5 flex-shrink-0" />
-          ) : (
-            <LockKeyhole className={cn("size-3.5 flex-shrink-0", justLocked && "animate-lock-icon")} />
-          )}
-
-          {/* Text element with animation only when just locked */}
-          {shouldShowHoverEffect || (canShowRecursiveOptions && showLockOptions) ? (
-            <span className={textBaseClass}>Unlock</span>
-          ) : (
-            <span className={cn(textBaseClass, justLocked && "animate-text-slide-in")}>Locked</span>
-          )}
-        </button>
+          <span
+            className={cn(
+              textBaseClass,
+              !shouldShowHoverEffect && !canShowRecursiveOptions && justLocked && "animate-text-slide-in"
+            )}
+          >
+            {shouldShowHoverEffect || (canShowRecursiveOptions && showLockOptions) ? "Unlock" : "Locked"}
+          </span>
+        </Button>
       )}
       {displayState === "unlocked" && (
-        <div className={cn(buttonBaseClass, "text-custom-text-200 animate-fade-out")} aria-label="Unlocked">
-          <LockKeyholeOpen className="size-3.5 flex-shrink-0 animate-unlock-icon" />
+        <Button
+          variant="ghost"
+          size="lg"
+          className="text-secondary animate-fade-out"
+          prependIcon={<LockKeyholeOpen />}
+          aria-label="Unlocked"
+          disabled
+        >
           <span className={cn(textBaseClass, "animate-text-slide-in animate-text-fade-out")}>Unlocked</span>
-        </div>
+        </Button>
       )}
 
       {canShowRecursiveOptions && showLockOptions && (
         <div ref={lockOptionsRef} className="absolute top-full right-0 mt-1 z-10 animate-slide-up">
-          <div className="my-1 overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[180px]">
+          <div className="my-1 overflow-hidden rounded-md border-[0.5px] border-subtle bg-surface-1 px-2 py-2.5 shadow-raised-200 focus:outline-hidden min-w-[180px]">
             {(() => {
               const LockIcon = is_locked ? LockKeyholeOpen : LockKeyhole;
               const menuItemClasses =
-                "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none flex items-center gap-2 transition-colors";
+                "w-full select-none truncate rounded-xs px-1 py-1.5 text-left text-secondary hover:bg-layer-1-hover hover:text-primary focus:outline-hidden flex items-center gap-2 transition-colors";
 
               return (
                 <>
                   <button type="button" onClick={() => handleLockOption(false)} className={menuItemClasses}>
-                    <LockIcon className="size-3.5 flex-shrink-0" />
-                    <span className="text-xs leading-none flex items-center">{`Just ${actionText.toLowerCase()} this page`}</span>
+                    <LockIcon className="size-3.5 shrink-0" />
+                    <span className="text-caption-sm-regular leading-none flex items-center">{`Just ${actionText.toLowerCase()} this page`}</span>
                   </button>
                   {hasSubpages && (
                     <button type="button" onClick={() => handleLockOption(true)} className={menuItemClasses}>
                       {is_locked ? (
-                        <FolderOpen className="size-3.5 flex-shrink-0" />
+                        <FolderOpen className="size-3.5 shrink-0" />
                       ) : (
-                        <FolderLock className="size-3.5 flex-shrink-0" />
+                        <FolderLock className="size-3.5 shrink-0" />
                       )}
-                      <span className="text-xs leading-none flex items-center">{`${actionText} page and all subpages`}</span>
+                      <span className="text-caption-sm-regular leading-none flex items-center">{`${actionText} page and all subpages`}</span>
                     </button>
                   )}
                 </>

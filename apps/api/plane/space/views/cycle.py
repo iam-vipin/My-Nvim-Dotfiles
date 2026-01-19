@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third Party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -28,8 +39,7 @@ class ProjectCyclesEndpoint(BaseAPIView):
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
+                        Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
                         then=Value("CURRENT"),
                     ),
                     When(start_date__gt=timezone.now(), then=Value("UPCOMING")),

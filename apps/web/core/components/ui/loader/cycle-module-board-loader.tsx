@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { range } from "lodash-es";
 
 export function CycleModuleBoardLayoutLoader() {
@@ -8,31 +21,31 @@ export function CycleModuleBoardLayoutLoader() {
           {range(5).map((i) => (
             <div
               key={i}
-              className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm"
+              className="flex h-44 w-full flex-col justify-between rounded-sm  border border-subtle bg-surface-1 p-4 text-13"
             >
               <div className="flex items-center justify-between">
-                <span className="h-6 w-24 bg-custom-background-80 rounded" />
+                <span className="h-6 w-24 bg-layer-1 rounded-sm" />
                 <div className="flex items-center gap-2">
-                  <span className="h-6 w-20 bg-custom-background-80 rounded" />
-                  <span className="h-6 w-6 bg-custom-background-80 rounded" />
+                  <span className="h-6 w-20 bg-layer-1 rounded-sm" />
+                  <span className="h-6 w-6 bg-layer-1 rounded-sm" />
                 </div>
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="h-5 w-5 bg-custom-background-80 rounded" />
-                    <span className="h-5 w-20 bg-custom-background-80 rounded" />
+                    <span className="h-5 w-5 bg-layer-1 rounded-sm" />
+                    <span className="h-5 w-20 bg-layer-1 rounded-sm" />
                   </div>
-                  <span className="h-5 w-5 bg-custom-background-80 rounded-full" />
+                  <span className="h-5 w-5 bg-layer-1 rounded-full" />
                 </div>
-                <span className="h-1.5 bg-custom-background-80 rounded" />
+                <span className="h-1.5 bg-layer-1 rounded-sm" />
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <span className="h-4 w-16 bg-custom-background-80 rounded" />
+                    <span className="h-4 w-16 bg-layer-1 rounded-sm" />
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="h-4 w-4 bg-custom-background-80 rounded" />
-                    <span className="h-4 w-4 bg-custom-background-80 rounded" />
+                    <span className="h-4 w-4 bg-layer-1 rounded-sm" />
+                    <span className="h-4 w-4 bg-layer-1 rounded-sm" />
                   </div>
                 </div>
               </div>

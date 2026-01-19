@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
@@ -87,19 +99,19 @@ export const LicenseFileForm = observer(function LicenseFileForm(props: TLicense
   return (
     <form onSubmit={submitActivateLicense}>
       <div className="flex flex-col max-h-[60vh] px-4 overflow-y-auto vertical-scrollbar scrollbar-xs">
-        <div className="space-y-6 flex-shrink-0 border-b border-custom-border-200 pb-4">
+        <div className="space-y-6 flex-shrink-0 border-b border-subtle-1 pb-4">
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-custom-text-200">Upload a license file</h4>
+            <h4 className="text-13 font-medium text-secondary">Upload a license file</h4>
             {!selectedFile ? (
               <div
                 {...getRootProps()}
                 className={cn(
-                  "rounded-lg p-6 text-center cursor-pointer transition-colors border border-dashed border-custom-primary-300 bg-custom-primary-100/10",
+                  "rounded-lg p-6 text-center cursor-pointer transition-colors border border-dashed border-accent-subtle bg-accent-primary/10",
                   !hasPermission && "cursor-not-allowed opacity-50"
                 )}
               >
                 <input {...getInputProps()} />
-                <div className="flex items-center justify-center gap-2 text-custom-primary-300 text-xs font-medium">
+                <div className="flex items-center justify-center gap-2 text-accent-secondary text-11 font-medium">
                   <Upload className="size-4" />
                   <p>
                     {isDragActive
@@ -110,38 +122,38 @@ export const LicenseFileForm = observer(function LicenseFileForm(props: TLicense
               </div>
             ) : (
               <>
-                <div className={cn("border border-custom-border-200 rounded-lg p-4", hasError && "border-red-500")}>
+                <div className={cn("border border-subtle-1 rounded-lg p-4", hasError && "border-danger-strong")}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <PageIcon className="size-5 text-custom-text-300" />
-                      <p className="text-sm font-medium text-custom-text-200">{selectedFile.name}</p>
+                      <PageIcon className="size-5 text-tertiary" />
+                      <p className="text-13 font-medium text-secondary">{selectedFile.name}</p>
                     </div>
-                    <Button type="button" variant="link-danger" size="sm" onClick={removeFile}>
+                    <Button type="button" variant="error-outline" onClick={removeFile}>
                       <CloseIcon className="size-4" />
                     </Button>
                   </div>
                 </div>
-                {hasError && <div className="text-xs text-red-500">{errors}</div>}
+                {hasError && <div className="text-caption-sm-medium text-danger-secondary">{errors}</div>}
               </>
             )}
           </div>
         </div>
         <InstanceDetailsForLicenseActivation workspaceSlug={workspaceSlug} />
       </div>
-      <div className="flex justify-between gap-2 border-t border-custom-border-200 pt-4 px-4">
+      <div className="flex justify-between gap-2 border-t border-subtle-1 pt-4 px-4">
         <div className="flex items-center gap-2">
           {!hasPermission && (
-            <div className="text-xs text-red-500 cursor-help">
+            <div className="text-caption-sm-medium text-danger-secondary cursor-help">
               You don&apos;t have permission to perform this action. Please contact the workspace admin.
             </div>
           )}
         </div>
         <div className="flex justify-end items-center gap-2">
-          <Button onClick={handleClose} variant="neutral-primary" size="sm" type="button">
+          <Button onClick={handleClose} variant="secondary" type="button" size="lg">
             Cancel
           </Button>
-          <Button type="submit" size="sm" disabled={loader || !hasPermission || !selectedFile}>
-            {loader ? "Activating..." : "Activate"}
+          <Button type="submit" disabled={loader || !hasPermission || !selectedFile} size="lg">
+            {loader ? "Activating" : "Activate"}
           </Button>
         </div>
       </div>

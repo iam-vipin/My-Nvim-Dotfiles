@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -34,9 +47,9 @@ export const EpicPropertiesRoot = observer(function EpicPropertiesRoot(props: Ep
     <div className={cn("py-2", containerClassName)}>
       <div
         className={cn(
-          "group/issue-type hover:bg-custom-background-90/60 rounded-md",
+          "group/issue-type hover:bg-layer-1/60 rounded-md",
           {
-            "bg-custom-background-90/60": isOpen,
+            "bg-layer-1/60": isOpen,
           },
           getClassName?.(isOpen)
         )}
@@ -52,23 +65,23 @@ export const EpicPropertiesRoot = observer(function EpicPropertiesRoot(props: Ep
                 <div className="flex-shrink-0">
                   <ChevronRightIcon
                     className={cn("flex-shrink-0 size-4 transition-all", {
-                      "rotate-90 text-custom-text-100": isOpen,
-                      "text-custom-text-300": !isOpen,
+                      "rotate-90 text-primary": isOpen,
+                      "text-tertiary": !isOpen,
                     })}
                   />
                 </div>
                 <div className="flex flex-col items-start justify-start whitespace-normal">
                   <div className="flex gap-4 text-left items-center">
-                    <div className="text-sm text-custom-text-100 font-medium line-clamp-1">
+                    <div className="text-13 text-primary font-medium line-clamp-1">
                       {t("project_settings.epics.properties.title")}
                     </div>
                     {!epicDetail?.is_active && (
-                      <div className="py-0.5 px-3 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
+                      <div className="py-0.5 px-3 text-11 rounded-sm font-medium text-tertiary bg-layer-1/70">
                         {t("project_settings.epics.disabled")}
                       </div>
                     )}
                   </div>
-                  <div className="text-sm text-custom-text-300 text-left line-clamp-1">
+                  <div className="text-13 text-tertiary text-left line-clamp-1">
                     {t("project_settings.epics.properties.description")}
                   </div>
                 </div>

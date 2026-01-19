@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 import logging
@@ -20,6 +31,7 @@ from plane.authentication.adapter.error import (
 from plane.utils.path_validator import get_safe_redirect_url
 
 logger = logging.getLogger("plane.authentication")
+
 
 class GitHubOauthInitiateEndpoint(View):
     def get(self, request):
@@ -62,10 +74,13 @@ class GitHubCallbackEndpoint(View):
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):
-            logger.warning("State mismatch in Github callback", extra={
-                "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
-                "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
-            })
+            logger.warning(
+                "State mismatch in Github callback",
+                extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                    "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
+                },
+            )
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
@@ -77,10 +92,13 @@ class GitHubCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         if not code:
-            logger.warning("Code not found in Github callback", extra={
-                "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
-                "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
-            })
+            logger.warning(
+                "Code not found in Github callback",
+                extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                    "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
+                },
+            )
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",

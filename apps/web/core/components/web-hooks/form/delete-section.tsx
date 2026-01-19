@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Disclosure, Transition } from "@headlessui/react";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -11,11 +24,11 @@ export function WebhookDeleteSection(props: Props) {
   const { openDeleteModal } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-200">
+    <Disclosure as="div" className="border-t border-subtle">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-            <span className="text-lg tracking-tight">Danger zone</span>
+            <span className="text-16 tracking-tight">Danger zone</span>
             {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
           </Disclosure.Button>
 
@@ -30,13 +43,14 @@ export function WebhookDeleteSection(props: Props) {
           >
             <Disclosure.Panel>
               <div className="flex flex-col gap-8">
-                <span className="text-sm tracking-tight">
+                <span className="text-13 tracking-tight">
                   Once a webhook is deleted, it cannot be restored. Future events will no longer be delivered to this
                   webhook.
                 </span>
                 <div>
                   <Button
-                    variant="danger"
+                    variant="error-fill"
+                    size="lg"
                     onClick={openDeleteModal}
                     data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DELETE_BUTTON}
                   >

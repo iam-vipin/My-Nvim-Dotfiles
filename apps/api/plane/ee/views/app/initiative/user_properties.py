@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -22,12 +33,8 @@ class InitiativeUserPropertiesEndpoint(BaseAPIView):
 
     def patch(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
-        initiative_user_properties = InitiativeUserProperty.objects.get(
-            user=request.user, workspace=workspace
-        )
-        initiative_user_properties.filters = request.data.get(
-            "filters", initiative_user_properties.filters
-        )
+        initiative_user_properties = InitiativeUserProperty.objects.get(user=request.user, workspace=workspace)
+        initiative_user_properties.filters = request.data.get("filters", initiative_user_properties.filters)
 
         initiative_user_properties.display_filters = request.data.get(
             "display_filters", initiative_user_properties.display_filters

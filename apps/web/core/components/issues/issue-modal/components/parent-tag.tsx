@@ -1,4 +1,16 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -33,7 +45,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
       control={control}
       name="parent_id"
       render={({ field: { onChange } }) => (
-        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-90 p-2 text-xs">
+        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded-sm bg-surface-2 p-2 text-caption-sm-regular">
           <div className="flex items-center gap-2">
             <span
               className="block h-1.5 w-1.5 rounded-full"
@@ -41,14 +53,14 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
                 backgroundColor: selectedParentIssue.state__color,
               }}
             />
-            <span className="flex-shrink-0 text-custom-text-200">
+            <span className="flex-shrink-0 text-secondary">
               {selectedParentIssue?.project_id && (
                 <IssueIdentifier
                   projectId={selectedParentIssue.project_id}
                   issueTypeId={selectedParentIssue.type_id}
                   projectIdentifier={selectedParentIssue?.project__identifier}
                   issueSequenceId={selectedParentIssue.sequence_id}
-                  textContainerClassName="text-xs"
+                  size="xs"
                 />
               )}
             </span>

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 from opensearchpy.helpers.utils import AttrList, AttrDict
 
@@ -111,21 +122,13 @@ class IssueCommentSearchSerializer(BaseSearchSerializer):
         Return highlighted comment snippet or truncated original comment
         """
         # Check if this is a search hit with highlighting (from preserved metadata)
-        if (
-            isinstance(obj, dict)
-            and "_highlight" in obj
-            and "comment" in obj["_highlight"]
-        ):
+        if isinstance(obj, dict) and "_highlight" in obj and "comment" in obj["_highlight"]:
             # Return the first highlighted fragment
             highlights = obj["_highlight"]["comment"]
             return highlights[0] if highlights else self._get_truncated_comment(obj)
 
         # Check if this is a raw hit object with meta.highlight
-        if (
-            hasattr(obj, "meta")
-            and hasattr(obj.meta, "highlight")
-            and "comment" in obj.meta.highlight
-        ):
+        if hasattr(obj, "meta") and hasattr(obj.meta, "highlight") and "comment" in obj.meta.highlight:
             # Return the first highlighted fragment
             highlights = obj.meta.highlight["comment"]
             return highlights[0] if highlights else self._get_truncated_comment(obj)

@@ -16,7 +16,8 @@ RUN apk add --no-cache --upgrade \
     "libxslt" \
     "xmlsec" \
     "ca-certificates" \
-    "openssl"
+    "openssl" \
+    "openldap-dev"
 
 COPY requirements.txt ./
 COPY requirements ./requirements

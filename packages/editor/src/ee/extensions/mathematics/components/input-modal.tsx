@@ -61,7 +61,7 @@ export function MathInputModal({ latex, onSave, onClose, onPreview, nodeType }: 
 
   return (
     <div
-      className="bg-custom-background-100 border border-custom-border-200 rounded-lg p-4 mt-2 shadow-2xl min-w-[400px] transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+      className="bg-layer-1 border border-subtle-1 rounded-lg p-4 mt-2 shadow-2xl min-w-[400px] transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >
@@ -69,7 +69,7 @@ export function MathInputModal({ latex, onSave, onClose, onPreview, nodeType }: 
         <textarea
           ref={inputRef}
           className={cn(
-            "w-full px-0 py-0 bg-transparent border-none text-sm font-mono text-custom-text-100 placeholder-custom-text-300 focus:outline-none resize-none",
+            "w-full px-0 py-0 bg-transparent border-none text-13 font-mono text-primary placeholder-custom-text-300 focus:outline-none resize-none",
             nodeType === ADDITIONAL_EXTENSIONS.INLINE_MATH ? "min-h-[32px]" : "min-h-[120px]"
           )}
           placeholder={ADDITIONAL_EXTENSIONS.INLINE_MATH === nodeType ? "F = ma" : "F = G \\frac{m_1 m_2}{r^2}"}
@@ -99,13 +99,13 @@ export function MathInputModal({ latex, onSave, onClose, onPreview, nodeType }: 
       <div className="flex justify-between items-center pt-2">
         <div>
           {!isValidLatex ? (
-            <div className="text-red-400 flex items-center gap-1">
-              <span className="text-base shrink-0"> ⚠ </span>
-              <span className="text-xs"> Invalid syntax</span>
+            <div className="text-danger-primary flex items-center gap-1">
+              <span className="text-14 shrink-0"> ⚠ </span>
+              <span className="text-11"> Invalid syntax</span>
             </div>
           ) : null}
         </div>
-        <Button onClick={handleSave} size="sm" disabled={!isValidLatex} variant="primary">
+        <Button onClick={handleSave} disabled={!isValidLatex} variant="primary" size="lg">
           Done
         </Button>
       </div>

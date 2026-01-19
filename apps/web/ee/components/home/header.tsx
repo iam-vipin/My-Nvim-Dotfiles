@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -20,7 +33,8 @@ export const HomePageHeader = observer(function HomePageHeader() {
   if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
 
   useEffect(() => {
-    initPiChat();
+    void initPiChat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -28,18 +42,19 @@ export const HomePageHeader = observer(function HomePageHeader() {
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-full gap-2">
           <div className="flex items-center gap-2">
-            <div className="text-base font-semibold text-custom-text-350">Ask AI</div>
+            <div className="text-14 font-semibold text-tertiary">Ask AI</div>
             <BetaBadge />
           </div>
           <Tooltip tooltipContent="Maximize" position="top">
             <Link href={`/${workspaceSlug}/projects/pi-chat/${activeChatId}`}>
-              <Maximize className="size-4 text-custom-text-350" />
+              <Maximize className="size-4 text-tertiary" />
             </Link>
           </Tooltip>
         </div>
         {isWorkspaceAuthorized ? (
           <InputBox
             isFullScreen
+            onlyInput={true}
             isProjectLevel
             showProgress // Required since its taken to a whole different page
             className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
@@ -47,7 +62,7 @@ export const HomePageHeader = observer(function HomePageHeader() {
           />
         ) : (
           <UnauthorizedView
-            className="border border-custom-border-100 rounded-lg p-4 mt-3 max-h-[164px] justify-start"
+            className="border border-subtle/40 rounded-lg p-4 mt-3 max-h-[164px] justify-start"
             imgClassName="h-[117px]"
           />
         )}

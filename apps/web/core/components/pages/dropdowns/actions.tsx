@@ -1,17 +1,29 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";
 // constants
-import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
+// plane editor
+import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
-// helpers
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web hooks
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -63,8 +75,14 @@ export const PageActions = observer(function PageActions(props: Props) {
   });
 
   // derived values
-  const { access, archived_at, canCurrentUserChangeAccess, canCurrentUserDeletePage, canCurrentUserDuplicatePage } =
-    page;
+  const {
+    access,
+    archived_at,
+    canCurrentUserChangeAccess,
+    canCurrentUserDeletePage,
+    canCurrentUserDuplicatePage,
+    isContentEditable,
+  } = page;
 
   const isProjectPage = page.project_ids && page.project_ids.length > 0;
   // Base menu items that are common across all implementations
@@ -73,51 +91,42 @@ export const PageActions = observer(function PageActions(props: Props) {
       {
         key: "toggle-access",
         action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ACCESS_TOGGLE,
-          });
           pageOperations.toggleAccess();
         },
         title: access === EPageAccess.PUBLIC ? "Make private" : isProjectPage ? "Make public" : "Open to workspace",
-        icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
-        shouldRender: canCurrentUserChangeAccess && !archived_at,
+        icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
+        shouldRender: canCurrentUserChangeAccess && !archived_at && isContentEditable,
       },
       {
         key: "open-in-new-tab",
         action: pageOperations.openInNewTab,
         title: "Open in new tab",
-        icon: ExternalLink,
+        icon: NewTabIcon,
         shouldRender: true,
       },
       {
         key: "copy-link",
         action: pageOperations.copyLink,
         title: "Copy link",
-        icon: Link,
+        icon: LinkIcon,
         shouldRender: true,
       },
       {
         key: "make-a-copy",
         action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.DUPLICATE_BUTTON,
-          });
           pageOperations.duplicate(realtimeEvents);
         },
         title: "Make a copy",
-        icon: Copy,
+        icon: CopyIcon,
         shouldRender: canCurrentUserDuplicatePage,
       },
       {
         key: "delete",
         action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.CONTEXT_MENU,
-          });
           setDeletePageModal(true);
         },
         title: "Delete",
-        icon: Trash2,
+        icon: TrashIcon,
         shouldRender: canCurrentUserDeletePage && !!archived_at,
       },
     ],

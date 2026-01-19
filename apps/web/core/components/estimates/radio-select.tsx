@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 // helpers
 import { cn } from "@plane/utils";
@@ -53,8 +66,8 @@ export function RadioInput({
             key={index}
             onClick={() => !disabled && setSelected(value)}
             className={cn(
-              "flex items-center gap-2 text-base",
-              disabled ? `bg-custom-background-200 border-custom-border-200 cursor-not-allowed` : ``,
+              "flex items-center gap-2 text-14",
+              disabled ? `bg-layer-1 border-subtle cursor-not-allowed` : ``,
               inputFieldClassName
             )}
           >
@@ -62,9 +75,9 @@ export function RadioInput({
               id={`${name}_${index}`}
               name={name}
               className={cn(
-                `group flex flex-shrink-0 size-5 items-center justify-center rounded-full border border-custom-border-400 bg-custom-background-500 cursor-pointer`,
-                selected === value ? `bg-custom-primary-200 border-custom-primary-100 ` : ``,
-                disabled ? `bg-custom-background-200 border-custom-border-200 cursor-not-allowed` : ``,
+                `group flex flex-shrink-0 size-5 items-center justify-center rounded-full border border-strong-1 bg-layer-2 cursor-pointer`,
+                selected === value ? `bg-accent-primary/80 border-accent-strong ` : ``,
+                disabled ? `bg-layer-1 border-subtle cursor-not-allowed` : ``,
                 inputButtonClassName
               )}
               type="radio"

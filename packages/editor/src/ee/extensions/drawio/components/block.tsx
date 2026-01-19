@@ -157,8 +157,8 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
   if (failedToLoadDiagram && isUploaded) {
     return (
       <div className="relative">
-        <div className="flex items-center justify-center p-4 border border-red-300 rounded-md bg-red-50">
-          <span className="text-red-600">Failed to load diagram</span>
+        <div className="flex items-center justify-center p-4 border border-danger-subtle rounded-md bg-danger-subtle">
+          <span className="text-danger-primary">Failed to load diagram</span>
         </div>
       </div>
     );
@@ -169,7 +169,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
         {/* Editing labels */}
         {userEditingThisDiagram && (
           <div
-            className="absolute z-20 rounded px-2 py-1 text-xs font-medium text-black shadow-sm pointer-events-none whitespace-nowrap -top-[28px]"
+            className="absolute z-20 rounded-sm px-2 py-1 text-11 font-medium text-black shadow-sm pointer-events-none whitespace-nowrap -top-[28px]"
             style={{
               backgroundColor: userEditingThisDiagram.color,
             }}
@@ -202,7 +202,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
               title="Diagram"
               onLoad={handleImageLoad}
               className={cn(
-                "rounded-md shadow-sm border border-custom-border-200 max-w-full h-auto transition-all duration-200",
+                "rounded-md shadow-sm border border-subtle-1 max-w-full h-auto transition-all duration-200",
                 {
                   hidden: showImageLoader, // Hide until loaded
                   "opacity-50": userEditingThisDiagram,

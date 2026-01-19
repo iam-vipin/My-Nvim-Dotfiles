@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -25,13 +38,13 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
     <div
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200 bg-custom-background-100"
+      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-subtle-1 bg-surface-1"
       style={{
         width: `${SIDEBAR_WIDTH}px`,
       }}
     >
       <div
-        className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pl-2 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
+        className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-subtle-1 pb-2 pl-2 pr-4 text-13 font-medium text-tertiary sticky top-0 z-10 bg-surface-1 "
         style={{
           height: `${HEADER_HEIGHT}px`,
         }}
@@ -42,7 +55,7 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
         <h6>Duration</h6>
       </div>
 
-      <div className="min-h-full h-max bg-custom-background-100 overflow-hidden">
+      <div className="min-h-full h-max overflow-hidden">
         {sidebarToRender &&
           sidebarToRender({
             title,

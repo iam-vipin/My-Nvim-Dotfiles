@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import type { E_SORT_ORDER, TActivityFilters } from "@plane/constants";
-import { EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
+import type { E_SORT_ORDER, TActivityFilters, EActivityFilterType } from "@plane/constants";
+import { BASE_ACTIVITY_FILTER_TYPES, filterActivityOnSelectedFilters } from "@plane/constants";
 import type { TCommentsOperations } from "@plane/types";
 // components
 import { CommentCard } from "@/components/comments/card/root";
@@ -52,13 +65,6 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
 
   const filteredActivityAndComments = filterActivityOnSelectedFilters(activityAndComments, selectedFilters);
 
-  const BASE_ACTIVITY_FILTER_TYPES = [
-    EActivityFilterType.ACTIVITY,
-    EActivityFilterType.STATE,
-    EActivityFilterType.ASSIGNEE,
-    EActivityFilterType.DEFAULT,
-  ];
-
   return (
     <div>
       {filteredActivityAndComments.map((activityComment, index) => {
@@ -73,9 +79,9 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={!!showAccessSpecifier}
             showCopyLinkOption={!isIntakeIssue}
-            enableReplies
             disabled={disabled}
             projectId={projectId}
+            enableReplies
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem

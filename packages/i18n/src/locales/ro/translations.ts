@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "Proiecte",
@@ -308,7 +321,6 @@ export default {
   drafts: "Schițe",
   projects: "Proiecte",
   views: "Perspective",
-  workspace: "Spațiu de lucru",
   archives: "Arhive",
   settings: "Setări",
   failed_to_move_favorite: "Nu s-a putut muta favorita",
@@ -1593,6 +1605,7 @@ export default {
         name: "Numele spațiului de lucru",
         company_size: "Dimensiunea companiei",
         url: "URL-ul spațiului de lucru",
+        workspace_timezone: "Fusul orar al spațiului de lucru",
         update_workspace: "Actualizează spațiul de lucru",
         delete_workspace: "Șterge acest spațiu de lucru",
         delete_workspace_description:

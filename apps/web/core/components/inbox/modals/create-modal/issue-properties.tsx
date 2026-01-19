@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -174,7 +187,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
               customButton={
                 <button
                   type="button"
-                  className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+                  className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
                 >
                   <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
                   <span className="whitespace-nowrap">
@@ -207,7 +220,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           ) : (
             <button
               type="button"
-              className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+              className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
               onClick={() => setParentIssueModalOpen(true)}
             >
               <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />

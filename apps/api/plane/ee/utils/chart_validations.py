@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 CHART_VALIDATION_RULES = {
     "BASIC": {
         "BAR_CHART": {"group_by": None},
@@ -13,20 +24,14 @@ CHART_VALIDATION_RULES = {
     "STANDARD": {"AREA_CHART": {"group_by": "required"}},
     "COMPARISON": {"AREA_CHART": {"group_by": "required"}},
     "PROGRESS": {"DONUT_CHART": {"x_axis_date_grouping": None, "group_by": None}},
-    None: {
-        "NUMBER": {"x_axis_date_grouping": None, "group_by": None, "chart_type": None}
-    },
+    None: {"NUMBER": {"x_axis_date_grouping": None, "group_by": None, "chart_type": None}},
 }
 
 
 def validate_chart_config(chart_model, chart_type, config):
     rules = CHART_VALIDATION_RULES.get(chart_model, {}).get(chart_type, {})
 
-    validated_config = {
-        key: value
-        for key, value in config.items()
-        if key not in rules or rules[key] is not None
-    }
+    validated_config = {key: value for key, value in config.items() if key not in rules or rules[key] is not None}
 
     # Add missing keys with None if defined in rules
     for key, value in rules.items():

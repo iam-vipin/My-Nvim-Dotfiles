@@ -1,4 +1,18 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
@@ -99,17 +113,17 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
-              "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
-              "border-custom-border-300": !isUpVotedByUser,
+              "border-accent-strong-200 text-accent-secondary": isUpVotedByUser,
+              "border-strong": !isUpVotedByUser,
               "cursor-default": isInIframe,
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_upward_alt</span>
-          <span className="text-sm font-normal transition-opacity ease-in-out">{allUpVotes.length}</span>
+          <ArrowUp className="shrink-0 size-3.5" />
+          <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
 
@@ -140,17 +154,17 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
-              "border-red-600 text-red-600": isDownVotedByUser,
-              "border-custom-border-300": !isDownVotedByUser,
+              "border-danger-strong text-danger-primary": isDownVotedByUser,
+              "border-strong": !isDownVotedByUser,
               "cursor-default": isInIframe,
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>
-          <span className="text-sm font-normal transition-opacity ease-in-out">{allDownVotes.length}</span>
+          <ArrowDown className="shrink-0 size-3.5" />
+          <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>
     </div>

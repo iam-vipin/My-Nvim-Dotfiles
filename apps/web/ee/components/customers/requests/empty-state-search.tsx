@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -19,8 +32,8 @@ export const CustomerRequestSearchEmptyState = observer(function CustomerRequest
           className="w-full h-full object-cover"
         />
       </div>
-      <span className="text-center text-base font-medium">{t("customers.requests.empty_state.search.title")}</span>
-      <span className="text-center text-sm text-custom-text-200">
+      <span className="text-center text-14 font-medium">{t("customers.requests.empty_state.search.title")}</span>
+      <span className="text-center text-13 text-secondary">
         {/* TODO: Translate here */}
         Try with another search term or{" "}
         <a href="mailto:support@plane.so" className="underline">

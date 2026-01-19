@@ -1,9 +1,21 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS, ETabIndices } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -11,7 +23,6 @@ import type { TCustomer, TCustomerPayload } from "@plane/types";
 // helpers
 import { cn, getChangedFields, getTabIndex } from "@plane/utils";
 // store
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components
 import { CustomerAdditionalProperties, DefaultProperties } from "@/plane-web/components/customers";
@@ -75,12 +86,6 @@ export function CustomerForm(props: TCustomerForms) {
           customerId: customer.id,
         });
       }
-      captureSuccess({
-        eventName: CUSTOMER_TRACKER_EVENTS.create_customer,
-        payload: {
-          id: customer.id,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("customers.toasts.create.success.title", { customer_name: customer.name }),
@@ -91,10 +96,6 @@ export function CustomerForm(props: TCustomerForms) {
       });
       toggleCreateCustomerModal();
     } catch (error: any) {
-      captureError({
-        eventName: CUSTOMER_TRACKER_EVENTS.create_customer,
-        error: error as Error,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("customers.toasts.create.error.title"),
@@ -114,12 +115,6 @@ export function CustomerForm(props: TCustomerForms) {
           customerId: customer.id,
         });
       }
-      captureSuccess({
-        eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-        payload: {
-          id: data.id,
-        },
-      });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -129,13 +124,6 @@ export function CustomerForm(props: TCustomerForms) {
 
       toggleCreateCustomerModal();
     } catch (error: any) {
-      captureError({
-        eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-        payload: {
-          id: data.id,
-        },
-        error: error as Error,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("customers.toasts.update.error.title"),
@@ -187,7 +175,7 @@ export function CustomerForm(props: TCustomerForms) {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg">
         <div className="space-y-2 pl-5 pt-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {data?.id ? t("customers.update.label") : t("customers.create.label")}
           </h3>
           {/* Default Properties */}
@@ -206,24 +194,17 @@ export function CustomerForm(props: TCustomerForms) {
         </div>
         <div
           className={cn(
-            "px-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100",
-            isFormOverFlowing && "shadow-custom-shadow-xs"
+            "px-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle",
+            isFormOverFlowing && "shadow-raised-100"
           )}
         >
           <div className="flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="neutral-primary"
-              size="sm"
-              onClick={handleModalClose}
-              tabIndex={getIndex("cancel")}
-            >
+            <Button type="button" variant="secondary" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
               {t("customers.create.cancel")}
             </Button>
             <Button
               variant="primary"
               ref={submitBtnRef}
-              size="sm"
               type="submit"
               tabIndex={getIndex("submit")}
               disabled={isSubmitting}

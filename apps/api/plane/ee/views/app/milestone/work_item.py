@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -32,15 +43,13 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.MILESTONES)
     def get(self, request, slug, project_id, milestone_id):
         # Return updated work items list using serializer
-        workitem_ids = MilestoneIssue.objects.filter(
-            milestone_id=milestone_id, deleted_at__isnull=True
-        ).values_list("issue_id", flat=True)
+        workitem_ids = MilestoneIssue.objects.filter(milestone_id=milestone_id, deleted_at__isnull=True).values_list(
+            "issue_id", flat=True
+        )
 
         # Base queryset with basic filters
         issue_queryset = (
-            Issue.issue_and_epics_objects.filter(
-                workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
-            )
+            Issue.issue_and_epics_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=workitem_ids)
             .select_related("type")
             .prefetch_related("labels", "assignees")
         )
@@ -59,9 +68,7 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
         ).first()
 
         if not milestone:
-            return Response(
-                {"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Use dedicated work item serializer to handle work items update
         serializer = MilestoneWorkItemSerializer(
@@ -103,15 +110,13 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
             )
 
         # Return updated work items list using serializer
-        workitem_ids = MilestoneIssue.objects.filter(
-            milestone_id=milestone_id, deleted_at__isnull=True
-        ).values_list("issue_id", flat=True)
+        workitem_ids = MilestoneIssue.objects.filter(milestone_id=milestone_id, deleted_at__isnull=True).values_list(
+            "issue_id", flat=True
+        )
 
         # Base queryset with basic filters
         issue_queryset = (
-            Issue.issue_and_epics_objects.filter(
-                workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
-            )
+            Issue.issue_and_epics_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=workitem_ids)
             .select_related("type")
             .prefetch_related("labels", "assignees")
         )
@@ -124,7 +129,6 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.MILESTONES)
     def post(self, request, slug, project_id, work_item_id):
-
         milestone_id = request.data.get("milestone_id")
 
         if not milestone_id:
@@ -139,9 +143,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not workspace:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Validate the work item exists
         work_item = Issue.objects.filter(
@@ -152,9 +154,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not work_item:
-            return Response(
-                {"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Validate the new milestone exists
         new_milestone = Milestone.objects.filter(
@@ -165,9 +165,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not new_milestone:
-            return Response(
-                {"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Check for existing milestone association
         milestone_work_item = (
@@ -184,6 +182,8 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         # If already assigned to this milestone, no-op
         if milestone_work_item and milestone_work_item.milestone_id == new_milestone.id:
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+        old_milestone_id = milestone_work_item.milestone_id if milestone_work_item else None
 
         # Delete old milestone association and log it
         if milestone_work_item:
@@ -202,15 +202,13 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         # Log creation with NEW milestone info
         issue_activity.delay(
             type=(
-                "milestone_issue.activity.created"
-                if milestone_work_item is None
-                else "milestone_issue.activity.updated"
+                "milestone_issue.activity.created" if old_milestone_id is None else "milestone_issue.activity.updated"
             ),
             requested_data=json.dumps({"milestone_id": str(new_milestone.id)}),
             actor_id=str(request.user.id),
             issue_id=str(work_item_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"milestone_name": new_milestone.title}),
+            current_instance=(json.dumps({"milestone_id": str(old_milestone_id)}) if old_milestone_id else None),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
@@ -226,9 +224,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not workspace:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         work_item = Issue.objects.filter(
             id=work_item_id,
@@ -238,9 +234,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not work_item:
-            return Response(
-                {"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
 
         milestone_work_item = MilestoneIssue.objects.filter(
             issue_id=work_item_id,

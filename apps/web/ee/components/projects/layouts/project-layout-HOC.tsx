@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // assets
@@ -18,7 +31,6 @@ import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -85,9 +97,6 @@ export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props)
             title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
             description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
             onClick={() => {
-              captureClick({
-                elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON,
-              });
               toggleCreateProjectModal(true);
             }}
             disabled={!hasProjectMemberPermissions}
@@ -101,8 +110,8 @@ export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props)
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <img src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
-          <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
-          <p className="whitespace-pre-line text-base text-custom-text-400">
+          <h5 className="mb-1 mt-7 text-18 font-medium">No matching projects</h5>
+          <p className="whitespace-pre-line text-14 text-placeholder">
             {`No projects detected with the matching\ncriteria. Create a new project instead`}
           </p>
         </div>

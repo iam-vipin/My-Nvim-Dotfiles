@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -65,13 +78,13 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
             selectedOption.member?.display_name
           ) : (
             <div className="flex items-center gap-2">
-              <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-              <span className="text-sm text-custom-sidebar-text-400">None</span>
+              <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
+              <span className="text-13 text-placeholder">None</span>
             </div>
           )}
         </div>
       }
-      buttonClassName="!px-3 !py-2 bg-custom-background-100"
+      buttonClassName="!px-3 !py-2 bg-surface-1"
       options={
         options &&
         options && [
@@ -81,8 +94,8 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
             query: "none",
             content: (
               <div className="flex items-center gap-2">
-                <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-                <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
+                <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
+                <span className="py-0.5 text-13 text-placeholder">None</span>
               </div>
             ),
           },

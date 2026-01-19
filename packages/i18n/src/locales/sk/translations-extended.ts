@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Používateľské meno",
+        placeholder: "Zadajte svoje používateľské meno",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Pokračovať s {ldapProviderName}",
+        sub_header: "Zadajte svoje prihlasovacie údaje {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Pí Čet",
     initiatives: "Iniciatívy",
@@ -723,6 +750,11 @@ export default {
       worklogs: {
         title: "Pracovné záznamy",
       },
+      identity: {
+        title: "Identita",
+        heading: "Identita",
+        description: "Nakonfigurujte svoju doménu a povolte jednotné prihlásenie",
+      },
       project_states: {
         title: "Stavy projektu",
       },
@@ -923,6 +955,54 @@ export default {
         heading: "Plane AI",
         description:
           "Vidíte, ako sa vaša práca stáva inteligentnejšou a rýchlejšou s pomocou AI, ktorá je natívne pripojená k vašej práci a znalostnej základni.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "Importovať členov z CSV",
+      description: "Nahrajte CSV so stĺpcami: Email, Display Name, First Name, Last Name, Role (5, 15 alebo 20)",
+      dropzone: {
+        active: "Presuňte CSV súbor sem",
+        inactive: "Presuňte alebo kliknite pre nahranie",
+        file_type: "Podporované są iba súbory .csv",
+      },
+      buttons: {
+        cancel: "Zrušiť",
+        import: "Importovať",
+        try_again: "Skúsiť znova",
+        close: "Zavrieť",
+        done: "Hotovo",
+      },
+      progress: {
+        uploading: "Nahrávanie...",
+        importing: "Importovanie...",
+      },
+      summary: {
+        title: {
+          failed: "Import zlyhal",
+          complete: "Import dokončený",
+        },
+        message: {
+          seat_limit: "Nie je možné importovať členov kvôli obmedzeniam počtu miest.",
+          success: "Úspešne pridaných {count} člen{plural} do pracovného priestoru.",
+          no_imports: "Zo súboru CSV neboli importovaní žiadni členovia.",
+        },
+        stats: {
+          successful: "Úspešné",
+          failed: "Neúspešné",
+        },
+        download_errors: "Stiahnuť chyby",
+      },
+      toast: {
+        invalid_file: {
+          title: "Neplatný súbor",
+          message: "Podporované sú iba CSV súbory.",
+        },
+        import_failed: {
+          title: "Import zlyhal",
+          message: "Niečo sa pokazilo.",
+        },
       },
     },
   },
@@ -1397,6 +1477,22 @@ export default {
     choose_entity: "Vyberte entitu",
     choose_project: "Vyberte projekt",
     link_plane_project: "Prepojiť projekt Plane",
+    project_issue_sync: "Synchronizácia problémov projektu",
+    project_issue_sync_description: "Synchronizujte problémy z Gitlab do vášho projektu Plane",
+    project_issue_sync_empty_state: "Mapovaná synchronizácia problémov projektu sa zobrazí tu",
+    configure_project_issue_sync_state: "Konfigurovať stav synchronizácie problémov",
+    select_issue_sync_direction: "Vyberte smer synchronizácie problémov",
+    allow_bidirectional_sync: "Obojsmerná - Synchronizovať problémy a komentáre obojsmerne medzi Gitlab a Plane",
+    allow_unidirectional_sync: "Jednosmerná - Synchronizovať problémy a komentáre iba z Gitlab do Plane",
+    allow_unidirectional_sync_warning:
+      "Údaje z Gitlab Issue nahradia údaje v prepojenom pracovnom prvku Plane (iba Gitlab → Plane)",
+    remove_project_issue_sync: "Odstrániť túto synchronizáciu problémov projektu",
+    remove_project_issue_sync_confirmation: "Ste si istí, že chcete odstrániť túto synchronizáciu problémov projektu?",
+    ISSUE_OPEN: "Problém otvorený",
+    ISSUE_CLOSED: "Problém uzavretý",
+    save: "Uložiť",
+    start_sync: "Spustiť synchronizáciu",
+    choose_repository: "Vyberte repozitár...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3143,6 +3239,221 @@ export default {
         title: "Automatizácie",
         description: "Automatizácie sú spôsob automatizácie úloh vo vašom projekte.",
         sub_description: "Získajte späť 80% svojho administratívneho času, keď používate automatizácie.",
+      },
+    },
+  },
+  sso: {
+    header: "Identita",
+    description: "Nakonfigurujte svoju doménu pre prístup k bezpečnostným funkciám vrátane jednotného prihlásenia.",
+    domain_management: {
+      header: "Správa domén",
+      verified_domains: {
+        header: "Overené domény",
+        description: "Overte vlastníctvo e-mailovej domény na povolenie jednotného prihlásenia.",
+        button_text: "Pridať doménu",
+        list: {
+          domain_name: "Názov domény",
+          status: "Stav",
+          status_verified: "Overené",
+          status_failed: "Zlyhalo",
+          status_pending: "Čaká sa",
+        },
+        add_domain: {
+          title: "Pridať doménu",
+          description: "Pridajte svoju doménu na konfiguráciu SSO a overenie.",
+          form: {
+            domain_label: "Doména",
+            domain_placeholder: "plane.so",
+            domain_required: "Doména je povinná",
+            domain_invalid: "Zadajte platný názov domény (napr. plane.so)",
+          },
+          primary_button_text: "Pridať doménu",
+          primary_button_loading_text: "Pridáva sa",
+          toast: {
+            success_title: "Úspech!",
+            success_message: "Doména bola úspešne pridaná. Prosím overte ju pridaním DNS TXT záznamu.",
+            error_message: "Nepodarilo sa pridať doménu. Skúste to prosím znova.",
+          },
+        },
+        verify_domain: {
+          title: "Overte svoju doménu",
+          description: "Postupujte podľa týchto krokov na overenie vašej domény.",
+          instructions: {
+            label: "Pokyny",
+            step_1: "Prejdite do nastavení DNS pre váš doménový hostiteľ.",
+            step_2: {
+              part_1: "Vytvorte",
+              part_2: "TXT záznam",
+              part_3: "a vložte úplnú hodnotu záznamu uvedenú nižšie.",
+            },
+            step_3: "Táto aktualizácia zvyčajne trvá niekoľko minút, ale môže trvať až 72 hodín.",
+            step_4: 'Kliknite na "Overiť doménu" na potvrdenie po aktualizácii DNS záznamu.',
+          },
+          verification_code_label: "Hodnota TXT záznamu",
+          verification_code_description: "Pridajte tento záznam do nastavení DNS",
+          domain_label: "Doména",
+          primary_button_text: "Overiť doménu",
+          primary_button_loading_text: "Overuje sa",
+          secondary_button_text: "Urobím to neskôr",
+          toast: {
+            success_title: "Úspech!",
+            success_message: "Doména bola úspešne overená.",
+            error_message: "Nepodarilo sa overiť doménu. Skúste to prosím znova.",
+          },
+        },
+        delete_domain: {
+          title: "Zmazať doménu",
+          description: {
+            prefix: "Naozaj chcete zmazať",
+            suffix: "? Túto akciu nemožno vrátiť späť.",
+          },
+          primary_button_text: "Zmazať",
+          primary_button_loading_text: "Maže sa",
+          secondary_button_text: "Zrušiť",
+          toast: {
+            success_title: "Úspech!",
+            success_message: "Doména bola úspešne zmazaná.",
+            error_message: "Nepodarilo sa zmazať doménu. Skúste to prosím znova.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Jednotné prihlásenie",
+      disabled_message: "Pridajte overenú doménu na konfiguráciu SSO",
+      configure: {
+        create: "Nakonfigurovať",
+        update: "Upraviť",
+      },
+      switch_alert_modal: {
+        title: "Prepínať metódu SSO na {newProviderShortName}?",
+        content:
+          "Chystáte sa povoliť {newProviderLongName} ({newProviderShortName}). Táto akcia automaticky zakáže {activeProviderLongName} ({activeProviderShortName}). Používatelia, ktorí sa pokúšajú prihlásiť cez {activeProviderShortName}, už nebudú môcť pristupovať k platforme, kým neprepnu na novú metódu. Naozaj chcete pokračovať?",
+        primary_button_text: "Prepínať",
+        primary_button_text_loading: "Prepína sa",
+        secondary_button_text: "Zrušiť",
+      },
+      form_section: {
+        title: "Detaily poskytnuté IdP pre {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Ukladá sa",
+        save_changes: "Uložiť zmeny",
+        configure_only: "Len nakonfigurovať",
+        configure_and_enable: "Nakonfigurovať a povoliť",
+        default: "Uložiť",
+      },
+      setup_details_section: {
+        title: "{workspaceName} poskytnuté detaily pre váš IdP",
+        button_text: "Získať detaily nastavenia",
+      },
+      saml: {
+        header: "Povoliť SAML",
+        description: "Nakonfigurujte svojho poskytovateľa identity SAML na povolenie jednotného prihlásenia.",
+        configure: {
+          title: "Povoliť SAML",
+          description:
+            "Overte vlastníctvo e-mailovej domény pre prístup k bezpečnostným funkciám vrátane jednotného prihlásenia.",
+          toast: {
+            success_title: "Úspech!",
+            create_success_message: "Poskytovateľ SAML bol úspešne vytvorený.",
+            update_success_message: "Poskytovateľ SAML bol úspešne aktualizovaný.",
+            error_title: "Chyba!",
+            error_message: "Nepodarilo sa uložiť poskytovateľa SAML. Skúste to prosím znova.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Webové detaily",
+            entity_id: {
+              label: "Entity ID | Publikum | Informácie o metadátach",
+              description:
+                "Vygenerujeme túto časť metadátov, ktorá identifikuje túto aplikáciu Plane ako autorizovanú službu na vašom IdP.",
+            },
+            callback_url: {
+              label: "URL jednotného prihlásenia",
+              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
+            },
+            logout_url: {
+              label: "URL jednotného odhlásenia",
+              description:
+                "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania jednotného odhlásenia vášho IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Mobilné detaily",
+            entity_id: {
+              label: "Entity ID | Publikum | Informácie o metadátach",
+              description:
+                "Vygenerujeme túto časť metadátov, ktorá identifikuje túto aplikáciu Plane ako autorizovanú službu na vašom IdP.",
+            },
+            callback_url: {
+              label: "URL jednotného prihlásenia",
+              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
+            },
+            logout_url: {
+              label: "URL jednotného odhlásenia",
+              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania odhlásenia vášho IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Detaily mapovania",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Povoliť OIDC",
+        description: "Nakonfigurujte svojho poskytovateľa identity OIDC na povolenie jednotného prihlásenia.",
+        configure: {
+          title: "Povoliť OIDC",
+          description:
+            "Overte vlastníctvo e-mailovej domény pre prístup k bezpečnostným funkciám vrátane jednotného prihlásenia.",
+          toast: {
+            success_title: "Úspech!",
+            create_success_message: "Poskytovateľ OIDC bol úspešne vytvorený.",
+            update_success_message: "Poskytovateľ OIDC bol úspešne aktualizovaný.",
+            error_title: "Chyba!",
+            error_message: "Nepodarilo sa uložiť poskytovateľa OIDC. Skúste to prosím znova.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Webové detaily",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "Vygenerujeme toto pre túto aplikáciu Plane. Pridajte toto ako dôveryhodný pôvod do zodpovedajúceho poľa vášho IdP.",
+            },
+            callback_url: {
+              label: "URL presmerovania",
+              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
+            },
+            logout_url: {
+              label: "URL odhlásenia",
+              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania odhlásenia vášho IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Mobilné detaily",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "Vygenerujeme toto pre túto aplikáciu Plane. Pridajte toto ako dôveryhodný pôvod do zodpovedajúceho poľa vášho IdP.",
+            },
+            callback_url: {
+              label: "URL presmerovania",
+              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania prihlásenia vášho IdP.",
+            },
+            logout_url: {
+              label: "URL odhlásenia",
+              description: "Vygenerujeme toto za vás. Pridajte toto do poľa URL presmerovania odhlásenia vášho IdP.",
+            },
+          },
+        },
       },
     },
   },

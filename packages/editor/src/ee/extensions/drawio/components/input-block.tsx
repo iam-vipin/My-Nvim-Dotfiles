@@ -18,16 +18,23 @@ export function DrawioInputBlock({
   mode,
   isFlagged = false,
 }: DrawioInputBlockProps) {
+  const borderColor =
+    selected && isEditable ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)" : undefined;
+
   return (
     <div
       className={cn(
-        "flex items-center justify-start gap-2 py-3 px-2 my-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+        "flex items-center justify-start gap-2 py-3 px-2 my-2 rounded-lg text-tertiary bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default",
         {
-          "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": isEditable,
-          "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
+          "border-subtle-1": !(selected && isEditable),
+          "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": isEditable,
+          "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && isEditable,
         }
       )}
+      style={borderColor ? { borderColor } : undefined}
+      contentEditable={false}
+      role="button"
       onClick={isFlagged ? undefined : handleDrawioButtonClick}
     >
       {mode === EDrawioMode.BOARD ? (

@@ -1,20 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { CircleX, Info, Loader, RefreshCcw } from "lucide-react";
-import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
+import { CircleX, Loader, RefreshCcw } from "lucide-react";
+import { InfoIcon, ProjectIcon } from "@plane/propel/icons";
 import type { TJobStatus } from "@plane/etl/core";
 import { E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TImportJob, TLogoProps } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
 import { DashboardLoaderTable, IconFieldRender, SyncJobStatus } from "./";
@@ -139,22 +150,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
         await startJob(reRunJobId);
         await handleJobsRefresh();
         handleClose();
-        captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.RE_RUN,
-          payload: {
-            jobId: reRunJobId,
-          },
-        });
       }
     } catch (error) {
       console.error(`Error while re-running ${serviceName} job`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.RE_RUN,
-        error: error as Error,
-        payload: {
-          jobId: reRunJobId,
-        },
-      });
     } finally {
       setModalLoader(false);
     }
@@ -167,22 +165,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
         await cancelJob(cancelJobId);
         await handleJobsRefresh();
         handleClose();
-        captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.CANCEL,
-          payload: {
-            jobId: cancelJobId,
-          },
-        });
       }
     } catch (error) {
       console.error(`Error while cancelling ${serviceName} job`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.CANCEL,
-        error: error as Error,
-        payload: {
-          jobId: cancelJobId,
-        },
-      });
     } finally {
       setModalLoader(false);
     }
@@ -192,22 +177,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     try {
       if (currentAuth?.isAuthenticated) {
         await fetchJobs();
-        captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
-          payload: {
-            serviceName,
-          },
-        });
       }
     } catch (error) {
       console.error(`Error while refreshing ${serviceName} jobs`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
-        error: error as Error,
-        payload: {
-          serviceName,
-        },
-      });
     }
   };
 
@@ -216,21 +188,8 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
       setDeactivateLoader(true);
       await deactivateAuth();
       handleDashboardView();
-      captureSuccess({
-        eventName: IMPORTER_TRACKER_EVENTS.DEACTIVATE,
-        payload: {
-          serviceName,
-        },
-      });
     } catch (error) {
       console.error(`Error while deactivating ${serviceName} auth`, error);
-      captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.DEACTIVATE,
-        error: error as Error,
-        payload: {
-          serviceName,
-        },
-      });
     } finally {
       setDeactivateLoader(false);
     }
@@ -256,29 +215,21 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
             <div className="flex-shrink-0 relative flex items-center gap-4">
               {!config.hideDeactivate && (
                 <Button
-                  variant="link-danger"
-                  size="sm"
+                  variant="error-outline"
                   onClick={handleDeactivateAuth}
                   className="bg-transparent"
                   disabled={deactivateLoader}
-                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_DEACTIVATE_BUTTON}
                 >
                   {deactivateLoader ? "Deactivating..." : "Deactivate"}
                 </Button>
               )}
               {!currentAuth?.sourceTokenInvalid ? (
-                <Button
-                  size="sm"
-                  onClick={handleDashboardView}
-                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_IMPORT_BUTTON}
-                >
-                  {t("importers.import")}
-                </Button>
+                <Button onClick={handleDashboardView}>{t("importers.import")}</Button>
               ) : (
                 <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
-                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
-                    <Info size={12} />
-                    <div className="text-xs">{t("importers.source_token_expired")}</div>
+                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-secondary">
+                    <InfoIcon height={12} width={12} />
+                    <div className="text-11">{t("importers.source_token_expired")}</div>
                   </div>
                 </Tooltip>
               )}
@@ -292,16 +243,14 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
           ) : jobIds && jobIds.length > 0 ? (
             <div className="w-full h-full space-y-3 relative flex flex-col">
               <div className="relative flex items-center gap-2">
-                <div className="flex-shrink-0 text-base font-medium py-2">{t("importers.migrations")}</div>
+                <div className="flex-shrink-0 text-14 font-medium py-2">{t("importers.migrations")}</div>
                 <Button
-                  size="sm"
-                  variant="neutral-primary"
+                  variant="secondary"
                   className="whitespace-nowrap border-none !px-1"
                   onClick={handleJobsRefresh}
                   disabled={loader === "re-fetch"}
-                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_REFRESH_BUTTON}
                 >
-                  <div className="relative flex items-center gap-1.5 text-xs">
+                  <div className="relative flex items-center gap-1.5 text-11">
                     {loader === "re-fetch" ? <Loader size={12} className="animate-spin" /> : <RefreshCcw size={12} />}
                     {loader === "re-fetch" && <div>{t("importers.refreshing")}</div>}
                   </div>
@@ -310,7 +259,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
               <div className="w-full h-full overflow-auto">
                 <table className="w-full table-auto">
                   <thead>
-                    <tr className="border-0 bg-custom-background-90 text-sm !font-medium text-left rounded-t">
+                    <tr className="border-0 bg-layer-1 text-13 !font-medium text-left rounded-t">
                       <td className="p-3 whitespace-nowrap">{t("importers.serial_number")}</td>
                       <td className="p-3 whitespace-nowrap">Plane {t("importers.project")}</td>
                       {!config.hideWorkspace && (
@@ -339,7 +288,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                         if (!job) return null;
 
                         return (
-                          <tr key={job.id} className="text-sm text-custom-text-200 even:bg-custom-background-90">
+                          <tr key={job.id} className="text-13 text-secondary even:bg-layer-1">
                             <td className="p-3 whitespace-nowrap">{index + 1}</td>
                             <td className="p-3 whitespace-nowrap">
                               <IconFieldRender
@@ -375,24 +324,20 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                             </td>
                             <td className="p-3 whitespace-nowrap text-center flex justify-center">
                               <Button
-                                variant="link-primary"
-                                size="sm"
+                                variant="link"
                                 prependIcon={<RefreshCcw className="w-3 h-3" />}
                                 onClick={() => handleRerunOpen(job.id)}
                                 disabled={isReRunDisabled(job)}
-                                data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_RE_RUN_BUTTON}
                               >
                                 {t("importers.re_run")}
                               </Button>
                             </td>
                             <td className="p-3 whitespace-nowrap text-center">
                               <Button
-                                variant="link-danger"
-                                size="sm"
+                                variant="error-outline"
                                 prependIcon={<CircleX className="w-3 h-3" />}
                                 onClick={() => handleCancelOpen(job.id)}
                                 disabled={isCancelDisabled(job)}
-                                data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_CANCEL_BUTTON}
                               >
                                 {t("importers.cancel")}
                               </Button>
@@ -412,12 +357,12 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
           ) : (
             <div className="grid h-full place-items-center p-5">
               <div className="flex flex-col items-center gap-4">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
-                  <ProjectIcon className="h-10 w-10 text-custom-text-200" />
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-layer-1">
+                  <ProjectIcon className="h-10 w-10 text-secondary" />
                 </div>
                 <div className="flex flex-col items-center gap-1.5 text-center">
-                  <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>
-                  <p className="text-sm text-custom-text-200">{t("importers.no_project_imports", { serviceName })}</p>
+                  <h4 className="text-18 font-medium">{t("importers.no_jobs_found")}</h4>
+                  <p className="text-13 text-secondary">{t("importers.no_project_imports", { serviceName })}</p>
                 </div>
               </div>
             </div>

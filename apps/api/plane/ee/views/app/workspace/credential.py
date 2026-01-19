@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -23,9 +34,7 @@ class WorkspaceCredentialView(BaseAPIView):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         if not credential:
             return Response(status=status.HTTP_204_NO_CONTENT)
-        serializer = WorkspaceCredentialSerializer(
-            credential, data={"is_active": False}, partial=True
-        )
+        serializer = WorkspaceCredentialSerializer(credential, data={"is_active": False}, partial=True)
         if serializer.is_valid():
             serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -54,9 +63,7 @@ class VerifyWorkspaceCredentialView(BaseAPIView):
         elif source == "jira":
             is_oauth_enabled = getattr(settings, "JIRA_OAUTH_ENABLED", "0") == "1"
         elif source == "jira_server":
-            is_oauth_enabled = (
-                getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
-            )
+            is_oauth_enabled = getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
         elif source == "asana":
             is_oauth_enabled = getattr(settings, "ASANA_OAUTH_ENABLED", "0") == "1"
 
@@ -77,9 +84,7 @@ class VerifyWorkspaceCredentialView(BaseAPIView):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         token = request.data.get("token", None)
 
-        serializer = WorkspaceCredentialSerializer(
-            credential, data={"token": token}, partial=True
-        )
+        serializer = WorkspaceCredentialSerializer(credential, data={"token": token}, partial=True)
 
         if serializer.is_valid():
             serializer.save()

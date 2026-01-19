@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -48,10 +61,10 @@ export const ArchiveTabsList = observer(function ArchiveTabsList() {
           tab.shouldRender(projectDetails) && (
             <Link key={tab.key} href={`/${workspaceSlug}/projects/${projectId}/archives/${tab.key}`}>
               <span
-                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium outline-none ${
+                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 py-4 px-4 text-13 font-medium outline-none ${
                   pathname.includes(tab.key)
-                    ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent hover:border-custom-border-200 text-custom-text-300 hover:text-custom-text-400"
+                    ? "border-accent-strong text-accent-primary"
+                    : "border-transparent hover:border-subtle text-tertiary hover:text-placeholder"
                 }`}
               >
                 {tab.label}

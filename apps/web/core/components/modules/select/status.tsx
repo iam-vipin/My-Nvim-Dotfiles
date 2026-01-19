@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 
 // react hook form
@@ -32,14 +45,16 @@ export function ModuleStatusSelect({ control, error, tabIndex, handleOnChange }:
           <CustomSelect
             value={value}
             label={
-              <div className={`flex items-center justify-center gap-2 text-xs py-0.5 ${error ? "text-red-500" : ""}`}>
+              <div
+                className={`flex items-center justify-center gap-2 text-11 py-0.5 ${error ? "text-danger-primary" : ""}`}
+              >
                 {value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
+                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-danger-primary" : "text-secondary"}`} />
                 )}
                 {(selectedValue && t(selectedValue?.i18n_label)) ?? (
-                  <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>
+                  <span className={`${error ? "text-danger-primary" : "text-secondary"}`}>Status</span>
                 )}
               </div>
             }

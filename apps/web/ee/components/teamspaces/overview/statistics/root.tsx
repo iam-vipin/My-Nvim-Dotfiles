@@ -1,18 +1,28 @@
-import type { FC } from "react";
-import React, { useRef, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TreeMapIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
@@ -25,10 +35,10 @@ import { StatisticsDueByFilter } from "./filters/due-by";
 import { StatisticsLegend } from "./filters/legend";
 import { StatisticsStateGroupFilter } from "./filters/state-group";
 
-const COMMON_FILTER_LIST_CLASSNAME = "flex flex-wrap items-center gap-2.5 text-sm pb-3 px-1.5";
+const COMMON_FILTER_LIST_CLASSNAME = "flex flex-wrap items-center gap-2.5 text-body-xs-regular pb-3 px-1.5";
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
-  "px-2.5 py-0.5 bg-custom-background-80/60 rounded text-custom-text-100 font-medium";
-const COMMON_CHEVRON_CLASSNAME = "size-3 text-custom-text-400 transition-all";
+  "px-2.5 py-0.5 bg-layer-2 hover:bg-layer-2-hover active:bg-layer-2-active disabled:bg-layer-transparent text-secondary disabled:text-disabled border border-strong disabled:border-subtle-1 shadow-raised-100 rounded-md font-medium transition-colors";
+const COMMON_CHEVRON_CLASSNAME = "size-3 text-placeholder transition-all";
 
 type Props = {
   teamspaceId: string;
@@ -96,35 +106,13 @@ export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot
     key: K,
     value: TStatisticsFilter[K]
   ) => {
-    captureClick({
-      elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.STATISTICS_FILTER_DROPDOWN,
-    });
-    await updateTeamspaceStatisticsFilter(workspaceSlug.toString(), teamspaceId, key, value)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_UPDATED,
-          payload: {
-            id: teamspaceId,
-            key,
-            value,
-          },
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "We couldn't update teamspace statistics filter. Please try again.",
-        });
-        captureError({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_UPDATED,
-          payload: {
-            id: teamspaceId,
-            key,
-            value,
-          },
-        });
+    await updateTeamspaceStatisticsFilter(workspaceSlug.toString(), teamspaceId, key, value).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "We couldn't update teamspace statistics filter. Please try again.",
       });
+    });
   };
 
   return (
@@ -136,7 +124,7 @@ export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot
           isOpen={isOpen}
           title="Team's stats"
           className="border-none px-0"
-          titleClassName={cn(isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200")}
+          titleClassName={cn(isOpen ? "text-primary" : "text-tertiary hover:text-secondary")}
         />
       }
       className="py-2"
@@ -194,7 +182,7 @@ export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot
           <SectionEmptyState
             heading={t("teamspace_analytics.empty_state.stats.general.title")}
             subHeading={t("teamspace_analytics.empty_state.stats.general.description")}
-            icon={<TreeMapIcon className="size-6 text-custom-text-400" />}
+            icon={<TreeMapIcon className="size-6 text-placeholder" />}
             variant="solid"
             iconVariant="round"
             size="md"

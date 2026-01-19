@@ -1,7 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { PencilIcon } from "lucide-react";
 // plane constants
 import {
   CUSTOMER_CONTRACT_STATUS,
@@ -12,7 +24,7 @@ import {
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { CustomersIcon } from "@plane/propel/icons";
+import { CustomersIcon, EditIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomerPayload } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
@@ -62,7 +74,7 @@ export function DefaultProperties(props: Props) {
   const customerStageOptions = CUSTOMER_STAGES.map((stage) => ({
     value: stage.value,
     query: t(stage.i18n_name),
-    content: <div className="text-sm">{t(stage.i18n_name)}</div>,
+    content: <div className="text-13">{t(stage.i18n_name)}</div>,
   }));
 
   const customerContractStatusOptions = CUSTOMER_CONTRACT_STATUS.map((stage) => ({
@@ -71,7 +83,7 @@ export function DefaultProperties(props: Props) {
     content: (
       <div className="flex items-center gap-2">
         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: stage.color }} />
-        <p className="text-sm">{t(stage.i18n_name)}</p>
+        <p className="text-13">{t(stage.i18n_name)}</p>
       </div>
     ),
   }));
@@ -111,10 +123,10 @@ export function DefaultProperties(props: Props) {
     <>
       <div className="py-2 w-fit relative space-y-1">
         <div
-          className="absolute -right-2 -top-1 p-1.5 rounded-full bg-custom-background-100 border border-custom-border-300 cursor-pointer"
+          className="absolute -right-2 -top-1 p-1.5 rounded-full bg-surface-1 border border-subtle-1 cursor-pointer"
           onClick={handleOpenImagePicker}
         >
-          <PencilIcon className="size-2.5" />
+          <EditIcon className="size-2.5" />
         </div>
         <Controller
           name="logo_url"
@@ -122,7 +134,7 @@ export function DefaultProperties(props: Props) {
           render={({ field: { value, onChange } }) => (
             <>
               {value || logo ? (
-                <div className="bg-custom-background-100 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-custom-border-300">
+                <div className="bg-surface-1 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-subtle-1">
                   <img
                     src={logo ? URL.createObjectURL(logo) : value && value !== "" ? (getFileURL(value) ?? "") : ""}
                     alt="customer logo"
@@ -130,7 +142,7 @@ export function DefaultProperties(props: Props) {
                   />
                 </div>
               ) : (
-                <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-11 w-11 p-1.5">
+                <div className="bg-layer-1 rounded-md flex items-center justify-center h-11 w-11 p-1.5">
                   <CustomersIcon className="size-5 opacity-50" />
                 </div>
               )}
@@ -148,8 +160,8 @@ export function DefaultProperties(props: Props) {
       </div>
       <div className="grid grid-cols-2 gap-2 space-y-1">
         <div className="space-y-1">
-          <label htmlFor="name" className="text-sm">
-            {t("customers.properties.default.customer_name.name")} <span className="text-red-500">*</span>
+          <label htmlFor="name" className="text-13">
+            {t("customers.properties.default.customer_name.name")} <span className="text-danger-primary">*</span>
           </label>
           <Controller
             name="name"
@@ -176,11 +188,11 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors?.name?.message}</span>
+          <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
         </div>
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm">
-            {t("customers.properties.default.email.name")} <span className="text-red-500">*</span>
+          <label htmlFor="email" className="text-13">
+            {t("customers.properties.default.email.name")} <span className="text-danger-primary">*</span>
           </label>
           <Controller
             name="email"
@@ -206,11 +218,11 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors.email?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.email?.message}</span>
         </div>
       </div>
       <div className="space-y-1">
-        <label htmlFor="description_html" className="text-sm">
+        <label htmlFor="description_html" className="text-13">
           {t("customers.properties.default.description.name")}
         </label>
         <Controller
@@ -234,7 +246,7 @@ export function DefaultProperties(props: Props) {
                   ...payload,
                 })
               }
-              containerClassName="pt-3 min-h-[120px] border-[0.5px] border-custom-border-200 rounded-lg relative focus:ring-1 focus:ring-custom-primary"
+              containerClassName="pt-3 min-h-[120px] border-[0.5px] border-subtle-1 rounded-lg relative focus:ring-1 focus:ring-accent-strong"
               disabledExtensions={["attachments"]}
               uploadFile={async (blockId, file) => {
                 try {
@@ -270,11 +282,11 @@ export function DefaultProperties(props: Props) {
             />
           )}
         />
-        <span className="text-xs text-red-500">{errors.description_html?.message}</span>
+        <span className="text-11 text-danger-primary">{errors.description_html?.message}</span>
       </div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-4">
         <div className="space-y-1">
-          <label htmlFor="website" className="text-sm">
+          <label htmlFor="website" className="text-13">
             {t("customers.properties.default.website_url.name")}
           </label>
           <Controller
@@ -300,10 +312,10 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors.website_url?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.website_url?.message}</span>
         </div>
         <div className="space-y-1">
-          <label htmlFor="domain" className="text-sm">
+          <label htmlFor="domain" className="text-13">
             {t("customers.properties.default.domain.name")}
           </label>
           <Controller
@@ -323,10 +335,10 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors.domain?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.domain?.message}</span>
         </div>
         <div className="space-y-1">
-          <label htmlFor="employees" className="text-sm">
+          <label htmlFor="employees" className="text-13">
             {t("customers.properties.default.employees.name")}
           </label>
           <Controller
@@ -356,10 +368,10 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors.employees?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.employees?.message}</span>
         </div>
         <div className="space-y-1">
-          <label htmlFor="stage" className="text-sm">
+          <label htmlFor="stage" className="text-13">
             {t("customers.properties.default.stage.name")}
           </label>
           <Controller
@@ -370,11 +382,9 @@ export function DefaultProperties(props: Props) {
                 options={customerStageOptions}
                 label={
                   <div className="truncate">
-                    <span className="text-sm text-custom-text-200">
+                    <span className="text-13 text-secondary">
                       {customerStageOptions.find((stage) => stage.value === value)?.query || (
-                        <span className="text-custom-text-400">
-                          {t("customers.properties.default.stage.placeholder")}
-                        </span>
+                        <span className="text-placeholder">{t("customers.properties.default.stage.placeholder")}</span>
                       )}
                     </span>
                   </div>
@@ -382,15 +392,15 @@ export function DefaultProperties(props: Props) {
                 value={value}
                 onChange={onChange}
                 maxHeight="lg"
-                buttonClassName="w-full py-2 px-3 rounded-md border-[0.5px] border-custom-border-200 focus:outline-none"
+                buttonClassName="w-full py-2 px-3 rounded-md border-[0.5px] border-subtle-1 focus:outline-none"
                 tabIndex={getIndex("stage")}
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors.stage?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.stage?.message}</span>
         </div>
         <div className="space-y-1">
-          <label htmlFor="contract_status" className="text-sm">
+          <label htmlFor="contract_status" className="text-13">
             {t("customers.properties.default.contract_status.name")}
           </label>
           <Controller
@@ -403,11 +413,11 @@ export function DefaultProperties(props: Props) {
                   options={customerContractStatusOptions}
                   label={
                     <div className="truncate">
-                      <span className="text-sm text-custom-text-200">
+                      <span className="text-13 text-secondary">
                         {labelContent ? (
                           labelContent.content
                         ) : (
-                          <span className="text-custom-text-400">
+                          <span className="text-placeholder">
                             {t("customers.properties.default.contract_status.placeholder")}
                           </span>
                         )}
@@ -417,16 +427,16 @@ export function DefaultProperties(props: Props) {
                   value={value}
                   onChange={onChange}
                   maxHeight="lg"
-                  buttonClassName="w-full py-2 px-3 rounded-md border-[0.5px] border-custom-border-200 focus:outline-none"
+                  buttonClassName="w-full py-2 px-3 rounded-md border-[0.5px] border-subtle-1 focus:outline-none"
                   tabIndex={getIndex("contract_status")}
                 />
               );
             }}
           />
-          <span className="text-xs text-red-500">{errors.contract_status?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.contract_status?.message}</span>
         </div>
         <div className="space-y-1">
-          <label htmlFor="revenue" className="text-sm">
+          <label htmlFor="revenue" className="text-13">
             {t("customers.properties.default.revenue.name")}
           </label>
           <Controller
@@ -452,7 +462,7 @@ export function DefaultProperties(props: Props) {
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors.revenue?.message}</span>
+          <span className="text-11 text-danger-primary">{errors.revenue?.message}</span>
         </div>
       </div>
     </>

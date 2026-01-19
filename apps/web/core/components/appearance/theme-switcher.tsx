@@ -1,4 +1,17 @@
-import { useEffect, useState, useCallback } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -6,59 +19,37 @@ import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { IUserTheme } from "@plane/types";
-import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
+// components
+import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
+import { ThemeSwitch } from "@/components/core/theme/theme-switch";
+// helpers
+import { PreferencesSection } from "@/components/preferences/section";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
-// local imports
-import { CustomThemeSelector } from "../core/theme/custom-theme-selector";
-import { ThemeSwitch } from "../core/theme/theme-switch";
-import type { PreferenceOption } from "./config";
-import { PreferencesSection } from ".";
 
-export const ThemeSwitcher = observer(function ThemeSwitcher(props: { option: PreferenceOption }) {
-  // hooks
-  const { setTheme } = useTheme();
+export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
+  option: {
+    id: string;
+    title: string;
+    description: string;
+  };
+}) {
+  // store hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
-
-  // states
-  const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
-
+  // theme
+  const { setTheme } = useTheme();
+  // translation
   const { t } = useTranslation();
-
-  // initialize theme
-  useEffect(() => {
-    if (!userProfile?.theme?.theme) return;
-
-    const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile.theme.theme);
-
-    if (userThemeOption) {
-      setCurrentTheme(userThemeOption);
-    }
+  // derived values
+  const currentTheme = useMemo(() => {
+    const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile?.theme?.theme);
+    return userThemeOption || null;
   }, [userProfile?.theme?.theme]);
 
-  // handlers
-  const applyThemeChange = useCallback(
-    (theme: Partial<IUserTheme>) => {
-      const themeValue = theme?.theme || "system";
-      setTheme(themeValue);
-
-      if (theme?.theme === "custom" && theme?.palette) {
-        const defaultPalette = "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
-        const palette = theme.palette !== ",,,," ? theme.palette : defaultPalette;
-        applyTheme(palette, false);
-      } else {
-        unsetCustomCssVariables();
-      }
-    },
-    [setTheme]
-  );
-
   const handleThemeChange = useCallback(
-    async (themeOption: I_THEME_OPTION) => {
+    (themeOption: I_THEME_OPTION) => {
       try {
-        applyThemeChange({ theme: themeOption.value });
-
+        setTheme(themeOption.value);
         const updatePromise = updateUserTheme({ theme: themeOption.value });
         setPromiseToast(updatePromise, {
           loading: "Updating theme...",
@@ -75,7 +66,7 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: { option: Pr
         console.error("Error updating theme:", error);
       }
     },
-    [applyThemeChange, updateUserTheme]
+    [updateUserTheme]
   );
 
   if (!userProfile) return null;
@@ -86,12 +77,12 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: { option: Pr
         title={t(props.option.title)}
         description={t(props.option.description)}
         control={
-          <div className="col-span-12 sm:col-span-6">
+          <div>
             <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
           </div>
         }
       />
-      {userProfile.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
+      {userProfile.theme?.theme === "custom" && <CustomThemeSelector />}
     </>
   );
 });

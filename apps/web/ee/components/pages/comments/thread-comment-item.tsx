@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -117,8 +130,16 @@ export const PageThreadCommentItem = observer(
         ref={ref}
         data-thread-id={comment.id}
         key={comment.id}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleThreadClick(e);
+          }
+        }}
         className={cn(
-          `relative w-full py-3 px-3.5 flex-col flex gap-3 cursor-pointer transition-all duration-200 bg-custom-background-100 hover:bg-custom-background-90 group animate-comment-item`
+          `relative w-full py-3 px-3.5 flex-col flex gap-3 cursor-pointer transition-all duration-200 bg-layer-transparent hover:bg-layer-transparent-hover group animate-comment-item`
         )}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -126,9 +147,9 @@ export const PageThreadCommentItem = observer(
       >
         {/* Reference Text Quote */}
         {referenceText && (
-          <div className="flex gap-1 p-[4px] rounded bg-custom-background-90">
+          <div className="flex gap-1 p-1 rounded-sm bg-layer-1">
             <div className="w-0.5 self-stretch rounded-sm bg-[#FFBF66]" />
-            <p className="flex-1 text-sm text-custom-text-300 leading-4">{referenceText}</p>
+            <p className="flex-1 text-13 text-tertiary leading-4">{referenceText}</p>
           </div>
         )}
 
@@ -164,9 +185,9 @@ export const PageThreadCommentItem = observer(
               <button
                 type="button"
                 onClick={handleReplyToggle}
-                className="h-6 rounded transition-colors hover:bg-custom-background-90"
+                className="h-6 rounded-sm transition-colors hover:bg-layer-1"
               >
-                <span className="text-xs font-medium text-custom-primary-100 transition-colors hover:text-custom-primary-200">
+                <span className="text-11 font-medium text-accent-primary transition-colors hover:text-accent-secondary">
                   Reply
                 </span>
               </button>
@@ -184,7 +205,9 @@ export const PageThreadCommentItem = observer(
               isReply
               autoFocus
               isSubmitting={isSubmittingReply}
-              onSubmit={handleReply}
+              onSubmit={(data) => {
+                void handleReply(data);
+              }}
               onCancel={handleReplyToggle}
               page={page}
             />

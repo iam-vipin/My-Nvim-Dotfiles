@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { CalendarDays } from "lucide-react";
 // plane imports
 import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
@@ -19,11 +32,11 @@ export function WorkItemPreviewCardDate(props: Props) {
   if (!startDate && !targetDate) return null;
 
   return (
-    <div className="text-xs h-full rounded px-1 text-custom-text-200">
+    <div className="text-11 h-full rounded-sm px-1 text-secondary">
       {isDateRangeEnabled ? (
         <div
           className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
           <CalendarDays className="shrink-0 size-3" />
@@ -39,7 +52,7 @@ export function WorkItemPreviewCardDate(props: Props) {
       ) : (
         <div
           className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
           <DueDatePropertyIcon className="shrink-0 size-3" />

@@ -1,6 +1,18 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 // Plane
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -29,7 +41,7 @@ type Props = {
 export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
   const { initiativeId } = props;
   // ref
-  const parentRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLButtonElement>(null);
   const { workspaceSlug } = useParams();
 
   const {
@@ -66,10 +78,10 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
   );
 
   return (
-    <div
+    <button
       ref={parentRef}
       className={cn(
-        "group/initiative-block min-h-[52px] relative flex flex-col items-center justify-between gap-3 py-4 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 transition-colors px-page-x",
+        "group/initiative-block w-full relative flex flex-col items-center justify-between gap-3 text-13 transition-colors border-b border-subtle bg-layer-transparent hover:bg-layer-transparent-hover",
         {
           "lg:flex-row lg:gap-5 lg:py-0": !isSidebarCollapsed,
           "xl:flex-row xl:gap-5 xl:py-0": isSidebarCollapsed,
@@ -77,18 +89,18 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
       )}
       onClick={handleInitiativeClick}
     >
-      <div className="relative flex w-full items-center justify-between gap-3 truncate flex-wrap md:flex-nowrap flex-shrink-0">
-        <div className="flex w-full items-center gap-3 overflow-hidden">
+      <div className="relative flex w-full items-center justify-between gap-1 truncate flex-wrap md:flex-nowrap flex-shrink-0 min-w-0 px-6 py-4 ">
+        <div className="flex w-full items-center gap-3 overflow-hidden min-w-0">
           <div className="flex items-center gap-4 truncate">
-            <span className="flex items-center flex-shrink-0">
+            <span className="flex items-center flex-shrink-0 bg-layer-3 p-1.5 rounded-sm">
               {initiative?.logo_props?.in_use ? (
                 <Logo logo={initiative?.logo_props} size={16} type="lucide" />
               ) : (
-                <InitiativeIcon className="h-4 w-4 text-custom-text-300" />
+                <InitiativeIcon className="h-4 w-4 text-icon-placeholder" />
               )}
             </span>
             <Tooltip tooltipContent={initiative.name} position="top" isMobile={isMobile}>
-              <span className="truncate text-sm">{initiative.name}</span>
+              <span className="truncate text-13 font-medium text-secondary">{initiative.name}</span>
             </Tooltip>
           </div>
         </div>
@@ -120,6 +132,6 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 });

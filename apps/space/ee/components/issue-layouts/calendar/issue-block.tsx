@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 /* eslint-disable react/display-name */
 import { useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // components
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane imports
 import { cn } from "@plane/utils";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -42,16 +55,16 @@ export const CalendarIssueBlock = observer(
         id={`issue-${issue.id}`}
         href={`?${queryParam}`}
         onClick={handleIssuePeekOverview}
-        className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
+        className="block w-full text-13 text-primary rounded-sm border-b md:border-[1px] border-subtle-1 hover:border-strong-1"
         ref={ref}
       >
         <>
           <div
             ref={blockRef}
             className={cn(
-              "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded  md:px-1 px-4 py-1.5 bg-custom-background-100 hover:bg-custom-background-90",
+              "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded-sm  md:px-1 px-4 py-1.5 bg-surface-1 hover:bg-layer-1",
               {
-                "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+                "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
               }
             )}
           >
@@ -62,11 +75,11 @@ export const CalendarIssueBlock = observer(
                   backgroundColor: stateColor,
                 }}
               />
-              <div className="flex-shrink-0 text-sm md:text-xs text-custom-text-300">
+              <div className="flex-shrink-0 text-13 md:text-11 text-tertiary">
                 {project_details?.identifier}-{issue.sequence_id}
               </div>
               <Tooltip tooltipContent={issue.name}>
-                <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
+                <div className="truncate text-13 font-medium md:font-normal md:text-11">{issue.name}</div>
               </Tooltip>
             </div>
           </div>

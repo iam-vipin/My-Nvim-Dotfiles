@@ -1,8 +1,3 @@
-module.exports = {
-  plugins: {
-    "postcss-import": {},
-    "tailwindcss/nesting": {},
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};
+import postcssConfig from "@plane/tailwind-config/postcss.config.js";
+
+export default postcssConfig;

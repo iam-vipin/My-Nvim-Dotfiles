@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TUserApplication } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 import drawioLogo from "@/app/assets/services/drawio.png?url";
@@ -12,8 +25,8 @@ export function AppTileLogo(props: AppTileLogoProps) {
   return logoUrl ? (
     <img src={logoUrl} alt={app.name} className="h-full w-full" />
   ) : (
-    <div className=" bg-custom-background-80 flex items-center justify-center h-full w-full">
-      <div className="text-lg font-medium">{app.name?.charAt(0)}</div>
+    <div className=" bg-layer-1 flex items-center justify-center h-full w-full">
+      <div className="text-body-sm-medium">{app.name?.charAt(0)}</div>
     </div>
   );
 }

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 import copy
@@ -48,6 +59,7 @@ from plane.db.models import (
     ProjectIssueType,
     ProjectMember,
     IssueSubscriber,
+    IssueDescriptionVersion,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -59,19 +71,15 @@ from plane.ee.serializers import (
     EpicUserPropertySerializer,
     IssueTypeSerializer,
 )
+from plane.app.serializers import IssueDescriptionVersionDetailSerializer
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
-    check_workspace_feature_flag,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.ee.utils.nested_issue_children import get_all_related_issues
 from plane.ee.utils.workflow import WorkflowStateManager
-from plane.app.views.issue.version import (
-    IssueDescriptionVersion,
-    IssueDescriptionVersionDetailSerializer,
-)
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
@@ -802,12 +810,14 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
 
             total_issues = issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug).count()
 
-            result.append({
-                "epic_id": epic_id,
-                "total_issues": total_issues,
-                "completed_issues": completed_issues,
-                "cancelled_issues": cancelled_issues,
-            })
+            result.append(
+                {
+                    "epic_id": epic_id,
+                    "total_issues": total_issues,
+                    "completed_issues": completed_issues,
+                    "cancelled_issues": cancelled_issues,
+                }
+            )
 
         return Response(result, status=status.HTTP_200_OK)
 

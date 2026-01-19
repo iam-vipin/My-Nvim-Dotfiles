@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.views.decorators.gzip import gzip_page
 from django.utils.decorators import method_decorator
@@ -42,9 +53,7 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
             order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=(issue_worklogs),
-            on_results=lambda issue_worklogs: IssueWorkLogSerializer(
-                issue_worklogs, many=True
-            ).data,
+            on_results=lambda issue_worklogs: IssueWorkLogSerializer(issue_worklogs, many=True).data,
         )
 
 
@@ -84,15 +93,13 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(
-            workspace__slug=slug, type="issue_worklogs"
-        ).select_related("workspace", "initiated_by")
+        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_worklogs").select_related(
+            "workspace", "initiated_by"
+        )
 
         return self.paginate(
             order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=exporter_history,
-            on_results=lambda exporter_history: ExporterHistorySerializer(
-                exporter_history, many=True
-            ).data,
+            on_results=lambda exporter_history: ExporterHistorySerializer(exporter_history, many=True).data,
         )

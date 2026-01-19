@@ -1,12 +1,21 @@
-import type { FC } from "react";
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { ScrollArea } from "@plane/propel/scrollarea";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomer } from "@plane/types";
 // plane web imports
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SidebarWrapper } from "@/plane-web/components/common/layout/sidebar/sidebar-wrapper";
 import {
   CustomerAdditionalPropertyValuesUpdate,
@@ -32,27 +41,13 @@ export const CustomerDetailSidebar = observer(function CustomerDetailSidebar(pro
       _payload = { ...data, website_url: parsedUrl };
     }
     updateCustomer(workspaceSlug, customerId, _payload)
-      .then(() => {
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-        });
-      })
-      .catch((error: unknown) => {
+      .then(() => {})
+      .catch((error) => {
         const errorMessage = (error as { error?: string })?.error;
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: errorMessage || "Unable to update property.Try again!",
-        });
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
-          payload: {
-            id: customerId,
-          },
-          error: error as Error,
         });
       });
   };
@@ -65,7 +60,7 @@ export const CustomerDetailSidebar = observer(function CustomerDetailSidebar(pro
     <SidebarWrapper isSidebarOpen={!customerDetailSidebarCollapsed}>
       <div className="flex h-full w-full flex-col overflow-hidden">
         <ScrollArea className="h-full w-full">
-          <div className="px-6 space-y-2">
+          <div className="flex flex-col gap-2">
             <CustomerDefaultSidebarProperties
               customer={customer}
               updateProperty={updateProperty}

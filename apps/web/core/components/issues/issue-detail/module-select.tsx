@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
@@ -64,8 +77,8 @@ export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIss
         placeholder={t("module.no_module")}
         disabled={disableSelect}
         className="group h-full w-full"
-        buttonContainerClassName="w-full rounded"
-        buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
+        buttonContainerClassName="w-full text-left rounded-sm"
+        buttonClassName={`text-body-xs-medium justify-between ${issue?.module_ids?.length ? "" : "text-placeholder"}`}
         buttonVariant="transparent-with-text"
         hideIcon
         dropdownArrow

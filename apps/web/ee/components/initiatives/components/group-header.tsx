@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { CircleDashed } from "lucide-react";
 
@@ -23,8 +36,8 @@ export const GroupHeader = observer(function GroupHeader(props: IGroupHeader) {
         </div>
 
         <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer">
-          <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
-          <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
+          <div className="inline-block line-clamp-1 truncate font-medium text-primary">{title}</div>
+          <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
         </div>
       </div>
     </>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { action, computed, makeObservable, observable } from "mobx";
 // types
 import type {
@@ -294,8 +307,8 @@ export abstract class IssueDetail implements IIssueDetail {
   // issue
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.fetchIssue(workspaceSlug, projectId, issueId);
-  fetchIssueWithIdentifier = async (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
-    this.issue.fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequenceId);
+  fetchWorkItemWithIdentifier = async (workspaceSlug: string, identifier: string) =>
+    this.issue.fetchWorkItemWithIdentifier(workspaceSlug, identifier);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

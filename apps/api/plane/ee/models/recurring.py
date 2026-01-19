@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import json
 
 # Django imports
@@ -33,9 +44,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
     ]
 
     # Celery task name constant
-    CELERY_TASK_NAME = (
-        "plane.ee.bgtasks.recurring_work_item_task.create_work_item_from_template"
-    )
+    CELERY_TASK_NAME = "plane.ee.bgtasks.recurring_work_item_task.create_work_item_from_template"
 
     # Cron expression constants
     CRON_WILDCARD = "*"
@@ -54,9 +63,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         help_text="Blueprint to duplicate",
     )
     start_at = models.DateTimeField(help_text="First allowed run (UTC)")
-    end_at = models.DateTimeField(
-        null=True, blank=True, help_text="Cut-off after which no runs occur (UTC)"
-    )
+    end_at = models.DateTimeField(null=True, blank=True, help_text="Cut-off after which no runs occur (UTC)")
     interval_type = models.CharField(
         max_length=20,
         default=INTERVAL_MONTHLY,
@@ -72,9 +79,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         blank=True,
         help_text="5-field standard cron. Mutually exclusive with interval_seconds",
     )
-    enabled = models.BooleanField(
-        default=True, help_text="Toggle to pause without deletion"
-    )
+    enabled = models.BooleanField(default=True, help_text="Toggle to pause without deletion")
     periodic_task = models.OneToOneField(
         PeriodicTask,
         on_delete=models.SET_NULL,
@@ -101,9 +106,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
             raise ValidationError("start_at is required")
 
     @classmethod
-    def generate_cron_expression(
-        cls, start_at, interval_type, project_timezone: Optional[str] = None
-    ):
+    def generate_cron_expression(cls, start_at, interval_type, project_timezone: Optional[str] = None):
         """
         Generate cron expression based on start_at datetime and interval_type.
 
@@ -141,9 +144,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
             tz = pytz.UTC
 
         # Normalize to project-local midnight
-        local_midnight = aware_start.astimezone(tz).replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        local_midnight = aware_start.astimezone(tz).replace(hour=0, minute=0, second=0, microsecond=0)
 
         # Extract cron fields from project timezone (not UTC) since CrontabSchedule
         # will be created with project_timezone
@@ -164,11 +165,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
     @classmethod
     def _convert_python_weekday_to_cron(cls, python_weekday):
         """Convert Python weekday (0=Monday, 6=Sunday) to cron format (0=Sunday, 6=Saturday)"""  # noqa: E501
-        return (
-            cls.CRON_SUNDAY
-            if python_weekday == cls.PYTHON_SUNDAY
-            else python_weekday + 1
-        )
+        return cls.CRON_SUNDAY if python_weekday == cls.PYTHON_SUNDAY else python_weekday + 1
 
     def save(self, *args, **kwargs):
         """Override save to generate cron expression and manage PeriodicTask synchronization"""  # noqa: E501
@@ -182,10 +179,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         self.clean()
 
         # Detect if we should skip syncing (e.g., during soft delete)
-        skip_sync = (
-            getattr(self, "_skip_periodic_sync", False)
-            or getattr(self, "deleted_at", None) is not None
-        )
+        skip_sync = getattr(self, "_skip_periodic_sync", False) or getattr(self, "deleted_at", None) is not None
 
         super().save(*args, **kwargs)
 
@@ -229,13 +223,9 @@ class RecurringWorkitemTask(ProjectBaseModel):
 
         if self.periodic_task:
             if start_changed:
-                self._update_existing_periodic_task(
-                    task_name, task_args, task_kwargs, cron_schedule
-                )
+                self._update_existing_periodic_task(task_name, task_args, task_kwargs, cron_schedule)
         else:
-            self._create_new_periodic_task(
-                task_name, task_args, task_kwargs, cron_schedule
-            )
+            self._create_new_periodic_task(task_name, task_args, task_kwargs, cron_schedule)
 
     def _generate_task_name(self):
         """Generate a unique task name for the periodic task"""
@@ -247,9 +237,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         task_kwargs = {"recurring_workitem_task_id": str(self.pk)}
         return json.dumps(task_args), json.dumps(task_kwargs)
 
-    def _update_existing_periodic_task(
-        self, task_name, task_args, task_kwargs, cron_schedule
-    ):
+    def _update_existing_periodic_task(self, task_name, task_args, task_kwargs, cron_schedule):
         """Update an existing PeriodicTask"""
         periodic_task = self.periodic_task
         periodic_task.name = task_name
@@ -263,9 +251,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         periodic_task.interval = None
         periodic_task.save()
 
-    def _create_new_periodic_task(
-        self, task_name, task_args, task_kwargs, cron_schedule
-    ):
+    def _create_new_periodic_task(self, task_name, task_args, task_kwargs, cron_schedule):
         """Create a new PeriodicTask"""
         periodic_task = PeriodicTask.objects.create(
             name=task_name,
@@ -411,22 +397,12 @@ class RecurringWorkitemTask(ProjectBaseModel):
         if interval_type == self.INTERVAL_DAILY:
             return "Every day at 00:00"
         elif interval_type == self.INTERVAL_WEEKLY:
-            return (
-                f"Every week on {local_dt.strftime('%A')} at 00:00"
-                if local_dt
-                else f"Cron: {self.cron_expression}"
-            )
+            return f"Every week on {local_dt.strftime('%A')} at 00:00" if local_dt else f"Cron: {self.cron_expression}"
         elif interval_type == self.INTERVAL_MONTHLY:
-            return (
-                f"Every month on day {local_dt.day} at 00:00"
-                if local_dt
-                else f"Cron: {self.cron_expression}"
-            )
+            return f"Every month on day {local_dt.day} at 00:00" if local_dt else f"Cron: {self.cron_expression}"
         elif interval_type == self.INTERVAL_YEARLY:
             return (
-                f"Every year on {local_dt.strftime('%B %d')} at 00:00"
-                if local_dt
-                else f"Cron: {self.cron_expression}"
+                f"Every year on {local_dt.strftime('%B %d')} at 00:00" if local_dt else f"Cron: {self.cron_expression}"
             )
         else:
             return f"Cron: {self.cron_expression}"
@@ -465,12 +441,8 @@ class RecurringWorkitemTaskLog(ProjectBaseModel):
         help_text="State of this execution",
     )
     started_at = models.DateTimeField(auto_now_add=True, help_text="When task began")
-    finished_at = models.DateTimeField(
-        null=True, blank=True, help_text="When task completed or failed"
-    )
-    error_message = models.TextField(
-        null=True, blank=True, help_text="Truncated exception or failure reason"
-    )
+    finished_at = models.DateTimeField(null=True, blank=True, help_text="When task completed or failed")
+    error_message = models.TextField(null=True, blank=True, help_text="Truncated exception or failure reason")
 
     class Meta:
         db_table = "recurring_workitem_task_logs"
@@ -508,9 +480,7 @@ class RecurringWorkItemTaskActivity(ProjectBaseModel):
         null=True,
     )
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
-    field = models.CharField(
-        max_length=255, verbose_name="Field Name", blank=True, null=True
-    )
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     property = models.ForeignKey(
         "ee.IssueProperty",
         on_delete=models.CASCADE,

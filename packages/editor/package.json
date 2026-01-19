@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
@@ -18,11 +18,11 @@
   "scripts": {
     "build": "tsc && tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings=1435",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check .",
-    "fix:lint": "eslint . --fix --max-warnings=1435",
-    "fix:format": "prettier --write .",
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1435",
+    "fix:format": "prettier . --cache --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
@@ -65,6 +65,7 @@
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",
     "@tiptap/suggestion": "^2.22.3",
+    "lodash-es": "catalog:",
     "emoji-regex": "^10.3.0",
     "highlight.js": "^11.8.0",
     "is-emoji-supported": "^0.0.5",
@@ -92,6 +93,7 @@
     "@types/tldjs": "^2.3.4",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/lodash-es": "catalog:",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"

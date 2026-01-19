@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -73,12 +86,12 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-h4-medium text-secondary">
             {preloadedData?.id ? t("common.update_link") : t("common.add_link")}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200">
+              <label htmlFor="url" className="mb-2 text-secondary">
                 {t("common.url")}
               </label>
               <Controller
@@ -100,12 +113,14 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
                   />
                 )}
               />
-              {errors.url && <span className="text-xs text-red-500">{t("common.url_is_invalid")}</span>}
+              {errors.url && (
+                <span className="text-caption-sm-regular text-danger-primary">{t("common.url_is_invalid")}</span>
+              )}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200">
+              <label htmlFor="title" className="mb-2 text-secondary">
                 {t("common.display_title")}
-                <span className="text-[10px] block">{t("common.optional")}</span>
+                <span className="text-caption-xs-regular block">{t("common.optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -126,11 +141,11 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+          <Button variant="secondary" size="lg" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {`${
               preloadedData?.id
                 ? isSubmitting

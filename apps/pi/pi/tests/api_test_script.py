@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Simple API endpoint testing script
 Tests Plane actions via direct HTTP calls to your API
@@ -60,7 +71,7 @@ class PlaneAPITester:
                 "llm": "gpt-4.1",
                 "is_new": True,  # Required field
                 "is_temp": False,  # Required field
-                "context": {"first_name": "sunder", "last_name": "Chintada"},
+                "context": {"first_name": "john", "last_name": "doe"},
             },
         )
 
@@ -253,11 +264,11 @@ def main():
     """Main test execution"""
 
     # Configuration
-    BASE_URL = "http://localhost:8000"  # Update if your API runs on different port
-    WORKSPACE_SLUG = "piworkspace"  # Replace with your workspace slug
-    WORKSPACE_ID = "5848c33a-1fdc-4155-8b16-d65e844fe3e7"  # Replace with your actual workspace UUID
-    SESSION_ID = "plane-session-id"
-    COOKIE_VALUE = "7iqry13n7e8jn1j8t6wh6uql4dbti5axm9p3hl8rwa5t2kplhf681ohhmzxx5x7l1g4no8ua6woqlqx4mdefcmvfij8yq3nwvh10mt5b306z0jsgtthctmholhc3skyd"
+    BASE_URL = "http://localhost:8000"
+    WORKSPACE_SLUG = "your_workspace_slug"
+    WORKSPACE_ID = "your_workspace_id"
+    SESSION_ID = "local-session-id"
+    COOKIE_VALUE = "your_cookie_value"
 
     if WORKSPACE_SLUG == "your_workspace_slug":
         print("❌ Please update WORKSPACE_SLUG in the script")

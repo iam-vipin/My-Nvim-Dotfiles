@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 // plane web imports
@@ -19,10 +32,10 @@ function PiLayout({ params }: Route.ComponentProps) {
   return (
     <>
       <PlaneAiAppPowerKProvider />
-      <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
+      <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-subtle-1">
         <div className="relative flex size-full overflow-hidden">
           <PiAppSidebar />
-          <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+          <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             {isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
               <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<EmptyPiChat />}>
                 <PiChatLayout shouldRenderSidebarToggle isFullScreen>

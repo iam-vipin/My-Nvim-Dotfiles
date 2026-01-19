@@ -1,8 +1,19 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Module imports
 from plane.app.serializers.base import BaseSerializer
 from plane.ee.models import ProjectAttribute, ProjectFeature
 from plane.db.models import FileAsset
-from plane.ee.models import ProjectLink, ProjectReaction, WorkspaceActivity
+from plane.ee.models import ProjectLink, ProjectReaction, ProjectActivity, ProjectMemberActivity
 from rest_framework import serializers
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
@@ -97,22 +108,16 @@ class ProjectLinkSerializer(BaseSerializer):
         if ProjectLink.objects.filter(
             url=validated_data.get("url"), project_id=validated_data.get("project_id")
         ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Project"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Project"})
         return ProjectLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         if (
-            ProjectLink.objects.filter(
-                url=validated_data.get("url"), project_id=instance.project_id
-            )
+            ProjectLink.objects.filter(url=validated_data.get("url"), project_id=instance.project_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Project"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Project"})
 
         return super().update(instance, validated_data)
 
@@ -148,6 +153,15 @@ class ProjectActivitySerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
 
     class Meta:
-        model = WorkspaceActivity
+        model = ProjectActivity
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "actor", "deleted_at"]
+
+
+class ProjectMemberActivitySerializer(BaseSerializer):
+    project_member = serializers.UUIDField(read_only=True, source="project_member.member_id", allow_null=True)
+
+    class Meta:
+        model = ProjectMemberActivity
         fields = "__all__"
         read_only_fields = ["workspace", "project", "actor", "deleted_at"]

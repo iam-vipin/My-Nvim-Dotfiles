@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -6,7 +19,6 @@ import { Monitor, Smartphone } from "lucide-react";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceOIDCAuthenticationConfigurationKeys } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -135,14 +147,14 @@ export function InstanceOIDCConfigForm(props: Props) {
   const OIDC_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URI",
-      label: "Origin URI",
+      label: "Origin URL",
       url: `${originURL}/auth/oidc/`,
       description:
         "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
     },
     {
       key: "Callback_URI",
-      label: "Callback URI",
+      label: "Redirect URL",
       url: `${originURL}/auth/oidc/callback/`,
       description: (
         <>
@@ -153,7 +165,7 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
     {
       key: "Logout_URI",
-      label: "Logout URI",
+      label: "Logout URL",
       url: `${originURL}/auth/oidc/logout/`,
       description: (
         <>
@@ -167,14 +179,14 @@ export function InstanceOIDCConfigForm(props: Props) {
   const OIDC_MOBILE_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "mobile_origin_uri",
-      label: "Origin URI",
+      label: "Origin URL",
       url: `${originURL}/auth/mobile/oidc/`,
       description:
         "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
     },
     {
       key: "mobile_callback_uri",
-      label: "Callback URI",
+      label: "Redirect URL",
       url: `${originURL}/auth/mobile/oidc/callback/`,
       description: (
         <>
@@ -185,7 +197,7 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
     {
       key: "mobile_logout_uri",
-      label: "Logout URI",
+      label: "Logout URL",
       url: `${originURL}/auth/mobile/oidc/logout/`,
       description: (
         <>
@@ -238,7 +250,7 @@ export function InstanceOIDCConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">IdP-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">IdP-provided details for Plane</div>
             {OIDC_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -257,33 +269,32 @@ export function InstanceOIDCConfigForm(props: Props) {
               <div className="flex items-center gap-4">
                 <Button
                   variant="primary"
-                  onClick={(e) => void handleSubmit(onSubmit)(e)}
+                  size="lg"
+                  onClick={(e) => {
+                    void handleSubmit(onSubmit)(e);
+                  }}
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving..." : "Save changes"}
+                  {isSubmitting ? "Saving" : "Save changes"}
                 </Button>
-                <Link
-                  href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
-                  onClick={handleGoBack}
-                >
+                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
-            <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
+            <div className="pt-2 text-18 font-medium">Plane-provided details for your IdP</div>
 
             <div className="flex flex-col gap-y-4">
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {OIDC_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
@@ -292,11 +303,11 @@ export function InstanceOIDCConfigForm(props: Props) {
 
               {/* mobile service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Smartphone className="w-3 h-3" />
                   Mobile
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {OIDC_MOBILE_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}

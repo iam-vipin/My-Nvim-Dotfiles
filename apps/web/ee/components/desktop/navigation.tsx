@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { webContents } from "@todesktop/client-core";
 import { observer } from "mobx-react";
@@ -53,7 +66,7 @@ export const DesktopAppNavigation = observer(function DesktopAppNavigation() {
   };
 
   const commonNavigationButtonClasses =
-    "size-6 flex items-center justify-center rounded cursor-pointer text-custom-text-300";
+    "size-6 flex items-center justify-center rounded-sm cursor-pointer text-tertiary";
 
   return (
     <div className="flex">
@@ -61,8 +74,8 @@ export const DesktopAppNavigation = observer(function DesktopAppNavigation() {
         <button
           onClick={() => handleNavigation("backward")}
           className={cn(commonNavigationButtonClasses, {
-            "text-custom-text-400 opacity-70 cursor-not-allowed": isBackwardNavigationDisabled,
-            "hover:bg-custom-background-90 hover:text-custom-text-200": !isBackwardNavigationDisabled,
+            "text-placeholder opacity-70 cursor-not-allowed": isBackwardNavigationDisabled,
+            "hover:bg-layer-1 hover:text-secondary": !isBackwardNavigationDisabled,
           })}
           disabled={isBackwardNavigationDisabled}
         >
@@ -73,8 +86,8 @@ export const DesktopAppNavigation = observer(function DesktopAppNavigation() {
         <button
           onClick={() => handleNavigation("forward")}
           className={cn(commonNavigationButtonClasses, {
-            "text-custom-text-400 opacity-70 cursor-not-allowed": isForwardNavigationDisabled,
-            "hover:bg-custom-background-90 hover:text-custom-text-200": !isForwardNavigationDisabled,
+            "text-placeholder opacity-70 cursor-not-allowed": isForwardNavigationDisabled,
+            "hover:bg-layer-1 hover:text-secondary": !isForwardNavigationDisabled,
           })}
           disabled={isForwardNavigationDisabled}
         >

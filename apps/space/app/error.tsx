@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // ui
 import { Button } from "@plane/propel/button";
 
@@ -7,21 +20,21 @@ function ErrorPage() {
   };
 
   return (
-    <div className="grid h-screen place-items-center p-4">
+    <div className="bg-surface-1 grid h-screen place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Yikes! That doesn{"'"}t look good.</h3>
-          <p className="mx-auto md:w-1/2 text-sm text-custom-text-200">
+          <h3 className="text-16 font-semibold">Yikes! That doesn{"'"}t look good.</h3>
+          <p className="mx-auto md:w-1/2 text-13 text-secondary">
             That crashed Plane, pun intended. No worries, though. Our engineers have been notified. If you have more
             details, please write to{" "}
-            <a href="mailto:support@plane.so" className="text-custom-primary">
+            <a href="mailto:support@plane.so" className="text-accent-primary">
               support@plane.so
             </a>{" "}
             or on our{" "}
             <a
               href="https://discord.com/invite/A92xrEGCge"
               target="_blank"
-              className="text-custom-primary"
+              className="text-accent-primary"
               rel="noopener noreferrer"
             >
               Discord
@@ -30,10 +43,10 @@ function ErrorPage() {
           </p>
         </div>
         <div className="flex items-center justify-center gap-2">
-          <Button variant="primary" size="md" onClick={handleRetry}>
+          <Button variant="primary" size="lg" onClick={handleRetry}>
             Refresh
           </Button>
-          {/* <Button variant="neutral-primary" size="md" onClick={() => {}}>
+          {/* <Button variant="secondary" size="lg" onClick={() => {}}>
             Sign out
           </Button> */}
         </div>

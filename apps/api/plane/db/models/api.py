@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from uuid import uuid4
 
@@ -32,6 +43,7 @@ class APIToken(BaseModel):
     workspace = models.ForeignKey("db.Workspace", related_name="api_tokens", on_delete=models.CASCADE, null=True)
     expired_at = models.DateTimeField(blank=True, null=True)
     is_service = models.BooleanField(default=False)
+    allowed_rate_limit = models.CharField(max_length=255, default="60/min")
 
     class Meta:
         verbose_name = "API Token"

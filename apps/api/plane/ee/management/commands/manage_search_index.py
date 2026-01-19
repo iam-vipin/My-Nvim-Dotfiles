@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 import argparse
@@ -131,11 +142,7 @@ class Command(BaseCommand):
                     lines = subcmd_help.split("\n")
                     skip_usage = True
                     for line in lines:
-                        if (
-                            skip_usage
-                            and line.strip()
-                            and not line.startswith("usage:")
-                        ):
+                        if skip_usage and line.strip() and not line.startswith("usage:"):
                             skip_usage = False
                         if not skip_usage:
                             print(line)
@@ -144,9 +151,7 @@ class Command(BaseCommand):
 
         except Exception as e:
             print(f"\nNote: Could not load opensearch command help: {e}")
-            print(
-                "You can run 'python manage.py opensearch --help' for detailed opensearch options."
-            )
+            print("You can run 'python manage.py opensearch --help' for detailed opensearch options.")
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -169,18 +174,12 @@ class Command(BaseCommand):
         # Validate that opensearch_args is not empty
         if not opensearch_args:
             self.stderr.write(
-                self.style.ERROR(
-                    "Error: opensearch_args is required. You must provide at least one argument."
-                )
+                self.style.ERROR("Error: opensearch_args is required. You must provide at least one argument.")
             )
             self.stderr.write("Usage examples:")
             self.stderr.write("  python manage.py manage_search_index list")
-            self.stderr.write(
-                "  python manage.py manage_search_index index create --force"
-            )
-            self.stderr.write(
-                "  python manage.py manage_search_index document index --force"
-            )
+            self.stderr.write("  python manage.py manage_search_index index create --force")
+            self.stderr.write("  python manage.py manage_search_index document index --force")
             return
 
         print(f"Running in background: {background}")
@@ -190,9 +189,7 @@ class Command(BaseCommand):
                 run_search_index_command,
             )
 
-            print(
-                "Running opensearch command in background with args:", opensearch_args
-            )
+            print("Running opensearch command in background with args:", opensearch_args)
             run_search_index_command.delay(*opensearch_args)
         else:
             print("Running opensearch command with args:", opensearch_args)

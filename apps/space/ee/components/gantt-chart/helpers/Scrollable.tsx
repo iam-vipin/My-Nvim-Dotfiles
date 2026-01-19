@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
@@ -76,7 +89,7 @@ export const ChartScrollable = observer(function ChartScrollable(props: Props) {
       {isHidden && block?.start_date && block?.target_date && (
         <button
           type="button"
-          className="sticky z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          className="sticky z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded-sm border border-subtle-1 bg-layer-1 text-secondary hover:text-primary"
           style={{
             left: `${SIDEBAR_WIDTH + 4}px`,
           }}

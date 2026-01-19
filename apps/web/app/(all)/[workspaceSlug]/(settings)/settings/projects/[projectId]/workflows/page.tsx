@@ -1,8 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
@@ -13,7 +25,6 @@ import { PageHead } from "@/components/core/page-title";
 // hook
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -65,27 +76,7 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
     const featureState = !isWorkflowEnabled;
     const featureTogglePromise = toggleProjectFeatures(workspaceSlug, projectId, {
       is_workflow_enabled: featureState,
-    })
-      .then(() => {
-        captureSuccess({
-          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_ENABLED_DISABLED,
-          payload: {
-            project_id: projectId,
-            is_workflow_enabled: featureState,
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_ENABLED_DISABLED,
-          payload: {
-            project_id: projectId,
-            is_workflow_enabled: featureState,
-          },
-          error: error as Error,
-        });
-        throw error;
-      });
+    });
     setPromiseToast(featureTogglePromise, {
       loading: t("workflows.toasts.enable_disable.loading", {
         action: featureState ? t("common.enabling") : t("common.disabling"),
@@ -118,12 +109,11 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
             <>
               {isWorkflowFeatureFlagEnabled && (
                 <div className="flex-shrink-0 flex items-center justify-center gap-2 px-4">
-                  <span className="text-xs text-custom-text-300">{t("common.live")}</span>
+                  <span className="text-11 text-tertiary">{t("common.live")}</span>
                   <ToggleSwitch
                     value={!!isWorkflowEnabled}
                     onChange={handleEnableDisableWorkflow}
                     disabled={isLoading}
-                    data-ph-element={WORKFLOW_TRACKER_ELEMENTS.WORK_FLOW_ENABLE_DISABLE_BUTTON}
                   />
                   <WorkflowSettingsQuickActions projectId={projectId} workspaceSlug={workspaceSlug} />
                 </div>

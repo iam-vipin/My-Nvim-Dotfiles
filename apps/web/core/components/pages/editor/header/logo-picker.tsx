@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -32,8 +45,8 @@ export const PageEditorHeaderLogoPicker = observer(function PageEditorHeaderLogo
         buttonClassName="flex items-center justify-center"
         label={
           <div
-            className={cn("-ml-[8px] size-[56px] grid place-items-center rounded transition-colors", {
-              "hover:bg-custom-background-80": isContentEditable,
+            className={cn("-ml-[8px] size-[56px] grid place-items-center rounded-sm transition-colors", {
+              "hover:bg-layer-1": isContentEditable,
             })}
           >
             {isLogoSelected && <Logo logo={logo_props} size={48} type="lucide" />}

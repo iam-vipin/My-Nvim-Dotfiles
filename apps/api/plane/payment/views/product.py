@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import requests
 
@@ -42,9 +53,7 @@ class ProductEndpoint(BaseAPIView):
                         member__is_bot=False,
                         role__gt=10,
                     ).count()
-                    + WorkspaceMemberInvite.objects.filter(
-                        workspace__slug=slug, role__gt=10
-                    ).count()
+                    + WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
                 )
 
                 # Get all the viewers and guests in the workspace
@@ -142,9 +151,7 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
         else:
             workspace = Workspace.objects.get(slug=slug)
             workspace_members = (
-                WorkspaceMember.objects.filter(
-                    workspace__slug=slug, is_active=True, member__is_bot=False
-                )
+                WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True, member__is_bot=False)
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
@@ -181,9 +188,7 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             except requests.exceptions.RequestException as e:
                 if hasattr(e, "response") and e.response.status_code == 400:
-                    return Response(
-                        e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                    )
+                    return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
                 return Response(
                     {"error": "error in syncing workspace license"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -198,9 +203,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
     def post(self, request):
         # Check if the request is authorized
         if request.headers.get("x-api-key") != settings.PAYMENT_SERVER_AUTH_TOKEN:
-            return Response(
-                {"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Get the workspace ID from the request
         workspace_id = request.data.get("workspace_id")
@@ -213,32 +216,22 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
             )
 
         # Check if the workspace license is present
-        workspace_license = WorkspaceLicense.objects.filter(
-            workspace_id=workspace_id
-        ).first()
+        workspace_license = WorkspaceLicense.objects.filter(workspace_id=workspace_id).first()
 
         # If the workspace license is present, then fetch the license from the payment server and update it
         if workspace_license:
             workspace_license.is_cancelled = request.data.get("is_cancelled", False)
             workspace_license.purchased_seats = request.data.get("purchased_seats", 0)
             workspace_license.free_seats = request.data.get("free_seats", 12)
-            workspace_license.current_period_end_date = request.data.get(
-                "current_period_end_date"
-            )
+            workspace_license.current_period_end_date = request.data.get("current_period_end_date")
             workspace_license.recurring_interval = request.data.get("interval")
             workspace_license.plan = request.data.get("plan")
             workspace_license.last_synced_at = timezone.now()
             workspace_license.trial_end_date = request.data.get("trial_end_date")
-            workspace_license.has_activated_free_trial = request.data.get(
-                "has_activated_free_trial", False
-            )
-            workspace_license.has_added_payment_method = request.data.get(
-                "has_added_payment_method", False
-            )
+            workspace_license.has_activated_free_trial = request.data.get("has_activated_free_trial", False)
+            workspace_license.has_added_payment_method = request.data.get("has_added_payment_method", False)
             workspace_license.subscription = request.data.get("subscription")
-            workspace_license.current_period_start_date = request.data.get(
-                "current_period_start_date"
-            )
+            workspace_license.current_period_start_date = request.data.get("current_period_start_date")
             workspace_license.save()
         # If the workspace license is not present, then fetch the license from the payment server and create it
         else:
@@ -253,12 +246,8 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                 plan=request.data.get("plan"),
                 last_synced_at=timezone.now(),
                 trial_end_date=request.data.get("trial_end_date"),
-                has_activated_free_trial=request.data.get(
-                    "has_activated_free_trial", False
-                ),
-                has_added_payment_method=request.data.get(
-                    "has_added_payment_method", False
-                ),
+                has_activated_free_trial=request.data.get("has_activated_free_trial", False),
+                has_added_payment_method=request.data.get("has_added_payment_method", False),
                 subscription=request.data.get("subscription"),
                 current_period_start_date=request.data.get("current_period_start_date"),
             )

@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -7,8 +19,6 @@ import useSWR from "swr";
 import {
   BUSINESS_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
-  LICENSE_TRACKER_ELEMENTS,
-  LICENSE_TRACKER_EVENTS,
   PRO_PLAN_FEATURES,
   SUBSCRIPTION_WEBPAGE_URLS,
   SUBSCRIPTION_WITH_TRIAL,
@@ -16,13 +26,12 @@ import {
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IPaymentProduct } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { EModalWidth, ModalCore, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
+import { EModalWidth, ModalCore } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
 import type { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
 // plane web imports
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/plane-web/services/payment.service";
 // local imports
@@ -34,6 +43,10 @@ export type PaidPlanUpgradeModalProps = {
   isOpen: boolean;
   handleClose: () => void;
 };
+
+// common card classname
+const COMMON_CARD_CLASSNAME = "flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3";
+const COMMON_EXTRA_FEATURES_CLASSNAME = "pt-2 text-center text-caption-md-medium text-accent-primary hover:underline";
 
 export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props: PaidPlanUpgradeModalProps) {
   const { isOpen, handleClose } = props;
@@ -68,54 +81,36 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
   const enterpriseProduct = (data || [])?.find(
     (product: IPaymentProduct) => product?.type === EProductSubscriptionEnum.ENTERPRISE
   );
-  // common card classname
-  const COMMON_CARD_CLASSNAME = cn("flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3");
-  const COMMON_EXTRA_FEATURES_CLASSNAME = cn(
-    "pt-2 text-center text-xs text-custom-primary-200 font-medium hover:underline"
-  );
 
-  const handleStripeCheckout = ({ planVariant, productId, priceId }: TCheckoutParams) => {
-    captureClick({
-      elementName: LICENSE_TRACKER_ELEMENTS.MODAL_UPGRADE_BUTTON,
-    });
+  const handleStripeCheckout = async ({ planVariant, productId, priceId }: TCheckoutParams) => {
     if (!productId || !priceId) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Unable to get the product id or price id. Please try again.",
       });
-      captureError({
-        eventName: LICENSE_TRACKER_EVENTS.upgrade_product_or_price_not_found,
-      });
       return;
     }
     setUpgradeLoaderType(planVariant);
-    paymentService
-      .getCurrentWorkspacePaymentLink(workspaceSlug.toString(), {
+
+    try {
+      setUpgradeLoaderType(planVariant);
+      const response = await paymentService.getCurrentWorkspacePaymentLink(workspaceSlug.toString(), {
         price_id: priceId,
         product_id: productId,
-      })
-      .then((response) => {
-        if (response.url) {
-          window.open(response.url, "_blank");
-          captureSuccess({
-            eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
-          });
-        }
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? "Failed to generate payment link. Please try again.",
-        });
-        captureError({
-          eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
-        });
-      })
-      .finally(() => {
-        setUpgradeLoaderType(undefined);
       });
+      if (response.url) {
+        window.open(response.url, "_blank");
+      }
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to generate payment link. Please try again.",
+      });
+    } finally {
+      setUpgradeLoaderType(undefined);
+    }
   };
 
   const renderTrialButton = (
@@ -136,34 +131,31 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
           <div className={cn(COMMON_CARD_CLASSNAME)}>
             {isOnTrial && currentPlan && (
               <div className="relative flex justify-start items-center pb-4">
-                <div
-                  className={cn(
-                    "px-1 py-0.5 text-xs font-semibold rounded",
-                    getSubscriptionTextAndBackgroundColor(currentPlan)
-                  )}
-                >
+                <div className="px-1 py-0.5 text-11 font-semibold rounded text-accent-primary">
                   {`${getSubscriptionName(currentPlan)} trial`}
                 </div>
               </div>
             )}
             {isTrialEnded && (
               <div className="relative flex justify-start items-center pb-4">
-                <div className="p-1 px-2 bg-red-500/20 text-red-600 text-xs rounded-full font-medium">Trial ended</div>
+                <div className="p-1 px-2 bg-danger-subtle text-danger-primary text-11 rounded-full font-medium">
+                  Trial ended
+                </div>
               </div>
             )}
-            <div className="text-3xl font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
+            <div className="text-28 font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
             <div className="mt-4 mb-2">
-              <p className="text-sm mb-4 pr-8 text-custom-text-100">
+              <p className="text-13 mb-4 pr-8 text-primary">
                 Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away. Upgrade
                 today to unlock features your teams need yesterday.
               </p>
             </div>
             {/* Workspace activation */}
             {isSelfHosted && (
-              <div className="flex gap-1 px-1 pb-3 text-sm text-custom-text-200 font-medium">
+              <div className="flex gap-1 px-1 pb-3 text-secondary text-caption-md-medium">
                 Got a license?
                 <button
-                  className="text-custom-primary-200 hover:underline outline-none"
+                  className="text-accent-primary hover:underline outline-none"
                   onClick={() => {
                     handleClose();
                     toggleLicenseActivationModal(true);

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import re
 
@@ -50,9 +61,9 @@ class ExtendedComplexFilterBackend(ComplexFilterBackend):
                     lookup = match.group(2)
 
                     # Check if the value is separated by ','
-                    value = value.split(',') if isinstance(value, str) and ',' in value and lookup == "in" else value
+                    value = value.split(",") if isinstance(value, str) and "," in value and lookup == "in" else value
                     if isinstance(value, list) and len(value) > 1:
-                        transformed[f"customproperty_value__{lookup}"] = ','.join([f"{property_id};{v}" for v in value])
+                        transformed[f"customproperty_value__{lookup}"] = ",".join([f"{property_id};{v}" for v in value])
                     else:
                         transformed[f"customproperty_value__{lookup}"] = f"{property_id};{value}"
                 else:

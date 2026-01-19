@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import os
 from enum import Enum
@@ -308,11 +319,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
 
         # Check the scores (only for TONE task)
         if task == Task.TONE.value:
-            if (
-                casual_score + formal_score != 10
-                or casual_score < 0
-                or formal_score < 0
-            ):
+            if casual_score + formal_score != 10 or casual_score < 0 or formal_score < 0:
                 return Response(
                     {
                         "error": "Invalid scores. casual_score and formal_score must sum to 10 and both must be non-negative."

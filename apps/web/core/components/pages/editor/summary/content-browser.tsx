@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useEffect, useCallback } from "react";
 // plane imports
 import type { EditorRefApi, IMarking } from "@plane/editor";
@@ -63,7 +76,7 @@ export function PageContentBrowser(props: Props) {
           return (
             <div
               key={`${marking.level}-${marking.sequence}`}
-              className="flex-shrink-0 h-0.5 bg-custom-border-400 self-end rounded-sm"
+              className="flex-shrink-0 h-0.5 bg-layer-3 self-end rounded-xs"
               style={{
                 width: marking.level === 1 ? "20px" : marking.level === 2 ? "18px" : "14px",
               }}

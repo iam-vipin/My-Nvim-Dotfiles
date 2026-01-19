@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FormEvent } from "react";
 import { useState } from "react";
 // types
@@ -10,7 +23,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import { EUserProjectRoles } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
-import { cn, getTabIndex } from "@plane/utils";
+import { cn, copyUrlToClipboard, getTabIndex } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -27,8 +40,31 @@ type Props = {
     | undefined
   >;
 };
-
-export const SavePageModal = observer(function SavePageModal(props: Props) {
+const ActionItems = ({ pageUrl }: { pageUrl: string }) => {
+  const [copied, setCopied] = useState(false);
+  const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await copyUrlToClipboard(pageUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return (
+    <div className="flex items-center gap-3 text-xs text-secondary mt-1">
+      <a href={pageUrl} target="_blank" rel="noopener noreferrer" className="text-11 font-medium text-accent-primary">
+        View page
+      </a>
+      <button onClick={copyToClipboard} className="text-11 font-medium text-accent-primary">
+        {copied ? "Copied!" : "Copy link"}
+      </button>
+    </div>
+  );
+};
+export const SavePageModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, isOpen, handleModalClose, handleConvertToPage } = props;
   // state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +92,7 @@ export const SavePageModal = observer(function SavePageModal(props: Props) {
         query: `${projectDetails?.name} ${projectDetails?.identifier}`,
         content: (
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-custom-background-80">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-layer-1">
               <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                 {projectDetails?.logo_props ? (
                   <Logo logo={projectDetails?.logo_props} size={16} />
@@ -67,7 +103,7 @@ export const SavePageModal = observer(function SavePageModal(props: Props) {
                 )}
               </span>
             </div>
-            <p className="text-sm font-medium">{projectDetails?.name}</p>
+            <p className="text-13 font-medium">{projectDetails?.name}</p>
           </div>
         ),
       };
@@ -87,20 +123,10 @@ export const SavePageModal = observer(function SavePageModal(props: Props) {
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page saved successfully.",
-          actionItems: (
-            <div className="flex items-center gap-1 text-xs text-custom-text-200">
-              <a
-                href={response?.page_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
-              >
-                View page
-              </a>
-            </div>
-          ),
+          actionItems: <ActionItems pageUrl={response?.page_url ?? ""} />,
         });
         handleModalClose();
+        return;
       })
       .catch(() => {
         setIsSubmitting(false);
@@ -114,49 +140,49 @@ export const SavePageModal = observer(function SavePageModal(props: Props) {
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleModalClose} position={EModalPosition.TOP} width={EModalWidth.SM}>
-      <form onSubmit={handleEditFormSubmit}>
-        <div className="space-y-2 p-5">
-          <h3 className="text-base font-semibold text-custom-text-300">Save this page in</h3>
+      <form onSubmit={(e) => void handleEditFormSubmit(e)}>
+        <div className="p-5">
+          <h3 className="text-h5-medium text-primary mb-2">Save this page in</h3>
           {/* search project */}
-          <div className="space-y-1 flex-grow w-full">
+          <div className="flex-grow w-full">
             <Input
               id="name"
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for projects"
-              className="w-full resize-none text-base font-medium text-custom-text-200"
+              className="w-full border border-subtle-1 text-body-sm-regular text-secondary py-1"
               tabIndex={getIndex("search")}
             />
           </div>
-          <div className="divide-y divide-custom-border-100">
+          <div className="divide-y divide-subtle">
             {/* wiki */}
             <div className="py-2">
               <button
-                className={cn("flex items-center gap-2 hover:bg-custom-background-90 rounded-md p-2 w-full", {
-                  "bg-custom-background-90": selectedEntity === "wiki",
+                className={cn("flex items-center gap-2 hover:bg-layer-1 rounded-md p-2 w-full", {
+                  "bg-layer-1": selectedEntity === "wiki",
                 })}
                 onClick={() => setSelectedEntity("wiki")}
                 type="button"
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-custom-background-80">
+                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-layer-1">
                   <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
                     <WikiIcon className="h-4 w-4" />
                   </span>
                 </div>
-                <p className="text-sm font-medium">Wiki</p>
+                <p className="text-body-sm-medium text-primary">Wiki</p>
               </button>
             </div>
             {/* projects */}
             <div className="py-4">
-              <h4 className="text-xs font-semibold text-custom-text-400 uppercase mb-4">Projects</h4>
+              <h4 className="text-caption-md-semibold text-placeholder mb-4">Projects</h4>
               <div className="flex flex-col max-h-[308px] overflow-y-scroll">
                 {filteredOptions?.map((option) => (
                   <button
                     type="button"
                     key={option.value}
-                    className={cn("hover:bg-custom-background-90 rounded-md p-2", {
-                      "bg-custom-background-90": selectedEntity === option.value,
+                    className={cn("hover:bg-layer-1 text-start rounded-md p-2 text-body-sm-medium text-primary", {
+                      "bg-layer-1": selectedEntity === option.value,
                     })}
                     onClick={() => setSelectedEntity(option.value)}
                   >
@@ -167,13 +193,13 @@ export const SavePageModal = observer(function SavePageModal(props: Props) {
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
             Cancel
           </Button>
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             type="submit"
             loading={isSubmitting}
             disabled={isSubmitting}

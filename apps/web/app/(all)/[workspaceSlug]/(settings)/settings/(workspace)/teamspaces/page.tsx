@@ -1,6 +1,18 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TeamsIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -12,7 +24,6 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
@@ -43,9 +54,6 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
 
   const toggleTeamsFeature = async () => {
     try {
-      captureClick({
-        elementName: TEAMSPACE_TRACKER_ELEMENTS.SETTINGS_PAGE_ENABLE_DISABLE_BUTTON,
-      });
       const payload = {
         [EWorkspaceFeatures.IS_TEAMSPACES_ENABLED]: !isTeamspacesFeatureEnabled,
       };
@@ -62,20 +70,8 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
         },
       });
       await toggleTeamsFeaturePromise;
-      captureSuccess({
-        eventName: isTeamspacesFeatureEnabled ? TEAMSPACE_TRACKER_EVENTS.DISABLE : TEAMSPACE_TRACKER_EVENTS.ENABLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-        },
-      });
     } catch (error) {
       console.error(error);
-      captureError({
-        eventName: isTeamspacesFeatureEnabled ? TEAMSPACE_TRACKER_EVENTS.DISABLE : TEAMSPACE_TRACKER_EVENTS.ENABLE,
-        payload: {
-          workspace_slug: workspaceSlug,
-        },
-      });
     }
   };
 
@@ -87,15 +83,15 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
         description={t("workspace_settings.settings.teamspaces.description")}
       />
       <WithFeatureFlagHOC flag="TEAMSPACES" fallback={<TeamspaceUpgrade />} workspaceSlug={workspaceSlug}>
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100 w-full">
+        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-subtle w-full">
           <div className="flex items-center gap-4">
-            <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-              <TeamsIcon className="size-5 text-custom-text-300" />
+            <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
+              <TeamsIcon className="size-5 text-tertiary" />
             </div>
             <div className="leading-tight">
               <h5 className="font-medium">Turn on Teamspaces for this workspace.</h5>
-              <span className="text-custom-sidebar-text-400 text-sm">
-                Once turned on, you can’t turn this feature off.
+              <span className="text-tertiary text-body-xs-regular">
+                Once turned on, you can&apos;t turn this feature off.
               </span>
             </div>
           </div>

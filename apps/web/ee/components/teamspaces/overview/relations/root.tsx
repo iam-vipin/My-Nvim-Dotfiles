@@ -1,11 +1,24 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ERelationType } from "@plane/constants";
-import { Collapsible, CollapsibleButton, Tabs } from "@plane/ui";
+import { Tabs } from "@plane/propel/tabs";
+import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
@@ -92,7 +105,7 @@ export const TeamspaceRelationsRoot = observer(function TeamspaceRelationsRoot(p
           title="Relations"
           className="border-none px-0"
           titleClassName={cn(
-            isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200",
+            isOpen ? "text-primary" : "text-tertiary hover:text-secondary",
             teamspaceRelationsLoader === "init-loader" && "cursor-not-allowed"
           )}
         />
@@ -101,16 +114,22 @@ export const TeamspaceRelationsRoot = observer(function TeamspaceRelationsRoot(p
     >
       <>
         <div ref={relationsContainerRef} className="flex w-full h-full">
-          <Tabs
-            tabs={TEAM_RELATION_TYPE_LIST}
-            storageKey={`teamspace-relations-${teamspaceId}`}
-            defaultTab="blocking"
-            size="sm"
-            containerClassName="pb-4"
-            tabListClassName="my-2 max-w-36"
-            tabPanelClassName="max-h-[184px] w-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-xs"
-            storeInLocalStorage={false}
-          />
+          <Tabs defaultValue={TEAM_RELATION_TYPE_LIST[0].key}>
+            <Tabs.List className={"w-fit"}>
+              {TEAM_RELATION_TYPE_LIST.map((tab) => (
+                <Tabs.Trigger key={tab.key} value={tab.key} size="sm">
+                  {tab.label}
+                </Tabs.Trigger>
+              ))}
+            </Tabs.List>
+            <div className="mt-2">
+              {TEAM_RELATION_TYPE_LIST.map((tab) => (
+                <Tabs.Content key={tab.key} value={tab.key}>
+                  {tab.content}
+                </Tabs.Content>
+              ))}
+            </div>
+          </Tabs>
         </div>
         <Suspense fallback={<></>}>
           <IssuePeekOverview />

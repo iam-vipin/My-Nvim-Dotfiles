@@ -1,13 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane imports
-import { DEFAULT_PAGE_SORT_ORDER, PAGE_SORT_ORDER_INCREMENT, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { DEFAULT_PAGE_SORT_ORDER, PAGE_SORT_ORDER_INCREMENT } from "@plane/constants";
 import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
 import { PriorityIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/plane-web/components/pages";
 import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
@@ -125,26 +136,12 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
         };
         try {
           const res = await createPage(payload);
-
-          captureSuccess({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
-            payload: {
-              id: res?.id,
-              state: "SUCCESS",
-            },
-          });
           return {
             pageId: res?.id ?? "",
             workspaceSlug: workspaceSlug?.toString() ?? "",
           };
         } catch (error) {
           console.log(error);
-          captureError({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
-            payload: {
-              state: "ERROR",
-            },
-          });
         }
       },
       widgetCallback: ({ pageId: pageIdFromNode, updateAttributes }) => (
@@ -186,26 +183,12 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
         if (!page) return;
         try {
           await page?.archive({ shouldSync: true });
-          captureSuccess({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_archive,
-            payload: {
-              id: page?.id,
-              state: "SUCCESS",
-            },
-          });
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: `${page?.name} archived successfully.`,
           });
         } catch {
-          captureError({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_archive,
-            payload: {
-              id: page?.id,
-              state: "ERROR",
-            },
-          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -217,26 +200,12 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
         try {
           const page = getPageById(pageId);
           await page?.restore({ shouldSync: true });
-          captureSuccess({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_restore,
-            payload: {
-              id: page?.id,
-              state: "SUCCESS",
-            },
-          });
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: `${page?.name} restored successfully.`,
           });
-        } catch {
-          captureError({
-            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_restore,
-            payload: {
-              id: page?.id,
-              state: "ERROR",
-            },
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",

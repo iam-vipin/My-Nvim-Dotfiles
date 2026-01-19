@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -176,7 +189,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
             <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex items-center gap-1.5 py-[1px]">
                 <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
-                <span className="text-xs font-medium">{t(item.i18n_key)}</span>
+                <span className="text-11 font-medium">{t(item.i18n_key)}</span>
               </div>
             </SidebarNavItem>
           </Link>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "Poznamenejte si nápad, zachyťte aha moment nebo zaznamenejte náhlý nápad. Přidejte poznámku a začněte.",
     },
     stickies: {
-      title: "Poznamenejte si nápad, zachyťte aha moment nebo zaznamenejte náhlý nápad. Přidejte poznámku a začněte.",
-      cta_primary: "Přidat poznámku",
+      title: "Zachyťte nápady okamžitě",
+      description: "Vytvářejte poznámky pro rychlé poznámky a úkoly a mějte je u sebe, kamkoli jdete.",
+      cta_primary: "Vytvořit první poznámku",
+      cta_secondary: "Dokumentace",
     },
     active_cycles: {
       title: "Žádné aktivní cykly",
@@ -106,11 +121,6 @@ export default {
       description:
         "Zkraťte dobu nastavení vytvářením šablon pro projekty, pracovní položky a stránky — a začněte novou práci během několika sekund.",
       cta_primary: "Vytvořit šablonu",
-    },
-    webhooks: {
-      title: "Zatím nebyl přidán žádný Webhook",
-      description: "Automatizujte oznámení externím službám při výskytu událostí projektu.",
-      cta_primary: "Přidat webhook",
     },
   },
 } as const;

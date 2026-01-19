@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { AlignLeft } from "lucide-react";
 // plane imports
@@ -12,9 +25,10 @@ import type {
   IProject,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { EWorkItemTypeEntity } from "@plane/types";
+import { EWorkItemTypeEntity, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
 import {
   getMilestoneFilterConfig,
+  getMilestoneIconProps,
   getTeamspaceProjectFilterConfig,
   getTextPropertyFilterConfig,
   getWorkItemTypeFilterConfig,
@@ -31,7 +45,6 @@ import { useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig } from "@/ce/h
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
-import { getMilestoneVariant } from "@/plane-web/components/project-overview/details/main/milestones/helper";
 import { useCustomPropertyFiltersConfig } from "@/plane-web/hooks/rich-filters/use-custom-property-filters-config";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types";
@@ -63,6 +76,14 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const workItemFiltersConfig = useCoreWorkItemFiltersConfig(props);
   const { isFilterEnabled, members, areAllConfigsInitialized: areAllCoreConfigsInitialized } = workItemFiltersConfig;
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
+  const operatorConfigsWithoutIsNull = useMemo(() => {
+    return {
+      allowedOperators: new Set(
+        [...operatorConfigs.allowedOperators].filter((op) => op !== EXTENDED_EQUALITY_OPERATOR.ISNULL)
+      ),
+      allowNegative: operatorConfigs.allowNegative,
+    };
+  }, [operatorConfigs]);
   const workItemTypes: IIssueType[] | undefined = workItemTypeIds
     ? (workItemTypeIds
         .map((workItemTypeId) => getIssueTypeById(workItemTypeId))
@@ -211,10 +232,10 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       getTextPropertyFilterConfig<TWorkItemFilterProperty>("name")({
         isEnabled: isFilterEnabled("name"),
         filterIcon: AlignLeft,
-        propertyDisplayName: "Name",
-        ...operatorConfigs,
+        propertyDisplayName: "Title",
+        ...operatorConfigsWithoutIsNull,
       }),
-    [isFilterEnabled, operatorConfigs]
+    [isFilterEnabled, operatorConfigsWithoutIsNull]
   );
 
   // milestones filter config
@@ -222,9 +243,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getMilestoneFilterConfig<TWorkItemFilterProperty>("milestone_id")({
         isEnabled: isMilestonesEnabled,
-        filterIcon: (props) => <MilestoneIcon {...props} variant="custom" />,
+        filterIcon: MilestoneIcon,
         getOptionIcon: (milestone) => (
-          <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-3.5" />
+          <MilestoneIcon {...getMilestoneIconProps(milestone.progress_percentage)} className="size-3.5" />
         ),
         milestones: milestones ?? [],
         ...operatorConfigs,
@@ -236,11 +257,11 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     ...workItemFiltersConfig,
     areAllConfigsInitialized,
     configs: [
+      workItemNameFilterConfig,
       workItemTypeFilterConfig,
       teamspaceProjectFilterConfig,
       milestoneFilterConfig,
       ...workItemFiltersConfig.configs,
-      workItemNameFilterConfig,
       ...customPropertyConfigs.configs,
     ],
     configMap: {

@@ -1,8 +1,20 @@
-import type { FC } from "react";
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { CUSTOMER_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -11,7 +23,6 @@ import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/ty
 import { EUserWorkspaceRoles } from "@plane/types";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // plane web components
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { CustomerWorkItem, WorkItemEmptyState } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
@@ -44,37 +55,21 @@ export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
     customerService.workItemsSearch(workspaceSlug, customerId, params);
 
   const handleAddWorkItems = async (data: ISearchIssueResponse[]) => {
-    const _workItemIds = data.map((item) => item.id);
-    await addWorkItemsToCustomer(workspaceSlug, customerId, _workItemIds)
-      .then(() => {
-        captureSuccess({
-          eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-          payload: {
-            id: customerId,
-            work_item_ids: _workItemIds,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("customers.toasts.work_item.add.success.title"),
-          message: t("customers.toasts.work_item.add.success.message"),
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
-          payload: {
-            id: customerId,
-            work_item_ids: _workItemIds,
-          },
-          error: error as Error,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("customers.toasts.work_item.add.error.title"),
-          message: error.error || t("customers.toasts.work_item.add.error.title"),
-        });
+    try {
+      const _workItemIds = data.map((item) => item.id);
+      await addWorkItemsToCustomer(workspaceSlug, customerId, _workItemIds);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("customers.toasts.work_item.add.success.title"),
+        message: t("customers.toasts.work_item.add.success.message"),
       });
+    } catch (error: any) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("customers.toasts.work_item.add.error.title"),
+        message: error?.error || t("customers.toasts.work_item.add.error.title"),
+      });
+    }
   };
 
   return (
@@ -88,13 +83,9 @@ export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
         workItemSearchServiceCallback={workItemSearchCallBack}
       />
       <div className="flex w-full items-center justify-between mb-4">
-        <h3 className="text-xl font-medium">{t("common.work_items")}</h3>
+        <h3 className="text-18 font-medium">{t("common.work_items")}</h3>
         <div className="flex gap-2 items-center">
-          {isAdmin && (
-            <Button onClick={() => setWorkItemsModal(true)} size="sm">
-              {t("customers.linked_work_items.link")}
-            </Button>
-          )}
+          {isAdmin && <Button onClick={() => setWorkItemsModal(true)}>{t("customers.linked_work_items.link")}</Button>}
         </div>
       </div>
       {workItemsCount === 0 ? (

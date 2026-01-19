@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
@@ -137,12 +150,10 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
       <input type="hidden" value={invitationId} name="invitation_id" />
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div
-          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
-        >
+        <div className={`relative flex items-center rounded-md bg-surface-1 border border-subtle`}>
           <Input
             id="email"
             name="email"
@@ -150,12 +161,12 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
             value={formData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
             disabled
           />
           {formData.email.length > 0 && (
             <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
               onClick={handleEmailClear}
             />
           )}
@@ -164,17 +175,17 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
 
       <div className="space-y-1">
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="password">
             Password
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword?.password ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder="Enter password"
-              className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
               autoComplete="on"
               autoFocus
               onFocus={() => handlePasswordInputFocused("password")}
@@ -182,12 +193,12 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
             />
             {showPassword?.password ? (
               <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("password")}
               />
             ) : (
               <Eye
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("password")}
               />
             )}
@@ -202,53 +213,47 @@ export function MobileAuthPasswordForm(props: TMobileAuthPasswordForm) {
       {isPasswordConfirmationRequired && (
         <div>
           <div className="space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+            <label className="text-13 text-tertiary font-medium" htmlFor="password">
               Confirm Password
             </label>
-            <div className="relative flex items-center rounded-md bg-custom-background-100">
+            <div className="relative flex items-center rounded-md bg-surface-1">
               <Input
                 type={showPassword?.passwordConfirmation ? "text" : "password"}
                 name="passwordConfirmation"
                 value={formData.passwordConfirmation}
                 onChange={(e) => handleFormChange("passwordConfirmation", e.target.value)}
                 placeholder="Enter password"
-                className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+                className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
                 disabled={!isPasswordConfirmationEnabled}
                 onFocus={() => handlePasswordInputFocused("passwordConfirmation")}
                 onBlur={() => handlePasswordInputFocused("passwordConfirmation")}
               />
               {showPassword?.passwordConfirmation ? (
                 <EyeOff
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("passwordConfirmation")}
                 />
               ) : (
                 <Eye
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("passwordConfirmation")}
                 />
               )}
             </div>
           </div>
           {isPasswordConfirmationErrorStatus && (
-            <span className="text-sm text-red-500">Passwords don&apos;t match</span>
+            <span className="text-13 text-danger-primary">Passwords don&apos;t match</span>
           )}
         </div>
       )}
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {isSubmitting ? <Spinner height="20px" width="20px" /> : isSMTPConfigured ? "Continue" : "Go to workspace"}
         </Button>
 
         {isSMTPConfigured && (
-          <Button
-            type="button"
-            onClick={redirectToUniqueCodeSignIn}
-            variant="outline-primary"
-            className="w-full"
-            size="lg"
-          >
+          <Button type="button" onClick={redirectToUniqueCodeSignIn} variant="secondary" className="w-full" size="xl">
             Sign in with unique code
           </Button>
         )}

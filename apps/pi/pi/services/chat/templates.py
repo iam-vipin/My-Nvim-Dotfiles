@@ -1,7 +1,22 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import random
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Literal
+from typing import Optional
+
+from pydantic import UUID4
 
 from pi import logger
 from pi.app.schemas.chat import ChatSuggestion
@@ -13,34 +28,51 @@ log = logger.getChild(__name__)
 # ========================== PREDEFINED TEMPLATES ==========================
 WORKSPACE_TEMPLATES: List[Dict[str, Any]] = [
     # Simple work item queries
-    {"text": "Show me my urgent work items that are still pending", "type": ChatType.ISSUES, "category": "work_items"},
+    {"text": "Show me my urgent work items that are still pending", "type": ChatType.ISSUES, "category": "work_items", "mode": "ask"},
     {
         "text": "What work items are assigned to me and not yet completed, with start and end dates, priorities?",
         "type": ChatType.ISSUES,
         "category": "work_items",
+        "mode": "ask",
     },
-    {"text": "Show me my overdue work items", "type": ChatType.ISSUES, "category": "work_items"},
-    {"text": "What did I complete this week?", "type": ChatType.ISSUES, "category": "work_items"},
-    {"text": "Show me work items I'm working on currently", "type": ChatType.ISSUES, "category": "work_items"},
+    {"text": "Show me my overdue work items", "type": ChatType.ISSUES, "category": "work_items", "mode": "ask"},
+    {"text": "What did I complete this week?", "type": ChatType.ISSUES, "category": "work_items", "mode": "ask"},
+    {"text": "Show me work items I'm working on currently", "type": ChatType.ISSUES, "category": "work_items", "mode": "ask"},
     {
         "text": "What work items are assigned to me that are blocked, and which ones are blocking them?",
         "type": ChatType.ISSUES,
         "category": "work_items",
+        "mode": "ask",
     },
     # Simple activity queries
-    {"text": "Who commented on my work items recently?", "type": ChatType.ISSUES, "category": "activity"},
-    {"text": "What changed in my pending work items today?", "type": ChatType.ISSUES, "category": "activity"},
-    {"text": "Show me recent activity on my pending work items", "type": ChatType.ISSUES, "category": "activity"},
+    {"text": "Who commented on my work items recently?", "type": ChatType.ISSUES, "category": "activity", "mode": "ask"},
+    {"text": "What changed in my pending work items today?", "type": ChatType.ISSUES, "category": "activity", "mode": "ask"},
+    {"text": "Show me recent activity on my pending work items", "type": ChatType.ISSUES, "category": "activity", "mode": "ask"},
     # Simple planning queries
-    # {"text": "Help me prioritize my work items", "type": ChatType.ISSUES, "category": "planning"},
-    {"text": "What's the progress of work items in current active cycles?", "type": ChatType.ISSUES, "category": "planning"},
+    # {"text": "Help me prioritize my work items", "type": ChatType.ISSUES, "category": "planning", "mode": "ask"},
+    {"text": "What's the progress of work items in current active cycles?", "type": ChatType.ISSUES, "category": "planning", "mode": "ask"},
     ## Multi-tool call queries. Will be used in the future.
-    # {"text": "Summarize the latest updates for the last work item assigned to me", "type": ChatType.ISSUES, "category": "work_items"},
+    # {"text": "Summarize the latest updates for the last work item assigned to me",
+    # "type": ChatType.ISSUES, "category": "work_items", "mode": "ask"},
     # {
     #     "text": "Summarize the latest updates for the most recent ten work items assigned to me with Urgent or High priority",
     #     "type": ChatType.ISSUES,
     #     "category": "work_items",
+    #     "mode": "ask",
     # },
+    # Build mode templates
+    {
+        "text": "Create a Sticky with details of all Urgent workitems across this workspace",
+        "type": ChatType.WORKSPACES,
+        "category": "workspaces",
+        "mode": "build",
+    },
+    {
+        "text": "Create a Page in the Wiki with work logs for each member in the last month",
+        "type": ChatType.WORKSPACES,
+        "category": "workspaces",
+        "mode": "build",
+    },
 ]
 
 
@@ -62,7 +94,7 @@ def preset_question_flow(question: str) -> List[Dict[str, Any]]:
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for urgent work items query",
+                    "🎯 Using optimized path for urgent work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'urgent work items assigned to me'",
                 ],
                 "agents": [
@@ -94,7 +126,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for assigned work items query",
+                    "🎯 Using optimized path for assigned work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'work items assigned to me and not yet completed along with start and end dates, priorities'",  # noqa: E501
                 ],
                 "agents": [
@@ -130,7 +162,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for overdue work items query",
+                    "🎯 Using optimized path for overdue work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'overdue work items assigned to me'",
                 ],
                 "agents": [
@@ -165,7 +197,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for completed work items query",
+                    "🎯 Using optimized path for completed work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'work items I completed this week'",
                 ],
                 "agents": [
@@ -202,7 +234,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for current work items query",
+                    "🎯 Using optimized path for current work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'work items I am currently working on'",
                 ],
                 "agents": [
@@ -237,7 +269,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for blocked work items query",
+                    "🎯 Using optimized path for blocked work items query\n\n",
                     "🔧 Performing database querying to pull details about: 'blocked work items assigned to me and their blocking issues'",
                 ],
                 "agents": [
@@ -276,7 +308,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for recent commenters query",
+                    "🎯 Using optimized path for recent commenters query\n\n",
                     "🔧 Performing database querying to pull details about: 'users who recently commented on my work items'",
                 ],
                 "agents": [
@@ -322,7 +354,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for today's work item changes query",
+                    "🎯 Using optimized path for today's work item changes query\n\n",
                     "🔧 Performing database querying to pull details about: 'changes made to my pending work items today'",
                 ],
                 "agents": [
@@ -364,7 +396,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for recent activity query",
+                    "🎯 Using optimized path for recent activity query\n\n",
                     "🔧 Performing database querying to pull details about: 'recent activity on my pending work items'",
                 ],
                 "agents": [
@@ -413,7 +445,7 @@ LIMIT 20;""",
                 "step_type": "routing",
                 "skip_routing": True,
                 "reasoning_messages": [
-                    "🎯 Using optimized path for active cycle progress query",
+                    "🎯 Using optimized path for active cycle progress query\n\n",
                     "🔧 Performing database querying to pull details about: 'progress of work items in current active cycles'",
                 ],
                 "agents": [
@@ -528,27 +560,212 @@ ORDER BY cycles.start_date DESC NULLS LAST, cycles.name ASC;""",
     return preset_flows.get(question, [])
 
 
-def tiles_factory() -> List[ChatSuggestion]:
-    """
-    Factory function to create chat suggestions.
-    Returns 3 random templates from the available templates.
-    """
-    try:
-        # Randomly select 3 templates from workspace templates
-        selected_templates = random.sample(WORKSPACE_TEMPLATES, min(3, len(WORKSPACE_TEMPLATES)))
+ENTITY_TYPE_TEMPLATES = {
+    "projects": [
+        {"text": "Workitems assigned to me in this project", "type": "projects", "mode": "ask"},
+        {"text": "Status of current cycles in the project", "type": "projects", "mode": "ask"},
+        {"text": "Workitems that moved to QA this week in the project", "type": "projects", "mode": "ask"},
+        {"text": "Provide a breakdown of workitems by assignee in this project", "type": "projects", "mode": "ask"},
+        # Build
+        {"text": "Create a new cycle starting tomorrow", "type": "projects", "mode": "build"},
+    ],
+    "cycles": [
+        {"text": "Workitems assigned to me in the current cycle with High or Urgent priority", "type": "cycles", "mode": "ask"},
+        {"text": "Performance of each team member in the last cycle", "type": "cycles", "mode": "ask"},
+        {"text": "Workitems that moved to completed state in the current cycle", "type": "cycles", "mode": "ask"},
+        {"text": "Provide a breakdown of workitems by assignee for the current cycle", "type": "cycles", "mode": "ask"},
+        # Build
+        {"text": "Draft a Page containing bug report detailing the status of bugs included in the current cycle", "type": "cycles", "mode": "build"},
+        {"text": "Add all high priority issues to the current cycle", "type": "cycles", "mode": "build"},
+        {"text": "Create a new cycle starting tomorrow", "type": "cycles", "mode": "build"},
+    ],
+    "modules": [
+        {"text": "State distribution of workitems in the current module", "type": "modules", "mode": "ask"},
+        {"text": "How many high-priority workitems are assigned to me in the current module", "type": "modules", "mode": "ask"},
+        {"text": "How many workitems are in backlog in the current module", "type": "modules", "mode": "ask"},
+        # Build
+        {"text": "Add all high priority issues to the current module", "type": "modules", "mode": "build"},
+        {"text": "Draft a module description for the current module and update it", "type": "modules", "mode": "build"},
+    ],
+    "initiatives": [
+        {"text": "Status of Active initiatives in which I'm the lead", "type": "initiatives", "mode": "ask"},
+        {"text": "Which initiatives are overdue?", "type": "initiatives", "mode": "ask"},
+        {"text": "Show me the progress of all initiatives", "type": "initiatives", "mode": "ask"},
+        # Build
+        {"text": "Create a new initiative starting tomorrow", "type": "initiatives", "mode": "build"},
+    ],
+    "issues": [
+        {"text": "Provide a breakdown of workitems by assignee in this project", "type": "issues", "mode": "ask"},
+        {"text": "Show me the most commented workitems", "type": "issues", "mode": "ask"},
+        {"text": "Which workitems are blocked?", "type": "issues", "mode": "ask"},
+        # Build
+        {"text": "Draft a Page containing a bug report detailing the status of bugs created in the last 15 days", "type": "issues", "mode": "build"},
+    ],
+}
 
-        suggestions = []
-        for template in selected_templates:
-            suggestions.append(ChatSuggestion(text=template["text"], type=template["type"], id=[]))
+
+ENTITY_TEMPLATES = {
+    "projects": [
+        {"text": "Workitems assigned to me in this project", "type": "projects", "mode": "ask"},
+        {"text": "Status of current cycles in the project", "type": "projects", "mode": "ask"},
+        {"text": "Workitems that moved to QA this week in the project", "type": "projects", "mode": "ask"},
+        # Build
+        {
+            "text": "Draft a Page containing a bug report detailing the status of bugs created in the last 15 days",
+            "type": "projects",
+            "mode": "build",
+        },
+        {"text": "Enable Epics for this project", "type": "projects", "mode": "build"},
+        {"text": "Enable Workitem-types for this project", "type": "projects", "mode": "build"},
+        {"text": "Enable time-tracking for this project", "type": "projects", "mode": "build"},
+        {"text": "Create a new cycle starting tomorrow", "type": "projects", "mode": "build"},
+    ],
+    "cycles": [
+        {"text": "Workitems assigned to me in this cycle with High or Urgent priority", "type": "cycles", "mode": "ask"},
+        {"text": "Performance of each team member in this cycle", "type": "cycles", "mode": "ask"},
+        {"text": "Workitems that moved to completed state in this cycle", "type": "cycles", "mode": "ask"},
+        {"text": "Provide a breakdown of workitems by assignee for this cycle", "type": "cycles", "mode": "ask"},
+        # Build
+        {"text": "Add all pending workitems in the project to this cycle", "type": "cycles", "mode": "build"},
+        {"text": "Draft a summary of this cycle and save it in a Page", "type": "cycles", "mode": "build"},
+    ],
+    "modules": [
+        {"text": "State distribution of workitems in this module", "type": "modules", "mode": "ask"},
+        {"text": "How many high-priority workitems are assigned to me in this module", "type": "modules", "mode": "ask"},
+        {"text": "How many workitems are in backlog in this module", "type": "modules", "mode": "ask"},
+        # Build
+        {"text": "Update the description of this module", "type": "modules", "mode": "build"},
+        {"text": "Draft a documentation for this module and save it in a Page", "type": "modules", "mode": "build"},
+    ],
+    "initiatives": [
+        {"text": "Status of epics in this initiative", "type": "initiatives", "mode": "ask"},
+        {"text": "How many epics are in backlog in this initiative", "type": "initiatives", "mode": "ask"},
+        {"text": "How many workitems are completed in this initiative", "type": "initiatives", "mode": "ask"},
+        # Build
+        {"text": "Update the description of this initiative", "type": "initiatives", "mode": "build"},
+        {"text": "Draft a progress report for this initiative and save it in a Page", "type": "initiatives", "mode": "build"},
+    ],
+    "issues": [
+        {"text": "Summarize the activity in this workitem", "type": "issues", "mode": "ask"},
+        {"text": "Summarize all the comments in this workitem", "type": "issues", "mode": "ask"},
+        {"text": "Update the description of this workitem", "type": "issues", "mode": "build"},
+        {"text": "Create sub-tasks for this workitem", "type": "issues", "mode": "build"},
+        {
+            "text": "Add a comment summarizing all the activity/comments pertaining to the workitems blocking this one",
+            "type": "issues",
+            "mode": "build",
+        },
+    ],
+    "pages": [
+        {"text": "Summarize this page in 100 words", "type": "pages", "mode": "ask"},
+        {"text": "What are the main topics in this page?", "type": "pages", "mode": "ask"},
+        {"text": "Create relevant workitems with actionables from this page", "type": "pages", "mode": "build"},
+    ],
+}
+
+
+def tiles_factory(
+    entity_type: Optional[str] = None,
+    entity_id: Optional[UUID4] = None,
+    mode: Literal["ask", "build"] = "ask",
+    workspace_id: Optional[UUID4] = None,
+    project_id: Optional[UUID4] = None,
+) -> List[ChatSuggestion]:
+    """
+    Factory function to create chat suggestions filtered by entity and mode.
+    Returns up to 3 random templates matching the criteria.
+
+    Hierarchy:
+    1. Get candidate templates based on entity context (specific entity > entity type > workspace)
+    2. Filter candidates by mode
+    3. If not enough templates, fall back to broader scope (also filtered by mode)
+    4. Randomly sample up to 3 templates
+    """
+
+    project_scoped_cats = [
+        "cycles",
+        "cycle",
+        "modules",
+        "module",
+        "worklogs",
+        "worklog",
+        "epics",
+        "epic",
+        "intake",
+        "intakes",
+        "properties",
+        "property",
+        "types",
+        "type",
+        "pages",
+        "page",
+    ]
+
+    try:
+        # Step 1: Get candidate templates based on entity context
+        if not entity_type and not entity_id:
+            # Workspace-level context
+            candidate_templates = WORKSPACE_TEMPLATES
+        elif entity_type and not entity_id:
+            # Entity type context (e.g., "show questions for cycles in general")
+            candidate_templates = ENTITY_TYPE_TEMPLATES.get(entity_type, [])
+        elif entity_type and entity_id:
+            # Specific entity context (e.g., "questions for THIS cycle")
+            candidate_templates = ENTITY_TEMPLATES.get(entity_type, [])
+        else:
+            candidate_templates = WORKSPACE_TEMPLATES
+
+        # Step 2: Filter by mode
+        filtered_templates = [t for t in candidate_templates if t.get("mode") == mode]
+
+        # Step 3: If not enough templates after mode filtering, try fallback sources
+        if len(filtered_templates) < 3:
+            # Determine fallback source
+            if entity_type and entity_id:
+                # If specific entity, fall back to entity type templates
+                fallback_source = ENTITY_TYPE_TEMPLATES.get(entity_type, [])
+            elif entity_type in project_scoped_cats:
+                # If project-scoped category, fall back to project templates
+                fallback_source = ENTITY_TEMPLATES.get("projects", []) if entity_id else ENTITY_TYPE_TEMPLATES.get("projects", [])
+            else:
+                # Otherwise, fall back to workspace templates
+                fallback_source = WORKSPACE_TEMPLATES
+
+            # Filter fallback by mode and add to pool
+            fallback_filtered = [t for t in fallback_source if t.get("mode") == mode]
+
+            # Combine without duplicates (based on text)
+            existing_texts = {t["text"] for t in filtered_templates}
+            for template in fallback_filtered:
+                if template["text"] not in existing_texts:
+                    filtered_templates.append(template)
+                    existing_texts.add(template["text"])
+
+        # Step 4: Randomly sample up to 3 templates
+        num_to_sample = min(3, len(filtered_templates))
+        selected_templates = random.sample(filtered_templates, num_to_sample) if num_to_sample > 0 else []
+
+        # Step 5: Convert to ChatSuggestion objects
+        suggestions = [
+            ChatSuggestion(text=template["text"], type=template["type"], mode=template.get("mode", "ask"), id=[]) for template in selected_templates
+        ]
 
         return suggestions
 
     except Exception as e:
         log.error(f"Error creating chat suggestions: {e}")
+        # Fallback with mode-appropriate templates
         fallback_templates: List[Dict[str, Any]] = [
-            {"text": "What work items are assigned to me and not yet completed, with start and end dates, priorities?", "type": ChatType.ISSUES},
-            {"text": "Show me my overdue work items", "type": ChatType.ISSUES},
-            {"text": "Who commented on my work items recently?", "type": ChatType.ISSUES},
+            {"text": "What work items are assigned to me and not yet completed?", "type": ChatType.ISSUES, "mode": "ask"},
+            {"text": "Show me my overdue work items", "type": ChatType.ISSUES, "mode": "ask"},
+            {"text": "Who commented on my work items recently?", "type": ChatType.ISSUES, "mode": "ask"},
         ]
+        mode_filtered_fallback = [t for t in fallback_templates if t.get("mode") == mode]
+        if not mode_filtered_fallback:
+            # If no mode match, use all fallback templates
+            mode_filtered_fallback = fallback_templates
 
-        return [ChatSuggestion(text=template["text"], type=template["type"], id=[]) for template in fallback_templates]
+        return [
+            ChatSuggestion(text=template["text"], type=template["type"], mode=template.get("mode", "ask"), id=[])
+            for template in mode_filtered_fallback[:3]
+        ]

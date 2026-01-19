@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronRightIcon } from "@plane/propel/icons";
@@ -20,13 +33,13 @@ export function AutomationDetailsMainContentSectionWrapper(props: TProps) {
         <>
           <Disclosure.Button
             className={cn(
-              "flex items-center gap-4 flex-shrink-0 w-full hover:rounded hover:text-custom-text-100 hover:bg-custom-background-80 py-1.5 px-1"
+              "flex items-center gap-4 flex-shrink-0 w-full hover:rounded-sm text-tertiary hover:text-secondary hover:bg-layer-transparent-hover py-1.5 px-1"
             )}
             aria-label="Toggle section"
           >
-            <h3 className="flex-shrink-0 text-sm font-medium uppercase text-custom-text-200">{title}</h3>
-            <div className="flex-grow h-px bg-custom-border-300" />
-            <div className="flex-shrink-0 size-4 rounded grid place-items-center outline-none border-none">
+            <h3 className="flex-shrink-0 text-13 font-medium uppercase">{title}</h3>
+            <div className="flex-grow h-px bg-layer-3" />
+            <div className="flex-shrink-0 size-4 rounded-sm grid place-items-center outline-none border-none">
               <ChevronRightIcon
                 className={cn("size-3.5 transition-transform", {
                   "rotate-90": open,
@@ -45,7 +58,7 @@ export function AutomationDetailsMainContentSectionWrapper(props: TProps) {
             <Disclosure.Panel className="mt-6 space-y-6">
               {Icon ? (
                 <div className="flex items-start gap-4">
-                  <span className="flex-shrink-0 size-8 rounded-full bg-custom-primary-100 text-white grid place-items-center">
+                  <span className="flex-shrink-0 size-8 rounded-full bg-accent-primary text-on-color grid place-items-center">
                     <Icon
                       className={cn("size-4", {
                         "fill-white": iconVariant === "filled",

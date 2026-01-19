@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 
@@ -376,6 +387,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
             FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
             FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
             FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
         }
 
@@ -578,6 +590,7 @@ class StaticFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.USER_AVATAR,
             FileAsset.EntityTypeContext.USER_COVER,
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
+            FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
             FileAsset.EntityTypeContext.PROJECT_COVER,
             FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
             FileAsset.EntityTypeContext.CUSTOMER_LOGO,
@@ -981,7 +994,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
             return {"entity_identifier": entity_id}
         return {}
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         project_id = request.data.get("project_id", None)
         entity_id = request.data.get("entity_id", None)
@@ -1000,7 +1013,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
 
         storage = S3Storage(request=request)
-        original_asset = FileAsset.objects.filter(workspace=workspace, id=asset_id, is_uploaded=True).first()
+        original_asset = FileAsset.objects.filter(id=asset_id, is_uploaded=True).first()
 
         if not original_asset:
             return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)

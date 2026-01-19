@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models import F, OuterRef, Value, Case, When, Q, CharField, Func, Max
 
@@ -59,9 +70,7 @@ class CustomerAPIEndpoint(BaseAPIView):
         return (
             Customer.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .annotate(
-                customer_request_count=CustomerRequest.objects.filter(
-                    customer_id=OuterRef("id")
-                )
+                customer_request_count=CustomerRequest.objects.filter(customer_id=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="count"))
                 .values("count")
@@ -122,9 +131,7 @@ class CustomerAPIEndpoint(BaseAPIView):
         """
         workspace = Workspace.objects.get(slug=slug)
 
-        serializer = CustomerSerializer(
-            data=request.data, context={"workspace_id": workspace.id}
-        )
+        serializer = CustomerSerializer(data=request.data, context={"workspace_id": workspace.id})
         if serializer.is_valid():
             serializer.save(workspace_id=workspace.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -146,9 +153,7 @@ class CustomerDetailAPIEndpoint(BaseAPIView):
         return (
             Customer.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .annotate(
-                customer_request_count=CustomerRequest.objects.filter(
-                    customer_id=OuterRef("id")
-                )
+                customer_request_count=CustomerRequest.objects.filter(customer_id=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="count"))
                 .values("count")
@@ -246,9 +251,7 @@ class CustomerRequestAPIEndpoint(BaseAPIView):
 
     def get_queryset(self, customer_id):
         return (
-            CustomerRequest.objects.filter(
-                customer_id=customer_id, workspace__slug=self.kwargs.get("slug")
-            )
+            CustomerRequest.objects.filter(customer_id=customer_id, workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "customer")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
@@ -283,9 +286,7 @@ class CustomerRequestAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=request_queryset,
-            on_results=lambda requests: CustomerRequestSerializer(
-                requests, many=True
-            ).data,
+            on_results=lambda requests: CustomerRequestSerializer(requests, many=True).data,
         )
 
     @extend_schema(
@@ -331,9 +332,7 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
 
     def get_queryset(self, customer_id):
         return (
-            CustomerRequest.objects.filter(
-                customer_id=customer_id, workspace__slug=self.kwargs.get("slug")
-            )
+            CustomerRequest.objects.filter(customer_id=customer_id, workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "customer")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
@@ -385,13 +384,9 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
 
         Partially update an existing customer request.
         """
-        customer_request = CustomerRequest.objects.get(
-            pk=pk, customer_id=customer_id, workspace__slug=slug
-        )
+        customer_request = CustomerRequest.objects.get(pk=pk, customer_id=customer_id, workspace__slug=slug)
 
-        serializer = CustomerRequestSerializer(
-            customer_request, data=request.data, partial=True
-        )
+        serializer = CustomerRequestSerializer(customer_request, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -414,9 +409,7 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
 
         Permanently delete a customer request and unlink any associated issues.
         """
-        customer_request = CustomerRequest.objects.get(
-            pk=pk, customer_id=customer_id, workspace__slug=slug
-        )
+        customer_request = CustomerRequest.objects.get(pk=pk, customer_id=customer_id, workspace__slug=slug)
         customer_request.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -484,9 +477,7 @@ class CustomerIssuesAPIEndpoint(BaseAPIView):
 
         # Filter by specific customer request if provided
         if customer_request_id:
-            issues = issues.filter(
-                customer_request_issues__customer_request_id=customer_request_id
-            )
+            issues = issues.filter(customer_request_issues__customer_request_id=customer_request_id)
 
         # Add search functionality
         if search:
@@ -570,9 +561,7 @@ class CustomerIssuesAPIEndpoint(BaseAPIView):
 
         # Verify customer request exists if provided
         if customer_request_id:
-            CustomerRequest.objects.get(
-                pk=customer_request_id, customer_id=customer_id, workspace__slug=slug
-            )
+            CustomerRequest.objects.get(pk=customer_request_id, customer_id=customer_id, workspace__slug=slug)
 
         # Validate that all issues exist before creating links
         existing_issues = Issue.objects.filter(
@@ -729,9 +718,7 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=properties_queryset,
-            on_results=lambda properties: CustomerPropertySerializer(
-                properties, many=True
-            ).data,
+            on_results=lambda properties: CustomerPropertySerializer(properties, many=True).data,
         )
 
     @extend_schema(
@@ -757,14 +744,9 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
         options = request.data.pop("options", [])
 
         # Basic validation
-        if (
-            not request.data.get("is_multi")
-            and len(request.data.get("default_value", [])) > 1
-        ):
+        if not request.data.get("is_multi") and len(request.data.get("default_value", [])) > 1:
             return Response(
-                {
-                    "error": "Default value must be a single value for non-multi properties"
-                },
+                {"error": "Default value must be a single value for non-multi properties"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -775,9 +757,7 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
         serializer = CustomerPropertySerializer(data=request.data)
         if serializer.is_valid():
             # Check for duplicate name
-            if CustomerProperty.objects.filter(
-                workspace_id=workspace.id, name=request.data["name"]
-            ).exists():
+            if CustomerProperty.objects.filter(workspace_id=workspace.id, name=request.data["name"]).exists():
                 return Response(
                     {"error": "Property with this name already exists in workspace"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -796,9 +776,7 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
                 property_options = CustomerPropertyOption.objects.filter(
                     property_id=customer_property.id, workspace__slug=slug
                 )
-                response_data["options"] = CustomerPropertyOptionSerializer(
-                    property_options, many=True
-                ).data
+                response_data["options"] = CustomerPropertyOptionSerializer(property_options, many=True).data
 
             return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -809,9 +787,9 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
         workspace_id = customer_property.workspace_id
         customer_property_id = customer_property.id
 
-        last_id = CustomerPropertyOption.objects.filter(
-            property_id=customer_property_id
-        ).aggregate(largest=Max("sort_order"))["largest"]
+        last_id = CustomerPropertyOption.objects.filter(property_id=customer_property_id).aggregate(
+            largest=Max("sort_order")
+        )["largest"]
 
         sort_order = (last_id + 10000) if last_id else 10000
 
@@ -870,12 +848,8 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
         # Include options for OPTION type properties
         response_data = CustomerPropertySerializer(customer_property).data
         if customer_property.property_type == "OPTION":
-            options = CustomerPropertyOption.objects.filter(
-                property_id=customer_property.id, workspace__slug=slug
-            )
-            response_data["options"] = CustomerPropertyOptionSerializer(
-                options, many=True
-            ).data
+            options = CustomerPropertyOption.objects.filter(property_id=customer_property.id, workspace__slug=slug)
+            response_data["options"] = CustomerPropertyOptionSerializer(options, many=True).data
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -913,14 +887,9 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
                 )
 
         # Validation for default values
-        if (
-            not customer_property.is_multi
-            and len(request.data.get("default_value", [])) > 1
-        ):
+        if not customer_property.is_multi and len(request.data.get("default_value", [])) > 1:
             return Response(
-                {
-                    "error": "Default value must be a single value for non-multi properties"
-                },
+                {"error": "Default value must be a single value for non-multi properties"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -928,9 +897,7 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
         if request.data.get("is_required", customer_property.is_required):
             request.data["default_value"] = []
 
-        serializer = CustomerPropertySerializer(
-            customer_property, data=request.data, partial=True
-        )
+        serializer = CustomerPropertySerializer(customer_property, data=request.data, partial=True)
 
         if serializer.is_valid():
             # Check for duplicate name (if updating)
@@ -943,9 +910,7 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
                 ).exists()
             ):
                 return Response(
-                    {
-                        "error": "Property with this display name already exists in the workspace"
-                    },
+                    {"error": "Property with this display name already exists in the workspace"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -961,9 +926,7 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
                 property_options = CustomerPropertyOption.objects.filter(
                     property_id=customer_property.id, workspace__slug=slug
                 )
-                response_data["options"] = CustomerPropertyOptionSerializer(
-                    property_options, many=True
-                ).data
+                response_data["options"] = CustomerPropertyOptionSerializer(property_options, many=True).data
 
             return Response(response_data, status=status.HTTP_200_OK)
 
@@ -993,9 +956,9 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
         workspace_id = customer_property.workspace_id
         customer_property_id = customer_property.id
 
-        last_id = CustomerPropertyOption.objects.filter(
-            property_id=customer_property_id
-        ).aggregate(largest=Max("sort_order"))["largest"]
+        last_id = CustomerPropertyOption.objects.filter(property_id=customer_property_id).aggregate(
+            largest=Max("sort_order")
+        )["largest"]
 
         sort_order = (last_id + 10000) if last_id else 10000
 
@@ -1023,9 +986,7 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
                     property_id=customer_property.id,
                     pk=option["id"],
                 )
-                option_serializer = CustomerPropertyOptionSerializer(
-                    property_option, data=option, partial=True
-                )
+                option_serializer = CustomerPropertyOptionSerializer(property_option, data=option, partial=True)
                 if option_serializer.is_valid():
                     option_serializer.save()
             else:
@@ -1125,15 +1086,10 @@ class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
         )
 
         # Annotate and get values
-        property_values = self._query_annotator(queryset).values(
-            "property_id", "values"
-        )
+        property_values = self._query_annotator(queryset).values("property_id", "values")
 
         # Create response dictionary
-        response = {
-            str(prop_value["property_id"]): prop_value["values"]
-            for prop_value in property_values
-        }
+        response = {str(prop_value["property_id"]): prop_value["values"] for prop_value in property_values}
 
         return Response(response, status=status.HTTP_200_OK)
 
@@ -1185,9 +1141,7 @@ class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
                 customer_id=customer_id,
             )
 
-            existing_prop_values = self._query_annotator(existing_prop_queryset).values(
-                "property_id", "values"
-            )
+            existing_prop_values = self._query_annotator(existing_prop_queryset).values("property_id", "values")
 
             # Get customer properties
             customer_properties = CustomerProperty.objects.filter(
@@ -1212,14 +1166,10 @@ class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
             )
 
             # Delete old values
-            existing_prop_queryset.filter(
-                property_id__in=customer_property_ids
-            ).delete()
+            existing_prop_queryset.filter(property_id__in=customer_property_ids).delete()
 
             # Bulk create new values
-            CustomerPropertyValue.objects.bulk_create(
-                bulk_customer_property_values, batch_size=10
-            )
+            CustomerPropertyValue.objects.bulk_create(bulk_customer_property_values, batch_size=10)
 
             return Response(status=status.HTTP_201_CREATED)
 
@@ -1326,15 +1276,10 @@ class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
         )
 
         # Annotate and get values
-        property_values = self._query_annotator(queryset).values(
-            "property_id", "values"
-        )
+        property_values = self._query_annotator(queryset).values("property_id", "values")
 
         # Create response dictionary
-        response = {
-            str(prop_value["property_id"]): prop_value["values"]
-            for prop_value in property_values
-        }
+        response = {str(prop_value["property_id"]): prop_value["values"] for prop_value in property_values}
 
         return Response(response, status=status.HTTP_200_OK)
 
@@ -1372,9 +1317,7 @@ class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
         try:
             # Verify customer and property exist
             Customer.objects.get(pk=customer_id, workspace__slug=slug)
-            customer_property = CustomerProperty.objects.get(
-                workspace__slug=slug, pk=property_id
-            )
+            customer_property = CustomerProperty.objects.get(workspace__slug=slug, pk=property_id)
 
             existing_prop_queryset = CustomerPropertyValue.objects.filter(
                 workspace__slug=slug, customer_id=customer_id, property_id=property_id
@@ -1383,13 +1326,9 @@ class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
             values = request.data.get("values", [])
 
             # Check if property is required
-            if customer_property.is_required and (
-                not values or not [v for v in values if v]
-            ):
+            if customer_property.is_required and (not values or not [v for v in values if v]):
                 return Response(
-                    {
-                        "error": f"{customer_property.display_name} is a required property"
-                    },
+                    {"error": f"{customer_property.display_name} is a required property"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -1414,9 +1353,7 @@ class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
 
                 # Delete old values and create new ones
                 existing_prop_queryset.delete()
-                CustomerPropertyValue.objects.bulk_create(
-                    property_values, batch_size=10
-                )
+                CustomerPropertyValue.objects.bulk_create(property_values, batch_size=10)
             else:
                 raise ValidationError("Invalid property type")
 

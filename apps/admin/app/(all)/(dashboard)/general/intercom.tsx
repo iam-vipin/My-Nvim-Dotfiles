@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -44,22 +57,22 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
   };
 
   const enableIntercomConfig = () => {
-    submitInstanceConfigurations({ IS_INTERCOM_ENABLED: isIntercomEnabled ? "0" : "1" });
+    void submitInstanceConfigurations({ IS_INTERCOM_ENABLED: isIntercomEnabled ? "0" : "1" });
   };
 
   return (
     <>
-      <div className="flex items-center gap-14 px-4 py-3 border border-custom-border-200 rounded">
+      <div className="flex items-center gap-14">
         <div className="grow flex items-center gap-4">
           <div className="shrink-0">
-            <div className="flex items-center justify-center w-10 h-10 bg-custom-background-80 rounded-full">
-              <MessageSquare className="w-6 h-6 text-custom-text-300/80 p-0.5" />
+            <div className="flex items-center justify-center size-11 bg-layer-1 rounded-lg">
+              <MessageSquare className="size-5 text-tertiary p-0.5" />
             </div>
           </div>
 
           <div className="grow">
-            <div className="text-sm font-medium text-custom-text-100 leading-5">Chat with us</div>
-            <div className="text-xs font-normal text-custom-text-300 leading-5">
+            <div className="text-13 font-medium text-primary leading-5">Chat with us</div>
+            <div className="text-11 font-regular text-tertiary leading-5">
               Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
               automatically.
             </div>

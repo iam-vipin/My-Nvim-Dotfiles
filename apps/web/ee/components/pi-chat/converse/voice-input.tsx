@@ -1,14 +1,28 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { SetStateAction, Dispatch } from "react";
 import React, { useRef, useState } from "react";
-import { Check, LoaderCircle, MicIcon } from "lucide-react";
+import { LoaderCircle, MicIcon } from "lucide-react";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import type { TPiChatEditorRefApi } from "@plane/editor";
-import { CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
 import type { TFocus, TPiLoaders } from "@/plane-web/types";
 import { Waveform } from "./voice-chart";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const SPEECH_LOADERS = ["recording", "transcribing"];
 
 type TProps = {
@@ -63,23 +77,24 @@ function AudioRecorder(props: TProps) {
         audioChunksRef.current.push(event.data);
       };
 
-      mediaRecorder.onstop = async () => {
+      mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, {
           type: "audio/webm",
         });
         setLoader("");
-        if (shouldSubmitRef.current) await sendToAPI(audioBlob);
+        if (shouldSubmitRef.current) void sendToAPI(audioBlob);
 
         // cleanup
         stream.getTracks().forEach((track) => track.stop());
         clearInterval(intervalIdRef.current);
-        audioCtxRef.current?.close();
+        void audioCtxRef.current?.close();
       };
 
       mediaRecorder.start();
       setLoader("recording");
 
       // analyser for waveform
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, no-unsafe-optional-chaining
       const audioCtx = new (window.AudioContext || (window as any)?.webkitAudioContext)();
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
@@ -98,9 +113,9 @@ function AudioRecorder(props: TProps) {
         }));
         setWaveformData(amplitudes);
       }, 80); // adjust speed
-    } catch (error: any) {
+    } catch (error: unknown) {
       setToast({
-        title: error.message || "Error starting recording",
+        title: (error as Error)?.message || "Error starting recording",
         message: "Enable mic access to dictate",
         type: TOAST_TYPE.ERROR,
       });
@@ -135,12 +150,10 @@ function AudioRecorder(props: TProps) {
   if (!SPEECH_LOADERS.includes(loader))
     return (
       <button
-        onClick={() => startRecording()}
+        onClick={() => void startRecording()}
         type="button"
         disabled={isSubmitting}
-        className={cn(
-          "flex items-center justify-center w-8 h-8 rounded-full hover:bg-custom-background-80 flex-shrink-0"
-        )}
+        className={cn("flex items-center justify-center w-8 h-8 rounded-full hover:bg-layer-1 flex-shrink-0")}
       >
         <MicIcon className="w-4 h-4" />
       </button>
@@ -154,15 +167,18 @@ function AudioRecorder(props: TProps) {
     >
       {/* record/stop button */}
       <button
-        onClick={() => (loader === "recording" ? stopRecording(false) : startRecording())}
+        onClick={() => (loader === "recording" ? stopRecording(false) : void startRecording())}
         type="button"
         disabled={isSubmitting}
-        className={cn(
-          "flex items-center justify-center w-8 h-8 rounded-full hover:bg-custom-background-80 flex-shrink-0",
-          { "bg-custom-background-80": SPEECH_LOADERS.includes(loader) }
-        )}
+        className={cn("flex items-center justify-center w-8 h-8 rounded-full hover:bg-layer-1 flex-shrink-0", {
+          "bg-layer-1": SPEECH_LOADERS.includes(loader),
+        })}
       >
-        {SPEECH_LOADERS.includes(loader) ? <CloseIcon className="w-4 h-4" /> : <MicIcon className="w-4 h-4" />}
+        {SPEECH_LOADERS.includes(loader) ? (
+          <CloseIcon className="w-4 h-4 text-icon-secondary" />
+        ) : (
+          <MicIcon className="w-4 h-4 text-icon-secondary" />
+        )}
       </button>
 
       {/* waveform / transcribing */}
@@ -172,7 +188,7 @@ function AudioRecorder(props: TProps) {
         ) : (
           loader === "transcribing" && (
             <div className="flex gap-2 items-center justify-center">
-              <span className="text-base text-custom-text-200 animate-pulse">Transcribing audio...</span>
+              <span className="text-body-xs-medium text-placeholder animate-pulse">Transcribing audio...</span>
             </div>
           )
         )}
@@ -182,13 +198,13 @@ function AudioRecorder(props: TProps) {
       {SPEECH_LOADERS.includes(loader) && (
         <button
           className={cn(
-            "rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 disabled:bg-custom-background-80"
+            "rounded-full bg-layer-1 text-icon-secondary size-8 flex items-center justify-center flex-shrink-0 disabled:bg-layer-1"
           )}
           type="submit"
           disabled={isSubmitting}
           onClick={() => stopRecording(true)}
         >
-          {isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <Check size={16} />}
+          {isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <CheckIcon width={16} height={16} />}
         </button>
       )}
     </div>

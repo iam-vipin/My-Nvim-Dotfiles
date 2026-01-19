@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import strawberry
 from strawberry_django.optimizer import DjangoOptimizerExtension
 
@@ -19,8 +30,10 @@ from .mutations.epics import (
     EpicAttachmentMutation,
     EpicCommentMutation,
     EpicCommentReactionMutation,
+    EpicCommentReplyMutation,
     EpicLinkMutation,
     EpicMutation,
+    EpicPageMutation,
     EpicRelationMutation,
     EpicUserPropertyMutation,
     EpicWorkItemsMutation,
@@ -30,11 +43,11 @@ from .mutations.intake import (
     IntakeWorkItemAttachmentMutation,
     IntakeWorkItemCommentMutation,
     IntakeWorkItemCommentReactionMutation,
+    IntakeWorkItemCommentReplyMutation,
     IntakeWorkItemMutation,
     IntakeWorkItemStatusMutation,
 )
 from .mutations.issue import (
-    IssueMutation,
     IssueSubscriptionMutation,
     IssueUserPropertyMutation,
 )
@@ -47,7 +60,12 @@ from .mutations.issues import (
     IssueMutationV2,
     IssueRelationMutation,
     SubIssueMutation,
+    WorkItemArchiveMutation,
+    WorkItemCommentMutation,
     WorkItemCommentReactionMutation,
+    WorkItemCommentReplyMutation,
+    WorkItemMutation,
+    WorkItemPageMutation,
 )
 from .mutations.module import (
     ModuleFavoriteMutation,
@@ -101,6 +119,8 @@ from .queries.epics import (
     EpicCommentReactionQuery,
     EpicCountQuery,
     EpicLinkQuery,
+    EpicPageQuery,
+    EpicPageSearchQuery,
     EpicQuery,
     EpicRelationQuery,
     EpicStatsQuery,
@@ -122,7 +142,6 @@ from .queries.intake import (
     IntakeWorkItemQuery,
 )
 from .queries.issue import (
-    IssueCommentActivityQuery,
     IssuePropertiesActivityQuery,
     IssueQuery,
     IssuesInformationQuery,
@@ -140,7 +159,6 @@ from .queries.issues import (
     SubIssuesQuery,
     WorkItemCommentReactionQuery,
 )
-from .queries.workitem import WorkspaceWorkItemMentionQuery
 from .queries.label import LabelQuery, WorkspaceLabelQuery
 from .queries.module import (
     ModuleIssueQuery,
@@ -165,7 +183,7 @@ from .queries.page import (
 from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery
 from .queries.roles import UserProjectRolesQuery
 from .queries.search import GlobalSearchQuery
-from .queries.state import StateQuery, WorkspaceStateQuery, TriageStateQuery
+from .queries.state import StateQuery, TriageStateQuery, WorkspaceStateQuery
 from .queries.stickies import WorkspaceStickiesQuery
 from .queries.teamspace import TeamspaceMemberQuery
 from .queries.timezone import TimezoneListQuery
@@ -177,6 +195,12 @@ from .queries.users import (
     UserRecentVisitQuery,
 )
 from .queries.version_check import VersionCheckQuery
+from .queries.workitem import (
+    IssueCommentActivityQuery,
+    WorkItemPageQuery,
+    WorkItemPageSearchQuery,
+    WorkspaceWorkItemMentionQuery,
+)
 from .queries.workspace import (
     PublicWorkspaceInviteQuery,
     WorkspaceFeatureQuery,
@@ -251,6 +275,8 @@ class Query(
     WorkItemCommentReactionQuery,
     IssueStatsQuery,
     WorkspaceWorkItemMentionQuery,
+    WorkItemPageQuery,
+    WorkItemPageSearchQuery,
     # workitem type
     IssueTypesTypeQuery,
     # label
@@ -296,6 +322,8 @@ class Query(
     EpicCommentQuery,
     EpicCommentReactionQuery,
     EpicStatsQuery,
+    EpicPageQuery,
+    EpicPageSearchQuery,
     # sticky
     WorkspaceStickiesQuery,
     # teamspace
@@ -344,15 +372,19 @@ class Mutation(
     ProjectFavoriteMutation,
     # workitem
     IssueUserPropertyMutation,
-    IssueMutation,  # old
-    IssueMutationV2,  # new
+    IssueMutationV2,
     IssueLinkMutation,
     IssueAttachmentMutation,
     IssueSubscriptionMutation,
     IssueRelationMutation,
     IssueCommentMutation,
+    WorkItemCommentMutation,
+    WorkItemCommentReplyMutation,
     SubIssueMutation,
     WorkItemCommentReactionMutation,
+    WorkItemPageMutation,
+    WorkItemMutation,
+    WorkItemArchiveMutation,
     # workitem type
     # label
     # state
@@ -389,13 +421,16 @@ class Mutation(
     EpicWorkItemsMutation,
     EpicRelationMutation,
     EpicCommentMutation,
+    EpicCommentReplyMutation,
     EpicCommentReactionMutation,
+    EpicPageMutation,
     # sticky
     WorkspaceStickiesMutation,
     # intake
     IntakeWorkItemMutation,
     IntakeWorkItemCommentMutation,
     IntakeWorkItemCommentReactionMutation,
+    IntakeWorkItemCommentReplyMutation,
     IntakeWorkItemAttachmentMutation,
     IntakeWorkItemStatusMutation,
     # catch up

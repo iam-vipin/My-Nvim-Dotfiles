@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { groupBy, orderBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -115,8 +128,8 @@ export const ProjectStates = observer(function ProjectStates(props: TProjectStat
           shouldTrackEvents={false}
           isEditable
           groupListClassName="space-y-4"
-          groupItemClassName="bg-custom-background-100 border-custom-border-100 rounded-lg"
-          stateItemClassName="border-custom-border-200"
+          groupItemClassName="bg-surface-1 border-subtle rounded-lg"
+          stateItemClassName="border-subtle"
         />
       </div>
     </TemplateCollapsibleWrapper>

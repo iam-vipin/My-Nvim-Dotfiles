@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // react
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -14,6 +27,15 @@ import { LiteTextEditor } from "@/components/editor/lite-text";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // types
 import type { TPageInstance } from "@/store/pages/base-page";
+
+const EMPTY_COMMENT_JSON: JSONContent = {
+  type: "doc",
+  content: [
+    {
+      type: "paragraph",
+    },
+  ],
+};
 
 type CommentBoxProps = {
   // Required props
@@ -45,15 +67,6 @@ type CommentBoxProps = {
     uploadedAssetIds: string[];
   }) => void;
   onCancel?: () => void;
-};
-
-export const EMPTY_COMMENT_JSON: JSONContent = {
-  type: "doc",
-  content: [
-    {
-      type: "paragraph",
-    },
-  ],
 };
 
 export const PageCommentForm = observer(function PageCommentForm(props: CommentBoxProps) {
@@ -217,8 +230,8 @@ export const PageCommentForm = observer(function PageCommentForm(props: CommentB
       className={cn(
         "relative w-full ",
         comment && "px-2 -mx-2",
-        isReply || !comment ? "border border-custom-border-200 rounded p-2" : "",
-        isFocused && editable ? "border-2 border-custom-primary-100 rounded py-2" : ""
+        isReply || !comment ? "border border-subtle-1 rounded-sm p-2" : "",
+        isFocused && editable ? "border-2 border-accent-strong rounded-sm py-2" : ""
       )}
     >
       <Controller

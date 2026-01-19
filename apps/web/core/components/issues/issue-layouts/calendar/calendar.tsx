@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-// plane constants
+// plane imports
+import { MONTHS_LIST } from "@plane/constants";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-// types
 import type {
   TGroupedIssues,
   TIssue,
@@ -14,17 +27,12 @@ import type {
   TSupportedFilterForUpdate,
 } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-// ui
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
-// constants
-import { MONTHS_LIST } from "@/constants/calendar";
-// helpers
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
@@ -147,7 +155,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
             <div className="h-full w-full">
               {layout === "month" && (
-                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
                   {allWeeksOfActiveMonth &&
                     Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                       <CalendarWeekDays
@@ -200,7 +208,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
             {/* mobile view */}
             <div className="md:hidden">
-              <p className="p-4 text-xl font-semibold">
+              <p className="p-4 text-18 font-semibold">
                 {`${selectedDate.getDate()} ${
                   MONTHS_LIST[selectedDate.getMonth() + 1].title
                 }, ${selectedDate.getFullYear()}`}
@@ -228,7 +236,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
         {/* mobile view */}
         <div className="md:hidden">
-          <p className="p-4 text-xl font-semibold">
+          <p className="p-4 text-18 font-semibold">
             {`${selectedDate.getDate()} ${
               MONTHS_LIST[selectedDate.getMonth() + 1].title
             }, ${selectedDate.getFullYear()}`}

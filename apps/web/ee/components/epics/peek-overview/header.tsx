@@ -1,11 +1,24 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
+import { MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
+import { CopyLinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
@@ -19,7 +32,6 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "../../feature-flags";
@@ -74,13 +86,10 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
     toggleEditEpicModal,
     toggleDeleteEpicModal,
     toggleDuplicateEpicModal,
-    disabled,
     embedIssue = false,
     removeRoutePeekId,
     isSubmitting,
   } = props;
-  // router
-  const router = useAppRouter();
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   // store hooks
@@ -112,13 +121,22 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(workItemLink).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Epic link copied to clipboard.",
+    copyUrlToClipboard(workItemLink)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Link Copied!",
+          message: "Epic link copied to clipboard.",
+        });
+        return;
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to copy link",
+        });
       });
-    });
   };
 
   const handleDelete = async () => {
@@ -126,6 +144,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
       await removeIssue(issue.project_id, issue.id).then(() => {
         // TODO: add toast
         setPeekIssue(undefined);
+        return;
       });
     }
   };
@@ -133,27 +152,29 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
   const handleUpdate = async (data: Partial<TIssue>) => {
     if (issue && updateIssue) {
       // TODO: add toast
-      updateIssue(issue.project_id, issue.id, data);
+      await updateIssue(issue.project_id, issue.id, data);
     }
   };
 
   const isEditingAllowed = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
   );
 
   return (
-    <div className={`relative flex items-center justify-between p-4 border-b border-custom-border-200 `}>
+    <div className={`relative flex items-center justify-between p-4 border-b border-subtle-1 `}>
       <div className="flex items-center gap-4">
         <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
           <button onClick={removeRoutePeekId}>
-            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
 
         <Tooltip tooltipContent="Open work item in full screen" isMobile={isMobile}>
           <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
           </Link>
         </Tooltip>
         {currentMode && embedIssue === false && (
@@ -164,7 +185,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
               customButton={
                 <Tooltip tooltipContent="Toggle peek view layout" isMobile={isMobile}>
                   <button type="button" className="">
-                    <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                    <currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />
                   </button>
                 </Tooltip>
               }
@@ -173,9 +194,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
                 <CustomSelect.Option key={mode.key} value={mode.key}>
                   <div
                     className={`flex items-center gap-1.5 ${
-                      currentMode.key === mode.key
-                        ? "text-custom-text-200"
-                        : "text-custom-text-400 hover:text-custom-text-200"
+                      currentMode.key === mode.key ? "text-secondary" : "text-placeholder hover:text-secondary"
                     }`}
                   >
                     <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
@@ -204,9 +223,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
             />
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
-            <button type="button" onClick={handleCopyText}>
-              <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
-            </button>
+            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
           </Tooltip>
           {issue && (
             <div ref={parentRef} className="flex items-center gap-2">
@@ -223,7 +240,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
               />
               <Sidebar
                 className={cn("size-4 cursor-pointer", {
-                  "text-custom-primary-100": !epicDetailSidebarCollapsed,
+                  "text-accent-primary": !epicDetailSidebarCollapsed,
                 })}
                 onClick={() => toggleEpicDetailSidebar(!epicDetailSidebarCollapsed)}
               />

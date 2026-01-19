@@ -1,19 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
 // plane imports
-import {
-  DEFAULT_GLOBAL_VIEWS_LIST,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  GLOBAL_VIEW_TRACKER_ELEMENTS,
-  GLOBAL_VIEW_TRACKER_EVENTS,
-} from "@plane/constants";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PlusIcon } from "@plane/propel/icons";
 import type { TStaticViewTypes } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -75,15 +81,6 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
   // bring the active view to the centre of the header
   useEffect(() => {
     if (globalViewId && currentWorkspaceViews) {
-      captureSuccess({
-        eventName: GLOBAL_VIEW_TRACKER_EVENTS.open,
-        payload: {
-          view_id: globalViewId,
-          view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
-            ? "Default"
-            : "Custom",
-        },
-      });
       const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
       if (activeTabElement && containerRef.current) {
         const containerRect = containerRef.current.getBoundingClientRect();
@@ -100,7 +97,7 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
   );
 
   return (
-    <Header variant={EHeaderVariant.SECONDARY} className="min-h-[44px] z-[12] bg-custom-background-100">
+    <Header variant={EHeaderVariant.SECONDARY} className="min-h-[44px] z-[12] bg-surface-1">
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div
         ref={containerRef}
@@ -118,11 +115,10 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
       {isAuthorizedUser ? (
         <button
           type="button"
-          data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
-          className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
+          className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-surface-1 py-3 hover:border-subtle hover:text-placeholder"
           onClick={() => setCreateViewModal(true)}
         >
-          <Plus className="h-4 w-4 text-custom-primary-200" />
+          <PlusIcon className="h-4 w-4 text-accent-secondary" />
         </button>
       ) : (
         <></>

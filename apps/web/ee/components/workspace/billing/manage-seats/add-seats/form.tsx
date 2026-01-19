@@ -1,16 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
 // plane imports
-import type { TProrationPreview } from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { EProductSubscriptionEnum } from "@plane/types";
+import type { IWorkspaceProductSubscription, TProrationPreview } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // plane web imports
-import {
-  SelectSeatsStep,
-  ConfirmPriceStep,
-} from "@/plane-web/components/workspace/billing/manage-seats/add-seats/steps";
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { SelectSeatsStep, ConfirmPriceStep } from "./steps";
 import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
@@ -18,22 +29,34 @@ const paymentService = new PaymentService();
 // Step type to track the modal state
 type TModalStep = "SELECT_SEATS" | "CONFIRM_PRICE";
 
+export type TMangeSeatSubscriptionDetails = Pick<
+  IWorkspaceProductSubscription,
+  "purchased_seats" | "is_self_managed" | "is_on_trial" | "product"
+>;
+
 type TAddSeatsFormProps = {
+  getIsInTrialPeriod: (checkForUpgrade: boolean) => boolean;
   onClose?: () => void;
-  onSuccess?: () => void;
   onPreviousStep?: () => void;
+  onSuccess?: () => void;
+  subscribedPlan: TMangeSeatSubscriptionDetails;
+  updateSubscribedPlan: (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => void;
+  workspaceSlug: string;
 };
 
 export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormProps) {
-  const { onClose, onSuccess, onPreviousStep } = props;
-  // router
-  const { workspaceSlug } = useParams();
-  // mobx store
   const {
-    currentWorkspaceSubscribedPlanDetail: subscribedPlan,
     getIsInTrialPeriod,
+    onClose,
+    onPreviousStep,
+    onSuccess,
+    subscribedPlan,
     updateSubscribedPlan,
-  } = useWorkspaceSubscription();
+    workspaceSlug,
+  } = props;
+  const {
+    workspace: { mutateWorkspaceMembersActivity },
+  } = useMember();
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("SELECT_SEATS");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -45,6 +68,7 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
   const isSelfHosted = subscribedPlan?.is_self_managed;
   const isOnTrial = getIsInTrialPeriod(false);
   const planeName = subscribedPlan?.product ? getSubscriptionName(subscribedPlan?.product) : "";
+  const subscriptionLevel = subscribedPlan.product === EProductSubscriptionEnum.ENTERPRISE ? "instance" : "workspace";
 
   useEffect(() => {
     if (error) setError("");
@@ -121,29 +145,29 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
     const updatedSeats = purchasedSeats + Number(numberOfSeats);
 
     setIsSubmitting(true);
-    await paymentService
-      .updateWorkspaceSeats(workspaceSlug?.toString(), updatedSeats)
-      .then((response) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Congratulations.",
-          message: `Your workspace in now updated to ${response?.seats} seats.`,
-        });
-        updateSubscribedPlan(workspaceSlug?.toString(), {
-          purchased_seats: response?.seats,
-        });
-        onSuccess?.();
-      })
-      .catch((err) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "We couldn't update seats.",
-          message: err?.error || "Try again.",
-        });
-      })
-      .finally(() => {
-        setIsSubmitting(false);
+    try {
+      const response = await paymentService.updateWorkspaceSeats(workspaceSlug, updatedSeats);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Congratulations.",
+        message: `Your workspace in now updated to ${response?.seats} seats.`,
       });
+      updateSubscribedPlan(workspaceSlug, {
+        purchased_seats: response?.seats,
+      });
+      void mutateWorkspaceMembersActivity(workspaceSlug);
+      onSuccess?.();
+    } catch (err) {
+      const errorMessage =
+        err && typeof err === "object" && "error" in err && typeof err.error === "string" ? err.error : "Try again.";
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "We couldn't update seats.",
+        message: errorMessage,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSeatChange = (action: "increase" | "decrease") => {
@@ -167,37 +191,37 @@ export const AddSeatsForm = observer(function AddSeatsForm(props: TAddSeatsFormP
   return (
     <form
       onSubmit={(e) => {
-        if (currentStep === "SELECT_SEATS") handleNextStep(e);
-        else handleFormSubmit(e);
-      }}
-      onKeyDown={(e) => {
-        if (e.code === "Enter") e.preventDefault();
+        e.preventDefault();
+        if (currentStep === "SELECT_SEATS") void handleNextStep(e);
+        else void handleFormSubmit(e);
       }}
     >
       {currentStep === "SELECT_SEATS" ? (
         <SelectSeatsStep
-          numberOfSeats={numberOfSeats}
-          setNumberOfSeats={setNumberOfSeats}
           error={error}
-          setError={setError}
+          handleClose={handleClose}
+          handleNextStep={(e) => void handleNextStep(e)}
           handleSeatChange={handleSeatChange}
           isLoading={isOnTrial ? isSubmitting : isFetchingProrationPreview}
-          handleNextStep={handleNextStep}
-          handleClose={handleClose}
+          isOnTrial={isOnTrial}
+          isSelfHosted={!!isSelfHosted}
+          numberOfSeats={numberOfSeats}
           onPreviousStep={onPreviousStep ? handleOnPreviousStep : undefined}
           planeName={planeName}
           purchasedSeats={subscribedPlan?.purchased_seats || 0}
-          isSelfHosted={!!isSelfHosted}
-          isOnTrial={isOnTrial}
+          setError={setError}
+          setNumberOfSeats={setNumberOfSeats}
+          subscriptionLevel={subscriptionLevel}
         />
       ) : (
         prorationPreview && (
           <ConfirmPriceStep
-            prorationPreview={prorationPreview}
-            handleFormSubmit={handleFormSubmit}
-            isSubmitting={isSubmitting}
             handleClose={handleClose}
+            handleFormSubmit={(e) => void handleFormSubmit(e)}
+            isSubmitting={isSubmitting}
             onPreviousStep={() => setCurrentStep("SELECT_SEATS")}
+            prorationPreview={prorationPreview}
+            subscriptionLevel={subscriptionLevel}
           />
         )
       )}

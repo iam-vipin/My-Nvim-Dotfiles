@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from typing import Optional
@@ -17,8 +28,9 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module imports
-from plane.db.models import CycleIssue, Workspace
+from plane.db.models import CycleIssue
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.helpers import get_workspace_async
 from plane.graphql.permissions.project import ProjectMemberPermission
 
 
@@ -26,24 +38,6 @@ def raise_error_exception(message: str, error_extensions: dict, e: Optional[Exce
     message = e.message if hasattr(e, "message") else message
     error_extensions = e.error_extensions if hasattr(e, "error_extensions") else error_extensions
     raise GraphQLError(message, extensions=error_extensions)
-
-
-# TODO: remove this function and use the one in the helpers
-# getting the workspace
-def get_workspace(workspace_slug: str) -> Workspace:
-    try:
-        return Workspace.objects.get(slug=workspace_slug)
-    except Workspace.DoesNotExist:
-        message = "Workspace not found"
-        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
-        raise_error_exception(message, error_extensions)
-    except Exception as e:
-        message = "Error getting workspace"
-        error_extensions = {
-            "code": "SOMETHING_WENT_WRONG",
-            "statusCode": 400,
-        }
-        raise_error_exception(message, error_extensions, e)
 
 
 # creating the cycle issue activity
@@ -135,7 +129,7 @@ def create_cycle_issue(
 ) -> bool:
     try:
         # get workspace
-        workspace = get_workspace(workspace_slug)
+        workspace = get_workspace_async(slug=workspace_slug)
 
         # create cycle issue
         cycle_issue = CycleIssue.objects.create(

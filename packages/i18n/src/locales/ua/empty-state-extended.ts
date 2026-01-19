@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "Запишіть ідею, зафіксуйте осяяння або запам'ятайте раптову думку. Додайте стікер, щоб почати.",
     },
     stickies: {
-      title: "Запишіть ідею, зафіксуйте осяяння або запам'ятайте раптову думку. Додайте стікер, щоб почати.",
-      cta_primary: "Додати стікер",
+      title: "Фіксуйте ідеї миттєво",
+      description: "Створюйте стікери для швидких нотаток та завдань, і тримайте їх при собі, куди б ви не йшли.",
+      cta_primary: "Створити перший стікер",
+      cta_secondary: "Документація",
     },
     active_cycles: {
       title: "Немає активних циклів",
@@ -106,11 +121,6 @@ export default {
       description:
         "Скоротіть час налаштування, створюючи шаблони для проєктів, робочих елементів та сторінок — і починайте нову роботу за секунди.",
       cta_primary: "Створити шаблон",
-    },
-    webhooks: {
-      title: "Ще не додано Webhook",
-      description: "Автоматизуйте сповіщення зовнішнім сервісам, коли відбуваються події проєкту.",
-      cta_primary: "Додати webhook",
     },
   },
 } as const;

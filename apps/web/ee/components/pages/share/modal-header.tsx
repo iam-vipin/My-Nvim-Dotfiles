@@ -1,4 +1,17 @@
-import { Link2 } from "lucide-react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { LinkIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 
 type TModalHeaderProps = {
@@ -10,11 +23,10 @@ type TModalHeaderProps = {
 export function ModalHeader({ pageTitle, copied, onCopyLink }: TModalHeaderProps) {
   return (
     <div className="flex items-center justify-between pt-3 px-4">
-      <h3 className="text-lg font-medium text-custom-text-100 truncate">Share {pageTitle}</h3>
+      <h3 className="text-lg font-medium text-primary truncate">Share {pageTitle}</h3>
       <Button
-        variant="link-primary"
-        size="sm"
-        prependIcon={<Link2 className="size-3.5 -rotate-45" />}
+        variant="link"
+        prependIcon={<LinkIcon className="size-3.5 -rotate-45" />}
         onClick={onCopyLink}
         className="shrink-0"
       >

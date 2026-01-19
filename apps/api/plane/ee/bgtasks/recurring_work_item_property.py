@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 
 # Third party imports
@@ -146,11 +157,7 @@ def handle_multi_properties(
             return
 
         # Case 2: If the existing value is not empty and the requested value is not empty
-        if (
-            existing_value
-            and requested_value
-            and existing_value[0] != requested_value[0]
-        ):
+        if existing_value and requested_value and existing_value[0] != requested_value[0]:
             bulk_property_activity.append(
                 RecurringWorkItemTaskActivity(
                     workspace_id=property.workspace_id,
@@ -380,9 +387,9 @@ def recurring_work_item_property_activity(
         """
 
         # Get the issue
-        recurring_workitem_task = RecurringWorkitemTask.objects.select_related(
-            "workitem_blueprint"
-        ).get(id=recurring_workitem_task_id)
+        recurring_workitem_task = RecurringWorkitemTask.objects.select_related("workitem_blueprint").get(
+            id=recurring_workitem_task_id
+        )
         issue_type_id = recurring_workitem_task.workitem_blueprint.type.get("id")
 
         if not issue_type_id:
@@ -431,10 +438,8 @@ def recurring_work_item_property_activity(
                     epoch=epoch,
                 )
 
-
         # Create the bulk activity
         RecurringWorkItemTaskActivity.objects.bulk_create(bulk_property_activity)
-
 
         return
     except Exception as e:

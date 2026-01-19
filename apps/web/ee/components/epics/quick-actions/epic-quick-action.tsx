@@ -1,9 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { pick } from "lodash-es";
 import { observer } from "mobx-react";
+import { Ellipsis } from "lucide-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EPIC_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -14,7 +28,6 @@ import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import type { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 // hooks
 import type { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -23,6 +36,7 @@ import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // helper
 import { useEpicMenuItems } from "./helper";
+import { IconButton } from "@plane/propel/icon-button";
 
 type TProjectEpicQuickActionProps = IQuickActionProps & {
   toggleEditEpicModal?: (value: boolean) => void;
@@ -193,6 +207,7 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
         maxHeight="lg"
         useCaptureForOutsideClick
         closeOnSelect
+        customButton={<IconButton variant="secondary" icon={Ellipsis} size="lg" />}
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -208,8 +223,8 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}
@@ -221,7 +236,7 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
                 className={cn(
                   "flex items-center gap-2",
                   {
-                    "text-custom-text-400": item.disabled,
+                    "text-placeholder": item.disabled,
                   },
                   item.className
                 )}
@@ -230,18 +245,12 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
                     onClick={() => {
-                      captureClick({
-                        elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
-                        context: {
-                          activeLayout,
-                        },
-                      });
                       nestedItem.action();
                     }}
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": nestedItem.disabled,
+                        "text-placeholder": nestedItem.disabled,
                       },
                       nestedItem.className
                     )}
@@ -252,8 +261,8 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": nestedItem.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": nestedItem.disabled,
                           })}
                         >
                           {nestedItem.description}
@@ -271,18 +280,12 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
-                  context: {
-                    activeLayout,
-                  },
-                });
                 item.action();
               }}
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -293,8 +296,8 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

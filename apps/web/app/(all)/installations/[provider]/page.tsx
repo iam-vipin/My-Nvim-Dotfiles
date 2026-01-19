@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 // ui
@@ -66,8 +79,8 @@ export default function AppPostInstallation({ params }: Route.ComponentProps) {
   }, [state, installation_id, provider, code]);
 
   return (
-    <div className="absolute left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-custom-background-80">
-      <h2 className="text-2xl text-custom-text-100">Installing. Please wait...</h2>
+    <div className="absolute left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-layer-1">
+      <h2 className="text-20 text-primary">Installing. Please wait...</h2>
       <LogoSpinner />
     </div>
   );

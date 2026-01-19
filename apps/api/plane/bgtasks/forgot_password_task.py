@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 
@@ -8,17 +19,17 @@ from celery import shared_task
 # Third party imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 
 # Module imports
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 
 
 @shared_task
 def forgot_password(first_name, email, uidb64, token, current_site):
     try:
-        relative_link = f"/accounts/reset-password/?uidb64={uidb64}&token={token}&email={email}"
+        relative_link = f"/accounts/reset-password/?uidb64={uidb64}&token={token}"
         abs_url = str(current_site) + relative_link
 
         (
@@ -41,7 +52,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
 
         html_content = render_to_string("emails/auth/forgot_password.html", context)
 
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         connection = get_connection(
             host=EMAIL_HOST,

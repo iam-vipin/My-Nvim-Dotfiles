@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from django.urls import path
 
 from .views import (
@@ -26,11 +37,19 @@ from .views import (
     OIDCAuthInitiateEndpoint,
     OIDCallbackEndpoint,
     OIDCLogoutEndpoint,
+    # Cloud OIDC
+    OIDCAuthCloudCallbackEndpoint,
     # SAML
     SAMLAuthInitiateEndpoint,
     SAMLCallbackEndpoint,
     SAMLMetadataEndpoint,
     SAMLLogoutEndpoint,
+    # CLoud SAML
+    SAMLAuthCloudMetadataEndpoint,
+    SAMLAuthCloudCallbackEndpoint,
+    SSOAuthInitiateEndpoint,
+    # LDAP
+    LDAPSignInAuthEndpoint,
     # Space
     EmailCheckSpaceEndpoint,
     GitLabCallbackSpaceEndpoint,
@@ -65,6 +84,10 @@ from .views import (
     MobileGoogleCallbackEndpoint,
     MobileGitHubOauthInitiateEndpoint,
     MobileGitHubCallbackEndpoint,
+    # SSO
+    IdentityProviderEndpoint,
+    DomainEndpoint,
+    DomainVerificationEndpoint,
     MobileOIDCAuthInitiateEndpoint,
     MobileOIDCallbackEndpoint,
     MobileOIDCLogoutEndpoint,
@@ -187,6 +210,8 @@ urlpatterns = [
     path("saml/callback/", SAMLCallbackEndpoint.as_view(), name="saml"),
     path("saml/metadata/", SAMLMetadataEndpoint.as_view(), name="saml"),
     path("saml/logout/", SAMLLogoutEndpoint.as_view(), name="saml"),
+    # LDAP
+    path("ldap/", LDAPSignInAuthEndpoint.as_view(), name="ldap"),
     # mobile web view authentication
     path(
         "mobile/email-check/",
@@ -265,6 +290,23 @@ urlpatterns = [
     #     MobileGitlabCallbackEndpoint.as_view(),
     #     name="mobile-gitlab-callback",
     # ),
+    # Cloud SSO
+    path("sso/", SSOAuthInitiateEndpoint.as_view(), name="sso-initiate"),
+    # Cloud OIDC
+    path("sso/oidc/callback/<uuid:workspace_id>/", OIDCAuthCloudCallbackEndpoint.as_view(), name="cloud-oidc-callback"),
+    # Cloud SAML
+    path("sso/saml/metadata/<uuid:workspace_id>/", SAMLAuthCloudMetadataEndpoint.as_view(), name="cloud-saml-metadata"),
+    path("sso/saml/callback/<uuid:workspace_id>/", SAMLAuthCloudCallbackEndpoint.as_view(), name="cloud-saml-callback"),
+    # SSO
+    path("sso/workspaces/<str:slug>/providers/", IdentityProviderEndpoint.as_view(), name="sso-provider"),
+    path("sso/workspaces/<str:slug>/providers/<uuid:pk>/", IdentityProviderEndpoint.as_view(), name="sso-provider"),
+    path("sso/workspaces/<str:slug>/domains/", DomainEndpoint.as_view(), name="sso-domain"),
+    path("sso/workspaces/<str:slug>/domains/<uuid:pk>/", DomainEndpoint.as_view(), name="sso-domain"),
+    path(
+        "sso/workspaces/<str:slug>/domains/<uuid:pk>/verification/",
+        DomainVerificationEndpoint.as_view(),
+        name="sso-domain-verification",
+    ),
     # mobile web view oidc
     path(
         "mobile/oidc/",

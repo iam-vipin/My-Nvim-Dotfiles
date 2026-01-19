@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useMemo } from "react";
 // plane imports
 import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
@@ -7,7 +20,6 @@ import type {
   IUserLite,
   TCustomPropertyFilterKey,
   TFilterConfig,
-  TFilterValue,
 } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import type { TCustomPropertyFilterParams, TFilterIconType } from "@plane/utils";
@@ -35,8 +47,8 @@ interface TUseCustomPropertyFiltersConfigProps {
 }
 
 interface TCustomPropertyFiltersConfig {
-  configs: Array<TFilterConfig<TCustomPropertyFilterKey, TFilterValue>>;
-  configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey, TFilterValue>>;
+  configs: Array<TFilterConfig<TCustomPropertyFilterKey>>;
+  configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey>>;
 }
 
 export const useCustomPropertyFiltersConfig = ({
@@ -48,8 +60,8 @@ export const useCustomPropertyFiltersConfig = ({
   operatorConfigs,
 }: TUseCustomPropertyFiltersConfigProps): TCustomPropertyFiltersConfig =>
   useMemo(() => {
-    const configs: Array<TFilterConfig<TCustomPropertyFilterKey, TFilterValue>> = [];
-    const configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey, TFilterValue>> = {};
+    const configs: Array<TFilterConfig<TCustomPropertyFilterKey>> = [];
+    const configMap: Record<TCustomPropertyFilterKey, TFilterConfig<TCustomPropertyFilterKey>> = {};
 
     customProperties.forEach((property) => {
       if (!property.id) return;
@@ -63,7 +75,7 @@ export const useCustomPropertyFiltersConfig = ({
       const propertyTypeDetails = ISSUE_PROPERTY_TYPE_DETAILS[propertyTypeKey];
 
       // Generate config based on property type
-      let config: TFilterConfig<TCustomPropertyFilterKey, TFilterValue> | null = null;
+      let config: TFilterConfig<TCustomPropertyFilterKey> | null = null;
 
       const commonConfig: TCustomPropertyFilterParams<TFilterIconType> = {
         isEnabled,

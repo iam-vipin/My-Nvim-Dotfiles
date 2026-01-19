@@ -1,9 +1,4 @@
-import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse, TPage } from "@plane/types";
-
-export enum EFeedback {
-  POSITIVE = "positive",
-  NEGATIVE = "negative",
-}
+import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse, TPage, EAiFeedback } from "@plane/types";
 
 export enum EChatType {
   THREAD = "threads",
@@ -51,7 +46,7 @@ export type TSearchQuery = {
 export type TFeedback = {
   chat_id: string;
   message_index: number;
-  feedback: EFeedback;
+  feedback: EAiFeedback;
   feedback_message?: string;
   workspace_id?: string;
 };
@@ -106,10 +101,7 @@ export type TArtifact = {
     description?: string;
     description_html?: string;
     properties: {
-      [key: string]: {
-        name: string;
-        [key: string]: any;
-      };
+      [key: string]: any;
     };
     project?: {
       id: string;
@@ -138,7 +130,7 @@ export type TDialogue = {
   query: string;
   answer?: string;
   llm?: string;
-  feedback?: EFeedback;
+  feedback?: EAiFeedback;
   current_tick?: string;
   reasoning?: string;
   isPiThinking: boolean;
@@ -166,6 +158,7 @@ export type TChatHistory = {
   focus_project_id: string;
   workspace_id?: string;
   mode?: string;
+  llm?: string;
 };
 
 export type TAction = {
@@ -197,6 +190,7 @@ export type TUserThreads = {
   last_modified: string;
   is_favorite: boolean;
   workspace_id?: string;
+  llm?: string;
 };
 
 export type TAiModels = {
@@ -206,26 +200,6 @@ export type TAiModels = {
   type: string;
   is_default: boolean;
 };
-
-interface IItem {
-  id: string;
-  label: string;
-  entity_name: string;
-  entity_identifier: string;
-  target: string;
-  redirect_uri: string;
-  name?: string;
-  project__identifier?: string | null;
-  sequence_id?: string | null;
-  title: string;
-  subTitle: string | undefined;
-  type_id: string | null;
-  project_id: string;
-}
-
-export interface IFormattedValue {
-  [key: string]: Partial<IItem>[] | undefined;
-}
 
 export type TPiLoaders = "recording" | "transcribing" | "submitting" | "";
 
@@ -282,6 +256,27 @@ export type TChatContextData = {
   subTitle?: string | undefined;
   icon: React.ReactNode;
 } | null;
+export type TPiChatDrawerOpen = {
+  is_open: boolean;
+  chatId?: string;
+};
+
+// SSE Event Types
+export type TSSEDeltaEvent = {
+  chunk: string;
+};
+
+export type TSSEReasoningEvent = {
+  header?: string;
+  content?: string;
+};
+
+export type TSSEActionsEvent = TArtifact;
+
+export type TSSETitleResponse = {
+  title: string;
+};
 
 // constants
-export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "cycle", "module"];
+export const PI_CHAT_ASSISTANT_KEY = "pi_chat_assistant";
+export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "project", "cycle", "module"];

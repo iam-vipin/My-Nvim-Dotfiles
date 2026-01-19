@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Extension } from "@tiptap/core";
 import type { Extensions } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extension-placeholder";
@@ -5,6 +18,7 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import StarterKit from "@tiptap/starter-kit";
 // extensions
+import { CustomLinkExtension } from "@/extensions";
 import { CustomCodeBlockExtension } from "@/extensions/code";
 import { CustomCodeInlineExtension } from "@/extensions/code-inline";
 // helpers
@@ -37,18 +51,18 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       italic: false,
       paragraph: {
         HTMLAttributes: {
-          class: `text-[14px] font-normal`,
+          class: `text-14 font-normal`,
         },
       },
       strike: false,
       bulletList: {
         HTMLAttributes: {
-          class: "list-disc pl-7 space-y-[--list-spacing-y]",
+          class: "list-disc pl-7 space-y-(--list-spacing-y)",
         },
       },
       orderedList: {
         HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-[--list-spacing-y]",
+          class: "list-decimal pl-7 space-y-(--list-spacing-y)",
         },
       },
       listItem: {
@@ -86,8 +100,9 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
         return text.trim().length > 0 ? "" : placeholder || "How can I help you today?";
       },
     }),
+    CustomLinkExtension,
     Extension.create({
-      onUpdate(this) {
+      onCreate(this) {
         setEditorCommand?.({
           getHTML: () => getTrimmedHTML(this.editor?.getHTML()),
           clear: () => this.editor?.commands.clearContent(false),

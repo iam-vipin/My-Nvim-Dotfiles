@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -316,12 +329,12 @@ export const useRealtimePageEvents = ({
             type: TOAST_TYPE.SUCCESS,
             title: `Page duplicated successfully.`,
             actionItems: (
-              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+              <div className="flex items-center gap-1 text-11 text-secondary">
                 <a
                   href={handlers.getRedirectionLink(duplicatedPage)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
                 >
                   View duplicated page
                 </a>

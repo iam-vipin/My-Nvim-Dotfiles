@@ -1,15 +1,28 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Loader, Search } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TInitiativeLabel } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
@@ -194,12 +207,12 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
       <button
         ref={setReferenceElement}
         type="button"
-        className={`clickable flex w-full h-full items-center justify-center gap-1 text-xs ${fullWidth && "hover:bg-custom-background-80"} ${
+        className={`clickable flex w-full h-full items-center justify-center gap-1 text-11 ${fullWidth && "hover:bg-layer-1-hover"} ${
           disabled
-            ? "cursor-not-allowed text-custom-text-200"
+            ? "cursor-not-allowed text-secondary"
             : value.length <= maxRender
               ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
+              : "cursor-pointer hover:bg-layer-1-hover"
         }  ${buttonClassName}`}
         onClick={handleOnClick}
         disabled={disabled}
@@ -233,16 +246,16 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
         {isOpen && (
           <Combobox.Options className="fixed z-10" static>
             <div
-              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded border border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none ${optionsClassName}`}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
             >
-              <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+              <div className="flex w-full items-center justify-start rounded border border-subtle bg-layer-1 px-2">
+                <Search className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   ref={inputRef}
-                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("common.search.label")}
@@ -252,7 +265,7 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
               </div>
               <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
-                  <p className="text-center text-custom-text-200">{t("common.loading")}</p>
+                  <p className="text-center text-secondary">{t("common.loading")}</p>
                 ) : filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <Combobox.Option
@@ -265,9 +278,9 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
                         }
                       }}
                       className={({ active, selected }) =>
-                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-layer-1-hover ${
+                          active ? "bg-layer-1-active" : ""
+                        } ${selected ? "text-primary" : "text-secondary"}`
                       }
                     >
                       {({ selected }) => (
@@ -275,7 +288,7 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
                           {option.content}
                           {selected && (
                             <div className="flex-shrink-0">
-                              <Check className={`h-3.5 w-3.5`} />
+                              <CheckIcon className={`h-3.5 w-3.5`} />
                             </div>
                           )}
                         </>
@@ -290,18 +303,18 @@ export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyD
                       if (!query.length) return;
                       handleAddLabel(query);
                     }}
-                    className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                    className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
                     {query.length ? (
                       <>
-                        + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                        + Add <span className="text-primary">&quot;{query}&quot;</span> to labels
                       </>
                     ) : (
                       t("label.create.type")
                     )}
                   </p>
                 ) : (
-                  <p className="text-left text-custom-text-200 ">{t("common.search.no_matching_results")}</p>
+                  <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
                 )}
               </div>
             </div>

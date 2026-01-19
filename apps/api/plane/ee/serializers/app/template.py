@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from rest_framework import serializers
 
@@ -16,12 +27,8 @@ from plane.utils.url import contains_url
 
 class TemplateSerializer(BaseSerializer):
     attachments_urls = serializers.SerializerMethodField()
-    attachments = serializers.PrimaryKeyRelatedField(
-        queryset=FileAsset.objects.all(), many=True, required=False
-    )
-    categories = serializers.PrimaryKeyRelatedField(
-        queryset=TemplateCategory.objects.all(), many=True, required=False
-    )
+    attachments = serializers.PrimaryKeyRelatedField(queryset=FileAsset.objects.all(), many=True, required=False)
+    categories = serializers.PrimaryKeyRelatedField(queryset=TemplateCategory.objects.all(), many=True, required=False)
 
     class Meta:
         model = Template
@@ -47,7 +54,6 @@ class WorkitemTemplateSerializer(BaseSerializer):
     class Meta:
         model = WorkitemTemplate
         fields = "__all__"
-
 
 
 class WorkitemTemplateDataSerializer(BaseSerializer):
@@ -163,6 +169,7 @@ class ProjectTemplateDataSerializer(BaseSerializer):
             "intake_settings",
             "workspace",
             "workitems",
+            "is_milestone_enabled",
         ]
         read_only_fields = fields
 
@@ -171,12 +178,8 @@ class TemplateDataSerializer(BaseSerializer):
     template_data = serializers.SerializerMethodField()
     attachments_urls = serializers.SerializerMethodField()
     cover_image_url = serializers.SerializerMethodField()
-    attachments = serializers.PrimaryKeyRelatedField(
-        queryset=FileAsset.objects.all(), many=True, required=False
-    )
-    categories = serializers.PrimaryKeyRelatedField(
-        queryset=TemplateCategory.objects.all(), many=True, required=False
-    )
+    attachments = serializers.PrimaryKeyRelatedField(queryset=FileAsset.objects.all(), many=True, required=False)
+    categories = serializers.PrimaryKeyRelatedField(queryset=TemplateCategory.objects.all(), many=True, required=False)
 
     class Meta:
         model = Template

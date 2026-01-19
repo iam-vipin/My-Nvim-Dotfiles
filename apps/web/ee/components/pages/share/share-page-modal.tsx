@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 // plane imports
 import type { EPageSharedUserAccess } from "@plane/types";
@@ -65,7 +78,7 @@ export function SharePageModal({ isOpen, onClose, data, onAction }: TSharePageMo
     >
       <ModalHeader pageTitle={data.pageTitle} copied={data.copied} onCopyLink={onAction.copyLink} />
 
-      <div className="mt-2 px-4 min-h-[240px] transition-all duration-300 ease-in-out">
+      <div className="mt-2 px-4 min-h-60 transition-all duration-300 ease-in-out">
         <MemberSearch
           memberOptions={data.memberOptions}
           onSelectMember={onAction.selectMember}
@@ -82,7 +95,7 @@ export function SharePageModal({ isOpen, onClose, data, onAction }: TSharePageMo
           />
 
           {data.pendingSharedUsers.length > 0 && data.existingUsers.length > 0 && (
-            <div className="flex-shrink-0 mt-3 h-[0.5px] bg-custom-background-80 transition-all duration-300 ease-in-out" />
+            <div className="shrink-0 mt-3 h-[0.5px] bg-layer-1 transition-all duration-300 ease-in-out" />
           )}
 
           <ExistingUsersSection
@@ -94,6 +107,7 @@ export function SharePageModal({ isOpen, onClose, data, onAction }: TSharePageMo
             isAccordionOpen={data.isSharedUsersAccordionOpen}
             onToggleAccordion={onAction.toggleSharedUsersAccordion}
             canCurrentUserChangeAccess={data.canCurrentUserChangeAccess}
+            isLoading={data.isLoadingSharedUsers}
           />
 
           <EmptyState

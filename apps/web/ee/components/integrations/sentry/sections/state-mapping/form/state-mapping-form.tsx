@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useMemo, useCallback } from "react";
 import useSWR from "swr";
@@ -69,7 +82,7 @@ export function StateMappingFormContent({
               {project?.logo_props ? (
                 <Logo logo={project.logo_props} size={16} />
               ) : (
-                <div className="h-full w-full flex items-center justify-center text-custom-text-100 font-medium bg-custom-primary-100/10 rounded text-xs">
+                <div className="h-full w-full flex items-center justify-center text-primary font-medium bg-accent-primary/10 rounded-sm text-caption-sm-regular">
                   {project?.name?.charAt(0).toUpperCase() || "P"}
                 </div>
               )}
@@ -93,7 +106,7 @@ export function StateMappingFormContent({
                 {currentProject?.logo_props ? (
                   <Logo logo={currentProject.logo_props} size={16} />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center text-custom-text-100 font-medium bg-custom-primary-100/10 rounded text-xs">
+                  <div className="h-full w-full flex items-center justify-center text-primary font-medium bg-accent-primary/10 rounded-sm text-caption-sm-regular">
                     {currentProject?.name?.charAt(0).toUpperCase() || "P"}
                   </div>
                 )}
@@ -170,10 +183,10 @@ export function StateMappingFormContent({
   );
 
   return (
-    <div className="border border-custom-border-200 rounded-lg p-4 space-y-4">
+    <div className="border border-subtle rounded-lg p-4 space-y-4">
       {/* Project Selection */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-custom-text-200">Project</label>
+        <label className="text-body-xs-medium text-secondary">Project</label>
         <CustomSearchSelect
           value={value.projectId}
           onChange={handleProjectChange}
@@ -185,7 +198,7 @@ export function StateMappingFormContent({
                   {selectedProject?.logo_props ? (
                     <Logo logo={selectedProject.logo_props} size={16} />
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center text-custom-text-100 font-medium bg-custom-primary-100/10 rounded text-xs">
+                    <div className="h-full w-full flex items-center justify-center text-primary font-medium bg-accent-primary/10 rounded-sm text-caption-sm-regular">
                       {selectedProject?.name?.charAt(0).toUpperCase() || "P"}
                     </div>
                   )}
@@ -193,7 +206,7 @@ export function StateMappingFormContent({
                 <span className="flex-grow truncate">{selectedProject?.name || "Project"}</span>
               </div>
             ) : (
-              <span className="text-custom-text-400">Select project</span>
+              <span className="text-placeholder">Select project</span>
             )
           }
           buttonClassName="h-9 w-full"
@@ -208,20 +221,22 @@ export function StateMappingFormContent({
           {/* States Loading State */}
           {statesLoading && (
             <div className="col-span-full flex items-center justify-center py-4">
-              <div className="flex items-center gap-2 text-custom-text-300">
+              <div className="flex items-center gap-2 text-tertiary">
                 <Loader>
                   <Loader.Item height="16px" width="100px" />
                 </Loader>
-                <span className="text-sm">Loading project states...</span>
+                <span className="text-body-xs-regular">Loading project states...</span>
               </div>
             </div>
           )}
 
           {/* States Error State */}
           {statesError && !statesLoading && (
-            <div className="col-span-full bg-red-50 border border-red-200 rounded-lg p-3">
-              <div className="text-sm text-red-600 font-medium">Failed to load project states</div>
-              <div className="text-xs text-red-500 mt-1">Please try selecting the project again</div>
+            <div className="col-span-full bg-danger-subtle border border-danger-subtle rounded-lg p-3">
+              <div className="text-body-xs-medium text-danger-primary">Failed to load project states</div>
+              <div className="text-caption-sm-regular text-danger-primary mt-1">
+                Please try selecting the project again
+              </div>
             </div>
           )}
 
@@ -230,9 +245,11 @@ export function StateMappingFormContent({
             <>
               {/* Resolved State */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-custom-text-200">
+                <label className="text-body-xs-medium text-secondary">
                   Resolved State
-                  <span className="text-xs text-custom-text-300 block">State to set when Sentry issue is resolved</span>
+                  <span className="text-caption-sm-regular text-tertiary block">
+                    State to set when Sentry issue is resolved
+                  </span>
                 </label>
                 <CustomSearchSelect
                   value={value.resolvedState?.id || ""}
@@ -245,7 +262,7 @@ export function StateMappingFormContent({
                         <span className="flex-grow truncate">{value.resolvedState.name}</span>
                       </div>
                     ) : (
-                      <span className="text-custom-text-400">
+                      <span className="text-placeholder">
                         {resolvedStateOptions.length === 0 ? "No states available" : "Select resolved state"}
                       </span>
                     )
@@ -258,9 +275,9 @@ export function StateMappingFormContent({
 
               {/* Unresolved State */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-custom-text-200">
+                <label className="text-body-xs-medium text-secondary">
                   Unresolved State
-                  <span className="text-xs text-custom-text-300 block">
+                  <span className="text-caption-sm-regular text-tertiary block">
                     State to set when Sentry issue is unresolved
                   </span>
                 </label>
@@ -275,7 +292,7 @@ export function StateMappingFormContent({
                         <span className="flex-grow truncate">{value.unresolvedState.name}</span>
                       </div>
                     ) : (
-                      <span className="text-custom-text-400">
+                      <span className="text-placeholder">
                         {unresolvedStateOptions.length === 0 ? "No states available" : "Select unresolved state"}
                       </span>
                     )
@@ -293,7 +310,7 @@ export function StateMappingFormContent({
       {/* Helper text */}
       {!value.projectId && (
         <div className="text-center py-4">
-          <p className="text-sm text-custom-text-300">Select a project to configure state mappings</p>
+          <p className="text-body-xs-regular text-tertiary">Select a project to configure state mappings</p>
         </div>
       )}
     </div>

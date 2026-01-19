@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 /*
  * Pull Request Behaviour
  * This behaviour addresses how a PR event is handled decoupled from any integration
@@ -60,7 +73,7 @@ export class PullRequestBehaviour {
       }
       const pullRequestDetails = pullRequestResult.data;
 
-      const pullRequestText = `${pullRequestDetails.title}\n${pullRequestDetails.description}`;
+      let pullRequestText = `${pullRequestDetails.title}\n${pullRequestDetails.description}`;
       const _pullRequestLog: any = {
         title: pullRequestDetails.title,
         //  first 100 characters of the description and last 100 characters of the description
@@ -72,6 +85,7 @@ export class PullRequestBehaviour {
         url: pullRequestDetails.url,
         repository: pullRequestDetails.repository,
       };
+      pullRequestText = this.removeEscapeCharactersFromBrackets(pullRequestText);
       const references = getReferredIssues(pullRequestText);
       if (references.closingReferences.length === 0 && references.nonClosingReferences.length === 0) {
         logger.info("No issue references found, skipping...", {
@@ -416,5 +430,9 @@ export class PullRequestBehaviour {
           `- [[${reference.identifier}-${reference.sequence}] ${issue.name}](${env.APP_BASE_URL}/${this.workspaceSlug}/projects/${issue.project}/issues/${issue.id})\n`
       )
       .join("");
+  }
+
+  private removeEscapeCharactersFromBrackets(text: string): string {
+    return text.replace(/\\\[/g, "[").replace(/\\\]/g, "]");
   }
 }

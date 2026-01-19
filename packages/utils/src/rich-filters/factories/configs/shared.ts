@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type {
   FILTER_FIELD_TYPE,
   TBaseFilterFieldConfig,
@@ -15,6 +28,8 @@ import type {
   TTextFilterFieldConfig,
   TSupportedOperators,
   TNumberRangeFilterFieldConfig,
+  TWithValueFilterFieldConfig,
+  TOperatorSpecificConfigs,
 } from "@plane/types";
 
 /**
@@ -22,9 +37,7 @@ import type {
  * @param config - The filter config to create
  * @returns The created filter config
  */
-export const createFilterConfig = <P extends TFilterProperty, V extends TFilterValue>(
-  config: TFilterConfig<P, V>
-): TFilterConfig<P, V> => config;
+export const createFilterConfig = <P extends TFilterProperty>(config: TFilterConfig<P>): TFilterConfig<P> => config;
 
 /**
  * Base parameters for filter type config factory functions.
@@ -60,16 +73,20 @@ export type TCreateDateFilterParams = TCreateFilterConfigParams & IFilterIconCon
 /**
  * Helper to create an operator entry for the supported operators map.
  * This ensures consistency between the operator key and the operator passed to the config function.
+ * Returns a type compatible with TOperatorSpecificConfigs so Map constructor accepts union types.
  * @param operator - The operator to use as both key and parameter
  * @param createParams - The base filter configuration parameters
  * @param configFn - Function that creates the operator config using base configuration
- * @returns A tuple of operator and its config
+ * @returns A tuple of operator and its config, typed to be compatible with operator configs map
  */
-export const createOperatorConfigEntry = <T, P extends TCreateFilterConfigParams>(
+export const createOperatorConfigEntry = <
+  T extends TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs],
+  P extends TCreateFilterConfigParams,
+>(
   operator: TSupportedOperators,
   createParams: P,
   configFn: (updatedParams: P) => T
-): [TSupportedOperators, T] => [
+): [TSupportedOperators, TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs]] => [
   operator,
   configFn({ isOperatorEnabled: createParams.allowedOperators.has(operator), ...createParams }),
 ];
@@ -101,5 +118,7 @@ export const createFilterFieldConfig = <T extends TFilterFieldType, V extends TF
                 ? TNumberRangeFilterFieldConfig<V>
                 : T extends typeof FILTER_FIELD_TYPE.TEXT
                   ? TTextFilterFieldConfig<V>
-                  : never
+                  : T extends typeof FILTER_FIELD_TYPE.WITH_VALUE
+                    ? TWithValueFilterFieldConfig<V>
+                    : never
 ): TSupportedFilterFieldConfigs<V> => config as TSupportedFilterFieldConfigs<V>;

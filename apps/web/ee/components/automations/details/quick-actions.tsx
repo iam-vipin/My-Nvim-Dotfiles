@@ -1,16 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-// icons
-import { Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -57,24 +66,22 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
     {
       key: "edit",
       action: () => {
-        captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_EDIT_BUTTON });
         setCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
       shouldRender: automation.canCurrentUserEdit,
     },
     {
       key: "delete",
       action: () => {
-        captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_DELETE_BUTTON });
         setIsDeleteModalOpen(true);
       },
       title: t("common.actions.delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: automation.canCurrentUserDelete,
       disabled: automation.isDeleteDisabled,
-      className: automation.isDeleteDisabled ? "text-custom-text-400 cursor-not-allowed" : "text-red-500",
+      className: automation.isDeleteDisabled ? "text-placeholder cursor-not-allowed" : "text-danger-primary",
       tooltipContent: automation.isDeleteDisabled ? t("automations.delete.validation.enabled") : undefined,
     },
   ];
@@ -102,13 +109,12 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
                   <CustomMenu.MenuItem
                     key={item.key}
                     onClick={() => {
-                      captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_MENU });
                       item.action();
                     }}
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": item.disabled,
+                        "text-placeholder": item.disabled,
                       },
                       item.className
                     )}
@@ -119,8 +125,8 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
                       <h5>{item.title}</h5>
                       {item.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": item.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": item.disabled,
                           })}
                         >
                           {item.description}

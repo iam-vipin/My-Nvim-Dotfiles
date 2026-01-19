@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Alembic environment configuration."""
 
 # Python imports
@@ -9,19 +20,23 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from pi.app.models import ActionArtifact  # noqa: F401
+from pi.app.models import ActionArtifactVersion  # noqa: F401
 from pi.app.models import Chat  # noqa: F401
+from pi.app.models import Feedback  # noqa: F401
+from pi.app.models import LlmModelUsageTracking  # noqa: F401
 from pi.app.models import Message  # noqa: F401
+from pi.app.models import MessageClarification  # noqa: F401
 from pi.app.models import MessageFeedback  # noqa: F401
 from pi.app.models import MessageFlowStep  # noqa: F401
+from pi.app.models import MessageMention  # noqa: F401
 from pi.app.models import MessageMeta  # noqa: F401
+from pi.app.models import PageAIBlock  # noqa: F401
+from pi.app.models import PlaneOAuthState  # noqa: F401
+from pi.app.models import PlaneOAuthToken  # noqa: F401
 from pi.app.models import Transcription  # noqa: F401
 from pi.app.models import WorkspaceVectorization  # noqa: F401
-from pi.app.models.action_artifact import ActionArtifact  # noqa: F401
-from pi.app.models.action_artifact import ActionArtifactVersion  # noqa: F401
 from pi.app.models.base import BaseModel
-from pi.app.models.message_clarification import MessageClarification  # noqa: F401
-from pi.app.models.oauth import PlaneOAuthState  # noqa: F401
-from pi.app.models.oauth import PlaneOAuthToken  # noqa: F401
 
 # Module imports
 from pi.config import settings

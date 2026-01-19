@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 import random
@@ -168,87 +179,87 @@ def sanitize_issue_data(issue_data):
 
 def process_single_issue(slug, project, user_id, issue_data):
     try:
-        with transaction.atomic():
-            with connection.cursor() as cur:
-                cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
-            # Process the main issue
-            issue_data = sanitize_issue_data(issue_data)
+        with connection.cursor() as cur:
+            cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
 
-            # Handle labels based on whether they are UUIDs or names
-            labels = []
-            if "labels" in issue_data:
-                label_values = issue_data.get("labels", [])
-                if label_values and not is_valid_uuid(label_values[0]):
-                    labels = issue_data.pop("labels")
+        # Process the main issue
+        issue_data = sanitize_issue_data(issue_data)
 
-            serializer = IssueSerializer(
-                data=issue_data,
-                context={
-                    "project_id": project.id,
-                    "workspace_id": project.workspace_id,
-                    "default_assignee_id": project.default_assignee_id,
-                },
+        # Handle labels based on whether they are UUIDs or names
+        labels = []
+        if "labels" in issue_data:
+            label_values = issue_data.get("labels", [])
+            if label_values and not is_valid_uuid(label_values[0]):
+                labels = issue_data.pop("labels")
+
+        serializer = IssueSerializer(
+            data=issue_data,
+            context={
+                "project_id": project.id,
+                "workspace_id": project.workspace_id,
+                "default_assignee_id": project.default_assignee_id,
+            },
+        )
+
+        if not serializer.is_valid():
+            logger.error(
+                "Error processing issue",
+                extra={"issueId": issue_data.get("id")},
             )
+            # Create an exception for serializer.errors
+            exception = Exception(serializer.errors)
+            log_exception(exception)
+            return None
 
-            if not serializer.is_valid():
-                logger.error(
-                    "Error processing issue",
-                    extra={"issueId": issue_data.get("id")},
-                )
-                # Create an exception for serializer.errors
-                exception = Exception(serializer.errors)
-                log_exception(exception)
-                return None
+        external_id = issue_data.get("external_id")
+        external_source = issue_data.get("external_source")
 
-            external_id = issue_data.get("external_id")
-            external_source = issue_data.get("external_source")
+        # Check if issue exists
+        issue = None
+        if external_id and external_source:
+            issue = Issue.objects.filter(
+                project_id=project.id,
+                workspace__slug=slug,
+                external_source=external_source,
+                external_id=external_id,
+            ).first()
 
-            # Check if issue exists
-            issue = None
-            if external_id and external_source:
-                issue = Issue.objects.filter(
-                    project_id=project.id,
-                    workspace__slug=slug,
-                    external_source=external_source,
-                    external_id=external_id,
-                ).first()
+        if issue:
+            serializer.instance = issue
 
-            if issue:
-                serializer.instance = issue
+        issue = serializer.save()
 
-            issue = serializer.save()
+        # Update the issue with the created_by_id
+        issue.created_by_id = issue_data.get("created_by")
+        issue.updated_by_id = issue_data.get("created_by")
+        issue.save(disable_auto_set_user=True)
 
-            # Update the issue with the created_by_id
-            issue.created_by_id = issue_data.get("created_by")
-            issue.updated_by_id = issue_data.get("created_by")
-            issue.save(disable_auto_set_user=True)
+        # Process links
+        process_issue_links(issue, issue_data.get("links", []))
 
-            # Process links
-            process_issue_links(issue, issue_data.get("links", []))
+        # Process comments
+        process_issue_comments(user_id=user_id, issue=issue, comments=issue_data.get("comments", []))
 
-            # Process comments
-            process_issue_comments(user_id=user_id, issue=issue, comments=issue_data.get("comments", []))
+        # Process cycles
+        process_issue_cycles(issue, issue_data.get("cycles", []))
 
-            # Process cycles
-            process_issue_cycles(issue, issue_data.get("cycles", []))
+        # Process modules
+        process_issue_modules(issue, issue_data.get("modules", []))
 
-            # Process modules
-            process_issue_modules(issue, issue_data.get("modules", []))
+        # Process file assets
+        process_issue_file_assets(issue, issue_data.get("file_assets", []))
 
-            # Process file assets
-            process_issue_file_assets(issue, issue_data.get("file_assets", []))
+        # Process issue property values
+        process_issue_property_values(issue, issue_data.get("issue_property_values", []))
 
-            # Process issue property values
-            process_issue_property_values(issue, issue_data.get("issue_property_values", []))
+        # Process labels
+        process_issue_labels(issue, labels, user_id)
 
-            # Process labels
-            process_issue_labels(issue, labels, user_id)
+        # Process worklogs
+        if issue_data.get("worklogs"):
+            process_issue_worklogs(issue, issue_data.get("worklogs"))
 
-            # Process worklogs
-            if issue_data.get("worklogs"):
-                process_issue_worklogs(issue, issue_data.get("worklogs"))
-
-            return issue
+        return issue
     except Exception as e:
         logger.error(
             "Error processing issue",
@@ -259,101 +270,109 @@ def process_single_issue(slug, project, user_id, issue_data):
 
 
 def process_issue_worklogs(issue, worklogs):
-    # We need to filter out, if the same duration, logged_by and created_at is present, then update else create
-    existing_worklogs = IssueWorkLog.objects.filter(
-        issue=issue,
-        project_id=issue.project_id,
-        workspace_id=issue.workspace_id,
-    )
+    try:
+        # We need to filter out, if the same duration, logged_by and created_at is present, then update else create
+        existing_worklogs = IssueWorkLog.objects.filter(
+            issue=issue,
+            project_id=issue.project_id,
+            workspace_id=issue.workspace_id,
+        )
 
-    bulk_create_worklogs = []
-    bulk_update_worklogs = []
-    worklog_timestamp_map = {}  # Map to store timestamps for created worklogs
+        bulk_create_worklogs = []
+        bulk_update_worklogs = []
+        worklog_timestamp_map = {}  # Map to store timestamps for created worklogs
 
-    for worklog in worklogs:
-        if worklog.get("duration") and worklog.get("logged_by") and worklog.get("created_at"):
-            existing_worklog = existing_worklogs.filter(
-                duration=worklog.get("duration"),
-                logged_by_id=worklog.get("logged_by"),
-                created_at=worklog.get("created_at"),
-            ).first()
-            if existing_worklog:
-                existing_worklog.description = worklog.get("description", "")
-                existing_worklog.duration = worklog.get("duration")
-                existing_worklog.updated_at = worklog.get("updated_at", worklog.get("created_at"))
-                existing_worklog.updated_by_id = issue.created_by_id
-                bulk_update_worklogs.append(existing_worklog)
-            else:
-                new_worklog = IssueWorkLog(
-                    issue=issue,
-                    project_id=issue.project_id,
-                    workspace_id=issue.workspace_id,
-                    description=worklog.get("description", ""),
+        for worklog in worklogs:
+            if worklog.get("duration") and worklog.get("logged_by") and worklog.get("created_at"):
+                existing_worklog = existing_worklogs.filter(
                     duration=worklog.get("duration"),
                     logged_by_id=worklog.get("logged_by"),
-                    created_by_id=issue.created_by_id,
-                    updated_by_id=issue.created_by_id,
-                )
-                bulk_create_worklogs.append(new_worklog)
-                # Store the timestamps to apply after creation
-                worklog_timestamp_map[id(new_worklog)] = {
-                    "created_at": worklog.get("created_at"),
-                    "updated_at": worklog.get("updated_at", worklog.get("created_at")),
-                }
+                    created_at=worklog.get("created_at"),
+                ).first()
+                if existing_worklog:
+                    existing_worklog.description = worklog.get("description", "")
+                    existing_worklog.duration = worklog.get("duration")
+                    existing_worklog.updated_at = worklog.get("updated_at", worklog.get("created_at"))
+                    existing_worklog.updated_by_id = issue.created_by_id
+                    bulk_update_worklogs.append(existing_worklog)
+                else:
+                    new_worklog = IssueWorkLog(
+                        issue=issue,
+                        project_id=issue.project_id,
+                        workspace_id=issue.workspace_id,
+                        description=worklog.get("description", ""),
+                        duration=worklog.get("duration"),
+                        logged_by_id=worklog.get("logged_by"),
+                        created_by_id=issue.created_by_id,
+                        updated_by_id=issue.created_by_id,
+                    )
+                    bulk_create_worklogs.append(new_worklog)
+                    # Store the timestamps to apply after creation
+                    worklog_timestamp_map[id(new_worklog)] = {
+                        "created_at": worklog.get("created_at"),
+                        "updated_at": worklog.get("updated_at", worklog.get("created_at")),
+                    }
 
-    # Bulk create new worklogs
-    created_worklogs = IssueWorkLog.objects.bulk_create(bulk_create_worklogs, batch_size=100, ignore_conflicts=True)
+        # Bulk create new worklogs
+        created_worklogs = IssueWorkLog.objects.bulk_create(bulk_create_worklogs, batch_size=100, ignore_conflicts=True)
 
-    # Update timestamps for newly created worklogs
-    if created_worklogs:
-        for worklog in created_worklogs:
-            timestamps = worklog_timestamp_map.get(id(worklog))
-            if timestamps:
-                worklog.created_at = timestamps["created_at"]
-                worklog.updated_at = timestamps["updated_at"]
+        # Update timestamps for newly created worklogs
+        if created_worklogs:
+            for worklog in created_worklogs:
+                timestamps = worklog_timestamp_map.get(id(worklog))
+                if timestamps:
+                    worklog.created_at = timestamps["created_at"]
+                    worklog.updated_at = timestamps["updated_at"]
 
-        IssueWorkLog.objects.bulk_update(
-            created_worklogs,
-            ["created_at", "updated_at"],
-            batch_size=100,
-        )
+            IssueWorkLog.objects.bulk_update(
+                created_worklogs,
+                ["created_at", "updated_at"],
+                batch_size=100,
+            )
 
-    # Bulk update existing worklogs
-    if bulk_update_worklogs:
-        IssueWorkLog.objects.bulk_update(
-            bulk_update_worklogs,
-            ["description", "duration", "updated_at", "updated_by_id"],
-            batch_size=100,
-        )
+        # Bulk update existing worklogs
+        if bulk_update_worklogs:
+            IssueWorkLog.objects.bulk_update(
+                bulk_update_worklogs,
+                ["description", "duration", "updated_at", "updated_by_id"],
+                batch_size=100,
+            )
+    except Exception as e:
+        logger.warning(f"Failed to process worklogs for issue {issue.id}: {str(e)}")
 
     return
 
 
 def process_issue_links(issue, links):
-    bulk_create_links = []
+    try:
+        bulk_create_links = []
 
-    # Get existing links
-    existing_links = list(
-        IssueLink.objects.filter(issue=issue, project_id=issue.project_id, workspace_id=issue.workspace_id).values_list(
-            "url", flat=True
+        # Get existing links
+        existing_links = list(
+            IssueLink.objects.filter(
+                issue=issue,
+                project_id=issue.project_id,
+                workspace_id=issue.workspace_id,
+            ).values_list("url", flat=True)
         )
-    )
 
-    for link_data in links:
-        if link_data["url"] not in existing_links:
-            bulk_create_links.append(
-                IssueLink(
-                    issue=issue,
-                    project_id=issue.project_id,
-                    workspace_id=issue.workspace_id,
-                    title=link_data["name"],
-                    url=link_data["url"],
-                    created_by_id=issue.created_by_id,
-                    updated_by_id=issue.created_by_id,
+        for link_data in links:
+            if link_data["url"] not in existing_links:
+                bulk_create_links.append(
+                    IssueLink(
+                        issue=issue,
+                        project_id=issue.project_id,
+                        workspace_id=issue.workspace_id,
+                        title=link_data["name"],
+                        url=link_data["url"],
+                        created_by_id=issue.created_by_id,
+                        updated_by_id=issue.created_by_id,
+                    )
                 )
-            )
 
-    IssueLink.objects.bulk_create(bulk_create_links, batch_size=100, ignore_conflicts=True)
+        IssueLink.objects.bulk_create(bulk_create_links, batch_size=100, ignore_conflicts=True)
+    except Exception as e:
+        logger.warning(f"Failed to process links for issue {issue.id}: {str(e)}")
     return
 
 
@@ -361,125 +380,131 @@ def process_issue_comments(user_id, issue, comments):
     if not comments:
         return
 
-    bulk_create_comments = []
-    bulk_update_comments = []
-    comment_timestamp_map = {}  # Map to store timestamps for created comments
+    try:
+        bulk_create_comments = []
+        bulk_update_comments = []
+        comment_timestamp_map = {}  # Map to store timestamps for created comments
 
-    # Get existing comments for this issue only
-    existing_comments_map = {
-        str(comment.external_id): comment
-        for comment in IssueComment.objects.filter(
-            issue=issue,
-            project_id=issue.project_id,
-            workspace_id=issue.workspace_id,
-            external_id__in=[str(c.get("external_id")) for c in comments if c.get("external_id")],
-        )
-    }
-
-    for comment_data in comments:
-        external_id = str(comment_data.get("external_id")) if comment_data.get("external_id") else None
-
-        # Skip if no external_id
-        if not external_id:
-            continue
-
-        comment_actor = comment_data.get("actor") if comment_data.get("actor") else user_id
-        if external_id in existing_comments_map:
-            # Update case
-            existing_comment = existing_comments_map[external_id]
-            existing_comment.actor_id = comment_actor
-            existing_comment.created_by_id = comment_actor
-            existing_comment.updated_by_id = comment_actor
-            existing_comment.comment_html = comment_data["comment_html"]
-            # Set updated_at if provided, otherwise use created_at or current time
-            if comment_data.get("updated_at"):
-                existing_comment.updated_at = comment_data["updated_at"]
-            elif comment_data.get("created_at"):
-                existing_comment.updated_at = comment_data["created_at"]
-            bulk_update_comments.append(existing_comment)
-        else:
-            # Create case - don't set created_at/updated_at here
-            comment = IssueComment(
+        # Get existing comments for this issue only
+        existing_comments_map = {
+            str(comment.external_id): comment
+            for comment in IssueComment.objects.filter(
                 issue=issue,
                 project_id=issue.project_id,
                 workspace_id=issue.workspace_id,
-                comment_html=comment_data["comment_html"],
-                actor_id=comment_actor,
-                created_by_id=comment_actor,
-                external_id=external_id,
-                external_source=comment_data.get("external_source"),
-                updated_by_id=comment_actor,
+                external_id__in=[str(c.get("external_id")) for c in comments if c.get("external_id")],
             )
-            bulk_create_comments.append(comment)
-            # Store the timestamps to apply after creation
-            comment_timestamp_map[id(comment)] = {
-                "created_at": comment_data.get("created_at"),
-                "updated_at": comment_data.get("updated_at", comment_data.get("created_at")),
-            }
+        }
 
-    # Bulk create new comments
-    created_comments = IssueComment.objects.bulk_create(bulk_create_comments, batch_size=100, ignore_conflicts=True)
+        for comment_data in comments:
+            external_id = str(comment_data.get("external_id")) if comment_data.get("external_id") else None
 
-    # Update timestamps for newly created comments
-    if created_comments:
-        comments_to_update_timestamps = []
-        for comment in created_comments:
-            timestamps = comment_timestamp_map.get(id(comment))
-            if timestamps and timestamps["created_at"]:
-                comment.created_at = timestamps["created_at"]
-                comment.updated_at = timestamps["updated_at"] or timestamps["created_at"]
-                comments_to_update_timestamps.append(comment)
+            # Skip if no external_id
+            if not external_id:
+                continue
 
-        if comments_to_update_timestamps:
+            comment_actor = comment_data.get("actor") if comment_data.get("actor") else user_id
+            if external_id in existing_comments_map:
+                # Update case
+                existing_comment = existing_comments_map[external_id]
+                existing_comment.actor_id = comment_actor
+                existing_comment.created_by_id = comment_actor
+                existing_comment.updated_by_id = comment_actor
+                existing_comment.comment_html = comment_data["comment_html"]
+                # Set updated_at if provided, otherwise use created_at or current time
+                if comment_data.get("updated_at"):
+                    existing_comment.updated_at = comment_data["updated_at"]
+                elif comment_data.get("created_at"):
+                    existing_comment.updated_at = comment_data["created_at"]
+                bulk_update_comments.append(existing_comment)
+            else:
+                # Create case - don't set created_at/updated_at here
+                comment = IssueComment(
+                    issue=issue,
+                    project_id=issue.project_id,
+                    workspace_id=issue.workspace_id,
+                    comment_html=comment_data["comment_html"],
+                    actor_id=comment_actor,
+                    created_by_id=comment_actor,
+                    external_id=external_id,
+                    external_source=comment_data.get("external_source"),
+                    updated_by_id=comment_actor,
+                )
+                bulk_create_comments.append(comment)
+                # Store the timestamps to apply after creation
+                comment_timestamp_map[id(comment)] = {
+                    "created_at": comment_data.get("created_at"),
+                    "updated_at": comment_data.get("updated_at", comment_data.get("created_at")),
+                }
+
+        # Bulk create new comments
+        created_comments = IssueComment.objects.bulk_create(bulk_create_comments, batch_size=100, ignore_conflicts=True)
+
+        # Update timestamps for newly created comments
+        if created_comments:
+            comments_to_update_timestamps = []
+            for comment in created_comments:
+                timestamps = comment_timestamp_map.get(id(comment))
+                if timestamps and timestamps["created_at"]:
+                    comment.created_at = timestamps["created_at"]
+                    comment.updated_at = timestamps["updated_at"] or timestamps["created_at"]
+                    comments_to_update_timestamps.append(comment)
+
+            if comments_to_update_timestamps:
+                IssueComment.objects.bulk_update(
+                    comments_to_update_timestamps,
+                    ["created_at", "updated_at"],
+                    batch_size=100,
+                )
+
+        # Bulk update existing comments
+        if bulk_update_comments:
             IssueComment.objects.bulk_update(
-                comments_to_update_timestamps,
-                ["created_at", "updated_at"],
+                bulk_update_comments,
+                ["comment_html", "actor_id", "created_by_id", "updated_by_id", "updated_at"],
                 batch_size=100,
             )
 
-    # Bulk update existing comments
-    if bulk_update_comments:
-        IssueComment.objects.bulk_update(
-            bulk_update_comments,
-            ["comment_html", "actor_id", "created_by_id", "updated_by_id", "updated_at"],
-            batch_size=100,
-        )
+        # Process file assets for each comment - ensure comments is not None
+        if comments and created_comments:
+            for comment in created_comments:
+                comment_data = next(
+                    (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
+                    None,
+                )
+                if comment_data and comment_data.get("file_assets"):
+                    process_comment_file_assets(comment, comment_data["file_assets"])
 
-    # Process file assets for each comment - ensure comments is not None
-    if comments and created_comments:
-        for comment in created_comments:
-            comment_data = next(
-                (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
-                None,
-            )
-            if comment_data and comment_data.get("file_assets"):
-                process_comment_file_assets(comment, comment_data["file_assets"])
-
-    if comments and bulk_update_comments:
-        for comment in bulk_update_comments:
-            comment_data = next(
-                (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
-                None,
-            )
-            if comment_data and comment_data.get("file_assets"):
-                process_comment_file_assets(comment, comment_data["file_assets"])
+        if comments and bulk_update_comments:
+            for comment in bulk_update_comments:
+                comment_data = next(
+                    (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
+                    None,
+                )
+                if comment_data and comment_data.get("file_assets"):
+                    process_comment_file_assets(comment, comment_data["file_assets"])
+    except Exception as e:
+        logger.warning(f"Failed to process comments for issue {issue.id}: {str(e)}")
 
     return
 
 
 def process_issue_cycles(issue, cycle_ids):
-    # Create new cycle associations without deleting existing ones
-    for cycle_id in cycle_ids:
-        CycleIssue.objects.get_or_create(
-            issue=issue,
-            project_id=issue.project_id,
-            workspace_id=issue.workspace_id,
-            cycle_id=cycle_id,
-            defaults={
-                "created_by_id": issue.created_by_id,
-                "updated_by_id": issue.created_by_id,
-            },
-        )
+    try:
+        # Create new cycle associations without deleting existing ones
+        for cycle_id in cycle_ids:
+            CycleIssue.objects.get_or_create(
+                issue=issue,
+                project_id=issue.project_id,
+                workspace_id=issue.workspace_id,
+                cycle_id=cycle_id,
+                defaults={
+                    "created_by_id": issue.created_by_id,
+                    "updated_by_id": issue.created_by_id,
+                },
+            )
+    except Exception as e:
+        logger.warning(f"Failed to process cycles for issue {issue.id}: {str(e)}")
     return
 
 
@@ -496,71 +521,89 @@ def process_issue_labels(issue, labels, user_id):
     if not labels:
         return
 
-    # Get existing labels for this project
-    existing_labels = Label.objects.filter(
-        name__in=labels,
-        project_id=issue.project_id,
-        workspace_id=issue.workspace_id,
-    )
-    existing_label_names = {label.name for label in existing_labels}
-    label_ids = [label.id for label in existing_labels]
-
-    # Identify labels that need to be created
-    labels_to_create = [name for name in labels if name not in existing_label_names]
-
-    # Bulk create missing labels
-    if labels_to_create:
-        new_labels = Label.objects.bulk_create(
-            [
-                Label(
-                    name=label_name,
-                    project_id=issue.project_id,
-                    workspace_id=issue.workspace_id,
-                    color=f"#{random.randint(0, 0xFFFFFF):06X}",
-                )
-                for label_name in labels_to_create
-            ],
-            ignore_conflicts=True,
+    try:
+        # Get existing label names for this project
+        existing_label_names = set(
+            Label.objects.filter(
+                name__in=labels,
+                project_id=issue.project_id,
+                workspace_id=issue.workspace_id,
+            ).values_list("name", flat=True)
         )
-        label_ids.extend([label.id for label in new_labels])
 
-    # Delete existing label associations for this issue
-    IssueLabel.objects.filter(issue=issue).delete()
+        # Identify labels that need to be created
+        labels_to_create = [name for name in labels if name not in existing_label_names]
 
-    # Create new IssueLabel associations
-    if label_ids:
-        IssueLabel.objects.bulk_create(
-            [
-                IssueLabel(
-                    workspace_id=issue.workspace_id,
-                    project_id=issue.project_id,
-                    issue=issue,
-                    label_id=label_id,
-                    created_by_id=user_id,
-                    updated_by_id=user_id,
-                )
-                for label_id in label_ids
-            ],
-            batch_size=10,
-            ignore_conflicts=True,
+        # Bulk create missing labels (ignore_conflicts handles duplicates)
+        # Note: With ignore_conflicts=True, returned objects may have phantom UUIDs
+        # that were never actually saved (Django generates UUIDs before INSERT)
+        if labels_to_create:
+            Label.objects.bulk_create(
+                [
+                    Label(
+                        name=label_name,
+                        project_id=issue.project_id,
+                        workspace_id=issue.workspace_id,
+                        color=f"#{random.randint(0, 0xFFFFFF):06X}",
+                    )
+                    for label_name in labels_to_create
+                ],
+                ignore_conflicts=True,
+            )
+
+        # Re-query to get actual label IDs (handles both race conditions and
+        # phantom UUIDs from bulk_create with ignore_conflicts)
+        valid_label_ids = list(
+            Label.objects.filter(
+                name__in=labels,
+                project_id=issue.project_id,
+                workspace_id=issue.workspace_id,
+            ).values_list("id", flat=True)
+        )
+
+        # Create new IssueLabel associations
+        if valid_label_ids:
+            IssueLabel.objects.bulk_create(
+                [
+                    IssueLabel(
+                        workspace_id=issue.workspace_id,
+                        project_id=issue.project_id,
+                        issue=issue,
+                        label_id=label_id,
+                        created_by_id=user_id,
+                        updated_by_id=user_id,
+                    )
+                    for label_id in valid_label_ids
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+    except Exception as e:
+        # Log but don't crash - label failures shouldn't block the entire import
+        logger.warning(
+            f"Failed to process labels for issue {issue.id}: {str(e)}",
+            extra={"issue_id": str(issue.id), "labels": labels},
         )
 
     return
 
 
 def process_issue_modules(issue, module_ids):
-    # Create new module associations without deleting existing ones
-    for module_id in module_ids:
-        ModuleIssue.objects.get_or_create(
-            issue=issue,
-            project_id=issue.project_id,
-            workspace_id=issue.workspace_id,
-            module_id=module_id,
-            defaults={
-                "created_by_id": issue.created_by_id,
-                "updated_by_id": issue.created_by_id,
-            },
-        )
+    try:
+        # Create new module associations without deleting existing ones
+        for module_id in module_ids:
+            ModuleIssue.objects.get_or_create(
+                issue=issue,
+                project_id=issue.project_id,
+                workspace_id=issue.workspace_id,
+                module_id=module_id,
+                defaults={
+                    "created_by_id": issue.created_by_id,
+                    "updated_by_id": issue.created_by_id,
+                },
+            )
+    except Exception as e:
+        logger.warning(f"Failed to process modules for issue {issue.id}: {str(e)}")
     return
 
 
@@ -589,81 +632,87 @@ def process_issue_file_assets(issue, file_assets):
     if not file_assets:
         return
 
-    # Get all assets by their IDs
-    asset_ids = [asset_id for asset_id in file_assets if asset_id]
-    if not asset_ids:
-        return
+    try:
+        # Get all assets by their IDs
+        asset_ids = [asset_id for asset_id in file_assets if asset_id]
+        if not asset_ids:
+            return
 
-    # Bulk update all assets
-    FileAsset.objects.filter(id__in=asset_ids).update(
-        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-        issue_id=issue.id,
-        project_id=issue.project_id,
-        workspace_id=issue.workspace_id,
-        created_by_id=issue.created_by_id,
-        updated_by_id=issue.created_by_id,
-    )
+        # Bulk update all assets
+        FileAsset.objects.filter(id__in=asset_ids).update(
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            issue_id=issue.id,
+            project_id=issue.project_id,
+            workspace_id=issue.workspace_id,
+            created_by_id=issue.created_by_id,
+            updated_by_id=issue.created_by_id,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to process file assets for issue {issue.id}: {str(e)}")
     return
 
 
 def process_issue_property_values(issue, issue_property_values):
-    workspace = Workspace.objects.get(pk=issue.workspace_id)
+    try:
+        workspace = Workspace.objects.get(pk=issue.workspace_id)
 
-    for property_data in issue_property_values:
-        property_id = property_data.get("id")
-        if not property_id:
-            continue
+        for property_data in issue_property_values:
+            property_id = property_data.get("id")
+            if not property_id:
+                continue
 
-        issue_property = IssueProperty.objects.get(pk=property_id)
+            issue_property = IssueProperty.objects.get(pk=property_id)
 
-        # existing issue property values
-        existing_issue_property_values = IssuePropertyValue.objects.filter(
-            workspace__slug=workspace.slug,
-            project_id=issue.project_id,
-            issue_id=issue.id,
-            property_id=property_id,
-            property__issue_type__is_epic=False,
-        )
+            # existing issue property values
+            existing_issue_property_values = IssuePropertyValue.objects.filter(
+                workspace__slug=workspace.slug,
+                project_id=issue.project_id,
+                issue_id=issue.id,
+                property_id=property_id,
+                property__issue_type__is_epic=False,
+            )
 
-        issue_property_values = property_data.get("values", [])
+            issue_property_values = property_data.get("values", [])
 
-        if not issue_property_values:
-            continue
+            if not issue_property_values:
+                continue
 
-        # validate the property value
-        bulk_external_issue_property_values = []
-        for value in issue_property_values:
-            # check if ant external id and external source is provided
-            property_value = value.get("value", None)
+            # validate the property value
+            bulk_external_issue_property_values = []
+            for value in issue_property_values:
+                # check if ant external id and external source is provided
+                property_value = value.get("value", None)
 
-            if property_value:
-                externalIssuePropertyValueValidator(issue_property=issue_property, value=property_value)
+                if property_value:
+                    externalIssuePropertyValueValidator(issue_property=issue_property, value=property_value)
 
-                # check if issue property with the same external id and external source already exists
-                property_external_id = value.get("external_id", None)
-                property_external_source = value.get("external_source", None)
+                    # check if issue property with the same external id and external source already exists
+                    property_external_id = value.get("external_id", None)
+                    property_external_source = value.get("external_source", None)
 
-                if property_value in ["true", "false"]:
-                    property_value = get_boolean_value(property_value)
+                    if property_value in ["true", "false"]:
+                        property_value = get_boolean_value(property_value)
 
-                # Save the values
-                bulk_external_issue_property_values.append(
-                    externalIssuePropertyValueSaver(
-                        workspace_id=issue.workspace.id,
-                        project_id=issue.project_id,
-                        issue_id=issue.id,
-                        issue_property=issue_property,
-                        value=property_value,
-                        external_id=property_external_id,
-                        external_source=property_external_source,
+                    # Save the values
+                    bulk_external_issue_property_values.append(
+                        externalIssuePropertyValueSaver(
+                            workspace_id=issue.workspace.id,
+                            project_id=issue.project_id,
+                            issue_id=issue.id,
+                            issue_property=issue_property,
+                            value=property_value,
+                            external_id=property_external_id,
+                            external_source=property_external_source,
+                        )
                     )
-                )
 
-        #  remove the existing issue property values
-        existing_issue_property_values.delete()
+            #  remove the existing issue property values
+            existing_issue_property_values.delete()
 
-        # Bulk create the issue property values
-        IssuePropertyValue.objects.bulk_create(bulk_external_issue_property_values, batch_size=10)
+            # Bulk create the issue property values
+            IssuePropertyValue.objects.bulk_create(bulk_external_issue_property_values, batch_size=10)
+    except Exception as e:
+        logger.warning(f"Failed to process property values for issue {issue.id}: {str(e)}")
 
 
 def process_issues(slug, project, user_id, issue_list):
@@ -685,18 +734,20 @@ def process_issues(slug, project, user_id, issue_list):
         return imported_issues, total_issues, external_id_map
 
     # First pass: Create/Update parent issues
-    with transaction.atomic():
-        for issue_data in issue_list:
+    for issue_data in issue_list:
+        try:
             if issue_data.get("parent") is None:
                 issue = process_single_issue(slug, project, user_id, issue_data)
                 if issue:
                     imported_issues += 1
                     if issue_data.get("external_id"):
                         external_id_map[issue_data["external_id"]] = str(issue.id)
+        except Exception as e:
+            logger.warning(f"Failed to process parent issue: {str(e)}")
 
     # Second pass: Create/Update child issues
-    with transaction.atomic():
-        for issue_data in issue_list:
+    for issue_data in issue_list:
+        try:
             if issue_data.get("parent") is not None:
                 parent_external_id = issue_data["parent"]
                 if parent_external_id in external_id_map:
@@ -715,6 +766,8 @@ def process_issues(slug, project, user_id, issue_list):
                     imported_issues += 1
                     if issue_data.get("external_id"):
                         external_id_map[issue_data["external_id"]] = str(issue.id)
+        except Exception as e:
+            logger.warning(f"Failed to process child issue: {str(e)}")
 
     return imported_issues, total_issues, external_id_map
 
@@ -766,26 +819,43 @@ def process_pages(slug, project_id, user_id, page_list):
         existing_pages_map = {}
 
     # Process each page for bulk operations
-    with transaction.atomic():
-        # Handle updates first
-        for key, page_data in external_ids_map.items():
-            if key in existing_pages_map:
-                # Update case
-                page = existing_pages_map[key]
-                for field, value in page_data.items():
-                    # Skip fields that shouldn't be directly updated
-                    if field in [
-                        "id",
-                        "created_at",
-                        "updated_at",
-                        "created_by",
-                        "projects",
-                    ]:
-                        continue
-                    setattr(page, field, value)
-                pages_to_update.append(page)
-            else:
-                # New pages to create
+    try:
+        with transaction.atomic():
+            # Handle updates first
+            for key, page_data in external_ids_map.items():
+                if key in existing_pages_map:
+                    # Update case
+                    page = existing_pages_map[key]
+                    for field, value in page_data.items():
+                        # Skip fields that shouldn't be directly updated
+                        if field in [
+                            "id",
+                            "created_at",
+                            "updated_at",
+                            "created_by",
+                            "projects",
+                        ]:
+                            continue
+                        setattr(page, field, value)
+                    pages_to_update.append(page)
+                else:
+                    # New pages to create
+                    new_page = Page(
+                        workspace_id=workspace.id,
+                        name=page_data.get("name", "Untitled Page"),
+                        external_id=page_data.get("external_id"),
+                        external_source=page_data.get("external_source"),
+                        description=page_data.get("description", {}),
+                        description_html=page_data.get("description_html", "<p></p>"),
+                        description_binary=page_data.get("description_binary"),
+                        owned_by_id=user_id,
+                        created_by_id=user_id,
+                        updated_by_id=user_id,
+                    )
+                    pages_to_create.append(new_page)
+
+            # For pages without external ids
+            for page_data in [p for p in page_list if not (p.get("external_id") and p.get("external_source"))]:
                 new_page = Page(
                     workspace_id=workspace.id,
                     name=page_data.get("name", "Untitled Page"),
@@ -800,44 +870,33 @@ def process_pages(slug, project_id, user_id, page_list):
                 )
                 pages_to_create.append(new_page)
 
-        # For pages without external ids
-        for page_data in [p for p in page_list if not (p.get("external_id") and p.get("external_source"))]:
-            new_page = Page(
-                workspace_id=workspace.id,
-                name=page_data.get("name", "Untitled Page"),
-                external_id=page_data.get("external_id"),
-                external_source=page_data.get("external_source"),
-                description=page_data.get("description", {}),
-                description_html=page_data.get("description_html", "<p></p>"),
-                description_binary=page_data.get("description_binary"),
-                owned_by_id=user_id,
-                created_by_id=user_id,
-                updated_by_id=user_id,
-            )
-            pages_to_create.append(new_page)
+            # Bulk update existing pages
+            if pages_to_update:
+                fields_to_update = [
+                    "name",
+                    "description",
+                    "description_html",
+                    "description_binary",
+                    "owned_by_id",
+                    "updated_by_id",
+                ]
+                Page.objects.bulk_update(pages_to_update, fields_to_update, batch_size=100)
+                imported_pages += len(pages_to_update)
 
-        # Bulk update existing pages
-        if pages_to_update:
-            fields_to_update = [
-                "name",
-                "description",
-                "description_html",
-                "description_binary",
-                "owned_by_id",
-                "updated_by_id",
-            ]
-            Page.objects.bulk_update(pages_to_update, fields_to_update, batch_size=100)
-            imported_pages += len(pages_to_update)
+            # Bulk create new pages
+            if pages_to_create:
+                created_pages = Page.objects.bulk_create(pages_to_create, batch_size=100)
+                imported_pages += len(created_pages)
 
-        # Bulk create new pages
-        if pages_to_create:
-            created_pages = Page.objects.bulk_create(pages_to_create, batch_size=100)
-            imported_pages += len(created_pages)
-
-            ProjectPage.objects.bulk_create(
-                [ProjectPage(page=page, project_id=project_id, workspace_id=workspace.id) for page in created_pages],
-                batch_size=1000,
-            )
+                ProjectPage.objects.bulk_create(
+                    [
+                        ProjectPage(page=page, project_id=project_id, workspace_id=workspace.id)
+                        for page in created_pages
+                    ],
+                    batch_size=1000,
+                )
+    except Exception as e:
+        logger.warning(f"Failed to process pages for project {project_id}: {str(e)}")
 
     return imported_pages, total_pages
 

@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -41,9 +54,9 @@ export const PageBreadcrumbItem = observer(function PageBreadcrumbItem({
 
     if (href) {
       return (
-        <div className="flex items-center gap-1 font-medium text-sm text-custom-text-200">
-          {showLogo && <div className="h-4 w-4 bg-custom-background-80 rounded animate-pulse" />}
-          <div className="h-4 w-24 bg-custom-background-80 rounded animate-pulse" />
+        <div className="flex items-center gap-1 font-medium text-13 text-secondary">
+          {showLogo && <div className="h-4 w-4 bg-layer-1 rounded animate-pulse" />}
+          <div className="h-4 w-24 bg-layer-1 rounded animate-pulse" />
         </div>
       );
     }
@@ -51,9 +64,9 @@ export const PageBreadcrumbItem = observer(function PageBreadcrumbItem({
     return (
       <li className={loadingItemClasses} tabIndex={-1}>
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
-            {showLogo && <div className="h-5 w-5 bg-custom-background-80 rounded animate-pulse" />}
-            <div className="h-4 w-24 bg-custom-background-80 rounded animate-pulse" />
+          <div className="flex cursor-default items-center gap-1 text-13 font-medium text-primary">
+            {showLogo && <div className="h-5 w-5 bg-layer-1 rounded animate-pulse" />}
+            <div className="h-4 w-24 bg-layer-1 rounded animate-pulse" />
           </div>
         </div>
       </li>
@@ -71,7 +84,7 @@ export const PageBreadcrumbItem = observer(function PageBreadcrumbItem({
               {logo_props?.in_use ? (
                 <Logo logo={logo_props} size={16} type="lucide" />
               ) : (
-                <PageIcon className="size-4 text-custom-text-300" />
+                <PageIcon className="size-4 text-tertiary" />
               )}
             </>
           )
@@ -83,13 +96,13 @@ export const PageBreadcrumbItem = observer(function PageBreadcrumbItem({
   return (
     <li className="flex items-center space-x-2" tabIndex={-1}>
       <div className="flex flex-wrap items-center gap-2.5">
-        <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
+        <div className="flex cursor-default items-center gap-1 text-13 font-medium text-primary">
           {showLogo && (
             <>
               {logo_props?.in_use ? (
                 <Logo logo={logo_props} size={16} type="lucide" />
               ) : (
-                <PageIcon className="size-4 text-custom-text-300" />
+                <PageIcon className="size-4 text-tertiary" />
               )}
             </>
           )}

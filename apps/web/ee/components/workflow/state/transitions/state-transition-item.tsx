@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { MoveRight, Trash2 } from "lucide-react";
+import { MoveRight } from "lucide-react";
+import { TrashIcon, ApproverIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
-import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ApproverIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -13,7 +25,6 @@ import { cn } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 //
 import { StateTransitionApprovers } from "./state-transition-approvers";
@@ -62,18 +73,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
   const handleTransitionStateChange = async (val: string) => {
     try {
       await changeStateTransition(workspaceSlug, projectId, parentStateId, transitionId, val);
-      captureSuccess({
-        eventName: WORKFLOW_TRACKER_EVENTS.STATE_UPDATED,
-        payload: {
-          project_id: projectId,
-          parent_state_id: parentStateId,
-        },
-      });
-    } catch (error) {
-      captureError({
-        eventName: WORKFLOW_TRACKER_EVENTS.STATE_UPDATED,
-        error: error as Error,
-      });
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.modify_state_change_rule.error.title"),
@@ -85,19 +85,8 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
   const handleApproversUpdate = async (memberIds: string[]) => {
     try {
       modifyStateTransitionMemberPermission(workspaceSlug, projectId, parentStateId, transitionId, memberIds);
-      captureSuccess({
-        eventName: WORKFLOW_TRACKER_EVENTS.APPROVERS_UPDATED,
-        payload: {
-          project_id: projectId,
-          parent_state_id: parentStateId,
-        },
-      });
       if (!isOpen) setIsOpen(true);
-    } catch (error) {
-      captureError({
-        eventName: WORKFLOW_TRACKER_EVENTS.APPROVERS_UPDATED,
-        error: error as Error,
-      });
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.modify_state_change_rule_movers.error.title"),
@@ -110,18 +99,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
     try {
       setRemovingTransition(true);
       await removeStateTransition(workspaceSlug, projectId, parentStateId, transitionId);
-      captureSuccess({
-        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_DELETED,
-        payload: {
-          project_id: projectId,
-          parent_state_id: parentStateId,
-        },
-      });
-    } catch (error) {
-      captureError({
-        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_DELETED,
-        error: error as Error,
-      });
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.remove_state_change_rule.error.title"),
@@ -134,7 +112,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
   };
 
   return (
-    <div className="border border-custom-border-100 py-1 px-3 rounded-md">
+    <div className="border border-subtle py-1 px-3 rounded-md">
       {/* Delete Transition Modal */}
       <AlertModalCore
         handleClose={() => setIsDeleteModalOpen(false)}
@@ -154,10 +132,10 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
         title={
           <div className="flex w-full items-center">
             <div className="flex w-full items-center justify-start gap-1 py-1">
-              <span className="text-xs font-medium text-custom-text-300">
+              <span className="text-11 font-medium text-tertiary">
                 {t("workflows.workflow_states.state_changes.move_to")}
               </span>
-              <MoveRight className="size-3.5 pl-1 text-custom-text-300" strokeWidth={2} />
+              <MoveRight className="size-3.5 pl-1 text-tertiary" strokeWidth={2} />
               <div onClick={(e) => e.stopPropagation()}>
                 <StateDropdown
                   buttonVariant={"transparent-with-text"}
@@ -174,9 +152,9 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                 />
               </div>
               {areApproversAvailable && (
-                <div className="flex gap-1 text-custom-text-400 items-center">
-                  <ApproverIcon strokeWidth={2} className="flex-shrink-0 size-3.5 text-custom-text-300" />
-                  <span className="text-xs font-medium">
+                <div className="flex gap-1 text-placeholder items-center">
+                  <ApproverIcon strokeWidth={2} className="flex-shrink-0 size-3.5 text-tertiary" />
+                  <span className="text-11 font-medium">
                     <span className="hidden lg:block">
                       {t("workflows.workflow_states.movers_count", { count: stateTransition.approvers.length })}
                     </span>
@@ -193,7 +171,7 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                     value={stateTransition?.approvers ?? []}
                     onChange={handleApproversUpdate}
                     button={
-                      <Button variant="accent-primary" size="sm" className="text-xs px-2 py-0.5">
+                      <Button variant="secondary" className="text-11 px-2 py-0.5">
                         {t("workflows.workflow_states.state_changes.movers.add")}
                       </Button>
                     }
@@ -204,19 +182,18 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
                   />
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Trash2
-                    className="size-3 text-custom-text-400 hover:text-red-500 cursor-pointer"
+                  <TrashIcon
+                    className="size-3 text-placeholder hover:text-danger-primary cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsDeleteModalOpen(true);
                     }}
-                    data-ph-element={WORKFLOW_TRACKER_ELEMENTS.DELETE_TRANSITION_BUTTON}
                   />
                   <ChevronDownIcon
                     strokeWidth={2}
-                    className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
-                      "rotate-180 text-custom-text-200": isOpen && areApproversAvailable,
-                      "text-custom-text-400 hover:text-custom-text-400": !areApproversAvailable,
+                    className={cn("transition-all size-4 text-placeholder hover:text-tertiary", {
+                      "rotate-180 text-secondary": isOpen && areApproversAvailable,
+                      "text-placeholder hover:text-placeholder": !areApproversAvailable,
                     })}
                   />
                 </div>

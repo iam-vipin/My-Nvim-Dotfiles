@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -8,7 +21,6 @@ import { useTranslation } from "@plane/i18n";
 import { MembersPropertyIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -67,10 +79,10 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
 
   return (
     <>
-      <h4 className="pt-4 mt-4 mb-2 text-sm font-medium text-custom-text-300">{intakeT("heading")}</h4>
-      <div className="px-4 rounded border transition-all border-custom-border-200 bg-custom-background-90">
+      <h4 className="pt-4 mt-4 mb-2 text-13 font-medium text-tertiary">{intakeT("heading")}</h4>
+      <div className="px-4 rounded-sm border transition-all border-subtle-1 bg-layer-1">
         {Object.entries(featureList).map(([featureKey, feature]) => (
-          <div key={featureKey} className={cn("gap-y-3 gap-x-8 py-3 bg-custom-background-90")}>
+          <div key={featureKey} className={cn("gap-y-3 gap-x-8 py-3 bg-layer-1")}>
             <div key={featureKey} className={cn("flex gap-2 justify-between", {})}>
               <div className="flex gap-2 w-full">
                 <div className="flex justify-center mt-1 rounded">{feature.icon}</div>
@@ -78,21 +90,14 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
                   <div className={cn("flex gap-2 justify-between", {})}>
                     <div className="flex-1 w-full">
                       <div className="flex gap-2">
-                        <div className="text-sm font-medium leading-5 align-top">{intakeT(`${featureKey}.title`)}</div>
+                        <div className="text-13 font-medium leading-5 align-top">{intakeT(`${featureKey}.title`)}</div>
                         {!isResponsibilityEnabled && (
-                          <div
-                            className={cn(
-                              "rounded bg-custom-background-80 px-2 py-[1px] text-xs font-medium text-custom-text-300 capitalize items-center",
-                              getSubscriptionTextAndBackgroundColor(EProductSubscriptionEnum.BUSINESS)
-                            )}
-                          >
+                          <div className="rounded-sm px-2 py-[1px] text-11 font-medium capitalize items-center text-plans-brand-primary bg-plans-brand-subtle">
                             <h1>{getSubscriptionName(EProductSubscriptionEnum.BUSINESS)}</h1>
                           </div>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-custom-text-300 text-wrap">
-                        {intakeT(`${featureKey}.description`)}
-                      </p>
+                      <p className="mt-1 text-13 text-tertiary text-wrap">{intakeT(`${featureKey}.description`)}</p>
                     </div>
                     <div className="flex items-center h-8 max-w-40">
                       {isResponsibilityEnabled ? (
@@ -115,7 +120,7 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
                           className="block w-full max-w-full h-full text-left opacity-30 cursor-pointer outline-none clickable"
                           onClick={() => togglePaidPlanModal(true)}
                         >
-                          <div className="h-full w-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded px-2 py-0.5 text-xs">
+                          <div className="h-full w-full flex items-center gap-1.5 border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded-sm px-2 py-0.5 text-11">
                             <MembersPropertyIcon className={cn("flex-shrink-0 w-3 h-3 mx-[4px]")} />
                             <span className="flex-grow leading-5 truncate">{t("no_assignee")}</span>
                             <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />

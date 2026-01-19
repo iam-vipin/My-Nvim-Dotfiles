@@ -1,11 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomersIcon } from "@plane/propel/icons";
 import { CustomSearchSelect } from "@plane/ui";
-import { SwitcherLabel } from "@/components/common/switcher-label";
+import { SwitcherIcon } from "@/components/common/switcher-label";
 import { useCustomers } from "@/plane-web/hooks/store";
+import { Button } from "@plane/propel/button";
 
 type TProps = {
   value: any;
@@ -45,7 +59,11 @@ export const CustomerDropDown = observer(function CustomerDropDown(props: TProps
     return {
       value: customer?.id,
       query: `${customer?.name}`,
-      content: <SwitcherLabel logo_url={customer?.logo_url} name={customer?.name} LabelIcon={CustomersIcon} />,
+      content: (
+        <Button variant="ghost" prependIcon={<SwitcherIcon logo_url={customer?.logo_url} LabelIcon={CustomersIcon} />}>
+          {customer?.name}
+        </Button>
+      ),
     };
   });
 
@@ -57,11 +75,11 @@ export const CustomerDropDown = observer(function CustomerDropDown(props: TProps
       value={value}
       label={
         <div className="truncate">
-          <span className="text-sm text-custom-text-200">
+          <span className=" text-secondary">
             {labelContent ? (
               labelContent.content
             ) : (
-              <span className="text-custom-text-400 text-xs">{t("customers.dropdown.placeholder")}</span>
+              <span className=" text-body-xs-medium text-placeholder">{t("customers.dropdown.placeholder")}</span>
             )}
           </span>
         </div>

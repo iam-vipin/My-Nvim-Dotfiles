@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "@plane/i18n";
@@ -117,8 +130,8 @@ function StateMappingForm({
       <div className="space-y-5 p-7">
         {/* Header */}
         <div className="space-y-1">
-          <div className="text-base font-medium">{stateMapping ? "Edit State Mapping" : "Create State Mapping"}</div>
-          <div className="text-sm text-custom-text-200">
+          <div className="text-body-sm-medium">{stateMapping ? "Edit State Mapping" : "Create State Mapping"}</div>
+          <div className="text-body-xs-regular text-secondary">
             Map Sentry issue states to your project states. Configure which states to use when a Sentry issue is
             resolved or unresolved.
           </div>
@@ -135,12 +148,11 @@ function StateMappingForm({
 
           {/* Action Buttons */}
           <div className="relative flex justify-end items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleCancel} disabled={isLoading}>
+            <Button variant="secondary" onClick={handleCancel} disabled={isLoading}>
               {t("cancel")}
             </Button>
             <Button
               variant="primary"
-              size="sm"
               onClick={handleSubmit}
               disabled={!formData.projectId || !formData.resolvedState || !formData.unresolvedState || isLoading}
               loading={isLoading}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -120,9 +133,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
         <Header.LeftItem>
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              component={<BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-tertiary" />} />}
             />
             <Breadcrumbs.Item
               component={
@@ -135,7 +146,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
                   title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
                   icon={
                     <Breadcrumbs.Icon>
-                      <ViewsIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                      <ViewsIcon className="size-4 flex-shrink-0 text-tertiary" />
                     </Breadcrumbs.Icon>
                   }
                   isLast
@@ -171,7 +182,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
 
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => setCreateViewModal(true)}
           >

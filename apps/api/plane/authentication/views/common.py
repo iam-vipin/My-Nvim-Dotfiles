@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.shortcuts import render
 
@@ -75,12 +86,21 @@ class ChangePasswordEndpoint(APIView):
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if new password is the same as current password
+        if user.check_password(new_password):
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_SAME_AS_CURRENT"],
+                error_message="PASSWORD_SAME_AS_CURRENT",
+                payload={"error": "New password cannot be the same as current password"},
+            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+
         # check the password score
         results = zxcvbn(new_password)
         if results["score"] < 3:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_NEW_PASSWORD"],
-                error_message="INVALID_NEW_PASSWORD",
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
@@ -118,8 +138,8 @@ class SetUserPasswordEndpoint(APIView):
         results = zxcvbn(password)
         if results["score"] < 3:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                error_message="INVALID_PASSWORD",
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 

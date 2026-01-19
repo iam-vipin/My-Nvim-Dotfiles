@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -30,17 +41,13 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk=None):
         if pk:
-            comment = TeamspaceComment.objects.get(
-                workspace__slug=slug, team_space_id=team_space_id, id=pk
-            )
+            comment = TeamspaceComment.objects.get(workspace__slug=slug, team_space_id=team_space_id, id=pk)
 
             serializer = TeamspaceCommentSerializer(comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         comments = (
-            TeamspaceComment.objects.filter(
-                workspace__slug=slug, team_space_id=team_space_id
-            )
+            TeamspaceComment.objects.filter(workspace__slug=slug, team_space_id=team_space_id)
             .prefetch_related("team_space_reactions")
             .order_by("-created_at")
         )
@@ -54,9 +61,7 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
         workspace = Workspace.objects.get(slug=slug)
         serializer = TeamspaceCommentSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                workspace=workspace, team_space_id=team_space_id, actor=request.user
-            )
+            serializer.save(workspace=workspace, team_space_id=team_space_id, actor=request.user)
 
             team_space_activity.delay(
                 type="comment.activity.created",
@@ -73,22 +78,13 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
-        comment = TeamspaceComment.objects.get(
-            workspace__slug=slug, team_space_id=team_space_id, id=pk
-        )
+        comment = TeamspaceComment.objects.get(workspace__slug=slug, team_space_id=team_space_id, id=pk)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        current_instance = json.dumps(
-            TeamspaceCommentSerializer(comment).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(TeamspaceCommentSerializer(comment).data, cls=DjangoJSONEncoder)
 
-        serializer = TeamspaceCommentSerializer(
-            comment, data=request.data, partial=True
-        )
+        serializer = TeamspaceCommentSerializer(comment, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                "comment_html" in request.data
-                and request.data["comment_html"] != comment.comment_html
-            ):
+            if "comment_html" in request.data and request.data["comment_html"] != comment.comment_html:
                 serializer.save(edited_at=timezone.now())
 
             # Send activity
@@ -107,12 +103,8 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
-        comment = TeamspaceComment.objects.get(
-            workspace__slug=slug, team_space_id=team_space_id, id=pk
-        )
-        current_instance = json.dumps(
-            TeamspaceCommentSerializer(comment).data, cls=DjangoJSONEncoder
-        )
+        comment = TeamspaceComment.objects.get(workspace__slug=slug, team_space_id=team_space_id, id=pk)
+        current_instance = json.dumps(TeamspaceCommentSerializer(comment).data, cls=DjangoJSONEncoder)
         comment.delete()
         team_space_activity.delay(
             type="comment.activity.deleted",

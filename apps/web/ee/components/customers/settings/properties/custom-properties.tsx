@@ -1,15 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React, { useRef, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { v4 } from "uuid";
-import { Plus } from "lucide-react";
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 // plane constants
 // plane i18n
 import { CUSTOMER_PROPERTY_TRACKER_ELEMENTS, CUSTOMER_PROPERTY_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { Button } from "@plane/propel/button";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import type { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
 // plane ui
 import { Collapsible } from "@plane/ui";
@@ -41,9 +53,9 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
   const [customerPropertyCreateList, setCustomerPropertyCreateList] = useState<TCustomerPropertyCreateList[]>([]);
   // hooks
   const { t } = useTranslation();
-  const { properties, getPropertyById, createProperty, deleteProperty } = useCustomerProperties();
+  const { sortedProperties, getPropertyById, createProperty, deleteProperty } = useCustomerProperties();
   // derived
-  const isAnyPropertiesAvailable = customerPropertyCreateList.length > 0 || properties.length > 0;
+  const isAnyPropertiesAvailable = customerPropertyCreateList.length > 0 || sortedProperties.length > 0;
 
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +107,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
   );
 
   return (
-    <div className="group/issue-type bg-custom-background-90/60 rounded-md">
+    <div className="group/issue-type bg-layer-1 rounded-md">
       <Collapsible
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
@@ -103,14 +115,14 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
           <div className="flex w-full gap-2 cursor-pointer items-center px-4">
             <div className="flex-shrink-0">
               <ChevronRightIcon
-                className={cn("flex-shrink-0 size-4 transition-all text-custom-text-300", {
+                className={cn("flex-shrink-0 size-4 transition-all text-tertiary", {
                   "rotate-90": isOpen,
                 })}
               />
             </div>
             <div className="text-left">
-              <h3 className="text-base font-medium">{t("customers.properties.custom.title")}</h3>
-              <p className="text-sm text-custom-text-300">{t("customers.properties.custom.info")}</p>
+              <h3 className="text-14 font-medium">{t("customers.properties.custom.title")}</h3>
+              <p className="text-13 text-tertiary">{t("customers.properties.custom.info")}</p>
             </div>
           </div>
         }
@@ -124,7 +136,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
                 customPropertyOperations={customPropertyOperations}
                 containerRef={containerRef}
                 lastElementRef={lastElementRef}
-                properties={properties}
+                properties={sortedProperties}
                 isUpdateAllowed={false}
                 trackers={{
                   create: {
@@ -141,8 +153,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
               />
               <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
                 <Button
-                  variant="accent-primary"
-                  size="sm"
+                  variant="secondary"
                   className="rounded-md"
                   onClick={() => {
                     handleCustomerPropertiesCreate("add", {
@@ -152,7 +163,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
                   }}
                   data-ph-element={CUSTOMER_PROPERTY_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON}
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <PlusIcon className="h-3.5 w-3.5" />
                   {t("customers.properties.add.primary_button")}
                 </Button>
               </div>

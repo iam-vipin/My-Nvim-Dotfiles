@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { ReactNode } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { EditIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -33,9 +46,9 @@ const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewH
   return (
     <button
       className={cn(
-        "group w-full flex flex-col gap-2 p-3 rounded-xl bg-custom-background-100 border border-custom-border-200/50 overflow-hidden hover:shadow-sm animate-fade-in transition-all duration-300",
+        "group w-full flex flex-col gap-2 p-3 rounded-xl bg-surface-1 border border-subtle-1 overflow-hidden hover:shadow-sm animate-fade-in transition-all duration-300",
         {
-          "border-custom-primary-100": artifactId === artifactIdInUse,
+          "border-accent-strong": artifactId === artifactIdInUse,
         }
       )}
       disabled={!shouldToggleSidebar || !isFullScreen}
@@ -46,16 +59,17 @@ const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewH
     >
       {children}
       {showEdited &&
+        isFullScreen &&
         originalArtifact?.is_editable &&
         EDITABLE_ARTIFACT_TYPES.includes(originalArtifact.artifact_type) && (
           <div
             className={cn(
-              "absolute right-3 top-3 text-custom-text-350 flex items-center gap-1 bg-custom-background-100 ",
+              "absolute right-3 top-3 text-tertiary flex items-center gap-1 bg-surface-1 ",
               "opacity-0 group-hover:opacity-100 transition-all duration-300"
             )}
           >
-            <Pencil className="size-3" />
-            <div className="text-xs">{!isEmpty(updatedArtifact) ? "Edited" : "Edit"}</div>
+            <EditIcon className="size-3" />
+            <div className="text-caption-sm-regular">{!isEmpty(updatedArtifact) ? "Edited" : "Edit"}</div>
           </div>
         )}
     </button>
@@ -67,11 +81,11 @@ function PreviewProperties(props: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "flex flex-wrap gap-2 items-center [&>*]:p-0 [&>*]:hover:bg-transparent text-sm text-custom-text-300",
+        "mt-2 flex flex-wrap gap-2 items-center [&>*]:p-0 [&>*]:hover:bg-transparent text-sm text-tertiary",
         "[&>*:not(:last-child)]:after:content-['']",
         "[&>*:not(:last-child)]:after:inline-block",
         "[&>*:not(:last-child)]:after:w-1 [&>*:not(:last-child)]:after:h-1",
-        "[&>*:not(:last-child)]:after:bg-custom-background-80",
+        "[&>*:not(:last-child)]:after:bg-layer-1",
         "[&>*:not(:last-child)]:after:rounded-full",
         "[&>*:not(:last-child)]:after:mx-1",
         "[&>*:not(:last-child)]:after:align-middle",

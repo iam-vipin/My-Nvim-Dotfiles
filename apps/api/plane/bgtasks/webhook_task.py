@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import hashlib
 import hmac
 import json
@@ -16,7 +27,6 @@ from django.db.models import Prefetch
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from django.core.exceptions import ObjectDoesNotExist
 
 # Module imports
@@ -47,6 +57,7 @@ from plane.db.models import (
     IssueAssignee,
 )
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.settings.mongo import MongoConnection
 
@@ -218,7 +229,7 @@ def send_webhook_deactivation_email(webhook_id: str, receiver_id: str, current_s
             "webhook_url": f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
         }
         html_content = render_to_string("emails/notifications/webhook-deactivate.html", context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         # Set the email connection
         connection = get_connection(

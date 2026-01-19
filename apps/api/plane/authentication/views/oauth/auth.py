@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 import json
 from typing import Any, Dict, Tuple
@@ -36,11 +47,7 @@ APP_INSTALLATION_ID_CACHE_TTL = 60  # 1 minute
 class OAuthTokenEndpoint(TokenView):
     """OAuth token endpoint with rate limiting (5/minute)"""
 
-    @method_decorator(
-        ratelimit(
-            key=token_ratelimit_key, rate=TOKEN_RATE_LIMIT, block=False, group="token"
-        )
-    )
+    @method_decorator(ratelimit(key=token_ratelimit_key, rate=TOKEN_RATE_LIMIT, block=False, group="token"))
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         # Check if rate limited before proceeding
         if getattr(request, "limited", False):
@@ -53,13 +60,9 @@ class OAuthTokenEndpoint(TokenView):
             )
 
         response = super().dispatch(request, *args, **kwargs)
-        return add_ratelimit_headers(
-            request, response, TOKEN_RATE_LIMIT, token_ratelimit_key, group="token"
-        )
+        return add_ratelimit_headers(request, response, TOKEN_RATE_LIMIT, token_ratelimit_key, group="token")
 
-    def create_token_response(
-        self, request: HttpRequest
-    ) -> Tuple[int, Dict[str, str], bytes, int]:
+    def create_token_response(self, request: HttpRequest) -> Tuple[int, Dict[str, str], bytes, int]:
         token_response = super().create_token_response(request)
         _, headers, token_data, status_code = token_response
         token_data = json.loads(token_data)
@@ -81,19 +84,15 @@ class OAuthTokenEndpoint(TokenView):
                     raise exceptions.ValidationError("App installation ID is required")
                 else:
                     # get the workspace app installation
-                    workspace_app_installation = (
-                        WorkspaceAppInstallation.objects.filter(
-                            id=app_installation_id,
-                            application_id=application_id,
-                            status=WorkspaceAppInstallation.Status.INSTALLED,
-                        ).first()
-                    )
+                    workspace_app_installation = WorkspaceAppInstallation.objects.filter(
+                        id=app_installation_id,
+                        application_id=application_id,
+                        status=WorkspaceAppInstallation.Status.INSTALLED,
+                    ).first()
                     # if the workspace app installation is not found, delete the token
                     if not workspace_app_installation:
                         token.delete()
-                        raise exceptions.ValidationError(
-                            "Workspace application not found"
-                        )
+                        raise exceptions.ValidationError("Workspace application not found")
 
                     # set the bot user, workspace app installation and workspace on the token
                     token.user = workspace_app_installation.app_bot
@@ -113,11 +112,7 @@ AUTHORIZE_RATE_LIMIT = "10/m"
 class CustomAuthorizationView(AuthorizationView):
     """OAuth authorization view with rate limiting (10/minute)"""
 
-    @method_decorator(
-        ratelimit(
-            key=auth_ratelimit_key, rate=AUTHORIZE_RATE_LIMIT, block=False, group="auth"
-        )
-    )
+    @method_decorator(ratelimit(key=auth_ratelimit_key, rate=AUTHORIZE_RATE_LIMIT, block=False, group="auth"))
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         # Check if rate limited before proceeding
         if getattr(request, "limited", False):
@@ -130,9 +125,7 @@ class CustomAuthorizationView(AuthorizationView):
             )
 
         response = super().dispatch(request, *args, **kwargs)
-        return add_ratelimit_headers(
-            request, response, AUTHORIZE_RATE_LIMIT, auth_ratelimit_key, group="auth"
-        )
+        return add_ratelimit_headers(request, response, AUTHORIZE_RATE_LIMIT, auth_ratelimit_key, group="auth")
 
     def handle_no_permission(self) -> HttpResponseRedirect:
         # Redirect to login with the current URL as the next path
@@ -185,13 +178,11 @@ class CustomOAuth2Validator(OAuth2Validator):
         # Allow 'code' response type for all applications
         if response_type == "code":
             return True
-        
+
         # For other response types, use the default validation
         return super().validate_response_type(client_id, response_type, client, request, *args, **kwargs)
 
-    def validate_grant_type(
-        self, client_id, grant_type, client, request, *args, **kwargs
-    ):
+    def validate_grant_type(self, client_id, grant_type, client, request, *args, **kwargs):
         """
         Allow both authorization_code and client_credentials for app with authorization grant type authorization_code
         and allow only client_credentials for app with authorization grant type client_credentials
@@ -227,9 +218,7 @@ class CustomOAuth2Validator(OAuth2Validator):
             return None
 
         # Get app_installation_id from cache
-        app_installation_id = cache.get(
-            f"app_installation_id_{client_id}_{request.user.id}"
-        )
+        app_installation_id = cache.get(f"app_installation_id_{client_id}_{request.user.id}")
         if app_installation_id and grant:
             try:
                 # Get the workspace app installation
@@ -255,9 +244,7 @@ class CustomOAuth2Validator(OAuth2Validator):
         """
         Create the access token
         """
-        access_token = super()._create_access_token(
-            expires, request, token, source_refresh_token
-        )
+        access_token = super()._create_access_token(expires, request, token, source_refresh_token)
 
         # get the grant and fetch grant
         code = getattr(request, "code", None)
@@ -283,15 +270,11 @@ class CustomOAuth2Validator(OAuth2Validator):
             access_token.save()
         return access_token
 
-    def _create_refresh_token(
-        self, request, refresh_token_code, access_token, previous_refresh_token
-    ):
+    def _create_refresh_token(self, request, refresh_token_code, access_token, previous_refresh_token):
         """
         Create the refresh token
         """
-        refresh_token = super()._create_refresh_token(
-            request, refresh_token_code, access_token, previous_refresh_token
-        )
+        refresh_token = super()._create_refresh_token(request, refresh_token_code, access_token, previous_refresh_token)
 
         # Get workspace info from the access_token
         if access_token and hasattr(access_token, "workspace_app_installation"):

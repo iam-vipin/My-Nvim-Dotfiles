@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -59,18 +72,18 @@ export function ProjectEpicMobileHeader() {
 
   return (
     <>
-      <div className="md:hidden flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
+      <div className="md:hidden flex justify-evenly border-b border-subtle-1 py-2 z-[13] bg-surface-1">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-sm text-custom-text-200"
+          className="flex flex-grow justify-center text-13 text-secondary"
           placement="bottom-start"
           customButton={
-            <div className="flex flex-start text-sm text-custom-text-200">
+            <div className="flex flex-start text-13 text-secondary">
               {t("common.layout")}
-              <ChevronDownIcon className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+              <ChevronDownIcon className="ml-2  h-4 w-4 text-secondary my-auto" strokeWidth={2} />
             </div>
           }
-          customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -82,18 +95,18 @@ export function ProjectEpicMobileHeader() {
               className="flex items-center gap-2"
             >
               <layout.icon className="h-3 w-3" />
-              <div className="text-custom-text-300">{t(layout.titleTranslationKey)}</div>
+              <div className="text-tertiary">{t(layout.titleTranslationKey)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle-1 text-13 text-secondary">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-sm text-custom-text-200">
+              <span className="flex items-center text-13 text-secondary">
                 {t("common.display")}
-                <ChevronDownIcon className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
           >

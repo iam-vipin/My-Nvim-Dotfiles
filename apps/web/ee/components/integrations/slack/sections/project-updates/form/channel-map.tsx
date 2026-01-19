@@ -1,9 +1,22 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { ArrowRight, Hash } from "lucide-react";
-
 // Plane components
 import type { SlackConversation } from "@plane/etl/slack";
+import { E_SLACK_PROJECT_UPDATES_EVENTS } from "@plane/etl/slack";
+import { Checkbox } from "@plane/ui";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PlaneLogo, ProjectIcon } from "@plane/propel/icons";
@@ -68,20 +81,31 @@ export const SlackProjectChannelForm = observer(function SlackProjectChannelForm
       (channel.is_channel || channel.is_group) && !channel.is_im
   );
 
+  const handleEventToggle = (event: E_SLACK_PROJECT_UPDATES_EVENTS) => {
+    const currentEvents = value.events || [];
+    const isSelected = currentEvents.includes(event);
+
+    const updatedEvents = isSelected ? currentEvents.filter((e) => e !== event) : [...currentEvents, event];
+
+    handleChange("events", updatedEvents);
+  };
+
+  const showEventOptions = !!value.projectId && !!value.channelId;
+
   return (
     <div className="relative space-y-4">
       {/* Main form container with visual mapping */}
-      <div className="p-4 border border-custom-border-200 rounded-lg bg-custom-background-90">
-        <div className="flex items-center gap-4 text-sm">
+      <div className="p-4 border border-subtle rounded-lg bg-layer-1">
+        <div className="flex items-center gap-4 text-body-xs-regular">
           {/* Project Selection - Left side */}
           <div className="flex-1 space-y-1 min-w-[100px]">
             <div className="flex items-center gap-1.5 ml-2">
-              <PlaneLogo className="h-3 w-auto flex-shrink-0 text-custom-primary-100" />
-              <div className="text-sm font-medium text-custom-text-200">
+              <PlaneLogo className="h-3 w-auto flex-shrink-0 text-accent-primary" />
+              <div className="text-body-xs-medium text-secondary">
                 {t("slack_integration.project_updates.project_updates_form.project_dropdown.label")}
               </div>
             </div>
-            <div className="bg-custom-background-100 rounded-md p-0.5">
+            <div className="bg-surface-1 rounded-md p-0.5">
               <Dropdown
                 dropdownOptions={(availableProjects || [])?.map((project) => ({
                   key: project?.id || "",
@@ -113,8 +137,8 @@ export const SlackProjectChannelForm = observer(function SlackProjectChannelForm
 
           {/* Arrow connector - Center */}
           <div className="flex items-center justify-center">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-custom-background-80 border border-custom-border-300">
-              <ArrowRight className="h-4 w-4 text-custom-text-300" />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-layer-1 border border-subtle">
+              <ArrowRight className="h-4 w-4 text-tertiary" />
             </div>
           </div>
 
@@ -124,11 +148,11 @@ export const SlackProjectChannelForm = observer(function SlackProjectChannelForm
               <div className="w-3.5 h-3.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
                 <img src={SlackLogo} alt="Slack" className="w-full h-full object-cover" />
               </div>
-              <div className="text-sm font-medium text-custom-text-200">
+              <div className="text-body-xs-medium text-secondary">
                 {t("slack_integration.project_updates.project_updates_form.channel_dropdown.label")}
               </div>
             </div>
-            <div className="bg-custom-background-100 rounded-md p-0.5">
+            <div className="bg-surface-1 rounded-md p-0.5">
               <Dropdown
                 dropdownOptions={availableChannels.map((channel) => ({
                   key: channel.id || "",
@@ -162,11 +186,60 @@ export const SlackProjectChannelForm = observer(function SlackProjectChannelForm
             </div>
           </div>
         </div>
+
+        {/* Event Checkboxes with Transition */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-in-out p-2 ${
+            showEventOptions ? "max-h-48 opacity-100 mt-4" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="pt-4 border-t border-subtle space-y-3">
+            <div className="text-body-xs-medium text-secondary mb-2">Notify when:</div>
+
+            <div className="flex items-start gap-2">
+              <Checkbox
+                checked={value.events?.includes(E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED) ?? true}
+                onChange={() => handleEventToggle(E_SLACK_PROJECT_UPDATES_EVENTS.NEW_WORK_ITEM_CREATED)}
+                className="mt-0.5"
+              />
+              <span className="text-body-xs-regular text-primary">When a work item is created</span>
+            </div>
+
+            <div className="flex items-start gap-2">
+              <Checkbox
+                checked={value.events?.includes(E_SLACK_PROJECT_UPDATES_EVENTS.WORK_ITEM_STATE_CHANGED) ?? false}
+                onChange={() => handleEventToggle(E_SLACK_PROJECT_UPDATES_EVENTS.WORK_ITEM_STATE_CHANGED)}
+                className="mt-0.5"
+              />
+              <span className="text-body-xs-regular text-primary">When a work item state changes</span>
+            </div>
+
+            <div className="flex items-start gap-2">
+              <Checkbox
+                checked={value.events?.includes(E_SLACK_PROJECT_UPDATES_EVENTS.WORK_ITEM_COMMENT_CREATED) ?? false}
+                onChange={() => handleEventToggle(E_SLACK_PROJECT_UPDATES_EVENTS.WORK_ITEM_COMMENT_CREATED)}
+                className="mt-0.5"
+              />
+              <span className="text-body-xs-regular text-primary">When a comment is created on a work item</span>
+            </div>
+
+            <div className="flex items-start gap-2">
+              <Checkbox
+                checked={
+                  value.events?.includes(E_SLACK_PROJECT_UPDATES_EVENTS.WORK_ITEM_COMPLETED_OR_CANCELLED) ?? false
+                }
+                onChange={() => handleEventToggle(E_SLACK_PROJECT_UPDATES_EVENTS.WORK_ITEM_COMPLETED_OR_CANCELLED)}
+                className="mt-0.5"
+              />
+              <span className="text-body-xs-regular text-primary">When a work item is marked cancelled or done</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Helper message for no available options */}
       {(availableProjects.length === 0 || availableChannels.length === 0) && (
-        <div className="text-sm text-custom-text-200 p-2">
+        <div className="text-body-xs-regular text-secondary p-2">
           {availableProjects.length === 0 && (
             <p>{t("slack_integration.project_updates.project_updates_form.all_projects_connected")}</p>
           )}

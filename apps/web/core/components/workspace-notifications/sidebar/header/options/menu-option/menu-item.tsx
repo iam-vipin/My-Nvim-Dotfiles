@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
@@ -10,16 +23,21 @@ export const NotificationMenuOptionItem = observer(function NotificationMenuOpti
   if (type === "menu-item")
     return (
       <div
-        className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+        className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
         onClick={() => onClick && onClick()}
       >
         {prependIcon && prependIcon}
-        <div className={cn("whitespace-nowrap text-sm", isActive ? "text-custom-text-100" : "text-custom-text-200")}>
+        <div
+          className={cn("whitespace-nowrap text-body-xs-medium", {
+            "text-primary": isActive,
+            "text-secondary": !isActive,
+          })}
+        >
           {label}
         </div>
         {appendIcon && <div className="ml-auto">{appendIcon}</div>}
       </div>
     );
 
-  return <div className="border-b border-custom-border-200" />;
+  return <div className="border-b border-subtle" />;
 });

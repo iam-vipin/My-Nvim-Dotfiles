@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { Loader } from "@plane/ui";
 // plane web constants
@@ -12,7 +25,7 @@ export function WorklogLoader(props: TWorklogLoader) {
     <Loader>
       {/* filter */}
       {loader === EWorklogLoader.WORKSPACE_INIT_LOADER && (
-        <div className="flex justify-between items-center h-full gap-5 border-b border-custom-border-200 pb-3">
+        <div className="flex justify-between items-center h-full gap-5 border-b border-subtle-1 pb-3">
           <div className="flex items-center gap-2">
             <Loader.Item height="20px" width="70px" />
             <Loader.Item height="20px" width="70px" />
@@ -24,8 +37,8 @@ export function WorklogLoader(props: TWorklogLoader) {
 
       {/* table */}
       <div>
-        <table className="table-auto border-b border-custom-border-200 w-full overflow-hidden whitespace-nowrap">
-          <thead className="border-b border-custom-border-200">
+        <table className="table-auto border-b border-subtle-1 w-full overflow-hidden whitespace-nowrap">
+          <thead className="border-b border-subtle-1">
             <tr>
               <th className="p-2.5">
                 <Loader.Item height="18.9px" width="70px" />

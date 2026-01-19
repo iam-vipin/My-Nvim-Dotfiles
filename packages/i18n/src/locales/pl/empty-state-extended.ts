@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,11 @@ export default {
       title: "Zapisz pomysł, uchwć moment olśnienia lub nagraj falę mózgową. Dodaj notatkę, aby rozpocząć.",
     },
     stickies: {
-      title: "Zapisz pomysł, uchwć moment olśnienia lub nagraj falę mózgową. Dodaj notatkę, aby rozpocząć.",
-      cta_primary: "Dodaj notatkę",
+      title: "Przechwytuj pomysły natychmiast",
+      description:
+        "Twórz notatki na szybkie notatki i zadania do zrobienia i zabieraj je ze sobą, dokądkolwiek się udasz.",
+      cta_primary: "Utwórz pierwszą notatkę",
+      cta_secondary: "Dokumentacja",
     },
     active_cycles: {
       title: "Brak aktywnych cykli",
@@ -106,11 +122,6 @@ export default {
       description:
         "Skróć czas konfiguracji, tworząc szablony dla projektów, elementów roboczych i stron — i rozpocznij nową pracę w ciągu kilku sekund.",
       cta_primary: "Utwórz szablon",
-    },
-    webhooks: {
-      title: "Nie dodano jeszcze webhooka",
-      description: "Automatyzuj powiadomienia do usług zewnętrznych, gdy wystąpią zdarzenia projektowe.",
-      cta_primary: "Dodaj webhook",
     },
   },
 } as const;

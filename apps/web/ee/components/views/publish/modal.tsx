@@ -1,9 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { ExternalLink, Globe2 } from "lucide-react";
+
+import { NewTabIcon, GlobeIcon } from "@plane/propel/icons";
 // plane imports
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -131,9 +145,9 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-xl font-medium text-custom-text-200">Publish views</h5>
+          <h5 className="text-18 font-medium text-secondary">Publish views</h5>
           {view.anchor && (
-            <Button variant="danger" onClick={() => handleUnPublishView()} loading={isUnPublishing}>
+            <Button variant="error-fill" onClick={() => handleUnPublishView()} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
             </Button>
           )}
@@ -151,10 +165,10 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
           <div className="px-5 space-y-4">
             {view.anchor && publishedViewSettings && (
               <>
-                <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="bg-layer-1 border border-subtle-1 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
                     href={publishLink}
-                    className="text-sm text-custom-text-200 truncate"
+                    className="text-13 text-secondary truncate"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -163,25 +177,25 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
                   <div className="flex-shrink-0 flex items-center gap-1">
                     <a
                       href={publishLink}
-                      className="size-8 grid place-items-center bg-custom-background-90 hover:bg-custom-background-100 rounded"
+                      className="size-8 grid place-items-center bg-layer-1 hover:bg-surface-1 rounded"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <ExternalLink className="size-4" />
+                      <NewTabIcon className="size-4" />
                     </a>
                     <button
                       type="button"
-                      className="h-8 bg-custom-background-90 hover:bg-custom-background-100 rounded text-xs font-medium py-2 px-3"
+                      className="h-8 bg-layer-1 hover:bg-surface-1 rounded-sm text-11 font-medium py-2 px-3"
                       onClick={handleCopyLink}
                     >
                       Copy link
                     </button>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-custom-primary-100 flex items-center gap-1 mt-3">
+                <p className="text-13 font-medium text-accent-primary flex items-center gap-1 mt-3">
                   <span className="relative grid place-items-center size-2.5">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-custom-primary-100 opacity-75" />
-                    <span className="relative inline-flex rounded-full size-1.5 bg-custom-primary-100" />
+                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-accent-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full size-1.5 bg-accent-primary" />
                   </span>
                   This View is now live on web
                 </p>
@@ -189,7 +203,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
             )}
             <div className="space-y-4">
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow comments</div>
+                <div className="text-13">Allow comments</div>
                 <Controller
                   control={control}
                   name="is_comments_enabled"
@@ -199,7 +213,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow reactions</div>
+                <div className="text-13">Allow reactions</div>
                 <Controller
                   control={control}
                   name="is_reactions_enabled"
@@ -209,7 +223,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow voting</div>
+                <div className="text-13">Allow voting</div>
                 <Controller
                   control={control}
                   name="is_votes_enabled"
@@ -223,24 +237,24 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
         )}
 
         {/* modal handlers */}
-        <div className="relative flex items-center justify-between border-t border-custom-border-200 px-5 py-4 mt-4">
-          <div className="flex items-center gap-1 text-sm text-custom-text-400">
-            <Globe2 className="size-3.5" />
-            <div className="text-sm">Anyone with the link can access</div>
+        <div className="relative flex items-center justify-between border-t border-subtle-1 px-5 py-4 mt-4">
+          <div className="flex items-center gap-1 text-13 text-placeholder">
+            <GlobeIcon className="size-3.5" />
+            <div className="text-13">Anyone with the link can access</div>
           </div>
           {!isLoading && (
             <div className="relative flex items-center gap-2">
-              <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+              <Button variant="secondary" size="lg" onClick={handleClose}>
                 Cancel
               </Button>
               {view.anchor ? (
                 isDirty && (
-                  <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                  <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating" : "Update settings"}
                   </Button>
                 )
               ) : (
-                <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                   {isSubmitting ? "Publishing" : "Publish"}
                 </Button>
               )}

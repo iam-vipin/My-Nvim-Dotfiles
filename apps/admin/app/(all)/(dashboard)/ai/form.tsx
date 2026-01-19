@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useForm } from "react-hook-form";
 import { Lightbulb } from "lucide-react";
 import { Button } from "@plane/propel/button";
@@ -42,7 +55,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           <a
             href="https://platform.openai.com/docs/models/overview"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Learn more
@@ -63,7 +76,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           <a
             href="https://platform.openai.com/api-keys"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -94,8 +107,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     <div className="space-y-8">
       <div className="space-y-3">
         <div>
-          <div className="pb-1 text-xl font-medium text-custom-text-100">OpenAI</div>
-          <div className="text-sm font-normal text-custom-text-300">If you use ChatGPT, this is for you.</div>
+          <div className="pb-1 text-18 font-medium text-primary">OpenAI</div>
+          <div className="text-13 font-regular text-tertiary">If you use ChatGPT, this is for you.</div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (
@@ -114,13 +127,13 @@ export function InstanceAIForm(props: IInstanceAIForm) {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save changes"}
+      <div className="flex flex-col gap-4 items-start">
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+          {isSubmitting ? "Saving" : "Save changes"}
         </Button>
 
-        <div className="relative inline-flex items-center gap-2 rounded border border-custom-primary-100/20 bg-custom-primary-100/10 px-4 py-2 text-xs text-custom-primary-200">
-          <Lightbulb height="14" width="14" />
+        <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-accent-subtle bg-accent-subtle px-4 py-2 text-caption-sm-regular text-accent-secondary  ">
+          <Lightbulb className="size-4" />
           <div>
             If you have a preferred AI models vendor, please get in{" "}
             <a className="underline font-medium" href="https://plane.so/contact">

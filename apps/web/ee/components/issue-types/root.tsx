@@ -1,12 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane web imports
 import { SettingsHeading } from "@/components/settings/heading";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { CreateOrUpdateIssueTypeModal } from "./create-update/modal";
@@ -14,9 +24,13 @@ import { IssueTypeEmptyState } from "./empty-state";
 import { IssueTypeDeleteConfirmationModal } from "./issue-type-delete-confirmation-modal";
 import { IssueTypesList } from "./issue-types-list";
 
-export const IssueTypesRoot = observer(function IssueTypesRoot() {
-  // router
-  const { workspaceSlug, projectId } = useParams();
+type TIssueTypesRoot = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const IssueTypesRoot = observer(function IssueTypesRoot(props: TIssueTypesRoot) {
+  const { workspaceSlug, projectId } = props;
   // states
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -27,7 +41,7 @@ export const IssueTypesRoot = observer(function IssueTypesRoot() {
   // plane web store hooks
   const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   // derived values
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
 
   const handleEditIssueTypeIdChange = (issueTypeId: string) => {
     setEditIssueTypeId(issueTypeId);
@@ -66,14 +80,11 @@ export const IssueTypesRoot = observer(function IssueTypesRoot() {
         button={{
           label: t("work_item_types.create.button"),
           onClick: () => {
-            captureClick({
-              elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_CREATE_WORK_ITEM_TYPE_BUTTON,
-            });
             setIsModalOpen(true);
           },
         }}
       />
-      <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+      <div className="h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {isWorkItemTypeEnabled ? (
           <IssueTypesList
             onEditIssueTypeIdChange={handleEditIssueTypeIdChange}
@@ -81,7 +92,7 @@ export const IssueTypesRoot = observer(function IssueTypesRoot() {
             onEnableDisableIssueType={handleEnableDisableIssueType}
           />
         ) : (
-          <IssueTypeEmptyState workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <IssueTypeEmptyState workspaceSlug={workspaceSlug} projectId={projectId} />
         )}
       </div>
       {/* Modal */}

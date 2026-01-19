@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Unplug } from "lucide-react";
@@ -28,10 +41,10 @@ export const ConnectedAppCard = observer(function ConnectedAppCard(props: TConne
   };
 
   return (
-    <div className="flex-shrink-0 relative flex items-center gap-4 p-4 border border-custom-border-100 rounded-lg">
+    <div className="flex-shrink-0 relative flex items-center gap-4 p-4 border border-subtle rounded-lg">
       <div className="w-full h-full overflow-hidden">
-        <div className="text-sm font-medium">{data.connection_slug ?? ""}</div>
-        <div className="text-sm text-custom-text-200">
+        <div className="text-body-xs-medium">{data.connection_slug ?? ""}</div>
+        <div className="text-body-xs-regular text-secondary">
           {" "}
           {t("sentry_integration.connected_on", { date: renderFormattedDate(data.created_at) })}
         </div>
@@ -41,7 +54,7 @@ export const ConnectedAppCard = observer(function ConnectedAppCard(props: TConne
           placement="bottom"
           closeOnSelect
           customButton={
-            <Button size="sm" variant="link-neutral" loading={isLoading}>
+            <Button variant="ghost" loading={isLoading}>
               {isLoading ? t("common.disconnecting") : t("common.connected")}
               <ChevronDownIcon height={12} width={12} />
             </Button>

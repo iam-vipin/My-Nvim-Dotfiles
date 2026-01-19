@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
-import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS, TEAMSPACE_UPDATES_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { formatTextList } from "@plane/utils";
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+// hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
@@ -30,24 +43,6 @@ export const useCommentOperations = (
   const { data: currentUser } = useUser();
 
   const operations: TCommentsOperations = useMemo(() => {
-    // Helper function to capture events with consistent element
-    const captureTeamspaceCommentEvent = (
-      eventName: string,
-      state: "SUCCESS" | "ERROR",
-      payload?: Record<string, any>
-    ) => {
-      captureElementAndEvent({
-        element: {
-          elementName: TEAMSPACE_UPDATES_TRACKER_ELEMENTS.SIDEBAR_COMMENT_SECTION,
-        },
-        event: {
-          eventName,
-          payload,
-          state,
-        },
-      });
-    };
-
     // Define operations object with all methods
     const ops: TCommentsOperations = {
       copyCommentLink: () => "",
@@ -60,7 +55,6 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_CREATED, "SUCCESS", { id: comment.id });
           return comment;
         } catch {
           setToast({
@@ -68,7 +62,6 @@ export const useCommentOperations = (
             type: TOAST_TYPE.ERROR,
             message: "Comment creation failed. Please try again later.",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_CREATED, "ERROR");
         }
       },
       updateComment: async (commentId, data) => {
@@ -80,14 +73,12 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Comment updated successfully.",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_UPDATED, "SUCCESS", { id: commentId });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment update failed. Please try again later.",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_UPDATED, "ERROR", { id: commentId });
         }
       },
       removeComment: async (commentId) => {
@@ -99,14 +90,12 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Comment removed successfully.",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_DELETED, "SUCCESS", { id: commentId });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment remove failed. Please try again later.",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_DELETED, "ERROR", { id: commentId });
         }
       },
       uploadCommentAsset: async (blockId, file: File, commentId): Promise<TFileSignedURLResponse> => {
@@ -121,15 +110,9 @@ export const useCommentOperations = (
             file,
             workspaceSlug,
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "SUCCESS", {
-            id: commentId,
-          });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "ERROR", {
-            id: commentId,
-          });
           throw error;
         }
       },
@@ -142,17 +125,11 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "SUCCESS", {
-            id: commentId,
-          });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction creation failed",
-          });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "ERROR", {
-            id: commentId,
           });
         }
       },
@@ -165,17 +142,11 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "SUCCESS", {
-            id: commentId,
-          });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction remove failed",
-          });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "ERROR", {
-            id: commentId,
           });
         }
       },

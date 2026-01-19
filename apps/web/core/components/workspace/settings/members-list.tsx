@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -66,10 +79,10 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
 
   return (
     <>
-      <div className="divide-y-[0.5px] divide-custom-border-100 overflow-scroll	">
+      <div className="divide-y-[0.5px] divide-subtle overflow-scroll	">
         {searchedMemberIds?.length !== 0 && <WorkspaceMembersListItem memberDetails={memberDetails ?? []} />}
         {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
-          <h4 className="mt-16 text-center text-sm text-custom-text-400">{t("no_matching_members")}</h4>
+          <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">{t("no_matching_members")}</h4>
         )}
       </div>
       {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
@@ -81,9 +94,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
           title={
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex">
-                <h4 className="text-xl font-medium pt-2 pb-2">
-                  {t("workspace_settings.settings.members.pending_invites")}
-                </h4>
+                <h4 className="text-h5-medium pt-2 pb-2">{t("workspace_settings.settings.members.pending_invites")}</h4>
                 {searchedInvitationsIds && (
                   <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
                 )}
@@ -93,7 +104,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
           }
         >
           <Disclosure.Panel>
-            <div className="ml-auto items-center gap-1.5 rounded-md bg-custom-background-100 py-1.5">
+            <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
               {searchedInvitationsIds?.map((invitationId) => (
                 <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
               ))}

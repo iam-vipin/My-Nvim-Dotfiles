@@ -1,3 +1,18 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
+# Django imports
+from django.utils import timezone
+
+# Module imports
 from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
@@ -5,6 +20,8 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.utils.cache import invalidate_cache_directly
+from plane.bgtasks.event_tracking_task import track_event
+from plane.utils.analytics_events import USER_JOINED_WORKSPACE
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
@@ -26,15 +43,25 @@ def process_workspace_project_invitations(user):
         ignore_conflicts=True,
     )
 
-    [
+    for workspace_member_invite in workspace_member_invites:
         invalidate_cache_directly(
             path=f"/api/workspaces/{str(workspace_member_invite.workspace.slug)}/members/",
             url_params=False,
             user=False,
             multiple=True,
         )
-        for workspace_member_invite in workspace_member_invites
-    ]
+        track_event.delay(
+            user_id=user.id,
+            event_name=USER_JOINED_WORKSPACE,
+            slug=workspace_member_invite.workspace.slug,
+            event_properties={
+                "user_id": user.id,
+                "workspace_id": workspace_member_invite.workspace.id,
+                "workspace_slug": workspace_member_invite.workspace.slug,
+                "role": workspace_member_invite.role,
+                "joined_at": str(timezone.now().isoformat()),
+            },
+        )
 
     # Sync workspace members
     [
@@ -74,10 +101,7 @@ def process_workspace_project_invitations(user):
     )
 
     # Sync workspace members
-    [
-        member_sync_task.delay(project_member_invite.workspace.slug)
-        for project_member_invite in project_member_invites
-    ]
+    [member_sync_task.delay(project_member_invite.workspace.slug) for project_member_invite in project_member_invites]
 
     # Delete all the invites
     workspace_member_invites.delete()

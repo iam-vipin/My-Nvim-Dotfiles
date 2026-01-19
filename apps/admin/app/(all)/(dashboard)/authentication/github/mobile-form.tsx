@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { isEmpty } from "lodash-es";
 import { Smartphone } from "lucide-react";
 // plane internal packages
@@ -23,7 +35,7 @@ export function GithubMobileForm() {
           <a
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -35,11 +47,11 @@ export function GithubMobileForm() {
 
   return (
     <div className="flex flex-col rounded-lg overflow-hidden">
-      <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+      <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
         <Smartphone className="w-3 h-3" />
         Mobile
       </div>
-      <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+      <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
         {GITHUB_MOBILE_SERVICE_DETAILS.map((field) => (
           <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
         ))}

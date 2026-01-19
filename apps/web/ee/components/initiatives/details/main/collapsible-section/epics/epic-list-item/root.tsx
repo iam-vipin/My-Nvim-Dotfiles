@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
@@ -14,9 +27,10 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { IdentifierText } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
+// core imports
+import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
 // local components
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EpicProperties } from "./properties";
@@ -90,11 +104,12 @@ export const EpicListItem = observer(function EpicListItem(props: Props) {
           <UpdateStatusIcons statusType={issue.update_status} />
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <>
-              <EpicIcon className="h-4 w-4 text-custom-text-300" />
+              <EpicIcon className="h-4 w-4 text-tertiary" />
               <IdentifierText
                 identifier={`${projectIdentifier}-${issueSequenceId}`}
                 enableClickToCopyIdentifier
-                textContainerClassName="text-xs text-custom-text-200"
+                size="xs"
+                variant="secondary"
               />
             </>
           </WithDisplayPropertiesHOC>
@@ -104,7 +119,7 @@ export const EpicListItem = observer(function EpicListItem(props: Props) {
         showProgress ? (
           <div className="flex items-center gap-1">
             <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
-            <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+            <span className="text-13 font-medium text-tertiary px-1">{`${progress}%`}</span>
           </div>
         ) : undefined
       }

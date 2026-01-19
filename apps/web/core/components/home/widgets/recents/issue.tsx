@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane types
 import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -73,14 +86,14 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               projectId={issueDetails?.project_id || ""}
               projectIdentifier={issueDetails?.project_identifier || ""}
               issueSequenceId={issueDetails?.sequence_id || ""}
-              textContainerClassName="text-custom-sidebar-text-400 text-sm whitespace-nowrap"
+              variant="tertiary"
             />
           ) : (
             <div className="flex gap-2 items-center justify-center">
-              <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
-                <WorkItemsIcon className="size-4 text-custom-text-350" />
+              <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
+                <WorkItemsIcon className="size-4 text-tertiary" />
               </div>
-              <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
+              <div className="font-medium text-placeholder text-13 whitespace-nowrap">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
               </div>
             </div>
@@ -88,7 +101,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+        <div className="flex-shrink-0 font-medium text-11 text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
@@ -130,7 +143,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-transparent my-auto !px-2 border-none py-3"
+      className="my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
       preventDefaultProgress

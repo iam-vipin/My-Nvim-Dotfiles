@@ -1,8 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader, IInboxIssueStore } from "@plane/types";
@@ -17,8 +29,6 @@ import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueActivity } from "@/components/issues/issue-detail/issue-activity";
 import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 import { IssueTitleInput } from "@/components/issues/title-input";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -102,10 +112,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             type: TOAST_TYPE.SUCCESS,
             message: "Work item deleted successfully",
           });
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: _issueId },
-          });
         } catch (error) {
           console.log("Error in deleting work item:", error);
           setToast({
@@ -113,47 +119,24 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             type: TOAST_TYPE.ERROR,
             message: "Work item delete failed",
           });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: _issueId },
-            error: error as Error,
-          });
         }
       },
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: _issueId },
-          });
         } catch (error) {
           setToast({
             title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
             message: "Work item update failed",
           });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: _issueId },
-            error: error as Error,
-          });
         }
       },
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-          });
         } catch (error) {
           console.error("Error in archiving issue:", error);
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-            error: error as Error,
-          });
         }
       },
     }),
@@ -166,7 +149,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="space-y-4 pb-4">
         {duplicateIssues.length > 0 && (
           <DeDupeIssuePopoverRoot
             workspaceSlug={workspaceSlug}
@@ -202,7 +185,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             onSubmit={async (value, isMigrationUpdate) => {
               if (!issue.id || !issue.project_id) return;
               await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-                description_html: value,
+                description_html: value.description_html,
                 ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
               });
             }}
@@ -248,27 +231,35 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         </div>
       </div>
 
-      <IssueAttachmentRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issue.id}
-        disabled={!isEditable}
-      />
+      <div className="py-4">
+        <IssueAttachmentRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issue.id}
+          disabled={!isEditable}
+        />
+      </div>
 
-      <InboxIssueContentProperties
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issue={issue}
-        issueOperations={issueOperations}
-        isEditable={isEditable}
-        duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
-        isIntakeAccepted={isIntakeAccepted}
-      />
+      <div className="py-4">
+        <InboxIssueContentProperties
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issue={issue}
+          issueOperations={issueOperations}
+          isEditable={isEditable}
+          duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
+          isIntakeAccepted={isIntakeAccepted}
+        />
+      </div>
 
       {/* Additional Information */}
-      {inboxIssue.issue && <IntakeAdditionalInformation workItemDetails={inboxIssue.issue} />}
+      <div className="py-4">
+        {inboxIssue.issue && <IntakeAdditionalInformation workItemDetails={inboxIssue.issue} />}
+      </div>
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
+      <div className="pt-4">
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
+      </div>
     </>
   );
 });

@@ -1,11 +1,21 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.chat import TitleRequest
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.chat.chat import PlaneChatBot
@@ -19,7 +29,7 @@ router = APIRouter()
 async def create_title(
     data: TitleRequest,
     db: AsyncSession = Depends(get_async_session),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
 ):
     """
     Generate or retrieve a title for a chat conversation.
@@ -58,11 +68,6 @@ async def create_title(
         Response:
             {"title": "Discussion about API design patterns"}
     """
-    try:
-        await is_valid_session(session)
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
 
     if not data.chat_id:
         log.warning("Request missing chat_id")

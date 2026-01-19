@@ -1,13 +1,22 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
-import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications/sidebar/notification-card/options";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // store
@@ -23,9 +32,7 @@ type TNotificationItemReadOption = {
 export const NotificationItemReadOption = observer(function NotificationItemReadOption(
   props: TNotificationItemReadOption
 ) {
-  const { workspaceSlug, notificationList, issueId, unreadCount } = props;
-  // hooks
-  const { currentNotificationTab } = useWorkspaceNotifications();
+  const { workspaceSlug, notificationList, unreadCount } = props;
 
   const { markBulkNotificationsAsRead, markBulkNotificationsAsUnread } = useWorkspaceNotifications();
 
@@ -33,36 +40,21 @@ export const NotificationItemReadOption = observer(function NotificationItemRead
     try {
       const request = unreadCount === 0 ? markBulkNotificationsAsUnread : markBulkNotificationsAsRead;
       await request(notificationList, workspaceSlug);
-      captureSuccess({
-        eventName: unreadCount === 0 ? NOTIFICATION_TRACKER_EVENTS.mark_unread : NOTIFICATION_TRACKER_EVENTS.mark_read,
-        payload: {
-          id: issueId,
-          tab: currentNotificationTab,
-        },
-      });
       setToast({
         title: unreadCount === 0 ? "Notification(s) marked as unread" : "Notification(s) marked as read",
         type: TOAST_TYPE.SUCCESS,
       });
     } catch (e) {
       console.error(e);
-      captureError({
-        eventName: unreadCount === 0 ? NOTIFICATION_TRACKER_EVENTS.mark_unread : NOTIFICATION_TRACKER_EVENTS.mark_read,
-        payload: {
-          id: issueId,
-          tab: currentNotificationTab,
-        },
-      });
     }
   };
 
   return (
     <NotificationItemOptionButton
-      data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_READ_UNREAD_BUTTON}
       tooltipContent={unreadCount === 0 ? "Mark as unread" : "Mark as read"}
       callBack={handleNotificationUpdate}
     >
-      <MessageSquare className="h-3 w-3 text-custom-text-300" />
+      <MessageSquare className="h-3 w-3 text-tertiary" />
     </NotificationItemOptionButton>
   );
 });

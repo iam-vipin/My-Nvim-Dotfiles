@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
@@ -71,38 +84,35 @@ export const CommentRepliesRoot = observer(
         {repliesCount > 0 && (
           <>
             {!isExpanded && (
-              <Button
-                variant="link-neutral"
-                size="sm"
-                onClick={() => setIsExpanded(true)}
-                className="flex items-center gap-2 text-xs text-custom-text-300 hover:text-custom-text-200 w-fit px-0 ml-2 pl-3 relative"
-              >
-                {repliedUserIds.length > 0 && (
-                  <AvatarGroup size="sm" max={2} showTooltip={false}>
-                    {uniq(repliedUserIds).map((userId) => {
-                      const userDetails = getUserDetails(userId);
-                      if (!userDetails) return null;
-                      return (
-                        <Avatar
-                          key={userId}
-                          name={userDetails.display_name}
-                          src={userDetails.avatar_url ? getFileURL(userDetails.avatar_url) : undefined}
-                        />
-                      );
-                    })}
-                  </AvatarGroup>
-                )}
-                <span>
-                  {repliesCount} {repliesCount === 1 ? "reply" : "replies"}
-                </span>
-                <div className="size-1 rounded-full bg-custom-background-80" />
-                {lastReplyAt && (
-                  <div className="flex gap-1">
-                    <span className="text-custom-text-400">Last reply</span>
-                    <span className="text-custom-text-400">{calculateTimeAgo(lastReplyAt)}</span>
-                  </div>
-                )}
-                <div className="absolute left-0 top-0 h-4 w-2 border-l border-b rounded-bl-full border-custom-background-80" />
+              <Button variant="ghost" size="sm" onClick={() => setIsExpanded(true)} className="relative ml-2 w-fit">
+                <div className="flex items-center gap-2 text-caption-sm-medium">
+                  {repliedUserIds.length > 0 && (
+                    <AvatarGroup size="sm" max={2} showTooltip={false}>
+                      {uniq(repliedUserIds).map((userId) => {
+                        const userDetails = getUserDetails(userId);
+                        if (!userDetails) return null;
+                        return (
+                          <Avatar
+                            key={userId}
+                            name={userDetails.display_name}
+                            src={userDetails.avatar_url ? getFileURL(userDetails.avatar_url) : undefined}
+                          />
+                        );
+                      })}
+                    </AvatarGroup>
+                  )}
+                  <span>
+                    {repliesCount} {repliesCount === 1 ? "reply" : "replies"}
+                  </span>
+                  <div className="size-1 rounded-full bg-layer-1-active" />
+                  {lastReplyAt && (
+                    <div className="flex gap-1">
+                      <span className="text-placeholder">Last reply</span>
+                      <span className="text-placeholder">{calculateTimeAgo(lastReplyAt)}</span>
+                    </div>
+                  )}
+                  <div className="absolute left-0 top-0 h-4 w-2 border-l border-b rounded-bl-full border-subtle-1" />
+                </div>
               </Button>
             )}
             <div

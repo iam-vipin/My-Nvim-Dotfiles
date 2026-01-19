@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
@@ -85,7 +98,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
     updateData && (
       <div
         key={updateData.id}
-        className="relative flex updateDatas-center gap-2 border border-custom-border-100 rounded-md p-4 pb-0"
+        className="relative flex updateDatas-center gap-2 border border-subtle rounded-md p-4 pb-0"
       >
         <div className="flex-1 w-full">
           <div className="flex flex-1">
@@ -95,10 +108,10 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
             </div>
             {/* Type and creator */}
             <div className="flex-1">
-              <div className={cn(`text-[${conf[updateData.status].color}] font-semibold text-sm capitalize`)}>
+              <div className={cn(`text-[${conf[updateData.status].color}] font-semibold text-13 capitalize`)}>
                 {updateData.status?.toLowerCase().replaceAll("-", " ")}
               </div>
-              <div className="text-custom-text-350 font-regular text-xs">
+              <div className="text-tertiary font-regular text-11">
                 {renderFormattedDate(updateData.updated_at)} • {getUserDetails(updateData?.created_by)?.display_name}
               </div>
             </div>
@@ -117,7 +130,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
           </div>
 
           {/* Update */}
-          <div className="text-base my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
+          <div className="text-14 my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
 
           {/* Progress */}
           <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />
@@ -132,7 +145,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
                 currentUser={currentUser}
               />
               <button
-                className="text-custom-text-350 bg-custom-background-80 rounded h-7 flex px-2 gap-2 text-xs font-medium items-center"
+                className="text-tertiary bg-layer-1 rounded-sm h-7 flex px-2 gap-2 text-11 font-medium items-center"
                 onClick={() => setShowComment(!showComment)}
               >
                 <MessageCircle className="h-3.5 w-3.5 m-auto" />

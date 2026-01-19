@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -11,7 +24,6 @@ import { cn } from "@plane/utils";
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -67,22 +79,22 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
       {workspaceProjectIds && (
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
-            <div className="flex h-full overflow-hidden bg-custom-background-100 ">
-              <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full">
+            <div className="flex h-full overflow-hidden ">
+              <Tabs value={selectedTab} onValueChange={handleTabChange}>
                 <div className={"flex flex-col w-full h-full"}>
                   <div
                     className={cn(
-                      "px-6 py-2 border-b border-custom-border-200 flex items-center gap-4 overflow-hidden w-full justify-between"
+                      "px-6 py-2 border-b border-subtle flex items-center gap-4 overflow-hidden w-full justify-between bg-surface-1"
                     )}
                   >
-                    <Tabs.List className={"my-2 overflow-x-auto flex w-fit"}>
+                    <Tabs.List className={"w-fit"}>
                       {ANALYTICS_TABS.map((tab) => (
                         <Tabs.Trigger
                           key={tab.key}
                           value={tab.key}
                           disabled={tab.isDisabled}
                           size="md"
-                          className="px-3"
+                          className="px-3 h-6"
                           onClick={() => {
                             if (!tab.isDisabled) {
                               handleTabChange(tab.key);
@@ -120,7 +132,6 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                   label: "Create a project",
                   onClick: () => {
                     toggleCreateProjectModal(true);
-                    captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
                   },
                   disabled: !canPerformEmptyStateActions,
                 },

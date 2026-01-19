@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 from uuid import UUID
@@ -34,13 +45,11 @@ class PageQuerySet(SoftDeletionQuerySet):
             projects__project_projectmember__is_active=True,
         )
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             ## Get all team ids where the user is a member
-            teamspace_ids = TeamspaceMember.objects.filter(
-                member_id=user_id, workspace__slug=slug
-            ).values_list("team_space_id", flat=True)
+            teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=slug).values_list(
+                "team_space_id", flat=True
+            )
 
             member_project_ids = ProjectMember.objects.filter(
                 member_id=user_id, workspace__slug=slug, is_active=True
@@ -112,7 +121,7 @@ class Page(BaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
 
     objects = PageManager()
-    
+
     class Meta:
         verbose_name = "Page"
         verbose_name_plural = "Pages"
@@ -126,9 +135,7 @@ class Page(BaseModel):
         deferred_fields = self.get_deferred_fields()
         self._original_name = self.name if "name" not in deferred_fields else None
         self._original_description_stripped = (
-            self.description_stripped
-            if "description_stripped" not in deferred_fields
-            else None
+            self.description_stripped if "description_stripped" not in deferred_fields else None
         )
 
     def __str__(self):
@@ -149,8 +156,7 @@ class Page(BaseModel):
         return (
             self.description_html == "<p></p>"
             or self.description_html == '<p class="editor-paragraph-block"></p>'
-            or self.description_html
-            == '<p class="editor-paragraph-block"></p><p class="editor-paragraph-block"></p>'
+            or self.description_html == '<p class="editor-paragraph-block"></p><p class="editor-paragraph-block"></p>'
             or not self.description_html
         )
 

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC, SyntheticEvent } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -151,6 +164,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             showTooltip
             customTooltipHeading="Date Range"
             renderPlaceholder={false}
+            renderInPortal
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -190,7 +204,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             placeholder={t("common.order_by.due_date")}
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={epic.target_date ? "border-with-text" : "border-without-text"}
-            clearIconClassName="text-custom-text-100"
+            clearIconClassName="text-primary"
             optionsClassName="z-10"
             disabled={disabled}
             showTooltip

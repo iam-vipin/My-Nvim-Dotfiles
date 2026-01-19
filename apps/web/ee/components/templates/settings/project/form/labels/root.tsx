@@ -1,7 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
-import { Pencil, PlusIcon, Trash2 } from "lucide-react";
+
+import { EditIcon, PlusIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -78,7 +92,7 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
   const customMenuItems: ICustomMenuItem[] = useMemo(
     () => [
       {
-        CustomIcon: Pencil,
+        CustomIcon: EditIcon,
         onClick: (label: IIssueLabel) => {
           setLabelToUpdate(label);
           setShowUpdateLabelForm(true);
@@ -89,7 +103,7 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
         key: "edit_label",
       },
       {
-        CustomIcon: Trash2,
+        CustomIcon: TrashIcon,
         onClick: handleLabelDelete,
         isVisible: true,
         text: "Delete label",
@@ -106,7 +120,7 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
         actionElement={({ setIsOpen }) => (
           <div className="flex items-center">
             <Button
-              variant="link-neutral"
+              variant="ghost"
               onClick={(e) => {
                 e.preventDefault();
                 setIsOpen(true);
@@ -120,10 +134,12 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
       >
         <div className="flex flex-col gap-y-4 pt-2 pb-4">
           {showEmptyState && (
-            <div className="px-5 text-sm text-custom-text-300">{t("templates.empty_state.no_labels.description")}</div>
+            <div className="px-5 text-body-xs-regular text-tertiary">
+              {t("templates.empty_state.no_labels.description")}
+            </div>
           )}
           {showCreateLabelForm && (
-            <div className="w-full rounded-lg border border-custom-border-100 bg-custom-background-100 px-3.5 py-2.5">
+            <div className="w-full rounded-lg border border-subtle bg-surface-1 px-3.5 py-2.5">
               <CreateUpdateLabelInline
                 labelForm={showCreateLabelForm}
                 setLabelForm={setShowCreateLabelForm}
@@ -141,7 +157,7 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
             <div
               key={label.id}
               className={cn(
-                "py-3 group relative flex items-center justify-between gap-2 space-y-4 bg-custom-background-100 border border-custom-border-100 rounded-lg",
+                "py-3 group relative flex items-center justify-between gap-2 space-y-4 bg-surface-1 border border-subtle rounded-lg",
                 showUpdateLabelForm && labelToUpdate?.id === label.id ? "px-4" : "pl-6"
               )}
             >

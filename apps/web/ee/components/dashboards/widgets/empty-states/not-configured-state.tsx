@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -61,25 +74,20 @@ export const DashboardWidgetNotConfiguredState = observer(function DashboardWidg
         />
         {canCurrentUserEditWidget ? (
           isViewModeEnabled ? (
-            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+            <p className="text-13 text-placeholder text-center whitespace-pre-line">
               Switch to{" "}
-              <Button
-                onClick={handleConfigureWidget}
-                variant="link-primary"
-                size="sm"
-                className="w-fit inline-flex p-0"
-              >
+              <Button onClick={handleConfigureWidget} variant="link" className="w-fit inline-flex p-0">
                 Edit mode
               </Button>{" "}
               to configure your widget.
             </p>
           ) : (
-            <Button onClick={handleConfigureWidget} variant="link-primary" size="sm" className="w-fit">
+            <Button onClick={handleConfigureWidget} variant="link" className="w-fit">
               {t("dashboards.widget.common.configure_widget")}
             </Button>
           )
         ) : (
-          <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+          <p className="text-13 text-placeholder text-center whitespace-pre-line">
             {t("dashboards.widget.not_configured_state.ask_admin")}
           </p>
         )}

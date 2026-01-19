@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -81,7 +94,7 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
         },
         {
           key: "pending",
-          fill: "rgba(var(--color-background-80))",
+          fill: "var(--background-color-layer-1)",
         },
       ];
     } else {
@@ -112,8 +125,8 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
           showCenterLabel
             ? {
                 text: totalCount,
-                fill: "rgba(var(--color-text-100))",
-                className: "text-2xl font-semibold",
+                fill: "var(--text-color-primary)",
+                className: "text-20 font-semibold",
                 style: {
                   fontSize: ((height ?? 1) * 1.5) / totalCountDigits + "rem",
                 },

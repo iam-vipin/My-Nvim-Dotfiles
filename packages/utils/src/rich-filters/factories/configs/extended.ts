@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { TFilterValue } from "@plane/types";
 import { EXTENDED_FILTER_FIELD_TYPE } from "@plane/types";
@@ -86,5 +99,25 @@ export type TTextConfig<V extends TFilterValue = string> = TCreateFilterConfigPa
 export const getTextConfig = <V extends TFilterValue = string>(config: TTextConfig<V>) =>
   createFilterFieldConfig<typeof EXTENDED_FILTER_FIELD_TYPE.TEXT, V>({
     type: EXTENDED_FILTER_FIELD_TYPE.TEXT,
+    ...config,
+  });
+
+// ------------ With value filters ------------
+
+/**
+ * With value configuration
+ */
+export type TWithValueConfig<V extends TFilterValue> = TCreateFilterConfigParams & {
+  value: V;
+};
+
+/**
+ * Helper to get the with value config
+ * @param config - With value configuration
+ * @returns The with value config
+ */
+export const getWithValueConfig = <V extends TFilterValue>(config: TWithValueConfig<V>) =>
+  createFilterFieldConfig<typeof EXTENDED_FILTER_FIELD_TYPE.WITH_VALUE, V>({
+    type: EXTENDED_FILTER_FIELD_TYPE.WITH_VALUE,
     ...config,
   });

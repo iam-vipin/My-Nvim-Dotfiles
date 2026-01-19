@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
@@ -35,7 +48,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           className={cn(
             titleFontClassName,
             {
-              "text-custom-text-400": !title,
+              "text-placeholder": !title,
             },
             "break-words"
           )}
@@ -62,7 +75,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           />
           <div
             className={cn(
-              "pointer-events-none absolute bottom-1 right-1 z-[2] font-normal rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+              "pointer-events-none absolute bottom-1 right-1 z-[2] font-regular rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
               {
                 "opacity-100": isLengthVisible,
               }
@@ -70,7 +83,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           >
             <span
               className={cn({
-                "text-red-500": title && title.length > 255,
+                "text-danger-primary": title && title.length > 255,
               })}
             >
               {title?.length}

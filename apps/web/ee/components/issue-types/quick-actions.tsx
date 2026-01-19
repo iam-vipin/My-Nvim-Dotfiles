@@ -1,8 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2 } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -10,7 +22,6 @@ import type { IIssueType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { captureClick } from "@/helpers/event-tracker.helper";
 
 type Props = {
   issueTypeId: string;
@@ -42,27 +53,21 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
     {
       key: "edit",
       action: () => {
-        captureClick({
-          elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.PROPERTY_QUICK_ACTIONS,
-        });
         onEditIssueTypeIdChange(issueTypeId);
       },
       title: t("common.actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
     },
     {
       key: "delete",
       action: () => {
-        captureClick({
-          elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.PROPERTY_QUICK_ACTIONS,
-        });
         onDeleteIssueTypeIdChange(issueTypeId);
       },
       title: t("common.actions.delete"),
       tooltipContent: issueTypeDetail?.is_default
         ? t("work_item_types.settings.cant_delete_default_message")
         : undefined,
-      icon: Trash2,
+      icon: TrashIcon,
       disabled: issueTypeDetail?.is_default,
     },
   ];
@@ -120,7 +125,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
         <CustomMenu
           placement="bottom-end"
           menuItemsClassName="z-20"
-          buttonClassName="!p-0.5 text-2xl"
+          buttonClassName="p-0.5 text-20"
           closeOnSelect
           ellipsis
           className="ml-2"
@@ -143,9 +148,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
                   disabled={item.disabled}
                 >
                   {item.icon && <item.icon className={cn("h-3 w-3")} />}
-                  <div>
-                    <h5>{item.title}</h5>
-                  </div>
+                  <div className="text-caption-xs-regular">{item.title}</div>
                 </CustomMenu.MenuItem>
               </span>
             </Tooltip>

@@ -1,18 +1,29 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { EProductSubscriptionTier, LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import type { IPaymentProduct } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getUpgradeButtonStyle, Loader } from "@plane/ui";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { Loader } from "@plane/ui";
+import { getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-const COMMON_BUTTON_STYLE =
-  "relative inline-flex items-center justify-center w-full px-4 py-1.5 text-xs font-medium rounded-lg focus:outline-none transition-all duration-300 animate-slide-up";
+const COMMON_BUTTON_STYLE = "w-full transition-all duration-300 animate-slide-up";
 
 type TSubscriptionButtonProps = {
   subscriptionType: EProductSubscriptionEnum;
@@ -40,8 +51,6 @@ export const SubscriptionButton = observer(function SubscriptionButton(props: TS
   const showUpgradeButton = subscriptionDetail?.is_on_trial
     ? !subscriptionDetail?.has_added_payment_method
     : isHigherTierPlan && currentPlan !== subscriptionType;
-  const upgradeButtonStyle =
-    getUpgradeButtonStyle(subscriptionType, !!upgradeLoader) ?? getButtonStyling("primary", "lg", !!upgradeLoader);
 
   if (!subscriptionDetail || isProductsAPILoading) {
     return (
@@ -53,7 +62,7 @@ export const SubscriptionButton = observer(function SubscriptionButton(props: TS
 
   if (showCurrentSubscriptionButton) {
     return (
-      <Button variant="neutral-primary" size="sm" className={cn(COMMON_BUTTON_STYLE)} disabled>
+      <Button variant="secondary" size="lg" className={COMMON_BUTTON_STYLE} disabled>
         Current plan
       </Button>
     );
@@ -74,14 +83,16 @@ export const SubscriptionButton = observer(function SubscriptionButton(props: TS
     };
 
     return (
-      <button
+      <Button
+        variant="primary"
+        size="lg"
         data-ph-element={LICENSE_TRACKER_ELEMENTS.BILLING_PAGE_COMPARISON_SECTION_UPGRADE_BUTTON}
         onClick={() => handleSubscriptionUpgrade(subscriptionType)}
-        className={cn(upgradeButtonStyle, COMMON_BUTTON_STYLE)}
+        className={COMMON_BUTTON_STYLE}
         disabled={!!upgradeLoader}
       >
         {getButtonText()}
-      </button>
+      </Button>
     );
   }
 

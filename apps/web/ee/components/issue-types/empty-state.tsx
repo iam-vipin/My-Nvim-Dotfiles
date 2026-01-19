@@ -1,9 +1,20 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { WORK_ITEM_TYPE_TRACKER_ELEMENTS, WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -14,8 +25,6 @@ import issueTypeDark from "@/app/assets/empty-state/issue-types/issue-type-dark.
 import issueTypeLight from "@/app/assets/empty-state/issue-types/issue-type-light.png?url";
 // helpers
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -53,25 +62,13 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
           title: "Success!",
           message: "Work item types and custom properties are now enabled for this project",
         });
-        captureSuccess({
-          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.TYPES_ENABLED,
-          payload: {
-            project_id: projectId,
-          },
-        });
+        return true;
       })
-      .catch((error) => {
+      .catch((_error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to enable work item types",
-        });
-        captureError({
-          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.TYPES_ENABLED,
-          payload: {
-            project_id: projectId,
-          },
-          error: error as Error,
         });
       })
       .finally(() => {
@@ -90,9 +87,6 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
             {
               label: t("settings_empty_state.work_item_types.cta_primary"),
               onClick: () => {
-                captureClick({
-                  elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_ENABLE_WORK_ITEM_TYPES_BUTTON,
-                });
                 setEnableIssueTypeConfirmation(true);
               },
               variant: "primary",
@@ -107,7 +101,7 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
     if (isSelfManagedUpgradeDisabled) {
       return (
         <DetailedEmptyState
-          className="!p-0 w-full"
+          className="p-0 w-full"
           title=""
           description=""
           assetPath={resolvedPath}
@@ -115,14 +109,14 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
             text: t("work_item_types.empty_state.get_pro.primary_button.text"),
             onClick: () => window.open("https://prime.plane.so/", "_blank"),
           }}
-          size="md"
+          size="base"
         />
       );
     }
 
     return (
       <DetailedEmptyState
-        className="!p-0 w-full"
+        className="p-0 w-full"
         title=""
         description=""
         assetPath={resolvedPath}
@@ -130,7 +124,7 @@ export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: 
           text: t("work_item_types.empty_state.upgrade.primary_button.text"),
           onClick: () => togglePaidPlanModal(true),
         }}
-        size="md"
+        size="base"
       />
     );
   };

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // local imports
 import { COMMENT_MARK_SELECTORS, ECommentAttributeNames } from "../types";
@@ -22,7 +35,7 @@ export const createHoverHandlerPlugin = () =>
               // Add hover effect to the corresponding sidebar comment item
               const sidebarCommentItem = document.querySelector(`[data-thread-id="${commentId}"]`);
               if (sidebarCommentItem) {
-                sidebarCommentItem.classList.add("bg-custom-background-90", "transition-all", "duration-200");
+                sidebarCommentItem.classList.add("bg-layer-1", "transition-all", "duration-200");
               }
               return true;
             }
@@ -45,7 +58,7 @@ export const createHoverHandlerPlugin = () =>
               // Remove hover effect from the corresponding sidebar comment item
               const sidebarCommentItem = document.querySelector(`[data-thread-id="${commentId}"]`);
               if (sidebarCommentItem) {
-                sidebarCommentItem.classList.remove("bg-custom-background-90", "transition-all", "duration-200");
+                sidebarCommentItem.classList.remove("bg-layer-1", "transition-all", "duration-200");
               }
               return true;
             }

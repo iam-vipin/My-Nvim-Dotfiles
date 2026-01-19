@@ -1,13 +1,26 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane
+import { MONTHS_LIST } from "@plane/constants";
 import type { TGroupedIssues, TLoader, TPaginationData, ICalendarWeek } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 // plane web
-import { MONTHS_LIST } from "@/plane-web/constants/calendar";
 import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper";
 import useSize from "@/plane-web/hooks/use-window-size";
 import type { ICalendarStore } from "@/plane-web/store/issue_calendar_view.store";
@@ -59,7 +72,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   if (!calendarPayload || !formattedDatePayload)
     return (
-      <div className="grid h-full w-full place-items-center">
+      <div className="size-full grid place-items-center">
         <Spinner />
       </div>
     );
@@ -69,7 +82,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   return (
     <>
-      <div className="flex h-full w-full flex-col overflow-hidden">
+      <div className="size-full flex flex-col overflow-hidden">
         <CalendarHeader calendarLayout={calendarLayout} setSelectedDate={setSelectedDate} />
 
         <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
@@ -82,7 +95,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             <CalendarWeekHeader isLoading={loader === "init-loader"} showWeekends={showWeekends} />
             <div className="h-full w-full">
               {calendarLayout === "month" && (
-                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
                   {allWeeksOfActiveMonth &&
                     Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                       <CalendarWeekDays
@@ -119,7 +132,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
             {/* mobile view */}
             <div className="md:hidden">
-              <p className="p-4 text-xl font-semibold">
+              <p className="p-4 text-18 font-semibold">
                 {`${selectedDate.getDate()} ${
                   MONTHS_LIST[selectedDate.getMonth() + 1].title
                 }, ${selectedDate.getFullYear()}`}
@@ -138,7 +151,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
         {/* mobile view */}
         <div className="md:hidden">
-          <p className="p-4 text-xl font-semibold">
+          <p className="p-4 text-18 font-semibold">
             {`${selectedDate.getDate()} ${
               MONTHS_LIST[selectedDate.getMonth() + 1].title
             }, ${selectedDate.getFullYear()}`}

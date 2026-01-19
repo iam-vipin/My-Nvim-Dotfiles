@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from datetime import datetime
 from typing import Dict, List, Optional, Union
@@ -415,6 +426,7 @@ class ProjectTemplate(BaseModel):
     is_project_updates_enabled = models.BooleanField(default=False)
     is_epic_enabled = models.BooleanField(default=False)
     is_workflow_enabled = models.BooleanField(default=False)
+    is_milestone_enabled = models.BooleanField(default=False)
 
     TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)

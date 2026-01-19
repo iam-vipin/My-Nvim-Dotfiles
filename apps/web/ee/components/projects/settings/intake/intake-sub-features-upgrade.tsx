@@ -1,10 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
-import { ToggleSwitch, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // ce imports
 import type { TProperties } from "@/ce/constants/project";
@@ -45,24 +58,18 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
 
   return (
     <>
-      <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "mt-3", className)}>
+      <div className={cn(isTooltip ? "divide-y divide-subtle-1/50" : "mt-3", className)}>
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)
           .map((featureKey) => {
             const feature = featureList[featureKey];
 
             return (
-              <div
-                key={featureKey}
-                className={cn(
-                  "gap-x-8 gap-y-3 py-3",
-                  isTooltip ? "bg-custom-background-100" : "bg-custom-background-90"
-                )}
-              >
+              <div key={featureKey} className={cn("gap-x-8 gap-y-3 py-3", isTooltip ? "bg-surface-1" : "bg-layer-1")}>
                 <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
                   <div className="flex gap-2 w-full">
                     <div
-                      className={cn("flex justify-center rounded mt-1", {
+                      className={cn("flex justify-center rounded-sm mt-1", {
                         "opacity-50": !isAdmin && featureKey !== "in_app",
                       })}
                     >
@@ -73,25 +80,20 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                         <div className="flex-1 w-full">
                           <div className="flex gap-2">
                             <div
-                              className={cn("text-sm font-medium leading-5 align-top", {
+                              className={cn("text-13 font-medium leading-5 align-top", {
                                 "opacity-50": !isAdmin && featureKey !== "in_app",
                               })}
                             >
                               {feature.title}
                             </div>
                             {featureKey !== "in_app" && (
-                              <div
-                                className={cn(
-                                  "rounded bg-custom-background-80 px-2 py-[1px] text-xs font-medium text-custom-text-300 capitalize items-center",
-                                  getSubscriptionTextAndBackgroundColor(EProductSubscriptionEnum.BUSINESS)
-                                )}
-                              >
+                              <div className="rounded-sm px-2 py-[1px] text-11 font-medium capitalize items-center text-plans-brand-primary bg-plans-brand-subtle">
                                 <h1>{getSubscriptionName(EProductSubscriptionEnum.BUSINESS)}</h1>
                               </div>
                             )}
                           </div>
                           <p
-                            className={cn("text-sm text-custom-text-300 text-wrap mt-1", {
+                            className={cn("text-13 text-tertiary text-wrap mt-1", {
                               "opacity-50": !isAdmin && featureKey !== "in_app",
                             })}
                           >

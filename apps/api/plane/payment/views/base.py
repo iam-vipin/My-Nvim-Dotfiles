@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import zoneinfo
 
@@ -92,9 +103,7 @@ class BaseAPIView(TimezoneMixin, APIView):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
 
         except Exception as exc:
@@ -111,14 +120,10 @@ class BaseAPIView(TimezoneMixin, APIView):
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None

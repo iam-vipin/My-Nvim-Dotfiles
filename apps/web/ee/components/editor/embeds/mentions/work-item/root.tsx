@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
 import useSWRImmutable from "swr/immutable";
@@ -62,21 +75,21 @@ export const EditorWorkItemMention = observer(function EditorWorkItemMention(pro
   const workItemDetails = savedWorkItemDetails || fetchedWorkItemDetails;
 
   return (
-    <div className="not-prose !inline px-1 py-0.5 rounded bg-custom-primary-100/10 border border-custom-border-400 no-underline cursor-pointer max-w-full truncate">
+    <div className="not-prose inline! px-1 py-0.5 rounded bg-accent-primary/10 border border-strong-1 no-underline cursor-pointer max-w-full truncate">
       <Popover delay={100} openOnHover>
         <Popover.Button className="truncate" nativeButton={false}>
           {workItemDetails && !errorFetchingWorkItemDetails ? (
             <EditorWorkItemMentionContent workItemDetails={workItemDetails} />
           ) : (
-            <span className="text-custom-text-300">{isFetchingWorkItemDetails ? "..." : "work item not found"}</span>
+            <span className="text-tertiary">{isFetchingWorkItemDetails ? "..." : "work item not found"}</span>
           )}
         </Popover.Button>
         <Popover.Panel side="bottom" align="start">
-          <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-custom-background-100 border-[0.5px] border-custom-border-300">
+          <div className="p-3 space-y-2 w-72 rounded-lg shadow-raised-200 bg-surface-1 border-[0.5px] border-subtle-1">
             {workItemDetails ? (
               <EditorWorkItemMentionPreview workItemDetails={workItemDetails} />
             ) : (
-              <p className="text-custom-text-300 text-sm">
+              <p className="text-tertiary text-13">
                 The mentioned work item is not found. It&apos;s either deleted or not accessible to you.
               </p>
             )}

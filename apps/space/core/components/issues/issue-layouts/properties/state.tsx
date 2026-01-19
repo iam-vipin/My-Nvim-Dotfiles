@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane ui
 import { StateGroupIcon } from "@plane/propel/icons";
@@ -33,13 +46,13 @@ export const IssueBlockState = observer(function IssueBlockState(props: Props) {
   return (
     <Tooltip tooltipHeading="State" tooltipContent={state.name}>
       <div
-        className={cn("flex h-full w-full items-center justify-between gap-1 rounded px-2.5 py-1 text-xs", {
-          "border-[0.5px] border-custom-border-300": shouldShowBorder,
+        className={cn("flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11", {
+          "border-[0.5px] border-strong": shouldShowBorder,
         })}
       >
         <div className="flex w-full items-center gap-1.5">
           <StateGroupIcon stateGroup={state.group} />
-          <div className="text-xs">{state.name}</div>
+          <div className="text-11">{state.name}</div>
         </div>
       </div>
     </Tooltip>

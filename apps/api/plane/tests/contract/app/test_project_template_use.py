@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import pytest
 import uuid
 from unittest.mock import patch
@@ -6,7 +17,7 @@ from rest_framework import status
 from plane.db.models import (
     Project,
     ProjectMember,
-    IssueUserProperty,
+    ProjectUserProperty,
     State,
     WorkspaceMember,
     User,
@@ -156,9 +167,7 @@ def project_state_for_grouping(workspace):
 
 
 @pytest.fixture
-def project_template_with_grouping(
-    workspace, template_base, project_template_data, project_state_for_grouping
-):
+def project_template_with_grouping(workspace, template_base, project_template_data, project_state_for_grouping):
     """Create a project template with project grouping enabled"""
     data = project_template_data.copy()
     data.update(
@@ -236,14 +245,9 @@ class TestProjectTemplateUseEndpoint:
         assert project.issue_views_view == project_template.issue_views_view
         assert project.page_view == project_template.page_view
         assert project.intake_view == project_template.intake_view
-        assert (
-            project.is_time_tracking_enabled
-            == project_template.is_time_tracking_enabled
-        )
+        assert project.is_time_tracking_enabled == project_template.is_time_tracking_enabled
         assert project.is_issue_type_enabled == project_template.is_issue_type_enabled
-        assert (
-            project.guest_view_all_features == project_template.guest_view_all_features
-        )
+        assert project.guest_view_all_features == project_template.guest_view_all_features
 
         # Verify project member was created
         assert ProjectMember.objects.count() == 1
@@ -251,10 +255,8 @@ class TestProjectTemplateUseEndpoint:
         assert project_member.role == 20  # Administrator
         assert project_member.is_active is True
 
-        # Verify IssueUserProperty was created
-        assert IssueUserProperty.objects.filter(
-            project=project, user=create_user
-        ).exists()
+        # Verify ProjectUserProperty was created
+        assert ProjectUserProperty.objects.filter(project=project, user=create_user).exists()
 
         # Verify states were created from template
         states = State.objects.filter(project=project)
@@ -272,14 +274,9 @@ class TestProjectTemplateUseEndpoint:
 
         # Verify ProjectFeature was created
         project_feature = ProjectFeature.objects.get(project=project)
-        assert (
-            project_feature.is_project_updates_enabled
-            == project_template.is_project_updates_enabled
-        )
+        assert project_feature.is_project_updates_enabled == project_template.is_project_updates_enabled
         assert project_feature.is_epic_enabled == project_template.is_epic_enabled
-        assert (
-            project_feature.is_workflow_enabled == project_template.is_workflow_enabled
-        )
+        assert project_feature.is_workflow_enabled == project_template.is_workflow_enabled
 
         # Verify background tasks were called
         mock_create_project_task.assert_called_once()
@@ -577,14 +574,10 @@ class TestProjectTemplateUseEndpoint:
         project = Project.objects.get(name=project_data["name"])
         assert ProjectMember.objects.filter(project=project, role=20).count() == 2
 
-        # Verify both have IssueUserProperty
-        assert IssueUserProperty.objects.filter(project=project).count() == 2
-        assert IssueUserProperty.objects.filter(
-            project=project, user=create_user
-        ).exists()
-        assert IssueUserProperty.objects.filter(
-            project=project, user=project_lead
-        ).exists()
+        # Verify both have ProjectUserProperty
+        assert ProjectUserProperty.objects.filter(project=project).count() == 2
+        assert ProjectUserProperty.objects.filter(project=project, user=create_user).exists()
+        assert ProjectUserProperty.objects.filter(project=project, user=project_lead).exists()
 
     @patch("plane.ee.views.app.project.template.create_project_from_template.delay")
     @patch("plane.ee.views.app.project.template.model_activity.delay")

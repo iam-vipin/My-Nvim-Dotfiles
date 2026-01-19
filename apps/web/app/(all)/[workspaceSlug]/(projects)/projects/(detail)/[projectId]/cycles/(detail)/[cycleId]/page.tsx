@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -66,12 +79,8 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
             {!isSidebarCollapsed && (
               <div
                 className={cn(
-                  "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
+                  "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-13 shadow-raised-200"
                 )}
-                style={{
-                  boxShadow:
-                    "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
-                }}
               >
                 <CycleDetailsSidebar
                   handleClose={toggleSidebar}

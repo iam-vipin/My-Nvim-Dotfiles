@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { EProductSubscriptionEnum } from "@plane/types";
 
 export enum E_FEATURE_FLAGS {
@@ -36,6 +49,7 @@ export enum E_FEATURE_FLAGS {
   ADVANCED_EXPORTS = "ADVANCED_EXPORTS",
   MILESTONES = "MILESTONES",
   AUTO_SCHEDULE_CYCLES = "AUTO_SCHEDULE_CYCLES",
+  WORKSPACE_MEMBERS_IMPORT = "WORKSPACE_MEMBERS_IMPORT",
 
   // ====== silo importers ======
   SILO_IMPORTERS = "SILO_IMPORTERS",
@@ -62,6 +76,7 @@ export enum E_FEATURE_FLAGS {
 
   // ==== silo ======
   SILO = "SILO",
+  AGENT_SIDECAR = "AGENT_SIDECAR",
 
   // ====== silo integrations ======
   SILO_INTEGRATIONS = "SILO_INTEGRATIONS",
@@ -71,6 +86,7 @@ export enum E_FEATURE_FLAGS {
   GITLAB_INTEGRATION = "GITLAB_INTEGRATION",
   GITLAB_ENTERPRISE_INTEGRATION = "GITLAB_ENTERPRISE_INTEGRATION",
   SLACK_INTEGRATION = "SLACK_INTEGRATION",
+  SLACK_WORK_OBJECTS = "SLACK_WORK_OBJECTS",
 
   // ====== silo deprecated ======
   SILO_JIRA_INTEGRATION = "SILO_JIRA_INTEGRATION", // DEPRECATED
@@ -96,6 +112,7 @@ export enum E_FEATURE_FLAGS {
   // pages and editor
   COLLABORATION_CURSOR = "COLLABORATION_CURSOR",
   EDITOR_AI_OPS = "EDITOR_AI_OPS",
+  EDITOR_AI_BLOCKS = "EDITOR_AI_BLOCKS",
   PAGE_ISSUE_EMBEDS = "PAGE_ISSUE_EMBEDS",
   PAGE_PUBLISH = "PAGE_PUBLISH",
   MOVE_PAGES = "MOVE_PAGES",
@@ -122,6 +139,14 @@ export enum E_FEATURE_FLAGS {
   RICH_FILTERS = "RICH_FILTERS",
   // intake type form
   WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM",
+  // workspace members activity
+  WORKSPACE_MEMBER_ACTIVITY = "WORKSPACE_MEMBER_ACTIVITY",
+  // project members activity
+  PROJECT_MEMBER_ACTIVITY = "PROJECT_MEMBER_ACTIVITY",
+  // SSO
+  CLOUD_SSO = "CLOUD_SSO",
+  // workspace socket connections
+  WORKSPACE_SOCKET = "WORKSPACE_SOCKET",
 }
 
 /**

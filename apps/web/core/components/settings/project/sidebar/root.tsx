@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -40,7 +53,7 @@ export const ProjectSettingsSidebar = observer(function ProjectSettingsSidebar(p
       appendItemsToTitle={(key: string) => {
         const role = projectMap[key].member_role;
         return (
-          <div className="text-xs font-medium text-custom-text-200 capitalize bg-custom-background-90 rounded-md px-1 py-0.5">
+          <div className="text-11 font-medium text-secondary capitalize rounded-md px-1 py-0.5">
             {role ? getUserRole(role)?.toLowerCase() : "Guest"}
           </div>
         );

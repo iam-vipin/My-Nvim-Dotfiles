@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 from enum import Enum
@@ -12,15 +23,15 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+
+# Module imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.db.models import APIToken, BotTypeEnum, DeployBoard, FileAsset, Project
+from plane.db.models import DeployBoard, FileAsset, Project, APIToken, BotTypeEnum
+from plane.settings.storage import S3Storage
+from .base import BaseAPIView
 from plane.ee.models import IntakeForm, IntakeSetting
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
-from plane.settings.storage import S3Storage
-
-# Module imports
-from .base import BaseAPIView
 
 
 class EntityAssetEndpoint(BaseAPIView):

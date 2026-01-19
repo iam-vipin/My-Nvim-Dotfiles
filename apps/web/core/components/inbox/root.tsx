@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
@@ -64,24 +77,24 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
     return (
       <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
         <IntakeIcon className="size-[60px]" strokeWidth={1.5} />
-        <div className="text-custom-text-200">{error?.message}</div>
+        <div className="text-secondary">{error?.message}</div>
       </div>
     );
 
   return (
     <>
       {!inboxIssueId && (
-        <div className="flex lg:hidden items-center px-4 w-full h-12 border-b border-custom-border-200">
+        <div className="flex lg:hidden items-center px-4 w-full h-12 border-b border-subtle">
           <PanelLeft
             onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-            className={cn("w-4 h-4 ", isMobileSidebar ? "text-custom-primary-100" : " text-custom-text-200")}
+            className={cn("w-4 h-4 ", isMobileSidebar ? "text-accent-primary" : " text-secondary")}
           />
         </div>
       )}
-      <div className="w-full h-full flex overflow-hidden bg-custom-background-100">
+      <div className="w-full h-full flex overflow-hidden bg-surface-1">
         <div
           className={cn(
-            "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-custom-background-100 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
+            "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-surface-1 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
             isMobileSidebar ? "translate-x-0" : "-translate-x-full lg:!translate-x-0"
           )}
         >

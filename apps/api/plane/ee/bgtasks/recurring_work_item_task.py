@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 from django.utils import timezone
@@ -45,14 +56,14 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
 
     try:
         # Get the recurring task
-        recurring_task = RecurringWorkitemTask.objects.select_related(
-            "workitem_blueprint", "project", "workspace"
-        ).filter(id=recurring_workitem_task_id).first()
+        recurring_task = (
+            RecurringWorkitemTask.objects.select_related("workitem_blueprint", "project", "workspace")
+            .filter(id=recurring_workitem_task_id)
+            .first()
+        )
 
         if not recurring_task:
-            logger.info(
-                f"Recurring task {recurring_workitem_task_id} not found, skipping execution"
-            )
+            logger.info(f"Recurring task {recurring_workitem_task_id} not found, skipping execution")
             return {"status": "skipped", "message": "Task not found"}
 
         slug = recurring_task.workspace.slug
@@ -64,16 +75,12 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
 
         # Check if task is enabled
         if not recurring_task.enabled:
-            logger.info(
-                f"Recurring task {recurring_workitem_task_id} is disabled, skipping execution"
-            )
+            logger.info(f"Recurring task {recurring_workitem_task_id} is disabled, skipping execution")
             return {"status": "skipped", "message": "Task is disabled"}
 
         # Check if task has expired
         if recurring_task.end_at and timezone.now() > recurring_task.end_at:
-            logger.info(
-                f"Recurring task {recurring_workitem_task_id} has expired, skipping execution"
-            )
+            logger.info(f"Recurring task {recurring_workitem_task_id} has expired, skipping execution")
             return {"status": "skipped", "message": "Task has expired"}
 
         # Create log entry
@@ -100,9 +107,7 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         # check for the workflows for the issue creation
         # if the state is changed later
         if workitem_blueprint_first.state.get("id"):
-            workflow_state_manager = WorkflowStateManager(
-                project_id=project_id, slug=slug
-            )
+            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
             if workflow_state_manager.validate_issue_creation(
                 state_id=workitem_blueprint_first.state.get("id"), user_id=user_id
             ):
@@ -111,17 +116,13 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         # get all the states in the project and create a mapping dict
         state_map = {
             str(state.id): str(state.id)
-            for state in State.objects.filter(
-                project_id=project_id, workspace_id=workspace_id
-            )
+            for state in State.objects.filter(project_id=project_id, workspace_id=workspace_id)
         }
 
         # get the labels in the project and create a mapping dict
         label_map = {
             str(label.id): str(label.id)
-            for label in Label.objects.filter(
-                project_id=project_id, workspace_id=workspace_id
-            )
+            for label in Label.objects.filter(project_id=project_id, workspace_id=workspace_id)
         }
 
         # get all the workitem types in the project and create a mapping dict
@@ -137,25 +138,19 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         # get all the workitem properties in the project and create a mapping dict
         workitem_property_map = {
             str(prop.id): str(prop.id)
-            for prop in IssueProperty.objects.filter(
-                project_id=project_id, workspace_id=workspace_id
-            )
+            for prop in IssueProperty.objects.filter(project_id=project_id, workspace_id=workspace_id)
         }
 
         # get all the workitem property options in the project and create a mapping dict
         workitem_property_option_map = {
             str(option.id): str(option.id)
-            for option in IssuePropertyOption.objects.filter(
-                project_id=project_id, workspace_id=workspace_id
-            )
+            for option in IssuePropertyOption.objects.filter(project_id=project_id, workspace_id=workspace_id)
         }
 
         # get all the estimates in the project and create a mapping dict
         estimate_point_map = {
             str(estimate.id): str(estimate.id)
-            for estimate in EstimatePoint.objects.filter(
-                project_id=project_id, workspace_id=workspace_id
-            )
+            for estimate in EstimatePoint.objects.filter(project_id=project_id, workspace_id=workspace_id)
         }
 
         work_item = create_workitems(
@@ -196,9 +191,7 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             updated_by_id=user_id,
         )
 
-        logger.info(
-            f"Successfully created work item {work_item.id} from recurring task {recurring_workitem_task_id}"
-        )
+        logger.info(f"Successfully created work item {work_item.id} from recurring task {recurring_workitem_task_id}")
 
         return {
             "status": "success",
@@ -208,9 +201,7 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         }
 
     except RecurringWorkitemTask.DoesNotExist:
-        error_msg = (
-            f"RecurringWorkitemTask with ID {recurring_workitem_task_id} not found"
-        )
+        error_msg = f"RecurringWorkitemTask with ID {recurring_workitem_task_id} not found"
         logger.error(error_msg)
         return {"status": "error", "message": error_msg}
 

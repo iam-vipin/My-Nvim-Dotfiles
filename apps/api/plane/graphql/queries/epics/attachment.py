@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third-Party Imports
 import strawberry
 
@@ -12,7 +23,7 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import FileAsset
 from plane.graphql.helpers import (
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
@@ -85,7 +96,7 @@ class EpicAttachmentQuery:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         issue_attachments = await get_epic_attachments(
@@ -110,7 +121,7 @@ class EpicAttachmentQuery:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         issue_attachment = await get_epic_attachment(

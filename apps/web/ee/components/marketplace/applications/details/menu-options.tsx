@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC, ReactNode } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { Edit, Key, Share, Trash2 } from "lucide-react";
+import { Edit, Key, Share } from "lucide-react";
+import { TrashIcon } from "@plane/propel/icons";
 
 // plane imports
 
@@ -108,7 +122,7 @@ export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuO
       type: "menu-item",
       label: "Delete",
       isActive: app.is_owned,
-      prependIcon: <Trash2 className="flex-shrink-0 h-3 w-3" />,
+      prependIcon: <TrashIcon className="flex-shrink-0 h-3 w-3" />,
       onClick: () => {
         toggleDeleteApplicationModal(true);
       },
@@ -118,7 +132,7 @@ export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuO
       type: "menu-item",
       label: "Uninstall",
       isActive: app.is_installed && allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE),
-      prependIcon: <Trash2 className="flex-shrink-0 h-3 w-3" />,
+      prependIcon: <TrashIcon className="flex-shrink-0 h-3 w-3" />,
       onClick: () => {
         toggleRevokeAccessModal(true);
       },
@@ -130,9 +144,9 @@ export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuO
     <>
       <PopoverMenu
         data={popoverMenuOptions}
-        buttonClassName="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 bg-custom-background-100 rounded-sm outline-none"
+        buttonClassName="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 bg-surface-1 rounded-sm outline-none"
         keyExtractor={(item: TPopoverMenuOptions) => item.key}
-        panelClassName="p-0 py-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1"
+        panelClassName="p-0 py-2 rounded-md border border-subtle bg-surface-1 space-y-1"
         render={(item: TPopoverMenuOptions) => <ApplicationTileMenuItem {...item} />}
       />
       <ApplicationPublishModal isOpen={isPublishModalOpen} handleClose={() => togglePublishModal(false)} app={app} />

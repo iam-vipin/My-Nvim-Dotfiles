@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ExternalLink } from "lucide-react";
+import { NewTabIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
@@ -70,13 +83,17 @@ export const BusinessPlanCard = observer(function BusinessPlanCard(props: TBusin
       planVariant={EProductSubscriptionEnum.BUSINESS}
       planDescription={
         <>
-          <div>Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more</div>
+          <div className="text-body-xs-medium text-secondary">
+            Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more
+          </div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isSubscriptionCancelled ? (
-                <div className="text-red-500 ">Your billing cycle ends on {renderFormattedDate(endDate)}.</div>
+                <div className="text-body-xs-medium text-danger-secondary">
+                  Your billing cycle ends on {renderFormattedDate(endDate)}.
+                </div>
               ) : (
-                <div>
+                <div className="text-body-xs-medium text-secondary">
                   {startDate
                     ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                     : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
@@ -85,9 +102,9 @@ export const BusinessPlanCard = observer(function BusinessPlanCard(props: TBusin
               )}
             </>
           ) : (
-            <div>
+            <div className="text-body-xs-medium text-secondary">
               To manage your subscription, please{" "}
-              <a className="text-custom-primary-300 hover:underline" href="mailto:support@plane.so">
+              <a className="text-accent-primary hover:underline" href="mailto:support@plane.so">
                 contact support.
               </a>
             </div>
@@ -99,8 +116,9 @@ export const BusinessPlanCard = observer(function BusinessPlanCard(props: TBusin
         isSubscriptionManagementEnabled && (
           <div className="flex items-center gap-2.5">
             <Button
-              variant="link-neutral"
-              className="cursor-pointer px-3 py-1.5 text-center text-xs font-medium outline-none"
+              variant="secondary"
+              size="lg"
+              appendIcon={<NewTabIcon />}
               onClick={
                 !isSelfManaged && isInTrialPeriod
                   ? () => handleUpgrade(EProductSubscriptionEnum.BUSINESS)
@@ -109,7 +127,6 @@ export const BusinessPlanCard = observer(function BusinessPlanCard(props: TBusin
               disabled={isLoading}
             >
               {isLoading ? "Redirecting to Stripe" : "Manage subscription"}
-              <ExternalLink className="h-3 w-3" strokeWidth={2} />
             </Button>
             <BillingActionsButton canPerformWorkspaceAdminActions />
           </div>

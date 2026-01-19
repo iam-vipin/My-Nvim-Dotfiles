@@ -1,15 +1,25 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TTeamspaceActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web constants
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teamspace";
 // plane web helpers
 import { getTeamspaceActivityKey } from "@/plane-web/helpers/teamspace-helper";
@@ -63,27 +73,22 @@ export const TeamsOverviewSidebarActivity = observer(function TeamsOverviewSideb
 
   return (
     <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
-      <div className="py-2 flex flex-col px-6">
+      <div className="flex flex-col">
         <div className="flex gap-2 items-center justify-between">
-          <span className="text-sm font-semibold">Activity</span>
+          <span className="text-body-xs-semibold">Activity</span>
           <span className="flex items-center gap-2">
             {teamActivitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
             <ActivitySortRoot
               sortOrder={teamspaceActivitySortOrder}
               toggleSort={() => {
-                captureClick({
-                  elementName: TEAMSPACE_UPDATES_TRACKER_ELEMENTS.SIDEBAR_ACTIVITY_SORT_BUTTON,
-                });
                 toggleTeamspaceActivitySortOrder();
               }}
-              className="py-1"
-              iconClassName="size-3"
             />
           </span>
         </div>
       </div>
       <div className="flex-grow overflow-y-auto vertical-scrollbar scrollbar-sm">
-        <div className="space-y-3 px-6">
+        <div className="space-y-3">
           {teamActivitiesLoader === "init-loader" ? (
             <Loader className="space-y-3">
               <Loader.Item height="34px" width="100%" />

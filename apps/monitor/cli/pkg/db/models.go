@@ -11,10 +11,10 @@ type License struct {
 	ID                     uuid.UUID  `json:"id" gorm:"primaryKey;type:uuid"`
 	LicenseKey             string     `json:"license_key" gorm:"not null;uniqueIndex:idx_workspace_license"`
 	InstanceID             uuid.UUID  `json:"instance_id" gorm:"type:uuid"`
-	WorkspaceID            uuid.UUID  `json:"workspace_id" gorm:"type:uuid;not null;unique;uniqueIndex:idx_workspace_license"`
+	WorkspaceID            uuid.UUID  `json:"workspace_id" gorm:"type:uuid;unique;uniqueIndex:idx_workspace_license"`
+	WorkspaceSlug          string     `json:"workspace_slug" gorm:"unique"`
 	Product                string     `json:"product" gorm:"not null"`
 	ProductType            string     `json:"product_type" gorm:"not null"`
-	WorkspaceSlug          string     `json:"workspace_slug" gorm:"not null;unique"`
 	Seats                  int        `json:"seats" gorm:"not null;default:0"`
 	FreeSeats              int        `json:"free_seats" gorm:"not null;default:12"`
 	CurrentPeriodEndDate   *time.Time `json:"current_period_end_date"`

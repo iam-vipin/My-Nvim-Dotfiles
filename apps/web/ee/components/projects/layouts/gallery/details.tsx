@@ -1,24 +1,37 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings } from "lucide-react";
 import { observer } from "mobx-react";
-import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
+import React, { useState } from "react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { LockIcon, TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, FavoriteStar } from "@plane/ui";
-import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
+import { CoverImage } from "@/components/common/cover-image";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { TProject } from "@/plane-web/types/projects";
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 
 type Props = {
   project: TProject;
@@ -107,7 +120,7 @@ export const Details = observer(function Details(props: Props) {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isArchived && isOwner,
     },
     {
@@ -134,11 +147,10 @@ export const Details = observer(function Details(props: Props) {
     <div className="w-full rounded-t ">
       <div className="relative ">
         <div>
-          <img
-            src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
+          <CoverImage
+            src={project.cover_image_url}
             alt={project.name}
-            className="relative w-full rounded-t object-cover h-[120px]"
-            // ref={projectCardRef}
+            className="relative w-full rounded-t h-[120px]"
             draggable={false}
             onDrag={(e) => {
               e.preventDefault();
@@ -147,7 +159,7 @@ export const Details = observer(function Details(props: Props) {
           />
           <div
             className={cn(
-              "hidden rounded absolute group-hover/project-card:flex inset-0 z-[1] bg-gradient-to-t to-black/60 from-transparent ",
+              "hidden rounded-sm absolute group-hover/project-card:flex inset-0 z-[1] bg-gradient-to-t to-black/60 from-transparent ",
               { "flex ": isOpen }
             )}
           />
@@ -157,7 +169,7 @@ export const Details = observer(function Details(props: Props) {
             <CustomMenu
               customButton={
                 <span
-                  className="grid place-items-center p-0.5 text-white rounded my-auto"
+                  className="grid place-items-center p-0.5 text-on-color rounded-sm my-auto"
                   ref={ref}
                   onClick={() => setIsOpen(!isOpen)}
                 >
@@ -165,7 +177,7 @@ export const Details = observer(function Details(props: Props) {
                 </span>
               }
               className={cn(
-                "flex justify-center items-center opacity-0 z-[10] pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6 ",
+                "flex justify-center items-center opacity-0 z-[10] pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded-sm h-6 w-6 ",
                 { "opacity-100 pointer-events-auto": isOpen }
               )}
               customButtonClassName="grid place-items-center"
@@ -195,12 +207,12 @@ export const Details = observer(function Details(props: Props) {
               {" "}
               <FavoriteStar
                 buttonClassName={cn(
-                  "relative flex justify-center items-center opacity-0 z-[2] pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6",
+                  "relative flex justify-center items-center opacity-0 z-[2] pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded-sm h-6 w-6",
                   {
                     "opacity-100 pointer-events-auto": project.is_favorite || isOpen,
                   }
                 )}
-                iconClassName="text-white"
+                iconClassName="text-on-color"
                 onClick={(e) => {
                   if (isArchived) return;
                   e.preventDefault();
@@ -216,7 +228,7 @@ export const Details = observer(function Details(props: Props) {
       </div>
       <div className="flex h-10 w-full items-center justify-between gap-3 mt-3 p-4">
         <div className="flex flex-grow items-center gap-2.5 truncate">
-          <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-custom-background-90">
+          <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded-sm bg-layer-1">
             <Logo logo={project.logo_props} size={18} />
           </div>
 
@@ -225,8 +237,8 @@ export const Details = observer(function Details(props: Props) {
               <h3 className=" font-medium w-full truncate ">{project.name}</h3>
             </div>
             <span className="flex items-center gap-1.5">
-              <p className="text-xs font-medium ">{project.identifier} </p>
-              {project.network === 0 && <Lock className="h-2.5 w-2.5  " />}
+              <p className="text-11 font-medium ">{project.identifier} </p>
+              {project.network === 0 && <LockIcon className="h-2.5 w-2.5  " />}
             </span>
           </div>
         </div>

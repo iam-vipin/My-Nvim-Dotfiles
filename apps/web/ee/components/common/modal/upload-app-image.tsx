@@ -1,12 +1,25 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@plane/propel/button";
 import { UserCirclePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import type { EFileAssetType } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -94,69 +107,49 @@ export const AppImageUploadModal = observer(function AppImageUploadModal(props: 
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-30 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:max-w-xl">
-              <Dialog.Title as="h3" className="text-lg font-medium text-custom-text-100">
-                Upload Image
-              </Dialog.Title>
-              <div className="mt-4">
-                <div
-                  {...getRootProps()}
-                  className="relative h-80 w-80 border-2 border-dashed border-custom-border-200 rounded-lg flex items-center justify-center cursor-pointer"
-                >
-                  {image || initialValue ? (
-                    <img
-                      src={image ? URL.createObjectURL(image) : getFileURL(initialValue ?? "")}
-                      alt="Uploaded preview"
-                      className="h-full w-full object-cover rounded-md"
-                    />
-                  ) : (
-                    <div className="text-center">
-                      <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-custom-text-200" />
-                      <p className="text-sm text-custom-text-200">
-                        {isDragActive ? "Drop image here" : "Drag & drop or click to upload"}
-                      </p>
-                    </div>
-                  )}
-                  <input {...getInputProps()} />
-                </div>
-                {fileRejections.length > 0 && (
-                  <p className="text-red-500 text-sm mt-2">Invalid file or exceeds size limit (5 MB).</p>
-                )}
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
+      <div className="px-5 py-8">
+        <h3 className="text-16 font-medium text-primary">Upload Image</h3>
+        <div className="mt-4">
+          <div
+            {...getRootProps()}
+            className="relative h-80 w-80 border-2 border-dashed border-subtle-1 rounded-lg flex items-center justify-center cursor-pointer"
+          >
+            {image || initialValue ? (
+              <img
+                src={image ? URL.createObjectURL(image) : getFileURL(initialValue ?? "")}
+                alt="Uploaded preview"
+                className="h-full w-full object-cover rounded-md"
+              />
+            ) : (
+              <div className="text-center">
+                <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-secondary" />
+                <p className="text-13 text-secondary">
+                  {isDragActive ? "Drop image here" : "Drag & drop or click to upload"}
+                </p>
               </div>
-              <div className="mt-6 flex justify-between">
-                <Button variant="danger" size="sm" onClick={handleImageRemove} disabled={!initialValue || isRemoving}>
-                  {isRemoving ? "Removing..." : "Remove Image"}
-                </Button>
-                <div className="flex gap-2">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                    Cancel
-                  </Button>
-                  <Button variant="primary" size="sm" onClick={handleSubmit} disabled={!image} loading={isUploading}>
-                    {isUploading ? "Uploading..." : "Upload & Save"}
-                  </Button>
-                </div>
-              </div>
-            </Dialog.Panel>
+            )}
+            <input {...getInputProps()} />
+          </div>
+          {fileRejections.length > 0 && (
+            <p className="text-danger-primary text-13 mt-2">Invalid file or exceeds size limit (5 MB).</p>
+          )}
+        </div>
+        <div className="mt-6 flex justify-between">
+          <Button variant="error-fill" onClick={handleImageRemove} disabled={!initialValue || isRemoving}>
+            {isRemoving ? "Removing..." : "Remove Image"}
+          </Button>
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isUploading}>
+              {isUploading ? "Uploading..." : "Upload & Save"}
+            </Button>
           </div>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+    </ModalCore>
   );
 });
 

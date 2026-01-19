@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -118,7 +131,7 @@ export function ModuleForm(props: Props) {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {status ? t("common.update") : t("common.create")} {t("common.module").toLowerCase()}
           </h3>
         </div>
@@ -146,13 +159,13 @@ export function ModuleForm(props: Props) {
                   }}
                   hasError={Boolean(errors?.name)}
                   placeholder={t("title")}
-                  className="w-full text-base"
+                  className="w-full text-14"
                   tabIndex={getIndex("name")}
                   autoFocus
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -168,7 +181,7 @@ export function ModuleForm(props: Props) {
                     handleOnChange();
                   }}
                   placeholder={t("description")}
-                  className="w-full text-base resize-none min-h-24"
+                  className="w-full text-14 resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   tabIndex={getIndex("description")}
                 />
@@ -262,11 +275,11 @@ export function ModuleForm(props: Props) {
         </div>
       </div>
       {showActionButtons && (
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
             {t("cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
             {status
               ? isSubmitting
                 ? t("updating")

@@ -110,9 +110,12 @@ const CustomBar = React.memo(function CustomBar(props: TBarProps) {
     <g>
       <path
         d={getBarPath(x, y, width, height, topBorderRadius, bottomBorderRadius)}
-        className="transition-opacity duration-200"
         fill={fill}
         opacity={opacity}
+        style={{
+          transition: "opacity 200ms",
+          fill: fill,
+        }}
       />
       {showText && (
         <PercentageText x={x + width / 2} y={textY} percentage={currentBarPercentage} className={textClassName} />

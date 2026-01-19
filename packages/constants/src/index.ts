@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export * from "./ai";
 export * from "./analytics";
 export * from "./application";
 export * from "./auth";
 export * from "./automation";
+export * from "./calendar";
 export * from "./chart";
 export * from "./customers";
 export * from "./cycle";
@@ -41,6 +55,7 @@ export * from "./projects-extended";
 export * from "./rich-filters";
 export * from "./settings";
 export * from "./sidebar";
+export * from "./sso";
 export * from "./spreadsheet";
 export * from "./state";
 export * from "./state-extended";

@@ -1,5 +1,18 @@
-import React from "react";
-import { Tab } from "@headlessui/react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+// plane imports
+import { Tabs } from "@plane/propel/tabs";
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // plane web imports
@@ -21,19 +34,15 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
   const { page, versionHistory } = props;
 
   return (
-    <Tab.Panels as={React.Fragment}>
+    <>
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
-        <Tab.Panel
-          key={tab.key}
-          as="div"
-          className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
-        >
+        <Tabs.Content key={tab.key} value={tab.key} className={"px-4 py-2"}>
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}
           {tab.key === "assets" && <PageNavigationPaneAssetsTabPanel page={page} />}
           <PageNavigationPaneAdditionalTabPanelsRoot activeTab={tab.key} page={page} />
-        </Tab.Panel>
+        </Tabs.Content>
       ))}
-    </Tab.Panels>
+    </>
   );
 }

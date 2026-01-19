@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Nama pengguna",
+        placeholder: "Masukkan nama pengguna Anda",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Lanjutkan dengan {ldapProviderName}",
+        sub_header: "Masukkan kredensial {ldapProviderName} Anda",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Plane AI",
     initiatives: "Inisiatif",
@@ -713,6 +740,11 @@ export default {
       worklogs: {
         title: "Log kerja",
       },
+      identity: {
+        title: "Identitas",
+        heading: "Identitas",
+        description: "Konfigurasi domain Anda dan aktifkan Single sign-on",
+      },
       project_states: {
         title: "Status proyek",
       },
@@ -911,6 +943,54 @@ export default {
         heading: "Plane AI",
         description:
           "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "Impor anggota dari CSV",
+      description: "Unggah CSV dengan kolom: Email, Display Name, First Name, Last Name, Role (5, 15, atau 20)",
+      dropzone: {
+        active: "Letakkan file CSV di sini",
+        inactive: "Seret & lepas atau klik untuk mengunggah",
+        file_type: "Hanya file .csv yang didukung",
+      },
+      buttons: {
+        cancel: "Batal",
+        import: "Impor",
+        try_again: "Coba Lagi",
+        close: "Tutup",
+        done: "Selesai",
+      },
+      progress: {
+        uploading: "Mengunggah...",
+        importing: "Mengimpor...",
+      },
+      summary: {
+        title: {
+          failed: "Impor Gagal",
+          complete: "Impor Selesai",
+        },
+        message: {
+          seat_limit: "Tidak dapat mengimpor anggota karena pembatasan tempat duduk.",
+          success: "Berhasil menambahkan {count} anggota ke workspace.",
+          no_imports: "Tidak ada anggota yang diimpor dari file CSV.",
+        },
+        stats: {
+          successful: "Berhasil",
+          failed: "Gagal",
+        },
+        download_errors: "Unduh kesalahan",
+      },
+      toast: {
+        invalid_file: {
+          title: "File tidak valid",
+          message: "Hanya file CSV yang didukung.",
+        },
+        import_failed: {
+          title: "Impor gagal",
+          message: "Terjadi kesalahan.",
+        },
       },
     },
   },
@@ -1383,6 +1463,22 @@ export default {
     choose_entity: "Pilih Entitas",
     choose_project: "Pilih Projek",
     link_plane_project: "Hubungkan projek Plane",
+    project_issue_sync: "Sinkronisasi Masalah Projek",
+    project_issue_sync_description: "Sinkronkan masalah dari Gitlab ke projek Plane Anda",
+    project_issue_sync_empty_state: "Sinkronisasi masalah projek yang dipetakan akan muncul di sini",
+    configure_project_issue_sync_state: "Konfigurasi Status Sinkronisasi Masalah",
+    select_issue_sync_direction: "Pilih arah sinkronisasi masalah",
+    allow_bidirectional_sync: "Dua Arah - Sinkronkan masalah dan komentar dua arah antara Gitlab dan Plane",
+    allow_unidirectional_sync: "Satu Arah - Sinkronkan masalah dan komentar hanya dari Gitlab ke Plane",
+    allow_unidirectional_sync_warning:
+      "Data dari Gitlab Issue akan menggantikan data di Item Kerja Plane yang Terhubung (hanya Gitlab → Plane)",
+    remove_project_issue_sync: "Hapus Sinkronisasi Masalah Projek ini",
+    remove_project_issue_sync_confirmation: "Apakah Anda yakin ingin menghapus sinkronisasi masalah projek ini?",
+    ISSUE_OPEN: "Masalah Terbuka",
+    ISSUE_CLOSED: "Masalah Tertutup",
+    save: "Simpan",
+    start_sync: "Mulai Sinkronisasi",
+    choose_repository: "Pilih Repositori...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3121,6 +3217,227 @@ export default {
         title: "Otomatisasi",
         description: "Otomatisasi adalah cara untuk mengotomatisasi tugas dalam proyek Anda.",
         sub_description: "Dapatkan kembali 80% waktu admin Anda ketika menggunakan Otomatisasi.",
+      },
+    },
+  },
+  sso: {
+    header: "Identitas",
+    description: "Konfigurasi domain Anda untuk mengakses fitur keamanan termasuk single sign-on.",
+    domain_management: {
+      header: "Manajemen domain",
+      verified_domains: {
+        header: "Domain terverifikasi",
+        description: "Verifikasi kepemilikan domain email untuk mengaktifkan single sign-on.",
+        button_text: "Tambah domain",
+        list: {
+          domain_name: "Nama domain",
+          status: "Status",
+          status_verified: "Terverifikasi",
+          status_failed: "Gagal",
+          status_pending: "Menunggu",
+        },
+        add_domain: {
+          title: "Tambah domain",
+          description: "Tambahkan domain Anda untuk mengonfigurasi SSO dan memverifikasinya.",
+          form: {
+            domain_label: "Domain",
+            domain_placeholder: "plane.so",
+            domain_required: "Domain wajib diisi",
+            domain_invalid: "Masukkan nama domain yang valid (mis. plane.so)",
+          },
+          primary_button_text: "Tambah domain",
+          primary_button_loading_text: "Menambahkan",
+          toast: {
+            success_title: "Berhasil!",
+            success_message: "Domain berhasil ditambahkan. Silakan verifikasi dengan menambahkan catatan DNS TXT.",
+            error_message: "Gagal menambahkan domain. Silakan coba lagi.",
+          },
+        },
+        verify_domain: {
+          title: "Verifikasi domain Anda",
+          description: "Ikuti langkah-langkah ini untuk memverifikasi domain Anda.",
+          instructions: {
+            label: "Instruksi",
+            step_1: "Buka pengaturan DNS untuk host domain Anda.",
+            step_2: {
+              part_1: "Buat sebuah",
+              part_2: "catatan TXT",
+              part_3: "dan tempelkan nilai catatan lengkap yang disediakan di bawah ini.",
+            },
+            step_3:
+              "Pembaruan ini biasanya memakan waktu beberapa menit tetapi dapat memakan waktu hingga 72 jam untuk diselesaikan.",
+            step_4: 'Klik "Verifikasi domain" untuk mengonfirmasi setelah catatan DNS Anda diperbarui.',
+          },
+          verification_code_label: "Nilai catatan TXT",
+          verification_code_description: "Tambahkan catatan ini ke pengaturan DNS Anda",
+          domain_label: "Domain",
+          primary_button_text: "Verifikasi domain",
+          primary_button_loading_text: "Memverifikasi",
+          secondary_button_text: "Saya akan melakukannya nanti",
+          toast: {
+            success_title: "Berhasil!",
+            success_message: "Domain berhasil diverifikasi.",
+            error_message: "Gagal memverifikasi domain. Silakan coba lagi.",
+          },
+        },
+        delete_domain: {
+          title: "Hapus domain",
+          description: {
+            prefix: "Apakah Anda yakin ingin menghapus",
+            suffix: "? Tindakan ini tidak dapat dibatalkan.",
+          },
+          primary_button_text: "Hapus",
+          primary_button_loading_text: "Menghapus",
+          secondary_button_text: "Batal",
+          toast: {
+            success_title: "Berhasil!",
+            success_message: "Domain berhasil dihapus.",
+            error_message: "Gagal menghapus domain. Silakan coba lagi.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Single sign-on",
+      disabled_message: "Tambahkan domain terverifikasi untuk mengonfigurasi SSO",
+      configure: {
+        create: "Konfigurasi",
+        update: "Edit",
+      },
+      switch_alert_modal: {
+        title: "Beralih metode SSO ke {newProviderShortName}?",
+        content:
+          "Anda akan mengaktifkan {newProviderLongName} ({newProviderShortName}). Tindakan ini akan secara otomatis menonaktifkan {activeProviderLongName} ({activeProviderShortName}). Pengguna yang mencoba masuk melalui {activeProviderShortName} tidak akan dapat mengakses platform sampai mereka beralih ke metode baru. Apakah Anda yakin ingin melanjutkan?",
+        primary_button_text: "Beralih",
+        primary_button_text_loading: "Beralih",
+        secondary_button_text: "Batal",
+      },
+      form_section: {
+        title: "Detail yang disediakan IdP untuk {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Menyimpan",
+        save_changes: "Simpan perubahan",
+        configure_only: "Hanya konfigurasi",
+        configure_and_enable: "Konfigurasi dan aktifkan",
+        default: "Simpan",
+      },
+      setup_details_section: {
+        title: "{workspaceName} detail yang disediakan untuk IdP Anda",
+        button_text: "Dapatkan detail pengaturan",
+      },
+      saml: {
+        header: "Aktifkan SAML",
+        description: "Konfigurasi penyedia identitas SAML Anda untuk mengaktifkan single sign-on.",
+        configure: {
+          title: "Aktifkan SAML",
+          description: "Verifikasi kepemilikan domain email untuk mengakses fitur keamanan termasuk single sign-on.",
+          toast: {
+            success_title: "Berhasil!",
+            create_success_message: "Penyedia SAML berhasil dibuat.",
+            update_success_message: "Penyedia SAML berhasil diperbarui.",
+            error_title: "Error!",
+            error_message: "Gagal menyimpan penyedia SAML. Silakan coba lagi.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Detail web",
+            entity_id: {
+              label: "Entity ID | Audience | Informasi metadata",
+              description:
+                "Kami akan menghasilkan bagian metadata ini yang mengidentifikasi aplikasi Plane ini sebagai layanan yang diotorisasi di IdP Anda.",
+            },
+            callback_url: {
+              label: "URL masuk tunggal",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
+            },
+            logout_url: {
+              label: "URL logout tunggal",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout tunggal IdP Anda.",
+            },
+          },
+          mobile_details: {
+            header: "Detail mobile",
+            entity_id: {
+              label: "Entity ID | Audience | Informasi metadata",
+              description:
+                "Kami akan menghasilkan bagian metadata ini yang mengidentifikasi aplikasi Plane ini sebagai layanan yang diotorisasi di IdP Anda.",
+            },
+            callback_url: {
+              label: "URL masuk tunggal",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
+            },
+            logout_url: {
+              label: "URL logout tunggal",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout IdP Anda.",
+            },
+          },
+          mapping_table: {
+            header: "Detail pemetaan",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Aktifkan OIDC",
+        description: "Konfigurasi penyedia identitas OIDC Anda untuk mengaktifkan single sign-on.",
+        configure: {
+          title: "Aktifkan OIDC",
+          description: "Verifikasi kepemilikan domain email untuk mengakses fitur keamanan termasuk single sign-on.",
+          toast: {
+            success_title: "Berhasil!",
+            create_success_message: "Penyedia OIDC berhasil dibuat.",
+            update_success_message: "Penyedia OIDC berhasil diperbarui.",
+            error_title: "Error!",
+            error_message: "Gagal menyimpan penyedia OIDC. Silakan coba lagi.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Detail web",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "Kami akan menghasilkan ini untuk aplikasi Plane ini. Tambahkan ini sebagai origin tepercaya di bidang yang sesuai di IdP Anda.",
+            },
+            callback_url: {
+              label: "URL pengalihan",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
+            },
+            logout_url: {
+              label: "URL logout",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout IdP Anda.",
+            },
+          },
+          mobile_details: {
+            header: "Detail mobile",
+            origin_url: {
+              label: "Origin URL",
+              description:
+                "Kami akan menghasilkan ini untuk aplikasi Plane ini. Tambahkan ini sebagai origin tepercaya di bidang yang sesuai di IdP Anda.",
+            },
+            callback_url: {
+              label: "URL pengalihan",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan masuk IdP Anda.",
+            },
+            logout_url: {
+              label: "URL logout",
+              description:
+                "Kami akan menghasilkan ini untuk Anda. Tambahkan ini di bidang URL pengalihan logout IdP Anda.",
+            },
+          },
+        },
       },
     },
   },

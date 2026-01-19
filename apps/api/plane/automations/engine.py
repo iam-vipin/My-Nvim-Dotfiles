@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Automation Execution Engine for the Plane Automation Engine.
 
@@ -11,6 +22,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, List
 
 from django.db import transaction, connection
+from django.db.models import F
 from django.utils import timezone
 
 from plane.automations.registry import NodeRegistry, BaseAutomationNode
@@ -118,9 +130,7 @@ class AutomationExecutionEngine:
         """Extract the triggering issue ID from the event, if present."""
         try:
             if entity_type == AutomationScopeChoices.WORKITEM:
-                return event.get("entity_id") or event.get("payload", {}).get(
-                    "data", {}
-                ).get("id")
+                return event.get("entity_id") or event.get("payload", {}).get("data", {}).get("id")
             return None
         except Exception:
             return None
@@ -245,9 +255,7 @@ class AutomationExecutionEngine:
                 automation_run=automation_run,
             )
             if not condition_result.success:
-                return self._finalize_automation_failure(
-                    automation_run, "Condition failed", condition_result
-                )
+                return self._finalize_automation_failure(automation_run, "Condition failed", condition_result)
 
         # Step 2: Execute action nodes linearly
         # If any action fails, stop execution and return failure
@@ -263,16 +271,12 @@ class AutomationExecutionEngine:
             action_results.append(action_result)
 
             if not action_result.success:
-                return self._finalize_automation_failure(
-                    automation_run, f"Action {i + 1} failed", action_result
-                )
+                return self._finalize_automation_failure(automation_run, f"Action {i + 1} failed", action_result)
 
         # All actions succeeded
         # Use the last action result for the success response
         final_result = action_results[-1] if action_results else None
-        return self._finalize_automation_success(
-            automation_run, "Automation completed successfully", final_result
-        )
+        return self._finalize_automation_success(automation_run, "Automation completed successfully", final_result)
 
     def _execute_automation_after_trigger(
         self,
@@ -307,14 +311,10 @@ class AutomationExecutionEngine:
             # TODO: We're here because the trigger node was already validated in the dispatch_automation_event function.
             validation_error = self._ensure_trigger_and_action_exist(nodes)
             if validation_error:
-                return self._finalize_automation_failure(
-                    automation_run, validation_error
-                )
+                return self._finalize_automation_failure(automation_run, validation_error)
 
             # Create execution context
-            context = self._create_execution_context(
-                automation_run=automation_run, event=event
-            )
+            context = self._create_execution_context(automation_run=automation_run, event=event)
 
             # Record trigger execution (already successful)
             trigger_node = nodes.get(NodeTypeChoices.TRIGGER)
@@ -336,9 +336,7 @@ class AutomationExecutionEngine:
 
         except Exception as e:
             logger.exception("Unexpected error during triggered automation execution")
-            return self._finalize_automation_failure(
-                automation_run, f"Execution error: {str(e)}"
-            )
+            return self._finalize_automation_failure(automation_run, f"Execution error: {str(e)}")
 
     def dispatch_automation_event(self, event: dict) -> List[Dict[str, Any]]:
         """
@@ -409,9 +407,7 @@ class AutomationExecutionEngine:
                     )
 
                     # Test the trigger - NO AutomationRun created yet
-                    raw_trigger_result = trigger_node["handler"].execute(
-                        event, context.to_dict()
-                    )
+                    raw_trigger_result = trigger_node["handler"].execute(event, context.to_dict())
 
                     # Only proceed if trigger matches
                     if not raw_trigger_result.get("success", False):
@@ -421,11 +417,7 @@ class AutomationExecutionEngine:
                     # Convert to structured result
                     trigger_result = NodeResult(
                         success=raw_trigger_result.get("success", False),
-                        output={
-                            k: v
-                            for k, v in raw_trigger_result.items()
-                            if k not in ["success", "error"]
-                        },
+                        output={k: v for k, v in raw_trigger_result.items() if k not in ["success", "error"]},
                         error=raw_trigger_result.get("error", ""),
                     )
 
@@ -434,16 +426,12 @@ class AutomationExecutionEngine:
                         # Ensure DB triggers mark events as originating from automations
                         try:
                             with connection.cursor() as cur:
-                                cur.execute(
-                                    "SELECT set_config('plane.initiator_type', 'SYSTEM.AUTOMATION', true)"
-                                )
+                                cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.AUTOMATION', true)")
                         except Exception:
                             # Fail-safe: do not block automation if GUC is unavailable
                             pass
 
-                        entity_type = event.get(
-                            "entity_type", AutomationScopeChoices.WORKITEM
-                        )
+                        entity_type = event.get("entity_type", AutomationScopeChoices.WORKITEM)
                         if entity_type == "issue":
                             entity_type = AutomationScopeChoices.WORKITEM
 
@@ -463,10 +451,11 @@ class AutomationExecutionEngine:
                             **self.get_entity_id_field(entity_type, entity_id),
                         )
 
-                        # Update automation run count and last run at
-                        automation.last_run_at = timezone.now()
-                        automation.run_count += 1
-                        automation.save(update_fields=["last_run_at", "run_count"])
+                        # Update automation run count and last run at atomically
+                        Automation.objects.filter(id=automation.id).update(
+                            run_count=F("run_count") + 1,
+                            last_run_at=timezone.now(),
+                        )
 
                         # Record automation run activity
                         try:
@@ -492,9 +481,7 @@ class AutomationExecutionEngine:
                             )
 
                         # Execute the full automation (trigger already succeeded)
-                        result = self._execute_automation_after_trigger(
-                            automation_run, event, trigger_result, nodes
-                        )
+                        result = self._execute_automation_after_trigger(automation_run, event, trigger_result, nodes)
                         results.append(result.to_dict())  # Convert back to dict for API
 
                 except Exception as e:
@@ -527,10 +514,7 @@ class AutomationExecutionEngine:
 
         # Get all nodes for this version (optimize if not already prefetched)
         # TODO: Need to double check the node fetching logic and how it's preserving the execution order
-        if (
-            hasattr(version, "_prefetched_objects_cache")
-            and "nodes" in version._prefetched_objects_cache
-        ):
+        if hasattr(version, "_prefetched_objects_cache") and "nodes" in version._prefetched_objects_cache:
             # Use prefetched nodes if available
             automation_nodes = version.nodes.all()
         else:
@@ -550,9 +534,7 @@ class AutomationExecutionEngine:
                 if node.node_type == NodeTypeChoices.ACTION:
                     if NodeTypeChoices.ACTION not in nodes:
                         nodes[NodeTypeChoices.ACTION] = []
-                    nodes[NodeTypeChoices.ACTION].append(
-                        {"handler": node_handler, "instance": node}
-                    )
+                    nodes[NodeTypeChoices.ACTION].append({"handler": node_handler, "instance": node})
                 else:
                     # Store trigger and condition nodes as single items
                     nodes[node.node_type] = {"handler": node_handler, "instance": node}
@@ -604,18 +586,12 @@ class AutomationExecutionEngine:
             # Convert to structured result
             node_result = NodeResult(
                 success=raw_result.get("success", False),
-                output={
-                    k: v for k, v in raw_result.items() if k not in ["success", "error"]
-                },
+                output={k: v for k, v in raw_result.items() if k not in ["success", "error"]},
                 error=raw_result.get("error", ""),
             )
 
             # Update execution record
-            node_execution.status = (
-                RunStatusChoices.SUCCESS
-                if node_result.success
-                else RunStatusChoices.FAILED
-            )
+            node_execution.status = RunStatusChoices.SUCCESS if node_result.success else RunStatusChoices.FAILED
             node_execution.completed_at = timezone.now()
             node_execution.output_data = node_result.to_dict()
             node_execution.error_message = node_result.error
@@ -625,9 +601,7 @@ class AutomationExecutionEngine:
 
         except Exception as e:
             # Update execution record with error
-            logger.exception(
-                f"Node execution failed: {getattr(node_instance, 'name', 'unknown')}"
-            )
+            logger.exception(f"Node execution failed: {getattr(node_instance, 'name', 'unknown')}")
             node_execution.status = RunStatusChoices.FAILED
             node_execution.completed_at = timezone.now()
             node_execution.error_message = str(e)
@@ -663,9 +637,7 @@ class AutomationExecutionEngine:
         NodeExecution.objects.create(
             run=automation_run,
             node=node_instance,
-            status=(
-                RunStatusChoices.SUCCESS if result.success else RunStatusChoices.FAILED
-            ),
+            status=(RunStatusChoices.SUCCESS if result.success else RunStatusChoices.FAILED),
             started_at=timezone.now(),  # Approximate - actual execution was earlier
             completed_at=timezone.now(),
             input_data={"event": event},
@@ -748,40 +720,22 @@ def get_automation_status(automation_run_id: str) -> Dict[str, Any]:
         automation_run = AutomationRun.objects.get(id=automation_run_id)
 
         # Get node executions
-        node_executions = NodeExecution.objects.filter(
-            automation_run=automation_run
-        ).order_by("started_at")
+        node_executions = NodeExecution.objects.filter(automation_run=automation_run).order_by("started_at")
 
         return {
             "automation_run_id": str(automation_run.id),
             "automation_id": str(automation_run.automation.id),
             "status": automation_run.status,
-            "started_at": (
-                automation_run.started_at.isoformat()
-                if automation_run.started_at
-                else None
-            ),
-            "completed_at": (
-                automation_run.completed_at.isoformat()
-                if automation_run.completed_at
-                else None
-            ),
+            "started_at": (automation_run.started_at.isoformat() if automation_run.started_at else None),
+            "completed_at": (automation_run.completed_at.isoformat() if automation_run.completed_at else None),
             "result_data": automation_run.result_data,
             "node_executions": [
                 {
                     "node_name": execution.node_name,
                     "node_type": execution.node_type,
                     "status": execution.status,
-                    "started_at": (
-                        execution.started_at.isoformat()
-                        if execution.started_at
-                        else None
-                    ),
-                    "completed_at": (
-                        execution.completed_at.isoformat()
-                        if execution.completed_at
-                        else None
-                    ),
+                    "started_at": (execution.started_at.isoformat() if execution.started_at else None),
+                    "completed_at": (execution.completed_at.isoformat() if execution.completed_at else None),
                     "output_data": execution.output_data,
                     "error_message": execution.error_message,
                 }

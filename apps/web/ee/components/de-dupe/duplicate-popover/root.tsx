@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -120,14 +133,14 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className={cn("mt-2 bg-custom-background-100 rounded-lg shadow-xl overflow-hidden")}
+                className={cn("mt-2 bg-surface-1 rounded-lg shadow-xl overflow-hidden")}
               >
                 <div
                   ref={containerRef}
                   className="relative flex flex-col gap-2.5 h-full px-3 py-4 rounded-lg shadow-xl bg-pi-50 max-h-[460px]"
                 >
                   <div className="flex gap-1.5 w-80 flex-shrink-0">
-                    <p className="text-left text-xs text-custom-text-200">
+                    <p className="text-left text-11 text-secondary">
                       {`Hey, ${issues?.length} work item${issues?.length > 1 ? "s" : ""} listed below seem${issues?.length > 1 ? "" : "s"} to be duplicate of this work item. Select if only some of them are helpful.`}
                     </p>
                   </div>
@@ -158,8 +171,7 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
                   {!isIntakeIssue && (
                     <div className="flex items-center gap-2 justify-end flex-shrink-0">
                       <Button
-                        variant="neutral-primary"
-                        size="sm"
+                        variant="secondary"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleClose();
@@ -169,7 +181,6 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
                       </Button>
                       <Button
                         variant="primary"
-                        size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleMarkAsDuplicate(workspaceSlug, projectId, rootIssueId, selectedEntityIds);

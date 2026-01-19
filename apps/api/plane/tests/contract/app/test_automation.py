@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 import json
 import uuid
@@ -60,9 +71,7 @@ class TestAutomationEndpoint:
         """Test basic GET list functionality"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -115,13 +124,9 @@ class TestAutomationEndpoint:
         """Test creating automation with valid data"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
-        response = session_client.post(
-            url, data=json.dumps(automation_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(automation_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data["name"] == automation_data["name"]
@@ -147,9 +152,7 @@ class TestAutomationEndpoint:
         """Test creating automation with missing required fields"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         # Test missing name
         incomplete_data = {
@@ -158,9 +161,7 @@ class TestAutomationEndpoint:
             "status": "draft",
         }
 
-        response = session_client.post(
-            url, data=json.dumps(incomplete_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(incomplete_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "name" in response.data
@@ -176,9 +177,7 @@ class TestAutomationEndpoint:
         """Test creating automation with invalid scope"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         invalid_data = {
             "name": "Test Automation",
@@ -188,9 +187,7 @@ class TestAutomationEndpoint:
             "is_enabled": False,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Invalid scope" in str(response.data)
@@ -207,9 +204,7 @@ class TestAutomationEndpoint:
         """Test creating automation with invalid status"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         invalid_data = {
             "name": "Test Automation",
@@ -219,9 +214,7 @@ class TestAutomationEndpoint:
             "is_enabled": False,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -237,9 +230,7 @@ class TestAutomationEndpoint:
         """Test creating automation with all valid scope values"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         # Test valid scope: "workitem"
         valid_data = {
@@ -250,12 +241,8 @@ class TestAutomationEndpoint:
             "is_enabled": False,
         }
 
-        with patch(
-            "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-        ):
-            response = session_client.post(
-                url, data=json.dumps(valid_data), content_type="application/json"
-            )
+        with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
+            response = session_client.post(url, data=json.dumps(valid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data["scope"] == AutomationScopeChoices.WORKITEM
@@ -272,9 +259,7 @@ class TestAutomationEndpoint:
         """Test creating automation with all valid status values"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         valid_statuses = [
             "draft",
@@ -291,12 +276,8 @@ class TestAutomationEndpoint:
                 "is_enabled": False,
             }
 
-            with patch(
-                "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-            ):
-                response = session_client.post(
-                    url, data=json.dumps(valid_data), content_type="application/json"
-                )
+            with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
+                response = session_client.post(url, data=json.dumps(valid_data), content_type="application/json")
 
             assert response.status_code == status.HTTP_201_CREATED
             assert response.data["status"] == status_value
@@ -314,9 +295,7 @@ class TestAutomationEndpoint:
         """Test creating automation with duplicate name"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         duplicate_data = {
             "name": "Existing Automation",  # Same name as fixture
@@ -326,9 +305,7 @@ class TestAutomationEndpoint:
             "is_enabled": False,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(duplicate_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(duplicate_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Automation with this name already exists" in response.data["error"]
@@ -365,9 +342,7 @@ class TestAutomationEndpoint:
             "status": "published",  # Valid status change
         }
 
-        response = session_client.patch(
-            url, data=json.dumps(update_data), content_type="application/json"
-        )
+        response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["name"] == update_data["name"]
@@ -401,9 +376,7 @@ class TestAutomationEndpoint:
             "scope": "invalid_scope",  # Invalid scope
         }
 
-        response = session_client.patch(
-            url, data=json.dumps(update_data), content_type="application/json"
-        )
+        response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Invalid scope" in str(response.data)
@@ -439,12 +412,8 @@ class TestAutomationEndpoint:
             "name": "Updated Name",  # This should work
         }
 
-        with patch(
-            "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-        ):
-            response = session_client.patch(
-                url, data=json.dumps(update_data), content_type="application/json"
-            )
+        with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
+            response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["name"] == "Updated Name"
@@ -464,13 +433,9 @@ class TestAutomationEndpoint:
         """Test creating automation with empty JSON"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
-        response = session_client.post(
-            url, data=json.dumps({}), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps({}), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -485,13 +450,9 @@ class TestAutomationEndpoint:
         """Test creating automation with malformed JSON"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
-        response = session_client.post(
-            url, data="invalid json", content_type="application/json"
-        )
+        response = session_client.post(url, data="invalid json", content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -506,9 +467,7 @@ class TestAutomationEndpoint:
         """Test creating automation with wrong data types"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         invalid_data = {
             "name": 123,  # Should be string
@@ -518,23 +477,17 @@ class TestAutomationEndpoint:
             "is_enabled": "not_boolean",  # Should be boolean
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     # Permission Tests (minimal)
     @patch("plane.payment.flags.flag_decorator.check_feature_flag")
-    def test_unauthenticated_access(
-        self, mock_feature_flag, api_client, workspace, project
-    ):
+    def test_unauthenticated_access(self, mock_feature_flag, api_client, workspace, project):
         """Test that unauthenticated requests are rejected"""
         mock_feature_flag.return_value = True
 
-        url = reverse(
-            "automations", kwargs={"slug": workspace.slug, "project_id": project.id}
-        )
+        url = reverse("automations", kwargs={"slug": workspace.slug, "project_id": project.id})
 
         response = api_client.get(url)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

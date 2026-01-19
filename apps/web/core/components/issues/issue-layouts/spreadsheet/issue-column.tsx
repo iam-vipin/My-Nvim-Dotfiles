@@ -1,10 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
-// hooks
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // components
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
 import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
@@ -30,6 +40,10 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
 
   if (!Column) return null;
 
+  const handleUpdateIssue = async (issue: TIssue, data: Partial<TIssue>) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, data);
+  };
+
   return (
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
@@ -38,22 +52,12 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
     >
       <td
         tabIndex={0}
-        className="h-11 min-w-36 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100"
+        className="h-11 min-w-36 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-r-[1px] border-subtle"
         ref={tableCellRef}
       >
         <Column
           issue={issueDetail}
-          onChange={(issue: TIssue, data: Partial<TIssue>) =>
-            updateIssue &&
-            updateIssue(issue.project_id, issue.id, data).then(() => {
-              captureSuccess({
-                eventName: WORK_ITEM_TRACKER_EVENTS.update,
-                payload: {
-                  id: issue.id,
-                },
-              });
-            })
-          }
+          onChange={handleUpdateIssue}
           disabled={disableUserActions}
           onClose={() => tableCellRef?.current?.focus()}
         />

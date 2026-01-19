@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -7,9 +20,8 @@ import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-ico
 import type { TProjectTemplateForm } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 // components
+import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
-// plane web components
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 
 export const ProjectDetails = observer(function ProjectDetails() {
@@ -28,15 +40,14 @@ export const ProjectDetails = observer(function ProjectDetails() {
 
   return (
     <>
-      <div className="group relative h-40 w-full rounded-lg bg-custom-background-80">
+      <div className="group relative h-40 w-full rounded-lg bg-layer-1">
         {/* Cover Image */}
-        {coverImage && (
-          <img
-            src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
-            className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
-            alt={t("project_cover_image_alt")}
-          />
-        )}
+        <CoverImage
+          src={coverImage}
+          alt={t("project_cover_image_alt")}
+          className="absolute left-0 top-0 h-full w-full rounded-lg"
+          showDefaultWhenEmpty
+        />
         <div className="absolute bottom-2 right-2">
           <Controller
             name="project.cover_image_url"
@@ -64,7 +75,7 @@ export const ProjectDetails = observer(function ProjectDetails() {
                 className="flex items-center justify-center"
                 buttonClassName="flex items-center justify-center"
                 label={
-                  <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
+                  <span className="grid h-11 w-11 place-items-center rounded-md bg-layer-1">
                     <Logo logo={value} size={20} />
                   </span>
                 }
@@ -123,14 +134,14 @@ export const ProjectDetails = observer(function ProjectDetails() {
               ref={ref}
               hasError={Boolean(errors.project?.name)}
               placeholder={t("templates.settings.form.project.name.placeholder")}
-              className="w-full text-lg font-bold p-0"
+              className="w-full text-h5-bold p-0"
               mode="true-transparent"
               inputSize="md"
             />
           )}
         />
         {errors?.project?.name && typeof errors.project.name.message === "string" && (
-          <span className="text-xs font-medium text-red-500">{errors.project.name.message}</span>
+          <span className="text-caption-sm-medium text-danger-primary">{errors.project.name.message}</span>
         )}
       </div>
 
@@ -147,7 +158,7 @@ export const ProjectDetails = observer(function ProjectDetails() {
               onChange={onChange}
               ref={ref}
               placeholder={t("templates.settings.form.project.template.description.placeholder")}
-              className="w-full text-base min-h-[80px] p-0 resize-none"
+              className="w-full text-body-sm-regular min-h-[80px] p-0 resize-none"
               mode="true-transparent"
               textAreaSize="md"
             />

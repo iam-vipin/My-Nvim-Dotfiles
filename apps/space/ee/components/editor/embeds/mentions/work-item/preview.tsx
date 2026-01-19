@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { StateGroupIcon } from "@plane/propel/icons";
@@ -12,17 +25,17 @@ export const EditorWorkItemMentionPreview = observer(function EditorWorkItemMent
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3 text-custom-text-200">
-        <p className="shrink-0 text-xs font-medium">
+      <div className="flex items-center justify-between gap-3 text-secondary">
+        <p className="shrink-0 text-11 font-medium">
           {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
         </p>
         <div className="shrink-0 flex items-center gap-1">
           <StateGroupIcon stateGroup={workItemDetails.state__group} className="shrink-0 size-3" />
-          <p className="text-xs font-medium">{workItemDetails.state__name}</p>
+          <p className="text-11 font-medium">{workItemDetails.state__name}</p>
         </div>
       </div>
       <div>
-        <h6 className="text-sm">{workItemDetails.name}</h6>
+        <h6 className="text-13">{workItemDetails.name}</h6>
       </div>
     </>
   );

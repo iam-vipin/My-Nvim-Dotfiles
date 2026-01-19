@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import uuid
 
 from django.contrib.auth.hashers import make_password
@@ -309,6 +320,7 @@ class WorkspaceAppInstallation(BaseModel):
             # create bot user and attach
             if not self.app_bot:
                 username = f"{self.workspace.slug}_{self.application.slug}_bot"
+                email = f"{username}@plane.so"
                 # check if any old installation exists with the same app and workspace
                 # it would have been marked as inactive by the uninstall endpoint
                 existing_installation = WorkspaceAppInstallation.all_objects.filter(
@@ -322,25 +334,37 @@ class WorkspaceAppInstallation(BaseModel):
                         existing_installation.app_bot.save()
                     self.app_bot = existing_installation.app_bot
                 else:
-                    # create a new bot user
-                    bot_type = BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
-                    self.app_bot = User.objects.create(
-                        username=username,
-                        display_name=f"{self.application.name} Bot",
-                        first_name=f"{self.application.name}",
-                        last_name="Bot",
-                        is_bot=True,
-                        bot_type=bot_type,
-                        email=f"{username}@plane.so",
-                        password=make_password(uuid.uuid4().hex),
-                        is_password_autoset=True,
-                    )
-                    user_avatar_asset = create_bot_user_avatar_asset(self.application.logo_asset, self.app_bot)
-                    self.app_bot.avatar_asset = user_avatar_asset
-                    self.app_bot.save()
+                    # check if a bot user with this email already exists
+                    # (e.g., from a previous installation that was deleted)
+                    existing_bot = User.objects.filter(email=email, is_bot=True).first()
+                    if existing_bot:
+                        # reuse the existing bot user
+                        if not existing_bot.is_active:
+                            existing_bot.is_active = True
+                            existing_bot.save()
+                        self.app_bot = existing_bot
+                    else:
+                        # create a new bot user
+                        bot_type = BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
+                        self.app_bot = User.objects.create(
+                            username=username,
+                            display_name=f"{self.application.name} Bot",
+                            first_name=f"{self.application.name}",
+                            last_name="Bot",
+                            is_bot=True,
+                            bot_type=bot_type,
+                            email=email,
+                            password=make_password(uuid.uuid4().hex),
+                            is_password_autoset=True,
+                        )
+                        user_avatar_asset = create_bot_user_avatar_asset(self.application.logo_asset, self.app_bot)
+                        self.app_bot.avatar_asset = user_avatar_asset
+                        self.app_bot.save()
 
-                # add this user to the workspace members
-                WorkspaceMember.objects.create(member=self.app_bot, workspace=self.workspace, role=ROLE.MEMBER.value)
+                # add this user to the workspace members (ignore if already exists)
+                WorkspaceMember.objects.get_or_create(
+                    member=self.app_bot, workspace=self.workspace, defaults={"role": ROLE.MEMBER.value}
+                )
 
             if self.status == self.Status.INSTALLED:
                 # add this user as a project member to all the projects in the workspace using bulk_create

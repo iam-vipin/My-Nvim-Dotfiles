@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import Link from "next/link";
 // hooks
@@ -31,11 +44,11 @@ export function IssueCreatorDisplay(props: TIssueUser) {
   return (
     <>
       {customUserName || ["FORMS", "EMAIL"].includes(activity?.source_data?.source) ? (
-        <span className="text-custom-text-100 font-medium">{getUserName()}</span>
+        <span className="text-primary font-medium">{getUserName()}</span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
-          className="hover:underline text-custom-text-100 font-medium"
+          className="hover:underline text-primary font-medium"
         >
           {activity.actor_detail?.display_name}
         </Link>

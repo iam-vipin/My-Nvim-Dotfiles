@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import axios from "axios";
 import type { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
@@ -20,6 +33,7 @@ import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { createReplyCommentModal } from "../../views/comments";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
+import type { PlaneUser } from "@plane/sdk";
 
 const shouldSkipActions = (data: TBlockActionPayload) => {
   const excludedActions = [E_MESSAGE_ACTION_TYPES.CONNECT_ACCOUNT];
@@ -69,6 +83,8 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
         return await handleUpdateWorkItemAction(data, details);
       case ACTIONS.ASSIGN_TO_ME:
         return await handleAssignToMeButtonAction(data, details);
+      case ACTIONS.ASSIGN_TO_ME_WO:
+        return await handleAssignToMeButtonActionForWO(data, details);
       case ACTIONS.CREATE_REPLY_COMMENT:
         return await handleCreateReplyCommentAction(data, details);
       case ACTIONS.LINKBACK_OVERFLOW_ACTIONS:
@@ -578,17 +594,36 @@ async function handleAssignToMeButtonAction(data: TBlockActionPayload, details: 
   const { workspaceConnection, slackService, planeClient } = details;
 
   const user = await slackService.getUserInfo(data.user.id);
-  const issue = data.actions[0].value.split(".");
-  if (issue.length === 2) {
-    const projectId = issue[0];
-    const issueId = issue[1];
+  const identifier = data.actions[0].value.split(".");
+  if (identifier.length === 2) {
+    const projectId = identifier[0];
+    const issueId = identifier[1];
 
-    const planeMembers = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
+    const [issue, planeMembers] = await Promise.all([
+      planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId),
+      planeClient.users.list(workspaceConnection.workspace_slug, projectId),
+    ]);
+
     const member = planeMembers.find((member) => member.email === user?.user.profile.email);
 
     if (member) {
+      const assigneeIds = issue.assignees.map((assignee) => {
+        return typeof assignee === "string" ? assignee : (assignee as PlaneUser).id;
+      });
+
+      if (assigneeIds.includes(member.id)) {
+        await slackService.sendEphemeralMessage(
+          data.user.id,
+          `Work Item already *assigned* to you.`,
+          data.channel.id,
+          data.message?.thread_ts
+        );
+
+        return;
+      }
+
       await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
-        assignees: [member.id],
+        assignees: [...assigneeIds, member.id],
       });
 
       await slackService.sendEphemeralMessage(
@@ -610,6 +645,54 @@ async function handleAssignToMeButtonAction(data: TBlockActionPayload, details: 
           blocks: refreshedLinkback.blocks,
         });
       }
+    }
+  }
+}
+
+async function handleAssignToMeButtonActionForWO(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "button") return;
+
+  const { workspaceConnection, slackService, planeClient } = details;
+
+  const user = await slackService.getUserInfo(data.user.id);
+  const identifier = data.actions[0].value.split(".");
+  if (identifier.length === 2) {
+    const projectId = identifier[0];
+    const issueId = identifier[1];
+
+    const [issue, planeMembers] = await Promise.all([
+      planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId),
+      planeClient.users.list(workspaceConnection.workspace_slug, projectId),
+    ]);
+
+    const member = planeMembers.find((member) => member.email === user?.user.profile.email);
+
+    if (member) {
+      const assigneeIds = issue.assignees.map((assignee) => {
+        return typeof assignee === "string" ? assignee : (assignee as PlaneUser).id;
+      });
+
+      if (assigneeIds.includes(member.id)) {
+        await slackService.sendEphemeralMessage(
+          data.user.id,
+          `Work Item already *assigned* to you.`,
+          data.channel.id,
+          data.message?.thread_ts
+        );
+
+        return;
+      }
+
+      await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+        assignees: [...assigneeIds, member.id],
+      });
+
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        `Work Item successfully *assigned* to you.`,
+        data.channel.id,
+        data.message?.thread_ts
+      );
     }
   }
 }

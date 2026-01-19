@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "プロジェクト",
@@ -303,7 +316,6 @@ export default {
   drafts: "下書き",
   projects: "プロジェクト",
   views: "ビュー",
-  workspace: "ワークスペース",
   archives: "アーカイブ",
   settings: "設定",
   failed_to_move_favorite: "お気に入りの移動に失敗しました",
@@ -1579,6 +1591,7 @@ export default {
         name: "ワークスペース名",
         company_size: "会社の規模",
         url: "ワークスペースURL",
+        workspace_timezone: "ワークスペースのタイムゾーン",
         update_workspace: "ワークスペースを更新",
         delete_workspace: "このワークスペースを削除",
         delete_workspace_description:

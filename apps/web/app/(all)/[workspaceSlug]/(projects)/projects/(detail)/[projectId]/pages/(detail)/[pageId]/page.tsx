@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -38,7 +51,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = params;
   // store hooks
-  const { createPage, fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
+  const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({
     pageId,
     storeType,
@@ -148,32 +161,16 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
       </div>
     );
 
-  if (!isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id)
-    return (
-      <div className="size-full flex flex-col items-center justify-center">
-        <h3 className="text-lg font-semibold text-center">Please upgrade your plan to view this nested page</h3>
-        <p className="text-sm text-custom-text-200 text-center mt-3">
-          Please upgrade your plan to view this nested page
-        </p>
-        <Link
-          href={`/${workspaceSlug}/projects/${projectId}/pages`}
-          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
-        >
-          View other Pages
-        </Link>
-      </div>
-    );
-
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
-      <div className="size-full flex flex-col items-center justify-center">
-        <h3 className="text-lg font-semibold text-center">Page not found</h3>
-        <p className="text-sm text-custom-text-200 text-center mt-3">
+      <div className="h-full w-full flex flex-col items-center justify-center">
+        <h3 className="text-16 font-semibold text-center">Page not found</h3>
+        <p className="text-13 text-secondary text-center mt-3">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/pages`}
-          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+          className={cn(getButtonStyling("secondary", "base"), "mt-5")}
         >
           View other Pages
         </Link>

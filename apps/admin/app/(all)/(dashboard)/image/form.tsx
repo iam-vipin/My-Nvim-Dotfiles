@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -56,7 +69,7 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
               <a
                 href="https://unsplash.com/documentation#creating-a-developer-account"
                 target="_blank"
-                className="text-custom-primary-100 hover:underline"
+                className="text-accent-primary hover:underline"
                 rel="noreferrer"
               >
                 Learn more.
@@ -70,8 +83,8 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
       </div>
 
       <div>
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save changes"}
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+          {isSubmitting ? "Saving" : "Save changes"}
         </Button>
       </div>
     </div>

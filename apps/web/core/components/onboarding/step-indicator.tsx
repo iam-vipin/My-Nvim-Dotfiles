@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 // helpers
 import { cn } from "@plane/utils";
@@ -21,8 +34,8 @@ export function OnboardingStepIndicator({ currentStep, totalSteps }: OnboardingS
         <div
           key={`line-${i}`}
           className={cn("h-1.5 -ml-0.5 w-full", {
-            "bg-green-700": isCompleted,
-            "bg-custom-background-100": !isCompleted,
+            "bg-success-primary": isCompleted,
+            "bg-surface-1": !isCompleted,
             "rounded-l-full": isFirstStep,
             "rounded-r-full": isLastStep || isActive,
             "z-10": isActive,
@@ -36,7 +49,7 @@ export function OnboardingStepIndicator({ currentStep, totalSteps }: OnboardingS
 
   return (
     <div className="flex flex-col justify-center">
-      <div className="text-sm text-custom-text-300 font-medium">
+      <div className="text-13 text-tertiary font-medium">
         {currentStep} of {totalSteps} steps
       </div>
       <div className="flex items-center justify-center my-0.5 mx-1 w-40 lg:w-52">{renderIndicators()}</div>

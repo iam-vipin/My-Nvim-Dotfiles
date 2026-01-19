@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Node, Schema } from "@tiptap/pm/model";
 import { Fragment, Slice } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
@@ -27,6 +40,7 @@ const generalSelectors = [
   ".page-embed-component",
   ".editor-mathematics-component",
   ".editor-drawio-component",
+  ".editor-ai-block-node",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -45,13 +59,13 @@ const createDragHandleElement = (): HTMLElement => {
   dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
   dragHandleElement.classList.value =
-    "hidden sm:flex items-center size-5 aspect-square rounded-sm cursor-grab outline-none hover:bg-custom-background-80 active:bg-custom-background-80 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
+    "hidden sm:flex items-center size-5 aspect-square rounded-xs cursor-grab outline-none hover:bg-layer-1-hover active:bg-layer-1 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
 
   const iconElement1 = document.createElement("span");
-  iconElement1.classList.value = "pointer-events-none text-custom-text-300";
+  iconElement1.classList.value = "pointer-events-none text-tertiary";
   iconElement1.innerHTML = verticalEllipsisIcon;
   const iconElement2 = document.createElement("span");
-  iconElement2.classList.value = "pointer-events-none text-custom-text-300 -ml-2.5";
+  iconElement2.classList.value = "pointer-events-none text-tertiary -ml-2.5";
   iconElement2.innerHTML = verticalEllipsisIcon;
 
   dragHandleElement.appendChild(iconElement1);
@@ -100,6 +114,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
       return elem;
     }
 
+    // Allow first-child paragraphs that are direct children of ProseMirror (document root)
     if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
       return elem;
     }

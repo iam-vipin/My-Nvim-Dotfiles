@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Styles } from "@react-pdf/renderer";
 import { StyleSheet } from "@react-pdf/renderer";
 import type { LucideIcon } from "lucide-react";
@@ -16,6 +29,7 @@ import {
   Heading6,
   Image,
   Italic,
+  List,
   ListOrdered,
   ListTodo,
   Paperclip,
@@ -27,7 +41,7 @@ import {
 // plane imports
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { ListLayoutIcon, MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
+import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 import { convertRemToPixel } from "@plane/utils";
 
 type TEditorTypes = "lite" | "document" | "sticky";
@@ -141,7 +155,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
     name: "Bulleted list",
-    icon: ListLayoutIcon,
+    icon: List,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },

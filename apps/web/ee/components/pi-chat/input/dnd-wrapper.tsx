@@ -1,4 +1,17 @@
-import type { Dispatch, FC, SetStateAction } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import type { Dispatch, SetStateAction } from "react";
 import React, { useCallback, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
@@ -23,6 +36,7 @@ type Props = {
   isProjectLevel: boolean;
   focus: TFocus;
   mode: string;
+  showBg: boolean;
   createNewChat: (focus: TFocus, mode: string, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
   setAttachments: Dispatch<SetStateAction<TPiAttachment[]>>;
   children: (isUploading: boolean, open: () => void) => React.ReactNode;
@@ -40,6 +54,7 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
     focus,
     mode,
     children,
+    showBg,
   } = props;
 
   // state
@@ -71,12 +86,15 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
               if (!res) return;
               setAttachments((prev) => [...prev, res]);
               successCount++;
+              return;
             })
-            .catch((e: any) => {
+            .catch((e: unknown) => {
+              const error = e as { detail?: string };
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: `Failed to upload ${currentFile.name?.slice(0, 20)}...`,
-                message: typeof e?.detail === "string" ? e?.detail : "File could not be attached. Try uploading again.",
+                message:
+                  typeof error?.detail === "string" ? error.detail : "File could not be attached. Try uploading again.",
               });
             });
         }
@@ -103,12 +121,12 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
       }
       return;
     },
-    [chatId, isProjectLevel, workspaceId, focus]
+    [chatId, isProjectLevel, workspaceId, focus, createAttachment, createNewChat, mode, setAttachments]
   );
 
   // useDropzone: noClick true so root div won't open file dialog (button will)
   const { getRootProps, getInputProps, open } = useDropzone({
-    onDrop,
+    onDrop: (acceptedFiles, rejectedFiles) => void onDrop(acceptedFiles, rejectedFiles),
     maxSize: maxFileSize,
     multiple: true,
     disabled: isUploading || disabled || !isFileUploadsEnabled,
@@ -165,26 +183,24 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
           tabIndex: 0,
           "aria-label": "Drop files here to upload",
           className: cn(
-            "relative w-full rounded-t-xl border border-transparent text-sm transition-colors focus:outline-none focus:ring bg-custom-background-100",
+            "relative w-full rounded-t-2xl border border-transparent text-sm transition-colors focus:outline-none",
             {
-              "border-dashed border-custom-primary-100 bg-custom-primary-100/10": isDragging,
+              "border-dashed border-accent-strong bg-accent-primary/10": isDragging,
+              "bg-layer-1": showBg,
             }
           ),
         })}
       >
         <input {...getInputProps()} />
         {isDragging && (
-          <div className="w-full h-full bg-custom-background-100 z-30 absolute top-0 left-0 rounded-xl overflow-hidden">
-            <div className="flex items-center justify-center gap-4 h-full bg-custom-primary-100/10">
+          <div className="w-full h-full bg-layer-1 z-30 absolute top-0 left-0 rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-center gap-4 h-full bg-accent-primary/10">
               {fileIcon}
-              <span className="text-base text-custom-primary-100">Drop any files here to add to chat</span>
+              <span className="text-14 text-accent-primary">Drop any files here to add to chat</span>
             </div>
           </div>
         )}
         {children(isUploading, open)}
-      </div>
-      <div className="text-xs text-custom-text-350 pt-2 text-center bg-custom-background-100">
-        Plane AI can make mistakes, please double-check responses.
       </div>
     </>
   );

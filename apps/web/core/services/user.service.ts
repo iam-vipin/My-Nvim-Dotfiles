@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // services
 import { API_BASE_URL } from "@plane/constants";
 import type {
@@ -245,7 +258,7 @@ export class UserService extends APIService {
   }
 
   async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/invitations/`, { project_ids })
+    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/join/`, { project_ids })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

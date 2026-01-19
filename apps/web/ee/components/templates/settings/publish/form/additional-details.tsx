@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
@@ -16,8 +29,7 @@ import {
 import { TemplateCategoriesDropdown } from "./template-categories-dropdown";
 import { TemplateCoverImageUpload } from "./template-cover-image-upload";
 
-const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
-  "bg-custom-background-100 border-[0.5px] border-custom-border-200 rounded-md px-2 py-1 h-8 w-full";
+const COMMON_DROPDOWN_CONTAINER_CLASSNAME = "bg-surface-1 border border-subtle rounded-md px-2 py-1 h-8 w-full";
 
 export const TemplateAdditionalDetails = observer(function TemplateAdditionalDetails() {
   // plane hooks
@@ -54,7 +66,7 @@ export const TemplateAdditionalDetails = observer(function TemplateAdditionalDet
                 value={value}
                 handleChange={onChange}
                 buttonContainerClassName={cn(COMMON_DROPDOWN_CONTAINER_CLASSNAME, {
-                  "border-red-500": Boolean(errors.categories),
+                  "border-danger-subtle": Boolean(errors.categories),
                 })}
               />
             )}

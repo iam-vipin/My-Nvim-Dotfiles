@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
@@ -46,7 +59,6 @@ import { ProjectTemplateLoader } from "./loader";
 import { ProjectDetails } from "./project-details";
 import { ProjectStates } from "./states";
 import { ProjectWorkItemTypes } from "./work-item-types/root";
-import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 
 export enum EProjectFormOperation {
   CREATE = "create",
@@ -120,6 +132,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
     is_project_updates_enabled: false,
     is_epic_enabled: false,
     is_workflow_enabled: false,
+    is_milestone_enabled: false,
   },
 };
 
@@ -413,7 +426,7 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
               }}
             />
           </div>
-          <div className="border-t border-custom-border-100 size-full">
+          <div className="border-t border-subtle size-full">
             <div className="w-full max-w-4xl py-page-y">
               {/* Project Details Section */}
               <div>
@@ -470,8 +483,7 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
               {/* Form Actions */}
               <div className="flex items-center justify-end gap-2 pt-8">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                   disabled={isSubmitting}
@@ -482,7 +494,6 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
                 <Button
                   variant="primary"
                   type="submit"
-                  size="sm"
                   className={cn("shadow-sm")}
                   loading={isSubmitting}
                   disabled={isSubmitting}

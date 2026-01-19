@@ -1,9 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { IModule, TFilterProperty } from "@plane/types";
 import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
 import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
-import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
+import {
+  createFilterConfig,
+  getMultiSelectConfig,
+  createOperatorConfigEntry,
+  getIsNullOperatorConfigEntry,
+} from "../../../rich-filters";
 
 /**
  * Module filter specific params
@@ -45,7 +63,7 @@ export const getModuleMultiSelectConfig = (params: TCreateModuleFilterParams) =>
 export const getModuleFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateModuleFilterParams> =>
   (params: TCreateModuleFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig({
       id: key,
       label: "Module",
       ...params,
@@ -54,5 +72,6 @@ export const getModuleFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getModuleMultiSelectConfig(updatedParams)
         ),
+        getIsNullOperatorConfigEntry(params),
       ]),
     });

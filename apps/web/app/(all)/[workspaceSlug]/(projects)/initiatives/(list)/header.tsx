@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -55,7 +68,7 @@ export const InitiativesListHeader = observer(function InitiativesListHeader() {
           </Breadcrumbs>
         </Header.LeftItem>
         <Header.RightItem>
-          <div className="hidden gap-3 md:flex">
+          <div className="hidden gap-2 md:flex">
             <LayoutSwitcher
               selectedLayout={activeLayout || DEFAULT_INITIATIVE_LAYOUT}
               onChange={(layout) => updateDisplayFilters(workspaceSlug.toString(), { layout })}
@@ -64,7 +77,11 @@ export const InitiativesListHeader = observer(function InitiativesListHeader() {
             <HeaderFilters workspaceSlug={workspaceSlug.toString()} />
           </div>
           {canUserCreateInitiative ? (
-            <Button onClick={() => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined })} size="sm">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined })}
+            >
               <div className="hidden sm:block">{t("add")}</div> {t("initiatives.label")}
             </Button>
           ) : (

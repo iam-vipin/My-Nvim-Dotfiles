@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import type { FieldPath, FieldValues, PathValue } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
-import { PlusIcon } from "lucide-react";
+
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { Button } from "@plane/propel/button";
 import type {
@@ -231,7 +245,7 @@ export const WorkItemBlueprintListRoot = observer(function WorkItemBlueprintList
         actionElement={({ setIsOpen }) => (
           <div className="flex items-center">
             <Button
-              variant="link-neutral"
+              variant="ghost"
               onClick={(e) => {
                 e.preventDefault();
                 handleCleanup();
@@ -247,7 +261,7 @@ export const WorkItemBlueprintListRoot = observer(function WorkItemBlueprintList
         borderVariant={borderVariant}
       >
         <div className="flex flex-col gap-y-2 pt-2 pb-4">
-          {showEmptyState && <div className="px-5 text-sm text-custom-text-300">{emptyStateDescription}</div>}
+          {showEmptyState && <div className="px-5 text-body-xs-regular text-tertiary">{emptyStateDescription}</div>}
           {!showEmptyState &&
             workItems.map((workItem, index) => (
               <WorkItemBlueprintListItem

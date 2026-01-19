@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import models
 from django.db.models import Q
@@ -78,17 +89,19 @@ class IntakeForm(ProjectBaseModel):
         # Add new fields
         if fields_to_add:
             try:
-                IntakeFormField.objects.bulk_create([
-                    IntakeFormField(
-                        intake_form=self,
-                        work_item_property_id=field_id,
-                        project_id=self.project_id,
-                        workspace_id=self.workspace_id,
-                        created_by_id=user_id or self.created_by_id,
-                        updated_by_id=user_id or self.updated_by_id,
-                    )
-                    for field_id in fields_to_add
-                ])
+                IntakeFormField.objects.bulk_create(
+                    [
+                        IntakeFormField(
+                            intake_form=self,
+                            work_item_property_id=field_id,
+                            project_id=self.project_id,
+                            workspace_id=self.workspace_id,
+                            created_by_id=user_id or self.created_by_id,
+                            updated_by_id=user_id or self.updated_by_id,
+                        )
+                        for field_id in fields_to_add
+                    ]
+                )
             except IntegrityError:
                 raise IntegrityError("Error creating intake form fields")
 

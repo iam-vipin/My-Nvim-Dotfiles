@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from plane.app.serializers import BaseSerializer, ProjectLiteSerializer, IssueSerializer
 
 from .app.issue import IssueLiteSerializer, WorkItemPageSerializer
@@ -37,6 +48,7 @@ from .app.project import (
     ProjectReactionSerializer,
     ProjectFeatureSerializer,
     ProjectActivitySerializer,
+    ProjectMemberActivitySerializer,
 )
 
 from .app.initiative import (
@@ -135,7 +147,7 @@ from .space.page import (
 )
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
-from .space.extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer # noqa: F811
+from .space.extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer  # noqa: F811
 from .space.intake_form import (
     IntakeFormSettingsSerializer,
     IntakeFormFieldSerializer,
@@ -153,11 +165,8 @@ from .app.workspace.entity_connection import WorkspaceEntityConnectionSerializer
 from .app.cycle_schedule import AutomatedCycleSerializer
 
 # api
-from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
-from .api.workspace.credential import WorkspaceCredentialAPISerializer
-from .api.workspace.connection import WorkspaceConnectionAPISerializer
-from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer
-from .api.worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
+
+from .app.workspace.workspace_member import WorkspaceMemberActivitySerializer
 
 # mobile app endpoints serializers
 from .app.mobile import (

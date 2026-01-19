@@ -1,4 +1,17 @@
-import React, { useEffect, useMemo, memo, useRef, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useMemo, memo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
@@ -6,11 +19,10 @@ import { Loader } from "lucide-react";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -62,7 +74,7 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
 
   // Custom hooks
   const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType, pageIds.length === 0);
-  const { isLoading } = useSectionPages(sectionType);
+  const { isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useSectionPages(sectionType);
 
   const sectionDetails = SECTION_DETAILS[sectionType];
   const sectionPages = useMemo(() => new Set(pageIds), [pageIds]);
@@ -112,22 +124,9 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
 
     try {
       const res = await createPage(payload);
-      captureSuccess({
-        eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-        payload: {
-          id: res?.id,
-          state: "SUCCESS",
-        },
-      });
       const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
       router.push(pageId);
     } catch (err: any) {
-      captureError({
-        eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
-        payload: {
-          state: "ERROR",
-        },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -176,7 +175,7 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
     <div
       ref={listSectionRef}
       className={cn("flex flex-col rounded-md transition-colors", {
-        "[&:not(:has(.is-dragging))]:bg-custom-primary-100/20": isDropping,
+        "[&:not(:has(.is-dragging))]:bg-accent-primary/20": isDropping,
       })}
     >
       <Disclosure defaultOpen={defaultOpen}>
@@ -200,8 +199,8 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
             >
               {showLoader ? (
                 <div className="ml-2 mt-2 flex items-center justify-center py-3">
-                  <Loader className="size-4 animate-spin text-custom-text-300" />
-                  <span className="ml-2 text-sm text-custom-text-300">Loading pages...</span>
+                  <Loader className="size-4 animate-spin text-placeholder" />
+                  <span className="ml-2 text-13 text-placeholder">Loading pages...</span>
                 </div>
               ) : (
                 <SectionContent
@@ -209,6 +208,9 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
                   sectionType={sectionType}
                   expandedPageIds={expandedPageIds}
                   setExpandedPageIds={setExpandedPageIds}
+                  hasNextPage={hasNextPage}
+                  isFetchingNextPage={isFetchingNextPage}
+                  fetchNextPage={fetchNextPage}
                 />
               )}
             </Transition>

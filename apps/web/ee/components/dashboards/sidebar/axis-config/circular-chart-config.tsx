@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { Controller, useFormContext } from "react-hook-form";
 // plane ui
 import { CHART_WIDGETS_Y_AXIS_METRICS_LIST, WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
@@ -30,7 +43,7 @@ export function WidgetConfigSidebarCircularChartConfig(props: Props) {
   );
 
   return (
-    <div className="flex-shrink-0 space-y-1 text-sm">
+    <div className="flex-shrink-0 space-y-1 text-13">
       {isPropertySelectEnabled && (
         <Controller
           control={control}

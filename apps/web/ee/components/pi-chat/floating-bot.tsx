@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -46,14 +59,20 @@ const getEntityData = (
   return null;
 };
 
-export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
+type TProps = {
+  isOpen: boolean;
+  sidecarChatId: string | undefined;
+  openPiChatSidecar: (chatId?: string) => void;
+};
+export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TProps) {
+  const { isOpen, sidecarChatId, openPiChatSidecar } = props;
   // query params
   const pathName = usePathname();
   const params = useParams();
   const { workspaceSlug, projectId, workItem, chatId: routeChatId } = params;
   const searchParams = useSearchParams();
   // hooks
-  const { isPiChatDrawerOpen: isOpen, togglePiChatDrawer, initPiChat } = usePiChat();
+  const { initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const entityData = getEntityData(params);
   const contextData = entityData ? useAIAssistant(entityData.entityType, entityData.entityIdentifier) : null;
@@ -64,15 +83,16 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
   const shouldRenderPiChat =
     isPiAllowed(pathName, workspaceSlug?.toString() ?? "") && isPiEnabled && (projectId || workItem);
   useEffect(() => {
-    if (!isPiEnabled || !isSidePanelOpen) return;
+    if (!isPiEnabled || (!isSidePanelOpen && !isOpen)) return;
     // initialize chat
-    if (chatId || routeChatId) initPiChat(chatId?.toString() || routeChatId?.toString());
+    if (chatId || routeChatId || sidecarChatId)
+      initPiChat(chatId?.toString() || routeChatId?.toString() || sidecarChatId?.toString());
     else initPiChat();
     // open side panel
     if (isSidePanelOpen) {
-      togglePiChatDrawer(true);
+      openPiChatSidecar(chatId?.toString());
     }
-  }, [isPiEnabled, isSidePanelOpen]);
+  }, [isPiEnabled, isSidePanelOpen, sidecarChatId]);
 
   if (pathName.includes("pi-chat")) return null;
   if (!isPiEnabled || !shouldRenderPiChat) return <></>;
@@ -82,7 +102,7 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
       <div
         className={cn(
           "transform transition-all duration-300 ease-in-out overflow-x-hidden",
-          "rounded-lg border border-custom-border-200 h-full max-w-[400px]",
+          "rounded-lg border border-subtle-1 h-full max-w-[400px]",
           isOpen ? "translate-x-0 w-[400px] mr-2" : "px-0 translate-x-[100%] w-0 border-none"
         )}
         data-prevent-outside-click

@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Nazwa użytkownika",
+        placeholder: "Wprowadź swoją nazwę użytkownika",
+      },
+    },
+    ldap: {
+      header: {
+        label: "Kontynuuj z {ldapProviderName}",
+        sub_header: "Wprowadź swoje dane logowania {ldapProviderName}",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Pi Czat",
     initiatives: "Inicjatywy",
@@ -710,6 +737,11 @@ export default {
       worklogs: {
         title: "Logi pracy",
       },
+      identity: {
+        title: "Tożsamość",
+        heading: "Tożsamość",
+        description: "Skonfiguruj swoją domenę i włącz logowanie jednokrotne",
+      },
       project_states: {
         title: "Stany projektu",
       },
@@ -910,6 +942,54 @@ export default {
         heading: "Plane AI",
         description:
           "Twoja praca staje się inteligentniejsza i szybsza dzięki AI, która jest natywnie połączona z Twoją pracą i bazą wiedzy.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "Importuj członków z CSV",
+      description: "Prześlij CSV z kolumnami: Email, Display Name, First Name, Last Name, Role (5, 15 lub 20)",
+      dropzone: {
+        active: "Upuść plik CSV tutaj",
+        inactive: "Przeciągnij i upuść lub kliknij, aby przesłać",
+        file_type: "Obsługiwane są tylko pliki .csv",
+      },
+      buttons: {
+        cancel: "Anuluj",
+        import: "Importuj",
+        try_again: "Spróbuj ponownie",
+        close: "Zamknij",
+        done: "Gotowe",
+      },
+      progress: {
+        uploading: "Przesyłanie...",
+        importing: "Importowanie...",
+      },
+      summary: {
+        title: {
+          failed: "Import nie powiódł się",
+          complete: "Import zakończony",
+        },
+        message: {
+          seat_limit: "Nie można zaimportować członków z powodu ograniczeń liczby miejsc.",
+          success: "Pomyślnie dodano {count} członk{plural} do przestrzeni roboczej.",
+          no_imports: "Nie zaimportowano żadnych członków z pliku CSV.",
+        },
+        stats: {
+          successful: "Pomyślne",
+          failed: "Nieudane",
+        },
+        download_errors: "Pobierz błędy",
+      },
+      toast: {
+        invalid_file: {
+          title: "Nieprawidłowy plik",
+          message: "Obsługiwane są tylko pliki CSV.",
+        },
+        import_failed: {
+          title: "Import nie powiódł się",
+          message: "Coś poszło nie tak.",
+        },
       },
     },
   },
@@ -1383,6 +1463,23 @@ export default {
     choose_entity: "Wybierz jednostkę",
     choose_project: "Wybierz projekt",
     link_plane_project: "Połącz projekt Plane",
+    project_issue_sync: "Synchronizacja problemów projektu",
+    project_issue_sync_description: "Synchronizuj problemy z Gitlab do swojego projektu Plane",
+    project_issue_sync_empty_state: "Zmapowana synchronizacja problemów projektu pojawi się tutaj",
+    configure_project_issue_sync_state: "Skonfiguruj stan synchronizacji problemów",
+    select_issue_sync_direction: "Wybierz kierunek synchronizacji problemów",
+    allow_bidirectional_sync:
+      "Dwukierunkowa - Synchronizuj problemy i komentarze w obu kierunkach między Gitlab a Plane",
+    allow_unidirectional_sync: "Jednokierunkowa - Synchronizuj problemy i komentarze tylko z Gitlab do Plane",
+    allow_unidirectional_sync_warning:
+      "Dane z Gitlab Issue zastąpią dane w powiązanym elemencie pracy Plane (tylko Gitlab → Plane)",
+    remove_project_issue_sync: "Usuń tę synchronizację problemów projektu",
+    remove_project_issue_sync_confirmation: "Czy na pewno chcesz usunąć tę synchronizację problemów projektu?",
+    ISSUE_OPEN: "Problem otwarty",
+    ISSUE_CLOSED: "Problem zamknięty",
+    save: "Zapisz",
+    start_sync: "Rozpocznij synchronizację",
+    choose_repository: "Wybierz repozytorium...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3132,6 +3229,222 @@ export default {
         title: "Automatyzacje",
         description: "Automatyzacje to sposób na automatyzację zadań w Twoim projekcie.",
         sub_description: "Odzyskaj 80% czasu administracyjnego, gdy używasz Automatyzacji.",
+      },
+    },
+  },
+  sso: {
+    header: "Tożsamość",
+    description:
+      "Skonfiguruj swoją domenę, aby uzyskać dostęp do funkcji bezpieczeństwa, w tym logowania jednokrotnego.",
+    domain_management: {
+      header: "Zarządzanie domenami",
+      verified_domains: {
+        header: "Zweryfikowane domeny",
+        description: "Zweryfikuj własność domeny e-mail, aby włączyć logowanie jednokrotne.",
+        button_text: "Dodaj domenę",
+        list: {
+          domain_name: "Nazwa domeny",
+          status: "Status",
+          status_verified: "Zweryfikowano",
+          status_failed: "Niepowodzenie",
+          status_pending: "Oczekujące",
+        },
+        add_domain: {
+          title: "Dodaj domenę",
+          description: "Dodaj swoją domenę, aby skonfigurować SSO i ją zweryfikować.",
+          form: {
+            domain_label: "Domena",
+            domain_placeholder: "plane.so",
+            domain_required: "Domena jest wymagana",
+            domain_invalid: "Wprowadź prawidłową nazwę domeny (np. plane.so)",
+          },
+          primary_button_text: "Dodaj domenę",
+          primary_button_loading_text: "Dodawanie",
+          toast: {
+            success_title: "Sukces!",
+            success_message: "Domena została pomyślnie dodana. Proszę zweryfikować ją, dodając rekord DNS TXT.",
+            error_message: "Nie udało się dodać domeny. Spróbuj ponownie.",
+          },
+        },
+        verify_domain: {
+          title: "Zweryfikuj swoją domenę",
+          description: "Wykonaj te kroki, aby zweryfikować swoją domenę.",
+          instructions: {
+            label: "Instrukcje",
+            step_1: "Przejdź do ustawień DNS dla swojego hosta domeny.",
+            step_2: {
+              part_1: "Utwórz",
+              part_2: "rekord TXT",
+              part_3: "i wklej pełną wartość rekordu podaną poniżej.",
+            },
+            step_3: "Ta aktualizacja zwykle trwa kilka minut, ale może zająć do 72 godzin.",
+            step_4: 'Kliknij "Zweryfikuj domenę", aby potwierdzić po zaktualizowaniu rekordu DNS.',
+          },
+          verification_code_label: "Wartość rekordu TXT",
+          verification_code_description: "Dodaj ten rekord do ustawień DNS",
+          domain_label: "Domena",
+          primary_button_text: "Zweryfikuj domenę",
+          primary_button_loading_text: "Weryfikowanie",
+          secondary_button_text: "Zrobię to później",
+          toast: {
+            success_title: "Sukces!",
+            success_message: "Domena została pomyślnie zweryfikowana.",
+            error_message: "Nie udało się zweryfikować domeny. Spróbuj ponownie.",
+          },
+        },
+        delete_domain: {
+          title: "Usuń domenę",
+          description: {
+            prefix: "Czy na pewno chcesz usunąć",
+            suffix: "? Tej akcji nie można cofnąć.",
+          },
+          primary_button_text: "Usuń",
+          primary_button_loading_text: "Usuwanie",
+          secondary_button_text: "Anuluj",
+          toast: {
+            success_title: "Sukces!",
+            success_message: "Domena została pomyślnie usunięta.",
+            error_message: "Nie udało się usunąć domeny. Spróbuj ponownie.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Logowanie jednokrotne",
+      disabled_message: "Dodaj zweryfikowaną domenę, aby skonfigurować SSO",
+      configure: {
+        create: "Skonfiguruj",
+        update: "Edytuj",
+      },
+      switch_alert_modal: {
+        title: "Przełącz metodę SSO na {newProviderShortName}?",
+        content:
+          "Zamierzasz włączyć {newProviderLongName} ({newProviderShortName}). Ta akcja automatycznie wyłączy {activeProviderLongName} ({activeProviderShortName}). Użytkownicy próbujący zalogować się przez {activeProviderShortName} nie będą już mogli uzyskać dostępu do platformy, dopóki nie przełączą się na nową metodę. Czy na pewno chcesz kontynuować?",
+        primary_button_text: "Przełącz",
+        primary_button_text_loading: "Przełączanie",
+        secondary_button_text: "Anuluj",
+      },
+      form_section: {
+        title: "Szczegóły dostarczone przez IdP dla {workspaceName}",
+      },
+      form_action_buttons: {
+        saving: "Zapisywanie",
+        save_changes: "Zapisz zmiany",
+        configure_only: "Tylko konfiguracja",
+        configure_and_enable: "Skonfiguruj i włącz",
+        default: "Zapisz",
+      },
+      setup_details_section: {
+        title: "{workspaceName} szczegóły dostarczone dla Twojego IdP",
+        button_text: "Pobierz szczegóły konfiguracji",
+      },
+      saml: {
+        header: "Włącz SAML",
+        description: "Skonfiguruj swojego dostawcę tożsamości SAML, aby włączyć logowanie jednokrotne.",
+        configure: {
+          title: "Włącz SAML",
+          description:
+            "Zweryfikuj własność domeny e-mail, aby uzyskać dostęp do funkcji bezpieczeństwa, w tym logowania jednokrotnego.",
+          toast: {
+            success_title: "Sukces!",
+            create_success_message: "Dostawca SAML został pomyślnie utworzony.",
+            update_success_message: "Dostawca SAML został pomyślnie zaktualizowany.",
+            error_title: "Błąd!",
+            error_message: "Nie udało się zapisać dostawcy SAML. Spróbuj ponownie.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Szczegóły internetowe",
+            entity_id: {
+              label: "Identyfikator jednostki | Odbiorcy | Informacje o metadanych",
+              description:
+                "Wygenerujemy tę część metadanych, która identyfikuje tę aplikację Plane jako autoryzowaną usługę w Twoim IdP.",
+            },
+            callback_url: {
+              label: "URL logowania jednokrotnego",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania jednokrotnego",
+              description:
+                "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania jednokrotnego Twojego IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Szczegóły mobilne",
+            entity_id: {
+              label: "Identyfikator jednostki | Odbiorcy | Informacje o metadanych",
+              description:
+                "Wygenerujemy tę część metadanych, która identyfikuje tę aplikację Plane jako autoryzowaną usługę w Twoim IdP.",
+            },
+            callback_url: {
+              label: "URL logowania jednokrotnego",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania jednokrotnego",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+            },
+          },
+          mapping_table: {
+            header: "Szczegóły mapowania",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "Włącz OIDC",
+        description: "Skonfiguruj swojego dostawcę tożsamości OIDC, aby włączyć logowanie jednokrotne.",
+        configure: {
+          title: "Włącz OIDC",
+          description:
+            "Zweryfikuj własność domeny e-mail, aby uzyskać dostęp do funkcji bezpieczeństwa, w tym logowania jednokrotnego.",
+          toast: {
+            success_title: "Sukces!",
+            create_success_message: "Dostawca OIDC został pomyślnie utworzony.",
+            update_success_message: "Dostawca OIDC został pomyślnie zaktualizowany.",
+            error_title: "Błąd!",
+            error_message: "Nie udało się zapisać dostawcy OIDC. Spróbuj ponownie.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Szczegóły internetowe",
+            origin_url: {
+              label: "URL źródła",
+              description:
+                "Wygenerujemy to dla tej aplikacji Plane. Dodaj to jako zaufane źródło w odpowiednim polu Twojego IdP.",
+            },
+            callback_url: {
+              label: "URL przekierowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+            },
+          },
+          mobile_details: {
+            header: "Szczegóły mobilne",
+            origin_url: {
+              label: "URL źródła",
+              description:
+                "Wygenerujemy to dla tej aplikacji Plane. Dodaj to jako zaufane źródło w odpowiednim polu Twojego IdP.",
+            },
+            callback_url: {
+              label: "URL przekierowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania logowania Twojego IdP.",
+            },
+            logout_url: {
+              label: "URL wylogowania",
+              description: "Wygenerujemy to dla Ciebie. Dodaj to w polu URL przekierowania wylogowania Twojego IdP.",
+            },
+          },
+        },
       },
     },
   },

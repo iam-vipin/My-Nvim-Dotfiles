@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Rocket, TriangleAlert, CircleAlert } from "lucide-react";
@@ -46,7 +59,7 @@ export const StatusDropdown = observer(function StatusDropdown(props: TStatusDro
             "text-[#CC7700]": status.key === EUpdateStatus.AT_RISK,
           })}
         />
-        <div className="truncate font-medium text-sm capitalize">{status.key.replaceAll("-", " ").toLowerCase()}</div>
+        <div className="truncate font-medium text-13 capitalize">{status.key.replaceAll("-", " ").toLowerCase()}</div>
       </CustomMenu.MenuItem>
     ));
   }
@@ -56,7 +69,7 @@ export const StatusDropdown = observer(function StatusDropdown(props: TStatusDro
   return (
     <CustomMenu
       maxHeight={"md"}
-      className={cn("flex justify-center text-xs text-custom-text-200 w-fit ", className)}
+      className={cn("flex justify-center text-11 text-secondary w-fit ", className)}
       placement="bottom-start"
       customButton={
         <button
@@ -67,7 +80,7 @@ export const StatusDropdown = observer(function StatusDropdown(props: TStatusDro
           })}
         >
           {selectedStatusObj && <selectedStatusObj.icon size={16} className="my-auto" />}
-          <span className="font-medium text-sm my-auto capitalize">
+          <span className="font-medium text-13 my-auto capitalize">
             {" "}
             {selectedStatusObj?.key.replaceAll("-", " ").toLowerCase()}
           </span>

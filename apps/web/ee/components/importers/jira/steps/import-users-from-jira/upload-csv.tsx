@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { Fragment, useState } from "react";
 import Papa from "papaparse";
@@ -29,12 +42,12 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
 
   const fileErrors = {
     processing: {
-      className: "text-custom-text-200",
+      className: "text-secondary",
       icon: <Loader className="flex-shrink-0 w-3.5 h-3.5 spin-in-90" />,
       message: t("file_upload.processing"),
     },
     error: {
-      className: "text-red-500",
+      className: "text-danger-primary",
       icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
       message: t("file_upload.invalid"),
     },
@@ -44,7 +57,7 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
       message: t("file_upload.missing_fields"),
     },
     success: {
-      className: "text-green-500",
+      className: "text-success-primary",
       icon: <CircleCheck className="flex-shrink-0 w-3.5 h-3.5" />,
       message: t("file_upload.success", { fileName: "CSV" }),
     },
@@ -110,7 +123,7 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
   return (
     <Fragment>
       {/* upload/dropzone container */}
-      <div className="relative border border-custom-border-300 border-dashed rounded-sm w-full min-h-28 h-full">
+      <div className="relative border border-subtle-1 border-dashed rounded-sm w-full min-h-28 h-full">
         <Dropzone
           multiple={false}
           accept={acceptFileTypes}
@@ -122,8 +135,8 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
           {({ getRootProps, getInputProps }) => (
             <div
               {...getRootProps()}
-              className={`relative flex flex-col justify-center items-center w-full min-h-28 h-full rounded-sm text-sm outline-none focus:outline-none shadow-none ${
-                file ? "bg-custom-background-90 cursor-not-allowed" : "cursor-pointer"
+              className={`relative flex flex-col justify-center items-center w-full min-h-28 h-full rounded-sm text-13 outline-none focus:outline-none shadow-none ${
+                file ? "bg-layer-1 cursor-not-allowed" : "cursor-pointer"
               }`}
             >
               <input
@@ -131,7 +144,7 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
                 {...getInputProps()}
                 className="outline-none focus:outline-none shadow-none border-none"
               />
-              <div className="text-custom-text-200">{t("file_upload.upload_text")}</div>
+              <div className="text-secondary">{t("file_upload.upload_text")}</div>
               <div className="pt-1 font-medium">
                 {t("common.or")} {t("file_upload.drag_drop_text")}
               </div>
@@ -140,7 +153,7 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
         </Dropzone>
         {file && (
           <div
-            className="absolute top-1 right-1 w-5 h-5 rounded-sm transition-all flex justify-center items-center bg-custom-background-100 hover:bg-custom-background-90 cursor-pointer"
+            className="absolute top-1 right-1 w-5 h-5 rounded-sm transition-all flex justify-center items-center bg-surface-1 hover:bg-layer-1 cursor-pointer"
             onClick={handleClearFile}
           >
             <CloseIcon className="flex-shrink-0 w-3.5 h-3.5" />
@@ -151,7 +164,7 @@ export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader)
       {/* upload successful */}
       {fileErrorType && (
         <div
-          className={cn("relative text-sm font-medium flex items-center gap-2", fileErrors[fileErrorType]?.className)}
+          className={cn("relative text-13 font-medium flex items-center gap-2", fileErrors[fileErrorType]?.className)}
         >
           {fileErrors[fileErrorType]?.icon}
           {fileErrors[fileErrorType]?.message}

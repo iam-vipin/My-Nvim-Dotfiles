@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { ExternalLink, Pencil } from "lucide-react";
+import { NewTabIcon, EditIcon } from "@plane/propel/icons";
 // ui
 import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { Input } from "@plane/ui";
@@ -37,10 +50,10 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
   };
 
   const commonClassNames = cn(
-    "w-full px-2 resize-none text-sm bg-custom-background-100 rounded border-0",
+    "w-full px-2 resize-none text-body-xs-regular bg-surface-1 rounded-sm border-0",
     {
       "border-[0.5px]": variant === "create",
-      "border-[1px] bg-custom-background-90": variant === "update",
+      "border-[1px] bg-layer-1": variant === "update",
       "cursor-not-allowed": isDisabled,
     },
     className
@@ -58,10 +71,10 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
     return (
       <button
         type="button"
-        className={cn("group flex items-center justify-between gap-4 px-2 py-1.5 rounded outline-none", {
+        className={cn("group flex items-center justify-between gap-4 px-2 py-1.5 rounded-sm outline-none", {
           "cursor-not-allowed": isDisabled,
-          "hover:bg-custom-background-80": !isDisabled,
-          "bg-custom-background-80": isEditing,
+          "hover:bg-layer-1": !isDisabled,
+          "bg-layer-1": isEditing,
         })}
         onClick={() => !isDisabled && setIsEditing(true)}
         disabled={isDisabled}
@@ -69,9 +82,9 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
         {urlComponents ? (
           <TruncatedUrl url={urlComponents} />
         ) : data?.[0] ? (
-          <span className="text-sm text-custom-text-500">{data?.[0]}</span>
+          <span className="text-body-xs-regular text-tertiary">{data?.[0]}</span>
         ) : (
-          <span className="text-sm text-custom-text-400">Add URL</span>
+          <span className="text-body-xs-regular text-placeholder">Add URL</span>
         )}
         {!isEditing && (
           <div className="flex items-center gap-1 group-hover:opacity-100">
@@ -80,15 +93,15 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
                 href={urlComponents.full.toString()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 rounded bg-custom-background-80 hover:bg-custom-background-100"
+                className="flex-shrink-0 rounded-sm bg-layer-1 hover:bg-surface-1"
                 onClick={(e) => e.stopPropagation()}
               >
-                <ExternalLink className="h-2.5 w-2.5 flex-shrink-0" />
+                <NewTabIcon className="h-2.5 w-2.5 flex-shrink-0" />
               </a>
             )}
 
-            <button className="p-1 flex-shrink-0  text-custom-text-400">
-              <Pencil className="h-2.5 w-2.5 flex-shrink-0" />
+            <button className="p-1 flex-shrink-0  text-placeholder">
+              <EditIcon className="h-2.5 w-2.5 flex-shrink-0" />
             </button>
           </div>
         )}
@@ -123,7 +136,7 @@ export const UrlValueInput = observer(function UrlValueInput(props: TUrlValueInp
         }}
       />
       {Boolean(error) && (
-        <span className="text-xs font-medium text-red-500">
+        <span className="text-caption-md-medium text-danger-primary">
           {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
         </span>
       )}

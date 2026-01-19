@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
@@ -23,8 +36,8 @@ export const IntakeFeatureChildren = observer(function IntakeFeatureChildren({
 
   return (
     <>
-      <h4 className="mt-4 mb-2 text-sm font-medium text-custom-text-300">Intake sources</h4>
-      <div className="px-4 rounded border transition-all border-custom-border-200 bg-custom-background-90">
+      <h4 className="mt-4 mb-2 text-13 font-medium text-tertiary">Intake sources</h4>
+      <div className="px-4 rounded-sm border transition-all border-subtle-1 bg-layer-1">
         {isEmailEnabled || isFormEnabled ? (
           <IntakeSubFeatures projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />
         ) : (

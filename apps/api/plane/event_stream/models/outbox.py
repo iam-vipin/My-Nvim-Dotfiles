@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python
 from uuid import uuid4, UUID
 from dataclasses import dataclass, asdict
@@ -47,9 +58,7 @@ class Outbox(models.Model):
     project_id = models.UUIDField()
 
     # The user ID that the event belongs to
-    initiator_id = models.UUIDField(
-        help_text="The user ID who triggered the event", null=True, blank=True
-    )
+    initiator_id = models.UUIDField(help_text="The user ID who triggered the event", null=True, blank=True)
 
     # The type of initiator that triggered the event
     initiator_type = models.CharField(max_length=255, default=InitiatorTypes.USER)
@@ -73,9 +82,7 @@ class Outbox(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return (
-            f"Outbox<{self.event_type}:{self.entity_type}:{self.entity_id}> {self.id}"
-        )
+        return f"Outbox<{self.event_type}:{self.entity_type}:{self.entity_id}> {self.id}"
 
 
 @dataclass
@@ -219,9 +226,7 @@ class OutboxEvent:
                 return obj.isoformat()
             elif isinstance(obj, UUID):
                 return str(obj)
-            raise TypeError(
-                f"Object of type {type(obj).__name__} is not JSON serializable"
-            )
+            raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
 
         return json.dumps(self.to_dict(), default=json_serializer)
 
@@ -239,11 +244,7 @@ class OutboxEvent:
             "event_type": self.event_type,
             "entity_type": self.entity_type,
             "entity_id": str(self.entity_id),
-            "created_at": (
-                self.created_at.isoformat()
-                if isinstance(self.created_at, datetime)
-                else self.created_at
-            ),
+            "created_at": (self.created_at.isoformat() if isinstance(self.created_at, datetime) else self.created_at),
             "workspace_id": str(self.workspace_id),
             "project_id": str(self.project_id),
             "initiator_id": str(self.initiator_id),

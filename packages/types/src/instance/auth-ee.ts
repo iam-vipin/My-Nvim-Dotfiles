@@ -1,4 +1,19 @@
-export type TInstanceEnterpriseAuthenticationMethodKeys = "IS_OIDC_ENABLED" | "IS_SAML_ENABLED";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+export type TExtendedInstanceAuthenticationModeKeys = "oidc" | "saml" | "ldap";
+
+export type TInstanceEnterpriseAuthenticationMethodKeys = "IS_OIDC_ENABLED" | "IS_SAML_ENABLED" | "IS_LDAP_ENABLED";
 
 export type TInstanceOIDCAuthenticationConfigurationKeys =
   | "OIDC_CLIENT_ID"
@@ -16,11 +31,22 @@ export type TInstanceSAMLAuthenticationConfigurationKeys =
   | "SAML_LOGOUT_URL"
   | "SAML_CERTIFICATE"
   | "SAML_PROVIDER_NAME"
-  | "ENABLE_SAML_IDP_SYNC";
+  | "ENABLE_SAML_IDP_SYNC"
+  | "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT";
+
+export type TInstanceLDAPAuthenticationConfigurationKeys =
+  | "LDAP_SERVER_URI"
+  | "LDAP_BIND_DN"
+  | "LDAP_BIND_PASSWORD"
+  | "LDAP_USER_SEARCH_BASE"
+  | "LDAP_USER_SEARCH_FILTER"
+  | "LDAP_USER_ATTRIBUTES"
+  | "LDAP_PROVIDER_NAME";
 
 export type TInstanceEnterpriseAuthenticationConfigurationKeys =
   | TInstanceOIDCAuthenticationConfigurationKeys
-  | TInstanceSAMLAuthenticationConfigurationKeys;
+  | TInstanceSAMLAuthenticationConfigurationKeys
+  | TInstanceLDAPAuthenticationConfigurationKeys;
 
 export type TInstanceEnterpriseAuthenticationKeys =
   | TInstanceEnterpriseAuthenticationMethodKeys

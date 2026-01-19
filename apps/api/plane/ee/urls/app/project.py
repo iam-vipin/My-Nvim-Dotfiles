@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.urls import path
 
@@ -12,6 +23,7 @@ from plane.ee.views.app.project import (
     ProjectAttachmentV2Endpoint,
     ProjectReactionViewSet,
     ProjectActivityEndpoint,
+    ProjectMemberActivityEndpoint,
     ProjectTemplateUseEndpoint,
 )
 
@@ -23,9 +35,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/links/<uuid:pk>/",
-        ProjectLinkViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-links",
     ),
     path(
@@ -35,16 +45,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/",
-        ProjectUpdatesViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectUpdatesViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-updates",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/comments/",
-        ProjectUpdatesViewSet.as_view(
-            {"get": "comments_list", "post": "comments_create"}
-        ),
+        ProjectUpdatesViewSet.as_view({"get": "comments_list", "post": "comments_create"}),
         name="project-updates-comments",
     ),
     path(
@@ -88,6 +94,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/history/",
         ProjectActivityEndpoint.as_view(),
         name="project-activity",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/history/",
+        ProjectMemberActivityEndpoint.as_view(),
+        name="project-member-activity",
     ),
     # project attributes
     path(

@@ -1,12 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
-// helpers
-import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -29,19 +39,13 @@ export const DeleteAutomationModal = observer(function DeleteAutomationModal(pro
   const { t } = useTranslation();
 
   const handleCloseWithTracking = () => {
-    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.DELETE_MODAL_CANCEL_BUTTON });
     handleClose();
   };
 
   const handleSubmit = async () => {
-    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.DELETE_MODAL_CONFIRM_BUTTON });
     try {
       setLoader(true);
       await handleDelete();
-      captureSuccess({
-        eventName: AUTOMATION_TRACKER_EVENTS.DELETE,
-        payload: { id: automationId },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("automations.toasts.delete.success.title"),
@@ -51,11 +55,6 @@ export const DeleteAutomationModal = observer(function DeleteAutomationModal(pro
       });
       handleClose();
     } catch (error: any) {
-      captureError({
-        eventName: AUTOMATION_TRACKER_EVENTS.DELETE,
-        error: error?.message || "Delete failed",
-        payload: { id: automationId },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.delete.error.title"),
@@ -76,7 +75,7 @@ export const DeleteAutomationModal = observer(function DeleteAutomationModal(pro
       content={
         <>
           Are you sure you want to delete automation{' "'}
-          <span className="break-words font-medium text-custom-text-100">{automationDetails?.name}</span>
+          <span className="break-words font-medium text-primary">{automationDetails?.name}</span>
           {'"'}? All of the data related to the automation will be permanently removed. This action cannot be undone.
         </>
       }

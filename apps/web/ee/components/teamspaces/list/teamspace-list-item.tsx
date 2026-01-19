@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -41,11 +54,11 @@ export const TeamspaceListItem = observer(function TeamspaceListItem(props: Team
       title={teamspace.name}
       itemLink={`/${workspaceSlug?.toString()}/teamspaces/${teamspace.id}`}
       prependTitleElement={
-        <div className="flex flex-shrink-0 size-8 items-center justify-center rounded-md bg-custom-background-90">
+        <div className="flex flex-shrink-0 size-8 items-center justify-center rounded-md bg-layer-1">
           {teamspace.logo_props?.in_use ? (
             <Logo logo={teamspace.logo_props} size={16} />
           ) : (
-            <TeamsIcon className="size-4 text-custom-text-300" />
+            <TeamsIcon className="size-4 text-tertiary" />
           )}
         </div>
       }

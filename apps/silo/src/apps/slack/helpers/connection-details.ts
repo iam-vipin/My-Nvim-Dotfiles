@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { createSlackService } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import type { PlaneWebhookPayload } from "@plane/sdk";
@@ -278,24 +291,36 @@ const getSlackConnectionServices = async (
   };
 };
 
-export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload, planeUserId: string | null) => {
+export const getConnectionDetailsForIssue = async (
+  payload: PlaneWebhookPayload,
+  planeUserId: string | null,
+  requireEntityConnection: boolean = true
+) => {
   const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: payload.workspace,
     project_id: payload.project,
     issue_id: payload.id,
   });
 
-  if (!entityConnection) {
+  if (!entityConnection && requireEntityConnection) {
     logger.info(`[SLACK] Entity connection not found for issue ${payload.id}`);
     return;
   }
 
-  const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
-    entityConnection.workspace_connection_id
-  );
+  const workspaceConnectionId = entityConnection?.workspace_connection_id;
+
+  // If no entity connection, try to get workspace connection from workspace_id
+  const workspaceConnection = workspaceConnectionId
+    ? await apiClient.workspaceConnection.getWorkspaceConnection(workspaceConnectionId)
+    : await integrationConnectionHelper.getWorkspaceConnection({
+        workspace_id: payload.workspace,
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+      });
 
   if (!workspaceConnection) {
-    logger.info(`[SLACK] Workspace connection not found for entity connection ${entityConnection.id}`);
+    logger.info(
+      `[SLACK] Workspace connection not found ${entityConnection ? `for entity connection ${entityConnection.id}` : `for workspace ${payload.workspace}`}`
+    );
     return;
   }
 
@@ -307,13 +332,15 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
   );
 
   if (!services) {
-    logger.info(`[SLACK] Services not found for entity connection ${entityConnection.id}`);
+    logger.info(
+      `[SLACK] Services not found ${entityConnection ? `for entity connection ${entityConnection.id}` : `for workspace ${payload.workspace}`}`
+    );
     return;
   }
 
   return {
     workspaceConnection,
-    entityConnection,
+    entityConnection: entityConnection || undefined,
     ...services,
   };
 };

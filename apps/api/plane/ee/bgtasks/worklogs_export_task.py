@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import csv
 import io
@@ -140,9 +151,7 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
 def generate_table_row(worklog):
     return [
         worklog["project__name"],
-        (
-            f"{worklog['project__identifier']} {worklog['issue__sequence_id']} {worklog['issue__name']}"
-        ),
+        (f"{worklog['project__identifier']} {worklog['issue__sequence_id']} {worklog['issue__name']}"),
         (
             f"{worklog['logged_by__first_name']} {worklog['logged_by__last_name']}"
             if worklog["logged_by__first_name"] and worklog["logged_by__last_name"]

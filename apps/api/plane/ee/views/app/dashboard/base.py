@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models import Q, Exists
 from django.db.models import OuterRef, Subquery
@@ -122,15 +133,11 @@ class DashboardQuickFilterEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, dashboard_id, pk=None):
         if pk:
-            quick_filters = DashboardQuickFilter.objects.get(
-                workspace__slug=slug, dashboard_id=dashboard_id, pk=pk
-            )
+            quick_filters = DashboardQuickFilter.objects.get(workspace__slug=slug, dashboard_id=dashboard_id, pk=pk)
             serializer = DashboardQuickFilterSerializer(quick_filters)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        quick_filters = DashboardQuickFilter.objects.filter(
-            workspace__slug=slug, dashboard_id=dashboard_id
-        )
+        quick_filters = DashboardQuickFilter.objects.filter(workspace__slug=slug, dashboard_id=dashboard_id)
         serializer = DashboardQuickFilterSerializer(quick_filters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -147,9 +154,7 @@ class DashboardQuickFilterEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug, dashboard_id, pk):
-        quick_filter = DashboardQuickFilter.objects.get(
-            workspace__slug=slug, dashboard_id=dashboard_id, pk=pk
-        )
+        quick_filter = DashboardQuickFilter.objects.get(workspace__slug=slug, dashboard_id=dashboard_id, pk=pk)
         serializer = DashboardQuickFilterSerializer(quick_filter, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -159,8 +164,6 @@ class DashboardQuickFilterEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def delete(self, request, slug, dashboard_id, pk):
-        quick_filter = DashboardQuickFilter.objects.get(
-            workspace__slug=slug, dashboard_id=dashboard_id, pk=pk
-        )
+        quick_filter = DashboardQuickFilter.objects.get(workspace__slug=slug, dashboard_id=dashboard_id, pk=pk)
         quick_filter.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

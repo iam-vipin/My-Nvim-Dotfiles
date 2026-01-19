@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { CircularProgressIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -31,14 +44,19 @@ export function ImagePreview(props: Props) {
     });
   }
   useEffect(() => {
-    getScaledWidthFromSrc(attachment.attachment_url, 58).then((w) => setScaledWidth(w));
+    getScaledWidthFromSrc(attachment.attachment_url, 58)
+      .then((w) => {
+        setScaledWidth(w);
+        return;
+      })
+      .catch(() => setScaledWidth(58));
   }, [attachment.attachment_url]);
   return (
     attachment && (
       <div className="relative flex gap-3 items-center group rounded-lg group/upload-component">
         {isLoading && (
           <div
-            className="animate-pulse bg-custom-background-80 rounded-md flex items-center justify-center"
+            className="animate-pulse bg-layer-1 rounded-md flex items-center justify-center"
             style={{ width: scaledWidth ?? 58, height: 58 }}
           >
             <CircularProgressIndicator size={20} strokeWidth={3} percentage={displayStatus ?? 0} />
@@ -50,7 +68,7 @@ export function ImagePreview(props: Props) {
           width={58}
           height={58}
           className={cn(
-            "rounded-lg border-2 border-custom-border-200 w-auto h-[58px] transition-all duration-500 ease-in-out opacity-100",
+            "rounded-lg border-1 border-subtle-1 w-auto h-[58px] transition-all duration-500 ease-in-out opacity-100",
             {
               hidden: isLoading,
               "blur-sm opacity-80 loading-image": isLoading,

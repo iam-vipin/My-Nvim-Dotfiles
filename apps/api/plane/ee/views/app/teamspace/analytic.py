@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from datetime import timedelta
 
@@ -35,22 +46,20 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
         team_page_count = TeamspacePage.objects.filter(
             team_space_id=team_space_id, page__access=0, page__archived_at__isnull=True
         ).count()
-        team_view_count = TeamspaceView.objects.filter(
-            team_space_id=team_space_id, view__access=1
-        ).count()
+        team_view_count = TeamspaceView.objects.filter(team_space_id=team_space_id, view__access=1).count()
 
         # Get linked entities count
         project_ids = TeamspaceProject.objects.filter(
             team_space_id=team_space_id, project__archived_at__isnull=True
         ).values_list("project_id", flat=True)
 
-        team_member_ids = TeamspaceMember.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
+        team_member_ids = TeamspaceMember.objects.filter(team_space_id=team_space_id).values_list(
+            "member_id", flat=True
+        )
 
-        issue_ids = IssueAssignee.objects.filter(
-            workspace__slug=slug, assignee_id__in=team_member_ids
-        ).values_list("issue_id", flat=True)
+        issue_ids = IssueAssignee.objects.filter(workspace__slug=slug, assignee_id__in=team_member_ids).values_list(
+            "issue_id", flat=True
+        )
 
         issue_count = Issue.issue_objects.filter(
             id__in=issue_ids,
@@ -127,13 +136,9 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
-        project_ids = TeamspaceProject.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("project_id", flat=True)
+        project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)
 
-        issues = Issue.issue_objects.filter(
-            project_id__in=project_ids, workspace__slug=slug
-        )
+        issues = Issue.issue_objects.filter(project_id__in=project_ids, workspace__slug=slug)
 
         x_axis = request.GET.get("x_axis", "target_date")
         y_axis = request.GET.get("y_axis", "issues")
@@ -146,27 +151,20 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
         }
 
         if x_axis not in X_AXIS_MAP:
-            return Response(
-                {"error": "Invalid x-axis"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid x-axis"}, status=status.HTTP_400_BAD_REQUEST)
 
         start_of_week, end_of_week = self.get_date_range()
 
         if x_axis == "target_date":
-            issues = issues.filter(
-                target_date__gte=start_of_week, target_date__lte=end_of_week
-            )
+            issues = issues.filter(target_date__gte=start_of_week, target_date__lte=end_of_week)
         if x_axis == "start_date":
-            issues = issues.filter(
-                start_date__gte=start_of_week, start_date__lte=end_of_week
-            )
+            issues = issues.filter(start_date__gte=start_of_week, start_date__lte=end_of_week)
 
         issues_data = issues.values(X_AXIS_MAP[x_axis]).annotate(
             overdue=Count(
                 Case(
                     When(
-                        Q(state__group__in=["backlog", "unstarted", "started"])
-                        & Q(target_date__lt=timezone.now()),
+                        Q(state__group__in=["backlog", "unstarted", "started"]) & Q(target_date__lt=timezone.now()),
                         then=1,
                     ),
                     output_field=IntegerField(),
@@ -175,18 +173,13 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
             pending=Count(
                 Case(
                     When(
-                        Q(state__group__in=["backlog", "started", "unstarted"])
-                        & Q(target_date__gte=timezone.now()),
+                        Q(state__group__in=["backlog", "started", "unstarted"]) & Q(target_date__gte=timezone.now()),
                         then=1,
                     ),
                     output_field=IntegerField(),
                 )
             ),
-            completed=Count(
-                Case(
-                    When(state__group="completed", then=1), output_field=IntegerField()
-                )
-            ),
+            completed=Count(Case(When(state__group="completed", then=1), output_field=IntegerField())),
         )
 
         if x_axis in ["target_date", "start_date"]:
@@ -201,19 +194,13 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
 
 class TeamspaceProgressSummaryEndpoint(TeamspaceBaseEndpoint):
     def get(self, request, slug, team_space_id):
-        project_ids = TeamspaceProject.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("project_id", flat=True)
+        project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)
 
-        issues = Issue.issue_objects.filter(
-            project_id__in=project_ids, workspace__slug=slug
-        )
+        issues = Issue.issue_objects.filter(project_id__in=project_ids, workspace__slug=slug)
 
         # Get the count of completed, pending, backlog, cancelled issues
         completed_issues = issues.filter(state__group="completed").count()
-        pending_issues = issues.filter(
-            state__group__in=["backlog", "unstarted", "started"]
-        ).count()
+        pending_issues = issues.filter(state__group__in=["backlog", "unstarted", "started"]).count()
 
         # Get the count of overdue issues
         overdue_issues = issues.filter(
@@ -276,9 +263,7 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
 
         related_blocking_issue_ids = [item["issue_id"] for item in related_issues_map]
 
-        related_issues = Issue.issue_objects.filter(
-            id__in=related_blocking_issue_ids
-        ).values(
+        related_issues = Issue.issue_objects.filter(id__in=related_blocking_issue_ids).values(
             "id",
             "name",
             "state__group",
@@ -292,18 +277,14 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
         for issue in blocking_issues:
             # Get all the related issues
             related_issue_ids = [
-                item["issue_id"]
-                for item in related_issues_map
-                if item["related_issue_id"] == issue["id"]
+                item["issue_id"] for item in related_issues_map if item["related_issue_id"] == issue["id"]
             ]
             # Attach the related issues to the blocking issue
-            issue["related_issues"] = [
-                item for item in related_issues if item["id"] in related_issue_ids
-            ]
+            issue["related_issues"] = [item for item in related_issues if item["id"] in related_issue_ids]
             # Attach the related issue assignee ids to the blocking issue
-            issue["related_assignee_ids"] = IssueAssignee.objects.filter(
-                issue_id__in=related_issue_ids
-            ).values_list("assignee_id", flat=True)
+            issue["related_assignee_ids"] = IssueAssignee.objects.filter(issue_id__in=related_issue_ids).values_list(
+                "assignee_id", flat=True
+            )
 
         return blocking_issues
 
@@ -338,13 +319,9 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
             relation_type="blocked_by", issue_id__in=blocked_by_issue_ids
         ).values("related_issue_id", "issue_id")
 
-        related_blocked_by_issue_ids = [
-            item["related_issue_id"] for item in related_issues_map
-        ]
+        related_blocked_by_issue_ids = [item["related_issue_id"] for item in related_issues_map]
 
-        related_issues = Issue.issue_objects.filter(
-            id__in=related_blocked_by_issue_ids
-        ).values(
+        related_issues = Issue.issue_objects.filter(id__in=related_blocked_by_issue_ids).values(
             "id",
             "name",
             "state__group",
@@ -358,31 +335,25 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
         for issue in blocked_by_issues:
             # Get all the related issues
             related_issue_ids = [
-                item["related_issue_id"]
-                for item in related_issues_map
-                if item["issue_id"] == issue["id"]
+                item["related_issue_id"] for item in related_issues_map if item["issue_id"] == issue["id"]
             ]
             # Attach the related issues to the blocked by issues
-            issue["related_issues"] = [
-                item for item in related_issues if item["id"] in related_issue_ids
-            ]
+            issue["related_issues"] = [item for item in related_issues if item["id"] in related_issue_ids]
             # Attach the related issue assignee ids to the blocked by issue
-            issue["related_assignee_ids"] = IssueAssignee.objects.filter(
-                issue_id__in=related_issue_ids
-            ).values_list("assignee_id", flat=True)
+            issue["related_assignee_ids"] = IssueAssignee.objects.filter(issue_id__in=related_issue_ids).values_list(
+                "assignee_id", flat=True
+            )
 
         return blocked_by_issues
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         # Get all the project ids
-        project_ids = TeamspaceProject.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("project_id", flat=True)
+        project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)
         # Get all team member ids
-        team_member_ids = TeamspaceMember.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
+        team_member_ids = TeamspaceMember.objects.filter(team_space_id=team_space_id).values_list(
+            "member_id", flat=True
+        )
 
         # Get the issues assigned to the user
         assigned_issue_ids = IssueAssignee.objects.filter(
@@ -398,12 +369,8 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
             assignee_id__in=team_member_ids,
         ).values_list("issue_id", flat=True)
 
-        blocking_issues = self.get_blocking_issues(
-            team_member_issue_ids, assigned_issue_ids
-        )
-        blocked_by_issues = self.get_blocked_by_issues(
-            team_member_issue_ids, assigned_issue_ids
-        )
+        blocking_issues = self.get_blocking_issues(team_member_issue_ids, assigned_issue_ids)
+        blocked_by_issues = self.get_blocked_by_issues(team_member_issue_ids, assigned_issue_ids)
 
         return Response(
             {
@@ -429,15 +396,13 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
         issues_queryset = issues_queryset.filter(**filters)
 
         # Get all team member ids
-        team_member_ids = TeamspaceMember.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
+        team_member_ids = TeamspaceMember.objects.filter(team_space_id=team_space_id).values_list(
+            "member_id", flat=True
+        )
 
         # Generate issue filter
         issue_filter = {
-            "id__in": IssueAssignee.objects.filter(
-                assignee_id__in=team_member_ids
-            ).values_list("issue_id", flat=True)
+            "id__in": IssueAssignee.objects.filter(assignee_id__in=team_member_ids).values_list("issue_id", flat=True)
         }
 
         issue_map = (
@@ -451,9 +416,9 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
 
     def member_tree(self, team_space_id, project_ids, filters):
         # Get all team member ids
-        team_member_ids = TeamspaceMember.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
+        team_member_ids = TeamspaceMember.objects.filter(team_space_id=team_space_id).values_list(
+            "member_id", flat=True
+        )
 
         issue_ids = Issue.issue_objects.filter(project_id__in=project_ids)
 
@@ -485,9 +450,7 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         # Get all the project ids
-        project_ids = TeamspaceProject.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("project_id", flat=True)
+        project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)
 
         # Get the tab
         data_key = request.GET.get("data_key", "projects")

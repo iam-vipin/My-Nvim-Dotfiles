@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import os
 from urllib.parse import urlencode
@@ -16,7 +27,7 @@ from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.utils.encoding import DjangoUnicodeDecodeError, smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views import View
+from django.core.cache import cache
 
 # Module imports
 from plane.bgtasks.forgot_password_task import forgot_password
@@ -28,7 +39,8 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.authentication.rate_limit import AuthenticationLimitedThrottle
+from plane.authentication.rate_limit import RateLimitedView
 
 
 def generate_password_token(user):
@@ -41,7 +53,9 @@ def generate_password_token(user):
 class ForgotPasswordSpaceEndpoint(APIView):
     permission_classes = [AllowAny]
 
-    throttle_classes = [AuthenticationThrottle]
+    throttle_classes = [
+        AuthenticationLimitedThrottle,
+    ]
 
     def post(self, request):
         email = request.data.get("email")
@@ -88,11 +102,19 @@ class ForgotPasswordSpaceEndpoint(APIView):
         # Get the user
         user = User.objects.filter(email=email).first()
         if user:
+            if cache.get(f"forgot_password_token_{user.id}"):
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
+                    error_message="RATE_LIMIT_EXCEEDED",
+                )
+                return Response(exc.get_error_dict(), status=status.HTTP_429_TOO_MANY_REQUESTS)
+
             # Get the reset token for user
             uidb64, token = generate_password_token(user=user)
             current_site = base_host(request=request, is_space=True)
             # send the forgot password email
             forgot_password.delay(user.first_name, user.email, uidb64, token, current_site)
+            cache.set(f"forgot_password_token_{user.id}", True, timeout=60 * 1)
             return Response(
                 {"message": "Check your email to reset your password"},
                 status=status.HTTP_200_OK,
@@ -104,7 +126,7 @@ class ForgotPasswordSpaceEndpoint(APIView):
         return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
 
-class ResetPasswordSpaceEndpoint(View):
+class ResetPasswordSpaceEndpoint(RateLimitedView):
     def post(self, request, uidb64, token):
         try:
             # Decode the id from the uidb64
@@ -128,17 +150,19 @@ class ResetPasswordSpaceEndpoint(View):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
+                params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
                 return HttpResponseRedirect(url)
 
             # Check the password complexity
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                    error_message="INVALID_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
+                params = {**exc.get_error_dict(), "uidb64": uidb64, "token": token}
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
                 return HttpResponseRedirect(url)
 
             # set_password also hashes the password that the user will get

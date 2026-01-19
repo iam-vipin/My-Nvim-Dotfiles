@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 import os
@@ -18,7 +29,6 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.db.models import Q, OuterRef, Exists, Subquery
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 
 # Module imports
 from plane.db.models import (
@@ -26,13 +36,13 @@ from plane.db.models import (
     Page,
     PageLog,
     Issue,
-    WorkspaceMember,
     ProjectPage,
     User,
 )
 from plane.ee.models import PageUser
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.url import normalize_url_path
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.ee.utils.page_descendants import get_descendant_page_ids
 
@@ -158,6 +168,10 @@ class StreamingZipFile:
     def add_file(self, archive_path, content=None, s3_key=None):
         """Add a file to the ZIP with memory-efficient processing"""
         if content is not None:
+            # Handle surrogate characters that can't be encoded in UTF-8
+            # These can appear from improperly decoded emoji or special characters
+            if isinstance(content, str):
+                content = content.encode("utf-8", errors="surrogatepass").decode("utf-8", errors="replace")
             # Add text/markdown content directly
             self.zipf.writestr(archive_path, content)
         elif s3_key is not None:
@@ -235,7 +249,7 @@ def send_export_email(email, presigned_url, filename, rows=None):
             "expiry_days": 7,
         },
     )
-    text_content = strip_tags(html_content)
+    text_content = generate_plain_text_from_html(html_content)
 
     (
         EMAIL_HOST,

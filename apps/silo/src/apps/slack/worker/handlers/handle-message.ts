@@ -1,9 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { PageResource, SlackEventPayload, UnfurlBlock, UnfurlMap } from "@plane/etl/slack";
 import { PageSubType } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import type { ExPage } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
-import { getProjectPageUrl, getPublishedPageUrl, getWorkspacePageUrl } from "@/helpers/urls";
+import {
+  getProfileConnectionPageUrl,
+  getProjectPageUrl,
+  getPublishedPageUrl,
+  getWorkspacePageUrl,
+} from "@/helpers/urls";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { getSlackContentParser } from "../../helpers/content-parser";
@@ -13,11 +31,15 @@ import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../
 import slackConnectionService from "../../services/connection.service";
 import type { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
-import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
 import { createPageLinkback } from "../../views/page-linkback";
 import { createProjectLinkback } from "../../views/project-linkback";
 import { handleAppMentionEvent } from "./message-handlers/app-mention";
+import { getIssueWorkObjectService } from "../../services/workobjects/issues";
+import type { TWorkObjectView } from "../../types/workobjects";
+import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+import { createSlackLinkback } from "../../views/issue-linkback";
 
 const apiClient = getAPIClient();
 
@@ -35,6 +57,9 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
         break;
       case "app_mention":
         await handleAppMentionEvent(data);
+        break;
+      case "entity_details_requested":
+        await handleEntityDetailsRequestedEvent(data);
         break;
       default:
         break;
@@ -60,6 +85,84 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
     await slackService.sendEphemeralMessage(data.event.user, errorMessage, data.event.channel, data.event.event_ts);
 
     if (!isPermissionError) {
+      throw error;
+    }
+  }
+};
+
+export const handleEntityDetailsRequestedEvent = async (data: SlackEventPayload) => {
+  if (data.event.type !== "entity_details_requested")
+    throw new Error(`Assertion Failed, expected "entity_details_requested" event, received ${data.event.type}`);
+  const teamId = data.team_id;
+  const userId = data.event.user;
+
+  const details = await getConnectionDetails(teamId, {
+    id: userId,
+  });
+
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
+    return;
+  }
+
+  const { slackService, missingUserCredentials } = details;
+
+  if (missingUserCredentials) {
+    // If we are missing user credentials, we'll show the user unauthenticated, and ask to connect account first
+    const authUrl = getProfileConnectionPageUrl(
+      details.workspaceConnection.workspace_slug,
+      details.workspaceConnection.workspace_id
+    );
+
+    const response: unknown = await slackService.entityPresentDetails(data.event.trigger_id, {
+      userAuthRequired: true,
+      userAuthUrl: authUrl,
+    });
+
+    logger.info("Missing user credentials for presenting user details", response);
+    return;
+  }
+
+  const workItemUrl = data.event.link.url;
+
+  // Extract issue identifier from URL (e.g., "HEYTHERE-1" from URL with or without trailing slash)
+  const urlParts = workItemUrl.replace(/\/$/, "").split("/");
+  const issueIdentifier = urlParts[urlParts.length - 1];
+
+  // Split issue identifier into project identifier and sequence (e.g., "HEYTHERE-1" -> "HEYTHERE" and 1)
+  const dashIndex = issueIdentifier.lastIndexOf("-");
+  const projectIdentifier = issueIdentifier.substring(0, dashIndex);
+  const issueSequence = parseInt(issueIdentifier.substring(dashIndex + 1), 10);
+
+  try {
+    const issueWorkObjectService = getIssueWorkObjectService("DETAILED", teamId, userId);
+    const workObject = await issueWorkObjectService.getWorkObject({
+      strategy: "sequence",
+      projectIdentifier: projectIdentifier,
+      issueSequence: issueSequence,
+    });
+
+    logger.info("Presented Work Object", workObject);
+
+    const response: unknown = await slackService.entityPresentDetails(data.event.trigger_id, {
+      metadata: workObject,
+    });
+
+    logger.info("Detailed Presented to Slack", response);
+  } catch (error: any) {
+    const errorString = error?.detail || error?.error;
+
+    if (errorString && typeof errorString === "string") {
+      const response: unknown = await slackService.entityPresentDetails(data.event.trigger_id, {
+        error: {
+          custom_title: "Woops, an error occured",
+          custom_message: errorString,
+          status: "custom",
+        },
+      });
+
+      logger.error("Error response posted", response, error);
+    } else {
       throw error;
     }
   }
@@ -97,6 +200,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
     const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const parser = getSlackContentParser({
+      slackService,
       userMap,
       teamDomain: workspaceConnection.connection_slug ?? "",
     });
@@ -109,7 +213,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
     let parsedDescription = await parser.toPlaneHtml(richText ?? "<p></p>");
 
     // Add a simple line in the bottom of the comment, mentioneding `Commented from Slack
-    parsedDescription = `<div>${parsedDescription}<div class="py-4 border-custom-border-400" data-type="horizontalRule"></div><span data-text-color="gray">Synced from Slack</span></div>`;
+    parsedDescription = `<div>${parsedDescription}<div class="py-4 border-strong-1" data-type="horizontalRule"></div><span data-text-color="gray">Synced from Slack</span></div>`;
 
     await planeClient.issueComment.create(
       workspaceConnection.workspace_slug,
@@ -130,6 +234,8 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
     const details = await getConnectionDetails(data.team_id, {
       id: data.event.user,
     });
+
+    const userId = data.event.user;
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
       return;
@@ -140,6 +246,7 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
     const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const unfurlMap: UnfurlMap = {};
+    const metadataEntities: TWorkObjectView[] = [];
 
     await Promise.all(
       data.event.links.map(async (link) => {
@@ -149,33 +256,65 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
         if (resource.type === "issue") {
           if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
 
-          const issue = await planeClient.issue.getIssueByIdentifierWithFields(
-            workspaceConnection.workspace_slug,
-            resource.projectIdentifier,
-            Number(resource.issueKey),
-            ["state", "project", "assignees", "labels", "type", "created_by", "updated_by"],
-            true
-          );
+          let workObjectEnabled = false;
 
-          const enhancedUserMap = await enhanceUserMapWithSlackLookup({
-            planeUsers: issue.assignees,
-            currentUserMap: userMap,
-            slackService,
-          });
+          try {
+            const featureFlagService = await getPlaneFeatureFlagService();
+            const planeUserId = userMap.get(userId);
 
-          const hideActions = issue.type?.is_epic ?? false;
+            const featureFlagResponse = await featureFlagService.featureFlags({
+              workspace_slug: workspaceConnection.workspace_slug,
+              user_id: planeUserId ?? "",
+              // @ts-expect-error we will need to check the feature key
+              flag_key: E_FEATURE_FLAGS.SLACK_WORK_OBJECTS,
+            });
 
-          const linkBack = createSlackLinkback(
-            workspaceConnection.workspace_slug,
-            issue,
-            enhancedUserMap,
-            false,
-            hideActions,
-            true
-          );
-          unfurlMap[link.url] = {
-            blocks: linkBack.blocks,
-          };
+            workObjectEnabled = featureFlagResponse || false;
+          } catch (error) {
+            logger.error("Work Object feature flag error", error);
+          }
+
+          if (workObjectEnabled) {
+            /* ----------------- Work Object Creation --------------------- */
+            const issueWorkObjectService = getIssueWorkObjectService("MINIMAL", data.team_id, userId);
+            const workObject = await issueWorkObjectService.getWorkObject({
+              strategy: "sequence",
+              projectIdentifier: resource.projectIdentifier,
+              issueSequence: Number(resource.issueKey),
+              appUnfurlUrl: link.url,
+            });
+
+            // Push the work object inside the metadata entity
+            metadataEntities.push(workObject);
+          } else {
+            const issue = await planeClient.issue.getIssueByIdentifierWithFields(
+              workspaceConnection.workspace_slug,
+              resource.projectIdentifier,
+              Number(resource.issueKey),
+              ["state", "project", "assignees", "labels", "type", "created_by", "updated_by"],
+              true
+            );
+
+            const enhancedUserMap = await enhanceUserMapWithSlackLookup({
+              planeUsers: issue.assignees,
+              currentUserMap: userMap,
+              slackService,
+            });
+
+            const hideActions = issue.type?.is_epic ?? false;
+
+            const linkBack = createSlackLinkback(
+              workspaceConnection.workspace_slug,
+              issue,
+              enhancedUserMap,
+              false,
+              hideActions,
+              true
+            );
+            unfurlMap[link.url] = {
+              blocks: linkBack.blocks,
+            };
+          }
         } else if (resource.type === "page") {
           const linkBack = await getPageLinkback(resource, details);
           if (!linkBack) return;
@@ -223,8 +362,19 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
       })
     );
 
-    if (Object.keys(unfurlMap).length > 0) {
-      const unfurlResponse = await slackService.unfurlLink(data.event.channel, data.event.message_ts, unfurlMap);
+    if (Object.keys(unfurlMap).length > 0 || metadataEntities.length > 0) {
+      const unfurlResponse: unknown = await slackService.unfurlLink(
+        data.event.channel,
+        data.event.message_ts,
+        unfurlMap,
+        {
+          /*
+        Note: here we are typecasting as, when we are creating work object, it provides us with app_unfurl_url as optional
+        as we can use work object for sending notifications as well, there `app_unfurl_url` need not be present.
+        */
+          entities: metadataEntities as { app_unfurl_url: string }[],
+        }
+      );
       logger.info(`[SLACK] Unfurl response`, { unfurlResponse });
     }
   }

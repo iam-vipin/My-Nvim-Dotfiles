@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -11,11 +24,11 @@ import type {
 } from "@plane/types";
 import { Loader, Row } from "@plane/ui";
 // components
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { cn } from "@plane/utils";
 // assets
 import activeCycleDark from "@/app/assets/empty-state/cycle/active-dark.webp?url";
 import activeCycleLight from "@/app/assets/empty-state/cycle/active-light.webp?url";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -85,17 +98,18 @@ const ActiveCycleDetail = observer(function ActiveCycleDetail(props: ActiveCycle
 
   if (!activeCycle)
     return (
-      <DetailedEmptyState
+      <EmptyStateDetailed
+        assetKey="cycle"
         title={t("project_cycles.empty_state.active.title")}
         description={t("project_cycles.empty_state.active.description")}
-        assetPath={activeCycleResolvedPath}
+        rootClassName="py-10 h-auto"
       />
     );
 
   return (
     <div ref={ref} className="flex flex-col">
       <Row
-        className={cn(`flex bg-custom-background-100 justify-between !pr-0 flex-col space-y-10`, {
+        className={cn(`flex bg-surface-1 justify-between !pr-0 flex-col space-y-10`, {
           "md:flex-row-reverse space-y-0": containerWidth > 890,
         })}
       >

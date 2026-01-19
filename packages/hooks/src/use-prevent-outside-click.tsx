@@ -26,11 +26,15 @@ export const usePreventOutsideClick = (
       }
       // check for the closest element with attribute name data-prevent-outside-click
       const preventOutsideClickElement = clickedElement?.closest("[data-prevent-outside-click]");
-      // if the closest element with attribute name data-prevent-outside-click is found, return
+      // if the closest element with attribute name data-prevent-outside-click is found
       if (preventOutsideClickElement) {
-        return;
+        // Only prevent the callback if the ref is NOT inside the same prevent-outside-click container.
+        // This allows normal outside click detection for elements within the same container
+        if (!preventOutsideClickElement.contains(ref.current)) {
+          return;
+        }
       }
-      // pass the linkElementto the callback
+      // pass the linkElement to the callback
       callback(linkElement);
     }
   };

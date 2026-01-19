@@ -1,3 +1,4 @@
+import type { Editor } from "@tiptap/core";
 import {
   ALargeSmall,
   CaseSensitive,
@@ -113,7 +114,7 @@ const fuzzySearch = (query: string, text: string): { match: boolean; score: numb
 
 export const getSlashCommandFilteredSections =
   (args: TExtensionProps) =>
-  ({ query }: { query: string }): TSlashCommandSection[] => {
+  ({ query, editor }: { query: string; editor: Editor }): TSlashCommandSection[] => {
     const { additionalOptions: externalAdditionalOptions, disabledExtensions, flaggedExtensions } = args;
     const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
       {
@@ -278,14 +279,7 @@ export const getSlashCommandFilteredSections =
             title: "Default",
             description: "Change text color",
             searchTerms: ["color", "text", "default"],
-            icon: (
-              <ALargeSmall
-                className="size-3.5"
-                style={{
-                  color: "rgba(var(--color-text-100))",
-                }}
-              />
-            ),
+            icon: <ALargeSmall className="size-3.5 text-primary" />,
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },
           ...COLORS_LIST.map(
@@ -324,8 +318,8 @@ export const getSlashCommandFilteredSections =
             icon: <ALargeSmall className="size-3.5" />,
             iconContainerStyle: {
               borderRadius: "4px",
-              backgroundColor: "rgba(var(--color-background-100))",
-              border: "1px solid rgba(var(--color-border-300))",
+              backgroundColor: "var(--background-color-surface-1)",
+              border: "1px solid var(--border-color-strong)",
             },
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },
@@ -386,6 +380,8 @@ export const getSlashCommandFilteredSections =
     const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => {
       // Get items with fuzzy search scores
       const scoredItems = section.items
+        // Filter out items that should not be shown based on editor state
+        .filter((item) => !item.shouldShow || item.shouldShow(editor))
         .map((item) => {
           if (!query) return { item, score: 0, match: true };
 

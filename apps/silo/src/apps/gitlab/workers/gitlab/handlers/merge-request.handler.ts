@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { GitlabMergeRequestEvent } from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
 import type { TGitlabWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
@@ -53,8 +66,14 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     };
 
     let baseUrl: string | undefined;
+    let clientId: string | undefined;
+    let clientSecret: string | undefined;
+
     if (data.isEnterprise) {
-      baseUrl = (workspaceConnection as TGitlabWorkspaceConnection).connection_data?.appConfig?.baseUrl;
+      const appConfig = (workspaceConnection as TGitlabWorkspaceConnection).connection_data?.appConfig;
+      baseUrl = appConfig?.baseUrl;
+      clientId = appConfig?.clientId;
+      clientSecret = appConfig?.clientSecret;
     }
 
     const gitlabService = new GitlabIntegrationService(
@@ -62,7 +81,9 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
       credentials.source_refresh_token!,
       refreshTokenCallback,
       baseUrl,
-      data.project.id.toString()
+      data.project.id.toString(),
+      clientId,
+      clientSecret
     );
 
     const pullRequestBehaviour = new PullRequestBehaviour(

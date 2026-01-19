@@ -14,7 +14,7 @@ export function BlockMathErrorState({ errorMessage, onClick, isEditable }: TBloc
 
   return (
     <BlockMathContainer onClick={onClick} variant="error" isEditable={isEditable}>
-      <div className="block-equation-inner text-red-400 text-sm">{latexMessage}</div>
+      <div className="block-equation-inner text-danger-primary text-13">{latexMessage}</div>
     </BlockMathContainer>
   );
 }

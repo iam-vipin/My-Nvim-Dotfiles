@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type {
   DropTargetRecord,
@@ -8,19 +21,13 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import Masonry from "react-masonry-component";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact, EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
-// assets
-import darkStickiesAsset from "@/app/assets/empty-state/stickies/stickies-dark.webp?url";
-import lightStickiesAsset from "@/app/assets/empty-state/stickies/stickies-light.webp?url";
-import darkStickiesSearchAsset from "@/app/assets/empty-state/stickies/stickies-search-dark.webp?url";
-import lightStickiesSearchAsset from "@/app/assets/empty-state/stickies/stickies-search-light.webp?url";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -62,8 +69,6 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     EUserPermissionsLevel.WORKSPACE
   );
-  const stickiesResolvedPath = resolvedTheme === "light" ? lightStickiesAsset : darkStickiesAsset;
-  const stickiesSearchResolvedPath = resolvedTheme === "light" ? lightStickiesSearchAsset : darkStickiesSearchAsset;
   const masonryRef = useRef<any>(null);
 
   const handleLayout = () => {
@@ -111,25 +116,35 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
         {isStickiesPage || searchQuery ? (
           <>
             {searchQuery ? (
-              <SimpleEmptyState
-                title={t("stickies.empty_state.search.title")}
-                description={t("stickies.empty_state.search.description")}
-                assetPath={stickiesSearchResolvedPath}
+              <EmptyStateCompact
+                title={t("common_empty_state.search.title")}
+                description={t("common_empty_state.search.description")}
+                assetKey="search"
+                assetClassName="size-20"
+                align="center"
               />
             ) : (
-              <DetailedEmptyState
-                title={t("stickies.empty_state.general.title")}
-                description={t("stickies.empty_state.general.description")}
-                assetPath={stickiesResolvedPath}
-                primaryButton={{
-                  prependIcon: <Plus className="size-4" />,
-                  text: t("stickies.empty_state.general.primary_button.text"),
-                  onClick: () => {
-                    toggleShowNewSticky(true);
-                    stickyOperations.create();
+              <EmptyStateDetailed
+                title={t("workspace_empty_state.stickies.title")}
+                description={t("workspace_empty_state.stickies.description")}
+                assetKey="stickies"
+                actions={[
+                  {
+                    label: t("workspace_empty_state.stickies.cta_primary"),
+                    onClick: () => {
+                      toggleShowNewSticky(true);
+                      stickyOperations.create();
+                    },
+                    disabled: !hasGuestLevelPermissions,
                   },
-                  disabled: !hasGuestLevelPermissions,
-                }}
+                  {
+                    label: t("workspace_empty_state.stickies.cta_secondary"),
+                    variant: "secondary",
+                    onClick: () => {
+                      window.open("https://docs.plane.so/core-concepts/stickies", "_blank");
+                    },
+                  },
+                ]}
               />
             )}
           </>

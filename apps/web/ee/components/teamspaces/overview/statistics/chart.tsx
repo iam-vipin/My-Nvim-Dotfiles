@@ -1,8 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TreeMapChart } from "@plane/propel/charts/tree-map";
@@ -12,7 +24,6 @@ import type { TreeMapItem } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
@@ -75,7 +86,7 @@ export const TeamspaceStatisticsMap = observer(function TeamspaceStatisticsMap(p
                 name={user.display_name}
                 src={getFileURL(user.avatar_url)}
                 size={16}
-                className="text-xs"
+                className="text-caption-xs-medium"
                 showTooltip={false}
               />
             </span>
@@ -162,27 +173,8 @@ export const TeamspaceStatisticsMap = observer(function TeamspaceStatisticsMap(p
     }));
   }, [teamspaceStatistics, getDataIcon, getDataName, getFillDetail]);
 
-  const handleClearStatisticsFilter = () => {
-    captureClick({
-      elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.EMPTY_STATE_CLEAR_STATISTICS_FILTERS_BUTTON,
-    });
-    clearTeamspaceStatisticsFilter(workspaceSlug?.toString(), teamspaceId)
-      .then(() => {
-        captureSuccess({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_CLEARED,
-          payload: {
-            id: teamspaceId,
-          },
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_CLEARED,
-          payload: {
-            id: teamspaceId,
-          },
-        });
-      });
+  const handleClearStatisticsFilter = async () => {
+    await clearTeamspaceStatisticsFilter(workspaceSlug?.toString(), teamspaceId);
   };
 
   return (
@@ -195,11 +187,11 @@ export const TeamspaceStatisticsMap = observer(function TeamspaceStatisticsMap(p
         <SectionEmptyState
           heading={t("teamspace_analytics.empty_state.stats.filter.title")}
           subHeading={t("teamspace_analytics.empty_state.stats.filter.description")}
-          icon={<TreeMapIcon className="size-6 text-custom-text-400" />}
+          icon={<TreeMapIcon className="size-6 text-placeholder" />}
           actionElement={
             <Button
-              variant="link-primary"
-              size="md"
+              variant="link"
+              size="lg"
               className="bg-transparent"
               disabled={isUpdating}
               onClick={handleClearStatisticsFilter}

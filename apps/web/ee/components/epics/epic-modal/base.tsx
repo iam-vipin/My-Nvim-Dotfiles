@@ -1,8 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
@@ -11,7 +23,6 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { CreateIssueToastActionItems } from "@/components/issues/create-issue-toast-action-items";
 import type { IssuesModalProps } from "@/components/issues/issue-modal/modal";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user";
@@ -144,12 +155,6 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
           />
         ),
       });
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: {
-          id: response.id,
-        },
-      });
       setDescription("<p></p>");
       return response;
     } catch (error) {
@@ -157,9 +162,6 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Epic could not be created. Please try again.",
-      });
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.create,
       });
       throw error;
     }
@@ -190,12 +192,6 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
         });
       }
 
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: {
-          id: data.id,
-        },
-      });
       handleClose();
     } catch (error) {
       console.error(error);
@@ -206,12 +202,6 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
           message: "Epic could not be updated. Please try again.",
         });
       }
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: {
-          id: data.id,
-        },
-      });
     }
   };
 
@@ -226,7 +216,9 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
       if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload);
       else {
-        if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
+        if (isConversionOperation) {
+          await handleConvert(workspaceSlug.toString(), data);
+        }
         response = await handleUpdateIssue(payload, !isConversionOperation);
       }
     } catch (error) {

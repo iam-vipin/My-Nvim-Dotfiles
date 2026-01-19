@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { cn } from "@plane/utils";
@@ -8,6 +21,7 @@ import { EpicDetail } from "./epic";
 import { Header } from "./header";
 import { ModuleDetail } from "./module";
 import { PageDetail } from "./page";
+import { ProjectDetail } from "./project";
 import { TemplateDetail } from "./template";
 import { WorkItemDetail } from "./work-item";
 
@@ -30,6 +44,8 @@ const DetailCardRenderer = observer(function DetailCardRenderer(props: {
       return <ModuleDetail {...props} />;
     case "cycle":
       return <CycleDetail {...props} />;
+    case "project":
+      return <ProjectDetail {...props} />;
     default:
       return <TemplateDetail {...props} />;
   }
@@ -52,22 +68,22 @@ export const PiChatArtifactsRoot = observer(function PiChatArtifactsRoot() {
     <div
       className={cn(
         "transform transition-all duration-300 ease-in-out overflow-x-hidden",
-        "rounded-lg border border-custom-border-200 h-full max-w-[900px]",
+        "rounded-lg border border-subtle-1 h-full max-w-[900px]",
         artifactId
           ? "translate-x-0 absolute top-0 right-0 w-auto lg:relative lg:w-[900px]  mr-2 z-30"
           : "px-0 translate-x-[100%] w-0 border-none"
       )}
     >
       <div
-        className={cn("flex flex-col h-full rounded-lg bg-custom-background-90", {
-          "bg-custom-background-100": artifactsData.artifact_type === "page",
+        className={cn("flex flex-col h-full rounded-lg bg-layer-2", {
+          "bg-surface-1": artifactsData.artifact_type === "page",
         })}
       >
         {/* Header */}
         <Header artifact={artifactsData} />
         <div
           className={cn("flex-1 flex justify-center items-center px-4 h-full overflow-y-scroll relative", {
-            "bg-custom-background-100 justify-start": artifactsData.artifact_type === "page",
+            "bg-surface-1 justify-start": artifactsData.artifact_type === "page",
           })}
         >
           <DetailCardRenderer

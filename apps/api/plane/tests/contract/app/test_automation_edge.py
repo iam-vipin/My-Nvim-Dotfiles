@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 import json
 import uuid
@@ -18,6 +29,7 @@ from plane.ee.models import (
 from plane.db.models import ProjectMember
 from plane.app.permissions import ROLE
 from plane.ee.models import AutomationScopeChoices
+
 
 @pytest.fixture
 def automation_edge_data():
@@ -61,9 +73,7 @@ def create_automation_version(db, workspace, project, create_user):
 
 
 @pytest.fixture
-def create_automation_nodes(
-    db, create_automation_version, workspace, project, create_user
-):
+def create_automation_nodes(db, create_automation_version, workspace, project, create_user):
     """Create and return automation nodes for edge testing"""
     automation, version = create_automation_version
 
@@ -97,9 +107,7 @@ def create_automation_nodes(
 
 
 @pytest.fixture
-def create_automation_edge(
-    db, create_automation_nodes, workspace, project, create_user
-):
+def create_automation_edge(db, create_automation_nodes, workspace, project, create_user):
     """Create and return an automation edge instance"""
     source_node, target_node, automation, version = create_automation_nodes
 
@@ -269,9 +277,7 @@ class TestAutomationEdgeEndpoint:
             },
         )
 
-        response = session_client.post(
-            url, data=json.dumps(edge_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(edge_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_201_CREATED
         assert str(response.data["source_node"]) == str(source_node.id)
@@ -313,9 +319,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": 1,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(incomplete_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(incomplete_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "source_node" in response.data
@@ -350,9 +354,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": 1,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "source_node" in response.data
@@ -387,9 +389,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": 1,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(self_loop_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(self_loop_data), content_type="application/json")
 
         # Should fail due to database constraint
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -424,9 +424,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": 2,  # Different execution order but same nodes
         }
 
-        response = session_client.post(
-            url, data=json.dumps(duplicate_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(duplicate_data), content_type="application/json")
 
         # Should fail due to unique constraint
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -479,12 +477,8 @@ class TestAutomationEdgeEndpoint:
                 "execution_order": execution_order,
             }
 
-            with patch(
-                "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-            ):
-                response = session_client.post(
-                    url, data=json.dumps(valid_data), content_type="application/json"
-                )
+            with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
+                response = session_client.post(url, data=json.dumps(valid_data), content_type="application/json")
 
             assert response.status_code == status.HTTP_201_CREATED
             assert response.data["execution_order"] == execution_order
@@ -520,9 +514,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": 5,
         }
 
-        response = session_client.patch(
-            url, data=json.dumps(update_data), content_type="application/json"
-        )
+        response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["execution_order"] == update_data["execution_order"]
@@ -560,12 +552,8 @@ class TestAutomationEdgeEndpoint:
             "execution_order": 10,  # This should work
         }
 
-        with patch(
-            "plane.ee.bgtasks.automation_activity_task.automation_activity.delay"
-        ):
-            response = session_client.patch(
-                url, data=json.dumps(update_data), content_type="application/json"
-            )
+        with patch("plane.ee.bgtasks.automation_activity_task.automation_activity.delay"):
+            response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["execution_order"] == 10
@@ -659,9 +647,7 @@ class TestAutomationEdgeEndpoint:
             },
         )
 
-        response = session_client.post(
-            url, data=json.dumps({}), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps({}), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -688,9 +674,7 @@ class TestAutomationEdgeEndpoint:
             },
         )
 
-        response = session_client.post(
-            url, data="invalid json", content_type="application/json"
-        )
+        response = session_client.post(url, data="invalid json", content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -723,9 +707,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": "not_integer",  # Should be integer
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -758,9 +740,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": -1,  # Negative execution order
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -795,9 +775,7 @@ class TestAutomationEdgeEndpoint:
             },
         )
 
-        response = session_client.post(
-            url, data=json.dumps(edge_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(edge_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -827,9 +805,7 @@ class TestAutomationEdgeEndpoint:
 
         update_data = {"execution_order": 5}
 
-        response = session_client.patch(
-            url, data=json.dumps(update_data), content_type="application/json"
-        )
+        response = session_client.patch(url, data=json.dumps(update_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -943,9 +919,7 @@ class TestAutomationEdgeEndpoint:
             "execution_order": 1,
         }
 
-        response = session_client.post(
-            url, data=json.dumps(invalid_data), content_type="application/json"
-        )
+        response = session_client.post(url, data=json.dumps(invalid_data), content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "target_node" in response.data

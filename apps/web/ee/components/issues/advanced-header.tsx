@@ -1,12 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Circle, ExternalLink } from "lucide-react";
+import { Circle } from "lucide-react";
+import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -63,7 +76,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
                 <BreadcrumbLink
                   label="Work items"
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                  icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -83,20 +96,20 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         {currentProjectDetails?.anchor ? (
           <a
             href={publishedURL}
-            className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+            className="group flex items-center gap-1.5 rounded-sm bg-accent-primary/10 px-2.5 py-1 text-11 font-medium text-accent-primary"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+            <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("common.access.public")}
-            <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+            <NewTabIcon className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
         ) : (
           <></>
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <div className="hidden gap-3 md:flex">
+        <div className="hidden gap-2 md:flex md:items-center">
           <HeaderFilters
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}
@@ -106,11 +119,11 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         </div>
         {canUserCreateIssue ? (
           <Button
+            size="lg"
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
-            size="sm"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>

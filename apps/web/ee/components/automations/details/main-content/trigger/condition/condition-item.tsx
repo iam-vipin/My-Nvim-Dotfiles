@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -44,14 +57,14 @@ export const AutomationDetailsMainContentTriggerConditionItem = observer(
     if (!isFilterEnabled) return null;
 
     return (
-      <div className="flex items-center gap-2 flex-wrap text-xs text-custom-text-300">
+      <div className="flex items-center gap-2 flex-wrap text-11 text-tertiary">
         {config.icon && (
           <span className="shrink-0 transition-transform duration-200 ease-in-out">
             <config.icon className="size-3.5" />
           </span>
         )}
         <span className="shrink-0 truncate font-medium">{config.label}</span>
-        <span className="shrink-0 font-mono p-0.5 bg-custom-background-80 uppercase rounded-sm font-medium">
+        <span className="shrink-0 font-mono p-0.5 bg-layer-1 uppercase rounded-sm font-medium">
           {config.getLabelForOperator(selectedOperatorOption)}
         </span>
         {/* TODO: Handle date values */}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useMemo } from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
@@ -17,37 +30,37 @@ export function MobilePasswordStrengthMeter(props: TMobilePasswordStrengthMeter)
     switch (strength) {
       case E_PASSWORD_STRENGTH.EMPTY: {
         return {
-          bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-layer-1`, `bg-layer-1`, `bg-layer-1`],
           text: `Please enter your password`,
-          textColor: `text-custom-text-100`,
+          textColor: `text-primary`,
         };
       }
       case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID: {
         return {
-          bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-danger-primary`, `bg-layer-1`, `bg-layer-1`],
           text: `Password length should me more than 8 characters`,
-          textColor: `text-red-500`,
+          textColor: `text-danger-primary`,
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID: {
         return {
-          bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-danger-primary`, `bg-layer-1`, `bg-layer-1`],
           text: `Password is weak`,
-          textColor: `text-red-500`,
+          textColor: `text-danger-primary`,
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_VALID: {
         return {
-          bars: [`bg-green-500`, `bg-green-500`, `bg-green-500`],
+          bars: [`bg-success-primary`, `bg-success-primary`, `bg-success-primary`],
           text: `Password is strong`,
-          textColor: `text-green-500`,
+          textColor: `text-success-primary`,
         };
       }
       default: {
         return {
-          bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
+          bars: [`bg-layer-1`, `bg-layer-1`, `bg-layer-1`],
           text: `Please enter your password`,
-          textColor: `text-custom-text-100`,
+          textColor: `text-primary`,
         };
       }
     }
@@ -64,9 +77,7 @@ export function MobilePasswordStrengthMeter(props: TMobilePasswordStrengthMeter)
             <div key={`${color}-${index}`} className={cn("w-full h-1 rounded-full", color)} />
           ))}
         </div>
-        <div className={cn(`text-xs font-medium text-custom-text-100`, strengthBars?.textColor)}>
-          {strengthBars?.text}
-        </div>
+        <div className={cn(`text-11 font-medium text-primary`, strengthBars?.textColor)}>{strengthBars?.text}</div>
       </div>
     </div>
   );

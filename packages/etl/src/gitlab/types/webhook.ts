@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { GitlabIssue, GitlabLabel, GitlabMergeRequest, GitlabNote, GitlabProject, GitlabUser } from "./common";
 
 // Base webhook event type
@@ -41,10 +54,12 @@ export interface GitlabPushEvent extends GitlabWebhookEvent {
 
 // Issue event
 export interface GitlabIssueEvent extends GitlabWebhookEvent {
-  object_kind: "issue";
+  object_kind: "issue" | "work_item";
+  event_type: "issue" | "work_item";
   object_attributes: GitlabIssue & {
-    action: string;
+    action: GitlabIssueWebhookActions;
     url: string;
+    type: "Issue" | "Task" | "Incident";
   };
   labels: GitlabLabel[];
   changes: {
@@ -85,13 +100,17 @@ export interface GitlabMergeRequestEvent extends GitlabWebhookEvent {
 }
 
 // Note event
-export interface NoteEvent extends GitlabWebhookEvent {
+export interface GitlabNoteEvent extends GitlabWebhookEvent {
   object_kind: "note";
+  event_type: "note";
   object_attributes: GitlabNote & {
+    description: string;
     url: string;
-    noteable_type: "Issue" | "MergeRequest" | "Snippet" | "Commit";
+    action: GitlabNoteWebhookActions;
   };
-  issue?: GitlabIssue;
+  issue: Omit<GitlabIssue, "labels"> & {
+    labels: GitlabLabel[];
+  };
   merge_request?: GitlabMergeRequest;
   snippet?: {
     id: number;
@@ -115,4 +134,16 @@ export interface NoteEvent extends GitlabWebhookEvent {
       email: string;
     };
   };
+}
+
+export enum GitlabIssueWebhookActions {
+  OPEN = "open",
+  CLOSE = "close",
+  REOPEN = "reopen",
+  UPDATE = "update",
+}
+
+export enum GitlabNoteWebhookActions {
+  CREATE = "create",
+  UPDATE = "update",
 }

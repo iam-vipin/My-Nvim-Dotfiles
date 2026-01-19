@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -13,7 +26,6 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -72,9 +84,6 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
           button={{
             label: t("workspace_settings.settings.webhooks.add_webhook"),
             onClick: () => {
-              captureClick({
-                elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_WEBHOOK_BUTTON,
-              });
               setShowCreateWebhookModal(true);
             },
           }}
@@ -94,9 +103,6 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
                   {
                     label: t("settings_empty_state.webhooks.cta_primary"),
                     onClick: () => {
-                      captureClick({
-                        elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WEBHOOK_BUTTON,
-                      });
                       setShowCreateWebhookModal(true);
                     },
                   },

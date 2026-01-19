@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -8,8 +20,8 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
-import { WorkspaceService } from "@/plane-web/services";
 // services
+import { WorkspaceService } from "@/plane-web/services";
 
 type TAuthHeader = {
   workspaceSlug: string | undefined;
@@ -101,12 +113,19 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
       </div>
     );
 
+  return <AuthHeaderBase subHeader={subHeader} header={header} />;
+});
+
+type TAuthHeaderBase = {
+  header: React.ReactNode;
+  subHeader: string;
+};
+
+export function AuthHeaderBase(props: TAuthHeaderBase) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-2xl font-semibold text-custom-text-100 leading-7">
-        {typeof header === "string" ? t(header) : header}
-      </span>
-      <span className="text-2xl font-semibold text-custom-text-400 leading-7">{subHeader}</span>
+      <span className="text-h4-semibold text-primary">{props.header}</span>
+      <span className="text-h4-semibold text-placeholder">{props.subHeader}</span>
     </div>
   );
-});
+}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
@@ -63,7 +76,7 @@ export const CreateUpdateWorkItemBlueprintForm = observer(function CreateUpdateW
   return (
     <div className="size-full py-5">
       {/* Form Title */}
-      {title && <h3 className="text-xl font-medium text-custom-text-200 px-5 pb-4">{title}</h3>}
+      {title && <h3 className="text-xl font-medium text-secondary px-5 pb-4">{title}</h3>}
       {/* Work Item Properties Section */}
       <div className="space-y-2 px-5">
         {usePropsForAdditionalData ? (
@@ -99,13 +112,13 @@ export const CreateUpdateWorkItemBlueprintForm = observer(function CreateUpdateW
         )}
       </div>
       {/* Form Actions */}
-      <div className="flex items-center justify-end gap-2 pt-5 border-t border-custom-border-200 px-5">
-        <Button variant="neutral-primary" size="sm" className={cn(COMMON_BUTTON_CLASS_NAME)} onClick={onClose}>
+      <div className="flex items-center justify-end gap-2 pt-5 border-t border-subtle px-5">
+        <Button variant="secondary" size="lg" className={cn(COMMON_BUTTON_CLASS_NAME)} onClick={onClose}>
           {t("common.cancel")}
         </Button>
         <Button
           variant="primary"
-          size="sm"
+          size="lg"
           className={cn("shadow-sm")}
           loading={isSubmitting}
           onClick={handleSubmit(handleFormSubmit)}

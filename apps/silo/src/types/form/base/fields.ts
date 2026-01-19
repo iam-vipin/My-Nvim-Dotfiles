@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { RelationTypeEnum, PropertyTypeEnum } from "@makeplane/plane-node-sdk";
 import type { SelectOption, UserOption } from "./field-options";
 import type { FieldValidation, TextValidation, NumberValidation, DateValidation, FileValidation } from "./validations";
@@ -7,6 +20,8 @@ export enum E_KNOWN_FIELD_KEY {
   DESCRIPTION_HTML = "description_html",
   TITLE = "title",
   NAME = "name",
+  STATUS = "status",
+  STATE = "state",
   PRIORITY = "priority",
   TYPE_ID = "type_id",
   ASSIGNEE_IDS = "assignee_ids",

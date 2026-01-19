@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
@@ -37,9 +50,9 @@ export function MovePageModalInput(props: Props) {
 
   return (
     <div className="flex items-center gap-2 px-4">
-      <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
+      <Search className="flex-shrink-0 size-4 text-placeholder" aria-hidden="true" />
       <Combobox.Input
-        className="h-12 w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+        className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
         placeholder={placeholder}
         displayValue={() => ""}
         value={searchTerm}

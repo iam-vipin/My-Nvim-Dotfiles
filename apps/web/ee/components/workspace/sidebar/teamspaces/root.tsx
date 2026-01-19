@@ -1,13 +1,26 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
@@ -53,42 +66,51 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
   return (
     <>
       <Disclosure as="div" defaultOpen>
-        <div className="group flex px-2 mb-0.5 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded">
+        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
           <Disclosure.Button
             as="button"
-            className="flex-1 sticky top-0 w-full flex items-center gap-1 text-custom-sidebar-text-400 text-xs font-semibold outline-none justify-between"
+            type="button"
+            className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
             onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
+            aria-label={t(
+              isTeamspaceListItemOpen
+                ? "aria_labels.projects_sidebar.close_projects_menu"
+                : "aria_labels.projects_sidebar.open_projects_menu"
+            )}
           >
-            <span className="text-sm font-semibold">{t("teamspaces.label")}</span>{" "}
+            <span className="text-13 font-semibold">{t("teamspaces.label")}</span>
           </Disclosure.Button>
-          <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+          <div className="flex items-center gap-1">
             {isAdmin && (
               <Tooltip tooltipHeading="Create teamspace" tooltipContent="">
-                <button
-                  type="button"
-                  data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.APP_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 text-custom-text-300 flex-shrink-0 outline-none"
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={PlusIcon}
                   onClick={() => {
                     toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
                   }}
-                >
-                  <Plus className="size-3" />
-                </button>
+                  data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.APP_SIDEBAR_ADD_BUTTON}
+                  className="hidden group-hover:inline-flex text-placeholder"
+                  aria-label={t("aria_labels.projects_sidebar.create_new_project")}
+                />
               </Tooltip>
             )}
-            <Disclosure.Button
-              as="button"
-              className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={ChevronRightIcon}
               onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
-            >
-              <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
-                <ChevronRightIcon
-                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                    "rotate-90": isTeamspaceListItemOpen,
-                  })}
-                />
-              </span>
-            </Disclosure.Button>
+              className="text-placeholder"
+              iconClassName={cn("transition-transform", {
+                "rotate-90": isTeamspaceListItemOpen,
+              })}
+              aria-label={t(
+                isTeamspaceListItemOpen
+                  ? "aria_labels.projects_sidebar.close_projects_menu"
+                  : "aria_labels.projects_sidebar.open_projects_menu"
+              )}
+            />
           </div>
         </div>
         <Transition

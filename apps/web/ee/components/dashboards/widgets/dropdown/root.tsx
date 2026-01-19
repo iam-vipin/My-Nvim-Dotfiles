@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -48,7 +61,7 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
         type="button"
         ref={setReferenceElement}
         className={cn(
-          "w-full h-7 flex items-center gap-1 px-2 py-1 rounded hover:bg-custom-background-80 text-left cursor-pointer transition-colors",
+          "w-full h-7 flex items-center gap-1 px-2 py-1 rounded-sm hover:bg-layer-1 text-left cursor-pointer transition-colors",
           buttonClassName
         )}
         disabled={disabled}
@@ -66,7 +79,7 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
       >
         <Popover.Panel ref={setPopperElement} style={styles.popper} {...attributes.popper} className="fixed z-10">
           {({ close }) => (
-            <div className="my-1 max-h-[90vh] overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-4 text-xs shadow-custom-shadow-rg focus:outline-none min-w-64 whitespace-nowrap divide-y divide-custom-border-300">
+            <div className="my-1 max-h-[90vh] overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-4 text-11 shadow-raised-200 focus:outline-none min-w-64 whitespace-nowrap divide-y divide-strong">
               {WIDGET_DROPDOWN_SECTIONS.map((section, index) => (
                 <div
                   key={section.key}
@@ -75,10 +88,10 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
                     "pb-0": index === WIDGET_DROPDOWN_SECTIONS.length - 1,
                   })}
                 >
-                  <h6 className="text-sm font-semibold text-custom-text-100">{t(section.i18n_label)}</h6>
+                  <h6 className="text-13 font-semibold text-primary">{t(section.i18n_label)}</h6>
                   {section.widgets.map((widget) => (
                     <div key={widget.key} className="space-y-1">
-                      <p className="text-sm font-semibold text-custom-text-300">{t(widget.i18n_label)}</p>
+                      <p className="text-13 font-semibold text-tertiary">{t(widget.i18n_label)}</p>
                       <div className="flex items-center gap-3 flex-wrap">
                         {widget.models.map((model) => (
                           <DashboardWidgetChartTypesDropdownOption

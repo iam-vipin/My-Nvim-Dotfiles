@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -23,25 +36,25 @@ export const ProjectsListMobileHeader = observer(function ProjectsListMobileHead
   const selectedScope = filters?.scope;
 
   const customButton = (label: string) => (
-    <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
+    <div className="flex text-13 items-center gap-2 text-secondary">
       {label}
       <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
     </div>
   );
   if (!workspaceId || !workspaceSlug) return null;
   return (
-    <div className="flex py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100 w-full">
+    <div className="flex py-2 border-b border-subtle-1 md:hidden bg-surface-1 w-full">
       {!isArchived && (
-        <div className="border-l border-custom-border-200 flex justify-around w-full">
+        <div className="border-l border-subtle-1 flex justify-around w-full">
           <ProjectLayoutSelection workspaceSlug={workspaceSlug.toString()} />
         </div>
       )}
       {!isArchived && selectedScope && (
-        <div className="border-l border-custom-border-200 flex justify-around w-full">
+        <div className="border-l border-subtle-1 flex justify-around w-full">
           <ProjectScopeDropdown workspaceSlug={workspaceSlug.toString()} className={"border-none"} />
         </div>
       )}
-      <div className="border-l border-custom-border-200 flex justify-around w-full">
+      <div className="border-l border-subtle-1 flex justify-around w-full">
         <ProjectAttributesDropdown
           workspaceSlug={workspaceSlug.toString()}
           workspaceId={workspaceId}
@@ -49,7 +62,7 @@ export const ProjectsListMobileHeader = observer(function ProjectsListMobileHead
           isArchived={isArchived}
         />
       </div>
-      <div className="border-l border-custom-border-200 flex justify-around w-full">
+      <div className="border-l border-subtle-1 flex justify-around w-full">
         <ProjectDisplayFiltersDropdown
           workspaceSlug={workspaceSlug.toString()}
           menuButton={customButton("Display")}

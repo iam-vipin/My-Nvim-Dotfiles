@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // types
 import type { TIssuesListTypes } from "@plane/types";
 
@@ -44,8 +57,8 @@ export const DURATION_FILTER_OPTIONS: {
 // random background colors for project cards
 export const PROJECT_BACKGROUND_COLORS = [
   "bg-gray-500/20",
-  "bg-green-500/20",
-  "bg-red-500/20",
+  "bg-success-subtle",
+  "bg-danger-subtle",
   "bg-orange-500/20",
   "bg-blue-500/20",
   "bg-yellow-500/20",

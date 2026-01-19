@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // i18n
@@ -163,7 +176,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
               } `}
             >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-surface-2 py-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}

@@ -1,14 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 // plane imports
-import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EditIcon, LinkIcon, NewTabIcon, TrashIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web constants
 import { DeleteTeamspaceModal } from "@/plane-web/components/teamspaces/actions/delete-modal";
@@ -55,7 +68,7 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
     {
       key: "edit",
       title: "Edit",
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditTeam,
       shouldRender: !hideEdit && isEditingAllowed,
     },
@@ -63,22 +76,22 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in a new tab",
-      icon: ExternalLink,
+      icon: NewTabIcon,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy link to teamspace",
-      icon: Link2,
+      icon: LinkIcon,
       iconClassName: "-rotate-45",
     },
     {
       key: "delete",
       action: handleDeleteTeam,
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isEditingAllowed,
-      className: "text-red-500",
+      className: "text-danger-primary",
     },
   ];
 
@@ -86,9 +99,6 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
     ...item,
     action: () => {
       item.action();
-      captureClick({
-        elementName: TEAMSPACE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
     },
   }));
 
@@ -100,22 +110,24 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
         onClose={() => setIsDeleteModalOpen(false)}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />}
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={buttonClassName}>
+      <CustomMenu
+        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
+        placement="bottom-end"
+        closeOnSelect
+        buttonClassName={buttonClassName}
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: trackerElement,
-                });
                 item.action();
               }}
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -126,8 +138,8 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

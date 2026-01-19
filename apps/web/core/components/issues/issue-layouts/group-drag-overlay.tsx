@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
 // plane imports
@@ -45,10 +58,10 @@ export function GroupDragOverlay(props: Props) {
     <div
       ref={messageContainerRef}
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded-sm bg-layer-1/85 ${dragColumnOrientation}`,
         {
-          "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
-          "bg-red-200/60": workflowDisabledSource && isDropDisabled,
+          "flex flex-col border-[1px] border-strong z-2": shouldOverlayBeVisible,
+          "bg-danger-subtle": workflowDisabledSource && isDropDisabled,
         },
         { hidden: !shouldOverlayBeVisible }
       )}
@@ -61,9 +74,9 @@ export function GroupDragOverlay(props: Props) {
         />
       ) : (
         <div
-          className={cn("p-3 my-8 flex flex-col rounded items-center", {
-            "text-custom-text-200": shouldOverlayBeVisible,
-            "text-custom-text-error": isDropDisabled,
+          className={cn("p-3 my-8 flex flex-col rounded-sm items-center", {
+            "text-secondary": shouldOverlayBeVisible,
+            "text-danger-secondary": isDropDisabled,
           })}
         >
           {dropErrorMessage ? (

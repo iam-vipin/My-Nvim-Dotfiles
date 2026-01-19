@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -60,13 +73,13 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
         render={
           <div
             id={`issue-${issueId}`}
-            className="relative flex h-full w-full cursor-pointer items-center rounded space-between"
+            className="relative flex h-full w-full cursor-pointer items-center rounded-sm space-between"
             style={blockStyle}
             onClick={handleIssuePeekOverview}
           >
-            <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50 " />
+            <div className="absolute left-0 top-0 h-full w-full bg-surface-1/50 " />
             <div
-              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100 flex-1"
+              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-13 text-primary flex-1"
               style={{ left: `${SIDEBAR_WIDTH}px` }}
             >
               {issueDetails?.name}
@@ -74,7 +87,7 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
             {isEpic && (
               <IssueStats
                 issueId={issueId}
-                className="sticky mx-2 font-medium text-custom-text-100 overflow-hidden truncate w-auto justify-end flex-shrink-0"
+                className="sticky mx-2 font-medium text-primary overflow-hidden truncate w-auto justify-end flex-shrink-0"
                 showProgressText={duration >= 2}
               />
             )}
@@ -140,7 +153,7 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
       id={`issue-${issueId}`}
       href={workItemLink}
       onClick={handleIssuePeekOverview}
-      className="line-clamp-1 w-full cursor-pointer text-sm text-custom-text-100"
+      className="line-clamp-1 w-full cursor-pointer text-13 text-primary"
       disabled={!!issueDetails?.tempId}
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
@@ -148,12 +161,13 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
           <IssueIdentifier
             issueId={issueDetails.id}
             projectId={issueDetails.project_id}
-            textContainerClassName="text-xs text-custom-text-300"
+            size="xs"
+            variant="tertiary"
             displayProperties={issuesFilter?.issueFilters?.displayProperties}
           />
         )}
         <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
-          <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
+          <span className="flex-grow truncate text-13 font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>
     </ControlLink>

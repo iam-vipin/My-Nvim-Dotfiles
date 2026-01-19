@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import models
 
@@ -5,18 +16,12 @@ from plane.db.models import BaseModel, ProjectBaseModel
 
 
 class Dashboard(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="dashboard"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="dashboard")
     name = models.CharField(max_length=255)
     filters = models.JSONField(default=dict)
     logo_props = models.JSONField(default=dict)
-    owned_by = models.ForeignKey(
-        "db.User", on_delete=models.CASCADE, related_name="dashboard"
-    )
-    access = models.PositiveSmallIntegerField(
-        default=1, choices=((0, "Private"), (1, "Public"))
-    )
+    owned_by = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="dashboard")
+    access = models.PositiveSmallIntegerField(default=1, choices=((0, "Private"), (1, "Public")))
 
     class Meta:
         verbose_name = "Dashboard"
@@ -30,9 +35,7 @@ class Dashboard(BaseModel):
 
 
 class DashboardProject(ProjectBaseModel):
-    dashboard = models.ForeignKey(
-        Dashboard, on_delete=models.CASCADE, related_name="dashboard_projects"
-    )
+    dashboard = models.ForeignKey(Dashboard, on_delete=models.CASCADE, related_name="dashboard_projects")
 
     class Meta:
         unique_together = ("dashboard", "project", "deleted_at")
@@ -55,12 +58,8 @@ class DashboardProject(ProjectBaseModel):
 
 class DashboardQuickFilter(BaseModel):
     name = models.CharField(max_length=255)
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="quick_filters"
-    )
-    dashboard = models.ForeignKey(
-        Dashboard, on_delete=models.CASCADE, related_name="quick_filters"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="quick_filters")
+    dashboard = models.ForeignKey(Dashboard, on_delete=models.CASCADE, related_name="quick_filters")
     filters = models.JSONField(default=dict)
 
     class Meta:
@@ -146,9 +145,7 @@ class Widget(BaseModel):
         )
         BLOCKED_WORK_ITEM_COUNT = "BLOCKED_WORK_ITEM_COUNT", "Blocked Work Item Count"
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="widgets"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="widgets")
     name = models.CharField(max_length=255)
     chart_type = models.CharField(max_length=255)
     chart_model = models.CharField(max_length=255)
@@ -172,15 +169,9 @@ class Widget(BaseModel):
 
 
 class DashboardWidget(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="dashboard_widgets"
-    )
-    dashboard = models.ForeignKey(
-        Dashboard, on_delete=models.CASCADE, related_name="dashboard_widgets"
-    )
-    widget = models.ForeignKey(
-        Widget, on_delete=models.CASCADE, related_name="dashboard_widgets"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="dashboard_widgets")
+    dashboard = models.ForeignKey(Dashboard, on_delete=models.CASCADE, related_name="dashboard_widgets")
+    widget = models.ForeignKey(Widget, on_delete=models.CASCADE, related_name="dashboard_widgets")
     filters = models.JSONField(default=dict)
     # widget dimensions
     height = models.PositiveIntegerField(default=1)

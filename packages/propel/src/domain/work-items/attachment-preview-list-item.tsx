@@ -12,17 +12,17 @@ export function AttachmentPreviewListItem({ item }: TAttachmentPreviewListItemPr
   const Icon = getAttachmentIcon(extension);
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md border border-custom-border-200 bg-custom-background-95 px-3 py-2">
+    <div className="flex items-center justify-between gap-3 rounded-md border border-subtle-1 bg-layer-1 px-3 py-2">
       <div className="flex min-w-0 flex-1 items-center gap-3">
-        <Icon className="size-6 shrink-0 text-custom-text-400" />
+        <Icon className="size-6 shrink-0 text-placeholder" />
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-medium text-custom-text-200">{name}</span>
-          <span className="text-xs text-custom-text-400">{formatBytes(size)}</span>
+          <span className="truncate text-13 font-medium text-secondary">{name}</span>
+          <span className="text-11 text-placeholder">{formatBytes(size)}</span>
         </div>
       </div>
       {status === "uploading" && (
-        <div className="flex items-center gap-2 text-xs text-custom-text-300">
-          <Loader2 className="size-4 animate-spin text-custom-text-400" />
+        <div className="flex items-center gap-2 text-11 text-tertiary">
+          <Loader2 className="size-4 animate-spin text-placeholder" />
           Uploading
         </div>
       )}

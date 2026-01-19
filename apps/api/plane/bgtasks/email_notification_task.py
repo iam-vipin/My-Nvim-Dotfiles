@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import logging
 import re
@@ -11,12 +22,12 @@ from django.template.loader import render_to_string
 
 # Django imports
 from django.utils import timezone
-from django.utils.html import strip_tags
 
 # Module imports
 from plane.db.models import EmailNotificationLog, Issue, User, IssueSubscriber, UserNotificationPreference
 
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.db.models.notification import EntityName
 from plane.ee.models import Teamspace, Initiative
@@ -35,36 +46,37 @@ def stack_email_notification():
     email_notifications = EmailNotificationLog.objects.filter(processed_at__isnull=True).order_by("receiver").values()
 
     # Group by receiver_id AND entity_name to handle different entity types separately
-    receivers_entities = list(set([
-        (str(notification.get("receiver_id")), notification.get("entity_name")) 
-        for notification in email_notifications
-    ]))
-    
+    receivers_entities = list(
+        set(
+            [
+                (str(notification.get("receiver_id")), notification.get("entity_name"))
+                for notification in email_notifications
+            ]
+        )
+    )
+
     processed_notifications = []
 
     for receiver_id, entity_name in receivers_entities:
         # Get notifications for this specific receiver AND entity_name combination
         receiver_notifications = [
-            notification for notification in email_notifications 
-            if str(notification.get("receiver_id")) == receiver_id 
-            and notification.get("entity_name") == entity_name
+            notification
+            for notification in email_notifications
+            if str(notification.get("receiver_id")) == receiver_id and notification.get("entity_name") == entity_name
         ]
-        
+
         # Create payload for this entity type only
         payload = {}
         entity_notification_ids = {}
-
 
         for receiver_notification in receiver_notifications:
             entity_identifier = receiver_notification.get("entity_identifier")
             payload.setdefault(receiver_notification.get("entity_identifier"), {}).setdefault(
                 str(receiver_notification.get("triggered_by_id")), []
             ).append(receiver_notification.get("data"))
-            
+
             # Track processed notifications and IDs
-            entity_notification_ids.setdefault(entity_identifier, []).append(
-                receiver_notification.get("id")
-            )
+            entity_notification_ids.setdefault(entity_identifier, []).append(receiver_notification.get("id"))
 
             # Track processed notifications for this entity
             processed_notifications.append(receiver_notification.get("id"))
@@ -97,6 +109,7 @@ def stack_email_notification():
 
     # Update the email notification log
     EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
+
 
 def create_payload(notification_data, entity_name):
     # return format {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
@@ -335,7 +348,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
             "entity_type": entity_type,
         }
         html_content = render_to_string(template_name, context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         try:
             send_email(subject, text_content, receiver, html_content, email_notification_ids)
@@ -365,8 +378,6 @@ def send_workspace_level_email_notification(
         except (Teamspace.DoesNotExist, Initiative.DoesNotExist):
             logging.getLogger("plane.worker").warning(f"Entity not found: {entity_id} for entity name: {entity_name}")
             return
-
-
 
         actors_involved = []
         template_data = []
@@ -413,7 +424,7 @@ def send_workspace_level_email_notification(
             template_name = "emails/notifications/teamspace-updates.html"
 
         html_content = render_to_string(template_name, context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         try:
             # Get email configurations

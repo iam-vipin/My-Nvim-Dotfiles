@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // plane constants
@@ -73,7 +86,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
 
   if (!issueIds || issueIds.length === 0) return <></>;
   return (
-    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap bg-layer-1 text-secondary">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <MultipleSelectGroup
         containerRef={containerRef}
@@ -103,8 +116,8 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 isEpic={isEpic}
               />
             </div>
-            <div className="border-t border-custom-border-100">
-              <div className="z-5 sticky bottom-0 left-0 mb-3">
+            <div className="border-t border-subtle">
+              <div className="z-5 sticky bottom-0 left-0">
                 {enableQuickCreateIssue && !disableIssueCreation && (
                   <QuickAddIssueRoot
                     layout={EIssueLayoutTypes.SPREADSHEET}

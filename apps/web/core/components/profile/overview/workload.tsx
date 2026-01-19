@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
 // types
@@ -15,27 +28,27 @@ export function ProfileWorkload({ stateDistribution }: Props) {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.workload")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.workload")}</h3>
       <div className="grid grid-cols-1 justify-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stateDistribution.map((group) => (
           <div key={group.state_group}>
             <a>
               <Card direction={ECardDirection.ROW} spacing={ECardSpacing.SM}>
                 <div
-                  className="h-3 w-3 rounded-sm my-2"
+                  className="h-3 w-3 rounded-xs my-2"
                   style={{
                     backgroundColor: STATE_GROUPS[group.state_group].color,
                   }}
                 />
                 <div className="space-y-1 flex-col">
-                  <span className="text-sm text-custom-text-400">
+                  <span className="text-13 text-placeholder">
                     {group.state_group === "unstarted"
                       ? "Not started"
                       : group.state_group === "started"
                         ? "Working on"
                         : STATE_GROUPS[group.state_group].label}
                   </span>
-                  <p className="text-xl font-semibold">{group.state_count}</p>
+                  <p className="text-18 font-semibold">{group.state_count}</p>
                 </div>
               </Card>
             </a>

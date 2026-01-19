@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -143,13 +156,13 @@ function TeamspacePageDetailsPage({ params }: Route.ComponentProps) {
   if (pageDetailsError)
     return (
       <div className="h-full w-full flex flex-col items-center justify-center">
-        <h3 className="text-lg font-semibold text-center">Page not found</h3>
-        <p className="text-sm text-custom-text-200 text-center mt-3">
+        <h3 className="text-h6-semibold text-center">Page not found</h3>
+        <p className="text-body-xs-regular text-secondary text-center mt-3">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
         <Link
           href={`/${workspaceSlug}/teamspaces/${teamspaceId}/pages`}
-          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+          className={cn(getButtonStyling("secondary", "base"), "mt-5")}
         >
           View other Pages
         </Link>

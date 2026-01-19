@@ -1,8 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -84,15 +97,15 @@ export const IssuePropertyOptionItem = observer(function IssuePropertyOptionItem
         }}
         onBlur={() => handleCreateUpdate()}
         placeholder={t("work_item_types.settings.properties.attributes.option.create_update.form.placeholder")}
-        className={cn("w-full text-sm bg-custom-background-100 border-[0.5px] rounded", {
-          "border-custom-border-300": !error,
+        className={cn("w-full text-13 bg-surface-1 border-[0.5px] rounded", {
+          "border-strong": !error,
         })}
         inputSize="xs"
         hasError={Boolean(error)}
       />
       {Boolean(error) && typeof error === "string" && (
-        <Tooltip tooltipContent={t(error)} className="text-xs" position="left">
-          <Info className="absolute right-1.5 h-3 w-3 stroke-red-600 hover:cursor-pointer" />
+        <Tooltip tooltipContent={t(error)} className="text-caption-md-regular" position="left">
+          <InfoIcon className="absolute right-1.5 h-3 w-3 stroke-danger hover:cursor-pointer" />
         </Tooltip>
       )}
     </div>

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { getUserRole } from "@plane/utils";
@@ -21,13 +34,13 @@ export const SettingsSidebarHeader = observer(function SettingsSidebarHeader(pro
             <WorkspaceLogo
               logo={currentWorkspace.logo_url ?? ""}
               name={currentWorkspace.name ?? ""}
-              classNames="size-8 border border-custom-border-200"
+              classNames="size-8 border border-subtle"
             />
             <div className="w-full overflow-hidden">
-              <div className="text-base font-medium text-custom-text-200 truncate text-ellipsis ">
+              <div className="text-14 font-medium text-secondary truncate text-ellipsis ">
                 {currentWorkspace.name ?? "Workspace"}
               </div>
-              <div className="text-sm text-custom-text-300 capitalize">
+              <div className="text-13 text-tertiary capitalize">
                 {getUserRole(currentWorkspace.role)?.toLowerCase() || "guest"}
               </div>
             </div>

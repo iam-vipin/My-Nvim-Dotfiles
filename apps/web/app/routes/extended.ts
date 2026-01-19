@@ -1,7 +1,34 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { layout, route } from "@react-router/dev/routes";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
+// helpers
+import { mergeRoutes } from "./helper";
+// cloud routes
+import { cloudRoutes } from "./cloud";
 
-export const extendedRoutes: RouteConfigEntry[] = [
+export const enterpriseRoutes: RouteConfigEntry[] = [
+  // ========================================================================
+  // USER MANAGEMENT ROUTES
+  // ========================================================================
+
+  // LDAP Auth
+  route("ldap", "./(home)/ldap/page.tsx"),
+
+  // SSO Auth
+  route("sso", "./(home)/sso/page.tsx"),
+
   // ========================================================================
   // ALL APP ROUTES
   // ========================================================================
@@ -457,6 +484,29 @@ export const extendedRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/(importers)/notion/page.tsx"
             ),
           ]),
+
+          // --------------------------------------------------------------------
+          // SINGLE SIGN-ON
+          // --------------------------------------------------------------------
+          layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/layout.tsx", [
+            route(
+              ":workspaceSlug/settings/identity",
+              "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/page.tsx"
+            ),
+            layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/layout.tsx", [
+              route(
+                ":workspaceSlug/settings/identity/oidc",
+                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/odic/page.tsx"
+              ),
+              route(
+                ":workspaceSlug/settings/identity/saml",
+                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/saml/page.tsx"
+              ),
+            ]),
+          ]),
+          // --------------------------------------------------------------------
+          // END: SINGLE SIGN-ON
+          // --------------------------------------------------------------------
         ]),
 
         // --------------------------------------------------------------------
@@ -596,3 +646,5 @@ export const extendedRoutes: RouteConfigEntry[] = [
   // → /:workspaceSlug/wiki/:path*
   route(":workspaceSlug/pages/*", "routes/redirects/extended/wiki.tsx"),
 ];
+
+export const extendedRoutes: RouteConfigEntry[] = mergeRoutes(enterpriseRoutes, cloudRoutes);

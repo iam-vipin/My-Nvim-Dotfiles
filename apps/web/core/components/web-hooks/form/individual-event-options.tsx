@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import type { IWebhook } from "@plane/types";
@@ -51,11 +64,11 @@ export function WebhookIndividualEventOptions({ control }: Props) {
             <div>
               <div className="flex items-center gap-2">
                 <Checkbox id={option.key} onChange={() => onChange(!value)} checked={value === true} />
-                <label className="text-sm" htmlFor={option.key}>
+                <label className="text-13" htmlFor={option.key}>
                   {option.label}
                 </label>
               </div>
-              <p className="ml-6 mt-0.5 text-xs text-custom-text-300">{option.description}</p>
+              <p className="ml-6 mt-0.5 text-11 text-tertiary">{option.description}</p>
             </div>
           )}
         />

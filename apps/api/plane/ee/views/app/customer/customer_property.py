@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import IntegrityError, models
 
@@ -25,9 +36,9 @@ class CustomerPropertyEndpoint(BaseAPIView):
         workspace_id = customer_property.workspace_id
         customer_property_id = customer_property.id
 
-        last_id = CustomerPropertyOption.objects.filter(
-            property_id=customer_property_id
-        ).aggregate(largest=models.Max("sort_order"))["largest"]
+        last_id = CustomerPropertyOption.objects.filter(property_id=customer_property_id).aggregate(
+            largest=models.Max("sort_order")
+        )["largest"]
 
         sort_order = (last_id + 10000) if last_id else 10000
 
@@ -97,9 +108,7 @@ class CustomerPropertyEndpoint(BaseAPIView):
 
         except IntegrityError:
             return Response(
-                {
-                    "error": "An option with the same name already exists in this property"
-                },
+                {"error": "An option with the same name already exists in this property"},
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -119,15 +128,11 @@ class CustomerPropertyEndpoint(BaseAPIView):
         ).values_list("id", flat=True)
 
         # Save the default value
-        customer_property.default_value = [
-            str(option) for option in customer_property_options
-        ]
+        customer_property.default_value = [str(option) for option in customer_property_options]
         customer_property.save()
 
     def get_options_response(self, customer_property, slug):
-        options = CustomerPropertyOption.objects.filter(
-            property_id=customer_property.id, workspace__slug=slug
-        )
+        options = CustomerPropertyOption.objects.filter(property_id=customer_property.id, workspace__slug=slug)
 
         options_serializer = CustomerPropertyOptionSerializer(options, many=True)
 
@@ -136,9 +141,7 @@ class CustomerPropertyEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, pk=None):
         if pk:
-            customer_property = CustomerProperty.objects.get(
-                workspace__slug=slug, pk=pk
-            )
+            customer_property = CustomerProperty.objects.get(workspace__slug=slug, pk=pk)
 
             serializer = CustomerPropertySerializer(customer_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -159,14 +162,9 @@ class CustomerPropertyEndpoint(BaseAPIView):
                 request.data["is_active"] = False
 
             # Check defaults
-            if (
-                not request.data.get("is_multi")
-                and len(request.data.get("default_value", [])) > 1
-            ):
+            if not request.data.get("is_multi") and len(request.data.get("default_value", [])) > 1:
                 return Response(
-                    {
-                        "error": "Default value must be a single value for non-multi properties"
-                    },
+                    {"error": "Default value must be a single value for non-multi properties"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -207,30 +205,19 @@ class CustomerPropertyEndpoint(BaseAPIView):
         # Get the options
         options = request.data.pop("options", [])
 
-        if (
-            request.data.get("property_type")
-            or request.data.get("is_multi")
-            or request.data.get("settings")
-        ):
+        if request.data.get("property_type") or request.data.get("is_multi") or request.data.get("settings"):
             return Response({"error": "Some fields cannot be updated "})
 
         # Check defaults
-        if (
-            not customer_property.is_multi
-            and len(request.data.get("default_value", [])) > 1
-        ):
+        if not customer_property.is_multi and len(request.data.get("default_value", [])) > 1:
             return Response(
-                {
-                    "error": "Default value must be a single value for non-multi properties"
-                },
+                {"error": "Default value must be a single value for non-multi properties"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if request.data.get("is_required", customer_property.is_required) is True:
             request.data["default_value"] = []
 
-        serializer = CustomerPropertySerializer(
-            customer_property, data=request.data, partial=True
-        )
+        serializer = CustomerPropertySerializer(customer_property, data=request.data, partial=True)
 
         # Validate the data
         serializer.is_valid(raise_exception=True)

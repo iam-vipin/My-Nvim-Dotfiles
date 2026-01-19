@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Pencil, RotateCw, Trash2 } from "lucide-react";
+import { RotateCw } from "lucide-react";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TContextMenuItem } from "@plane/ui";
@@ -34,7 +48,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
     () => [
       {
         key: "edit",
-        icon: Pencil,
+        icon: EditIcon,
         title: "Edit",
         action: () => {
           if (!widget.id) return;
@@ -51,7 +65,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
       },
       {
         key: "delete",
-        icon: Trash2,
+        icon: TrashIcon,
         title: "Delete",
         action: () => {
           if (!widget.id) return;
@@ -89,14 +103,14 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
         {!isViewModeEnabled && (
           <DragHandle className="absolute top-6 -translate-y-1/2 left-0.5 bg-transparent p-0 opacity-0 pointer-events-none group-hover/widget:opacity-100 group-hover/widget:pointer-events-auto transition-opacity" />
         )}
-        <h5 className="text-sm font-medium text-custom-text-200 truncate">{widget.name}</h5>
+        <h5 className="text-13 font-medium text-secondary truncate">{widget.name}</h5>
       </div>
       <div className="flex-shrink-0 hidden group-hover/widget:flex items-center">
         {!isViewModeEnabled && canCurrentUserEditWidget && (
           <Tooltip tooltipContent="Edit">
             <button
               type="button"
-              className="grid place-items-center p-1 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
+              className="grid place-items-center p-1 rounded-sm text-secondary hover:text-primary hover:bg-layer-1"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -104,14 +118,14 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
                 toggleEditWidget?.(widget.id);
               }}
             >
-              <Pencil className="size-3.5" />
+              <EditIcon className="size-3.5" />
             </button>
           </Tooltip>
         )}
         <Tooltip tooltipContent="Refresh">
           <button
             type="button"
-            className="grid place-items-center p-1 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
+            className="grid place-items-center p-1 rounded-sm text-secondary hover:text-primary hover:bg-layer-1"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();

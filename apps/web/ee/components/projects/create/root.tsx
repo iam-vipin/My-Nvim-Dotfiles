@@ -1,9 +1,20 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -11,13 +22,11 @@ import { EFileAssetType } from "@plane/types";
 import type { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
 // types
 import type { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
-// constants
 import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 // hooks
 import { uploadCoverImage, getCoverImageType } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -34,7 +43,12 @@ import ProjectAttributes from "./attributes";
 import { ProjectCreateLoader } from "./loader";
 import { ProjectCreationProvider } from "./provider";
 
-export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormProps) {
+type TCreateProjectFormExtendedProps = TCreateProjectFormProps & {
+  dataResetProperties?: ReadonlyArray<string | number | boolean | null | Partial<TProject> | undefined>;
+  showActionButtons?: boolean;
+  onChange?: (data: Partial<TProject> | null) => void;
+};
+export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormExtendedProps) {
   return (
     <ProjectCreationProvider templateId={props.templateId}>
       <CreateProjectFormBase {...props} />
@@ -42,8 +56,18 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   );
 });
 
-export const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCreateProjectFormProps) {
-  const { setToFavorite, workspaceSlug, onClose, handleNextStep, data, updateCoverImageStatus } = props;
+export const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCreateProjectFormExtendedProps) {
+  const {
+    setToFavorite,
+    workspaceSlug,
+    onClose,
+    handleNextStep,
+    data,
+    updateCoverImageStatus,
+    showActionButtons = true,
+    onChange,
+    dataResetProperties = [],
+  } = props;
   // store
   const { addProjectToFavorites, createProject, updateProject } = useProject();
   const { projectCreationLoader, createProjectUsingTemplate } = useProjectAdvanced();
@@ -67,10 +91,11 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
     reValidateMode: "onChange",
   });
   const {
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty, dirtyFields },
     handleSubmit,
     reset,
     setValue,
+    watch,
   } = methods;
   // derived values
   const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
@@ -78,6 +103,13 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
   const isLoading = isSubmitting || isApplyingTemplate;
 
+  // Reset form when data prop changes
+  useEffect(() => {
+    if (data) {
+      reset({ ...getProjectFormValues(), ...data });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...dataResetProperties]);
   useEffect(() => {
     if (projectTemplateId) {
       handleTemplateChange({
@@ -98,6 +130,15 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
         message: "Couldn't remove the project from favorites. Please try again.",
       });
     });
+  };
+
+  const handleFormChange = () => {
+    if (!onChange) return;
+
+    // Check isDirty or if specific fields are dirty (for fields that may not update isDirty synchronously)
+    const isFormDirty = isDirty || Object.keys(dirtyFields).length > 0;
+    if (isFormDirty) onChange(watch());
+    else onChange(null);
   };
 
   const onSubmit = async (formData: Partial<TProject>) => {
@@ -124,7 +165,7 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
     if (coverImage) {
       const imageType = getCoverImageType(coverImage);
 
-      if (imageType === "local_static") {
+      if (imageType === "local_static" || imageType === "unsplash") {
         try {
           uploadedAssetUrl = await uploadCoverImage(coverImage, {
             workspaceSlug: workspaceSlug.toString(),
@@ -175,13 +216,6 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
             members: membersPayload,
           });
         }
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-            id: res.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -196,13 +230,6 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
       })
       .catch((err) => {
         try {
-          captureError({
-            eventName: PROJECT_TRACKER_EVENTS.create,
-            payload: {
-              identifier: formData.identifier,
-            },
-          });
-
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err?.data ?? {};
 
@@ -261,31 +288,41 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
   return (
     <FormProvider {...methods}>
       <div className="p-3">
-        <ProjectCreateHeader handleClose={handleClose} />
+        <ProjectCreateHeader
+          handleClose={handleClose}
+          // handleFormChange={handleFormChange}
+          isClosable={showActionButtons}
+        />
         <form onSubmit={handleSubmit(onSubmit)} className="px-3">
           <div className="mt-9 space-y-6 pb-5">
             <ProjectCommonAttributes
               setValue={setValue}
               isMobile={isMobile}
-              isChangeInIdentifierRequired={isChangeInIdentifierRequired}
-              setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+              shouldAutoSyncIdentifier={false}
+              setShouldAutoSyncIdentifier={() => {}}
+              // isChangeInIdentifierRequired={isChangeInIdentifierRequired}
+              // setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+              handleFormOnChange={handleFormChange}
             />
             <ProjectAttributes
               workspaceSlug={workspaceSlug}
               currentWorkspace={currentWorkspace}
               isProjectGroupingEnabled={isProjectGroupingEnabled}
               data={data}
+              handleFormOnChange={handleFormChange}
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-custom-border-100">
-            <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
-              {t("common.cancel")}
-            </Button>
-            <Button variant="primary" type="submit" size="sm" loading={isLoading} tabIndex={7}>
-              {isSubmitting ? t("common.creating") : t("create_project")}
-            </Button>
-          </div>
+          {showActionButtons && (
+            <div className="flex justify-end gap-2 pt-4 border-t border-subtle">
+              <Button variant="secondary" size={"lg"} onClick={handleClose} tabIndex={6}>
+                {t("common.cancel")}
+              </Button>
+              <Button variant="primary" type="submit" size={"lg"} loading={isLoading} tabIndex={7}>
+                {isSubmitting ? t("common.creating") : t("create_project")}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </FormProvider>

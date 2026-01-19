@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
@@ -69,21 +82,21 @@ export function SingleUserSelect({ collaborator, index, users, setUsers }: Props
     | undefined;
 
   return (
-    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-custom-background-80 px-2 py-3">
+    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-layer-1 px-2 py-3">
       <div className="flex items-center gap-2">
-        <div className="relative h-8 w-8 flex-shrink-0 rounded">
+        <div className="relative h-8 w-8 flex-shrink-0 rounded-sm">
           <img
             src={collaborator.avatar_url}
-            className="absolute left-0 top-0 h-full w-full rounded object-cover"
+            className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
             alt={`${collaborator.login} GitHub user`}
           />
         </div>
-        <p className="text-sm">{collaborator.login}</p>
+        <p className="text-13">{collaborator.login}</p>
       </div>
       <div>
         <CustomSelect
           value={users[index].import}
-          label={<div className="text-xs">{importOptions.find((o) => o.key === users[index].import)?.label}</div>}
+          label={<div className="text-11">{importOptions.find((o) => o.key === users[index].import)?.label}</div>}
           onChange={(val: any) => {
             const newUsers = [...users];
             newUsers[index].import = val;
@@ -111,7 +124,7 @@ export function SingleUserSelect({ collaborator, index, users, setUsers }: Props
             setUsers(newUsers);
           }}
           placeholder="Enter email of the user"
-          className="w-full py-1 text-xs"
+          className="w-full py-1 text-11"
         />
       )}
       {users[index].import === "map" && members && (

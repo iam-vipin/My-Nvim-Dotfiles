@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
@@ -60,7 +73,7 @@ export const PropertyTypeDropdown = observer(function PropertyTypeDropdown(props
 
   return (
     <div>
-      <span className="text-xs text-custom-text-300 font-medium">
+      <span className="text-11 text-tertiary font-medium">
         {t("work_item_types.settings.properties.dropdown.label")}
       </span>
       <CustomSearchSelect
@@ -79,10 +92,10 @@ export const PropertyTypeDropdown = observer(function PropertyTypeDropdown(props
         onChange={onPropertyTypeChange}
         optionsClassName="w-48"
         buttonClassName={cn(
-          "rounded text-sm border-[0.5px] bg-custom-background-100 border-custom-border-300",
-          Boolean(error) && "border-red-500",
+          "rounded-sm text-13 border-[0.5px] bg-surface-1 border-subtle-1",
+          Boolean(error) && "border-danger-strong",
           {
-            "bg-custom-background-80": !isEditingAllowed,
+            "bg-layer-1": !isEditingAllowed,
           }
         )}
         disabled={!isEditingAllowed}

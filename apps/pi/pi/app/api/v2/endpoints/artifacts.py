@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Action artifacts endpoint for managing AI-planned action results."""
 
 from typing import Any
@@ -16,8 +27,7 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.app.api.v2.dependencies import cookie_schema
-from pi.app.api.v2.dependencies import is_valid_session
+from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.artifact import ArtifactUpdateRequest
 from pi.app.schemas.artifact import ArtifactUpdateResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session
@@ -34,7 +44,7 @@ router = APIRouter()
 async def list_artifacts(
     ids: Optional[List[UUID4]] = Query(None, description="List of artifact UUIDs to retrieve"),
     chat_id: Optional[UUID4] = Query(None, description="Filter artifacts by chat UUID"),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     """
@@ -119,12 +129,7 @@ async def list_artifacts(
         - Retrieve entity IDs created by actions
     """
     try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(
-                status_code=401,
-                content={"success": False, "detail": "Invalid User"},
-            )
+        pass
     except Exception as e:
         log.error(f"Error validating session: {e!s}")
         return JSONResponse(
@@ -208,7 +213,7 @@ async def list_artifacts(
 async def create_artifact_followup(
     request: ArtifactUpdateRequest,
     artifact_id: UUID4 = Path(..., description="UUID of the artifact to update"),
-    session: str = Depends(cookie_schema),
+    current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
     """
@@ -307,11 +312,7 @@ async def create_artifact_followup(
     """
     try:
         # Validate session
-        auth = await is_valid_session(session)
-        if not auth.user:
-            raise HTTPException(status_code=401, detail="Invalid User")
-
-        user_id = auth.user.id
+        user_id = current_user.id
 
         # Use artifact_id from path parameter (takes precedence)
         result = await handle_artifact_prompt_followup(

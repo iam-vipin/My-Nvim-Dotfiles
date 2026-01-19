@@ -1,9 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, DropdownIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { DropdownIcon } from "@plane/propel/icons";
 import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { CustomerWorkItem } from "@/plane-web/components/customers";
@@ -30,18 +42,18 @@ export const RequestWorkItemsListCollapsible = observer(function RequestWorkItem
         <>
           <div className="flex items-center gap-2">
             <DropdownIcon
-              className={cn("size-2 text-custom-text-200 hover:text-custom-text-200 duration-300", {
+              className={cn("size-2 text-secondary hover:text-secondary duration-300", {
                 "-rotate-90": !isOpen,
               })}
             />
-            <div className="text-sm text-custom-text-300 font-medium">
+            <div className="text-12 text-tertiary font-medium">
               {t("customers.linked_work_items.label")}{" "}
-              <span className="text-custom-text-400 text-sm">{workItemIds.length}</span>
+              <span className="text-placeholder text-12">{workItemIds.length}</span>
             </div>
           </div>
           {isEditable && (
             <div
-              className="text-custom-text-100"
+              className="text-primary"
               onClick={(e) => {
                 e.stopPropagation();
                 openWorkItemModal();

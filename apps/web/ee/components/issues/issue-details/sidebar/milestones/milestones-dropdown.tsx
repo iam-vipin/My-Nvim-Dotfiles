@@ -1,12 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
+import { CheckIcon, MilestoneIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
-import { MilestoneIcon } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
-import { getMilestoneVariant } from "@/plane-web/components/project-overview/details/main/milestones/helper";
+import { cn, getMilestoneIconProps } from "@plane/utils";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 type Props = {
@@ -47,8 +58,8 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
         query: "None",
         content: (
           <div className="flex items-center gap-1">
-            <MilestoneIcon className="h-4 w-4 flex-shrink-0" variant="default" />
-            <span className="flex-grow truncate text-left">No milestone</span>
+            <MilestoneIcon className="size-4 shrink-0 text-primary" />
+            <span className="grow truncate text-left">No milestone</span>
           </div>
         ),
         progress_percentage: 0,
@@ -61,11 +72,8 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
           query: milestone!.title,
           content: (
             <div className="flex items-center gap-1">
-              <MilestoneIcon
-                className="h-4 w-4 flex-shrink-0"
-                variant={getMilestoneVariant(milestone!.progress_percentage)}
-              />
-              <span className="flex-grow truncate text-left">{milestone!.title}</span>
+              <MilestoneIcon className="size-4 shrink-0" {...getMilestoneIconProps(milestone!.progress_percentage)} />
+              <span className="grow truncate text-left">{milestone!.title}</span>
             </div>
           ),
           progress_percentage: milestone!.progress_percentage,
@@ -86,34 +94,34 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
     <Combobox value={value || "none"} onValueChange={handleChange} disabled={disabled || readonly}>
       <Combobox.Button
         className={cn(
-          "flex h-7 w-full items-center justify-between gap-1 px-2 py-1 rounded-md text-sm hover:bg-custom-background-80",
+          "h-full w-full flex items-center gap-1.5 rounded-sm py-0.5 hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary",
           buttonClassName
         )}
         disabled={disabled || readonly}
       >
-        <div className="flex items-center gap-1">
+        <>
           {selectedMilestone ? (
             <>
               {value && (
                 <MilestoneIcon
-                  className="h-4 w-4 flex-shrink-0"
-                  variant={getMilestoneVariant(selectedMilestone.progress_percentage)}
+                  className="size-4 shrink-0"
+                  {...getMilestoneIconProps(selectedMilestone.progress_percentage)}
                 />
               )}
-              <span className="flex-grow truncate">{selectedMilestone.query}</span>
+              <span className="flex-shrink-0 text-body-xs-regular truncate">{selectedMilestone.query}</span>
             </>
           ) : (
-            <span className="text-custom-text-400">{placeholder}</span>
+            <span className="flex-shrink-0 text-body-xs-regular text-placeholder">{placeholder}</span>
           )}
-        </div>
+        </>
       </Combobox.Button>
       <Combobox.Options
         showSearch
         searchPlaceholder={t("search")}
         emptyMessage={t("no_matching_results")}
         maxHeight="md"
-        className="w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-sm shadow-custom-shadow-rg"
-        inputClassName="w-full bg-transparent py-1 text-sm text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+        className="w-48 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-body-xs-regular shadow-raised-200"
+        inputClassName="w-full bg-transparent py-1 text-body-xs-regular text-secondary placeholder:text-placeholder focus:outline-none"
         optionsContainerClassName="mt-2 space-y-1"
         positionerClassName="z-50"
         dataPreventOutsideClick
@@ -122,10 +130,10 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
           <Combobox.Option
             key={option.value}
             value={option.value}
-            className="w-full truncate flex items-center justify-between gap-2 rounded cursor-pointer select-none px-1 py-1.5 hover:bg-custom-background-80 data-[selected]:text-custom-text-100 text-xs text-custom-text-200"
+            className="w-full truncate flex items-center justify-between gap-2 rounded-sm cursor-pointer select-none px-1 py-1.5 hover:bg-layer-1 data-[selected]:text-primary text-caption-sm-medium text-secondary"
           >
-            <span className="flex-grow truncate">{option.content}</span>
-            {option.value === (value || "none") && <Check className="h-4 w-4 flex-shrink-0" />}
+            <span className="grow truncate">{option.content}</span>
+            {option.value === (value || "none") && <CheckIcon className="size-4 shrink-0" />}
           </Combobox.Option>
         ))}
       </Combobox.Options>

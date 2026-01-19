@@ -1,12 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  ETemplateLevel,
-  PAGE_TEMPLATE_TRACKER_ELEMENTS,
-  PROJECT_TEMPLATE_TRACKER_ELEMENTS,
-  WORKITEM_TEMPLATE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -18,7 +26,6 @@ import { extractPageFormData } from "@plane/utils";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { EPageStoreType, usePageStore, usePageTemplates } from "@/plane-web/hooks/store";
@@ -72,21 +79,12 @@ export const TemplateListActionWrapper = observer(function TemplateListActionWra
     setSelectedTemplateId(templateId);
     switch (type) {
       case ETemplateType.PROJECT:
-        captureClick({
-          elementName: PROJECT_TEMPLATE_TRACKER_ELEMENTS.LIST_ITEM_USE_TEMPLATE_BUTTON,
-        });
         setIsCreateProjectModalOpen(true);
         break;
       case ETemplateType.WORK_ITEM:
-        captureClick({
-          elementName: WORKITEM_TEMPLATE_TRACKER_ELEMENTS.LIST_ITEM_USE_TEMPLATE_BUTTON,
-        });
         setIsCreateWorkItemModalOpen(true);
         break;
       case ETemplateType.PAGE:
-        captureClick({
-          elementName: PAGE_TEMPLATE_TRACKER_ELEMENTS.LIST_ITEM_USE_TEMPLATE_BUTTON,
-        });
         handleUsePageTemplateAction(templateId);
         break;
       default:

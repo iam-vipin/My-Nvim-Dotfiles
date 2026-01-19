@@ -1,10 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Trash2 } from "lucide-react";
+import { TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
-import { ArchiveIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDeDupeIssue } from "@plane/types";
 import { Checkbox } from "@plane/ui";
@@ -98,7 +110,7 @@ export const DeDupeIssueBlockHeader = observer(function DeDupeIssueBlockHeader(p
             >
               <Checkbox
                 className={cn("!outline-none size-3.5 pointer-events-none", {
-                  "pointer-events-auto text-white": isSelected,
+                  "pointer-events-auto text-on-color": isSelected,
                 })}
                 iconClassName="size-3"
                 checked={isSelected}
@@ -111,7 +123,7 @@ export const DeDupeIssueBlockHeader = observer(function DeDupeIssueBlockHeader(p
             projectIdentifier={projectIdentifier}
             issueTypeId={issue.type_id}
             projectId={issue.project_id}
-            textContainerClassName="text-xs font-medium text-custom-text-300"
+            variant="tertiary"
             size="xs"
             displayProperties={{
               key: true,
@@ -127,9 +139,9 @@ export const DeDupeIssueBlockHeader = observer(function DeDupeIssueBlockHeader(p
             >
               <button
                 type="button"
-                className={cn("text-custom-text-300", {
-                  "hover:text-custom-text-200": isInArchivableGroup,
-                  "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
+                className={cn("text-tertiary", {
+                  "hover:text-secondary": isInArchivableGroup,
+                  "cursor-not-allowed text-placeholder": !isInArchivableGroup,
                 })}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -152,7 +164,7 @@ export const DeDupeIssueBlockHeader = observer(function DeDupeIssueBlockHeader(p
                   toggleDeleteIssueModal(issue.id);
                 }}
               >
-                <Trash2 className="size-4 text-custom-text-300 hover:text-custom-text-200" />
+                <TrashIcon className="size-4 text-tertiary hover:text-secondary" />
               </button>
             </Tooltip>
           )}

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type {
   IIssueFilterOptions,
   ILayoutDisplayFiltersOptions,
@@ -72,31 +85,31 @@ export const ISSUE_PRIORITY_FILTERS: TIssueFilterPriorityObject[] = [
   {
     key: "urgent",
     titleTranslationKey: "issue.priority.urgent",
-    className: "bg-red-500 border-red-500 text-white",
+    className: "bg-layer-2 text-priority-urgent border-strong",
     icon: "error",
   },
   {
     key: "high",
     titleTranslationKey: "issue.priority.high",
-    className: "text-orange-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-high border-strong",
     icon: "signal_cellular_alt",
   },
   {
     key: "medium",
     titleTranslationKey: "issue.priority.medium",
-    className: "text-yellow-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-medium border-strong",
     icon: "signal_cellular_alt_2_bar",
   },
   {
     key: "low",
     titleTranslationKey: "issue.priority.low",
-    className: "text-green-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-low border-strong",
     icon: "signal_cellular_alt_1_bar",
   },
   {
     key: "none",
     titleTranslationKey: "common.none",
-    className: "text-gray-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-none border-strong",
     icon: "block",
   },
 ];
@@ -394,4 +407,10 @@ export const filterActivityOnSelectedFilters = (
     return filters.some((filter) => shouldRenderActivity(activity, filter));
   });
 
+export const BASE_ACTIVITY_FILTER_TYPES = [
+  EActivityFilterType.ACTIVITY,
+  EActivityFilterType.STATE,
+  EActivityFilterType.ASSIGNEE,
+  EActivityFilterType.DEFAULT,
+];
 export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE

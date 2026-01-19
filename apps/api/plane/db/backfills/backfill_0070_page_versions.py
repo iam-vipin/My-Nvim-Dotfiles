@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from celery import shared_task
 
@@ -27,15 +38,13 @@ def backfill_issue_type_task(projects):
     # Update the issue type for all existing issues
     issue_types = {
         str(issue_type["project_id"]): str(issue_type["id"])
-        for issue_type in IssueType.objects.filter(
-            project_id__in=[project["id"] for project in projects]
-        ).values("id", "project_id")
+        for issue_type in IssueType.objects.filter(project_id__in=[project["id"] for project in projects]).values(
+            "id", "project_id"
+        )
     }
     # Update the issue type for all existing issues
     bulk_issues = []
-    for issue in Issue.objects.filter(
-        project_id__in=[project["id"] for project in projects]
-    ):
+    for issue in Issue.objects.filter(project_id__in=[project["id"] for project in projects]):
         issue.type_id = issue_types[str(issue.project_id)]
         bulk_issues.append(issue)
 

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
@@ -35,6 +48,7 @@ type Props = TDropdownProps & {
   closeOnSelect?: boolean;
   formatToken?: string;
   renderByDefault?: boolean;
+  labelClassName?: string;
 };
 
 export const DateDropdown = observer(function DateDropdown(props: Props) {
@@ -62,6 +76,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
     value,
     formatToken,
     renderByDefault = true,
+    labelClassName = "",
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -118,7 +133,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       className={cn(
         "clickable block h-full max-w-full outline-none",
         {
-          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-not-allowed text-secondary": disabled,
           "cursor-pointer": !disabled,
         },
         buttonContainerClassName
@@ -138,7 +153,9 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       >
         {!hideIcon && icon}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate">{value ? renderFormattedDate(value, formatToken) : placeholder}</span>
+          <span className={cn("flex-grow truncate text-left text-body-xs-medium", labelClassName)}>
+            {value ? renderFormattedDate(value, formatToken) : placeholder}
+          </span>
         )}
         {isClearable && !disabled && isDateSelected && (
           <CloseIcon
@@ -174,7 +191,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30",
+                "my-1 bg-surface-1 shadow-raised-200 border-[0.5px] border-strong rounded-md overflow-hidden z-30",
                 optionsClassName
               )}
               ref={setPopperElement}
@@ -182,7 +199,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
               {...attributes.popper}
             >
               <Calendar
-                className="rounded-md border border-custom-border-200 p-3"
+                className="rounded-md border border-subtle p-3"
                 captionLayout="dropdown"
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}

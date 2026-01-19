@@ -1,25 +1,34 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
+import { MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
-// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
@@ -28,6 +37,7 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
+import { IconButton } from "@plane/propel/icon-button";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -134,61 +144,40 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
 
       return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
         setPeekIssue(undefined);
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: issueId },
-        });
       });
-    } catch (error) {
+    } catch (_error) {
       setToast({
         title: t("toast.error"),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-        payload: { id: issueId },
-        error: error as Error,
-      });
     }
   };
 
   const handleArchiveIssue = async () => {
-    try {
-      await archiveIssue(workspaceSlug, projectId, issueId);
-      // check and remove if issue is peeked
-      if (getIsIssuePeeked(issueId)) {
-        removeRoutePeekId();
-      }
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId },
-      });
-    } catch (error) {
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId },
-        error: error as Error,
-      });
+    await archiveIssue(workspaceSlug, projectId, issueId);
+    // check and remove if issue is peeked
+    if (getIsIssuePeeked(issueId)) {
+      removeRoutePeekId();
     }
   };
 
   return (
     <div
       className={`relative flex items-center justify-between p-4 ${
-        currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
+        currentMode?.key === "full-screen" ? "border-b border-subtle" : ""
       }`}
     >
       <div className="flex items-center gap-4">
         <Tooltip tooltipContent={t("common.close_peek_view")} isMobile={isMobile}>
           <button onClick={removeRoutePeekId}>
-            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
 
         <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
           <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
           </Link>
         </Tooltip>
         {currentMode && embedIssue === false && (
@@ -199,7 +188,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
               customButton={
                 <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
                   <button type="button" className="">
-                    <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                    <currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />
                   </button>
                 </Tooltip>
               }
@@ -208,9 +197,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
                 <CustomSelect.Option key={mode.key} value={mode.key}>
                   <div
                     className={`flex items-center gap-1.5 ${
-                      currentMode.key === mode.key
-                        ? "text-custom-text-200"
-                        : "text-custom-text-400 hover:text-custom-text-200"
+                      currentMode.key === mode.key ? "text-secondary" : "text-placeholder hover:text-secondary"
                     }`}
                   >
                     <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
@@ -224,7 +211,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       </div>
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
@@ -236,9 +223,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
             />
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-            <button type="button" onClick={handleCopyText}>
-              <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
-            </button>
+            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
           </Tooltip>
           {issueDetails && (
             <WorkItemDetailQuickActions

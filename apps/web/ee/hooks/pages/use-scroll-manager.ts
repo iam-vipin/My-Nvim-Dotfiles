@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useRef } from "react";
 
 type ScrollBehavior = "auto" | "smooth" | "instant";
@@ -31,9 +44,9 @@ export const useScrollManager = <T = string>(containerRef: React.RefObject<HTMLE
 
       // Add highlight effect if requested
       if (highlight) {
-        targetElement.classList.add("bg-custom-background-90", "transition-all", "duration-300");
+        targetElement.classList.add("bg-layer-1", "transition-all", "duration-300");
         setTimeout(() => {
-          targetElement.classList.remove("bg-custom-background-90", "transition-all", "duration-300");
+          targetElement.classList.remove("bg-layer-1", "transition-all", "duration-300");
         }, 2000);
       }
 

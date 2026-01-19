@@ -1,14 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import useSWR from "swr";
-import { Check, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, EpicIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon, EpicIcon } from "@plane/propel/icons";
 import type { TWorkspaceEpicsSearchParams } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
@@ -144,7 +157,7 @@ export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -161,7 +174,7 @@ export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
           >
-            {!hideIcon && <EpicIcon className="h-4 w-4 text-custom-text-300" />}
+            {!hideIcon && <EpicIcon className="h-4 w-4 text-tertiary" />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
               <span className="flex-grow truncate max-w-40">{getDisplayName(value, placeholder)}</span>
             )}
@@ -190,23 +203,23 @@ export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
     >
       {isOpen &&
         (isLoading ? (
-          <div className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none">
-            <p className="text-custom-text-400 italic py-1 px-1.5">{t("loading")}</p>
+          <div className="my-1 w-48 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none">
+            <p className="text-placeholder italic py-1 px-1.5">{t("loading")}</p>
           </div>
         ) : (
           <Combobox.Options className="fixed z-10" static>
             <div
-              className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+              className="my-1 w-48 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
             >
-              <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-                <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-layer-1 px-2">
+                <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
                 <Combobox.Input
                   as="input"
                   ref={inputRef}
-                  className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("search")}
@@ -224,26 +237,26 @@ export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
                           key={option.id}
                           value={option.id}
                           className={({ active, selected }) =>
-                            `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                              active ? "bg-custom-background-80" : ""
-                            } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                            `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
+                              active ? "bg-layer-1" : ""
+                            } ${selected ? "text-primary" : "text-secondary"}`
                           }
                         >
                           {({ selected }) => (
                             <>
-                              <EpicIcon className="h-4 w-4 text-custom-text-300" />
+                              <EpicIcon className="h-4 w-4 text-tertiary" />
                               <span className="flex-grow truncate">{option.name}</span>
-                              {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                              {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                             </>
                           )}
                         </Combobox.Option>
                       );
                     })
                   ) : (
-                    <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
+                    <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
                   )
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">{t("loading")}</p>
+                  <p className="text-placeholder italic py-1 px-1.5">{t("loading")}</p>
                 )}
               </div>
             </div>

@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
+import { CopyIcon, NewTabIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -105,7 +119,7 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
           handleSubmit={regenerateIntakeForms}
         />
       )}
-      <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "")}>
+      <div className={cn(isTooltip ? "divide-y divide-subtle-1/50" : "")}>
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)
           .map((featureKey) => {
@@ -127,19 +141,13 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                 />
               );
             return (
-              <div
-                key={featureKey}
-                className={cn(
-                  "gap-x-8 gap-y-3 py-3",
-                  isTooltip ? "bg-custom-background-100" : "bg-custom-background-90"
-                )}
-              >
+              <div key={featureKey} className={cn("gap-x-8 gap-y-3 py-3", isTooltip ? "bg-surface-1" : "bg-layer-1")}>
                 <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
                   <div className="w-full space-y-2">
                     <div className={cn("flex justify-between gap-4", {})}>
                       <div className="flex-1 w-full">
-                        <div className="text-sm font-medium leading-5 align-top ">{feature.title}</div>
-                        <p className="text-sm text-custom-text-300 text-wrap mt-1">{feature.description} </p>
+                        <div className="text-13 font-medium leading-5 align-top ">{feature.title}</div>
+                        <p className="text-13 text-tertiary text-wrap mt-1">{feature.description} </p>
                       </div>
                       <div className={cn(!isTooltip && "flex items-center")}>
                         {settings && (
@@ -168,34 +176,29 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                     </div>
 
                     {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
-                      <div
-                        className={cn(
-                          "rounded-md space-y-2",
-                          isTooltip ? "bg-custom-background-90" : "bg-custom-background-100"
-                        )}
-                      >
+                      <div className={cn("rounded-md space-y-2", isTooltip ? "bg-layer-1" : "bg-surface-1")}>
                         <div className="p-3 space-y-2">
                           <div className="flex gap-2 rounded">
-                            {feature.icon} <span className="text-xs font-medium">{feature.fieldName}</span>
+                            {feature.icon} <span className="text-11 font-medium">{feature.fieldName}</span>
                           </div>
                           <div className="flex gap-2 h-[30px] w-full">
                             {settings?.anchors[feature.key] ? (
                               <div
                                 className={cn(
-                                  "flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 flex-1 py-1 px-2 gap-2 h-full",
+                                  "flex items-center text-13 rounded-md border-[0.5px] border-subtle-1 flex-1 py-1 px-2 gap-2 h-full",
                                   {
                                     "w-[320px]": isTooltip,
                                   }
                                 )}
                               >
                                 <span className="truncate flex-1 mr-4">{publishLink}</span>
-                                <Copy
-                                  className="text-custom-text-400 w-[16px] cursor-pointer"
+                                <CopyIcon
+                                  className="text-placeholder w-[16px] cursor-pointer"
                                   onClick={() => copyToClipboard(publishLink)}
                                 />
                                 {feature.hasHyperlink && (
                                   <a href={publishLink} target="_blank" rel="noreferrer">
-                                    <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
+                                    <NewTabIcon className="text-placeholder w-[16px] cursor-pointer" />
                                   </a>
                                 )}
                               </div>
@@ -207,9 +210,8 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                             {allowEdit && settings?.anchors[feature.key] && (
                               <Button
                                 tabIndex={-1}
-                                size="sm"
-                                variant="neutral-primary"
-                                className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
+                                variant="secondary"
+                                className="w-fit cursor-pointer px-2 py-1 text-center text-13 font-medium outline-none my-auto h-full"
                                 onClick={() => setModalType(feature.key)}
                               >
                                 <RefreshCcw className="w-[16px]" /> Renew

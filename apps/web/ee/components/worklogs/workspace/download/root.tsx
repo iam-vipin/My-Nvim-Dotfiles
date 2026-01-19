@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
@@ -61,14 +74,14 @@ export const WorkspaceWorklogDownloadRoot = observer(function WorkspaceWorklogDo
           className="cursor-pointer flex items-center gap-1 group"
           onClick={() => setDisclosureState(!disclosureState)}
         >
-          <div className="flex-shrink-0 w-5 h-5 rounded group-hover:bg-custom-background-90 text-custom-text-200 hover:text-custom-text-100 flex justify-center items-center">
+          <div className="flex-shrink-0 w-5 h-5 rounded-sm group-hover:bg-layer-1 text-secondary hover:text-primary flex justify-center items-center">
             <ChevronDownIcon
               height={16}
               width={16}
               className={cn("duration-300", { "-rotate-90": !disclosureState })}
             />
           </div>
-          <div className="text-lg font-medium w-full py-0.5">Previous Downloads</div>
+          <div className="text-16 font-medium w-full py-0.5">Previous Downloads</div>
           {disclosureState && (workspaceWorklogDownloadIds || [])?.length > 0 && (
             <WorkspaceWorklogDownloadRefresh workspaceSlug={workspaceSlug} />
           )}

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
@@ -25,7 +36,6 @@ from plane.ee.bgtasks.recurring_work_item_activity_task import (
 
 
 class RecurringWorkItemViewSet(TemplateBaseEndpoint):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
     def post(self, request, slug, project_id):
@@ -45,13 +55,9 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # create a new recurring work item
-        serializer = RecurringWorkItemSerializer(
-            data=request.data, context={"project_id": project_id}
-        )
+        serializer = RecurringWorkItemSerializer(data=request.data, context={"project_id": project_id})
         if serializer.is_valid():
-            serializer.save(
-                workitem_blueprint_id=work_item_template.id, project_id=project_id
-            )
+            serializer.save(workitem_blueprint_id=work_item_template.id, project_id=project_id)
             # create a new recurring work item activity
             recurring_work_item_activity.delay(
                 type="recurring_workitem.activity.created",
@@ -89,7 +95,6 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
     def patch(self, request, slug, project_id, pk):
-
         recurring_work_item = RecurringWorkitemTask.objects.get(
             id=pk,
             project_id=project_id,
@@ -116,13 +121,9 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
                 project_id=project_id,
             )
 
-            work_item_serializer = WorkitemTemplateSerializer(
-                work_item_template, data=workitem_blueprint, partial=True
-            )
+            work_item_serializer = WorkitemTemplateSerializer(work_item_template, data=workitem_blueprint, partial=True)
             if not work_item_serializer.is_valid():
-                return Response(
-                    work_item_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(work_item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = RecurringWorkItemSerializer(
             recurring_work_item,
@@ -164,7 +165,6 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
 
 
 class RecurringWorkItemActivitiesEndpoint(TemplateBaseEndpoint):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
     def get(self, request, slug, project_id, pk):
@@ -178,7 +178,5 @@ class RecurringWorkItemActivitiesEndpoint(TemplateBaseEndpoint):
             recurring_workitem_task_id=pk,
         ).filter(**filters)
 
-        serializer = RecurringWorkItemTaskActivitySerializer(
-            recurring_work_items, many=True
-        )
+        serializer = RecurringWorkItemTaskActivitySerializer(recurring_work_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

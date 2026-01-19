@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -18,7 +29,7 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 from plane.db.models import (
     Cycle,
     Intake,
-    IssueUserProperty,
+    ProjectUserProperty,
     Module,
     Project,
     DeployBoard,
@@ -29,7 +40,7 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
-from .base import BaseAPIView
+from plane.api.views.base import BaseAPIView
 from plane.utils.host import base_host
 from plane.api.serializers import (
     ProjectSerializer,
@@ -229,7 +240,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
+
             serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
+
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -256,8 +269,6 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
-                # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(project_id=serializer.instance.id, user=request.user)
 
                 if serializer.instance.project_lead is not None and str(serializer.instance.project_lead) != str(
                     request.user.id
@@ -266,11 +277,6 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         project_id=serializer.instance.id,
                         member_id=serializer.instance.project_lead,
                         role=20,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.instance.id,
-                        user_id=serializer.instance.project_lead,
                     )
 
                 State.objects.bulk_create(

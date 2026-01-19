@@ -1,5 +1,15 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from __future__ import annotations
-import json
 import pytz
 
 # Python imports
@@ -11,20 +21,11 @@ from django.db.models import Subquery
 
 # Third Party imports
 from celery import shared_task
-from django.db.models import Count, Q, When, Case, Value, FloatField, Sum, F
-from django.db.models.functions import Cast, Concat
-from django.db import models, transaction
+from django.db.models import Q
 
 # Module imports
 from plane.ee.models import CycleSettings, ProjectFeature, AutomatedCycleLog
-from plane.db.models import Cycle, Project, Issue, CycleIssue, Workspace
-from plane.utils.analytics_plot import burndown_plot
-from plane.bgtasks.issue_activities_task import issue_activity
-from plane.bgtasks.webhook_task import model_activity
-from plane.ee.bgtasks.entity_issue_state_progress_task import (
-    entity_issue_state_activity_task,
-)
-from plane.utils.host import base_host
+from plane.db.models import Cycle, Project, Workspace
 from plane.db.models import BotTypeEnum, ProjectMember
 from plane.utils.exception_logger import log_exception
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues

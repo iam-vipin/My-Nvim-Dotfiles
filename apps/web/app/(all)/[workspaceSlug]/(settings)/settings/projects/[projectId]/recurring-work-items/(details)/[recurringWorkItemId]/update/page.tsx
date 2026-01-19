@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
@@ -21,9 +34,9 @@ function UpdateRecurringWorkItemPage({ params }: Route.ComponentProps) {
       flag={E_FEATURE_FLAGS.RECURRING_WORKITEMS}
       fallback={<RecurringWorkItemsUpgrade />}
     >
-      <div className="flex items-center justify-between border-b border-custom-border-200 pb-3 tracking-tight w-full">
+      <div className="flex items-center justify-between border-b border-subtle-1 pb-3 tracking-tight w-full">
         <div>
-          <h3 className="text-xl font-medium">{t("recurring_work_items.settings.update_recurring_work_item")}</h3>
+          <h3 className="text-18 font-medium">{t("recurring_work_items.settings.update_recurring_work_item")}</h3>
         </div>
       </div>
       <IssueModalProvider>

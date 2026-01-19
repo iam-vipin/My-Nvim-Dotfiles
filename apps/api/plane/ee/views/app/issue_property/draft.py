@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models import F, Value, Case, When
 from django.core.exceptions import ValidationError
@@ -84,9 +95,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 property_id=issue_property_id,
             )
 
-            issue_property_value = self.query_annotator(issue_property_value).values(
-                "property_id", "value"
-            )
+            issue_property_value = self.query_annotator(issue_property_value).values("property_id", "value")
 
             return Response(issue_property_value, status=status.HTTP_200_OK)
 
@@ -99,9 +108,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
         )
 
         # Annotate the query
-        issue_property_values = self.query_annotator(issue_property_values).values(
-            "property_id", "values"
-        )
+        issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
 
         # Create dictionary of property_id and values
         response = {
@@ -128,9 +135,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all issue property values
-            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
-                "property_id", "values"
-            )
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values("property_id", "values")
 
             # Get issue
             issue = DraftIssue.objects.get(pk=draft_issue_id)
@@ -173,9 +178,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 property_id__in=issue_property_ids, draft_issue__type_id=issue_type_id
             ).delete()
             # Bulk create the issue property values
-            DraftIssuePropertyValue.objects.bulk_create(
-                bulk_issue_property_values, batch_size=10
-            )
+            DraftIssuePropertyValue.objects.bulk_create(bulk_issue_property_values, batch_size=10)
 
             return Response(status=status.HTTP_201_CREATED)
         except (ValidationError, ValueError) as e:
@@ -204,9 +207,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
             values = request.data.get("values", [])
 
             # Check if the property is required
-            if issue_property.is_required and (
-                not values or not [v for v in values if v]
-            ):
+            if issue_property.is_required and (not values or not [v for v in values if v]):
                 return Response(
                     {"error": issue_property.display_name + " is a required property"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -236,9 +237,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 # Delete the old values
                 existing_prop_queryset.filter(property_id=property_id).delete()
                 # Bulk create the issue property values
-                DraftIssuePropertyValue.objects.bulk_create(
-                    property_values, batch_size=10
-                )
+                DraftIssuePropertyValue.objects.bulk_create(property_values, batch_size=10)
 
             else:
                 raise ValidationError("Invalid property type")

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db import models
 from django.conf import settings
@@ -18,16 +29,12 @@ class GroupChoices(models.TextChoices):
 
 
 class ProjectState(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="project_states"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_states")
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     color = models.CharField(max_length=255)
     sequence = models.FloatField(default=65535)
-    group = models.CharField(
-        max_length=20, choices=GroupChoices.choices, default=GroupChoices.DRAFT
-    )
+    group = models.CharField(max_length=20, choices=GroupChoices.choices, default=GroupChoices.DRAFT)
     default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
@@ -53,9 +60,9 @@ class ProjectState(BaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = ProjectState.objects.filter(workspace=self.workspace).aggregate(
-                largest=models.Max("sequence")
-            )["largest"]
+            last_id = ProjectState.objects.filter(workspace=self.workspace).aggregate(largest=models.Max("sequence"))[
+                "largest"
+            ]
             # if last_id is not None
             if last_id is not None:
                 self.sequence = last_id + 15000
@@ -72,9 +79,7 @@ class PriorityChoices(models.TextChoices):
 
 
 class ProjectAttribute(ProjectBaseModel):
-    priority = models.CharField(
-        max_length=50, choices=PriorityChoices.choices, default=PriorityChoices.NONE
-    )
+    priority = models.CharField(max_length=50, choices=PriorityChoices.choices, default=PriorityChoices.NONE)
     state = models.ForeignKey(
         ProjectState,
         on_delete=models.SET_NULL,
@@ -170,9 +175,7 @@ class ProjectComment(ProjectBaseModel):
     edited_at = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.comment_stripped = (
-            strip_tags(self.comment_html) if self.comment_html != "" else ""
-        )
+        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
         return super(ProjectComment, self).save(*args, **kwargs)
 
     class Meta:
@@ -188,9 +191,7 @@ class ProjectComment(ProjectBaseModel):
 
 class ProjectCommentReaction(ProjectBaseModel):
     reaction = models.CharField(max_length=255)
-    comment = models.ForeignKey(
-        "ee.ProjectComment", on_delete=models.CASCADE, related_name="project_reactions"
-    )
+    comment = models.ForeignKey("ee.ProjectComment", on_delete=models.CASCADE, related_name="project_reactions")
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -215,21 +216,12 @@ class ProjectCommentReaction(ProjectBaseModel):
         return f"{self.comment} {self.actor.email}"
 
 
-class ProjectMemberActivityModel(ProjectBaseModel):
+class ProjectMemberActivity(ProjectBaseModel):
     class ProjectMemberActivityType(models.TextChoices):
-        # Project
-        PROJECT_JOINED = "PROJECT_JOINED", "Project Joined"
-        PROJECT_LEFT = "PROJECT_LEFT", "Project Left"
-        PROJECT_INVITED = "PROJECT_INVITED", "Project Invited"
-        PROJECT_REMOVED = "PROJECT_REMOVED", "Project Removed"
-
-        # Team
-        TEAM_JOINED = "TEAM_JOINED", "Team Joined"
-        TEAM_LEFT = "TEAM_LEFT", "Team Left"
-        TEAM_INVITED = "TEAM_INVITED", "Team Invited"
-        TEAM_REMOVED = "TEAM_REMOVED", "Team Removed"
-
-        # Role
+        JOINED = "JOINED", "Joined"
+        ADDED = "ADDED", "Added"
+        LEFT = "LEFT", "Left"
+        REMOVED = "REMOVED", "Removed"
         ROLE_UPDATED = "ROLE_UPDATED", "Role Updated"
 
     actor = models.ForeignKey(
@@ -243,11 +235,11 @@ class ProjectMemberActivityModel(ProjectBaseModel):
         related_name="activities",
         null=True,
     )
-    type = models.CharField(
-        max_length=255, default=ProjectMemberActivityType.PROJECT_JOINED
-    )
+    type = models.CharField(max_length=25)
     old_value = models.TextField(blank=True, null=True)
     new_value = models.TextField(blank=True, null=True)
+    old_identifier = models.UUIDField(null=True)
+    new_identifier = models.UUIDField(null=True)
     epoch = models.FloatField(null=True)
 
     class Meta:
@@ -258,3 +250,29 @@ class ProjectMemberActivityModel(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.actor}"
+
+
+class ProjectActivity(ProjectBaseModel):
+    verb = models.CharField(max_length=255, verbose_name="Action", default="created")
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
+    comment = models.TextField(verbose_name="Comment", blank=True)
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="project_activities",
+    )
+    old_identifier = models.UUIDField(null=True)
+    new_identifier = models.UUIDField(null=True)
+    epoch = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Project Activity"
+        verbose_name_plural = "Project Activities"
+        db_table = "project_activities"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.verb}"

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
@@ -23,12 +36,12 @@ export const SidePeekView = observer(function SidePeekView(props: Props) {
   const { canComment } = usePublish(anchor);
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden">
+    <div className="flex size-full flex-col overflow-hidden">
       <div className="w-full p-5">
         <PeekOverviewHeader handleClose={handleClose} issueDetails={issueDetails} />
       </div>
       {issueDetails ? (
-        <div className="h-full w-full overflow-y-auto px-6">
+        <div className="size-full overflow-y-auto px-6">
           {/* issue title and description */}
           <div className="w-full">
             <PeekOverviewIssueDetails anchor={anchor} issueDetails={issueDetails} />
@@ -38,7 +51,7 @@ export const SidePeekView = observer(function SidePeekView(props: Props) {
             <PeekOverviewIssueProperties issueDetails={issueDetails} />
           </div>
           {/* divider */}
-          <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
+          <div className="my-5 h-[1] w-full border-t border-subtle" />
           {/* issue activity/comments */}
           {canComment && (
             <div className="w-full pb-5">

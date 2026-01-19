@@ -1,21 +1,35 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_OVERVIEW_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProject, IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
+import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import type { TProject } from "@/plane-web/types";
+import { Tooltip } from "@plane/propel/tooltip";
 
 type THeroSection = {
   project: TProject;
@@ -47,12 +61,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: project.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -60,12 +68,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
         });
       })
       .catch((error) => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: project.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -78,9 +80,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
     const payload: Partial<IProject> = {
       logo_props: getValues<"logo_props">("logo_props"),
     };
-    captureClick({
-      elementName: PROJECT_OVERVIEW_TRACKER_ELEMENTS.HEADER_EMOJI_PICKER,
-    });
     handleUpdateChange(payload);
   };
 
@@ -96,11 +95,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
   return (
     <div>
       <div className="relative h-[118px] w-full ">
-        <img
-          src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
-          alt={project.name}
-          className="absolute left-0 top-0 h-full w-full object-cover"
-        />
+        <CoverImage src={project.cover_image_url} alt={project.name} className="absolute left-0 top-0 h-full w-full" />
         {isAdmin && (
           <div className="absolute right-4 top-4">
             <ImagePickerPopover
@@ -120,7 +115,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
       <div className="relative px-10 pt-page-y mt-2">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="absolute -top-[27px] h-10 w-10 flex-shrink-0 grid place-items-center rounded bg-custom-background-80"
+          className="absolute -top-[27px] h-10 w-10 flex-shrink-0 grid place-items-center rounded-sm bg-layer-1"
         >
           <Controller
             control={control}
@@ -159,7 +154,9 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
             )}
           />
         </form>
-        <div className="font-bold text-xl">{project.name}</div>
+        <Tooltip tooltipContent={project.name} position="top">
+          <div className="font-bold text-18 pt-5 truncate">{project.name}</div>
+        </Tooltip>
       </div>
     </div>
   );

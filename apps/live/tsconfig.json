@@ -6,13 +6,34 @@
     "noImplicitOverride": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
-
     "paths": {
       "@/*": ["./src/*"],
       "@/plane-live/*": ["./src/ee/*"]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "transform": "@effect/language-service/transform",
+        "diagnosticSeverity": {
+          "floatingEffect": "error",
+          "deterministicKeys": "warning"
+        },
+        "keyPatterns": [
+          {
+            "target": "service",
+            "pattern": "default",
+            "skipLeadingPath": ["src/"]
+          },
+          {
+            "target": "error",
+            "pattern": "default",
+            "skipLeadingPath": ["src/"]
+          }
+        ]
+      }
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -70,20 +83,18 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
     <form onSubmit={handleAppFormSubmit}>
       <div className="space-y-4 p-4">
         <div className="space-y-1">
-          <div className="text-custom-text-200 font-medium mb-1">
-            {t("gitlab_enterprise_integration.app_form_title")}
-          </div>
-          <div className="text-sm text-custom-text-300 mb-4">
+          <div className="text-secondary font-medium mb-1">{t("gitlab_enterprise_integration.app_form_title")}</div>
+          <div className="text-body-xs-regular text-tertiary mb-4">
             {t("gitlab_enterprise_integration.app_form_description")}
           </div>
         </div>
         <div>
-          <div className="text-sm text-custom-text-300">{t("gitlab_enterprise_integration.base_url_title")}</div>
+          <div className="text-body-xs-regular text-tertiary">{t("gitlab_enterprise_integration.base_url_title")}</div>
           <Input
             id="baseUrl"
             type="text"
             placeholder={t("gitlab_enterprise_integration.base_url_placeholder")}
-            className="w-full resize-none text-sm"
+            className="w-full resize-none text-body-xs-regular"
             hasError={Boolean(errors.baseUrl)}
             tabIndex={1}
             {...register("baseUrl", {
@@ -94,62 +105,70 @@ export const GitlabEnterpriseServerAppForm = observer(function GitlabEnterpriseS
               },
             })}
           />
-          <div className="text-xs text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.base_url_description")}
           </div>
-          {errors.baseUrl && <p className="text-red-500 text-xs">{errors.baseUrl.message}</p>}
+          {errors.baseUrl && <p className="text-danger-primary text-caption-sm-regular">{errors.baseUrl.message}</p>}
         </div>
         <div>
-          <div className="text-sm text-custom-text-300">{t("gitlab_enterprise_integration.client_id_title")}</div>
+          <div className="text-body-xs-regular text-tertiary">{t("gitlab_enterprise_integration.client_id_title")}</div>
           <Input
             id="clientId"
             type="text"
             placeholder={t("gitlab_enterprise_integration.client_id_placeholder")}
-            className="w-full resize-none text-sm"
+            className="w-full resize-none text-body-xs-regular"
             hasError={Boolean(errors.clientId)}
             tabIndex={1}
             {...register("clientId", { required: t("gitlab_enterprise_integration.client_id_error") })}
           />
-          <div className="text-xs text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.client_id_description")}
           </div>
-          {errors.clientId && <p className="text-red-500 text-xs">{errors.clientId.message}</p>}
+          {errors.clientId && <p className="text-danger-primary text-caption-sm-regular">{errors.clientId.message}</p>}
         </div>
         <div>
-          <div className="text-sm text-custom-text-300">{t("gitlab_enterprise_integration.client_secret_title")}</div>
+          <div className="text-body-xs-regular text-tertiary">
+            {t("gitlab_enterprise_integration.client_secret_title")}
+          </div>
           <Input
             id="clientSecret"
             type="text"
             placeholder={t("gitlab_enterprise_integration.client_secret_placeholder")}
-            className="w-full resize-none text-sm"
+            className="w-full resize-none text-body-xs-regular"
             hasError={Boolean(errors.clientSecret)}
             tabIndex={1}
             {...register("clientSecret", { required: t("gitlab_enterprise_integration.client_secret_error") })}
           />
-          <div className="text-xs text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.client_secret_description")}
           </div>
-          {errors.clientSecret && <p className="text-red-500 text-xs">{errors.clientSecret.message}</p>}
+          {errors.clientSecret && (
+            <p className="text-danger-primary text-caption-sm-regular">{errors.clientSecret.message}</p>
+          )}
         </div>
 
         <div>
-          <div className="text-sm text-custom-text-300">{t("gitlab_enterprise_integration.webhook_secret_title")}</div>
+          <div className="text-body-xs-regular text-tertiary">
+            {t("gitlab_enterprise_integration.webhook_secret_title")}
+          </div>
           <Input
             id="webhookSecret"
             type="text"
             placeholder={t("gitlab_enterprise_integration.webhook_secret_placeholder")}
-            className="w-full resize-none text-sm"
+            className="w-full resize-none text-body-xs-regular"
             hasError={Boolean(errors.webhookSecret)}
             tabIndex={1}
             {...register("webhookSecret", { required: t("gitlab_enterprise_integration.webhook_secret_error") })}
           />
-          <div className="text-xs text-custom-text-300 mt-1">
+          <div className="text-caption-sm-regular text-tertiary mt-1">
             {t("gitlab_enterprise_integration.webhook_secret_description")}
           </div>
-          {errors.webhookSecret && <p className="text-red-500 text-xs">{errors.webhookSecret.message}</p>}
+          {errors.webhookSecret && (
+            <p className="text-danger-primary text-caption-sm-regular">{errors.webhookSecret.message}</p>
+          )}
         </div>
         <div className="flex justify-start gap-2 mt-10">
-          <Button type="button" variant="outline-primary" onClick={handleClose}>
+          <Button type="button" variant="secondary" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting} loading={isSubmitting} variant="primary">

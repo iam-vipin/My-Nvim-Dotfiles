@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -46,15 +59,15 @@ export const PagesAppSidebarMenu = observer(function PagesAppSidebarMenu() {
           <Link key={link.key} href={`/${workspaceSlug}${link.href}`} className="block">
             <div
               className={cn(
-                "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90",
+                "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
                 {
-                  "text-custom-primary-100 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 focus:bg-custom-primary-100/10":
+                  "text-accent-primary bg-accent-primary/10 hover:bg-accent-primary/10 focus:bg-accent-primary/10":
                     link.highlight(pathname, `/${workspaceSlug}${link.href}/`),
                 }
               )}
             >
               {<link.Icon className="size-4" />}
-              <p className="text-sm leading-5 font-medium">{link.label}</p>
+              <p className="text-13 leading-5 font-medium">{link.label}</p>
             </div>
           </Link>
         );

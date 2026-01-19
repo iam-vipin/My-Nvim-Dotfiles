@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 
@@ -51,17 +62,13 @@ def update_workflow_transition_activity(
     workflow_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     requested_data = json.loads(requested_data) if requested_data is not None else None
     workflow_activities.append(
         WorkflowTransitionActivity(
             workflow_id=workflow_id,
             actor_id=actor_id,
-            verb=(
-                "enabled" if requested_data.get("allow_issue_creation") else "disabled"
-            ),
+            verb=("enabled" if requested_data.get("allow_issue_creation") else "disabled"),
             old_value=current_instance.get("allow_issue_creation"),
             new_value=requested_data.get("allow_issue_creation"),
             field="allow_work_item_creation",
@@ -85,9 +92,7 @@ def delete_workflow_transition_activity(
     workflow_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     workflow_activities.append(
         WorkflowTransitionActivity(
             workflow_id=workflow_id,
@@ -118,16 +123,10 @@ def update_workflow_approver_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    added_approvers = (
-        requested_data.get("added_approver_ids", None) if requested_data else []
-    )
-    removed_approvers = (
-        requested_data.get("removed_approver_ids", None) if requested_data else []
-    )
+    added_approvers = requested_data.get("added_approver_ids", None) if requested_data else []
+    removed_approvers = requested_data.get("removed_approver_ids", None) if requested_data else []
     if added_approvers is not None:
-        added_approvers = User.objects.filter(pk__in=added_approvers).values(
-            "display_name", "id"
-        )
+        added_approvers = User.objects.filter(pk__in=added_approvers).values("display_name", "id")
         for approver in added_approvers:
             workflow_activities.append(
                 WorkflowTransitionActivity(
@@ -146,9 +145,7 @@ def update_workflow_approver_activity(
             )
 
     if removed_approvers is not None:
-        removed_approvers = User.objects.filter(pk__in=removed_approvers).values(
-            "display_name", "id"
-        )
+        removed_approvers = User.objects.filter(pk__in=removed_approvers).values("display_name", "id")
         for approver in removed_approvers:
             workflow_activities.append(
                 WorkflowTransitionActivity(
@@ -204,17 +201,13 @@ def enable_workflow_transition(
     workflow_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     requested_data = json.loads(requested_data) if requested_data is not None else None
     workflow_activities.append(
         WorkflowTransitionActivity(
             workflow_id=workflow_id,
             actor_id=actor_id,
-            verb=(
-                "enabled" if requested_data.get("is_workflow_enabled") else "disabled"
-            ),
+            verb=("enabled" if requested_data.get("is_workflow_enabled") else "disabled"),
             old_value=current_instance.get("is_workflow_enabled"),
             new_value=requested_data.get("is_workflow_enabled"),
             field="is_workflow_enabled",

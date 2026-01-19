@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 from typing import Any
 
@@ -28,9 +39,7 @@ class OAuthApplicationInstalledWorkspacesEndpoint(BaseAPIView):
         if request.query_params.get("id"):
             filters["id"] = request.query_params.get("id")
 
-        workspace_applications = WorkspaceAppInstallation.objects.filter(
-            application=application, **filters
-        )
+        workspace_applications = WorkspaceAppInstallation.objects.filter(application=application, **filters)
 
         # Always filter those workspaces where user is a member
         workspace_applications = workspace_applications.filter(
@@ -42,9 +51,5 @@ class OAuthApplicationInstalledWorkspacesEndpoint(BaseAPIView):
                 workspace=token.workspace,
             )
 
-        workspace_applications_serializer = WorkspaceAppInstallationSerializer(
-            workspace_applications, many=True
-        )
-        return Response(
-            workspace_applications_serializer.data, status=status.HTTP_200_OK
-        )
+        workspace_applications_serializer = WorkspaceAppInstallationSerializer(workspace_applications, many=True)
+        return Response(workspace_applications_serializer.data, status=status.HTTP_200_OK)

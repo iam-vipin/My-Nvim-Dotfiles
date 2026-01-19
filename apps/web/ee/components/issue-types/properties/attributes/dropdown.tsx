@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
@@ -54,7 +67,7 @@ export const DropdownAttributes = observer(function DropdownAttributes(props: TD
   return (
     <>
       <div>
-        <span className="text-xs text-custom-text-300 font-medium">
+        <span className="text-caption-sm-regular text-tertiary">
           {t("work_item_types.settings.properties.attributes.label")}
         </span>
         <PropertyMultiSelect
@@ -86,7 +99,7 @@ export const DropdownAttributes = observer(function DropdownAttributes(props: TD
       )}
       <IssuePropertyOptionsRoot customPropertyId={dropdownPropertyDetail.id} error={error?.options} />
       <div>
-        <div className="text-xs font-medium text-custom-text-300">
+        <div className="text-caption-sm-medium text-tertiary">
           {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <DefaultOptionSelect isMultiSelect={dropdownPropertyDetail.is_multi} isDisabled={isOptionDefaultDisabled} />

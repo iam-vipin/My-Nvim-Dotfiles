@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from typing import AsyncGenerator
 from typing import Optional
 
@@ -8,6 +19,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi.config import settings
+from pi.core.context import get_current_user_context
 
 log = logger.getChild(__name__)
 
@@ -44,7 +56,12 @@ async def close_async_db(app: Optional[FastAPI] = None):
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    """Get an async database session."""
+    """Get an async database session with current user context injected.
+
+    The current user is automatically retrieved from the request context
+    (set by authentication dependencies) and injected into session.info
+    for use by the UserAuditModel event listener.
+    """
     global _async_engine
 
     if _async_engine is None:
@@ -53,14 +70,36 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async_session = sessionmaker(_async_engine, class_=AsyncSession, expire_on_commit=False)  # type: ignore[call-overload]
 
     async with async_session() as session:
+        # Inject current user from context into session for audit fields
+        current_user = get_current_user_context()
+        if current_user:
+            session.info["current_user"] = current_user
         yield session
+
+
+class _UserAwareSession:
+    """Context manager wrapper that injects current user into session.info."""
+
+    def __init__(self, session: AsyncSession):
+        self._session = session
+
+    async def __aenter__(self) -> AsyncSession:
+        # Inject current user from context into session for audit fields
+        current_user = get_current_user_context()
+        if current_user:
+            self._session.info["current_user"] = current_user
+        return self._session
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self._session.close()
+        return False
 
 
 def get_streaming_db_session():
     """Get a short-lived async database session for streaming DB writes.
 
-    Returns a context manager that yields an AsyncSession.
-    Use this for DB writes during long-running streams to avoid holding connections.
+    Returns a context manager that yields an AsyncSession with current user
+    context injected for audit fields.
 
     Usage:
         async with get_streaming_db_session() as db:
@@ -72,4 +111,5 @@ def get_streaming_db_session():
         raise RuntimeError("Database engine not initialized. Call init_async_db first.")
 
     async_session_factory = sessionmaker(_async_engine, class_=AsyncSession, expire_on_commit=False)  # type: ignore[call-overload]
-    return async_session_factory()
+    session = async_session_factory()
+    return _UserAwareSession(session)

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import serializers
 
@@ -133,7 +144,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
     invite_link = serializers.SerializerMethodField()
 
     def get_invite_link(self, obj):
-        return f"/workspace-invitations/?invitation_id={obj.id}&email={obj.email}&slug={obj.workspace.slug}"
+        return f"/workspace-invitations/?invitation_id={obj.id}&slug={obj.workspace.slug}&token={obj.token}"
 
     class Meta:
         model = WorkspaceMemberInvite

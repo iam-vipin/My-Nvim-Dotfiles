@@ -4,6 +4,7 @@ import type { Editor } from "@tiptap/react";
 import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { debounce } from "lodash-es";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { cn, CORE_EXTENSIONS } from "@plane/utils";
@@ -29,6 +30,8 @@ const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropd
   const [selectedIndex, setSelectedIndex] = useState(0);
   // refs
   const dropdownContainer = useRef<HTMLDivElement>(null);
+  const searchCallbackRef = useRef(searchCallback);
+  const debouncedSearchRef = useRef<ReturnType<typeof debounce> | null>(null);
 
   const selectItem = useCallback(
     (item: TEmbedItem) => {
@@ -99,11 +102,31 @@ const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropd
   }));
 
   useEffect(() => {
-    setItems(undefined);
-    searchCallback(query).then((data) => {
-      setItems(data);
-    });
-  }, [query, searchCallback]);
+    searchCallbackRef.current = searchCallback;
+  }, [searchCallback]);
+
+  useEffect(() => {
+    debouncedSearchRef.current = debounce(async (searchQuery: string) => {
+      setItems(undefined);
+      try {
+        const data = await searchCallbackRef.current(searchQuery);
+        setItems(data);
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+        setItems([]);
+      }
+    }, 300);
+
+    return () => {
+      debouncedSearchRef.current?.cancel();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (query !== undefined && query !== null) {
+      void debouncedSearchRef.current?.(query);
+    }
+  }, [query]);
 
   useOutsideClickDetector(dropdownContainer, onClose);
 
@@ -119,7 +142,7 @@ const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropd
       <div
         ref={dropdownContainer}
         id="issue-list-container"
-        className="relative max-h-80 w-96 overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-80 w-96 overflow-y-auto rounded-md border-[0.5px] border-subtle-1 bg-layer-1 px-2 py-2.5 shadow-raised-200 space-y-2"
         style={{
           zIndex: 100,
         }}
@@ -131,23 +154,23 @@ const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropd
                 key={item.id}
                 type="button"
                 className={cn(
-                  "w-full flex items-center gap-2 select-none truncate rounded px-1 py-1.5 text-left text-xs text-custom-text-200 hover:bg-custom-background-90",
+                  "w-full flex items-center gap-2 select-none truncate rounded-sm px-1 py-1.5 text-left text-11 text-secondary hover:bg-layer-1-hover",
                   {
-                    "bg-custom-background-90": index === selectedIndex,
+                    "bg-layer-1-hover": index === selectedIndex,
                   }
                 )}
                 onClick={() => selectItem(item)}
               >
-                <h5 className="whitespace-nowrap text-xs text-custom-text-300 flex-shrink-0">{item.subTitle}</h5>
+                <h5 className="whitespace-nowrap text-11 text-tertiary flex-shrink-0">{item.subTitle}</h5>
                 {item.icon}
-                <p className="flex-grow w-full truncate text-xs">{item.title}</p>
+                <p className="flex-grow w-full truncate text-11">{item.title}</p>
               </button>
             ))
           ) : (
-            <div className="text-center text-xs text-custom-text-400">No results found</div>
+            <div className="text-center text-11 text-placeholder">No results found</div>
           )
         ) : (
-          <div className="text-center text-xs text-custom-text-400">Loading</div>
+          <div className="text-center text-11 text-placeholder">Loading</div>
         )}
       </div>
     </>

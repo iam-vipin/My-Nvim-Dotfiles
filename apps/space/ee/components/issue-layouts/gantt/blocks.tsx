@@ -1,9 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // ui
 import { StateGroupIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -38,7 +51,7 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
       }}
       onClick={handleIssuePeekOverview}
     >
-      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+      <div className="absolute left-0 top-0 h-full w-full bg-surface-1/50" />
       <Tooltip
         tooltipContent={
           <div className="space-y-1">
@@ -49,9 +62,10 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
             </div>
           </div>
         }
-        position="top-left"
+        side="top"
+        align="start"
       >
-        <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100">
+        <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-13 text-primary">
           {issueDetails?.name}
         </div>
       </Tooltip>
@@ -80,15 +94,15 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
     <Link
       href={`?${queryParam}`}
       onClick={handleIssuePeekOverview}
-      className="line-clamp-1 w-full cursor-pointer text-sm text-custom-text-100"
+      className="line-clamp-1 w-full cursor-pointer text-13 text-primary"
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
         {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />}
-        <div className="flex-shrink-0 text-xs text-custom-text-300">
+        <div className="flex-shrink-0 text-11 text-tertiary">
           {projectIdentifier} {issueDetails?.sequence_id}
         </div>
         <Tooltip tooltipContent={issueDetails?.name}>
-          <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
+          <span className="flex-grow truncate text-13 font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>
     </Link>

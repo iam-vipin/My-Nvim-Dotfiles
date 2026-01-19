@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { LayersIcon } from "lucide-react";
@@ -5,7 +18,8 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TMilestone } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { Button, EModalPosition, Input, Loader, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { EModalPosition, Input, Loader, ModalCore } from "@plane/ui";
 import { cn, getChangedFields, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -140,6 +154,7 @@ export function CreateUpdateMilestoneModal(props: Props) {
       fetchMilestoneWorkItems(workspaceSlug, projectId, milestoneId)
         .then((workItemIds) => {
           setSelectedWorkItemIds(workItemIds);
+          return;
         })
         .catch(() => {
           setToast({
@@ -173,9 +188,7 @@ export function CreateUpdateMilestoneModal(props: Props) {
       <div className="p-4">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
-            <h3 className="text-xl font-medium text-custom-text-200">
-              {data?.id ? "Update Milestone" : "Create Milestone"}
-            </h3>
+            <h4 className="text-h4-medium text-secondary">{data?.id ? "Update Milestone" : "Create Milestone"}</h4>
             {/* Title */}
             <div className="space-y-1">
               <Controller
@@ -184,7 +197,7 @@ export function CreateUpdateMilestoneModal(props: Props) {
                 render={({ field: { value, onChange } }) => (
                   <Input
                     type="text"
-                    className={cn("text-sm w-full", errors.title ? "border-red-500" : "")}
+                    className={cn("text-body-xs-regular w-full", errors.title ? "border-danger-strong" : "")}
                     value={value}
                     onChange={onChange}
                     placeholder="Title"
@@ -194,7 +207,7 @@ export function CreateUpdateMilestoneModal(props: Props) {
                   required: "Title is required",
                 }}
               />
-              {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
+              {errors.title && <p className="text-caption-sm-medium text-danger-primary">{errors.title.message}</p>}
             </div>
             {/* Description */}
             <Controller
@@ -219,7 +232,7 @@ export function CreateUpdateMilestoneModal(props: Props) {
                       project_id: projectId?.toString() ?? "",
                     })
                   }
-                  containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-custom-border-100"
+                  containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-subtle"
                   uploadFile={async (blockId, file) => {
                     try {
                       const { asset_id } = await uploadEditorAsset({
@@ -264,10 +277,10 @@ export function CreateUpdateMilestoneModal(props: Props) {
                       <Loader.Item height="28px" width="48px" />
                     </Loader>
                   ) : (
-                    <Button variant="neutral-primary" size="sm" className="text-xs text-custom-text-100">
+                    <Button variant="secondary" className="text-caption-sm-medium text-primary">
                       <LayersIcon className="size-3" />
                       {selectedWorkItemIds.length > 0 ? (
-                        <span className="text-xs">{selectedWorkItemIds.length}</span>
+                        <span className="text-caption-sm-medium">{selectedWorkItemIds.length}</span>
                       ) : (
                         "Link work items"
                       )}
@@ -296,11 +309,11 @@ export function CreateUpdateMilestoneModal(props: Props) {
               </div>
             </div>
           </div>
-          <div className="flex border-t items-center border-custom-border-100 pt-3 mt-3 justify-end gap-3">
-            <Button variant="neutral-primary" onClick={onClose} size="sm">
+          <div className="flex border-t items-center border-subtle pt-3 mt-3 justify-end gap-3">
+            <Button variant="secondary" size="lg" onClick={onClose}>
               Discard
             </Button>
-            <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
+            <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
               {data?.id ? "Update" : "Create"}
             </Button>
           </div>

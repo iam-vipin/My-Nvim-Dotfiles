@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -5,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import { EPageAccess, TEAMSPACE_PAGE_TRACKER_ELEMENTS, TEAMSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPageNavigationTabs, TPage, TPageDragPayload } from "@plane/types";
 // assets
@@ -21,8 +34,6 @@ import publicPageLight from "@/app/assets/empty-state/wiki/public-light.webp?url
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 // plane web hooks
@@ -114,23 +125,10 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
         const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
-        captureError({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            state: "ERROR",
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -201,7 +199,6 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
             text: isCreatingPage ? "Creating" : "Create public page",
             onClick: () => {
               handleCreatePage();
-              captureClick({ elementName: TEAMSPACE_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PAGE_BUTTON });
             },
             disabled: isCreatingPage,
           }}
@@ -228,8 +225,8 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto object-cover"
             alt="No matching pages"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="text-h5-medium mt-7 mb-1">No matching pages</h5>
+          <p className="text-placeholder text-body-sm-regular">
             {debouncedSearchQuery.length > 0
               ? "Remove the search criteria to see all pages"
               : "Remove the filters to see all pages"}
@@ -241,9 +238,7 @@ export const TeamspacePagesListRoot = observer(function TeamspacePagesListRoot(p
   return (
     <div
       ref={rootDropRef}
-      className={`size-full overflow-y-scroll vertical-scrollbar scrollbar-sm ${
-        isRootDropping ? "bg-custom-background-80" : ""
-      }`}
+      className={`size-full overflow-y-scroll vertical-scrollbar scrollbar-sm ${isRootDropping ? "bg-layer-1" : ""}`}
     >
       {pageIds.map((pageId) => (
         <PageListBlockRoot

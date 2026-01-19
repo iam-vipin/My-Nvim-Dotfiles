@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
@@ -52,9 +63,7 @@ class IssueTypeEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         # Get a single issue type
         if pk:
-            issue_type = IssueType.objects.get(
-                workspace__slug=slug, project_issue_types__project_id=project_id, pk=pk
-            )
+            issue_type = IssueType.objects.get(workspace__slug=slug, project_issue_types__project_id=project_id, pk=pk)
             serializer = IssueTypeSerializer(issue_type)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -67,9 +76,7 @@ class IssueTypeEndpoint(BaseAPIView):
             ).annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
+                        ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                         .values("issue_type")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
@@ -112,9 +119,7 @@ class IssueTypeEndpoint(BaseAPIView):
         serializer.save(workspace_id=project.workspace_id)
 
         # Bridge the issue type with the project
-        ProjectIssueType.objects.create(
-            project_id=project_id, issue_type_id=serializer.data["id"], level=0
-        )
+        ProjectIssueType.objects.create(project_id=project_id, issue_type_id=serializer.data["id"], level=0)
 
         # Refetch the data
         issue_type = (
@@ -126,9 +131,7 @@ class IssueTypeEndpoint(BaseAPIView):
             ).annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
+                        ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                         .values("issue_type")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
@@ -196,9 +199,7 @@ class IssueTypeEndpoint(BaseAPIView):
         ).annotate(
             project_ids=Coalesce(
                 Subquery(
-                    ProjectIssueType.objects.filter(
-                        issue_type=OuterRef("pk"), workspace__slug=slug
-                    )
+                    ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                     .values("issue_type")
                     .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                     .values("project_ids")
@@ -264,9 +265,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             ).annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
+                        ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                         .values("issue_type")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
@@ -284,9 +283,9 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
                 "logo_props": work_item_type.logo_props,
                 "is_epic": work_item_type.is_epic,
             }
-            WorkitemTemplate.objects.filter(
-                project_id=project_id, workspace__slug=slug, type__exact={}
-            ).update(type=work_item_type_template_schema)
+            WorkitemTemplate.objects.filter(project_id=project_id, workspace__slug=slug, type__exact={}).update(
+                type=work_item_type_template_schema
+            )
 
             # Update the project
             project.is_issue_type_enabled = True
@@ -297,9 +296,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Check if default issue type exists for the project
-        if ProjectIssueType.objects.filter(
-            project_id=project_id, is_default=True
-        ).exists():
+        if ProjectIssueType.objects.filter(project_id=project_id, is_default=True).exists():
             return Response(
                 {"error": "Default work item type already exists"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -318,18 +315,16 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
         )
 
         # Update existing issues to use the new default issue type
-        Issue.objects.filter(
-            project_id=project_id, workspace__slug=slug, type_id__isnull=True
-        ).update(type_id=issue_type.id)
+        Issue.objects.filter(project_id=project_id, workspace__slug=slug, type_id__isnull=True).update(
+            type_id=issue_type.id
+        )
 
         # Update the project
         project.is_issue_type_enabled = True
         project.save()
 
         # Bridge the issue type with the project
-        ProjectIssueType.objects.create(
-            project_id=project_id, issue_type_id=issue_type.id, level=0, is_default=True
-        )
+        ProjectIssueType.objects.create(project_id=project_id, issue_type_id=issue_type.id, level=0, is_default=True)
 
         # Refetch the data
         issue_type = IssueType.objects.filter(
@@ -340,9 +335,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
         ).annotate(
             project_ids=Coalesce(
                 Subquery(
-                    ProjectIssueType.objects.filter(
-                        issue_type=OuterRef("pk"), workspace__slug=slug
-                    )
+                    ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                     .values("issue_type")
                     .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                     .values("project_ids")
@@ -360,9 +353,9 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             "logo_props": work_item_type.logo_props,
             "is_epic": work_item_type.is_epic,
         }
-        WorkitemTemplate.objects.filter(
-            project_id=project_id, workspace__slug=slug, type__exact={}
-        ).update(type=work_item_type_template_schema)
+        WorkitemTemplate.objects.filter(project_id=project_id, workspace__slug=slug, type__exact={}).update(
+            type=work_item_type_template_schema
+        )
 
         # Serialize the data
         serializer = IssueTypeSerializer(work_item_type)

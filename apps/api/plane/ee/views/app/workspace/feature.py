@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -15,16 +26,12 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
-        workspace_feature, _ = WorkspaceFeature.objects.get_or_create(
-            workspace_id=workspace.id
-        )
+        workspace_feature, _ = WorkspaceFeature.objects.get_or_create(workspace_id=workspace.id)
         serializer = WorkspaceFeatureSerializer(workspace_feature)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch(self, request, slug):
-        is_project_grouping_enabled = request.data.get(
-            "is_project_grouping_enabled", False
-        )
+        is_project_grouping_enabled = request.data.get("is_project_grouping_enabled", False)
         workspace = Workspace.objects.get(slug=slug)
         workspace_feature = WorkspaceFeature.objects.get(workspace_id=workspace.id)
 
@@ -90,13 +97,11 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
                     ignore_conflicts=True,
                 )
 
-            default_state = ProjectState.objects.filter(
-                workspace__slug=slug, default=True
-            ).first()
+            default_state = ProjectState.objects.filter(workspace__slug=slug, default=True).first()
 
-            project_attribute_project_ids = ProjectAttribute.objects.filter(
-                workspace__slug=slug
-            ).values_list("project_id", flat=True)
+            project_attribute_project_ids = ProjectAttribute.objects.filter(workspace__slug=slug).values_list(
+                "project_id", flat=True
+            )
 
             projects_ids = (
                 Project.objects.filter(workspace__slug=slug)
@@ -118,9 +123,7 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
                     batch_size=10,
                 )
 
-        serializer = WorkspaceFeatureSerializer(
-            workspace_feature, data=request.data, partial=True
-        )
+        serializer = WorkspaceFeatureSerializer(workspace_feature, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python Imports
 from typing import Optional
 from datetime import datetime
@@ -69,7 +80,9 @@ def construct_catch_up_activity(
         activity_id = workitem_activity.get("id", None)
         activity_updated_at = notification_updated_at or None
         workitem_activity_field = workitem_activity.get("field", None)
+        workitem_activity_comment_id = workitem_activity.get("new_identifier", None)
         if workitem_activity_field is not None and workitem_activity_field == "comment":
+            activity_id = workitem_activity_comment_id or activity_id
             activity_type = CatchUpActivityTypeEnum.COMMENT
 
     return CatchUpActivityType(

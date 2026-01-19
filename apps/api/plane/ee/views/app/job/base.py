@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -17,9 +28,7 @@ class ImportJobView(BaseAPIView):
     @check_feature_flag(FeatureFlag.SILO)
     def get(self, request, slug, pk=None):
         if not pk:
-            import_jobs = ImportJob.objects.filter(**request.query_params).order_by(
-                "-created_at"
-            )
+            import_jobs = ImportJob.objects.filter(**request.query_params).order_by("-created_at")
             serializer = ImportJobSerializer(import_jobs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         import_job = ImportJob.objects.filter(pk=pk).first()

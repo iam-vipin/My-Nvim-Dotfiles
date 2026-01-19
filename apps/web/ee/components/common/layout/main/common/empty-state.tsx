@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 // plane imports
@@ -32,8 +45,8 @@ export function SectionEmptyState(props: TSectionEmptyStateProps) {
       className={cn(
         "flex flex-col gap-4 items-center justify-center rounded-md px-10",
         {
-          "border border-custom-border-200": variant === "outline",
-          "bg-custom-background-90/70": variant === "solid",
+          "border border-subtle": variant === "outline",
+          "bg-layer-1/70": variant === "solid",
           "py-10": size === "sm",
           "py-12": size === "md",
         },
@@ -42,7 +55,7 @@ export function SectionEmptyState(props: TSectionEmptyStateProps) {
     >
       <div className={cn("flex flex-col items-center gap-2 text-center", contentClassName)}>
         <div
-          className={cn("flex items-center justify-center bg-custom-background-80", {
+          className={cn("flex items-center justify-center bg-layer-1", {
             "rounded-full": iconVariant === "round",
             rounded: iconVariant === "square",
             "size-8": size === "sm",
@@ -53,16 +66,16 @@ export function SectionEmptyState(props: TSectionEmptyStateProps) {
         </div>
         <span
           className={cn("font-medium", {
-            "text-sm ": size === "sm",
-            "text-base": size === "md",
+            "text-13 ": size === "sm",
+            "text-14": size === "md",
           })}
         >
           {heading}
         </span>
         <span
-          className={cn("text-custom-text-300", {
-            "text-xs": size === "sm",
-            "text-sm": size === "md",
+          className={cn("text-tertiary", {
+            "text-11": size === "sm",
+            "text-13": size === "md",
           })}
         >
           {subHeading}

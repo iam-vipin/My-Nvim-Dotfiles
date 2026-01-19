@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "Annota un'idea, cattura un'illuminazione o registra un'intuizione. Aggiungi un adesivo per iniziare.",
     },
     stickies: {
-      title: "Annota un'idea, cattura un'illuminazione o registra un'intuizione. Aggiungi un adesivo per iniziare.",
-      cta_primary: "Aggiungi adesivo",
+      title: "Cattura idee istantaneamente",
+      description: "Crea adesivi per note rapide e promemoria, e portali con te ovunque tu vada.",
+      cta_primary: "Crea primo adesivo",
+      cta_secondary: "Documentazione",
     },
     active_cycles: {
       title: "Nessun ciclo attivo",
@@ -105,11 +120,6 @@ export default {
       description:
         "Riduci i tempi di configurazione creando modelli per progetti, elementi di lavoro e pagine — e inizia nuovi lavori in pochi secondi.",
       cta_primary: "Crea modello",
-    },
-    webhooks: {
-      title: "Nessun Webhook aggiunto ancora",
-      description: "Automatizza le notifiche a servizi esterni quando si verificano eventi del progetto.",
-      cta_primary: "Aggiungi webhook",
     },
   },
 } as const;

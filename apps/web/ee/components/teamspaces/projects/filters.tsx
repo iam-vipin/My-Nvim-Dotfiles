@@ -1,20 +1,26 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  EIssueFilterType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS,
-  TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
-// helpers
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 
@@ -37,20 +43,7 @@ export const TeamspaceProjectWorkItemFilters = observer(function TeamspaceProjec
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !teamspaceId) return;
-      captureClick({
-        elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_UPDATE_LAYOUT_BUTTON,
-      });
-      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, projectId)
-        .then(() => {
-          captureSuccess({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.LAYOUT_UPDATE,
-          });
-        })
-        .catch(() => {
-          captureError({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.LAYOUT_UPDATE,
-          });
-        });
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, projectId);
     },
     [workspaceSlug, teamspaceId, updateFilters, projectId]
   );
@@ -58,20 +51,7 @@ export const TeamspaceProjectWorkItemFilters = observer(function TeamspaceProjec
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !teamspaceId) return;
-      captureClick({
-        elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_UPDATE_DISPLAY_FILTER_BUTTON,
-      });
-      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, projectId)
-        .then(() => {
-          captureSuccess({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_FILTER_UPDATE,
-          });
-        })
-        .catch(() => {
-          captureError({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_FILTER_UPDATE,
-          });
-        });
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, projectId);
     },
     [workspaceSlug, teamspaceId, updateFilters, projectId]
   );
@@ -79,20 +59,7 @@ export const TeamspaceProjectWorkItemFilters = observer(function TeamspaceProjec
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !teamspaceId) return;
-      captureClick({
-        elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_UPDATE_DISPLAY_PROPERTY_BUTTON,
-      });
-      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_PROPERTIES, property, projectId)
-        .then(() => {
-          captureSuccess({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_PROPERTY_UPDATE,
-          });
-        })
-        .catch(() => {
-          captureError({
-            eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.DISPLAY_PROPERTY_UPDATE,
-          });
-        });
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_PROPERTIES, property, projectId);
     },
     [workspaceSlug, teamspaceId, updateFilters, projectId]
   );

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -36,7 +49,7 @@ export const PageTemplatePageDetails = observer(function PageTemplatePageDetails
   return (
     <div className="space-y-4">
       {/* Page Logo */}
-      <div className="size-10 -ml-[4px] grid place-items-center rounded hover:bg-custom-background-80 transition-colors">
+      <div className="size-10 -ml-[4px] grid place-items-center rounded-sm hover:bg-layer-transparent-hover transition-colors">
         <Controller
           control={control}
           name="page.logo_props"
@@ -52,7 +65,7 @@ export const PageTemplatePageDetails = observer(function PageTemplatePageDetails
                   {value?.in_use ? (
                     <Logo logo={value} size={36} type="lucide" />
                   ) : (
-                    <PageIcon className="size-9 text-custom-text-300" />
+                    <PageIcon className="size-9 text-tertiary" />
                   )}
                 </span>
               }
@@ -105,14 +118,14 @@ export const PageTemplatePageDetails = observer(function PageTemplatePageDetails
               }}
               hasError={Boolean(errors.page?.name)}
               placeholder={t("templates.settings.form.page.name.placeholder")}
-              className="w-full text-lg font-bold p-0"
+              className="w-full text-h5-bold p-0"
               mode="true-transparent"
               inputSize="md"
             />
           )}
         />
         {errors?.page?.name && typeof errors.page.name.message === "string" && (
-          <span className="text-xs font-medium text-red-500">{errors.page.name.message}</span>
+          <span className="text-caption-sm-medium text-danger-primary">{errors.page.name.message}</span>
         )}
       </div>
       {/* Page Description */}

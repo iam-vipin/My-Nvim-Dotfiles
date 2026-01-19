@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -17,8 +30,10 @@ export default {
       title: "記下想法、捕捉靈光一現或記錄思維火花。新增便籤開始。",
     },
     stickies: {
-      title: "記下想法、捕捉靈光一現或記錄思維火花。新增便籤開始。",
-      cta_primary: "新增便籤",
+      title: "即時捕捉想法",
+      description: "建立便籤記錄快速筆記和待辦事項,並隨身攜帶它們無論您走到哪裡。",
+      cta_primary: "建立第一個便籤",
+      cta_secondary: "文件",
     },
     active_cycles: {
       title: "無活躍週期",
@@ -96,11 +111,6 @@ export default {
       title: "暫無範本",
       description: "透過為專案、工作項和頁面建立範本來減少設定時間 — 並在幾秒鐘內開始新工作。",
       cta_primary: "建立範本",
-    },
-    webhooks: {
-      title: "尚未新增 Webhook",
-      description: "在專案事件發生時自動向外部服務傳送通知。",
-      cta_primary: "新增 webhook",
     },
   },
 } as const;

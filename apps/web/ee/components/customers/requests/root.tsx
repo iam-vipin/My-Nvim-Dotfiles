@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -55,12 +68,12 @@ export const CustomerRequestsRoot = observer(function CustomerRequestsRoot(props
   return (
     <>
       {/* Header */}
-      <div className="flex justify-between pb-4">
-        <h3 className="text-xl font-medium">{t("customers.requests.label", { count: 2 })}</h3>
+      <div className="flex justify-between pb-4 items-center">
+        <h3 className="text-18 text-h3-semibold">{t("customers.requests.label", { count: 2 })}</h3>
         <div className="flex gap-2 items-center">
           <CustomerRequestSearch />
           {isEditable && (
-            <Button onClick={handleFormOpen} disabled={isRequestFormOpen} size="sm" className="px-2 py-1">
+            <Button onClick={handleFormOpen} disabled={isRequestFormOpen} className="px-2 py-1">
               {t("customers.requests.add")}
             </Button>
           )}

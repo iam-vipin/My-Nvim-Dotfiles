@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -16,14 +29,10 @@ export function PageNavigationPaneAssetsTabEmptyState() {
   return (
     <div className="size-full grid place-items-center">
       <div className="flex flex-col items-center gap-y-6 text-center">
-        <img
-          src={resolvedPath}
-          className="w-[160px] h-[160px] object-contain"
-          alt="An image depicting the assets of a page"
-        />
+        <img src={resolvedPath} className="size-40 object-contain" alt="depicts the assets of a page" />
         <div className="space-y-2.5">
-          <h4 className="text-base font-medium">{t("page_navigation_pane.tabs.assets.empty_state.title")}</h4>
-          <p className="text-sm text-custom-text-200 font-medium">
+          <h4 className="text-14 font-medium">{t("page_navigation_pane.tabs.assets.empty_state.title")}</h4>
+          <p className="text-13 text-secondary font-medium">
             {t("page_navigation_pane.tabs.assets.empty_state.description")}
           </p>
         </div>

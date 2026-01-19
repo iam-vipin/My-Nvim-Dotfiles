@@ -1,8 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -10,7 +22,6 @@ import type { TBaseIssue, TIssue } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -47,6 +58,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     isProjectSelectionDisabled = false,
     isConversionOperation = false,
     isTypeSelectDisabled = false,
+    showActionItemsOnUpdate = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -250,10 +262,6 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           />
         ),
       });
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { id: response.id },
-      });
       if (!createMore) handleClose();
       if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
       setDescription("<p></p>");
@@ -264,11 +272,6 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         type: TOAST_TYPE.ERROR,
         title: t("error"),
         message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
-      });
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { id: payload.id },
-        error: error as Error,
       });
       throw error;
     }
@@ -341,12 +344,17 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),
           message: t("issue_updated_successfully"),
+          actionItems:
+            showActionItemsOnUpdate && payload.project_id ? (
+              <CreateIssueToastActionItems
+                workspaceSlug={workspaceSlug.toString()}
+                projectId={payload.project_id}
+                issueId={data.id}
+              />
+            ) : undefined,
         });
       }
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: data.id },
-      });
+
       handleClose();
     } catch (error: any) {
       console.error(error);
@@ -357,11 +365,6 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           message: error?.error ?? t("issue_could_not_be_updated"),
         });
       }
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: data.id },
-        error: error as Error,
-      });
     }
   };
 
@@ -377,7 +380,9 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else {
         // if the issue is being converted, handle the conversion
-        if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
+        if (isConversionOperation) {
+          await handleConvert(workspaceSlug.toString(), data);
+        }
         response = await handleUpdateIssue(payload, !isConversionOperation);
       }
     } catch (error) {

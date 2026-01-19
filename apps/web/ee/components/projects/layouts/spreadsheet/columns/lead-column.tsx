@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -25,14 +38,14 @@ export const SpreadsheetLeadColumn = observer(function SpreadsheetLeadColumn(pro
   return (
     <div
       className={cn(
-        "flex gap-x-2 gap-y-2 h-11 w-full items-center border-b-[0.5px] border-custom-border-200 px-4 py-1 text-xs hover:bg-custom-background-80 group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
+        "flex gap-x-2 gap-y-2 h-11 w-full items-center border-b-[0.5px] border-subtle-1 px-4 py-1 text-11 hover:bg-layer-1 group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
       )}
     >
       {lead ? (
         <>
           {lead.member.avatar_url && lead.member.avatar_url.trim() !== "" ? (
             <Link href={`/${workspaceSlug}/profile/${lead.member.id}`}>
-              <span className="relative flex h-5 w-5 items-center justify-center rounded-full capitalize text-white ">
+              <span className="relative flex h-5 w-5 items-center justify-center rounded-full capitalize text-on-color ">
                 <img
                   width={20}
                   src={getFileURL(lead.member.avatar_url)}
@@ -43,7 +56,7 @@ export const SpreadsheetLeadColumn = observer(function SpreadsheetLeadColumn(pro
             </Link>
           ) : (
             <Link href={`/${workspaceSlug}/profile/${lead.member.id}`}>
-              <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 capitalize text-white">
+              <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 capitalize text-on-color">
                 {(lead.member.email ?? lead.member.display_name ?? "?")[0]}
               </span>
             </Link>

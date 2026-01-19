@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import Link from "next/link";
 // types
@@ -38,15 +51,15 @@ export function TeamspacePageTabNavigation(props: TTeamspacePageTabNavigation) {
           onClick={(e) => handleTabClick(e, tab.key)}
         >
           <span
-            className={cn(`block p-3 py-4 text-sm font-medium transition-all`, {
-              "text-custom-primary-100": tab.key === pageType,
+            className={cn(`block p-3 py-4 text-body-xs-medium transition-all`, {
+              "text-accent-primary": tab.key === pageType,
             })}
           >
             {tab.label}
           </span>
           <div
             className={cn(`rounded-t border-t-2 transition-all border-transparent`, {
-              "border-custom-primary-100": tab.key === pageType,
+              "border-accent-strong": tab.key === pageType,
             })}
           />
         </Link>

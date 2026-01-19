@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -82,7 +95,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
   useKeypress("Escape", handleKeyDown);
 
   const peekOverviewInitiativeClassName = cn(
-    "absolute z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300",
+    "absolute z-[25] flex flex-col overflow-hidden rounded border border-subtle bg-surface-1 transition-all duration-300",
     {
       "top-0 bottom-0 right-0 w-full md:w-[80%] lg:w-[75%] border-0 border-l": peekMode === "side-peek",
       "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
@@ -93,7 +106,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
   const content = (
-    <div className="w-full !text-base">
+    <div className="w-full !text-14">
       {initiativeId && (
         <div
           ref={initiativePeekOverviewRef}
@@ -122,7 +135,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
                 disabled={disabled}
               />
               {/* content - reuse the exact same detail layout */}
-              <div className="flex h-full w-full overflow-hidden">
+              <div className="relative flex h-full w-full overflow-hidden">
                 <div className="h-full w-full overflow-y-auto">
                   <InitiativeMainContentRoot
                     editorRef={editorRef}

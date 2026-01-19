@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import type {
@@ -19,7 +32,6 @@ import {
 import { useWorkspace } from "./store/use-workspace";
 import useLocalStorage from "./use-local-storage";
 
-const PROJECT_PREFERENCES_KEY = "navigation_preferences_projects";
 const APP_RAIL_PREFERENCES_KEY = "app_rail_preferences";
 
 export const usePersonalNavigationPreferences = () => {
@@ -105,49 +117,73 @@ export const usePersonalNavigationPreferences = () => {
 };
 
 export const useProjectNavigationPreferences = () => {
-  const { storedValue, setValue } = useLocalStorage<TProjectNavigationPreferences>(
-    PROJECT_PREFERENCES_KEY,
-    DEFAULT_PROJECT_PREFERENCES
-  );
+  const { workspaceSlug } = useParams();
+  const { getProjectNavigationPreferences, updateProjectNavigationPreferences } = useWorkspace();
 
+  // Get preferences from the store
+  const storePreferences = getProjectNavigationPreferences(workspaceSlug?.toString() || "");
+
+  // Computed preferences with fallback logic: API → defaults
+  const preferences: TProjectNavigationPreferences = useMemo(() => {
+    // 1. Try API data first
+    if (
+      storePreferences &&
+      (storePreferences.navigation_control_preference || storePreferences.navigation_project_limit !== undefined)
+    ) {
+      const limit = storePreferences.navigation_project_limit ?? DEFAULT_PROJECT_PREFERENCES.limitedProjectsCount;
+
+      return {
+        navigationMode: storePreferences.navigation_control_preference || DEFAULT_PROJECT_PREFERENCES.navigationMode,
+        limitedProjectsCount: limit > 0 ? limit : DEFAULT_PROJECT_PREFERENCES.limitedProjectsCount,
+        showLimitedProjects: limit > 0, // Derived: 0 = false, >0 = true
+      };
+    }
+
+    // 2. Fall back to defaults
+    return DEFAULT_PROJECT_PREFERENCES;
+  }, [storePreferences]);
+
+  // Update navigation mode
   const updateNavigationMode = useCallback(
-    (mode: TProjectNavigationMode) => {
-      const currentPreferences = storedValue || DEFAULT_PROJECT_PREFERENCES;
-      setValue({
-        navigationMode: mode,
-        showLimitedProjects: currentPreferences.showLimitedProjects,
-        limitedProjectsCount: currentPreferences.limitedProjectsCount,
+    async (mode: TProjectNavigationMode) => {
+      if (!workspaceSlug) return;
+
+      await updateProjectNavigationPreferences(workspaceSlug.toString(), {
+        navigation_control_preference: mode,
       });
     },
-    [storedValue, setValue]
+    [workspaceSlug, updateProjectNavigationPreferences]
   );
 
+  // Update show limited projects
   const updateShowLimitedProjects = useCallback(
-    (show: boolean) => {
-      const currentPreferences = storedValue || DEFAULT_PROJECT_PREFERENCES;
-      setValue({
-        navigationMode: currentPreferences.navigationMode,
-        showLimitedProjects: show,
-        limitedProjectsCount: currentPreferences.limitedProjectsCount,
+    async (show: boolean) => {
+      if (!workspaceSlug) return;
+
+      // When toggling off, set to 0; when toggling on, use current count or default
+      const newLimit = show ? preferences.limitedProjectsCount || DEFAULT_PROJECT_PREFERENCES.limitedProjectsCount : 0;
+
+      await updateProjectNavigationPreferences(workspaceSlug.toString(), {
+        navigation_project_limit: newLimit,
       });
     },
-    [storedValue, setValue]
+    [workspaceSlug, updateProjectNavigationPreferences, preferences.limitedProjectsCount]
   );
 
+  // Update limited projects count
   const updateLimitedProjectsCount = useCallback(
-    (count: number) => {
-      const currentPreferences = storedValue || DEFAULT_PROJECT_PREFERENCES;
-      setValue({
-        navigationMode: currentPreferences.navigationMode,
-        showLimitedProjects: currentPreferences.showLimitedProjects,
-        limitedProjectsCount: count,
+    async (count: number) => {
+      if (!workspaceSlug) return;
+
+      await updateProjectNavigationPreferences(workspaceSlug.toString(), {
+        navigation_project_limit: count,
       });
     },
-    [storedValue, setValue]
+    [workspaceSlug, updateProjectNavigationPreferences]
   );
 
   return {
-    preferences: storedValue || DEFAULT_PROJECT_PREFERENCES,
+    preferences,
     updateNavigationMode,
     updateShowLimitedProjects,
     updateLimitedProjectsCount,

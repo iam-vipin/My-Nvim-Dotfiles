@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -14,6 +27,8 @@ import {
   PriorityIcon,
   StateGroupIcon,
   ViewsIcon,
+  StartDatePropertyIcon,
+  DueDatePropertyIcon,
 } from "@plane/propel/icons";
 import { FilterInstance } from "@plane/shared-state";
 import type {
@@ -40,8 +55,10 @@ import {
   getMentionFilterConfig,
   getModuleFilterConfig,
   getPriorityFilterConfig,
+  getStartDateFilterConfig,
   getStateFilterConfig,
   getStateGroupFilterConfig,
+  getTargetDateFilterConfig,
   getWorkItemTypeFilterConfig,
 } from "@plane/utils";
 
@@ -75,11 +92,12 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
         adapter: new DashboardWidgetFilterAdapter(),
         initialExpression: initialFilters,
         onExpressionChange: (expression) => {
-          handleSubmit({
+          void handleSubmit({
             filters: expression,
           });
         },
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -311,6 +329,28 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
     [operatorConfigs]
   );
 
+  // start date filter config
+  const startDateFilterConfig = useMemo(
+    () =>
+      getStartDateFilterConfig<TDashboardWidgetFilterKeys>("start_date")({
+        isEnabled: true,
+        filterIcon: StartDatePropertyIcon,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
+  // target date filter config
+  const targetDateFilterConfig = useMemo(
+    () =>
+      getTargetDateFilterConfig<TDashboardWidgetFilterKeys>("target_date")({
+        isEnabled: true,
+        filterIcon: DueDatePropertyIcon,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
   if (filterInstance) {
     filterInstance.configManager.registerAll([
       assigneeFilterConfig,
@@ -323,6 +363,8 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
       workItemTypeFilterConfig,
       stateFilterConfig,
       stateGroupFilterConfig,
+      startDateFilterConfig,
+      targetDateFilterConfig,
     ]);
   }
 
@@ -339,7 +381,7 @@ const FilterContent = observer(function FilterContent({ projectIds, initialFilte
             filter={filterInstance}
             buttonConfig={{
               label: "Add filter",
-              variant: "accent-primary",
+              variant: "secondary",
               defaultOpen: false,
               iconConfig: {
                 shouldShowIcon: false,
@@ -356,7 +398,7 @@ const WidgetConfigSidebarFilters = observer(function WidgetConfigSidebarFilters(
   return (
     <div className="flex flex-col gap-4 w-full overflow-x-hidden flex-shrink-0">
       <div className="flex items-center justify-between w-full">
-        <h6 className="font-semibold text-custom-text-200 text-sm">Filters</h6>
+        <h6 className="font-semibold text-secondary text-13">Filters</h6>
       </div>
       {props.initialFilters ? <FilterContent {...props} /> : <Loader.Item height="24px" width="100%" />}
     </div>

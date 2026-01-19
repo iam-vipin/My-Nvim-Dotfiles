@@ -1,7 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
+import { LinkIcon, NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { LinkItemBlock } from "@plane/ui";
@@ -64,25 +78,25 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         key: "edit",
         action: () => handleEdit(true),
         title: t("edit"),
-        icon: Pencil,
+        icon: EditIcon,
       },
       {
         key: "open-new-tab",
         action: handleOpenInNewTab,
         title: t("open_in_new_tab"),
-        icon: ExternalLink,
+        icon: NewTabIcon,
       },
       {
         key: "copy-link",
         action: handleCopyText,
         title: t("copy_link"),
-        icon: Link,
+        icon: LinkIcon,
       },
       {
         key: "delete",
         action: handleDelete,
         title: t("delete"),
-        icon: Trash2,
+        icon: TrashIcon,
       },
     ],
     [handleEdit, handleOpenInNewTab, handleCopyText, handleDelete, t]

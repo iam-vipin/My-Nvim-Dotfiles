@@ -1,7 +1,17 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
 import { useState } from "react";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
@@ -35,19 +45,17 @@ export const stateMapInit: TStateMap = {
 };
 
 interface IRepositoryMappingRootProps {
+  isEntitiesLoading: boolean;
   isEnterprise: boolean;
 }
 
 export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
+  isEntitiesLoading,
   isEnterprise,
 }: IRepositoryMappingRootProps) {
   // hooks
   const {
-    workspace,
-    fetchProjects,
-    auth: { workspaceConnectionIds },
-    data: { fetchGitlabEntities },
-    entityConnection: { entityConnectionIds, entityConnectionById, fetchEntityConnections },
+    entityConnection: { entityConnectionIds, entityConnectionById },
   } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
@@ -56,9 +64,6 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
   const [modalProjectCreateOpen, setModalProjectCreateOpen] = useState<boolean>(false);
 
   // derived values
-  const workspaceId = workspace?.id || undefined;
-  const workspaceSlug = workspace?.slug || undefined;
-  const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const entityConnections = entityConnectionIds.map((id) => {
     const entityConnection = entityConnectionById(id);
     if (!entityConnection || entityConnection.type !== EConnectionType.ENTITY) {
@@ -75,43 +80,19 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
     return entityConnection;
   });
 
-  // fetching external api token
-  const { isLoading: isGitlabEntitiesLoading } = useSWR(
-    workspaceConnectionId && workspaceId
-      ? `INTEGRATION_GITLAB_ENTITIES_${workspaceId}_${workspaceConnectionId}${isEnterprise ? "_ENTERPRISE" : ""}`
-      : null,
-    workspaceConnectionId && workspaceId ? async () => fetchGitlabEntities() : null,
-    { errorRetryCount: 0 }
-  );
-
-  // fetching plane projects
-  const { isLoading: isProjectsLoading } = useSWR(
-    workspaceSlug ? `INTEGRATION_PLANE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug ? async () => fetchProjects(workspaceSlug) : null,
-    { errorRetryCount: 0 }
-  );
-
-  // fetching entity connections
-  const { isLoading: isEntitiesLoading } = useSWR(
-    workspaceId ? `INTEGRATION_GITLAB_ENTITY_CONNECTIONS_${workspaceId}${isEnterprise ? "_ENTERPRISE" : ""}` : null,
-    workspaceId ? async () => fetchEntityConnections() : null,
-    { errorRetryCount: 0 }
-  );
-
   return (
     <div className="space-y-4">
-      <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
+      <div className="relative border border-subtle rounded-sm p-4 space-y-4">
         {/* heading */}
         <div className="relative flex justify-between items-start gap-4">
           <div className="space-y-1">
-            <div className="text-base font-medium">{t("gitlab_integration.project_connections")}</div>
-            <div className="text-sm text-custom-text-200">
+            <div className="text-body-sm-medium">{t("gitlab_integration.project_connections")}</div>
+            <div className="text-body-xs-regular text-secondary">
               {t("gitlab_integration.project_connections_description")}
             </div>
           </div>
           <Button
-            variant="neutral-primary"
-            size="sm"
+            variant="secondary"
             onClick={() => setModalCreateOpen(true)}
             data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.GITLAB_ADD_PROJECT_BUTTON}
           >
@@ -147,18 +128,17 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
       </div>
 
       {/* Add project state mapping blocks */}
-      <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
+      <div className="relative border border-subtle rounded-sm p-4 space-y-4">
         {/* heading */}
         <div className="relative flex justify-between items-center gap-4">
           <div className="space-y-1">
-            <div className="text-base font-medium">{t("gitlab_integration.plane_project_connection")}</div>
-            <div className="text-sm text-custom-text-200">
+            <div className="text-body-sm-medium">{t("gitlab_integration.plane_project_connection")}</div>
+            <div className="text-body-xs-regular text-secondary">
               {t("gitlab_integration.plane_project_connection_description")}
             </div>
           </div>
           <Button
-            variant="neutral-primary"
-            size="sm"
+            variant="secondary"
             onClick={() => setModalProjectCreateOpen(true)}
             data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.PLANE_ADD_PROJECT_BUTTON}
           >

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
@@ -220,7 +233,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
             searchPlaceholder={`${parsedData.data.length} ${xAxisLabel}`}
             actions={(table: Table<TChartDatum>) => (
               <Button
-                variant="accent-primary"
+                variant="secondary"
                 prependIcon={<Download className="h-3.5 w-3.5" />}
                 onClick={() => exportCSV(table.getRowModel().rows, [...defaultColumns, ...columns], workspaceSlug)}
               >
@@ -233,7 +246,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
         <EmptyStateCompact
           assetKey="unknown"
           assetClassName="size-20"
-          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
           title={t("workspace_empty_state.analytics_work_items.title")}
         />
       )}

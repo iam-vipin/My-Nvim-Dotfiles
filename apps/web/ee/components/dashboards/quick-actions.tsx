@@ -1,6 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { NewTabIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -44,14 +57,14 @@ export const DashboardQuickActions = observer(function DashboardQuickActions(pro
           updateCreateUpdateModalPayload({ ...dashboardDetails?.asJSON, id: dashboardId });
         },
         title: t("common.actions.edit"),
-        icon: Pencil,
+        icon: EditIcon,
         shouldRender: !!canCurrentUserEditDashboard && showEdit,
       },
       {
         key: "open-in-new-tab",
         action: () => window.open(dashboardLink, "_blank"),
         title: t("common.actions.open_in_new_tab"),
-        icon: ExternalLink,
+        icon: NewTabIcon,
       },
       {
         key: "copy-link",
@@ -66,13 +79,13 @@ export const DashboardQuickActions = observer(function DashboardQuickActions(pro
           });
         },
         title: t("common.actions.copy_link"),
-        icon: Link,
+        icon: LinkIcon,
       },
       {
         key: "delete",
         action: () => setIsDeleteModalOpen(true),
         title: t("common.actions.delete"),
-        icon: Trash2,
+        icon: TrashIcon,
         shouldRender: !!canCurrentUserDeleteDashboard,
       },
     ];

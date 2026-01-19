@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { update } from "lodash-es";
 import { computedFn } from "mobx-utils";
 import { EUserProjectRoles } from "@plane/types";
+import type { IProjectBulkAddFormData, TProjectMembership } from "@plane/types";
 // plane imports
 import { getHighestRole } from "@plane/utils";
 // plane web imports
@@ -9,6 +23,7 @@ import type { RootStore } from "@/plane-web/store/root.store";
 import type { IMemberRootStore } from "@/store/member";
 import type { IBaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
 import { BaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 
 export type IProjectMemberStore = IBaseProjectMemberStore;
 
@@ -85,7 +100,7 @@ export class ProjectMemberStore extends BaseProjectMemberStore implements IProje
     const projectRoleFromTeamspaceMembership = this.getProjectRoleFromTeamspaceMembership(userId, projectId);
     if (projectRoleFromTeamspaceMembership) {
       // If the user is a member of the teamspace, update user membership detail
-      update(this.projectMemberMap, [projectId, userId], (prev) => ({
+      update(this.projectMemberMap, [projectId, userId], (prev: TProjectMembership) => ({
         ...prev,
         id: null,
         original_role: null,
@@ -94,5 +109,68 @@ export class ProjectMemberStore extends BaseProjectMemberStore implements IProje
     } else {
       this.handleMemberRemoval(projectId, userId);
     }
+  };
+
+  /**
+   * @description Mutate project members activity
+   * @param workspaceSlug
+   * @param projectId
+   */
+  mutateProjectMembersActivity = async (workspaceSlug: string, projectId: string) => {
+    const isProjectMembersActivityEnabled = this.rootStore.featureFlags.getFeatureFlag(
+      workspaceSlug,
+      E_FEATURE_FLAGS.PROJECT_MEMBER_ACTIVITY,
+      false
+    );
+
+    if (isProjectMembersActivityEnabled) {
+      await this.rootStore.projectMembersActivityStore.fetchProjectMembersActivity(workspaceSlug, projectId);
+    }
+  };
+
+  /**
+   * @description bulk add members to a project
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @returns Promise<TProjectMembership[]>
+   */
+  override bulkAddMembersToProject = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: IProjectBulkAddFormData
+  ) => {
+    const response = await super.bulkAddMembersToProject(workspaceSlug, projectId, data);
+    void this.mutateProjectMembersActivity(workspaceSlug, projectId);
+    return response;
+  };
+
+  /**
+   * @description update the role of a member in a project
+   * @param workspaceSlug
+   * @param projectId
+   * @param userId
+   * @param data
+   */
+  override updateMemberRole = async (
+    workspaceSlug: string,
+    projectId: string,
+    userId: string,
+    role: EUserProjectRoles
+  ) => {
+    const response = await super.updateMemberRole(workspaceSlug, projectId, userId, role);
+    void this.mutateProjectMembersActivity(workspaceSlug, projectId);
+    return response;
+  };
+
+  /**
+   * @description remove a member from a project
+   * @param workspaceSlug
+   * @param projectId
+   * @param userId
+   */
+  override removeMemberFromProject = async (workspaceSlug: string, projectId: string, userId: string) => {
+    await super.removeMemberFromProject(workspaceSlug, projectId, userId);
+    void this.mutateProjectMembersActivity(workspaceSlug, projectId);
   };
 }

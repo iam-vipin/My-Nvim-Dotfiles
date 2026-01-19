@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import re
 import uuid
 from datetime import timedelta
@@ -430,11 +441,7 @@ def filter_issue_type(params, issue_filter, method, prefix=""):
         if len(types) and "" not in types:
             issue_filter[f"{prefix}type__in"] = types
     else:
-        if (
-            params.get("issue_type", None)
-            and len(params.get("issue_type"))
-            and params.get("issue_type") != "null"
-        ):
+        if params.get("issue_type", None) and len(params.get("issue_type")) and params.get("issue_type") != "null":
             issue_filter[f"{prefix}type__in"] = params.get("issue_type")
     return issue_filter
 
@@ -452,9 +459,7 @@ def filter_is_epic(params, issue_filter, method, prefix=""):
 
 def filter_team_project(params, issue_filter, method, prefix=""):
     if method == "GET":
-        projects = [
-            item for item in params.get("team_project").split(",") if item != "null"
-        ]
+        projects = [item for item in params.get("team_project").split(",") if item != "null"]
         projects = filter_valid_uuids(projects)
         if len(projects) and "" not in projects:
             issue_filter[f"{prefix}project__in"] = projects
@@ -472,15 +477,11 @@ def filter_dependencies(params, issue_filter, method, prefix=""):
     dependency_type = params.get("dependency_type", "all")
 
     if dependency_type == "blocking":
-        issue_ids = IssueRelation.objects.filter(
-            relation_type="blocked_by"
-        ).values_list("issue_id", flat=True)
+        issue_ids = IssueRelation.objects.filter(relation_type="blocked_by").values_list("issue_id", flat=True)
         issue_filter[f"{prefix}id__in"] = issue_ids
 
     if dependency_type == "blocked_by":
-        issue_ids = IssueRelation.objects.filter(
-            relation_type="blocked_by"
-        ).values_list("related_issue_id", flat=True)
+        issue_ids = IssueRelation.objects.filter(relation_type="blocked_by").values_list("related_issue_id", flat=True)
         issue_filter[f"{prefix}id__in"] = issue_ids
     return issue_filter
 

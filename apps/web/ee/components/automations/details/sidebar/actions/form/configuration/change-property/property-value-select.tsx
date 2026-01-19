@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // components
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -120,7 +133,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         )}
       />
       {propertyValueError && typeof propertyValueError.message === "string" && (
-        <span className="text-xs font-medium text-red-500">{propertyValueError.message}</span>
+        <span className="text-11 font-medium text-danger-primary">{propertyValueError.message}</span>
       )}
     </div>
   );

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
@@ -120,12 +133,7 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (
-        <Button
-          className="hidden md:block px-2"
-          onClick={() => setAnalyticsModal(true)}
-          variant="neutral-primary"
-          size="sm"
-        >
+        <Button className="hidden md:block px-2" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
           <div className="hidden @4xl:flex">{t("common.analytics")}</div>
           <div className="flex @4xl:hidden">
             <ChartNoAxesColumn className="size-3.5" />

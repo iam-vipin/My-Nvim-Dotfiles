@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -7,6 +20,15 @@ import type { TMovePagePayload, TPage, TPageFilters, TPageNavigationTabs, TPages
 import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
+// page filter storage helpers
+import type { TPageFilterStorageKeys } from "./page-filter-storage.helpers";
+import { restorePageFiltersFromStorage, setupPageFilterStorageReactions } from "./page-filter-storage.helpers";
+// local storage keys
+const PROJECT_PAGES_STORAGE_KEYS: TPageFilterStorageKeys = {
+  sortKey: "project-pages-sort-key",
+  sortBy: "project-pages-sort-by",
+  filters: "project-pages-filters",
+};
 // plane web store
 import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 import { PageShareService } from "@/plane-web/services/page/page-share.service";
@@ -195,6 +217,13 @@ export class ProjectPageStore implements IProjectPageStore {
         this.filters.searchQuery = "";
       }
     );
+
+    // restore sort filters from localStorage (one-time initialization)
+    restorePageFiltersFromStorage(this.filters, PROJECT_PAGES_STORAGE_KEYS);
+
+    // setup reactions to persist filters to localStorage
+    const storageDisposers = setupPageFilterStorageReactions(this.filters, PROJECT_PAGES_STORAGE_KEYS);
+    this.disposers.push(...storageDisposers);
   }
 
   /**
@@ -361,14 +390,8 @@ export class ProjectPageStore implements IProjectPageStore {
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
-      // Create a new filters object to avoid direct mutation
-      const updatedFilters = { ...this.filters };
-
-      // Set the new value
-      updatedFilters[filterKey] = filterValue;
-
-      // Replace the entire filters object
-      this.filters = updatedFilters;
+      // Mutate the existing filters object in-place so MobX reactions can track changes
+      set(this.filters, [filterKey], filterValue);
 
       // Trigger update of the pages arrays
       this.updatePageTypeArrays();
@@ -381,6 +404,9 @@ export class ProjectPageStore implements IProjectPageStore {
   clearAllFilters = () =>
     runInAction(() => {
       set(this.filters, ["filters"], {});
+      if (typeof localStorage !== "undefined") {
+        localStorage.removeItem(PROJECT_PAGES_STORAGE_KEYS.filters);
+      }
     });
 
   /**

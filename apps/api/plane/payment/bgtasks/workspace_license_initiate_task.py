@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import requests
 
@@ -19,9 +30,7 @@ def workspace_license_initiate_task(workspace_id):
     if settings.IS_MULTI_TENANT:
         # Get all active workspace members
         workspace_members = (
-            WorkspaceMember.objects.filter(
-                workspace_id=workspace_id, is_active=True, member__is_bot=False
-            )
+            WorkspaceMember.objects.filter(workspace_id=workspace_id, is_active=True, member__is_bot=False)
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),

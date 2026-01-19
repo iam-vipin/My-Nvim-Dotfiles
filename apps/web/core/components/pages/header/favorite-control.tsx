@@ -1,10 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
-// constants
-import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import { Star } from "lucide-react";
 // ui
-import { FavoriteStar } from "@plane/ui";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
+import { IconButton } from "@plane/propel/icon-button";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -25,16 +35,17 @@ export const PageFavoriteControl = observer(function PageFavoriteControl({ page 
   if (!canCurrentUserFavoritePage) return null;
 
   return (
-    <FavoriteStar
-      selected={is_favorite}
+    <IconButton
+      variant="ghost"
+      size="lg"
+      icon={Star}
       onClick={() => {
-        captureClick({
-          elementName: PROJECT_PAGE_TRACKER_ELEMENTS.FAVORITE_BUTTON,
-        });
         pageOperations.toggleFavorite();
       }}
-      buttonClassName="flex-shrink-0 size-6 group rounded hover:bg-custom-background-80 transition-colors"
-      iconClassName="size-3.5 text-custom-text-200 group-hover:text-custom-text-10"
+      aria-label={is_favorite ? "Remove favorite" : "Add to favorites"}
+      className={
+        is_favorite ? "[&_svg]:fill-(--color-label-yellow-icon) [&_svg]:stroke-(--color-label-yellow-icon)" : ""
+      }
     />
   );
 });

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import * as dotenv from "@dotenvx/dotenvx";
 import { z } from "zod";
 
@@ -24,7 +37,7 @@ const envSchema = z.object({
   REDIS_PORT: z.string().default("6379").transform(Number),
   REDIS_URL: z.string().optional(),
   // Iframely configuration
-  IFRAMELY_URL: z.string(),
+  IFRAMELY_URL: z.string().optional(),
 });
 
 const validateEnv = () => {

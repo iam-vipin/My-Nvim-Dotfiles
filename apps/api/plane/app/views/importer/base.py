@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import uuid
 
@@ -57,9 +68,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 integration__provider="github", workspace__slug=slug
             )
 
-            access_tokens_url = workspace_integration.metadata.get(
-                "access_tokens_url", False
-            )
+            access_tokens_url = workspace_integration.metadata.get("access_tokens_url", False)
 
             if not access_tokens_url:
                 return Response(
@@ -69,9 +78,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            issue_count, labels, collaborators = get_github_repo_details(
-                access_tokens_url, owner, repo
-            )
+            issue_count, labels, collaborators = get_github_repo_details(access_tokens_url, owner, repo)
             return Response(
                 {
                     "issue_count": issue_count,
@@ -92,25 +99,19 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
             for key, error_message in params.items():
                 if not request.GET.get(key, False):
-                    return Response(
-                        {"error": error_message}, status=status.HTTP_400_BAD_REQUEST
-                    )
+                    return Response({"error": error_message}, status=status.HTTP_400_BAD_REQUEST)
 
             project_key = request.GET.get("project_key", "")
             api_token = request.GET.get("api_token", "")
             email = request.GET.get("email", "")
             cloud_hostname = request.GET.get("cloud_hostname", "")
 
-            response = jira_project_issue_summary(
-                email, api_token, project_key, cloud_hostname
-            )
+            response = jira_project_issue_summary(email, api_token, project_key, cloud_hostname)
             if "error" in response:
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(response, status=status.HTTP_200_OK)
-        return Response(
-            {"error": "Service not supported yet"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"error": "Service not supported yet"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ImportServiceEndpoint(BaseAPIView):
@@ -120,9 +121,7 @@ class ImportServiceEndpoint(BaseAPIView):
         project_id = request.data.get("project_id", False)
 
         if not project_id:
-            return Response(
-                {"error": "Project ID is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Project ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         workspace = Workspace.objects.get(slug=slug)
 
@@ -136,13 +135,9 @@ class ImportServiceEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            api_token = APIToken.objects.filter(
-                user=request.user, workspace=workspace
-            ).first()
+            api_token = APIToken.objects.filter(user=request.user, workspace=workspace).first()
             if api_token is None:
-                api_token = APIToken.objects.create(
-                    user=request.user, label="Importer", workspace=workspace
-                )
+                api_token = APIToken.objects.create(user=request.user, label="Importer", workspace=workspace)
 
             importer = Importer.objects.create(
                 service=service,
@@ -185,13 +180,9 @@ class ImportServiceEndpoint(BaseAPIView):
                     {"error": "Data, config and metadata are required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            api_token = APIToken.objects.filter(
-                user=request.user, workspace=workspace
-            ).first()
+            api_token = APIToken.objects.filter(user=request.user, workspace=workspace).first()
             if api_token is None:
-                api_token = APIToken.objects.create(
-                    user=request.user, label="Importer", workspace=workspace
-                )
+                api_token = APIToken.objects.create(user=request.user, label="Importer", workspace=workspace)
 
             importer = Importer.objects.create(
                 service=service,
@@ -210,9 +201,7 @@ class ImportServiceEndpoint(BaseAPIView):
             serializer = ImporterSerializer(importer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(
-            {"error": "Servivce not supported yet"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"error": "Servivce not supported yet"}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug):
         imports = (
@@ -252,9 +241,7 @@ class ImportServiceEndpoint(BaseAPIView):
 
 class UpdateServiceImportStatusEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, service, importer_id):
-        importer = Importer.objects.get(
-            pk=importer_id, workspace__slug=slug, project_id=project_id, service=service
-        )
+        importer = Importer.objects.get(pk=importer_id, workspace__slug=slug, project_id=project_id, service=service)
         importer.status = request.data.get("status", "processing")
         importer.save()
         return Response(status.HTTP_200_OK)
@@ -266,38 +253,28 @@ class BulkImportIssuesEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         # Get the default state
-        default_state = State.objects.filter(
-            ~Q(name="Triage"), project_id=project_id, default=True
-        ).first()
+        default_state = State.objects.filter(~Q(name="Triage"), project_id=project_id, default=True).first()
         # if there is no default state assign any random state
         if default_state is None:
-            default_state = State.objects.filter(
-                ~Q(name="Triage"), project_id=project_id
-            ).first()
+            default_state = State.objects.filter(~Q(name="Triage"), project_id=project_id).first()
 
         # Get the maximum sequence_id
-        last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(
-            largest=Max("sequence")
-        )["largest"]
+        last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(largest=Max("sequence"))["largest"]
 
         last_id = 1 if last_id is None else last_id + 1
 
         # Get the maximum sort order
-        largest_sort_order = Issue.objects.filter(
-            project_id=project_id, state=default_state
-        ).aggregate(largest=Max("sort_order"))["largest"]
+        largest_sort_order = Issue.objects.filter(project_id=project_id, state=default_state).aggregate(
+            largest=Max("sort_order")
+        )["largest"]
 
-        largest_sort_order = (
-            65535 if largest_sort_order is None else largest_sort_order + 10000
-        )
+        largest_sort_order = 65535 if largest_sort_order is None else largest_sort_order + 10000
 
         # Get the issues_data
         issues_data = request.data.get("issues_data", [])
 
         if not len(issues_data):
-            return Response(
-                {"error": "Issue data is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Issue data is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Issues
         bulk_issues = []
@@ -306,19 +283,12 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                 Issue(
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    state_id=(
-                        issue_data.get("state")
-                        if issue_data.get("state", False)
-                        else default_state.id
-                    ),
+                    state_id=(issue_data.get("state") if issue_data.get("state", False) else default_state.id),
                     name=issue_data.get("name", "Issue Created through Bulk"),
                     description_html=issue_data.get("description_html", "<p></p>"),
                     description_stripped=(
                         None
-                        if (
-                            issue_data.get("description_html") == ""
-                            or issue_data.get("description_html") is None
-                        )
+                        if (issue_data.get("description_html") == "" or issue_data.get("description_html") is None)
                         else strip_tags(issue_data.get("description_html"))
                     ),
                     sequence_id=last_id,
@@ -333,9 +303,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
             largest_sort_order = largest_sort_order + 10000
             last_id = last_id + 1
 
-        issues = Issue.objects.bulk_create(
-            bulk_issues, batch_size=100, ignore_conflicts=True
-        )
+        issues = Issue.objects.bulk_create(bulk_issues, batch_size=100, ignore_conflicts=True)
 
         # Sequences
         _ = IssueSequence.objects.bulk_create(
@@ -366,9 +334,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                 for label_id in labels_list
             ]
 
-        _ = IssueLabel.objects.bulk_create(
-            bulk_issue_labels, batch_size=100, ignore_conflicts=True
-        )
+        _ = IssueLabel.objects.bulk_create(bulk_issue_labels, batch_size=100, ignore_conflicts=True)
 
         # Attach Assignees
         bulk_issue_assignees = []
@@ -385,9 +351,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                 for assignee_id in assignees_list
             ]
 
-        _ = IssueAssignee.objects.bulk_create(
-            bulk_issue_assignees, batch_size=100, ignore_conflicts=True
-        )
+        _ = IssueAssignee.objects.bulk_create(bulk_issue_assignees, batch_size=100, ignore_conflicts=True)
 
         # Track the issue activities
         IssueActivity.objects.bulk_create(
@@ -475,9 +439,7 @@ class BulkImportModulesEndpoint(BaseAPIView):
                     ModuleLink(
                         module=module,
                         url=module_data.get("link", {}).get("url", "https://plane.so"),
-                        title=module_data.get("link", {}).get(
-                            "title", "Original Issue"
-                        ),
+                        title=module_data.get("link", {}).get("title", "Original Issue"),
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                         created_by=request.user,
@@ -502,14 +464,10 @@ class BulkImportModulesEndpoint(BaseAPIView):
                     for issue in module_issues_list
                 ]
 
-            _ = ModuleIssue.objects.bulk_create(
-                bulk_module_issues, batch_size=100, ignore_conflicts=True
-            )
+            _ = ModuleIssue.objects.bulk_create(bulk_module_issues, batch_size=100, ignore_conflicts=True)
 
             serializer = ModuleSerializer(modules, many=True)
-            return Response(
-                {"modules": serializer.data}, status=status.HTTP_201_CREATED
-            )
+            return Response({"modules": serializer.data}, status=status.HTTP_201_CREATED)
 
         else:
             return Response(

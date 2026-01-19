@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Unplug } from "lucide-react";
@@ -32,24 +45,23 @@ export const PersonalAccountInstallationCard = observer(function PersonalAccount
   };
 
   return (
-    <div className="flex-shrink-0 relative flex items-center gap-4 p-2">
+    <div className="shrink-0 relative flex items-center gap-4 p-2">
       <div className="w-full h-full overflow-hidden">
-        <div className="text-sm font-medium">{t("slack_integration.connect_personal_account")}</div>
-        <div className="text-sm text-custom-text-200">
+        <div className="text-body-xs-medium">{t("slack_integration.connect_personal_account")}</div>
+        <div className="text-body-xs-regular text-secondary">
           {isUserConnected
             ? t("slack_integration.personal_account_connected", { providerName })
             : t("slack_integration.link_personal_account", { providerName })}
         </div>
       </div>
-      <div className="flex-shrink-0 relative flex items-center">
+      <div className="shrink-0 relative flex items-center">
         {isUserConnected ? (
           <CustomMenu
             placement="bottom"
             closeOnSelect
             customButton={
               <Button
-                size="sm"
-                variant="link-neutral"
+                variant="ghost"
                 loading={isLoading}
                 data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_PERSONAL_ACCOUNT_CONTEXT_MENU}
               >
@@ -74,7 +86,7 @@ export const PersonalAccountInstallationCard = observer(function PersonalAccount
             <Loader.Item width="100px" height="28px" />
           </Loader>
         ) : (
-          <Button size="sm" variant="link-neutral" onClick={handleConnectDisconnect} loading={isLoading}>
+          <Button variant="ghost" onClick={handleConnectDisconnect} loading={isLoading}>
             {isLoading ? t("common.connecting") : t("common.connect")}
             <ChevronRightIcon height={12} width={12} />
           </Button>

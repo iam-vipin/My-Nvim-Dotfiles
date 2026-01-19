@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, computed, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -6,6 +19,18 @@ import { EPageAccess } from "@plane/constants";
 import type { TMovePagePayload, TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
+// page filter storage helpers
+import type { TPageFilterStorageKeys } from "@/store/pages/page-filter-storage.helpers";
+import {
+  restorePageFiltersFromStorage,
+  setupPageFilterStorageReactions,
+} from "@/store/pages/page-filter-storage.helpers";
+// local storage keys
+const WORKSPACE_PAGES_STORAGE_KEYS: TPageFilterStorageKeys = {
+  sortKey: "workspace-pages-sort-key",
+  sortBy: "workspace-pages-sort-by",
+  filters: "workspace-pages-filters",
+};
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // services
@@ -17,8 +42,26 @@ import type { TWorkspacePage } from "./workspace-page";
 import { WorkspacePage } from "./workspace-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
+type TPaginationLoader = "pagination" | undefined;
 
 type TError = { title: string; description: string };
+
+// Pagination info for each page type
+export type TPagePaginationInfo = {
+  nextCursor: string | null;
+  hasNextPage: boolean;
+  totalResults: number;
+};
+
+// Default pagination info
+const DEFAULT_PAGINATION_INFO: TPagePaginationInfo = {
+  nextCursor: null,
+  hasNextPage: true,
+  totalResults: 0,
+};
+
+// Per page count for pagination
+const PAGES_PER_PAGE = 20;
 
 export interface IWorkspacePageStore {
   // observables
@@ -37,6 +80,9 @@ export interface IWorkspacePageStore {
   filteredPrivatePageIds: string[];
   filteredArchivedPageIds: string[];
   filteredSharedPageIds: string[];
+  // pagination info per page type
+  paginationInfo: Record<TPageNavigationTabs, TPagePaginationInfo>;
+  paginationLoader: Record<TPageNavigationTabs, TPaginationLoader>;
   // computed
   isAnyPageAvailable: boolean;
   currentWorkspacePageIds: string[] | undefined;
@@ -50,10 +96,12 @@ export interface IWorkspacePageStore {
   clearAllFilters: () => void;
   findRootParent: (page: TWorkspacePage) => TWorkspacePage | undefined;
   clearRootParentCache: () => void;
+  getPaginationInfo: (pageType: TPageNavigationTabs) => TPagePaginationInfo;
+  getPaginationLoader: (pageType: TPageNavigationTabs) => TPaginationLoader;
   // actions
   fetchPagesSummary: () => Promise<TPagesSummary | undefined>;
   fetchAllPages: () => Promise<TPage[] | undefined>;
-  fetchPagesByType: (pageType: string, searchQuery?: string) => Promise<TPage[] | undefined>;
+  fetchPagesByType: (pageType: string, searchQuery?: string, cursor?: string) => Promise<TPage[] | undefined>;
   fetchParentPages: (pageId: string) => Promise<TPage[] | undefined>;
   fetchPageDetails: (
     pageId: string,
@@ -109,6 +157,19 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   filteredPrivatePageIds: string[] = [];
   filteredArchivedPageIds: string[] = [];
   filteredSharedPageIds: string[] = [];
+  // pagination info per page type
+  paginationInfo: Record<TPageNavigationTabs, TPagePaginationInfo> = {
+    public: { ...DEFAULT_PAGINATION_INFO },
+    private: { ...DEFAULT_PAGINATION_INFO },
+    archived: { ...DEFAULT_PAGINATION_INFO },
+    shared: { ...DEFAULT_PAGINATION_INFO },
+  };
+  paginationLoader: Record<TPageNavigationTabs, TPaginationLoader> = {
+    public: undefined,
+    private: undefined,
+    archived: undefined,
+    shared: undefined,
+  };
   // private props
   private _rootParentMap: Map<string, string | null> = new Map(); // pageId => rootParentId
   // disposers for reactions
@@ -135,6 +196,9 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       filteredPrivatePageIds: observable,
       filteredArchivedPageIds: observable,
       filteredSharedPageIds: observable,
+      // pagination info
+      paginationInfo: observable,
+      paginationLoader: observable,
       // computed
       currentWorkspacePageIds: computed,
       // helper actions
@@ -160,6 +224,13 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
     // Set up reactions to automatically update page type arrays
     this.setupReactions();
+
+    // restore sort filters from localStorage (one-time initialization)
+    restorePageFiltersFromStorage(this.filters, WORKSPACE_PAGES_STORAGE_KEYS);
+
+    // setup reactions to persist filters to localStorage
+    const storageDisposers = setupPageFilterStorageReactions(this.filters, WORKSPACE_PAGES_STORAGE_KEYS);
+    this.disposers.push(...storageDisposers);
   }
 
   /**
@@ -317,14 +388,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
-      // Create a new filters object to avoid direct mutation
-      const updatedFilters = { ...this.filters };
-
-      // Set the new value
-      updatedFilters[filterKey] = filterValue;
-
-      // Replace the entire filters object
-      this.filters = updatedFilters;
+      // Mutate the existing filters object in-place so MobX reactions can track changes
+      set(this.filters, [filterKey], filterValue);
 
       // Trigger update of the pages arrays
       this.updatePageTypeArrays();
@@ -337,7 +402,26 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   clearAllFilters = () =>
     runInAction(() => {
       set(this.filters, ["filters"], {});
+      if (typeof localStorage !== "undefined") {
+        localStorage.removeItem(WORKSPACE_PAGES_STORAGE_KEYS.filters);
+      }
     });
+
+  /**
+   * @description get pagination info for a page type
+   * @param {TPageNavigationTabs} pageType
+   */
+  getPaginationInfo = computedFn((pageType: TPageNavigationTabs): TPagePaginationInfo => {
+    return this.paginationInfo[pageType] ?? DEFAULT_PAGINATION_INFO;
+  });
+
+  /**
+   * @description get pagination loader for a page type
+   * @param {TPageNavigationTabs} pageType
+   */
+  getPaginationLoader = computedFn((pageType: TPageNavigationTabs): TPaginationLoader => {
+    return this.paginationLoader[pageType];
+  });
 
   /**
    * Updates pages in store from an array of pages
@@ -872,19 +956,62 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     delete this.data[pageId];
   };
 
-  fetchPagesByType = async (pageType: string, searchQuery?: string) => {
+  /**
+   * @description fetch pages by type with pagination support
+   * @param {string} pageType - The type of pages to fetch
+   * @param {string} [searchQuery] - Optional search query
+   * @param {string} [cursor] - Optional cursor for pagination. If not provided, fetches first page
+   * @returns {Promise<TPage[] | undefined>} Array of pages or undefined
+   */
+  fetchPagesByType = async (pageType: string, searchQuery?: string, cursor?: string) => {
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug) return undefined;
 
-      const currentPageIds = this.currentWorkspacePageIds;
+      const pageNavigationTab = pageType as TPageNavigationTabs;
+      const isFirstPage = !cursor;
+
+      // For next page fetches, validate pagination state
+      if (!isFirstPage) {
+        const paginationInfo = this.paginationInfo[pageNavigationTab];
+        // Don't fetch if there's no next page
+        if (!paginationInfo?.hasNextPage || !paginationInfo?.nextCursor) {
+          return undefined;
+        }
+
+        // Don't fetch if already loading
+        if (this.paginationLoader[pageNavigationTab] === "pagination") {
+          return undefined;
+        }
+      }
+
+      // Set appropriate loader based on whether it's first page or next page
       runInAction(() => {
-        this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
+        if (isFirstPage) {
+          const currentPageIds = this.currentWorkspacePageIds;
+          this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
+          // Reset pagination info when fetching first page
+          this.paginationInfo[pageNavigationTab] = { ...DEFAULT_PAGINATION_INFO };
+        } else {
+          this.paginationLoader[pageNavigationTab] = "pagination";
+        }
         this.error = undefined;
       });
 
-      const pages = await this.pageService.fetchPagesByType(workspaceSlug, pageType, searchQuery);
+      // Determine cursor to use
+      const cursorToUse = isFirstPage ? undefined : (this.paginationInfo[pageNavigationTab].nextCursor ?? undefined);
+
+      const response = await this.pageService.fetchPagesByType(
+        workspaceSlug,
+        pageType,
+        searchQuery,
+        cursorToUse,
+        PAGES_PER_PAGE
+      );
+
+      const pages = response.results || [];
       runInAction(() => {
+        // Update pages in store
         for (const page of pages) {
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);
@@ -895,16 +1022,39 @@ export class WorkspacePageStore implements IWorkspacePageStore {
             }
           }
         }
-        this.loader = undefined;
+
+        // Update pagination info
+        this.paginationInfo[pageNavigationTab] = {
+          nextCursor: response.next_cursor || null,
+          hasNextPage: response.next_page_results ?? false,
+          totalResults: response.total_results ?? 0,
+        };
+
+        // Clear appropriate loader
+        if (isFirstPage) {
+          this.loader = undefined;
+        } else {
+          this.paginationLoader[pageNavigationTab] = undefined;
+        }
       });
 
       return pages;
     } catch (error) {
       runInAction(() => {
-        this.loader = undefined;
+        const pageNavigationTab = pageType as TPageNavigationTabs;
+        const isFirstPage = !cursor;
+
+        if (isFirstPage) {
+          this.loader = undefined;
+        } else {
+          this.paginationLoader[pageNavigationTab] = undefined;
+        }
+
         this.error = {
           title: "Failed",
-          description: "Failed to fetch the pages, Please try again later.",
+          description: isFirstPage
+            ? "Failed to fetch the pages, Please try again later."
+            : "Failed to fetch more pages, Please try again later.",
         };
       });
       throw error;

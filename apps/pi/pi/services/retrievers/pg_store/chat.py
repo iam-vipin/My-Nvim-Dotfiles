@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 import json
 import uuid
 from typing import Any
@@ -15,7 +26,7 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.agents.sql_agent.tools import format_as_bullet_points
+from pi.agents.sql_agent.helpers import format_as_bullet_points
 from pi.app.models import Chat
 from pi.app.models import Message
 from pi.app.models import MessageFlowStep
@@ -408,11 +419,12 @@ async def retrieve_chat_history(
         user_chat_preference_result = await db.execute(user_chat_preference_query)
         user_chat_preference = user_chat_preference_result.scalar_one_or_none()
 
-        # Step 4: Get messages for this chat ordered by sequence (exclude replaced messages)
+        # Step 4: Get messages for this chat ordered by sequence (exclude replaced messages and external app triggered messages)
         message_query = (
             select(Message)
             .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
             .where(~Message.is_replaced)  # type: ignore[arg-type]
+            .where((Message.source != "app") | (Message.source.is_(None)))  # type: ignore[arg-type,union-attr]
             .order_by(Message.sequence)  # type: ignore[arg-type]
         )
         message_result = await db.execute(message_query)
@@ -1129,7 +1141,8 @@ async def retrieve_chat_history(
 
                                 # Build the formatted reasoning string for this message
                                 if standalone_original_query:
-                                    _, cleaned_query = parse_query(standalone_original_query)
+                                    parsed = await parse_query(standalone_original_query)
+                                    cleaned_query = parsed.parsed_content
                                     if standalone_rewritten_query and standalone_rewritten_query != cleaned_query:
                                         standalone_internal_reasoning_parts.append(
                                             f"User question: '{cleaned_query}' rewritten to '{standalone_rewritten_query}'."
@@ -1377,11 +1390,19 @@ async def get_user_chat_threads(
     Returns either a list of chat threads (success) or a tuple of (status_code, response_content) for errors
     """
     try:
+        # Subquery to find chats that have messages with source='app'
+        app_message_subquery = (
+            select(Message.chat_id)  # type: ignore[arg-type,call-overload]
+            .where(Message.source == "app")  # type: ignore[arg-type]
+            .where(Message.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+        )
+
         chat_query = (
             select(Chat)
             .where(Chat.user_id == user_id)  # type: ignore[union-attr,arg-type]
             .where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
             .where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
+            .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
         )
 
         if workspace_id is not None:
@@ -1509,11 +1530,19 @@ async def get_favorite_chats(
     Returns a tuple of (status_code, response_content)
     """
     try:
+        # Subquery to find chats that have messages with source='app'
+        app_message_subquery = (
+            select(Message.chat_id)  # type: ignore[arg-type,call-overload]
+            .where(Message.source == "app")  # type: ignore[arg-type]
+            .where(Message.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+        )
+
         stmt = (
             select(Chat)
             .where(Chat.user_id == user_id)  # type: ignore[union-attr,arg-type]
             .where(Chat.is_favorite)  # type: ignore[union-attr,arg-type]
             .where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+            .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
             .order_by(desc(Chat.updated_at))  # type: ignore[union-attr,arg-type]
         )
 
@@ -1586,12 +1615,20 @@ async def get_user_chat_threads_paginated(
     Returns either a tuple of (results, pagination_response) or (status_code, error_response) for errors
     """
     try:
+        # Subquery to find chats that have messages with source='app'
+        app_message_subquery = (
+            select(Message.chat_id)  # type: ignore[arg-type,call-overload]
+            .where(Message.source == "app")  # type: ignore[arg-type]
+            .where(Message.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+        )
+
         # Build base query
         chat_query = (
             select(Chat)
             .where(Chat.user_id == user_id)  # type: ignore[union-attr,arg-type]
             .where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
             .where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
+            .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
         )
 
         if workspace_id is not None:
@@ -1603,6 +1640,7 @@ async def get_user_chat_threads_paginated(
             .where(Chat.user_id == user_id)  # type: ignore[union-attr,arg-type]
             .where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
             .where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
+            .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
         )
 
         if workspace_id is not None:

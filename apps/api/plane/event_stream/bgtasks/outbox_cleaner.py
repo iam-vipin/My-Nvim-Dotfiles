@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import os
 import logging
@@ -42,9 +53,7 @@ def flush_to_mongo_and_delete(
         logger.debug("No records to flush - buffer is empty")
         return
 
-    logger.info(
-        f"Starting batch flush: {len(buffer)} records, {len(ids_to_delete)} IDs to delete"
-    )
+    logger.info(f"Starting batch flush: {len(buffer)} records, {len(ids_to_delete)} IDs to delete")
 
     try:
         # Insert into MongoDB
@@ -87,9 +96,7 @@ def delete_outbox_records() -> None:
         try:
             collection_name = os.environ.get("OUTBOX_COLLECTION_NAME", "outbox")
             mongo_collection = MongoConnection.get_collection(collection_name)
-            logger.info(
-                f"MongoDB collection '{collection_name}' connected successfully"
-            )
+            logger.info(f"MongoDB collection '{collection_name}' connected successfully")
         except Exception as e:
             logger.error(f"Failed to get MongoDB collection: {str(e)}")
             log_exception(e)
@@ -98,9 +105,7 @@ def delete_outbox_records() -> None:
     # Calculate cutoff time
     cutoff_days = int(os.environ.get("OUTBOX_CLEANER_CUTOFF_DAYS", 2))
     cutoff_time = timezone.now() - timedelta(days=cutoff_days)
-    logger.info(
-        f"Processing outbox records older than {cutoff_time} (cutoff: {cutoff_days} days)"
-    )
+    logger.info(f"Processing outbox records older than {cutoff_time} (cutoff: {cutoff_days} days)")
 
     # Get records to process
     # if the outbox poller is enabled delete only the processed records else
@@ -180,9 +185,7 @@ def delete_outbox_records() -> None:
                 flush_to_mongo_and_delete(mongo_collection, buffer, ids_to_delete)
             else:
                 deleted_count = Outbox.objects.filter(id__in=ids_to_delete).delete()[0]
-                logger.info(
-                    f"Deleted {deleted_count} records from PostgreSQL (MongoDB unavailable)"
-                )
+                logger.info(f"Deleted {deleted_count} records from PostgreSQL (MongoDB unavailable)")
 
             total_processed += len(buffer)
 
@@ -199,9 +202,7 @@ def delete_outbox_records() -> None:
             flush_to_mongo_and_delete(mongo_collection, buffer, ids_to_delete)
         else:
             deleted_count = Outbox.objects.filter(id__in=ids_to_delete).delete()[0]
-            logger.info(
-                f"Deleted {deleted_count} records from PostgreSQL (MongoDB unavailable)"
-            )
+            logger.info(f"Deleted {deleted_count} records from PostgreSQL (MongoDB unavailable)")
 
         total_processed += len(buffer)
 

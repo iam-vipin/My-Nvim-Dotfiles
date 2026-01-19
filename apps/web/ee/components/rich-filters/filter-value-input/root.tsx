@@ -1,4 +1,16 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import type {
@@ -73,6 +85,12 @@ export const AdditionalFilterValueInput = observer(function AdditionalFilterValu
         onChange={(value) => onChange(value as SingleOrArray<V>)}
       />
     );
+  }
+
+  // With value filter input
+  if (filterFieldConfig?.type === FILTER_FIELD_TYPE.WITH_VALUE) {
+    // No input needed for "with value" filters—render nothing.
+    return <></>;
   }
 
   return <AdditionalFilterValueInputCE {...props} />;

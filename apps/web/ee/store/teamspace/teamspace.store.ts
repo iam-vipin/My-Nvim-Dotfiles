@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { concat, set, uniq, update, xor } from "lodash-es";
 import { makeObservable, action, computed, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -445,14 +458,17 @@ export class TeamspaceStore implements ITeamspaceStore {
       this.loader = "mutation";
       // create teamspace
       const teamspace = await this.teamService.createTeamspace(workspaceSlug, data);
-      // add current user to the list of members and update the team members
+      // Update team members including current user and team lead
+      const membersToAdd = new Set(data.member_ids ?? []);
       const currentUserId = this.rootStore.user.data?.id;
-      await this.updateTeamspaceMembers(
-        workspaceSlug,
-        teamspace.id,
-        currentUserId ? uniq([...(data.member_ids ?? []), currentUserId]) : (data.member_ids ?? []),
-        false
-      );
+      const teamLeadId = data.lead_id;
+      if (currentUserId) {
+        membersToAdd.add(currentUserId);
+      }
+      if (teamLeadId) {
+        membersToAdd.add(teamLeadId);
+      }
+      await this.updateTeamspaceMembers(workspaceSlug, teamspace.id, Array.from(membersToAdd), false);
       // set teamspace map along with member_ids
       runInAction(() => {
         const teamspaceMemberIds = this.getTeamspaceMemberIdsFromMembersMap(teamspace.id);

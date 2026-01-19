@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { index, layout, route } from "@react-router/dev/routes";
 import type { RouteConfig } from "@react-router/dev/routes";
 
@@ -15,8 +28,10 @@ export default [
     route("authentication/gitea", "./(all)/(dashboard)/authentication/gitea/page.tsx"),
     route("authentication/oidc", "./(all)/(dashboard)/authentication/oidc/page.tsx"),
     route("authentication/saml", "./(all)/(dashboard)/authentication/saml/page.tsx"),
+    route("authentication/ldap", "./(all)/(dashboard)/authentication/ldap/page.tsx"),
     route("ai", "./(all)/(dashboard)/ai/page.tsx"),
     route("image", "./(all)/(dashboard)/image/page.tsx"),
+    route("billing", "./(all)/(dashboard)/billing/page.tsx"),
   ]),
   // Catch-all route for 404 handling - must be last
   route("*", "./components/404.tsx"),

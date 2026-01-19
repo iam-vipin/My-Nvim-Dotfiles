@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   sidebar: {
     projects: "Projeler",
@@ -306,7 +319,6 @@ export default {
   drafts: "Taslaklar",
   projects: "Projeler",
   views: "Görünümler",
-  workspace: "Çalışma Alanı",
   archives: "Arşivler",
   settings: "Ayarlar",
   failed_to_move_favorite: "Favori taşınamadı",
@@ -1588,6 +1600,7 @@ export default {
         name: "Çalışma Alanı Adı",
         company_size: "Şirket Büyüklüğü",
         url: "Çalışma Alanı URL'si",
+        workspace_timezone: "Çalışma Alanı Saat Dilimi",
         update_workspace: "Çalışma Alanını Güncelle",
         delete_workspace: "Bu çalışma alanını sil",
         delete_workspace_description:

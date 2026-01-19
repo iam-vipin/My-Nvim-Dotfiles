@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Info, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
@@ -57,7 +71,7 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
   if (!estimatePoint) return <></>;
   return (
     <div className="relative flex items-center gap-2">
-      <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+      <div className="w-full border border-subtle-1 rounded-sm px-3 py-2 bg-layer-1 text-13">
         {estimateType === EEstimateSystem.TIME
           ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value))
           : estimatePoint?.value}
@@ -67,8 +81,8 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
       </div>
       <div
         className={cn(
-          "relative w-full border rounded flex items-center",
-          estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
+          "relative w-full border rounded-sm flex items-center",
+          estimatePointError?.message ? `border-danger-strong` : `border-subtle-1`
         )}
       >
         <EstimateInputRoot
@@ -79,8 +93,8 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
         {estimatePointError?.message && (
           <>
             <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
-              <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
-                <Info size={14} />
+              <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-danger-primary">
+                <InfoIcon height={14} width={14} />
               </div>
             </Tooltip>
           </>

@@ -1,6 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Copy } from "lucide-react";
+
+import { CopyIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -67,57 +81,51 @@ export const RegenerateClientSecretModal = observer(function RegenerateClientSec
         <div className="w-full p-5">
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-medium text-custom-text-100">
+              <h3 className="text-16 font-medium text-primary">
                 {t("workspace_settings.settings.applications.client_id_and_secret")}
               </h3>
-              <p className="text-sm text-custom-text-400 mt-1">
+              <p className="text-13 text-placeholder mt-1">
                 {t("workspace_settings.settings.applications.regenerate_client_secret_description")}
               </p>
             </div>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <p className="text-sm text-custom-text-100">
-                  {t("workspace_settings.settings.applications.application_id")}
-                </p>
+                <p className="text-13 text-primary">{t("workspace_settings.settings.applications.application_id")}</p>
                 <button
                   type="button"
                   onClick={() => copyContent(application.id ?? "", "applicationId")}
-                  className="flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-3 text-sm font-medium outline-none bg-custom-background-100 text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+                  className="flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-subtle-1 px-3 py-3 text-13 font-medium outline-none bg-surface-1 text-primary hover:bg-layer-1 transition-colors"
                 >
-                  <span className="truncate pr-2 text-custom-text-100">{application.id}</span>
+                  <span className="truncate pr-2 text-primary">{application.id}</span>
                   <Tooltip tooltipContent="Copy application id" isMobile={isMobile}>
-                    <Copy className="h-4 w-4 text-custom-text-400 flex-shrink-0" />
+                    <CopyIcon className="h-4 w-4 text-placeholder flex-shrink-0" />
                   </Tooltip>
                 </button>
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-custom-text-100">
-                  {t("workspace_settings.settings.applications.client_id")}
-                </p>
+                <p className="text-13 text-primary">{t("workspace_settings.settings.applications.client_id")}</p>
                 <button
                   type="button"
                   onClick={() => copyContent(application.client_id ?? "", "clientId")}
-                  className="flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-3 text-sm font-medium outline-none bg-custom-background-100 text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+                  className="flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-subtle-1 px-3 py-3 text-13 font-medium outline-none bg-surface-1 text-primary hover:bg-layer-1 transition-colors"
                 >
-                  <span className="truncate pr-2 text-custom-text-100">{application.client_id}</span>
+                  <span className="truncate pr-2 text-primary">{application.client_id}</span>
                   <Tooltip tooltipContent="Copy client id" isMobile={isMobile}>
-                    <Copy className="h-4 w-4 text-custom-text-400 flex-shrink-0" />
+                    <CopyIcon className="h-4 w-4 text-placeholder flex-shrink-0" />
                   </Tooltip>
                 </button>
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-custom-text-100">
-                  {t("workspace_settings.settings.applications.client_secret")}
-                </p>
-                <div className="flex items-center justify-between rounded-md text-sm font-medium outline-none bg-custom-background-100 text-custom-text-100 gap-2">
-                  <span className="truncate pr-2 text-custom-text-100 border-[0.5px] border-custom-border-200 rounded flex-1 px-3 py-2 flex items-center">
+                <p className="text-13 text-primary">{t("workspace_settings.settings.applications.client_secret")}</p>
+                <div className="flex items-center justify-between rounded-md text-13 font-medium outline-none bg-surface-1 text-primary gap-2">
+                  <span className="truncate pr-2 text-primary border border-subtle-1 rounded-sm flex-1 px-3 py-2 flex items-center">
                     {"******************"}
                   </span>
-                  <div className="flex items-center space-x-2 border-[0.5px] border-custom-border-200 rounded">
-                    <Button variant="neutral-primary" size="sm" onClick={() => setIsRegenerateModalOpen(true)}>
+                  <div className="flex items-center space-x-2 rounded">
+                    <Button size="xl" variant="secondary" onClick={() => setIsRegenerateModalOpen(true)}>
                       {t("workspace_settings.settings.applications.regenerate_client_secret")}
                     </Button>
                   </div>
@@ -126,7 +134,7 @@ export const RegenerateClientSecretModal = observer(function RegenerateClientSec
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+              <Button variant="secondary" size="lg" onClick={handleClose}>
                 {t("close")}
               </Button>
             </div>

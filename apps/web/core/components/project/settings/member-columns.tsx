@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
@@ -45,7 +58,7 @@ export function NameColumn(props: NameProps) {
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-4 items-center justify-center rounded-full capitalize text-white">
+                  <span className="relative flex size-6 items-center justify-center rounded-full capitalize text-on-color">
                     <img
                       src={getFileURL(avatar_url)}
                       className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -55,7 +68,7 @@ export function NameColumn(props: NameProps) {
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 capitalize text-white text-xs">
+                  <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 capitalize text-on-color text-11">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
@@ -71,7 +84,7 @@ export function NameColumn(props: NameProps) {
               >
                 <CustomMenu.MenuItem>
                   <div
-                    className="flex items-center gap-x-1 cursor-pointer text-red-600 font-medium"
+                    className="flex items-center gap-x-1 cursor-pointer text-danger-primary font-medium"
                     data-ph-element={MEMBER_TRACKER_ELEMENTS.PROJECT_MEMBER_TABLE_CONTEXT_MENU}
                     onClick={() => setRemoveMemberModal(rowData)}
                   >
@@ -167,7 +180,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                   <span>{roleLabel}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
+              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
               className="rounded-md p-0 w-32"
               input
             >

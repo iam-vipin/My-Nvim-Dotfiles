@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """Setting for the Plane AI project."""
 
 import logging
@@ -66,6 +77,7 @@ class Server:
     FASTAPI_APP_HOST: str = os.getenv("FASTAPI_APP_HOST", "")
     FASTAPI_APP_PORT: str = os.getenv("FASTAPI_APP_PORT", "")
     FASTAPI_APP_WORKERS: str = os.getenv("FASTAPI_APP_WORKERS", "")
+    FASTAPI_APP_WORKER_TIMEOUT: str = os.getenv("FASTAPI_APP_WORKER_TIMEOUT", "60")
     PI_SECRET_KEY: str = os.getenv("PI_SECRET_KEY", "")
     PLANE_PI_INTERNAL_API_SECRET: str = os.getenv("PLANE_PI_INTERNAL_API_SECRET", "")
 
@@ -169,7 +181,8 @@ class LLMModels:
     GPT_5_STANDARD: str = "gpt-5-standard"
     GPT_5_FAST: str = "gpt-5-fast"
     GPT_5_1: str = "gpt-5.1"
-    DEFAULT: str = GPT_4_1
+    GPT_5_2: str = "gpt-5.2"
+    DEFAULT: str = GPT_5_2
     CLAUDE_SONNET_4_0: str = "claude-sonnet-4-0"
     CLAUDE_SONNET_4_5: str = "claude-sonnet-4-5"
 
@@ -180,7 +193,7 @@ class LLMConfig:
 
     OPENAI_API_KEY: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     CLAUDE_API_KEY: str = field(default_factory=lambda: os.getenv("CLAUDE_API_KEY", ""))
-    CLAUDE_BASE_URL: str = field(default_factory=lambda: os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com/v1"))
+    CLAUDE_BASE_URL: str = field(default_factory=lambda: os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com"))
     R1_URL_HOST: str = field(default_factory=lambda: os.getenv("R1_URL_HOST", "http://35.239.241.155:8000/v1"))
     R1_MODEL_NAME: str = field(default_factory=lambda: os.getenv("R1_MODEL_NAME", "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"))
     TESTED_FOR_WORKSPACE: list = field(
@@ -189,6 +202,7 @@ class LLMConfig:
             LLMModels.GPT_5_STANDARD,
             LLMModels.GPT_5_FAST,
             LLMModels.GPT_5_1,
+            LLMModels.GPT_5_2,
             LLMModels.CLAUDE_SONNET_4_0,
             LLMModels.CLAUDE_SONNET_4_5,
             LLMModels.LITE_LLM_CLAUDE_SONNET_4,
@@ -414,6 +428,10 @@ class Settings:
         colorlog.getLogger("httpx").setLevel(colorlog.WARNING)
         colorlog.getLogger("httpcore").setLevel(colorlog.WARNING)
 
+        # Suppress Anthropic client debug logs
+        colorlog.getLogger("anthropic").setLevel(colorlog.WARNING)
+        colorlog.getLogger("anthropic._base_client").setLevel(colorlog.WARNING)
+
         # Suppress boto3/botocore debug logs
         colorlog.getLogger("boto3").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore").setLevel(colorlog.INFO)
@@ -439,13 +457,32 @@ class Settings:
         colorlog.getLogger("datadog").setLevel(colorlog.INFO)
         colorlog.getLogger("datadog.dogstatsd").setLevel(colorlog.INFO)
 
-        colorlog.getLogger("ddtrace.internal.telemetry").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal.telemetry.writer").setLevel(colorlog.INFO)
+        # Conditional logging format based on DD_ENABLED (Datadog)
+        # When Datadog is enabled (production), use JSON logging for structured logs
+        # When Datadog is disabled (local dev), use colored logs for readability
+        dd_enabled = get_env_bool("DD_ENABLED", "0")
+        if dd_enabled:
+            # Production: Use JSON formatter for structured logging (Datadog)
+            from pythonjsonlogger.json import JsonFormatter
 
-        from pythonjsonlogger.json import JsonFormatter
-
-        json_formatter = JsonFormatter(fmt="%(asctime)s %(name)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
-        handler.setFormatter(json_formatter)
+            colorlog.getLogger("ddtrace.internal.telemetry").setLevel(colorlog.INFO)
+            colorlog.getLogger("ddtrace.internal.telemetry.writer").setLevel(colorlog.INFO)
+            json_formatter = JsonFormatter(fmt="%(asctime)s %(name)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+            handler.setFormatter(json_formatter)
+        else:
+            # Local development: Use colorlog for readable output
+            color_formatter = colorlog.ColoredFormatter(
+                "%(log_color)s%(asctime)s %(name)-20s %(levelname)-8s%(reset)s %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+                log_colors={
+                    "DEBUG": "cyan",
+                    "INFO": "green",
+                    "WARNING": "yellow",
+                    "ERROR": "red",
+                    "CRITICAL": "red,bg_white",
+                },
+            )
+            handler.setFormatter(color_formatter)
 
         # Get the root logger and configure it
         root_logger = colorlog.getLogger()

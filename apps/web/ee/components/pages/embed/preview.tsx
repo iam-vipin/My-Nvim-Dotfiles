@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -107,7 +120,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
         e.preventDefault();
       }}
       className={cn(
-        "absolute top-full left-0 z-10 w-80 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg overflow-hidden max-h-[250px] cursor-default",
+        "absolute top-full left-0 z-10 w-80 bg-surface-1 shadow-raised-200 rounded-lg overflow-hidden max-h-[250px] cursor-default",
         "transition-all duration-200 transform origin-top-left",
         isAnimatedIn ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-2 scale-95"
       )}
@@ -120,7 +133,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
         {/* Header */}
         <div className="flex items-center space-x-2 mb-2">
           <div className="flex-shrink-0">{logo}</div>
-          <h4 className="text-sm font-medium truncate relative bottom-[5px]">{getPageName(name)}</h4>
+          <h4 className="text-13 font-medium truncate relative bottom-[5px]">{getPageName(name)}</h4>
         </div>
 
         <div className="flex-grow overflow-hidden" style={{ maxHeight: "120px" }}>
@@ -163,7 +176,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
                   id={id ?? ""}
                   value={description_html ?? "<p></p>"}
                   containerClassName="p-0 pl-3 border-none"
-                  editorClassName="p-2.5 text-xs"
+                  editorClassName="p-2.5 text-11"
                   disabledExtensions={documentEditorExtensions.disabled}
                   flaggedExtensions={documentEditorExtensions.flagged}
                   displayConfig={{
@@ -194,7 +207,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
                 className="absolute left-0 right-0 bottom-[50px] pointer-events-none h-20"
                 style={{
                   background:
-                    "linear-gradient(to bottom, rgba(var(--color-background-100),0) 0%, rgba(var(--color-background-100),0.95) 100%)",
+                    "linear-gradient(to bottom, --alpha(var(--background-color-surface-1) / 0%) 0%, --alpha(var(--background-color-surface-1) / 95%) 100%)",
                 }}
               />
             </div>
@@ -204,7 +217,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
           {is_description_empty && (
             <div
               className={cn(
-                "h-full flex items-center justify-center text-custom-text-300 text-sm transition-opacity duration-300 ease-in-out cursor-default",
+                "h-full flex items-center justify-center text-tertiary text-13 transition-opacity duration-300 ease-in-out cursor-default",
                 isContentVisible && is_description_empty ? "opacity-100" : "opacity-0",
                 !isLoading && is_description_empty ? "block" : "hidden"
               )}
@@ -216,7 +229,7 @@ export const PageEmbedPreview = observer(function PageEmbedPreview(props: Props)
         </div>
 
         {/* Footer - always visible */}
-        <div className="flex items-center justify-between text-xs text-custom-text-300 pt-2.5 border-t border-custom-border-200 mt-2">
+        <div className="flex items-center justify-between text-11 text-tertiary pt-2.5 border-t border-subtle-1 mt-2">
           <div className="flex items-center gap-1.5">
             <Avatar
               src={getFileURL(userDetails?.avatar_url ?? "")}

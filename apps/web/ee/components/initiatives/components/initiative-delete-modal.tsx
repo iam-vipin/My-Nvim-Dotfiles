@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -85,7 +98,7 @@ export const InitiativeDeleteModal = observer(function InitiativeDeleteModal(pro
         <>
           {/* TODO: Add translation here */}
           Are you sure you want to delete Initiative{' "'}
-          <span className="break-words font-medium text-custom-text-100">{initiative?.name}</span>
+          <span className="break-words font-medium text-primary">{initiative?.name}</span>
           {'"'}? All of the data related to the initiative will be permanently removed. This action cannot be undone.
         </>
       }

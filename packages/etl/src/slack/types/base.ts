@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export type TSlackConfig = {
   team_id: string;
   access_token: string;
@@ -206,6 +219,10 @@ export interface ISlackView<TBlocks extends Array<any> = any[]> {
   root_view_id: string;
   app_id: string;
   external_id: string;
+  external_ref?: {
+    id: string;
+    type: string;
+  };
   app_installed_team_id: string;
   bot_id: string;
 }
@@ -394,10 +411,33 @@ export interface SlackEventPayload {
 }
 
 export type SlackEvent<TBlocks = any[]> =
+  | SlackEntityDetailsRequestedEvent
   | SlackMessageEvent<TBlocks>
   | SlackLinkSharedEvent
   | SlackAppUninstallEvent
   | SlackAppMentionEvent;
+
+export interface SlackEntityDetailsRequestedEvent {
+  type: "entity_details_requested";
+  user: string;
+  external_ref: {
+    id: string;
+    type: string;
+  };
+  entity_url: string;
+  link: {
+    url: string;
+    domain: string;
+  };
+  bot_id?: string;
+  app_unfurl_url: string;
+  event_ts: string;
+  trigger_id: string;
+  user_locale: string;
+  channel: string;
+  message_ts: string;
+  thread_ts: string;
+}
 
 export interface SlackMessageEvent<TBlocks = any[]> {
   type: "message";
@@ -461,7 +501,6 @@ export interface SlackTopicPurpose {
 export interface BaseConversation {
   id: string;
   created: number;
-  is_channel: boolean;
   is_group: boolean;
   is_im: boolean;
   is_archived?: boolean;
@@ -472,6 +511,7 @@ export interface BaseConversation {
 
 // Interface for channel/group conversations
 export interface ChannelGroupConversation extends BaseConversation {
+  is_channel: true;
   name: string;
   creator: string;
   unlinked?: number;
@@ -491,6 +531,7 @@ export interface ChannelGroupConversation extends BaseConversation {
 
 // Interface for direct message conversations
 export interface DirectMessageConversation extends BaseConversation {
+  is_channel: false;
   user: string;
   is_user_deleted: boolean;
 }

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import type { FieldPath, FieldValues } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
@@ -72,7 +85,7 @@ export const TemplateDetails = observer(function TemplateDetails<T extends Field
               onChange={onChange}
               ref={ref}
               placeholder={placeholders?.name}
-              className="w-full text-lg font-bold p-0"
+              className="w-full text-h5-bold p-0"
               mode="true-transparent"
               inputSize="md"
               hasError={Boolean(nameError)}
@@ -81,7 +94,7 @@ export const TemplateDetails = observer(function TemplateDetails<T extends Field
           )}
         />
         {nameError && typeof nameError.message === "string" && (
-          <span className="text-xs font-medium text-red-500">{nameError.message}</span>
+          <span className="text-caption-sm-medium text-danger-primary">{nameError.message}</span>
         )}
       </div>
       {/* Template Description */}
@@ -97,7 +110,7 @@ export const TemplateDetails = observer(function TemplateDetails<T extends Field
               onChange={onChange}
               ref={ref}
               placeholder={placeholders?.shortDescription}
-              className="w-full text-base min-h-[80px] p-0 resize-none"
+              className="w-full text-body-sm-regular min-h-[80px] p-0 resize-none"
               mode="true-transparent"
               textAreaSize="md"
             />

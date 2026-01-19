@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import Link from "next/link";
 import { EAuthModes } from "@plane/constants";
@@ -20,8 +33,8 @@ const MESSAGES = {
 // Reusable link component to reduce duplication
 function LegalLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <Link href={href} className="text-custom-text-200" target="_blank" rel="noopener noreferrer">
-      <span className="text-sm font-medium underline hover:cursor-pointer">{children}</span>
+    <Link href={href} className="text-secondary" target="_blank" rel="noopener noreferrer">
+      <span className="text-13 font-medium underline hover:cursor-pointer">{children}</span>
     </Link>
   );
 }
@@ -29,7 +42,7 @@ function LegalLink({ href, children }: { href: string; children: React.ReactNode
 export function TermsAndConditions({ authType = EAuthModes.SIGN_IN }: TermsAndConditionsProps) {
   return (
     <div className="flex items-center justify-center">
-      <p className="text-center text-sm text-custom-text-300 whitespace-pre-line">
+      <p className="text-center text-13 text-tertiary whitespace-pre-line">
         {`${MESSAGES[authType]}, you understand and agree to \n our `}
         <LegalLink href={LEGAL_LINKS.termsOfService}>Terms of Service</LegalLink> and{" "}
         <LegalLink href={LEGAL_LINKS.privacyPolicy}>Privacy Policy</LegalLink>.

@@ -1,10 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { PlusIcon } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { PlusIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
@@ -104,7 +118,7 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
         customQuickAddButton={
           <div
             className={cn(
-              "md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100",
+              "md:opacity-0 rounded-sm  bg-layer-transparent hover:bg-layer-transparent-hover md:group-hover:opacity-100 overflow-hidden",
               {
                 block: isMenuOpen,
               }
@@ -117,9 +131,9 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
               className="w-full"
               customButtonClassName="w-full"
               customButton={
-                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
+                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-tertiary hover:text-tertiary">
                   <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                  <span className="text-sm font-medium flex-shrink-0">
+                  <span className="text-13 font-medium flex-shrink-0">
                     {isEpic ? t("epic.add.label") : t("issue.add.label")}
                   </span>
                 </div>

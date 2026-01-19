@@ -1,11 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { LoaderCircle, Plus } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Disclosure } from "@headlessui/react";
 // constants
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-import { ChevronRightIcon } from "@plane/propel/icons";
 // utils
 import { cn } from "@plane/utils";
 // types
@@ -28,12 +41,12 @@ export const SectionHeader = React.memo(function SectionHeader({
   return (
     <div
       className={cn(
-        "group w-full flex items-center justify-between px-2 py-0.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90"
+        "group w-full flex items-center justify-between px-2 py-0.5 rounded text-placeholder hover:bg-surface-2"
       )}
     >
       <Link
         href={`/${workspaceSlug}/wiki/${sectionType}`}
-        className={cn("flex-grow text-sm font-semibold text-custom-sidebar-text-400")}
+        className={cn("flex-grow text-13 font-semibold text-placeholder")}
       >
         {sectionDetails.label === SECTION_DETAILS.public.label ? "Workspace" : sectionDetails.label}
       </Link>
@@ -41,7 +54,7 @@ export const SectionHeader = React.memo(function SectionHeader({
       <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
         {sectionType !== "archived" && sectionType !== "shared" && (
           <button
-            className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+            className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
             data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.SIDEBAR}
             onClick={() => {
               handleCreatePage(sectionType);
@@ -50,7 +63,7 @@ export const SectionHeader = React.memo(function SectionHeader({
             {isCreatingPage === sectionType ? (
               <LoaderCircle className="size-3.5 animate-spin" />
             ) : (
-              <Plus className="size-3.5" />
+              <PlusIcon className="size-3.5" />
             )}
           </button>
         )}
@@ -58,7 +71,7 @@ export const SectionHeader = React.memo(function SectionHeader({
           ref={buttonRef}
           as="button"
           type="button"
-          className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+          className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
           onClick={(e) => {
             e.stopPropagation();
             if (onButtonClick) onButtonClick();

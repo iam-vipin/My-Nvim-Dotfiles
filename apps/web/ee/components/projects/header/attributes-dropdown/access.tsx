@@ -1,7 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { Globe2, Lock } from "lucide-react";
+
+import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web hooks
 import { PROJECT_ACCESS } from "@/plane-web/constants/project";
@@ -50,12 +64,14 @@ export const FilterAccess = observer(function FilterAccess(props: TFilterAccess)
                 key={access.key}
                 isChecked={appliedFilters?.includes(access.key) ? true : false}
                 onClick={() => handleFilter(access.key)}
-                icon={access.key === "public" ? <Globe2 className={`h-3 w-3`} /> : <Lock className={`h-3 w-3`} />}
+                icon={
+                  access.key === "public" ? <GlobeIcon className={`h-3 w-3`} /> : <LockIcon className={`h-3 w-3`} />
+                }
                 title={access.label}
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-11 italic text-placeholder">No matches found</p>
           )}
         </div>
       )}

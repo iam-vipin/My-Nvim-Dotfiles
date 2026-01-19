@@ -1,6 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { AiSearchIcon, AiWriteIcon } from "@plane/propel/icons";
-import { CustomSelect, Tooltip } from "@plane/ui";
+import { Combobox } from "@plane/propel/combobox";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
+import { ChevronDownIcon } from "lucide-react";
 
 const MODE_OPTIONS = [
   {
@@ -8,54 +23,42 @@ const MODE_OPTIONS = [
     value: "ask",
     icon: <AiSearchIcon className="size-4" />,
   },
-
   {
     label: "Build",
     value: "build",
     icon: <AiWriteIcon className="size-4" />,
   },
 ];
+
 export function AiMode(props: { aiMode: string; setAiMode: (mode: string) => void }) {
   const { aiMode, setAiMode } = props;
   const selectedMode = MODE_OPTIONS.find((option) => option.value === aiMode);
+
   return (
-    <CustomSelect
-      value={aiMode}
-      label={
-        <Tooltip tooltipContent="Select the mode of the AI to use for the conversation." position="top">
-          <div className="flex font-medium gap-2 w-full overflow-hidden">
-            <span className="flex items-center gap-2 text-custom-text-300">{selectedMode?.icon}</span>
-            <span className="text-sm truncate">{selectedMode?.label}</span>
-          </div>
-        </Tooltip>
-      }
-      noChevron
-      onChange={(val: string) => {
-        setAiMode(val);
-      }}
-      maxHeight="lg"
-      className="flex flex-col-reverse"
-      buttonClassName={cn(
-        "rounded-lg h-full px-2 border-[0.5px] border-custom-border-200 h-[27px] overflow-hidden hover:bg-custom-background-100"
-      )}
-      optionsClassName="max-h-[70vh] overflow-y-auto"
-    >
-      <div className="flex flex-col divide-y divide-custom-border-100 space-y-2 max-h-full">
-        <div>
-          {MODE_OPTIONS.map((option) => (
-            <CustomSelect.Option
-              key={option.value}
-              value={option.value}
-              className="text-sm text-custom-text-200 font-medium flex w-full"
-            >
-              <div className="flex items-center gap-2">
-                <span className="flex items-center gap-2 text-custom-text-300">{option.icon}</span>
-                <span className="text-sm truncate">{option.label}</span>
-              </div>
-            </CustomSelect.Option>
-          ))}
-        </div>
-      </div>
-    </CustomSelect>
+    <Combobox value={aiMode} onValueChange={(val) => setAiMode(val as string)}>
+      <Tooltip tooltipContent="Select the mode of the AI to use for the conversation." position="top">
+        <Combobox.Button
+          className={cn(
+            "flex items-center gap-1 rounded-lg h-[27px] px-2 bg-layer-2 border border-subtle-1 overflow-hidden hover:bg-surface-1 hover:shadow-raised-100 shrink-0"
+          )}
+        >
+          <span className="flex items-center gap-2 text-icon-secondary">{selectedMode?.icon}</span>
+          <span className="text-body-xs-medium truncate text-primary">{selectedMode?.label}</span>
+          <ChevronDownIcon className="size-4 text-icon-secondary" />
+        </Combobox.Button>
+      </Tooltip>
+      <Combobox.Options className="max-h-[70vh] overflow-y-auto" maxHeight="lg">
+        {MODE_OPTIONS.map((option) => (
+          <Combobox.Option
+            key={option.value}
+            value={option.value}
+            className="text-13 text-secondary font-medium flex w-full items-center gap-2 data-[highlighted]:bg-layer-transparent-hover"
+          >
+            <span className="flex items-center gap-2 text-tertiary">{option.icon}</span>
+            <span className="text-13 truncate">{option.label}</span>
+          </Combobox.Option>
+        ))}
+      </Combobox.Options>
+    </Combobox>
   );
 }

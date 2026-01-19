@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { PlaneWebhookPayloadBase, ExIssue, ExIssueComment } from "@plane/sdk";
 import { getIssueUrlFromSequenceId, getUserProfileUrl } from "@/helpers/urls";
 import { titleCase, isUUID } from "@/helpers/utils";
@@ -190,6 +203,15 @@ export const getIssueDescriptionDmAlertText = (
   workItemHyperlink: string
 ) =>
   `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> mentioned you in the description of work item ${workItemHyperlink}`;
+
+export const getCommentProjectUpdateText = (
+  workspaceSlug: string,
+  actorDisplayName: string,
+  workItemIdentifier: string,
+  workItemUrl: string
+) => {
+  return `A comment was created by <${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> on Work Item  <${workItemUrl}|${workItemIdentifier}>`;
+};
 
 export const isValidIssueUpdateActivity = (payload: PlaneWebhookPayloadBase<ExIssue | ExIssueComment>) =>
   payload.activity.field &&

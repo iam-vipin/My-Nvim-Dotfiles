@@ -1,18 +1,31 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { LayersIcon, PlusIcon } from "lucide-react";
+import { LayersIcon } from "lucide-react";
+import { PlusIcon, MilestoneIcon } from "@plane/propel/icons";
 import { Card } from "@plane/propel/card";
-import { MilestoneIcon } from "@plane/propel/icons";
 import { Pill, EPillSize } from "@plane/propel/pill";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
-import { Button, CircularProgressIndicator, cn, Collapsible, CollapsibleButton } from "@plane/ui";
-import { renderFormattedPayloadDate } from "@plane/utils";
+import { Button } from "@plane/propel/button";
+import { CircularProgressIndicator, cn, Collapsible, CollapsibleButton } from "@plane/ui";
+import { getMilestoneIconProps, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
-import { getMilestoneVariant, MilestoneQuickActionButton } from "./helper";
+import { MilestoneQuickActionButton } from "./helper";
 import { MilestoneWorkItemsList } from "./milestone-work-items";
 import { MilestoneWorkItemActionButton } from "./quick-action-button";
 
@@ -58,13 +71,13 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
   };
 
   return (
-    <Card className="!shadow-none p-4">
+    <Card className="shadow-none p-4">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center overflow-hidden">
           <div className="size-4">
-            <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-4" />
+            <MilestoneIcon {...getMilestoneIconProps(milestone.progress_percentage)} className="size-4" />
           </div>
-          <span className="text-base text-custom-text-100 font-medium truncate flex-shrink">{milestone.title}</span>
+          <span className="text-body-sm-medium text-primary truncate shrink">{milestone.title}</span>
         </div>
         <div className="flex items-center gap-2">
           <DateDropdown
@@ -88,7 +101,7 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
           value={milestone.description?.description_html ?? ""}
           workspaceId={milestone.workspace_id ?? ""}
           workspaceSlug={workspaceSlug}
-          containerClassName="border-none ring-none outline-non text-sm !px-0 py-2"
+          containerClassName="border-none ring-none outline-none text-body-xs-regular px-0 py-2"
           editorClassName="px-0"
           displayConfig={{
             fontSize: "small-font",
@@ -98,7 +111,7 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
         <div className="py-1" />
       )}
       {/* Linked Work items collapsible */}
-      <div className="border-t border-custom-border-200 pt-1">
+      <div className="border-t border-subtle-1 pt-1">
         {milestone.progress.total_items ? (
           <Collapsible
             isOpen={isLinkedWorkItemsOpen}
@@ -115,10 +128,10 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
                         percentage={milestone.progress_percentage}
                         strokeWidth={3}
                         strokeColor={cn(
-                          milestone.progress_percentage >= 100 ? "stroke-green-400" : "stroke-custom-primary-100"
+                          milestone.progress_percentage >= 100 ? "stroke-success-secondary" : "stroke-accent-primary"
                         )}
                       />
-                      <span className="text-xs text-custom-text-100 font-medium">{milestone.progress_percentage}%</span>
+                      <span className="text-caption-sm-medium text-primary">{milestone.progress_percentage}%</span>
                     </div>
                   </Pill>
                 }
@@ -126,11 +139,11 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
                   <MilestoneWorkItemActionButton
                     projectId={projectId}
                     workspaceSlug={workspaceSlug}
-                    customButton={<PlusIcon className="size-4 text-custom-text-200" />}
+                    customButton={<PlusIcon className="size-4 text-secondary" />}
                     handleSubmit={handleAddWorkItems}
                   />
                 }
-                titleClassName="text-sm"
+                titleClassName="text-body-xs-regular"
                 className="border-none h-min px-0"
               />
             }
@@ -144,7 +157,7 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               customButton={
-                <Button variant="neutral-primary" size="sm" className="text-custom-text-200 text-xs">
+                <Button variant="secondary" className="text-secondary text-caption-sm-medium">
                   <LayersIcon className="size-3" />
                   Link work items
                 </Button>

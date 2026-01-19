@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
@@ -39,19 +52,19 @@ export const SettingsSidebar = observer(function SettingsSidebar(props: Settings
   return (
     <div
       className={cn("flex w-[250px] flex-col gap-2 flex-shrink-0 overflow-y-scroll h-full md:pt-page-y ", {
-        "absolute left-0 top-[42px] z-50 h-fit max-h-[400px] overflow-scroll bg-custom-background-100 border border-custom-border-100 rounded shadow-sm p-4":
+        "absolute left-0 top-[42px] z-50 h-fit max-h-[400px] overflow-scroll bg-surface-1 border border-subtle rounded-sm shadow-sm p-4":
           isMobile,
       })}
     >
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
-      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+      <div className="divide-y divide-subtle overflow-x-hidden w-full h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {categories.map((category) => {
           if (groupedSettings[category].length === 0) return null;
           return (
             <div key={category} className="py-3">
-              <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2 px-2">{t(category)}</span>
+              <span className="text-13 font-semibold text-tertiary capitalize mb-2 px-2">{t(category)}</span>
               <div className="relative flex flex-col gap-0.5 h-full mt-2">
                 {groupedSettings[category].map(
                   (setting) =>

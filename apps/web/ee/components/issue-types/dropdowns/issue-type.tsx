@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { LayersIcon } from "@plane/propel/icons";
@@ -51,9 +64,9 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
       <div className="flex w-full gap-2 items-center">
         <IssueTypeLogo icon_props={issueTypeDetail?.logo_props?.icon} isDefault={issueTypeDetail?.is_default} />
         <div
-          className={cn("text-custom-text-200 truncate", {
-            "text-xs": variant === "xs",
-            "text-sm font-medium": variant === "sm",
+          className={cn("text-secondary truncate", {
+            "text-caption-md-regular": variant === "xs",
+            "text-body-sm-medium": variant === "sm",
           })}
         >
           {issueTypeDetail.name}
@@ -83,7 +96,7 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
         >
           {!issueTypeId && (
             <LayersIcon
-              className={cn("flex-shrink-0 text-custom-text-300", {
+              className={cn("flex-shrink-0 text-tertiary", {
                 "size-3": variant === "xs",
                 "size-4": variant === "sm",
               })}
@@ -97,9 +110,9 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
             />
           )}
           <div
-            className={cn("truncate", issueTypeId ? "text-custom-text-200" : "text-custom-text-300", {
-              "text-xs": variant === "xs",
-              "text-sm font-medium": variant === "sm",
+            className={cn("truncate", issueTypeId ? "text-secondary" : "text-tertiary", {
+              "text-caption-md-regular": variant === "xs",
+              "text-body-sm-medium": variant === "sm",
             })}
           >
             {issueTypeId ? allIssueTypes[issueTypeId]?.name : placeholder}
@@ -110,10 +123,7 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
       onChange={handleIssueTypeChange}
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
-      buttonClassName={cn(
-        "rounded text-sm py-0.5 bg-custom-background-100 border-[0.5px] border-custom-border-300",
-        buttonClassName
-      )}
+      buttonClassName={cn("rounded-sm text-13 py-0.5 bg-surface-1 border-[0.5px] border-subtle-1", buttonClassName)}
       disabled={disabled}
       noChevron
     />

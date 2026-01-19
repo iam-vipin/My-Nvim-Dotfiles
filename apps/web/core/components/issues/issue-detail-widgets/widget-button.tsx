@@ -1,7 +1,20 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 // helpers
-import { cn } from "@plane/utils";
+import { Button } from "@plane/propel/button";
 
 type Props = {
   icon: React.ReactNode;
@@ -12,17 +25,9 @@ type Props = {
 export function IssueDetailWidgetButton(props: Props) {
   const { icon, title, disabled = false } = props;
   return (
-    <div
-      className={cn(
-        "h-full w-min whitespace-nowrap flex items-center gap-2 border border-custom-border-200 rounded px-3 py-1.5",
-        {
-          "cursor-not-allowed text-custom-text-400 bg-custom-background-90": disabled,
-          "cursor-pointer text-custom-text-300 hover:bg-custom-background-80": !disabled,
-        }
-      )}
-    >
+    <Button variant={"secondary"} disabled={disabled} size="lg">
       {icon && icon}
-      <span className="text-sm font-medium">{title}</span>
-    </div>
+      <span className="text-body-xs-medium">{title}</span>
+    </Button>
   );
 }

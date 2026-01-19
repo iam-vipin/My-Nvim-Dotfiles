@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django import
 from django.db import IntegrityError
 
@@ -37,19 +48,13 @@ class SlackProjectSyncViewSet(BaseViewSet):
             code = request.data.get("code", False)
 
             if not code:
-                return Response(
-                    {"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST)
 
             slack_response = slack_oauth(code=code)
 
-            workspace_integration = WorkspaceIntegration.objects.get(
-                workspace__slug=slug, pk=workspace_integration_id
-            )
+            workspace_integration = WorkspaceIntegration.objects.get(workspace__slug=slug, pk=workspace_integration_id)
 
-            workspace_integration = WorkspaceIntegration.objects.get(
-                pk=workspace_integration_id, workspace__slug=slug
-            )
+            workspace_integration = WorkspaceIntegration.objects.get(pk=workspace_integration_id, workspace__slug=slug)
             slack_project_sync = SlackProjectSync.objects.create(
                 access_token=slack_response.get("access_token"),
                 scopes=slack_response.get("scope"),
@@ -61,9 +66,7 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 workspace_integration=workspace_integration,
                 project_id=project_id,
             )
-            _ = ProjectMember.objects.get_or_create(
-                member=workspace_integration.actor, role=20, project_id=project_id
-            )
+            _ = ProjectMember.objects.get_or_create(member=workspace_integration.actor, role=20, project_id=project_id)
             serializer = SlackProjectSyncSerializer(slack_project_sync)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except IntegrityError as e:

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -53,9 +66,9 @@ export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(pro
     <Row
       ref={projectRef}
       className={cn(
-        "group/list-block min-h-[52px] relative flex flex-col gap-2 bg-custom-background-100 hover:bg-custom-background-90 py-4 text-sm transition-colors border border-transparent border-b border-b-custom-border-200 md:py-0",
+        "group/list-block min-h-[52px] relative flex flex-col gap-2 bg-layer-transparent hover:bg-layer-transparent-hover py-4 text-13 transition-colors border border-transparent border-b border-b-subtle-1 md:py-0",
         {
-          "bg-custom-background-80": isCurrentBlockDragging,
+          "bg-layer-1": isCurrentBlockDragging,
           "md:flex-row md:items-center": isSidebarCollapsed,
           "lg:flex-row lg:items-center": !isSidebarCollapsed,
         }
@@ -73,7 +86,7 @@ export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(pro
       <div className="flex w-full truncate">
         <div className="flex flex-grow items-center gap-0.5 truncate pb-0 md:pt-2 lg:py-2">
           <div className="flex items-center gap-1">
-            <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded bg-custom-background-90 mr-2">
+            <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded-sm bg-layer-1 mr-2">
               <Logo logo={projectDetails.logo_props} size={14} />
             </div>
           </div>
@@ -87,7 +100,7 @@ export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(pro
                 e.stopPropagation();
                 router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/projects/${projectId}`);
               }}
-              className={cn("w-full truncate cursor-pointer text-sm text-custom-text-100", {})}
+              className={cn("w-full truncate cursor-pointer text-body-xs-regular text-primary", {})}
             >
               <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile} position="top-start">
                 <p className="truncate mr-2">{projectDetails.name}</p>
@@ -96,7 +109,7 @@ export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(pro
           ) : (
             <div
               id={`project-${projectDetails.id}`}
-              className={cn("w-full truncate cursor-not-allowed text-sm text-custom-text-100", {})}
+              className={cn("w-full truncate cursor-not-allowed text-body-xs-regular text-primary", {})}
             >
               <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile} position="top-start">
                 <p className="truncate">{projectDetails.name}</p>
@@ -105,7 +118,7 @@ export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(pro
           )}
         </div>
         <div
-          className={cn("block border border-custom-border-300 rounded h-full m-2", {
+          className={cn("block border border-subtle-1 rounded-sm h-full m-2", {
             "md:hidden": isSidebarCollapsed,
             "lg:hidden": !isSidebarCollapsed,
           })}

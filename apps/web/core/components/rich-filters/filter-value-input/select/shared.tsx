@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -45,9 +58,9 @@ export const getFormattedOptions = <V extends TFilterValue>(options: IFilterOpti
 
 export const getCommonCustomSearchSelectProps = (isDisabled?: boolean) => ({
   customButtonClassName: cn(
-    "h-full w-full px-2 text-sm font-normal transition-all duration-300 ease-in-out",
+    "h-full w-full px-2 text-13 font-regular transition-all duration-300 ease-in-out",
     !isDisabled && COMMON_FILTER_ITEM_BORDER_CLASSNAME,
-    isDisabled && "hover:bg-custom-background-100"
+    isDisabled && "hover:bg-surface-1"
   ),
   optionsClassName: "w-56",
   maxHeight: "md" as const,

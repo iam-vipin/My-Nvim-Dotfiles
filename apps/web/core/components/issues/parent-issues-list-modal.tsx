@@ -1,15 +1,27 @@
-import React, { useEffect, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-// icons
-import { Search } from "lucide-react";
 // headless ui
-import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { SearchIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-search-modal-empty-state";
@@ -88,111 +100,78 @@ export function ParentIssuesListModal({
   }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug, convertToWorkItem, searchEpic]);
 
   return (
-    <>
-      <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
-        <Dialog as="div" className="relative z-30" onClose={handleClose}>
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-          </Transition.Child>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <Combobox
+        value={value}
+        onChange={(val) => {
+          onChange(val);
+          handleClose();
+        }}
+      >
+        <div className="relative m-1">
+          <SearchIcon
+            className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+            aria-hidden="true"
+          />
+          <Combobox.Input
+            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none placeholder:text-placeholder focus:ring-0 sm:text-13"
+            placeholder={t("common.search.placeholder")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            displayValue={() => ""}
+            tabIndex={baseTabIndex}
+          />
+        </div>
+        <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md">
+          {searchTerm !== "" && (
+            <h5 className="mx-2 text-13 text-secondary">
+              Search results for{" "}
+              <span className="text-primary">
+                {'"'}
+                {searchTerm}
+                {'"'}
+              </span>{" "}
+              in project:
+            </h5>
+          )}
 
-          <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
-                <Combobox
-                  value={value}
-                  onChange={(val) => {
-                    onChange(val);
-                    handleClose();
-                  }}
-                >
-                  <div className="relative m-1">
-                    <Search
-                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
-                      aria-hidden="true"
-                    />
-                    <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0 sm:text-sm"
-                      placeholder={t("common.search.placeholder")}
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      displayValue={() => ""}
-                      tabIndex={baseTabIndex}
-                    />
-                  </div>
-                  <Combobox.Options
-                    static
-                    className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
-                  >
-                    {searchTerm !== "" && (
-                      <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
-                        Search results for{" "}
-                        <span className="text-custom-text-100">
-                          {'"'}
-                          {searchTerm}
-                          {'"'}
-                        </span>{" "}
-                        in project:
-                      </h5>
-                    )}
-
-                    {isSearching || isLoading ? (
-                      <Loader className="space-y-3 p-3">
-                        <Loader.Item height="40px" />
-                        <Loader.Item height="40px" />
-                        <Loader.Item height="40px" />
-                        <Loader.Item height="40px" />
-                      </Loader>
-                    ) : (
-                      <>
-                        {issues.length === 0 ? (
-                          <IssueSearchModalEmptyState
-                            debouncedSearchTerm={debouncedSearchTerm}
-                            isSearching={isSearching}
-                            issues={issues}
-                            searchTerm={searchTerm}
-                          />
-                        ) : (
-                          <ul className={`text-sm ${issues.length > 0 ? "p-2" : ""}`}>
-                            {issues.map((issue) => (
-                              <Combobox.Option
-                                key={issue.id}
-                                value={issue}
-                                className={({ active, selected }) =>
-                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  } ${selected ? "text-custom-text-100" : ""}`
-                                }
-                              >
-                                <ParentIssuesListItem workspaceSlug={workspaceSlug?.toString()} issue={issue} />
-                              </Combobox.Option>
-                            ))}
-                          </ul>
-                        )}
-                      </>
-                    )}
-                  </Combobox.Options>
-                </Combobox>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition.Root>
-    </>
+          {isSearching || isLoading ? (
+            <Loader className="space-y-3 p-3">
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+            </Loader>
+          ) : (
+            <>
+              {issues.length === 0 ? (
+                <IssueSearchModalEmptyState
+                  debouncedSearchTerm={debouncedSearchTerm}
+                  isSearching={isSearching}
+                  issues={issues}
+                  searchTerm={searchTerm}
+                />
+              ) : (
+                <ul className={`text-13 ${issues.length > 0 ? "p-2" : ""}`}>
+                  {issues.map((issue) => (
+                    <Combobox.Option
+                      key={issue.id}
+                      value={issue}
+                      className={({ active, selected }) =>
+                        `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                          active ? "bg-layer-1 text-primary" : ""
+                        } ${selected ? "text-primary" : ""}`
+                      }
+                    >
+                      <ParentIssuesListItem workspaceSlug={workspaceSlug?.toString()} issue={issue} />
+                    </Combobox.Option>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+        </Combobox.Options>
+      </Combobox>
+    </ModalCore>
   );
 }

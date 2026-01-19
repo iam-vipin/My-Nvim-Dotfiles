@@ -1,4 +1,31 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
+  auth: {
+    common: {
+      username: {
+        label: "Kullanıcı adı",
+        placeholder: "Kullanıcı adınızı girin",
+      },
+    },
+    ldap: {
+      header: {
+        label: "{ldapProviderName} ile devam et",
+        sub_header: "{ldapProviderName} kimlik bilgilerinizi girin",
+      },
+    },
+  },
   sidebar: {
     pi_chat: "Pay Çet",
     initiatives: "İnisiyetivs",
@@ -725,6 +752,11 @@ export default {
       worklogs: {
         title: "Workloglar",
       },
+      identity: {
+        title: "Kimlik",
+        heading: "Kimlik",
+        description: "Alan adınızı yapılandırın ve Tek oturum açmayı etkinleştirin",
+      },
       project_states: {
         title: "Proje durumları",
       },
@@ -923,6 +955,55 @@ export default {
         heading: "Plane AI",
         description:
           "İşinizi daha akıllı ve daha hızlı hale getirmek için doğal olarak işinize ve bilgi tabanınıza bağlı olan AI kullanın.",
+      },
+    },
+  },
+  workspace: {
+    members_import: {
+      title: "CSV'den üye içe aktar",
+      description:
+        "Şu sütunları içeren bir CSV yükleyin: Email, Display Name, First Name, Last Name, Role (5, 15 veya 20)",
+      dropzone: {
+        active: "CSV dosyasını buraya bırakın",
+        inactive: "Sürükle bırak veya yüklemek için tıklayın",
+        file_type: "Yalnızca .csv dosyaları desteklenir",
+      },
+      buttons: {
+        cancel: "İptal",
+        import: "İçe Aktar",
+        try_again: "Tekrar Dene",
+        close: "Kapat",
+        done: "Tamamlandı",
+      },
+      progress: {
+        uploading: "Yükleniyor...",
+        importing: "İçe aktarılıyor...",
+      },
+      summary: {
+        title: {
+          failed: "İçe Aktarma Başarısız",
+          complete: "İçe Aktarma Tamamlandı",
+        },
+        message: {
+          seat_limit: "Koltuk sınırlamaları nedeniyle üyeler içe aktarılamıyor.",
+          success: "Çalışma alanına başarıyla {count} üye eklendi.",
+          no_imports: "CSV dosyasından hiçbir üye içe aktarılmadı.",
+        },
+        stats: {
+          successful: "Başarılı",
+          failed: "Başarısız",
+        },
+        download_errors: "Hataları indir",
+      },
+      toast: {
+        invalid_file: {
+          title: "Geçersiz dosya",
+          message: "Yalnızca CSV dosyaları desteklenir.",
+        },
+        import_failed: {
+          title: "İçe aktarma başarısız",
+          message: "Bir şeyler ters gitti.",
+        },
       },
     },
   },
@@ -1394,6 +1475,23 @@ export default {
     choose_entity: "Varlık Seçin",
     choose_project: "Proje Seçin",
     link_plane_project: "Plane projesini bağla",
+    project_issue_sync: "Proje Sorun Senkronizasyonu",
+    project_issue_sync_description: "Gitlab'dan Plane projenize sorunları senkronize edin",
+    project_issue_sync_empty_state: "Eşlenmiş proje sorun senkronizasyonu burada görünecek",
+    configure_project_issue_sync_state: "Sorun Senkronizasyon Durumunu Yapılandır",
+    select_issue_sync_direction: "Sorun senkronizasyon yönünü seçin",
+    allow_bidirectional_sync:
+      "Çift Yönlü - Gitlab ve Plane arasında sorunları ve yorumları her iki yönde senkronize et",
+    allow_unidirectional_sync: "Tek Yönlü - Sorunları ve yorumları yalnızca Gitlab'dan Plane'e senkronize et",
+    allow_unidirectional_sync_warning:
+      "Gitlab Sorunu'ndaki veriler Bağlantılı Plane İş Öğesi'ndeki verilerin yerini alacak (yalnızca Gitlab → Plane)",
+    remove_project_issue_sync: "Bu Proje Sorun Senkronizasyonunu Kaldır",
+    remove_project_issue_sync_confirmation: "Bu proje sorun senkronizasyonunu kaldırmak istediğinizden emin misiniz?",
+    ISSUE_OPEN: "Sorun Açık",
+    ISSUE_CLOSED: "Sorun Kapalı",
+    save: "Kaydet",
+    start_sync: "Senkronizasyonu Başlat",
+    choose_repository: "Depo Seçin...",
   },
   gitlab_enterprise_integration: {
     name: "Gitlab Enterprise",
@@ -3182,6 +3280,228 @@ export default {
         title: "Otomasyonlar",
         description: "Otomasyonlar, projenizdeki görevleri otomatikleştirmenin bir yoludur.",
         sub_description: "Otomasyonları kullandığınızda yönetim zamanınızın %80'ini geri kazanın.",
+      },
+    },
+  },
+  sso: {
+    header: "Kimlik",
+    description: "Tek oturum açma dahil güvenlik özelliklerine erişmek için etki alanınızı yapılandırın.",
+    domain_management: {
+      header: "Etki alanı yönetimi",
+      verified_domains: {
+        header: "Doğrulanmış etki alanları",
+        description: "Tek oturum açmayı etkinleştirmek için bir e-posta etki alanının sahipliğini doğrulayın.",
+        button_text: "Etki alanı ekle",
+        list: {
+          domain_name: "Etki alanı adı",
+          status: "Durum",
+          status_verified: "Doğrulandı",
+          status_failed: "Başarısız",
+          status_pending: "Beklemede",
+        },
+        add_domain: {
+          title: "Etki alanı ekle",
+          description: "SSO&apos;yu yapılandırmak ve doğrulamak için etki alanınızı ekleyin.",
+          form: {
+            domain_label: "Etki alanı",
+            domain_placeholder: "plane.so",
+            domain_required: "Etki alanı gereklidir",
+            domain_invalid: "Geçerli bir etki alanı adı girin (örn. plane.so)",
+          },
+          primary_button_text: "Etki alanı ekle",
+          primary_button_loading_text: "Ekleniyor",
+          toast: {
+            success_title: "Başarılı!",
+            success_message: "Etki alanı başarıyla eklendi. Lütfen DNS TXT kaydını ekleyerek doğrulayın.",
+            error_message: "Etki alanı eklenemedi. Lütfen tekrar deneyin.",
+          },
+        },
+        verify_domain: {
+          title: "Etki alanınızı doğrulayın",
+          description: "Etki alanınızı doğrulamak için bu adımları izleyin.",
+          instructions: {
+            label: "Talimatlar",
+            step_1: "Etki alanı ana bilgisayarınızın DNS ayarlarına gidin.",
+            step_2: {
+              part_1: "Bir",
+              part_2: "TXT kaydı",
+              part_3: "oluşturun ve aşağıda sağlanan tam kayıt değerini yapıştırın.",
+            },
+            step_3: "Bu güncelleme genellikle birkaç dakika sürer ancak tamamlanması 72 saate kadar sürebilir.",
+            step_4: 'DNS kaydınız güncellendikten sonra onaylamak için "Etki alanını doğrula" seçeneğine tıklayın.',
+          },
+          verification_code_label: "TXT kaydı değeri",
+          verification_code_description: "Bu kaydı DNS ayarlarınıza ekleyin",
+          domain_label: "Etki alanı",
+          primary_button_text: "Etki alanını doğrula",
+          primary_button_loading_text: "Doğrulanıyor",
+          secondary_button_text: "Bunu daha sonra yapacağım",
+          toast: {
+            success_title: "Başarılı!",
+            success_message: "Etki alanı başarıyla doğrulandı.",
+            error_message: "Etki alanı doğrulanamadı. Lütfen tekrar deneyin.",
+          },
+        },
+        delete_domain: {
+          title: "Etki alanını sil",
+          description: {
+            prefix: "Silmek istediğinizden emin misiniz",
+            suffix: "? Bu işlem geri alınamaz.",
+          },
+          primary_button_text: "Sil",
+          primary_button_loading_text: "Siliniyor",
+          secondary_button_text: "İptal",
+          toast: {
+            success_title: "Başarılı!",
+            success_message: "Etki alanı başarıyla silindi.",
+            error_message: "Etki alanı silinemedi. Lütfen tekrar deneyin.",
+          },
+        },
+      },
+    },
+    providers: {
+      header: "Tek oturum açma",
+      disabled_message: "SSO&apos;yu yapılandırmak için doğrulanmış bir etki alanı ekleyin",
+      configure: {
+        create: "Yapılandır",
+        update: "Düzenle",
+      },
+      switch_alert_modal: {
+        title: "SSO yöntemini {newProviderShortName}&apos;a geçir?",
+        content:
+          "{newProviderLongName} ({newProviderShortName})&apos;ı etkinleştirmek üzeresiniz. Bu işlem {activeProviderLongName} ({activeProviderShortName})&apos;ı otomatik olarak devre dışı bırakacaktır. {activeProviderShortName} üzerinden giriş yapmaya çalışan kullanıcılar yeni yönteme geçene kadar platforma erişemeyeceklerdir. Devam etmek istediğinizden emin misiniz?",
+        primary_button_text: "Geçir",
+        primary_button_text_loading: "Geçiriliyor",
+        secondary_button_text: "İptal",
+      },
+      form_section: {
+        title: "{workspaceName} için IdP tarafından sağlanan ayrıntılar",
+      },
+      form_action_buttons: {
+        saving: "Kaydediliyor",
+        save_changes: "Değişiklikleri kaydet",
+        configure_only: "Yalnızca yapılandır",
+        configure_and_enable: "Yapılandır ve etkinleştir",
+        default: "Kaydet",
+      },
+      setup_details_section: {
+        title: "{workspaceName} IdP&apos;niz için sağlanan ayrıntılar",
+        button_text: "Kurulum ayrıntılarını al",
+      },
+      saml: {
+        header: "SAML&apos;i etkinleştir",
+        description: "Tek oturum açmayı etkinleştirmek için SAML kimlik sağlayıcınızı yapılandırın.",
+        configure: {
+          title: "SAML&apos;i etkinleştir",
+          description:
+            "Tek oturum açma dahil güvenlik özelliklerine erişmek için bir e-posta etki alanının sahipliğini doğrulayın.",
+          toast: {
+            success_title: "Başarılı!",
+            create_success_message: "SAML sağlayıcı başarıyla oluşturuldu.",
+            update_success_message: "SAML sağlayıcı başarıyla güncellendi.",
+            error_title: "Hata!",
+            error_message: "SAML sağlayıcı kaydedilemedi. Lütfen tekrar deneyin.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web ayrıntıları",
+            entity_id: {
+              label: "Varlık Kimliği | Hedef Kitle | Meta veri bilgileri",
+              description:
+                "Bu Plane uygulamasını IdP&apos;nizde yetkili bir hizmet olarak tanımlayan meta verilerin bu bölümünü oluşturacağız.",
+            },
+            callback_url: {
+              label: "Tek oturum açma URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+            logout_url: {
+              label: "Tek oturum kapatma URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin tek oturum kapatma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+          },
+          mobile_details: {
+            header: "Mobil ayrıntılar",
+            entity_id: {
+              label: "Varlık Kimliği | Hedef Kitle | Meta veri bilgileri",
+              description:
+                "Bu Plane uygulamasını IdP&apos;nizde yetkili bir hizmet olarak tanımlayan meta verilerin bu bölümünü oluşturacağız.",
+            },
+            callback_url: {
+              label: "Tek oturum açma URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+            logout_url: {
+              label: "Tek oturum kapatma URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum kapatma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+          },
+          mapping_table: {
+            header: "Eşleme ayrıntıları",
+            table: {
+              idp: "IdP",
+              plane: "Plane",
+            },
+          },
+        },
+      },
+      oidc: {
+        header: "OIDC&apos;yi etkinleştir",
+        description: "Tek oturum açmayı etkinleştirmek için OIDC kimlik sağlayıcınızı yapılandırın.",
+        configure: {
+          title: "OIDC&apos;yi etkinleştir",
+          description:
+            "Tek oturum açma dahil güvenlik özelliklerine erişmek için bir e-posta etki alanının sahipliğini doğrulayın.",
+          toast: {
+            success_title: "Başarılı!",
+            create_success_message: "OIDC sağlayıcı başarıyla oluşturuldu.",
+            update_success_message: "OIDC sağlayıcı başarıyla güncellendi.",
+            error_title: "Hata!",
+            error_message: "OIDC sağlayıcı kaydedilemedi. Lütfen tekrar deneyin.",
+          },
+        },
+        setup_modal: {
+          web_details: {
+            header: "Web ayrıntıları",
+            origin_url: {
+              label: "Kaynak URL",
+              description:
+                "Bunu bu Plane uygulaması için oluşturacağız. Bunu IdP&apos;nizin ilgili alanına güvenilir bir kaynak olarak ekleyin.",
+            },
+            callback_url: {
+              label: "Yönlendirme URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+            logout_url: {
+              label: "Oturum kapatma URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum kapatma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+          },
+          mobile_details: {
+            header: "Mobil ayrıntılar",
+            origin_url: {
+              label: "Kaynak URL",
+              description:
+                "Bunu bu Plane uygulaması için oluşturacağız. Bunu IdP&apos;nizin ilgili alanına güvenilir bir kaynak olarak ekleyin.",
+            },
+            callback_url: {
+              label: "Yönlendirme URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum açma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+            logout_url: {
+              label: "Oturum kapatma URL&apos;si",
+              description:
+                "Bunu sizin için oluşturacağız. Bunu IdP&apos;nizin oturum kapatma yönlendirme URL&apos;si alanına ekleyin.",
+            },
+          },
+        },
       },
     },
   },

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -92,7 +105,7 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
   return (
     <form onSubmit={handleTeamFormSubmit}>
       <div className="space-y-3 p-5 pb-4">
-        <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Teamspace</h3>
+        <h3 className="text-h5-medium text-secondary">{formData.id ? "Update" : "Create"} Teamspace</h3>
         <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
           <EmojiPicker
             iconType="material"
@@ -101,7 +114,7 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
             className="flex items-center justify-center"
             buttonClassName="flex items-center justify-center"
             label={
-              <span className="grid size-9 place-items-center rounded-md bg-custom-background-90">
+              <span className="grid size-9 place-items-center rounded-md bg-layer-1">
                 {formData.logo_props && <Logo logo={formData.logo_props} size={20} />}
               </span>
             }
@@ -126,12 +139,12 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
               value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
               placeholder="Name this teamspace."
-              className="w-full resize-none text-base"
+              className="w-full resize-none text-body-sm-regular"
               hasError={Boolean(errors.name)}
               tabIndex={1}
               autoFocus
             />
-            {errors.name && <div className="text-red-500 text-xs">{errors.name}</div>}
+            {errors.name && <div className="text-danger-primary text-caption-xs-medium">{errors.name}</div>}
           </div>
         </div>
         <RichTextEditor
@@ -153,8 +166,8 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
               : t(getDescriptionPlaceholderI18n(isFocused, value))
           }
           searchMentionCallback={searchEntity}
-          editorClassName="text-xs"
-          containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
+          editorClassName="text-caption-xs-regular"
+          containerClassName="resize-none min-h-24 text-caption-xs-regular border-[0.5px] border-subtle-1 rounded-md px-3 py-2"
           tabIndex={2}
           uploadFile={async (blockId, file) => {
             try {
@@ -189,7 +202,7 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
           }}
         />
         <div className="space-y-0.5">
-          <p className="text-sm text-custom-text-300">Team lead</p>
+          <p className="text-body-xs-regular text-tertiary">Team lead</p>
           <MemberDropdown
             value={formData.lead_id ?? ""}
             memberIds={userIdsWithAdminOrMemberRole}
@@ -204,7 +217,7 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
             buttonVariant="border-with-text"
             buttonContainerClassName={cn(
               "h-8 w-full text-left",
-              formData.lead_id ? "text-custom-text-200" : "text-custom-text-400"
+              formData.lead_id ? "text-secondary" : "text-placeholder"
             )}
             placeholder="Pick from your list of members."
             showUserDetails
@@ -212,7 +225,7 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
           />
         </div>
         <div className="space-y-0.5">
-          <p className="flex gap-1.5 items-center text-sm text-custom-text-300">Team members</p>
+          <p className="flex gap-1.5 items-center text-body-xs-regular text-tertiary">Team members</p>
           <MemberDropdown
             value={formData.member_ids ?? []}
             memberIds={userIdsWithAdminOrMemberRole}
@@ -223,7 +236,7 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
             buttonVariant="border-with-text"
             buttonContainerClassName={cn(
               "h-8 w-full text-left",
-              formData.member_ids?.length ? "text-custom-text-200" : "text-custom-text-400"
+              formData.member_ids?.length ? "text-secondary" : "text-placeholder"
             )}
             placeholder="Pick from your list of members."
             hideIcon={formData.member_ids?.length === 0}
@@ -232,12 +245,12 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
           />
         </div>
       </div>
-      <div className="mx-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100">
+      <div className="mx-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={3}>
+          <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={3}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={4}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={4}>
             {formData.id ? "Update" : "Create"} teamspace
           </Button>
         </div>

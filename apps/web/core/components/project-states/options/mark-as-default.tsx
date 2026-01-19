@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -31,8 +44,8 @@ export const StateMarksAsDefault = observer(function StateMarksAsDefault(props: 
   return (
     <button
       className={cn(
-        "text-xs whitespace-nowrap transition-colors",
-        isDefault ? "text-custom-text-300" : "text-custom-text-200 hover:text-custom-text-100"
+        "text-11 whitespace-nowrap transition-colors",
+        isDefault ? "text-tertiary" : "text-secondary hover:text-primary"
       )}
       disabled={isDefault || isLoading}
       onClick={handleMarkAsDefault}

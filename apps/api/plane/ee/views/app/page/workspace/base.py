@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from datetime import datetime, timedelta
@@ -245,21 +256,6 @@ class WorkspacePageViewSet(BaseViewSet):
         page = self.get_queryset().filter(pk=page_id).first()
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
-        if not page:
-            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        if page.parent_id and (
-            not check_workspace_feature_flag(
-                feature_key=FeatureFlag.NESTED_PAGES,
-                slug=slug,
-                user_id=str(request.user.id),
-            )
-        ):
-            return Response(
-                {"error": "You are not authorized to access this page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if page is None:
             return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -358,7 +354,7 @@ class WorkspacePageViewSet(BaseViewSet):
         if search:
             filters &= Q(name__icontains=search)
         if page_type == "private":
-            filters &= Q(access=1) & ~Q(id__in=user_pages)
+            filters &= Q(access=1) & ~Q(id__in=user_pages) & Q(archived_at__isnull=True)
         elif page_type == "archived":
             filters &= Q(archived_at__isnull=False)
         elif page_type == "public":
@@ -376,8 +372,14 @@ class WorkspacePageViewSet(BaseViewSet):
             .order_by("sort_order", "-created_at")
         )
 
-        pages = WorkspacePageSerializer(queryset, many=True).data
-        return Response(pages, status=status.HTTP_200_OK)
+        # This paginates the filtered results
+        return self.paginate(
+            request=request,
+            queryset=queryset,
+            on_results=lambda pages: WorkspacePageSerializer(pages, many=True).data,
+            default_per_page=20,
+            max_per_page=100,
+        )
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def archive(self, request, slug, page_id):

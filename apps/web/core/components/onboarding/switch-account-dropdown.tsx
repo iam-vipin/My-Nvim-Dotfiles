@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -33,8 +46,8 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
     <>
       <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
       <Menu as="div" className="relative">
-        <Menu.Button className="flex items-center gap-x-2.5 px-2 py-1.5 rounded-lg bg-custom-background-90 z-10">
-          <div className="size-6 rounded-full bg-green-700 flex items-center justify-center text-white font-semibold text-sm capitalize">
+        <Menu.Button className="flex items-center gap-x-2.5 px-2 py-1.5 rounded-lg bg-layer-1 z-10">
+          <div className="size-6 rounded-full bg-success-primary flex items-center justify-center text-on-color font-semibold text-13 capitalize">
             {user?.avatar_url ? (
               <img
                 src={getFileURL(user?.avatar_url)}
@@ -45,7 +58,7 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
               <>{fullName?.[0] ?? "R"}</>
             )}
           </div>
-          <span className="text-sm font-medium text-custom-text-200">{displayName}</span>
+          <span className="text-13 font-medium text-secondary">{displayName}</span>
         </Menu.Button>
         <Transition
           enter="transition duration-100 ease-out"
@@ -55,13 +68,13 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
-          <Menu.Items className="absolute z-10 right-0 rounded-md border-[0.5px] border-custom-border-300 mt-2 bg-custom-background-100 px-2 py-2.5 text-sm min-w-[12rem] shadow-custom-shadow-rg">
+          <Menu.Items className="absolute z-10 right-0 rounded-md border-[0.5px] border-strong mt-2 bg-surface-1 px-2 py-2.5 text-13 min-w-[12rem] shadow-raised-200">
             <Menu.Item
               as="button"
               type="button"
               className={({ active }) =>
-                cn("text-red-500 px-1 py-1.5 whitespace-nowrap text-left rounded w-full", {
-                  "bg-custom-background-80": active,
+                cn("text-danger-primary px-1 py-1.5 whitespace-nowrap text-left rounded-sm w-full", {
+                  "bg-layer-1": active,
                 })
               }
               onClick={() => setShowSwitchAccountModal(true)}

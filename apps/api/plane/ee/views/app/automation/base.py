@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 import uuid
 import json
@@ -36,20 +47,13 @@ from plane.ee.bgtasks.automation_activity_task import automation_activity
 
 
 class AutomationEndpoint(BaseAPIView):
-
-    def enhance_automation_data(
-        self, automations: list[Automation], data: list[dict]
-    ) -> list[dict]:
+    def enhance_automation_data(self, automations: list[Automation], data: list[dict]) -> list[dict]:
         # get all automation runs for the automations
         runs = AutomationRun.objects.filter(automation__in=automations).values(
             "automation_id", "status", "started_at", "completed_at"
         )
         for automation in data:
-            automation_runs = [
-                run
-                for run in runs
-                if str(run.get("automation_id")) == str(automation.get("id"))
-            ]
+            automation_runs = [run for run in runs if str(run.get("automation_id")) == str(automation.get("id"))]
             if automation_runs:
                 automation["last_run_status"] = automation_runs[0].get("status")
                 # Calculate average run time only for runs with both timestamps
@@ -58,23 +62,19 @@ class AutomationEndpoint(BaseAPIView):
                     for run in automation_runs
                     if run.get("completed_at") and run.get("started_at")
                 ]
-                automation["average_run_time"] = (
-                    sum(run_times) / len(run_times) if run_times else 0
-                )
+                automation["average_run_time"] = sum(run_times) / len(run_times) if run_times else 0
 
+                automation["run_count"] = len(automation_runs)
                 automation["total_success_count"] = sum(
-                    1
-                    for run in automation_runs
-                    if run.get("status") == RunStatusChoices.SUCCESS.value
+                    1 for run in automation_runs if run.get("status") == RunStatusChoices.SUCCESS.value
                 )
                 automation["total_failed_count"] = sum(
-                    1
-                    for run in automation_runs
-                    if run.get("status") == RunStatusChoices.FAILED.value
+                    1 for run in automation_runs if run.get("status") == RunStatusChoices.FAILED.value
                 )
             else:
                 automation["last_run_status"] = None
                 automation["average_run_time"] = 0
+                automation["run_count"] = 0
                 automation["total_success_count"] = 0
                 automation["total_failed_count"] = 0
 
@@ -89,9 +89,7 @@ class AutomationEndpoint(BaseAPIView):
                 project_id=project_id,
             ).first()
             if not automation:
-                return Response(
-                    {"error": "Automation not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Automation not found"}, status=status.HTTP_404_NOT_FOUND)
 
             serializer = AutomationDetailReadSerializer(automation)
 
@@ -150,12 +148,8 @@ class AutomationEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         )
-        current_instance = json.dumps(
-            AutomationWriteSerializer(automation).data, cls=DjangoJSONEncoder
-        )
-        serializer = AutomationWriteSerializer(
-            automation, data=request.data, partial=True
-        )
+        current_instance = json.dumps(AutomationWriteSerializer(automation).data, cls=DjangoJSONEncoder)
+        serializer = AutomationWriteSerializer(automation, data=request.data, partial=True)
         if serializer.is_valid():
             try:
                 serializer.save()
@@ -242,18 +236,12 @@ class AutomationStatusEndpoint(BaseAPIView):
             ).exists()
         ):
             return Response(
-                {
-                    "error": "Automation cannot be published since it does not contain a trigger and an action"
-                },
+                {"error": "Automation cannot be published since it does not contain a trigger and an action"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         automation.is_enabled = is_enabled
-        automation.status = (
-            AutomationStatusChoices.PUBLISHED
-            if is_enabled
-            else AutomationStatusChoices.DISABLED
-        )
+        automation.status = AutomationStatusChoices.PUBLISHED if is_enabled else AutomationStatusChoices.DISABLED
         automation.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

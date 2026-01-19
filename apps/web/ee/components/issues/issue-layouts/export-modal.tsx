@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { Button } from "@plane/propel/button";
 import { ModalCore, EModalWidth, EModalPosition } from "@plane/ui";
@@ -27,24 +40,24 @@ export function ExportModal(props: Props) {
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} width={EModalWidth.SM} position={EModalPosition.TOP}>
       <div className="p-5">
-        <h3 className="text-base text-custom-text-100 font-medium mb-2">Export</h3>
+        <h3 className="text-14 text-primary font-medium mb-2">Export</h3>
         <div className="space-y-2">
-          <p className="font-medium text-sm text-custom-text-200">Format</p>
+          <p className="font-medium text-13 text-secondary">Format</p>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="radio" name="provider" checked={provider === "csv"} onChange={() => setProvider("csv")} />
-            <span className="text-xs">CSV</span>
+            <span className="text-11">CSV</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="radio" name="provider" checked={provider === "json"} onChange={() => setProvider("json")} />
-            <span className="text-xs">JSON</span>
+            <span className="text-11">JSON</span>
           </label>
         </div>
       </div>
-      <div className="flex justify-end gap-2 border-t border-custom-border-200 p-3">
-        <Button variant="neutral-primary" size="sm" onClick={onClose}>
+      <div className="flex justify-end gap-2 border-t border-subtle-1 p-3">
+        <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" onClick={handleConfirm} disabled={!provider || isSubmitting}>
+        <Button variant="primary" onClick={handleConfirm} disabled={!provider || isSubmitting}>
           Continue
         </Button>
       </div>

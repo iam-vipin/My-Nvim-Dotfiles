@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
@@ -58,15 +71,15 @@ const IntakeFeatureChildren = observer(function IntakeFeatureChildren() {
         const intakeSettingsKey = featureKey as TIntakeFeatureKeys;
         const isFeatureEnabled = getFeatureStatus(intakeSettingsKey);
         return (
-          <div key={featureKey} className="gap-x-8 gap-y-3 bg-custom-background-100 py-3">
+          <div key={featureKey} className="gap-x-8 gap-y-3 bg-surface-1 py-3">
             <div key={featureKey} className={cn("flex justify-between gap-2")}>
               <div className="flex gap-2 w-full">
-                <div className="flex justify-center rounded mt-1">{feature.icon}</div>
+                <div className="flex justify-center rounded-sm mt-1">{feature.icon}</div>
                 <div className="w-full">
                   <div className={cn("flex items-center justify-between gap-2")}>
                     <div className="flex-1 w-full">
-                      <div className="text-sm font-medium leading-5 align-top ">{feature.title}</div>
-                      <p className="text-sm text-custom-text-300 text-wrap mt-1">{feature.description} </p>
+                      <div className="text-body-xs-medium leading-5 align-top ">{feature.title}</div>
+                      <p className="text-body-xs-regular text-tertiary text-wrap mt-1">{feature.description} </p>
                     </div>
                     <ToggleSwitch
                       value={isFeatureEnabled}

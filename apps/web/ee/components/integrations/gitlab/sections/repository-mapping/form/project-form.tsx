@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
@@ -57,9 +70,9 @@ export const ProjectForm = observer(function ProjectForm(props: TProjectForm) {
     .filter((project) => project !== undefined && project !== null);
 
   return (
-    <div className="relative space-y-4 text-sm">
+    <div className="relative space-y-4 text-body-xs-regular">
       <div className="space-y-1">
-        <div className="text-custom-text-200">Plane {t("common.project")}</div>
+        <div className="text-secondary">Plane {t("common.project")}</div>
         <Dropdown
           dropdownOptions={(planeProjects || [])?.map((project) => ({
             key: project?.id || "",

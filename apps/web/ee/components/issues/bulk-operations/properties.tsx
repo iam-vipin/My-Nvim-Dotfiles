@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -178,7 +191,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 value={value}
                 onChange={(val) => onChange(value === val ? undefined : val)}
                 buttonVariant="border-with-text"
-                buttonClassName="!text-custom-text-300"
+                buttonClassName="!text-tertiary"
                 disabled={isUpdateDisabled}
                 placement="top-start"
               />
@@ -251,7 +264,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                     value={value}
                     projectId={projectId.toString()}
                     onChange={onChange}
-                    buttonContainerClassName="text-custom-text-300 "
+                    buttonContainerClassName="text-tertiary "
                     placement="top-start"
                   />
                 </div>
@@ -271,7 +284,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                     onChange={onChange}
                     projectId={projectId.toString()}
                     buttonVariant="border-with-text"
-                    buttonClassName="text-custom-text-300 py-1 rounded"
+                    buttonClassName="text-tertiary py-1 rounded"
                     disabled={isUpdateDisabled}
                     placement="top-start"
                     placeholder="Cycle"
@@ -289,7 +302,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                     onChange={onChange}
                     projectId={projectId.toString()}
                     buttonVariant="border-with-text"
-                    buttonClassName="text-custom-text-300 py-1"
+                    buttonClassName="text-tertiary py-1"
                     disabled={isUpdateDisabled}
                     placement="top-start"
                     placeholder="Estimates"
@@ -307,8 +320,8 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                     onChange={onChange}
                     projectId={projectId.toString()}
                     buttonVariant="border-with-text"
-                    buttonClassName="text-custom-text-300 border-none  px-2 py-1"
-                    buttonContainerClassName="border-[0.5px] border-custom-border-300 rounded"
+                    buttonClassName="text-tertiary border-none  px-2 py-1"
+                    buttonContainerClassName="border-[0.5px] border-subtle-1 rounded"
                     disabled={isUpdateDisabled}
                     placement="top-start"
                     placeholder="Module"
@@ -346,13 +359,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
         )}
       </div>
       {isDirty && (
-        <Button
-          variant="primary"
-          size="sm"
-          className="py-1"
-          onClick={handleSubmit(handleBulkOperations)}
-          loading={isSubmitting}
-        >
+        <Button variant="primary" className="py-1" onClick={handleSubmit(handleBulkOperations)} loading={isSubmitting}>
           {isSubmitting ? "Updating" : "Update"}
         </Button>
       )}

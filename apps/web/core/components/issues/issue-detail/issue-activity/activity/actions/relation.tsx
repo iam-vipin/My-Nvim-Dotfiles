@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -29,9 +42,9 @@ export const IssueRelationActivity = observer(function IssueRelationActivity(pro
     >
       {activityContent}
       {activity.old_value === "" ? (
-        <span className="font-medium text-custom-text-100">{activity.new_value}.</span>
+        <span className="font-medium text-primary">{activity.new_value}.</span>
       ) : (
-        <span className="font-medium text-custom-text-100">{activity.old_value}.</span>
+        <span className="font-medium text-primary">{activity.old_value}.</span>
       )}
     </IssueActivityBlockComponent>
   );

@@ -1,7 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2 } from "lucide-react";
+
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import type { TInitiativeLabel } from "@plane/types";
 // components
@@ -31,7 +45,7 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
 
   const customMenuItems: IInitiativeCustomMenuItem[] = [
     {
-      CustomIcon: Pencil,
+      CustomIcon: EditIcon,
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
@@ -41,7 +55,7 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
       key: "edit_label",
     },
     {
-      CustomIcon: Trash2,
+      CustomIcon: TrashIcon,
       onClick: () => {
         handleLabelDelete(label);
       },
@@ -55,14 +69,12 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
     <InitiativeLabelDndHOC label={label} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging: boolean, dragHandleRef: React.RefObject<HTMLButtonElement>) => (
         <div
-          className={`rounded ${isDragging ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+          className={`rounded-sm ${isDragging ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
           <div
-            className={`rounded text-custom-text-100 ${
-              !isDragging ? "border-[0.5px] border-custom-border-200" : ""
-            } ${isDragging ? "bg-custom-background-80" : "bg-custom-background-100"} ${
-              isParentDragging ? "opacity-60" : ""
-            }`}
+            className={`rounded-sm text-primary ${
+              !isDragging ? "border-[0.5px] border-subtle-1" : ""
+            } ${isDragging ? "bg-layer-1" : "bg-surface-1"} ${isParentDragging ? "opacity-60" : ""}`}
           >
             <div className="py-2 px-3">
               {isEditLabelForm ? (

@@ -1,5 +1,17 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useMemo } from "react";
-import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TIssueServiceType } from "@plane/types";
@@ -7,7 +19,6 @@ import { EIssueServiceType } from "@plane/types";
 // helper
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useCustomers } from "@/plane-web/hooks/store";
 
@@ -48,7 +59,7 @@ export const useCustomerWorkItemOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: t("entity.update.success", { entity: entityName }),
           });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
@@ -58,27 +69,15 @@ export const useCustomerWorkItemOperations = (
       },
       removeRelation: async (workspaceSlug: string, customerId: string, workItemId: string, requestId?: string) => {
         try {
-          return removeWorkItemFromCustomer(workspaceSlug, customerId, workItemId, requestId).then(() => {
-            captureSuccess({
-              eventName: CUSTOMER_TRACKER_EVENTS.remove_work_items_from_customer,
-              payload: {
-                id: customerId,
-              },
-            });
+          return removeWorkItemFromCustomer(workspaceSlug, customerId, workItemId, requestId).then((response) => {
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("customers.toasts.work_item.remove.success.title"),
               message: t("customers.toasts.work_item.remove.success.message"),
             });
+            return response;
           });
-        } catch (error) {
-          captureError({
-            eventName: CUSTOMER_TRACKER_EVENTS.remove_work_items_from_customer,
-            payload: {
-              id: customerId,
-            },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("customers.toasts.work_item.remove.error.title"),
@@ -87,7 +86,7 @@ export const useCustomerWorkItemOperations = (
         }
       },
     }),
-    [entityName, removeWorkItemFromCustomer, updateIssue]
+    [entityName, removeWorkItemFromCustomer, updateIssue, t]
   );
 
   return issueOperations;

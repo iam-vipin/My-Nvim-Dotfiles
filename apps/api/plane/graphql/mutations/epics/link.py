@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from dataclasses import asdict
@@ -21,7 +32,7 @@ from strawberry.types import Info
 from plane.db.models import IssueLink
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.helpers import (
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
@@ -142,7 +153,7 @@ class EpicLinkMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # getting the workspace,
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         link_url = link_input.url
@@ -220,7 +231,7 @@ class EpicLinkMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # getting the workspace
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         epic_link = await get_epic_link(
@@ -308,7 +319,7 @@ class EpicLinkMutation:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         epic_link = await get_epic_link(

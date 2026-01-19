@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
@@ -58,9 +69,7 @@ class ProjectEpicTypeEndpoint(BaseAPIView):
             ).annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
+                        ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                         .values("issue_type")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")

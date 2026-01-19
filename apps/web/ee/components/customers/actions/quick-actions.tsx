@@ -1,16 +1,30 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Link2, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 // plane imports
-import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@plane/propel/icon-button";
+import { LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
@@ -57,7 +71,7 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
     {
       key: "edit",
       title: t("customers.quick_actions.edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditCustomer,
       shouldRender: isAdmin,
     },
@@ -65,15 +79,15 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
       key: "copy-link",
       action: handleCopyText,
       title: t("customers.quick_actions.copy_link"),
-      icon: Link2,
+      icon: LinkIcon,
       iconClassName: "-rotate-45",
     },
     {
       key: "delete",
       action: handelDeleteCustomer,
       title: t("customers.quick_actions.delete"),
-      icon: Trash2,
-      className: "text-red-500",
+      icon: TrashIcon,
+      className: "text-danger-primary",
       shouldRender: isAdmin,
     },
   ];
@@ -86,7 +100,12 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
+      <CustomMenu
+        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
+        placement="bottom-end"
+        closeOnSelect
+        buttonClassName={customClassName}
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (
@@ -94,12 +113,11 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
               key={item.key}
               onClick={() => {
                 item.action();
-                captureClick({ elementName: CUSTOMER_TRACKER_ELEMENTS.QUICK_ACTIONS });
               }}
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -110,8 +128,8 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

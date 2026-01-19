@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
 // plane web hooks
@@ -41,24 +54,26 @@ export const GlobalModals = observer(function GlobalModals(props: TGlobalModalsP
   const { workspaceSlug } = props;
   // store hooks
   const {
-    isSeatManagementEnabled,
     addWorkspaceSeatsModal,
+    getIsInTrialPeriod,
+    handleSuccessModalToggle,
+    isSeatManagementEnabled,
+    isSuccessPlanModalOpen,
     removeUnusedSeatsConfirmationModal,
     toggleAddWorkspaceSeatsModal,
     toggleRemoveUnusedSeatsConfirmationModal,
-    isSuccessPlanModalOpen,
-    handleSuccessModalToggle,
+    updateSubscribedPlan,
   } = useWorkspaceSubscription();
   const { subscribedPlan, isPaidPlanModalOpen, togglePaidPlanModal } = useWorkspaceSubscription();
   const { isActivationModalOpen, toggleLicenseActivationModal } = useSelfHostedSubscription();
   // derived values
-  const subscriptionDetail = subscribedPlan[workspaceSlug];
+  const currentWorkspaceSubscriptionDetail = subscribedPlan[workspaceSlug];
 
   return (
     <Suspense fallback={null}>
-      {subscriptionDetail?.product && (
+      {currentWorkspaceSubscriptionDetail?.product && (
         <PaidPlanSuccessModal
-          variant={subscriptionDetail?.product}
+          variant={currentWorkspaceSubscriptionDetail?.product}
           isOpen={isSuccessPlanModalOpen}
           handleClose={() => handleSuccessModalToggle(false)}
         />
@@ -68,9 +83,13 @@ export const GlobalModals = observer(function GlobalModals(props: TGlobalModalsP
         handleClose={() => toggleLicenseActivationModal(false)}
       />
       <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
-      {isSeatManagementEnabled && (
+      {isSeatManagementEnabled && currentWorkspaceSubscriptionDetail && (
         <AddSeatsModal
           data={addWorkspaceSeatsModal}
+          getIsInTrialPeriod={getIsInTrialPeriod}
+          subscribedPlan={currentWorkspaceSubscriptionDetail}
+          updateSubscribedPlan={updateSubscribedPlan}
+          workspaceSlug={workspaceSlug}
           onClose={() => {
             toggleAddWorkspaceSeatsModal({ isOpen: false });
           }}
@@ -80,6 +99,8 @@ export const GlobalModals = observer(function GlobalModals(props: TGlobalModalsP
         <RemoveUnusedSeatsModal
           isOpen={removeUnusedSeatsConfirmationModal}
           handleClose={() => toggleRemoveUnusedSeatsConfirmationModal()}
+          updateSubscribedPlan={updateSubscribedPlan}
+          workspaceSlug={workspaceSlug}
         />
       )}
     </Suspense>

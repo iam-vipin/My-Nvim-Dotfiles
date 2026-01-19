@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from django.conf import settings
 from django.db.models import Prefetch
 from django_opensearch_dsl import fields
@@ -22,11 +33,7 @@ class IssueViewDocument(BaseDocument):
     name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
     class Index(BaseDocument.Index):
-        name = (
-            f"{settings.OPENSEARCH_INDEX_PREFIX}_issue_views"
-            if settings.OPENSEARCH_INDEX_PREFIX
-            else "issue_views"
-        )
+        name = f"{settings.OPENSEARCH_INDEX_PREFIX}_issue_views" if settings.OPENSEARCH_INDEX_PREFIX else "issue_views"
 
     class Django:
         model = IssueView
@@ -90,9 +97,7 @@ class IssueViewDocument(BaseDocument):
         if hasattr(instance.project, "active_project_members"):
             members = instance.project.active_project_members
         else:
-            members = instance.project.project_projectmember.filter(
-                is_active=True
-            ).only("member_id")
+            members = instance.project.project_projectmember.filter(is_active=True).only("member_id")
         return [member.member_id for member in members]
 
     def prepare_is_deleted(self, instance):

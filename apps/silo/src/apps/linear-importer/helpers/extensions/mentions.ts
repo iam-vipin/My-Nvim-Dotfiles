@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
@@ -148,7 +161,7 @@ export class LinearProjectMentionParserExtension implements IParserExtension {
     // Add styling classes if needed
     node.setAttribute(
       "class",
-      "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer"
+      "text-accent-secondary underline underline-offset-[3px] hover:text-accent-primary transition-colors cursor-pointer"
     );
 
     return node;

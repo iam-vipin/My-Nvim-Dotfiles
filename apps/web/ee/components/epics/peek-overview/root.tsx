@@ -1,15 +1,26 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EPIC_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, IWorkItemPeekOverview } from "@plane/types";
 import { EIssueServiceType, EUserProjectRoles } from "@plane/types";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
@@ -48,54 +59,29 @@ export const EpicPeekOverview = observer(function EpicPeekOverview(props: IWorkI
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-        if (updateIssue) {
-          await updateIssue(workspaceSlug, projectId, issueId, data)
-            .then(async () => {
-              fetchActivities(workspaceSlug, projectId, issueId);
-              captureSuccess({
-                eventName: EPIC_TRACKER_EVENTS.update,
-                payload: {
-                  id: issueId,
-                },
-              });
-            })
-            .catch(() => {
-              captureError({
-                eventName: EPIC_TRACKER_EVENTS.update,
-                payload: {
-                  id: issueId,
-                },
-              });
-              setToast({
-                title: "Error!",
-                type: TOAST_TYPE.ERROR,
-                message: "Work item update failed",
-              });
-            });
+        try {
+          if (updateIssue) {
+            await updateIssue(workspaceSlug, projectId, issueId, data);
+            await fetchActivities(workspaceSlug, projectId, issueId);
+          }
+        } catch (error) {
+          console.error("Error updating the parent work item", error);
+          setToast({
+            title: "Error!",
+            type: TOAST_TYPE.ERROR,
+            message: "Work item update failed",
+          });
         }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          return removeIssue(workspaceSlug, projectId, issueId).then(() => {
-            captureSuccess({
-              eventName: EPIC_TRACKER_EVENTS.delete,
-              payload: {
-                id: issueId,
-              },
-            });
-            removeRoutePeekId();
-          });
-        } catch {
+          await removeIssue(workspaceSlug, projectId, issueId);
+          removeRoutePeekId();
+        } catch (_error) {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Work item delete failed",
-          });
-          captureError({
-            eventName: EPIC_TRACKER_EVENTS.delete,
-            payload: {
-              id: issueId,
-            },
           });
         }
       },

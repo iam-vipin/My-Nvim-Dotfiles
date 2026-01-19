@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 from datetime import datetime
 from typing import Optional
@@ -14,7 +25,7 @@ from strawberry.scalars import JSON
 
 # Module imports
 from plane.db.models import Notification
-from plane.graphql.types.project import ProjectType
+from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.types.user import UserType
 from plane.graphql.utils.issue_activity import issue_activity_comment_string
 from plane.graphql.utils.timezone import user_timezone_converter
@@ -57,7 +68,7 @@ class NotificationType:
     entity_identifier: strawberry.ID
     data: JSON
     workspace: strawberry.ID
-    project: Optional[ProjectType]
+    project: Optional[ProjectLiteType]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
@@ -112,15 +123,13 @@ class NotificationType:
         return "mentioned" in self.sender.lower()
 
     @strawberry.field
-    def is_intake_issue(self) -> bool:
-        return getattr(self, "is_intake_issue", False)
+    def intake_id(self) -> Optional[str]:
+        annotated_intake_id = getattr(self, "intake_id", None)
+        return str(annotated_intake_id) if annotated_intake_id is not None else None
 
     @strawberry.field
-    def intake_id(self) -> Optional[str]:
-        annotated_intake_id = self.__dict__.get("intake_id")
-        if annotated_intake_id is not None:
-            return str(annotated_intake_id)
-        return None
+    def is_intake_issue(self) -> bool:
+        return getattr(self, "intake_id", None) is not None
 
     @strawberry.field
     def is_epic(self) -> bool:

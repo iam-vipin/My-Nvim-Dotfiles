@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -105,7 +118,7 @@ export const TemplateBasicDetails = observer(function TemplateBasicDetails<T ext
               onChange={onChange}
               ref={ref}
               placeholder={t("templates.settings.form.publish.short_description.placeholder")}
-              className="w-full resize-none text-sm bg-custom-background-100 mb-0"
+              className="w-full resize-none text-body-xs-regular bg-surface-1 mb-0"
               textAreaSize="sm"
               hasError={Boolean(errors.short_description)}
             />
@@ -146,7 +159,7 @@ export const TemplateBasicDetails = observer(function TemplateBasicDetails<T ext
                   ? t("templates.settings.form.publish.description.placeholder")
                   : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
               }
-              containerClassName="min-h-[240px] md:min-h-[120px] border-[0.5px] py-2 border-custom-border-200 rounded-md"
+              containerClassName="min-h-[240px] md:min-h-[120px] border py-2 border-subtle rounded-md"
               disabledExtensions={["image", "issue-embed", "attachments"]}
               uploadFile={() => Promise.resolve("")}
               duplicateFile={() => Promise.resolve("")}

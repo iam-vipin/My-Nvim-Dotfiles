@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TUserPermissions } from "./enums";
 import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import type { TLoginMediums } from "./instance";
@@ -61,14 +74,10 @@ export type TUserProfile = {
   role: string | undefined;
   last_workspace_id: string | undefined;
   theme: {
-    text: string | undefined;
     theme: string | undefined;
-    palette: string | undefined;
     primary: string | undefined;
     background: string | undefined;
     darkPalette: boolean | undefined;
-    sidebarText: string | undefined;
-    sidebarBackground: string | undefined;
   };
   onboarding_step: TOnboardingSteps;
   is_onboarded: boolean;
@@ -105,14 +114,10 @@ export interface IUserSettings {
 }
 
 export interface IUserTheme {
-  text: string | undefined;
-  theme: string | undefined;
-  palette: string | undefined;
-  primary: string | undefined;
-  background: string | undefined;
-  darkPalette: boolean | undefined;
-  sidebarText: string | undefined;
-  sidebarBackground: string | undefined;
+  theme: string | undefined; // 'light', 'dark', 'custom', etc.
+  primary?: string | undefined;
+  background?: string | undefined;
+  darkPalette?: boolean | undefined;
 }
 
 export interface IUserMemberLite extends IUserLite {

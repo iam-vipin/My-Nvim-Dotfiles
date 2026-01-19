@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -61,7 +74,7 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
   // If publish is not enabled, show upgrade button
   if (!isPagePublishEnabled) {
     return (
-      <Button variant="accent-primary" size="sm" onClick={() => togglePaidPlanModal(true)}>
+      <Button variant="secondary" size="lg" onClick={() => togglePaidPlanModal(true)}>
         Upgrade to publish
       </Button>
     );
@@ -86,15 +99,15 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
       {isDeployed && (
         <a
           href={publishLink}
-          className="h-6 px-2 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+          className="h-6 px-2 bg-success-subtle text-success-primary rounded-sm text-11 font-medium flex items-center gap-1.5"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+          <span className="flex-shrink-0 rounded-full size-1.5 bg-success-primary" />
           Live
         </a>
       )}
-      <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)} className="h-6">
+      <Button variant="secondary" onClick={() => setIsPublishModalOpen(true)} className="h-6">
         {isDeployed ? "Unpublish" : "Publish"}
       </Button>
     </>

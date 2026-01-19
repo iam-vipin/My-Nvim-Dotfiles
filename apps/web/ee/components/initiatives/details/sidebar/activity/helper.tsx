@@ -1,6 +1,26 @@
-import type { ReactNode } from "react";
-import { AlignLeft, Link, Paperclip, Type } from "lucide-react";
-import { CalendarLayoutIcon, EpicIcon, InitiativeIcon, MembersPropertyIcon, ProjectIcon } from "@plane/propel/icons";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import type { FC, ReactNode } from "react";
+import { AlignLeft, Paperclip, Type } from "lucide-react";
+import {
+  LinkIcon,
+  CalendarLayoutIcon,
+  EpicIcon,
+  InitiativeIcon,
+  MembersPropertyIcon,
+  ProjectIcon,
+} from "@plane/propel/icons";
 import type { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
 import type { TInitiativeActivity } from "@/plane-web/types/initiative";
@@ -28,7 +48,7 @@ export type TInitiativeActivityVerbs = TBaseActivityVerbs;
 export type TInitiativeActivityKeys = `${TInitiativeActivityFields}_${TInitiativeActivityVerbs}`;
 
 export type TInitiativeActivityDetails = {
-  icon: ReactNode;
+  icon: FC<{ className?: string }>;
   message: ReactNode;
   customUserName?: string;
 };
@@ -37,21 +57,20 @@ export type TInitiativeActivityDetailsHelperMap = {
   [key in TInitiativeActivityKeys]: (activity: TInitiativeActivity) => TInitiativeActivityDetails;
 };
 
-const commonIconClassName = "h-4 w-4 flex-shrink-0 text-custom-text-300";
-const commonTextClassName = "text-custom-text-100 font-medium";
+const commonTextClassName = "text-primary font-medium";
 
 // TODO: Add redirect link for relevant activities
 export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHelperMap> = {
   initiative_created: () => ({
-    icon: <InitiativeIcon className={commonIconClassName} />,
+    icon: InitiativeIcon,
     message: <>created the initiative.</>,
   }),
   initiative_deleted: () => ({
-    icon: <InitiativeIcon className={commonIconClassName} />,
+    icon: InitiativeIcon,
     message: <>deleted the initiative.</>,
   }),
   name_updated: (activity: TInitiativeActivity) => ({
-    icon: <Type className={commonIconClassName} />,
+    icon: Type,
     message: (
       <>
         renamed the initiative to <span className={commonTextClassName}>{activity.new_value}</span>.
@@ -59,11 +78,11 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   description_updated: () => ({
-    icon: <AlignLeft className={commonIconClassName} />,
+    icon: AlignLeft,
     message: <>updated the initiative description.</>,
   }),
   lead_updated: (activity: TInitiativeActivity) => ({
-    icon: <MembersPropertyIcon className={commonIconClassName} />,
+    icon: MembersPropertyIcon,
     message: (
       <>
         {activity.old_identifier && activity.new_identifier ? (
@@ -101,7 +120,7 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   projects_updated: (activity: TInitiativeActivity) => ({
-    icon: <ProjectIcon className={commonIconClassName} />,
+    icon: ProjectIcon,
     message: (
       <>
         {activity.old_value ? (
@@ -119,7 +138,7 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   epics_updated: (activity: TInitiativeActivity) => ({
-    icon: <EpicIcon className={commonIconClassName} />,
+    icon: EpicIcon,
     message: (
       <>
         {activity.old_value ? (
@@ -137,35 +156,35 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   start_date_updated: () => ({
-    icon: <CalendarLayoutIcon className={commonIconClassName} />,
+    icon: CalendarLayoutIcon,
     message: <>updated the start date.</>,
   }),
   end_date_updated: () => ({
-    icon: <CalendarLayoutIcon className={commonIconClassName} />,
+    icon: CalendarLayoutIcon,
     message: <>updated the end date.</>,
   }),
   link_created: () => ({
-    icon: <Link className={commonIconClassName} />,
+    icon: LinkIcon,
     message: <>created a link</>,
   }),
   link_updated: () => ({
-    icon: <Link className={commonIconClassName} />,
+    icon: LinkIcon,
     message: <>updated the link</>,
   }),
   link_deleted: () => ({
-    icon: <Link className={commonIconClassName} />,
+    icon: LinkIcon,
     message: <>deleted the link</>,
   }),
   attachment_created: () => ({
-    icon: <Paperclip className={commonIconClassName} />,
+    icon: Paperclip,
     message: <>created an attachment</>,
   }),
   attachment_updated: () => ({
-    icon: <Paperclip className={commonIconClassName} />,
+    icon: Paperclip,
     message: <>updated the attachment</>,
   }),
   attachment_deleted: () => ({
-    icon: <Paperclip className={commonIconClassName} />,
+    icon: Paperclip,
     message: <>deleted the attachment</>,
   }),
 };

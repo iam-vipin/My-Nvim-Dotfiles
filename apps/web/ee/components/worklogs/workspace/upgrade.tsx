@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -14,14 +27,12 @@ export const WorkspaceWorklogsUpgrade = observer(function WorkspaceWorklogsUpgra
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
+      <div className="flex items-center justify-between gap-2 border-b border-subtle-1 pb-3">
         <div>
-          <h3 className="text-xl font-medium">Worklogs</h3>
-          <span className="text-sm text-custom-text-300">
-            Download worklogs AKA timesheets for anyone in any project.
-          </span>
+          <h3 className="text-18 font-medium">Worklogs</h3>
+          <span className="text-13 text-tertiary">Download worklogs AKA timesheets for anyone in any project.</span>
         </div>
-        <Button onClick={() => togglePaidPlanModal(true)} className="w-fit" size="sm">
+        <Button onClick={() => togglePaidPlanModal(true)} className="w-fit">
           Upgrade
         </Button>
       </div>
@@ -32,7 +43,6 @@ export const WorkspaceWorklogsUpgrade = observer(function WorkspaceWorklogsUpgra
         }
         assetPath={resolvedEmptyStatePath}
         className="w-[600px] !px-0 min-h-fit"
-        size="sm"
         primaryButton={{
           text: "Upgrade",
           onClick: () => togglePaidPlanModal(true),

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard Library imports
 import sys
 
@@ -52,9 +63,7 @@ class Command(BaseCommand):
             "AUTOMATION_EVENT_STREAM_QUEUE_NAME",
             "plane.event_stream.automations",
         )
-        exchange_name = getattr(
-            settings, "AUTOMATION_EXCHANGE_NAME", "plane.event_stream"
-        )
+        exchange_name = getattr(settings, "AUTOMATION_EXCHANGE_NAME", "plane.event_stream")
         event_types = getattr(settings, "AUTOMATION_EVENT_TYPES", ["issue."])
         event_types_display = ", ".join(event_types)
 
@@ -77,25 +86,17 @@ class Command(BaseCommand):
         )
 
         try:
-            self.stdout.write(
-                self.style.SUCCESS(
-                    "Consumer initialized. Starting message processing..."
-                )
-            )
+            self.stdout.write(self.style.SUCCESS("Consumer initialized. Starting message processing..."))
 
             # Start the consumer (this will block until stopped)
             consumer.start_consuming()
 
         except KeyboardInterrupt:
-            self.stdout.write(
-                self.style.WARNING("Keyboard interrupt received, stopping...")
-            )
+            self.stdout.write(self.style.WARNING("Keyboard interrupt received, stopping..."))
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Unexpected error: {e}"))
             sys.exit(1)
 
         finally:
-            self.stdout.write(
-                self.style.SUCCESS("Automation consumer stopped successfully.")
-            )
+            self.stdout.write(self.style.SUCCESS("Automation consumer stopped successfully."))

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { Avatar, Table } from "@plane/ui";
 // helpers
@@ -44,10 +57,10 @@ export function WorklogsPaginatedTableRoot(props: TWorklogsPaginatedTableRoot) {
         const currentProject = (rowData.project_id && getProjectById(rowData.project_id)) || undefined;
         return (
           <div className="flex items-center gap-2">
-            <div className="text-xs text-custom-text-200">
+            <div className="text-11 text-secondary">
               {currentProject?.identifier}-{rowData.issue_detail?.sequence_id}
             </div>
-            <div className="text-custom-text-100">{rowData.issue_detail?.name || "undefined"}</div>
+            <div className="text-primary">{rowData.issue_detail?.name || "undefined"}</div>
           </div>
         );
       },
@@ -88,10 +101,10 @@ export function WorklogsPaginatedTableRoot(props: TWorklogsPaginatedTableRoot) {
         columns={tableColumns}
         data={worklogTableData}
         keyExtractor={(rowData: TWorklog) => rowData.id || ""}
-        tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
+        tHeadClassName="border-b border-subtle"
+        thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-2 h-[40px] text-custom-text-200"
+        tBodyTrClassName="divide-x-0 p-2 h-[40px] text-secondary"
         tHeadTrClassName="divide-x-0"
       />
     </div>

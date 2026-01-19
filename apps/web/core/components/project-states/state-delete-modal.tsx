@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
-import { STATE_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
-// constants
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TStateDeleteModal = {
@@ -38,12 +48,6 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
 
     await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
-        captureSuccess({
-          eventName: STATE_TRACKER_EVENTS.delete,
-          payload: {
-            id: data.id,
-          },
-        });
         handleClose();
       })
       .catch((err) => {
@@ -60,12 +64,6 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
-        captureError({
-          eventName: STATE_TRACKER_EVENTS.delete,
-          payload: {
-            id: data.id,
-          },
-        });
       })
       .finally(() => {
         setIsDeleteLoading(false);
@@ -81,8 +79,8 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
       title="Delete State"
       content={
         <>
-          Are you sure you want to delete state- <span className="font-medium text-custom-text-100">{data?.name}</span>?
-          All of the data related to the state will be permanently removed. This action cannot be undone.
+          Are you sure you want to delete state- <span className="font-medium text-primary">{data?.name}</span>? All of
+          the data related to the state will be permanently removed. This action cannot be undone.
         </>
       }
     />

@@ -1,196 +1,100 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 """
 Intake API tools for Plane work item triage operations.
 """
 
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
+from pi.services.actions.tool_generator import generate_tools_for_category
+from pi.services.actions.tool_metadata import ToolMetadata
+from pi.services.actions.tool_metadata import ToolParameter
 
-from langchain_core.tools import tool
+# ============================================================================
+# TOOL METADATA DEFINITIONS
+# ============================================================================
 
-from .base import PlaneToolBase
+INTAKE_TOOL_DEFINITIONS = {
+    "create": ToolMetadata(
+        name="intake_create",
+        description="Submit work item to intake queue for triage. Creates a new intake item that can be reviewed and converted to a work item.",
+        sdk_method="create_intake",
+        parameters=[
+            ToolParameter(name="name", type="str", required=True, description="Work item title (required)"),
+            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
+            ToolParameter(name="description_html", type="Optional[str]", required=False, description="Description in HTML format"),
+            ToolParameter(name="priority", type="Optional[str]", required=False, description="Priority level (high, medium, low, urgent, none)"),
+            ToolParameter(name="assignee", type="Optional[str]", required=False, description="Assignee user ID"),
+            ToolParameter(name="reporter", type="Optional[str]", required=False, description="Reporter user ID"),
+            ToolParameter(name="labels", type="Optional[list]", required=False, description="List of label IDs"),
+        ],
+        returns_entity_type="intake",
+    ),
+    "list": ToolMetadata(
+        name="intake_list",
+        description="List intake items awaiting triage for a project.",
+        sdk_method="list_intake",
+        parameters=[
+            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
+            ToolParameter(name="per_page", type="Optional[int]", required=False, description="Number of results per page (default: 20)"),
+            ToolParameter(name="cursor", type="Optional[str]", required=False, description="Pagination cursor"),
+        ],
+    ),
+    "retrieve": ToolMetadata(
+        name="intake_retrieve",
+        description="Get a single intake work item by ID.",
+        sdk_method="retrieve_intake",
+        parameters=[
+            ToolParameter(name="intake_id", type="str", required=True, description="Intake item ID to retrieve"),
+            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
+        ],
+    ),
+    "update": ToolMetadata(
+        name="intake_update",
+        description="Update intake work item details before triage.",
+        sdk_method="update_intake",
+        parameters=[
+            ToolParameter(name="intake_id", type="str", required=True, description="Intake item ID to update"),
+            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
+            ToolParameter(name="name", type="Optional[str]", required=False, description="Work item title"),
+            ToolParameter(name="description_html", type="Optional[str]", required=False, description="Description in HTML format"),
+            ToolParameter(name="priority", type="Optional[str]", required=False, description="Priority level (high, medium, low, urgent, none)"),
+            ToolParameter(name="assignee", type="Optional[str]", required=False, description="Assignee user ID"),
+            ToolParameter(name="reporter", type="Optional[str]", required=False, description="Reporter user ID"),
+            ToolParameter(name="labels", type="Optional[list]", required=False, description="List of label IDs"),
+        ],
+        returns_entity_type="intake",
+    ),
+    "delete": ToolMetadata(
+        name="intake_delete",
+        description="Remove an intake work item from the triage queue.",
+        sdk_method="delete_intake",
+        parameters=[
+            ToolParameter(name="intake_id", type="str", required=True, description="Intake item ID to delete"),
+            ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
+            ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
+        ],
+        returns_entity_type="intake",
+    ),
+}
 
-# Factory wired via CATEGORY_TO_PROVIDER in tools/__init__.py
-# Returns LangChain tools implementing intake actions
+
+# ============================================================================
+# TOOL FACTORY
+# ============================================================================
 
 
 def get_intake_tools(method_executor, context):
-    """Return LangChain tools for the intake category using method_executor and context."""
-
-    @tool
-    async def intake_create(
-        name: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-        description_html: Optional[str] = None,
-        priority: Optional[str] = None,
-        assignee: Optional[str] = None,
-        reporter: Optional[str] = None,
-        labels: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
-        """Submit work item to intake queue for triage.
-
-        Args:
-            name: Work item title (required)
-            description_html: Description in HTML format
-            project_id: Project ID (required - provide from conversation context or previous actions)
-            workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
-            priority: Priority level (high, medium, low, urgent, none)
-            assignee: Assignee user ID
-            reporter: Reporter user ID
-            labels: List of label IDs
-        """
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "intake",
-            "create",
-            name=name,
-            description_html=description_html,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            priority=priority,
-            assignee=assignee,
-            reporter=reporter,
-            labels=labels,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload(f"Successfully submitted intake item '{name}'", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to create intake item", result["error"])
-
-    @tool
-    async def intake_list(
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-        per_page: Optional[int] = 20,
-        cursor: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """List intake items awaiting triage."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "intake",
-            "list",
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            per_page=per_page,
-            cursor=cursor,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved intake list", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to list intake items", result["error"])
-
-    @tool
-    async def intake_retrieve(
-        intake_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Get a single intake work item by ID."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "intake",
-            "retrieve",
-            intake_id=intake_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully retrieved intake item", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to retrieve intake item", result["error"])
-
-    @tool
-    async def intake_update(
-        intake_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-        name: Optional[str] = None,
-        description_html: Optional[str] = None,
-        priority: Optional[str] = None,
-        assignee: Optional[str] = None,
-        reporter: Optional[str] = None,
-        labels: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
-        """Update intake work item details."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        # Build update data
-        update_data: Dict[str, Any] = {}
-        if name is not None:
-            update_data["name"] = name
-        if description_html is not None:
-            update_data["description_html"] = description_html
-        if priority is not None:
-            update_data["priority"] = priority
-        if assignee is not None:
-            update_data["assignee"] = assignee
-        if reporter is not None:
-            update_data["reporter"] = reporter
-        if labels is not None:
-            update_data["labels"] = labels
-
-        result = await method_executor.execute(
-            "intake",
-            "update",
-            intake_id=intake_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-            **update_data,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully updated intake item", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to update intake item", result["error"])
-
-    @tool
-    async def intake_delete(
-        intake_id: str,
-        project_id: Optional[str] = None,
-        workspace_slug: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Remove intake work item."""
-        # Auto-fill from context if not provided
-        if workspace_slug is None and "workspace_slug" in context:
-            workspace_slug = context["workspace_slug"]
-        if project_id is None and "project_id" in context:
-            project_id = context["project_id"]
-
-        result = await method_executor.execute(
-            "intake",
-            "delete",
-            intake_id=intake_id,
-            project_id=project_id,
-            workspace_slug=workspace_slug,
-        )
-
-        if result["success"]:
-            return PlaneToolBase.format_success_payload("Successfully deleted intake item", result["data"])
-        else:
-            return PlaneToolBase.format_error_payload("Failed to delete intake item", result["error"])
-
-    return [intake_create, intake_list, intake_retrieve, intake_update, intake_delete]
+    """Return LangChain tools for the intake category using auto-generation from metadata."""
+    return generate_tools_for_category("intake", method_executor, context, INTAKE_TOOL_DEFINITIONS)

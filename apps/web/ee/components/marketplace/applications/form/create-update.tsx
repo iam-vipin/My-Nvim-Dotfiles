@@ -1,8 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Book, Camera, Check, ChevronDown } from "lucide-react";
+import { Book, Camera, ChevronDown } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { EApplicationAuthorizationGrantType, AUTHORIZATION_GRANT_TYPES_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -179,8 +193,8 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
         />
         <Button
           type="button"
-          className="flex items-center gap-2 hover:bg-custom-background-100"
-          variant="link-neutral"
+          className="flex items-center gap-2 hover:bg-surface-1"
+          variant="ghost"
           prependIcon={<Book className="h-4 shrink-0" />}
           onClick={() => {
             window.open("https://developers.plane.so/api-reference/byoa/build-plane-app", "_blank");
@@ -212,13 +226,13 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
                 />
               ) : (
                 <div
-                  className={`flex items-center justify-center w-full h-full gap-2 p-5 bg-custom-background-100 rounded border border-custom-border-200`}
+                  className={`flex items-center justify-center w-full h-full gap-2 p-5 bg-surface-1 rounded-sm border border-subtle-1`}
                 >
-                  <Camera className="w-5 h-5 text-custom-text-400" />
+                  <Camera className="w-5 h-5 text-placeholder" />
                 </div>
               )}
             </div>
-            <button onClick={() => setIsImageModalOpen(true)} className="text-sm text-custom-primary-100 font-medium">
+            <button onClick={() => setIsImageModalOpen(true)} className="text-13 text-accent-primary font-medium">
               {t("workspace_settings.settings.applications.upload_logo")}
             </button>
           </div>
@@ -317,7 +331,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
             error={errors.website}
           />
           <div className="space-y-2">
-            <div className="text-xs text-custom-text-100 font-medium">
+            <div className="text-11 text-primary font-medium">
               {t("workspace_settings.settings.applications.authorization_grant_type.title")}
             </div>
             <Dropdown
@@ -331,9 +345,9 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
                 value: type.toString(),
               }))}
               disableSearch
-              buttonContainerClassName="bg-custom-background-100 border border-custom-border-200 rounded-md px-2 py-1"
+              buttonContainerClassName="bg-surface-1 border border-subtle-1 rounded-md px-2 py-1"
               buttonContent={(isOpen, val) => (
-                <span className="flex items-center justify-between gap-1 text-sm text-custom-text-300 w-60">
+                <span className="flex items-center justify-between gap-1 text-13 text-tertiary w-60">
                   {val ? AUTHORIZATION_GRANT_TYPES_MAP[val as EApplicationAuthorizationGrantType] : t("common.select")}
                   <ChevronDown size={16} className={cn(isOpen ? "rotate-180 ml-auto" : "rotate-0 ml-auto")} />
                 </span>
@@ -341,15 +355,15 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
               renderItem={(option) => (
                 <span className="flex items-center gap-1">
                   {AUTHORIZATION_GRANT_TYPES_MAP[option.value as EApplicationAuthorizationGrantType]}
-                  {option.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                  {option.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                 </span>
               )}
             />
-            <div className="text-xs text-custom-text-300">
+            <div className="text-11 text-tertiary">
               {t("workspace_settings.settings.applications.authorization_grant_type.description")}
             </div>
           </div>
-          <div className="text-xs text-custom-text-300 flex items-center gap-2">
+          <div className="text-11 text-tertiary flex items-center gap-2">
             <ToggleSwitch
               value={watch("is_mentionable") ?? false}
               onChange={(value) => setValue("is_mentionable", value)}
@@ -360,7 +374,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
               tooltipContent={t("workspace_settings.settings.applications.enable_app_mentions_tooltip")}
               position="top"
             >
-              <span className="border border-custom-border-200 rounded-full h-4 w-4 flex items-center justify-center text-custom-text-400 cursor-help">
+              <span className="border border-subtle-1 rounded-full h-4 w-4 flex items-center justify-center text-placeholder cursor-help">
                 ?
               </span>
             </Tooltip>
@@ -413,7 +427,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
         </FormSection>
         <FormSection title={"Categorisation"} collapsible>
           <div tabIndex={5} className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
+            <div className="text-13 text-tertiary">
               {t("workspace_settings.settings.applications.categories_description")}
             </div>
             {categoriesLoader === "init-loader" ? (
@@ -428,7 +442,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
         </FormSection>
         <FormSection title={t("workspace_settings.settings.applications.supported_plans")} collapsible>
           <div tabIndex={6} className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
+            <div className="text-13 text-tertiary">
               {t("workspace_settings.settings.applications.supported_plans_description")}
             </div>
             <SelectSupportedPlans
@@ -530,7 +544,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
         </Button>
         <Button
           type="button"
-          variant="neutral-primary"
+          variant="secondary"
           onClick={() => router.push(`/${workspaceSlug}/settings/integrations`)}
         >
           {t("common.cancel")}

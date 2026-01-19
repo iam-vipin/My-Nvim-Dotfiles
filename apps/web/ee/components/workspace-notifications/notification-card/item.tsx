@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { orderBy, uniq } from "lodash-es";
@@ -109,11 +122,10 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
   return (
     <Popover as="div" className={""}>
       <div
-        className={cn(
-          "border-b relative transition-all py-4 border-custom-border-200 cursor-pointer group w-full",
-          isWorkItemPeeked && "bg-custom-background-80/30",
-          unreadCount > 0 ? "bg-custom-primary-100/5" : ""
-        )}
+        className={cn("border-b relative transition-all py-4 border-subtle cursor-pointer group w-full", {
+          "bg-layer-1/30": isWorkItemPeeked,
+          "bg-accent-primary/5": unreadCount > 0,
+        })}
         ref={setReferenceElement}
         onClick={(e) => {
           e.preventDefault();
@@ -125,7 +137,7 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
         {/* Issue card header */}
         <div className="flex items-center gap-1 justify-between px-4">
           <div className="flex-1 flex h-5 gap-2 justify-between items-center">
-            <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-00">
+            <span className="overflow-hidden whitespace-normal text-body-xs-medium break-all truncate line-clamp-1 text-primary">
               {issue.name}
             </span>
           </div>
@@ -140,7 +152,7 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
             setCustomSnoozeModal={setCustomSnoozeModal}
           />
           {unreadCount > 0 && (
-            <span className="text-xs px-[5px] font-medium group-hover:hidden py-[1px] text-white bg-custom-primary-300 rounded-md">
+            <span className="text-caption-sm-medium px-[5px] group-hover:hidden py-[1px] text-on-color bg-accent-primary rounded-md">
               {unreadCount <= 20 ? unreadCount : `20+`}
             </span>
           )}
@@ -155,11 +167,11 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
                   projectId={projectId}
                   issueTypeId={issue.type_id}
                   size="xs"
-                  textContainerClassName="text-xs text-custom-text-100/80"
+                  variant="primary-subtle"
                 />
               </>
             )}
-            <div className="bg-custom-text-300/70 w-1 h-1 rounded-full" />
+            <div className="bg-layer-1/70 w-1 h-1 rounded-full" />
             {/* Author avatars */}
             <MemberDropdown
               value={authorIds}
@@ -175,7 +187,7 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
             />
           </div>
           <div />
-          <span className="text-xs text-custom-text-100">{latestNotificationTime}</span>
+          <span className="text-caption-sm-regular text-primary">{latestNotificationTime}</span>
         </div>
       </div>
 

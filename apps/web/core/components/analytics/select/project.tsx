@@ -1,8 +1,23 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 // plane package imports
+import { getButtonStyling } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, ProjectIcon } from "@plane/propel/icons";
 import { CustomSearchSelect } from "@plane/ui";
+import { cn } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -40,8 +55,9 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
       value={value ?? []}
       onChange={(val: string[]) => onChange(val)}
       options={options}
-      label={
-        <div className="flex items-center gap-2 p-1 ">
+      className="border-none p-0"
+      customButton={
+        <div className={cn(getButtonStyling("secondary", "lg"), "gap-2")}>
           <ProjectIcon className="h-4 w-4" />
           {value && value.length > 3
             ? `3+ projects`
@@ -51,8 +67,10 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
                   .map((p) => getProjectById(p)?.name)
                   .join(", ")
               : "All projects"}
+          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
         </div>
       }
+      customButtonClassName="border-none p-0 bg-transparent hover:bg-transparent w-auto h-auto"
       multiple
     />
   );

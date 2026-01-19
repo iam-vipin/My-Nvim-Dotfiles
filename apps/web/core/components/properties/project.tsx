@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { BriefcaseBusiness } from "lucide-react";
@@ -15,9 +28,7 @@ export const DisplayProject = observer(function DisplayProject(props: {
   const projectDetails = getProjectById(project.id);
   const logoProps = project?.logo_props || projectDetails?.logo_props;
   return (
-    <div
-      className={cn("flex items-center gap-1 text-sm text-custom-text-300 max-w-[100px] overflow-hidden", className)}
-    >
+    <div className={cn("flex items-center gap-1 text-13 text-tertiary max-w-[100px] overflow-hidden", className)}>
       {!isEmpty(logoProps) ? (
         <Logo logo={logoProps} size={16} />
       ) : (

@@ -126,6 +126,14 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
     uploader: uploadFile,
   });
 
+  const isErrorState = !!fileUploadError;
+  const { selected } = props;
+
+  const borderColor =
+    selected && editor.isEditable && !isErrorState
+      ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)"
+      : undefined;
+
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
@@ -175,19 +183,27 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
   return (
     <div
       className={cn(
-        "py-3 px-2 rounded-lg bg-custom-background-90 border border-dashed border-custom-border-300 flex items-center gap-2 transition-colors cursor-default",
+        "py-3 px-2 rounded-lg bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default flex items-center gap-2",
         {
-          "hover:bg-custom-background-80 cursor-pointer": editor.isEditable,
-          "bg-custom-background-80": editor.isEditable && draggedInside,
+          "border-subtle-1": !(selected && editor.isEditable && !isErrorState),
+          "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": editor.isEditable && !isErrorState,
+          "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
+          "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
+            selected && editor.isEditable && !isErrorState,
+          "text-danger-primary bg-danger-subtle cursor-default": isErrorState,
+          "hover:text-danger-primary hover:bg-danger-subtle-hover": isErrorState && editor.isEditable,
+          "bg-danger-subtle-selected": isErrorState && selected,
+          "hover:bg-danger-subtle-active": isErrorState && selected && editor.isEditable,
         }
       )}
+      style={borderColor ? { borderColor } : undefined}
       onDrop={onDrop}
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={() => {
         if (isTouchDevice) onClick?.();
-        else if (editor.isEditable && !fileBeingUploaded) fileInputRef.current?.click();
+        else if (editor.isEditable && !fileBeingUploaded && !isErrorState) fileInputRef.current?.click();
       }}
       role="button"
       // aria-label={t("attachmentComponent.aria.click_to_upload")}
@@ -196,9 +212,9 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
     >
       <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
         {isVideoUploader ? (
-          <VideoFileIcon className="flex-shrink-0 size-8 text-custom-text-300" />
+          <VideoFileIcon className="flex-shrink-0 size-8 text-tertiary" />
         ) : (
-          <FileUp className="flex-shrink-0 size-8 text-custom-text-300" />
+          <FileUp className="flex-shrink-0 size-8 text-tertiary" />
         )}
       </div>
       <CustomAttachmentUploaderDetails

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -84,7 +97,7 @@ export const WorkflowTree = observer(function WorkflowTree(props: Props) {
   );
 
   return (
-    <div className="flex flex-col px-1 text-xs font-light gap-2">
+    <div className="flex flex-col px-1 text-11 font-light gap-2">
       <div className="flex gap-1">
         <span>{t("workflows.workflow_tree.label")}</span>
         <StatePill stateId={parentStateId} />
@@ -93,10 +106,10 @@ export const WorkflowTree = observer(function WorkflowTree(props: Props) {
         {orderedTransitionTrees.map((stateTransitionTree) => (
           <li
             key={stateTransitionTree.transition_state_ids.join("-")}
-            className="relative flex items-center py-1.5 px-2.5 border border-custom-border-200/50 rounded bg-custom-background-90/50"
+            className="relative flex items-center py-1.5 px-2.5 border border-subtle-1/50 rounded-sm bg-layer-1/50"
           >
             <div className="flex flex-col gap-1">
-              <div className="flex flex-wrap items-center gap-x-1 text-custom-text-200">
+              <div className="flex flex-wrap items-center gap-x-1 text-secondary">
                 <span className="flex-wrap font-medium">{getMergedApproversList(stateTransitionTree.approvers)}</span>
                 <span className="flex-wrap">{t("workflows.workflow_tree.state_change_label")}</span>
               </div>

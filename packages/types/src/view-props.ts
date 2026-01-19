@@ -1,3 +1,17 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import type { IProjectMemberNavigationPreferences } from "./project";
 import type { TIssue } from "./issues/issue";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import type { CompleteOrEmpty } from "./utils";
@@ -211,6 +225,22 @@ export interface IIssueFiltersResponse {
   rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
+}
+
+export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
+  sort_order: number;
+  preferences: {
+    pages: {
+      block_display: boolean;
+    };
+    navigation: IProjectMemberNavigationPreferences;
+  };
+}
+
+export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {
+  navigation_project_limit?: number;
+  navigation_control_preference?: "ACCORDION" | "TABBED";
+  // Note: show_limited_projects is derived from navigation_project_limit (0 = false, >0 = true)
 }
 
 export interface IWorkspaceIssueFilterOptions {

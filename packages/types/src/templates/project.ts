@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { TInboxForm } from "../intake";
 import type { IIssueLabel } from "../issues";
 import type { TProject, TProjectPriority, TProjectState } from "../project";
@@ -66,6 +79,7 @@ export type TProjectTemplateData = Pick<
   is_project_updates_enabled: boolean;
   is_epic_enabled: boolean;
   is_workflow_enabled: boolean;
+  is_milestone_enabled: boolean;
   // project grouping
   priority?: TProjectPriority;
   project_state: CompleteOrEmpty<TProjectStateBlueprint>;
@@ -112,6 +126,7 @@ export type TProjectTemplateFormData = Pick<
   | "is_project_updates_enabled"
   | "is_epic_enabled"
   | "is_workflow_enabled"
+  | "is_milestone_enabled"
 > &
   Pick<
     TProject,

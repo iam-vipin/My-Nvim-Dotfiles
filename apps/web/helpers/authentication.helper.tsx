@@ -1,7 +1,42 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 // plane imports
 import { SUPPORT_EMAIL } from "@plane/constants";
+
+/**
+ * Decodes a base64 encoded email from URL parameters.
+ * Used to decode the 'ctx' parameter that contains encoded email.
+ * @param encodedEmail - The base64 encoded email string
+ * @returns The decoded email or undefined if decoding fails
+ */
+export const decodeEmailFromUrl = (encodedEmail: string | null | undefined): string | undefined => {
+  if (!encodedEmail) return undefined;
+  try {
+    return atob(encodedEmail);
+  } catch {
+    return undefined;
+  }
+};
+
+/**
+ * Encodes an email address to base64 for use in URL parameters.
+ * @param email - The email address to encode
+ * @returns The base64 encoded email
+ */
+export const encodeEmailForUrl = (email: string): string => btoa(email);
 
 export enum EPageTypes {
   PUBLIC = "PUBLIC",
@@ -41,6 +76,7 @@ export enum EAuthenticationErrorCodes {
   USER_ACCOUNT_DEACTIVATED = "5019",
   // Password strength
   INVALID_PASSWORD = "5020",
+  PASSWORD_TOO_WEAK = "5021",
   SMTP_NOT_CONFIGURED = "5025",
   // Sign Up
   USER_ALREADY_EXIST = "5030",
@@ -78,6 +114,7 @@ export enum EAuthenticationErrorCodes {
   INCORRECT_OLD_PASSWORD = "5135",
   MISSING_PASSWORD = "5138",
   INVALID_NEW_PASSWORD = "5140",
+  PASSWORD_SAME_AS_CURRENT = "5142",
   // set password
   PASSWORD_ALREADY_SET = "5145",
   // Admin
@@ -105,6 +142,7 @@ export type TAuthErrorInfo = {
   message: ReactNode;
 };
 
+// TODO: move all error messages to translation files
 const errorCodeMessages: {
   [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
@@ -141,6 +179,10 @@ const errorCodeMessages: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
   },
+  [EAuthenticationErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Password too weak. Please try again.`,
+  },
   [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
     message: () => `SMTP not configured. Please contact your administrator.`,
@@ -154,7 +196,7 @@ const errorCodeMessages: {
         Your account is already registered.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          href={`/sign-in${email ? `?ctx=${encodeEmailForUrl(email)}` : ``}`}
         >
           Sign In
         </Link>
@@ -190,7 +232,7 @@ const errorCodeMessages: {
         No account found.&nbsp;
         <Link
           className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          href={`/${email ? `?ctx=${encodeEmailForUrl(email)}` : ``}`}
         >
           Create one
         </Link>
@@ -297,6 +339,10 @@ const errorCodeMessages: {
   [EAuthenticationErrorCodes.INVALID_NEW_PASSWORD]: {
     title: `Invalid new password`,
     message: () => `Invalid new password. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.PASSWORD_SAME_AS_CURRENT]: {
+    title: `Password unchanged`,
+    message: () => `New password cannot be the same as current password.`,
   },
 
   // set password
@@ -419,6 +465,7 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.INCORRECT_OLD_PASSWORD,
     EAuthenticationErrorCodes.MISSING_PASSWORD,
     EAuthenticationErrorCodes.INVALID_NEW_PASSWORD,
+    EAuthenticationErrorCodes.PASSWORD_SAME_AS_CURRENT,
     EAuthenticationErrorCodes.PASSWORD_ALREADY_SET,
     EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST,
     EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
@@ -430,6 +477,7 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
+    EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
     EAuthenticationErrorCodes.USER_NOT_ONBOARDED,
     EAuthenticationErrorCodes.TOKEN_NOT_SET,
     EAuthenticationErrorCodes.MOBILE_SIGNUP_DISABLED,
@@ -445,3 +493,8 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
 
   return undefined;
 };
+
+export const passwordErrors = [
+  EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
+  EAuthenticationErrorCodes.INVALID_NEW_PASSWORD,
+];

@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { useParams } from "next/navigation";
@@ -114,7 +127,7 @@ export function CreateUpdateInitiativeForm(props: Props) {
       }}
     >
       <div className="space-y-3 p-5 pb-4">
-        <h3 className="text-xl font-medium text-custom-text-200">
+        <h3 className="text-18 font-medium text-secondary">
           {formData.id ? t("initiatives.update_initiative") : t("initiatives.create_initiative")}
         </h3>
         <div className="flex items-start gap-2 w-full">
@@ -125,12 +138,12 @@ export function CreateUpdateInitiativeForm(props: Props) {
             className="flex items-center justify-center flex-shrink0"
             buttonClassName="flex items-center justify-center"
             label={
-              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-layer-1">
                 <>
                   {logoValue?.in_use ? (
                     <Logo logo={logoValue} size={18} type="lucide" />
                   ) : (
-                    <InitiativeIcon className="h-4 w-4 text-custom-text-300" />
+                    <InitiativeIcon className="h-4 w-4 text-tertiary" />
                   )}
                 </>
               </span>
@@ -166,12 +179,12 @@ export function CreateUpdateInitiativeForm(props: Props) {
               value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
               placeholder={t("initiatives.initiative_name")}
-              className="w-full resize-none text-base"
+              className="w-full resize-none text-14"
               hasError={Boolean(errors.name)}
               tabIndex={1}
               autoFocus
             />
-            {errors.name && <div className="text-red-500 text-xs">{errors.name}</div>}
+            {errors.name && <div className="text-danger-primary text-11">{errors.name}</div>}
           </div>
         </div>
         <RichTextEditor
@@ -188,8 +201,8 @@ export function CreateUpdateInitiativeForm(props: Props) {
           }}
           placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
           searchMentionCallback={searchEntity}
-          editorClassName="text-xs"
-          containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
+          editorClassName="text-11"
+          containerClassName="resize-none min-h-24 text-11 border-[0.5px] border-subtle rounded-md px-3 py-2"
           tabIndex={2}
           uploadFile={async (blockId, file) => {
             try {
@@ -270,11 +283,11 @@ export function CreateUpdateInitiativeForm(props: Props) {
           />
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={5}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <Button variant="secondary" onClick={handleClose} tabIndex={5}>
           {t("cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={6}>
+        <Button variant="primary" type="submit" loading={isSubmitting} tabIndex={6}>
           {initiativeDetail
             ? isSubmitting
               ? t("common.updating")

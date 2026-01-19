@@ -1,4 +1,16 @@
-import type { FC } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -67,49 +79,49 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
 
   return (
     <div
-      className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`} ${!worklog?.description && "items-center"}`}
+      className={`relative flex items-center gap-3 text-caption-sm-regular ${
+        ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
+      } ${!worklog?.description ? "" : "items-start"}`}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-custom-background-80" aria-hidden />
-      <div className="flex-shrink-0 relative w-7 h-7 rounded-full flex justify-center items-center z-10 bg-gray-500 text-white border border-white uppercase font-medium">
+      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-layer-3" aria-hidden />
+      <div className="flex-shrink-0 relative w-7 h-7 rounded-lg overflow-visible flex justify-center items-center z-[4] bg-layer-2 text-secondary transition-border duration-1000 border border-subtle shadow-raised-100">
         {currentUser?.member?.avatar_url && currentUser?.member?.avatar_url !== "" ? (
           <img
             src={getFileURL(currentUser?.member?.avatar_url)}
             alt={currentUser?.member?.display_name}
-            height={30}
-            width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-200"
+            height={28}
+            width={28}
+            className="h-full w-full object-cover rounded-lg"
           />
         ) : (
-          <>
+          <span className="uppercase font-medium">
             {currentUser?.member?.first_name
               ? currentUser?.member?.first_name.charAt(0)
               : currentUser?.member?.display_name?.charAt(0)}
-          </>
+          </span>
         )}
-        <div className="absolute top-2 left-4 w-5 h-5 rounded-full overflow-hidden flex justify-center items-center bg-custom-background-80">
-          <Timer className="w-3 h-3 text-custom-text-200" />
+        <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full flex justify-center items-center bg-layer-1 border border-subtle shadow-raised-100 z-10">
+          <Timer className="w-2 h-2 text-secondary" />
         </div>
       </div>
       <div className="w-full space-y-1.5">
         <div className="w-full relative flex items-center">
-          <div className="flex w-full truncate gap-1">
-            <div className="text-xs">
-              <Link
-                href={`/${workspaceSlug}/profile/${currentUser?.member?.id}`}
-                className="hover:underline text-custom-text-100 font-medium capitalize"
-              >
-                {currentUser?.member?.display_name}
-              </Link>
-              <span className="text-custom-text-300 font-medium">{` logged `}</span>
-              <span className="text-custom-text-100 font-medium">{`${convertMinutesToHoursMinutesString(worklog?.duration || 0)}.`}</span>
-            </div>
+          <div className="flex w-full truncate gap-1 text-secondary">
+            <Link
+              href={`/${workspaceSlug}/profile/${currentUser?.member?.id}`}
+              className="hover:underline text-primary font-medium"
+            >
+              {currentUser?.member?.display_name}
+            </Link>
+            <span className="text-secondary">{` logged `}</span>
+            <span className="text-primary font-medium">{`${convertMinutesToHoursMinutesString(worklog?.duration || 0)}.`}</span>
             {worklog.created_at && (
               <span>
                 <Tooltip
                   isMobile={isMobile}
                   tooltipContent={`${renderFormattedDate(worklog.created_at)}, ${renderFormattedTime(worklog.created_at)}`}
                 >
-                  <div className="text-xs text-custom-text-200">{`${calculateTimeAgo(worklog.created_at)}`}</div>
+                  <span className="whitespace-nowrap text-tertiary"> {calculateTimeAgo(worklog.created_at)}</span>
                 </Tooltip>
               </span>
             )}
@@ -120,7 +132,7 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
                 button={<></>}
                 popoverButtonRef={popoverButtonRef}
                 buttonClassName="w-0 h-0"
-                panelClassName="w-72 my-1 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 p-3 text-xs shadow-custom-shadow-rg focus:outline-none"
+                panelClassName="w-72 my-1 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 p-3 text-11 shadow-raised-200 focus:outline-none"
               >
                 <WorklogUpdate
                   workspaceSlug={workspaceSlug}
@@ -133,26 +145,26 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
             </div>
             <CustomMenu
               maxHeight={"md"}
-              className="flex flex-grow justify-center text-sm text-custom-text-200"
+              className="flex flex-grow justify-center text-13 text-secondary"
               placement="bottom-start"
               customButton={
-                <div className="w-5 h-5 flex justify-center items-center overflow-hidden rounded hover:bg-custom-background-80 transition-all">
+                <div className="w-5 h-5 flex justify-center items-center overflow-hidden rounded-sm hover:bg-layer-1 transition-all">
                   <Ellipsis className="w-3.5 h-3.5 font-medium" />
                 </div>
               }
-              customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+              customButtonClassName="flex flex-grow justify-center text-secondary text-13"
               closeOnSelect
             >
               {popoverOptions.map((option) => (
                 <CustomMenu.MenuItem key={option.value} onClick={option.onClick}>
-                  <div className="text-custom-text-300">{option.label}</div>
+                  <div className="text-tertiary">{option.label}</div>
                 </CustomMenu.MenuItem>
               ))}
             </CustomMenu>
           </div>
         </div>
         {worklog?.description && (
-          <div className="border border-custom-border-200 whitespace-pre-line rounded p-2">{worklog?.description}</div>
+          <div className="border border-subtle-1 whitespace-pre-line rounded-sm p-2">{worklog?.description}</div>
         )}
       </div>
     </div>

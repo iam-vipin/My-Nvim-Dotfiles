@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 export default {
   project_empty_state: {
     epics: {
@@ -18,8 +31,11 @@ export default {
       title: "Ghi lại một ý tưởng, ghi lại khoảnh khắc sáng tạo hoặc ghi lại ý nghĩ. Thêm ghi chú dán để bắt đầu.",
     },
     stickies: {
-      title: "Ghi lại một ý tưởng, ghi lại khoảnh khắc sáng tạo hoặc ghi lại ý nghĩ. Thêm ghi chú dán để bắt đầu.",
-      cta_primary: "Thêm ghi chú dán",
+      title: "Ghi lại ý tưởng ngay lập tức",
+      description:
+        "Tạo ghi chú dán cho các ghi chú nhanh và việc cần làm, và mang chúng theo bên mình mọi nơi bạn đến.",
+      cta_primary: "Tạo ghi chú dán đầu tiên",
+      cta_secondary: "Tài liệu",
     },
     active_cycles: {
       title: "Không có chu kỳ hoạt động",
@@ -107,11 +123,6 @@ export default {
       description:
         "Giảm thời gian thiết lập bằng cách tạo mẫu cho dự án, mục công việc và trang — và bắt đầu công việc mới trong vài giây.",
       cta_primary: "Tạo mẫu",
-    },
-    webhooks: {
-      title: "Chưa thêm Webhook",
-      description: "Tự động hóa thông báo đến các dịch vụ bên ngoài khi sự kiện dự án xảy ra.",
-      cta_primary: "Thêm webhook",
     },
   },
 } as const;

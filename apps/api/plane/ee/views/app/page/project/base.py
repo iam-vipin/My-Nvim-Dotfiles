@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Python imports
 import json
 from datetime import datetime
@@ -283,18 +294,6 @@ class PageExtendedViewSet(BaseViewSet):
         the requesting user then dont show the page
         """
 
-        if page.parent_id and (
-            not check_workspace_feature_flag(
-                feature_key=FeatureFlag.NESTED_PAGES,
-                slug=slug,
-                user_id=str(request.user.id),
-            )
-        ):
-            return Response(
-                {"error": "You are not authorized to access this page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -312,32 +311,29 @@ class PageExtendedViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if page is None:
-            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            issue_ids = PageLog.objects.filter(page_id=page_id, entity_name="issue").values_list(
-                "entity_identifier", flat=True
+        issue_ids = PageLog.objects.filter(page_id=page_id, entity_name="issue").values_list(
+            "entity_identifier", flat=True
+        )
+        data = PageDetailSerializer(page).data
+        data["issue_ids"] = issue_ids
+        if track_visit:
+            recent_visited_task.delay(
+                slug=slug,
+                entity_name="page",
+                entity_identifier=page_id,
+                user_id=request.user.id,
+                project_id=project_id,
             )
-            data = PageDetailSerializer(page).data
-            data["issue_ids"] = issue_ids
-            if track_visit:
-                recent_visited_task.delay(
-                    slug=slug,
-                    entity_name="page",
-                    entity_identifier=page_id,
-                    user_id=request.user.id,
-                    project_id=project_id,
-                )
-            return Response(data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
 
     def lock(self, request, slug, project_id, page_id):
         action = request.data.get("action", "current-page")
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             project_pages__project_id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         page.is_locked = True
         page.save()
@@ -354,12 +350,12 @@ class PageExtendedViewSet(BaseViewSet):
 
     def unlock(self, request, slug, project_id, page_id):
         action = request.data.get("action", "current-page")
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             project_pages__project_id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         page.is_locked = False
         page.save()
@@ -377,12 +373,12 @@ class PageExtendedViewSet(BaseViewSet):
 
     def access(self, request, slug, project_id, page_id):
         access = request.data.get("access", 0)
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             project_pages__project_id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
         old_page_access = page.access
 
         # Only update access if the page owner is the requesting user
@@ -758,13 +754,13 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
     model = Page
 
     def retrieve(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, project_pages__project_id=project_id)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
-            .first()
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
-        if page is None:
-            return Response({"error": "Page not found"}, status=404)
         binary_data = page.description_binary
 
         def stream_data():
@@ -778,14 +774,13 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, project_pages__project_id=project_id)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
-            .first()
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
-
-        if page is None:
-            return Response({"error": "Page not found"}, status=404)
 
         if page.is_locked:
             return Response(
@@ -837,8 +832,12 @@ class PageDuplicateExtendedEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):
-        page = Page.objects.get(id=page_id, workspace__slug=slug, project_pages__project_id=project_id)
-
+        page = Page.objects.get(
+            id=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)

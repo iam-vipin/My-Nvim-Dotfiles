@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect } from "react";
 import { debounce } from "lodash-es";
 import { Controller, useFormContext } from "react-hook-form";
@@ -74,7 +87,7 @@ export function AreaChartAppearanceConfig(props: Props) {
                   onChange(e.target.value);
                   debouncedConfigUpdate({ opacity: Number(e.target.value) });
                 }}
-                className="hide-arrows w-full px-2 py-1 rounded border-custom-border-300 text-xs"
+                className="hide-arrows w-full px-2 py-1 rounded-sm border-subtle-1 text-11"
                 placeholder={t("dashboards.widget.common.opacity.placeholder")}
                 min={0.1}
                 max={1}

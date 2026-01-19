@@ -125,9 +125,9 @@ function PiChatEditor(props: PiChatEditorProps) {
           user_mentions: [],
         }),
       }),
-      addChatContext: (attributes: PiChatEditorMentionAttributes) => {
+      addChatContext: (attributes: PiChatEditorMentionAttributes, trailingText?: string) => {
         if (!editor) return false;
-        return editor.commands.addChatContext(attributes);
+        return editor.commands.addChatContext(attributes, trailingText);
       },
     }),
     [editor]
@@ -138,7 +138,7 @@ function PiChatEditor(props: PiChatEditorProps) {
   return (
     <div
       onClick={handleContainerClick}
-      className={cn("w-full text-base editor-container", className, {
+      className={cn("w-full text-14 editor-container", className, {
         "max-h-[185px] overflow-y-scroll": editable,
       })}
     >

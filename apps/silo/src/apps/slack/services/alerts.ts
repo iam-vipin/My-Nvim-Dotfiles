@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { SlackService, TSlackUserAlertsConfig } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import type { Client, ExIssue, ExIssueComment, PlaneActivity, PlaneWebhookPayloadBase } from "@plane/sdk";
@@ -125,6 +138,25 @@ const extractSlackDmAlertsFromIssue = (payload: PlaneWebhookPayloadBase<ExIssue>
         action: ESlackDMAlertActivityAction.ADDED,
       }))
       .filter((activity) => (payload.activity.actor?.id ? activity.actor_id !== payload.activity.actor?.id : true));
+  }
+
+  // When it comes to creating work items directly, the field values come as null
+  if (!payload.activity.field) {
+    const assignees = payload.data.assignees || [];
+    const assigneeAlerts = assignees.map((assignee: { id: string } | string) => ({
+      actor_id: typeof assignee === "object" ? assignee.id : assignee,
+      type: ESlackDMAlertActivityType.ASSIGNEE,
+      action: ESlackDMAlertActivityAction.ADDED,
+    }));
+    const descriptionAlerts = extractUserMentionFromHtml(payload.data.description_html)
+      .map((userId) => ({
+        actor_id: userId,
+        type: ESlackDMAlertActivityType.WORK_ITEM_DESCRIPTION_MENTION,
+        action: ESlackDMAlertActivityAction.ADDED,
+      }))
+      .filter((activity) => (payload.activity.actor?.id ? activity.actor_id !== payload.activity.actor?.id : true));
+
+    return [...assigneeAlerts, ...descriptionAlerts];
   }
 
   return [];
@@ -373,12 +405,14 @@ const createCommentBlock = (
   } = blockFormationCtx;
   const workItemHyperlink = createSlackHyperlinkMarkdown(displayText, url);
 
+  const commentDmAlertText = getCommentDmAlertText(workspaceSlug, actorDisplayName, workItemHyperlink);
   const commentBlocks = createCommentLinkback({
     blockFormationCtx,
     workItemHyperlink,
     projectId: alert.project_id,
     issueId: alert.issue_id,
     createdBy: alert.payload.created_by,
+    header: commentDmAlertText,
   });
 
   return {

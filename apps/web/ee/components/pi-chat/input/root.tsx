@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useParams, usePathname } from "next/navigation";
@@ -26,6 +39,7 @@ import { DndWrapper } from "./dnd-wrapper";
 import { FocusFilter } from "./focus-filter";
 import { AiMode } from "./mode";
 import { AttachmentActionButton } from "./quick-action-button";
+import { ContextualTemplates } from "../conversation/contextual-templates";
 
 type TEditCommands = {
   getHTML: () => string;
@@ -39,6 +53,7 @@ type TProps = {
   isProjectLevel?: boolean;
   showProgress?: boolean;
   contextData?: TChatContextData;
+  onlyInput?: boolean;
 };
 
 export const InputBox = observer(function InputBox(props: TProps) {
@@ -50,12 +65,15 @@ export const InputBox = observer(function InputBox(props: TProps) {
     showProgress = false,
     isFullScreen = false,
     contextData,
+    onlyInput = false,
   } = props;
 
   // store hooks
   const {
     isPiTyping,
     isLoading: isChatLoading,
+    isNewChat,
+    initPiChat,
     getAnswer,
     searchCallback,
     createNewChat,
@@ -73,10 +91,10 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const routerWithProgress = useAppRouter();
   const pathname = usePathname();
   // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const [projectIdentifier] = workItem?.split("-") ?? [];
   const projectDetails = getProjectByIdentifier(projectIdentifier);
-  const projectIdToUse = projectDetails?.id || projectId || "";
+  const projectIdToUse = projectDetails?.id || projectId;
   const chatFocus = getChatFocus(activeChatId);
   const chatMode = getChatMode(activeChatId || "");
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
@@ -95,6 +113,8 @@ export const InputBox = observer(function InputBox(props: TProps) {
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
   const editorRef = useRef<TPiChatEditorRefApi>(null);
+  const lastKeyRef = useRef<string>("");
+  const timeoutRef = useRef<number | null>(null);
 
   useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
     revalidateOnFocus: false,
@@ -106,20 +126,46 @@ export const InputBox = observer(function InputBox(props: TProps) {
     editorCommands.current = command;
   };
 
-  const addContext = useCallback((): void => {
-    if (!contextData) return;
+  const addContext = useCallback(
+    (trailingText?: string): void => {
+      if (!contextData) {
+        editorRef.current?.clearEditor();
+        return;
+      }
 
-    editorRef.current?.addChatContext({
-      id: uuidv4(),
-      label: contextData.subTitle || contextData.title || "",
-      entity_identifier: contextData.id,
-      target: contextData.type,
-    });
-  }, [contextData]);
+      editorRef.current?.addChatContext(
+        {
+          id: uuidv4(),
+          label: contextData.subTitle || contextData.title || "",
+          entity_identifier: contextData.id,
+          target: contextData.type,
+        },
+        trailingText
+      );
+    },
+    [contextData]
+  );
 
-  const handleSubmit = useEvent(async (e?: React.FormEvent) => {
+  const handleUseTemplate = useCallback(
+    (query: string) => {
+      if (contextData) {
+        addContext(query);
+        setTimeout(() => {
+          void handleSubmit();
+        }, 0);
+      } else {
+        const formattedQuery = `<p>${query}</p>`;
+        editorRef.current?.clearEditor();
+        editorRef.current?.setEditorValue(formattedQuery);
+        void handleSubmit(undefined, formattedQuery);
+      }
+    },
+    [contextData]
+  );
+
+  const handleSubmit = useEvent(async (e?: React.FormEvent, queryArg?: string) => {
     e?.preventDefault();
-    const query = editorCommands.current?.getHTML();
+    const query = queryArg || editorCommands.current?.getHTML();
     if (
       isPiTyping ||
       loader === "submitting" ||
@@ -138,7 +184,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
         joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat", chatIdToUse)
       );
     const attachmentIds = attachments.map((attachment) => attachment.id);
-    await getAnswer(
+    void getAnswer(
       chatIdToUse || "",
       query || "",
       focus,
@@ -160,10 +206,19 @@ export const InputBox = observer(function InputBox(props: TProps) {
     abortStream(activeChatId || "");
   };
 
-  const getMentionSuggestions = useEvent(async (query) => {
-    const response = await searchCallback(workspaceSlug.toString(), query, focus);
+  const getMentionSuggestions = useEvent(async (query: string) => {
+    const response = await searchCallback(workspaceSlug?.toString() || "", query, focus);
     return formatSearchQuery(response);
   });
+
+  const templateProps = {
+    isFullScreen,
+    mode: aiMode,
+    projectId: projectIdToUse,
+    entityId: contextData?.id,
+    entityType: contextData?.type,
+    onClick: handleUseTemplate,
+  };
 
   useEffect(() => {
     if (chatFocus) {
@@ -177,7 +232,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     if (chatMode) {
       setAiMode(chatMode);
     }
-  }, [isChatLoading, chatFocus]);
+  }, [isChatLoading, chatFocus, chatMode]);
 
   // Adding context for the sidecar
   useEffect(() => {
@@ -186,136 +241,218 @@ export const InputBox = observer(function InputBox(props: TProps) {
     }
   }, [contextData, isEditorReady, addContext]);
 
+  useEffect(() => {
+    const handleKeySequence = (e: KeyboardEvent) => {
+      // Clear previous timeout
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+      }
+
+      if (e.key === "Shift") {
+        lastKeyRef.current = "Shift";
+        // Reset after 1 second
+        timeoutRef.current = window.setTimeout(() => {
+          lastKeyRef.current = "";
+        }, 1000);
+        return;
+      }
+
+      if (lastKeyRef.current === "Shift" && (e.key === "a" || e.key === "b" || e.key === "n")) {
+        e.preventDefault();
+        if (e.key === "n") {
+          if (isFullScreen) {
+            router.push(joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat"));
+          } else {
+            void initPiChat();
+          }
+        } else {
+          setAiMode(e.key === "a" ? "ask" : "build");
+        }
+        editorRef.current?.focus("end");
+      }
+
+      lastKeyRef.current = "";
+    };
+
+    document.addEventListener("keydown", handleKeySequence);
+    return () => {
+      document.removeEventListener("keydown", handleKeySequence);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    };
+  }, [setAiMode, isFullScreen, isProjectLevel, router, initPiChat, workspaceSlug]);
+
   if (!workspaceId) return;
   return (
-    <form
-      className={cn(
-        "bg-custom-background-100 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-xl w-full",
-        className
+    <>
+      {isNewChat && !onlyInput && !isFullScreen && (
+        <div className="flex flex-col gap-4 mt-4 w-full">
+          <div className={cn("text-start text-h4-regular text-primary")}>What can I do for you?</div>
+          <ContextualTemplates {...templateProps} />
+        </div>
       )}
-    >
-      <div className={cn("bg-custom-background-90 rounded-xl transition-[max-height] duration-100")}>
-        {/* Audio Recorder Loader */}
-        {SPEECH_LOADERS.includes(loader) && (
-          <div className="flex gap-2 p-2 items-center">
-            <Disc className="size-3 text-red-500" strokeWidth={3} />
-            <span className="text-sm text-custom-text-300 font-medium">Recording...</span>
+
+      <form
+        className={cn(
+          "flex flex-col px-2 md:px-0 rounded-2xl w-full my-auto",
+          {
+            "absolute bottom-[32px] left-0": !isNewChat || !isFullScreen,
+          },
+          className
+        )}
+      >
+        {isNewChat && !onlyInput && isFullScreen && (
+          <div className="flex flex-col gap-2.5 mb-6">
+            <div className={cn("text-center text-h3-medium text-primary")}>What can I do for you?</div>
           </div>
         )}
-        {/* Input Box */}
-        <DndWrapper
-          workspaceSlug={workspaceSlug?.toString()}
-          workspaceId={workspaceId}
-          chatId={activeChatId}
-          setAttachments={setAttachments}
-          isProjectLevel={isProjectLevel}
-          mode={aiMode}
-          createNewChat={createNewChat}
-          focus={focus}
+        <div
+          className={cn("rounded-2xl transition-[max-height] duration-100", {
+            "bg-layer-1": onlyInput,
+          })}
         >
-          {(isUploading: boolean, open: () => void) => (
-            <div
-              className={cn(
-                "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 justify-between h-fit",
-                {
-                  "min-h-[120px]": !SPEECH_LOADERS.includes(loader),
-                }
-              )}
-            >
-              {/* file input view */}
-              {((attachmentsUploadStatus && attachmentsUploadStatus.length > 0) || attachments?.length > 0) && (
-                <div className="mb-2">
-                  <InputPreviewUploads
-                    chatId={activeChatId}
-                    attachments={attachments}
-                    setAttachments={setAttachments}
-                  />
-                </div>
-              )}
-              {/* Focus */}
-              {!SPEECH_LOADERS.includes(loader) && (
-                <div className="mb-2 w-fit">
-                  <FocusFilter
-                    workspaceId={workspaceId}
-                    projectId={projectIdToUse}
-                    focus={focus}
-                    setFocus={setFocus}
-                    isLoading={isChatLoading && !!activeChatId}
-                  />
-                </div>
-              )}
-              {/* editor view */}
-              <PiChatEditorWithRef
-                setEditorCommand={(command) => {
-                  setEditorCommands({ ...command });
-                }}
-                handleSubmit={handleSubmit}
-                searchCallback={getMentionSuggestions}
-                className={cn("flex-1  max-h-[250px] min-h-[50px]", {
-                  "absolute w-0": SPEECH_LOADERS.includes(loader),
-                })}
-                onEditorReady={() => setIsEditorReady(true)}
-                ref={editorRef}
-              />
-              <div className="flex w-full gap-3 justify-between">
-                {/* Focus */}
-                {!SPEECH_LOADERS.includes(loader) && <AiMode aiMode={aiMode} setAiMode={setAiMode} />}
-                <div className="flex items-center w-full justify-end gap-2">
-                  <div className="flex w-full justify-end">
-                    {/* speech recorder */}
-                    <WithFeatureFlagHOC
-                      workspaceSlug={workspaceSlug?.toString()}
-                      flag={E_FEATURE_FLAGS.PI_CONVERSE}
-                      fallback={<></>}
-                    >
-                      <AudioRecorder
-                        workspaceId={workspaceId}
-                        chatId={activeChatId}
-                        editorRef={editorRef}
-                        createNewChat={createNewChat}
-                        isProjectLevel={isProjectLevel}
-                        loader={loader}
-                        setLoader={setLoader}
-                        isFullScreen={isFullScreen}
-                        focus={focus}
-                        mode={aiMode}
-                      />
-                    </WithFeatureFlagHOC>
-                    {!SPEECH_LOADERS.includes(loader) && (
-                      <WithFeatureFlagHOC
-                        workspaceSlug={workspaceSlug?.toString()}
-                        flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
-                        fallback={<></>}
-                      >
-                        {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
-                      </WithFeatureFlagHOC>
-                    )}
-                  </div>
-                  {!SPEECH_LOADERS.includes(loader) && (
-                    <button
-                      className={cn(
-                        "rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 transition-all duration-300",
-                        {
-                          "bg-custom-background-80": isPiTyping || loader === "submitting",
-                        }
-                      )}
-                      type="submit"
-                      onClick={isPiTyping ? handleAbortStream : handleSubmit}
-                      disabled={loader === "submitting"}
-                    >
-                      {!isPiTyping || loader === "submitting" ? (
-                        <ArrowUp size={16} />
-                      ) : (
-                        <Square size={16} className={cn("fill-custom-text-200 transition-all")} stroke={"0"} />
-                      )}
-                    </button>
-                  )}
-                </div>
-              </div>
+          {/* Audio Recorder Loader */}
+          {SPEECH_LOADERS.includes(loader) && (
+            <div className="flex gap-2 p-2 items-center">
+              <Disc className="size-3 text-danger-primary" strokeWidth={3} />
+              <span className="text-caption-md-medium text-secondary">Recording...</span>
             </div>
           )}
-        </DndWrapper>
+          {/* Input Box */}
+          <DndWrapper
+            workspaceSlug={workspaceSlug?.toString()}
+            workspaceId={workspaceId}
+            chatId={activeChatId}
+            setAttachments={setAttachments}
+            isProjectLevel={isProjectLevel}
+            mode={aiMode}
+            createNewChat={createNewChat}
+            focus={focus}
+            showBg={isNewChat && !onlyInput && isFullScreen}
+          >
+            {(isUploading: boolean, open: () => void) => (
+              <div
+                className={cn(
+                  "bg-layer-2 rounded-2xl p-3 flex flex-col gap-1 shadow-raised-100 border border-subtle-1 justify-between h-fit",
+                  {
+                    "min-h-[120px]": !SPEECH_LOADERS.includes(loader),
+                  }
+                )}
+              >
+                {/* file input view */}
+                {((attachmentsUploadStatus && attachmentsUploadStatus.length > 0) || attachments?.length > 0) && (
+                  <div className="mb-2">
+                    <InputPreviewUploads
+                      chatId={activeChatId}
+                      attachments={attachments}
+                      setAttachments={setAttachments}
+                    />
+                  </div>
+                )}
+                {/* Focus */}
+                {!SPEECH_LOADERS.includes(loader) && (
+                  <div className="mb-2 w-fit">
+                    <FocusFilter
+                      workspaceId={workspaceId}
+                      projectId={projectIdToUse}
+                      focus={focus}
+                      setFocus={setFocus}
+                      isLoading={isChatLoading && !!activeChatId}
+                    />
+                  </div>
+                )}
+                {/* editor view */}
+                <PiChatEditorWithRef
+                  setEditorCommand={(command: TEditCommands) => {
+                    setEditorCommands({ ...command });
+                  }}
+                  handleSubmit={() => void handleSubmit()}
+                  searchCallback={getMentionSuggestions}
+                  className={cn("flex-1  max-h-[250px] min-h-[50px]", {
+                    "absolute w-0": SPEECH_LOADERS.includes(loader),
+                  })}
+                  onEditorReady={() => setIsEditorReady(true)}
+                  ref={editorRef}
+                />
+                <div className="flex items-center w-full gap-3 justify-between">
+                  {/* Focus */}
+                  {!SPEECH_LOADERS.includes(loader) && <AiMode aiMode={aiMode} setAiMode={setAiMode} />}
+                  <div className="flex items-center w-full justify-end gap-2">
+                    <div className="flex w-full justify-end">
+                      {/* speech recorder */}
+                      <WithFeatureFlagHOC
+                        workspaceSlug={workspaceSlug?.toString()}
+                        flag={E_FEATURE_FLAGS.PI_CONVERSE}
+                        fallback={<></>}
+                      >
+                        <AudioRecorder
+                          workspaceId={workspaceId}
+                          chatId={activeChatId}
+                          editorRef={editorRef}
+                          createNewChat={createNewChat}
+                          isProjectLevel={isProjectLevel}
+                          loader={loader}
+                          setLoader={setLoader}
+                          isFullScreen={isFullScreen}
+                          focus={focus}
+                          mode={aiMode}
+                        />
+                      </WithFeatureFlagHOC>
+                      {!SPEECH_LOADERS.includes(loader) && (
+                        <WithFeatureFlagHOC
+                          workspaceSlug={workspaceSlug?.toString()}
+                          flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
+                          fallback={<></>}
+                        >
+                          {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
+                        </WithFeatureFlagHOC>
+                      )}
+                    </div>
+                    {!SPEECH_LOADERS.includes(loader) && (
+                      <button
+                        className={cn(
+                          "rounded-full bg-accent-primary text-on-color size-8 flex items-center justify-center flex-shrink-0 transition-all duration-300 disabled:bg-layer-1 disabled:text-icon-secondary",
+                          {
+                            "bg-layer-1 text-icon-secondary": isPiTyping || loader === "submitting",
+                          }
+                        )}
+                        type="submit"
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                          e.preventDefault();
+                          if (isPiTyping) {
+                            void handleAbortStream();
+                          } else {
+                            void handleSubmit();
+                          }
+                        }}
+                        disabled={loader === "submitting"}
+                      >
+                        {!isPiTyping || loader === "submitting" ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <Square
+                            size={16}
+                            className={cn("text-icon-secondary transition-all")}
+                            fill="currentColor"
+                            strokeWidth={0}
+                          />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </DndWrapper>
+        </div>
+        {isNewChat && !onlyInput && isFullScreen && <ContextualTemplates {...templateProps} />}
+      </form>
+      <div
+        className={cn("w-full text-caption-sm-regular text-disabled pt-2 text-center bg-surface-1 h-[32px]", {
+          "absolute bottom-0 left-[50%] translate-x-[-50%]": !onlyInput,
+        })}
+      >
+        <div className="mx-auto max-w-[400px]">Plane AI can make mistakes, please double-check responses. </div>
       </div>
-    </form>
+    </>
   );
 });

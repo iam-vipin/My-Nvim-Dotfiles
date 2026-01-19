@@ -1,4 +1,16 @@
-import React from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 // plane imports
 import { EAutomationRunStatus } from "@plane/types";
 import { cn, getAutomationRunStatusLabel } from "@plane/utils";
@@ -10,10 +22,10 @@ type TAutomationRunStatusBadgeProps = {
 };
 
 const variantStylesMap: Map<TAutomationRunStatusBadgeVariant, string> = new Map([
-  ["success", "bg-green-500/10"],
+  ["success", "bg-success-subtle"],
   ["info", "bg-yellow-500/10"],
-  ["error", "bg-red-500/10"],
-  ["default", "bg-custom-background-80"],
+  ["error", "bg-danger-subtle"],
+  ["default", "bg-layer-1"],
 ]);
 
 const statusToVariantMap: Map<EAutomationRunStatus, TAutomationRunStatusBadgeVariant> = new Map([
@@ -27,10 +39,10 @@ const statusToVariantMap: Map<EAutomationRunStatus, TAutomationRunStatusBadgeVar
 export function AutomationRunStatusBadge(props: TAutomationRunStatusBadgeProps) {
   const { status } = props;
   // derived values
-  const styles = status ? variantStylesMap.get(statusToVariantMap.get(status)!) : "text-custom-text-400";
+  const styles = status ? variantStylesMap.get(statusToVariantMap.get(status)!) : "text-placeholder";
 
   return (
-    <div className={cn("inline-flex items-center p-1 rounded text-[9px] text-custom-text-200 font-medium", styles)}>
+    <div className={cn("inline-flex items-center p-1 rounded-sm text-9 text-secondary font-medium", styles)}>
       {status ? getAutomationRunStatusLabel(status) : "--"}
     </div>
   );

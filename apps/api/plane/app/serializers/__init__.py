@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 from .base import BaseSerializer, DynamicBaseSerializer
 from .user import (
     UserSerializer,
@@ -54,7 +65,7 @@ from .issue import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssueCommentReplySerializer,
-    IssueUserPropertySerializer,
+    ProjectUserPropertySerializer,
     IssueAssigneeSerializer,
     LabelSerializer,
     IssueSerializer,
@@ -148,14 +159,13 @@ from .deploy_board import DeployBoardSerializer
 
 
 # Extended serializers
-from .extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer # noqa: F811
+from .extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer  # noqa: F811
 
 
 __all__ = [
     # Base serializers
     "BaseSerializer",
     "DynamicBaseSerializer",
-
     # User serializers
     "UserSerializer",
     "UserLiteSerializer",
@@ -166,7 +176,6 @@ __all__ = [
     "UserMeSettingsSerializer",
     "ProfileSerializer",
     "AccountSerializer",
-
     # Workspace serializers
     "WorkSpaceSerializer",
     "WorkSpaceMemberSerializer",
@@ -181,7 +190,6 @@ __all__ = [
     "WorkspaceHomePreferenceSerializer",
     "StickySerializer",
     "WorkspaceUserMeSerializer",
-
     # Project serializers
     "ProjectSerializer",
     "ProjectListSerializer",
@@ -194,30 +202,25 @@ __all__ = [
     "ProjectMemberAdminSerializer",
     "ProjectPublicMemberSerializer",
     "ProjectMemberRoleSerializer",
-
     # State serializers
     "StateSerializer",
     "StateLiteSerializer",
-
     # View serializers
     "IssueViewSerializer",
     "ViewIssueListSerializer",
-
     # Cycle serializers
     "CycleSerializer",
     "CycleIssueSerializer",
     "CycleWriteSerializer",
     "CycleUserPropertiesSerializer",
     "EntityProgressSerializer",
-
     # Asset serializers
     "FileAssetSerializer",
-
     # Issue serializers
     "IssueCreateSerializer",
     "IssueActivitySerializer",
     "IssueCommentSerializer",
-    "IssueUserPropertySerializer",
+    "ProjectUserPropertySerializer",
     "IssueAssigneeSerializer",
     "LabelSerializer",
     "IssueSerializer",
@@ -242,7 +245,6 @@ __all__ = [
     "IssueListDetailSerializer",
     "IssueDuplicateSerializer",
     "IssueAttachmentSerializer",
-
     # Module serializers
     "ModuleDetailSerializer",
     "ModuleWriteSerializer",
@@ -250,14 +252,11 @@ __all__ = [
     "ModuleIssueSerializer",
     "ModuleLinkSerializer",
     "ModuleUserPropertiesSerializer",
-
     # API serializers
     "APITokenSerializer",
     "APITokenReadSerializer",
-
     # Importer serializers
     "ImporterSerializer",
-
     # Page serializers
     "PageSerializer",
     "PageLiteSerializer",
@@ -266,42 +265,33 @@ __all__ = [
     "PageBinaryUpdateSerializer",
     "PageVersionDetailSerializer",
     "PageUserSerializer",
-
     # Estimate serializers
     "EstimateSerializer",
     "EstimatePointSerializer",
     "EstimateReadSerializer",
     "WorkspaceEstimateSerializer",
-
     # Intake serializers
     "IntakeSerializer",
     "IntakeIssueSerializer",
     "IssueStateIntakeSerializer",
     "IntakeIssueLiteSerializer",
     "IntakeIssueDetailSerializer",
-
     # Analytic serializers
     "AnalyticViewSerializer",
-
     # Notification serializers
     "NotificationSerializer",
     "UserNotificationPreferenceSerializer",
-
     # Exporter serializers
     "ExporterHistorySerializer",
-
     # Webhook serializers
     "WebhookSerializer",
     "WebhookLogSerializer",
-
     # Favorite serializers
     "UserFavoriteSerializer",
-
     # Draft serializers
     "DraftIssueCreateSerializer",
     "DraftIssueSerializer",
     "DraftIssueDetailSerializer",
-
     # Integration serializers
     "IntegrationSerializer",
     "WorkspaceIntegrationSerializer",
@@ -310,7 +300,6 @@ __all__ = [
     "GithubRepositorySyncSerializer",
     "GithubCommentSyncSerializer",
     "SlackProjectSyncSerializer",
-
     # Deploy board serializers
     "DeployBoardSerializer",
 ]

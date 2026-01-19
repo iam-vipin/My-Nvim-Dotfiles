@@ -1,13 +1,23 @@
-import type { FC } from "react";
-import React, { Fragment, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
-import { usePopper } from "react-popper";
-import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { CustomersIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { getFileURL } from "@plane/utils";
+import { Popover } from "@plane/propel/popover";
 // components
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -22,10 +32,6 @@ type TCustomerListItem = {
 
 export const CustomerSidebarListitem = observer(function CustomerSidebarListitem(props: TCustomerListItem) {
   const { customerId, isPeekView, workspaceSlug } = props;
-  // refs
-  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [showPreview, setShowPreview] = useState<boolean>(false);
   // hooks
   const { getCustomerById } = useCustomers();
   const { allowPermissions } = useUserPermissions();
@@ -33,49 +39,32 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
   const customer = getCustomerById(customerId);
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: isPeekView ? "right" : "left",
-  });
-
   if (!customer) return null;
   return (
-    <Popover as="div" className="truncate max-w-[200px]">
-      <div
-        className="flex gap-2 items-center py-0.5 px-1.5 border rounded-full border-custom-border-100 cursor-default truncate"
-        onMouseEnter={() => setShowPreview(true)}
-        onMouseLeave={() => setShowPreview(false)}
-        ref={setReferenceElement}
-      >
-        <div className="border border-custom-border-200 rounded-md flex items-center gap-2">
-          {customer.logo_url ? (
-            <img src={getFileURL(customer.logo_url)} alt="customer-logo" className="rounded-md w-3 h-3 object-cover" />
-          ) : (
-            <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-3 w-3 p-0.5">
-              <CustomersIcon className="size-5 opacity-50" />
-            </div>
-          )}
-        </div>
-        <div className="text-custom-text-200 flex flex-col truncate">
-          <span className="text-xs font-medium truncate">{customer.name}</span>
-        </div>
-      </div>
-      <Transition as={Fragment} show={showPreview}>
-        <Popover.Panel
-          {...attributes.popper}
-          className={""}
-          onMouseEnter={() => setShowPreview(true)}
-          onMouseLeave={() => setShowPreview(false)}
-        >
-          {isAdmin && (
-            <CustomerPreview
-              workspaceSlug={workspaceSlug}
-              customer={customer}
-              setPopperElement={setPopperElement}
-              styles={styles}
-            />
-          )}
-        </Popover.Panel>
-      </Transition>
+    <Popover openOnHover delay={0}>
+      <Popover.Button
+        render={
+          <button
+            type="button"
+            className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary"
+          >
+            {customer.logo_url ? (
+              <img
+                src={getFileURL(customer.logo_url)}
+                alt="customer-logo"
+                className="rounded-md w-3 h-3 object-cover"
+              />
+            ) : (
+              <CustomersIcon className="size-4 opacity-50" />
+            )}
+            <span className="shrink-0 text-body-xs-regular truncate">{customer.name}</span>
+          </button>
+        }
+      />
+
+      <Popover.Panel align={"center"} side={isPeekView ? "left" : "right"} positionerClassName="z-40">
+        {isAdmin && <CustomerPreview workspaceSlug={workspaceSlug} customer={customer} />}
+      </Popover.Panel>
     </Popover>
   );
 });

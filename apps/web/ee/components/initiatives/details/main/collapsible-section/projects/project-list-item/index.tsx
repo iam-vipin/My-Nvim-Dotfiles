@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
@@ -52,11 +65,11 @@ export const ProjectItem = observer(function ProjectItem(props: Props) {
       prependTitleElement={
         <div className="flex items-center gap-2">
           <UpdateStatusIcons statusType={projectDetails.update_status} />
-          <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded bg-custom-background-90 mr-2">
+          <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded-sm bg-layer-1 mr-2">
             {projectDetails.logo_props ? (
               <Logo logo={projectDetails.logo_props} size={14} />
             ) : (
-              <ProjectIcon className="size-[14px] text-custom-text-300" />
+              <ProjectIcon className="size-[14px] text-tertiary" />
             )}
           </div>
         </div>
@@ -65,7 +78,7 @@ export const ProjectItem = observer(function ProjectItem(props: Props) {
         showProgress ? (
           <div className="flex items-center gap-1">
             <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
-            <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+            <span className="text-13 font-medium text-tertiary px-1">{`${progress}%`}</span>
           </div>
         ) : undefined
       }

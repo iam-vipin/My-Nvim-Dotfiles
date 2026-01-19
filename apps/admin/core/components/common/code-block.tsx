@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { cn } from "@plane/utils";
 
 type TProps = {
@@ -10,9 +23,9 @@ export function CodeBlock({ children, className, darkerShade }: TProps) {
   return (
     <span
       className={cn(
-        "px-0.5 text-xs text-custom-text-300 bg-custom-background-90 font-semibold rounded-md border border-custom-border-100",
+        "px-0.5 text-11 text-tertiary bg-surface-2 font-semibold rounded-md border border-subtle",
         {
-          "text-custom-text-200 bg-custom-background-80 border-custom-border-200": darkerShade,
+          "text-secondary bg-layer-1 border-subtle": darkerShade,
         },
         className
       )}

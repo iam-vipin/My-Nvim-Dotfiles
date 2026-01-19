@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -21,6 +34,14 @@ type TEpicDetailActivityRootProps = {
   epicId: string;
 };
 
+// TODO: replace with @plane/constants import later
+const BASE_ACTIVITY_FILTER_TYPES = [
+  EActivityFilterType.ACTIVITY,
+  EActivityFilterType.STATE,
+  EActivityFilterType.ASSIGNEE,
+  EActivityFilterType.DEFAULT,
+];
+
 export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot(props: TEpicDetailActivityRootProps) {
   const { epicId } = props;
   // i18n
@@ -42,34 +63,23 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
   // derived values
   const activityComments = getActivityAndCommentsByIssueId(epicId, sortOrder ?? E_SORT_ORDER.ASC);
 
-  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
-    EActivityFilterType.ACTIVITY,
-  ]);
+  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], BASE_ACTIVITY_FILTER_TYPES);
 
   return (
     <SidebarContentWrapper
       title={t("activity")}
-      actionElement={
-        <ActivitySortRoot
-          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-          toggleSort={toggleSortOrder}
-          className="flex-shrink-0"
-          iconClassName="size-3"
-        />
-      }
+      actionElement={<ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />}
     >
       <div className="min-h-[200px]">
         {filteredActivityComments.length > 0 &&
           filteredActivityComments.map((activityComment, index) => {
             const currActivityComment = activityComment;
-            return currActivityComment.activity_type === "ACTIVITY" ? (
+            return (
               <EpicActivityItem
                 key={currActivityComment.id}
                 id={currActivityComment.id}
                 ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
               />
-            ) : (
-              <></>
             );
           })}
       </div>

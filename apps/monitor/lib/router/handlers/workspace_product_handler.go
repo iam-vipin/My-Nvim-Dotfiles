@@ -42,6 +42,8 @@ type ProrationPreviewPayload struct {
 func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) (err error) {
 
+		isEnterprise, enterpriseLicense := checkIfEnterpriseInstance()
+
 		var payload prime_api.WorkspaceProductPayload
 
 		// Validate the payload sent from the client
@@ -56,6 +58,26 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 		if workspaceId == "" {
 			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "Invalid workspace id",
+			})
+		}
+
+		// If the instance is an enterprise instance, return the enterprise license details
+		if isEnterprise {
+			return ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
+				Plan:                   enterpriseLicense.ProductType,
+				PurchasedSeats:         enterpriseLicense.Seats,
+				FreeSeats:              enterpriseLicense.FreeSeats,
+				CurrentPeriodEndDate:   enterpriseLicense.CurrentPeriodEndDate,
+				IsCancelled:            enterpriseLicense.IsCancelled,
+				Interval:               enterpriseLicense.Interval,
+				IsOfflinePayment:       enterpriseLicense.IsOfflinePayment,
+				TrialEndDate:           enterpriseLicense.TrialEndDate,
+				HasAddedPayment:        enterpriseLicense.HasAddedPaymentMethod,
+				HasActivatedFree:       enterpriseLicense.HasActivatedFreeTrial,
+				Subscription:           enterpriseLicense.Subscription,
+				LastVerifiedAt:         enterpriseLicense.LastVerifiedAt,
+				LastPaymentFailedDate:  enterpriseLicense.LastPaymentFailedDate,
+				LastPaymentFailedCount: enterpriseLicense.LastPaymentFailedCount,
 			})
 		}
 

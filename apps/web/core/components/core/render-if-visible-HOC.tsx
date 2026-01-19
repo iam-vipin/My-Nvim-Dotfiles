@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
@@ -79,7 +92,7 @@ function RenderIfVisible(props: Props) {
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
   const style = isVisible || !shouldRecordHeights ? {} : { height: placeholderHeight.current, width: "100%" };
-  const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-custom-background-80");
+  const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-layer-1");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
 }

@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Standard library imports
 import logging
 from typing import Any, Dict, List, Optional, Sequence, Type
@@ -95,9 +106,7 @@ class OpenSearchHelper:
         self.search_fields = search_fields or self._get_default_search_fields()
         self.source_fields = source_fields
         self.page = max(1, page)  # Ensure page is at least 1
-        self.page_size = min(
-            page_size, getattr(settings, "OPENSEARCH_MAX_PAGE_SIZE", 100)
-        )
+        self.page_size = min(page_size, getattr(settings, "OPENSEARCH_MAX_PAGE_SIZE", 100))
         self.boosts = boosts or {}
         self.sort = sort
         self.operator = operator.lower() if operator else "or"
@@ -114,9 +123,7 @@ class OpenSearchHelper:
         for (
             field_name,
             field,
-        ) in (
-            self.document_cls._doc_type.mapping.properties.properties.to_dict().items()
-        ):
+        ) in self.document_cls._doc_type.mapping.properties.properties.to_dict().items():
             if field.get("type") == "text":
                 fields.append(field_name)
         return fields
@@ -194,9 +201,7 @@ class OpenSearchHelper:
 
         # Apply boosts to all text fields (edge_ngram + standard)
         all_text_fields = edge_ngram_fields + standard_fields
-        boosted_text_fields = [
-            f"{f}^{self.boosts.get(f, 1.0)}" for f in all_text_fields
-        ]
+        boosted_text_fields = [f"{f}^{self.boosts.get(f, 1.0)}" for f in all_text_fields]
 
         # Build query components
         query_parts = []
@@ -216,9 +221,7 @@ class OpenSearchHelper:
         # Keyword fields
         for field in keyword_fields:
             boost = self.boosts.get(field, 1.0)
-            query_parts.append(
-                Q("term", **{field: {"value": self.query, "boost": boost}})
-            )
+            query_parts.append(Q("term", **{field: {"value": self.query, "boost": boost}}))
 
         # Numeric fields - try to convert query to number if possible
         try:
@@ -226,9 +229,7 @@ class OpenSearchHelper:
             for field in numeric_fields:
                 boost = self.boosts.get(field, 1.0)
                 # For numeric fields, use a term query with the converted value
-                query_parts.append(
-                    Q("term", **{field: {"value": numeric_value, "boost": boost}})
-                )
+                query_parts.append(Q("term", **{field: {"value": numeric_value, "boost": boost}}))
         except (ValueError, TypeError):
             # If query can't be converted to number, skip numeric fields
             pass
@@ -331,11 +332,7 @@ class OpenSearchHelper:
                         hit_dict = hit.to_dict()
 
                         # Preserve highlight information from the raw response
-                        if (
-                            hasattr(response, "hits")
-                            and hasattr(response.hits, "hits")
-                            and j < len(response.hits.hits)
-                        ):
+                        if hasattr(response, "hits") and hasattr(response.hits, "hits") and j < len(response.hits.hits):
                             raw_hit = response.hits.hits[j]
                             if "highlight" in raw_hit:
                                 # Add highlight as a special metadata field
@@ -352,11 +349,7 @@ class OpenSearchHelper:
                         hit_dict = hit.to_dict()
 
                         # Preserve highlight information from the raw response
-                        if (
-                            hasattr(response, "hits")
-                            and hasattr(response.hits, "hits")
-                            and j < len(response.hits.hits)
-                        ):
+                        if hasattr(response, "hits") and hasattr(response.hits, "hits") and j < len(response.hits.hits):
                             raw_hit = response.hits.hits[j]
                             if "highlight" in raw_hit:
                                 hit_dict["_highlight"] = raw_hit["highlight"]

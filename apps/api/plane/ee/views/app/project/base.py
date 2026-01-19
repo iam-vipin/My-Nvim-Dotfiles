@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # python imports
 import json
 
@@ -28,9 +39,7 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id):
         # Annotate the counts for different states in one query
-        issues = Issue.issue_objects.filter(
-            project_id=project_id, workspace__slug=slug
-        ).aggregate(
+        issues = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug).aggregate(
             backlog_issues=Count("id", filter=Q(state__group="backlog")),
             unstarted_issues=Count("id", filter=Q(state__group="unstarted")),
             started_issues=Count("id", filter=Q(state__group="started")),
@@ -47,22 +56,19 @@ class WorkspaceProjectFeatureEndpoint(BaseAPIView):
         # Get all projects in the workspace
         projects = Project.objects.filter(workspace__slug=slug)
         # Create project feature only if it doesn't exist
-        existing_project_features = ProjectFeature.objects.filter(
-            project__in=projects
-        ).values_list("project_id", flat=True)
+        existing_project_features = ProjectFeature.objects.filter(project__in=projects).values_list(
+            "project_id", flat=True
+        )
         projects_without_features = projects.exclude(id__in=existing_project_features)
 
         # Create project features for projects without features
         project_features_to_create = [
-            ProjectFeature(workspace_id=project.workspace_id, project=project)
-            for project in projects_without_features
+            ProjectFeature(workspace_id=project.workspace_id, project=project) for project in projects_without_features
         ]
 
         ProjectFeature.objects.bulk_create(project_features_to_create)
         # Get all project features in at workspace level
-        project_features = ProjectFeature.objects.filter(
-            workspace__slug=slug, project__in=projects
-        ).annotate(
+        project_features = ProjectFeature.objects.filter(workspace__slug=slug, project__in=projects).annotate(
             is_issue_type_enabled=F("project__is_issue_type_enabled"),
             is_time_tracking_enabled=F("project__is_time_tracking_enabled"),
         )
@@ -76,22 +82,14 @@ class WorkspaceProjectFeatureEndpoint(BaseAPIView):
 class ProjectFeatureEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN])
     def patch(self, request, slug, project_id):
-        project_feature = ProjectFeature.objects.filter(
-            project_id=project_id, workspace__slug=slug
-        ).first()
+        project_feature = ProjectFeature.objects.filter(project_id=project_id, workspace__slug=slug).first()
 
         if not project_feature:
-            return Response(
-                {"error": "Project feature not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Project feature not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        current_instance = json.dumps(
-            ProjectFeatureSerializer(project_feature).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(ProjectFeatureSerializer(project_feature).data, cls=DjangoJSONEncoder)
 
-        serializer = ProjectFeatureSerializer(
-            project_feature, data=request.data, partial=True
-        )
+        serializer = ProjectFeatureSerializer(project_feature, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             project_activity.delay(

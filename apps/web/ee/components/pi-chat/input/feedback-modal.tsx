@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
@@ -39,10 +52,10 @@ export const FeedbackModal = observer(function FeedbackModal(props: TProps) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.MD}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">Feedback </h3>
+          <h3 className="text-18 font-medium text-secondary">Feedback </h3>
           <div className="mt-2 space-y-3">
             <div className="space-y-2">
-              <label htmlFor="url" className="mb-2 text-custom-text-300 text-base font-medium">
+              <label htmlFor="url" className="mb-2 text-tertiary text-14 font-medium">
                 Please provide details: (optional)
               </label>
               <Controller
@@ -59,18 +72,18 @@ export const FeedbackModal = observer(function FeedbackModal(props: TProps) {
                     ref={ref}
                     hasError={Boolean(errors.message)}
                     placeholder="What was unsatisfying about this response?"
-                    className="w-full resize-none min-h-24 text-base"
+                    className="w-full resize-none min-h-24 text-14"
                   />
                 )}
               />
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+          <Button variant="secondary" onClick={handleClose}>
             {t("Cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} className="capitalize">
+          <Button variant="primary" type="submit" loading={isSubmitting} className="capitalize">
             {isSubmitting ? t("submitting") : t("submit")}
           </Button>
         </div>

@@ -1,14 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
-import {
-  EUserPermissionsLevel,
-  EPageAccess,
-  TEAMSPACE_PAGE_TRACKER_EVENTS,
-  TEAMSPACE_PAGE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -26,7 +34,6 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -71,9 +78,6 @@ export const TeamspacePagesList = observer(function TeamspacePagesList(props: Pr
   // handlers
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
-    captureClick({
-      elementName: TEAMSPACE_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PAGE_BUTTON,
-    });
     // Create page
     await createPage({
       access: EPageAccess.PUBLIC,
@@ -82,13 +86,6 @@ export const TeamspacePagesList = observer(function TeamspacePagesList(props: Pr
         if (res?.id) {
           const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
           router.push(pageId);
-          captureSuccess({
-            eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-            payload: {
-              id: res?.id,
-              teamspaceId,
-            },
-          });
         }
       })
       .catch((err) => {
@@ -96,12 +93,6 @@ export const TeamspacePagesList = observer(function TeamspacePagesList(props: Pr
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
-        });
-        captureError({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            teamspaceId,
-          },
         });
       })
       .finally(() => {
@@ -141,7 +132,7 @@ export const TeamspacePagesList = observer(function TeamspacePagesList(props: Pr
                 <PageListBlockRoot key={pageId} paddingLeft={0} pageId={pageId} storeType={storeType} />
               ))
             ) : (
-              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+              <p className="mt-10 text-center text-body-xs-regular text-tertiary">No results found</p>
             )}
           </ListLayout>
         </div>

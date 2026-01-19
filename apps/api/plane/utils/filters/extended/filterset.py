@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
 # Django imports
 from django.db.models import Q
 
@@ -12,6 +23,13 @@ from plane.utils.uuid import is_valid_uuid
 
 
 class ExtendedIssueFilterSet(IssueFilterSet):
+    assignee_id__isnull = filters.BooleanFilter(method="filter_assignee_id_isnull", lookup_expr="isnull")
+    mention_id__isnull = filters.BooleanFilter(method="filter_mention_id_isnull", lookup_expr="isnull")
+    subscriber_id__isnull = filters.BooleanFilter(method="filter_subscriber_id_isnull", lookup_expr="isnull")
+    cycle_id__isnull = filters.BooleanFilter(method="filter_cycle_id_isnull", lookup_expr="isnull")
+    module_id__isnull = filters.BooleanFilter(method="filter_module_id_isnull", lookup_expr="isnull")
+    label_id__isnull = filters.BooleanFilter(method="filter_label_id_isnull", lookup_expr="isnull")
+
     team_project_id = filters.UUIDFilter(field_name="project_id")
     team_project_id__in = UUIDInFilter(field_name="project_id", lookup_expr="in")
 
@@ -20,6 +38,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
     milestone_id = filters.UUIDFilter(method="filter_milestone_id")
     milestone_id__in = UUIDInFilter(method="filter_milestone_id_in", lookup_expr="in")
+    milestone_id__isnull = filters.BooleanFilter(method="filter_milestone_id_isnull", lookup_expr="isnull")
 
     customproperty_value = filters.CharFilter(method="filter_custom_property_value")
     customproperty_value__exact = filters.CharFilter(method="filter_custom_property_value_exact")
@@ -33,16 +52,17 @@ class ExtendedIssueFilterSet(IssueFilterSet):
     customproperty_value__startswith = filters.CharFilter(method="filter_custom_property_value_startswith")
     customproperty_value__endswith = filters.CharFilter(method="filter_custom_property_value_endswith")
     customproperty_value__range = filters.CharFilter(method="filter_custom_property_value_range")
+    customproperty_value__isnull = filters.CharFilter(method="filter_custom_property_value_isnull")
 
     class Meta(IssueFilterSet.Meta):
         fields = IssueFilterSet.Meta.fields
         fields.update(
             {
                 "name": ["exact", "icontains", "contains", "startswith", "endswith"],
-                "start_date": ["exact", "gte", "gt", "lte", "lt", "range"],
-                "target_date": ["exact", "gte", "gt", "lte", "lt", "range"],
-                "created_at": ["exact", "gte", "gt", "lte", "lt", "range"],
-                "updated_at": ["exact", "gte", "gt", "lte", "lt", "range"],
+                "start_date": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
+                "target_date": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
+                "created_at": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
+                "updated_at": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
             }
         )
 
@@ -66,6 +86,57 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     fields.append(key)
             return fields
         return []
+
+    def filter_assignee_id_isnull(self, queryset, name, value):
+        """Filter by assignee ID (is null), excluding soft deleted users"""
+        # Check for at least one non-deleted assignee (requires both existence AND non-deleted)
+        has_non_deleted_assignee = Q(issue_assignee__isnull=False, issue_assignee__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            # No non-deleted assignees: no assignees at all OR all assignees are soft-deleted
+            return ~has_non_deleted_assignee
+        else:
+            # Has at least one non-deleted assignee
+            return has_non_deleted_assignee
+
+    def filter_mention_id_isnull(self, queryset, name, value):
+        """Filter by mention ID (is null), excluding soft deleted mentions"""
+        has_non_deleted_mention = Q(issue_mention__isnull=False, issue_mention__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_mention
+        else:
+            return has_non_deleted_mention
+
+    def filter_subscriber_id_isnull(self, queryset, name, value):
+        """Filter by subscriber ID (is null), excluding soft deleted subscribers"""
+        has_non_deleted_subscriber = Q(issue_subscribers__isnull=False, issue_subscribers__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_subscriber
+        else:
+            return has_non_deleted_subscriber
+
+    def filter_cycle_id_isnull(self, queryset, name, value):
+        """Filter by cycle ID (is null), excluding soft deleted cycle associations"""
+        has_non_deleted_cycle = Q(issue_cycle__isnull=False, issue_cycle__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_cycle
+        else:
+            return has_non_deleted_cycle
+
+    def filter_module_id_isnull(self, queryset, name, value):
+        """Filter by module ID (is null), excluding soft deleted module associations"""
+        has_non_deleted_module = Q(issue_module__isnull=False, issue_module__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_module
+        else:
+            return has_non_deleted_module
+
+    def filter_label_id_isnull(self, queryset, name, value):
+        """Filter by label ID (is null), excluding soft deleted label associations"""
+        has_non_deleted_label = Q(label_issue__isnull=False, label_issue__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_label
+        else:
+            return has_non_deleted_label
 
     def filter_custom_property_value(self, queryset, name, value):
         """Filter by custom property value (exact match)"""
@@ -114,6 +185,44 @@ class ExtendedIssueFilterSet(IssueFilterSet):
     def filter_custom_property_value_range(self, queryset, name, value):
         """Filter by custom property value (range)"""
         return self._filter_custom_property_value_with_lookup(queryset, "range", value)
+
+    def filter_custom_property_value_isnull(self, queryset, name, value):
+        """Filter by custom property value (is null)"""
+        from plane.ee.models.issue_properties import IssueProperty
+        from plane.utils.exception_logger import log_exception
+
+        try:
+            # Split the value into property_id and isnull_value
+            # Format: custompropertyvalue__isnull=<property_id>;<true/false>
+            property_id, isnull_value = value.split(";")
+
+            # If the property_id or value is not valid, return an empty Q object
+            if not property_id or not isnull_value:
+                return Q()
+
+            if not is_valid_uuid(property_id):
+                return Q()
+
+            # Get the property to determine its type
+            property_obj = IssueProperty.objects.get(id=property_id)
+
+            # Check for at least one non-deleted property value for this property
+            has_non_deleted_property_value = Q(
+                properties__isnull=False,
+                properties__property_id=property_id,
+                properties__property__deleted_at__isnull=True,
+                properties__deleted_at__isnull=True,
+            )
+            if isnull_value in (True, "true", "True", 1, "1"):
+                # No non-deleted property values for this property
+                return Q(type_id=property_obj.issue_type_id) & ~has_non_deleted_property_value
+            else:
+                # Has at least one non-deleted property value for this property
+                return Q(type_id=property_obj.issue_type_id) & has_non_deleted_property_value
+
+        except Exception as e:
+            log_exception(e)
+            return Q()
 
     def _filter_custom_property_value_with_lookup(self, queryset, lookup, value):
         """Helper method to filter by custom property value with a specific lookup.
@@ -254,9 +363,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
             # Use a subquery to find matching issue IDs
             # This ensures each custom property filter is independent
-            matching_issues = IssuePropertyValue.objects.filter(
-                **base_filters
-            ).values_list("issue_id", flat=True)
+            matching_issues = IssuePropertyValue.objects.filter(**base_filters).values_list("issue_id", flat=True)
 
             # Return Q object with pk__in subquery
             return Q(pk__in=matching_issues)
@@ -264,7 +371,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
         except Exception as e:
             log_exception(e)
             return Q()
-    
+
     def filter_milestone_id(self, queryset, name, value):
         """Filter by milestone ID, excluding soft deleted milestones"""
         return Q(
@@ -279,20 +386,40 @@ class ExtendedIssueFilterSet(IssueFilterSet):
             issue_milestone__deleted_at__isnull=True,
         )
 
+    def filter_milestone_id_isnull(self, queryset, name, value):
+        """Filter by milestone ID (is null), excluding soft deleted milestone associations"""
+        has_non_deleted_milestone = Q(issue_milestone__isnull=False, issue_milestone__deleted_at__isnull=True)
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_milestone
+        else:
+            return has_non_deleted_milestone
 
 class InitiativeFilterSet(BaseFilterSet):
     lead = filters.UUIDFilter(field_name="lead")
     lead__in = UUIDInFilter(field_name="lead", lookup_expr="in")
+    lead__isnull = filters.BooleanFilter(method="filter_lead_isnull", lookup_expr="isnull")
     label_id = filters.UUIDFilter(method="filter_label_id")
     label_id__in = UUIDInFilter(method="filter_label_id_in", lookup_expr="in")
+    label_id__isnull = filters.BooleanFilter(method="filter_label_id_isnull", lookup_expr="isnull")
 
     class Meta:
         model = Initiative
         fields = {
-            "start_date": ["exact", "gte", "gt", "lte", "lt", "range"],
-            "end_date": ["exact", "gte", "gt", "lte", "lt", "range"],
+            "start_date": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
+            "end_date": ["exact", "gte", "gt", "lte", "lt", "range", "isnull"],
             "state": ["exact", "in"],
         }
+
+    def filter_lead_isnull(self, queryset, name, value):
+        """Filter by lead ID (is null), excluding soft deleted users"""
+        if value in (True, "true", "True", 1, "1"):
+            return Q(
+                lead_id__isnull=True,
+            )
+        else:
+            return Q(
+                lead_id__isnull=False,
+            )
 
     def filter_label_id(self, queryset, name, value):
         """Filter by label IDs (in), excluding soft deleted labels"""
@@ -307,3 +434,14 @@ class InitiativeFilterSet(BaseFilterSet):
             initiative_label_associations__label_id__in=value,
             initiative_label_associations__deleted_at__isnull=True,
         )
+
+    def filter_label_id_isnull(self, queryset, name, value):
+        """Filter by label ID (is null), excluding soft deleted label associations"""
+        has_non_deleted_label = Q(
+            initiative_label_associations__isnull=False,
+            initiative_label_associations__deleted_at__isnull=True,
+        )
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_label
+        else:
+            return has_non_deleted_label

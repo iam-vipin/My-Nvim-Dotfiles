@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -111,10 +124,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
         <button
           ref={setReferenceElement}
           type="button"
-          className={cn(
-            "clickable block h-full w-full outline-none hover:bg-custom-background-80",
-            buttonContainerClassName
-          )}
+          className={cn("clickable block h-full w-full outline-none hover:bg-layer-1", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
           tabIndex={tabIndex}
@@ -126,9 +136,9 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
           ref={setReferenceElement}
           type="button"
           className={cn(
-            "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
+            "clickable block h-full max-w-full outline-none hover:bg-layer-1",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName

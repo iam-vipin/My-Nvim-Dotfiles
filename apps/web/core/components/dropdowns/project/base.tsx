@@ -21,7 +21,7 @@ import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CheckIcon, SearchIcon, ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, sortBySelectedFirst } from "@plane/utils";
 // components
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
@@ -123,10 +123,13 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
     };
   });
 
-  const filteredOptions =
-    query === ""
+  const filteredOptions = sortBySelectedFirst(
+    (query === ""
       ? options?.filter((o) => o?.value !== currentProjectId)
-      : options?.filter((o) => o?.value !== currentProjectId && o?.query.toLowerCase().includes(query.toLowerCase()));
+      : options?.filter((o) => o?.value !== currentProjectId && o?.query.toLowerCase().includes(query.toLowerCase()))
+    )?.filter((o): o is NonNullable<typeof o> => o !== undefined),
+    value
+  );
 
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
     dropdownRef,

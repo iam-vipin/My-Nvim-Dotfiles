@@ -70,7 +70,8 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
   // handle page check
   const { isNestedPagesEnabled: getIsNestedPagesEnabled } = usePageStore(storeType);
   // derived values
-  const isNestedPagesEnabled = getIsNestedPagesEnabled(workspaceSlug) && page?.parent_id;
+  const isNestedPagesEnabled = getIsNestedPagesEnabled(workspaceSlug);
+  const shouldHideActions = !isNestedPagesEnabled && page?.parent_id;
 
   const handleSubPagesToggle = useCallback(async () => {
     handleToggleExpanded();
@@ -163,7 +164,7 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
           </div>
         }
         actionableItems={
-          isNestedPagesEnabled ? <BlockItemAction page={page} parentRef={parentRef} storeType={storeType} /> : undefined
+          shouldHideActions ? undefined : <BlockItemAction page={page} parentRef={parentRef} storeType={storeType} />
         }
         isMobile={isMobile}
         parentRef={parentRef}

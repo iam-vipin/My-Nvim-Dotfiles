@@ -67,6 +67,10 @@ export default {
         "頁面是 Plane 中的思想捕捉空間。記錄會議筆記,輕鬆格式化,嵌入工作項,使用元件庫進行配置,並將它們全部保留在專案上下文中。",
       cta_primary: "建立您的頁面",
     },
+    project_overview_state_sidebar: {
+      title: "啟用專案狀態",
+      description: "啟用專案狀態以檢視和管理狀態、優先順序、到期日等屬性。",
+    },
   },
   settings_empty_state: {
     teamspace: {

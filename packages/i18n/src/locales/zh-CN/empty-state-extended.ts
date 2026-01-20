@@ -67,6 +67,10 @@ export default {
         "页面是 Plane 中的思想捕捉空间。记录会议笔记,轻松格式化,嵌入工作项,使用组件库进行布局,并将它们全部保留在项目上下文中。",
       cta_primary: "创建您的页面",
     },
+    project_overview_state_sidebar: {
+      title: "启用项目状态",
+      description: "启用项目状态以查看和管理状态、优先级、截止日期等属性。",
+    },
   },
   settings_empty_state: {
     teamspace: {

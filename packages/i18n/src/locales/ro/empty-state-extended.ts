@@ -71,6 +71,11 @@ export default {
         "Paginile sunt spațiu de captare a gândurilor în Plane. Notați note de întâlnire, formatați-le cu ușurință, încorporați elemente de lucru, aranjați-le folosind o bibliotecă de componente și păstrați-le toate în contextul proiectului dvs.",
       cta_primary: "Creați pagina dvs.",
     },
+    project_overview_state_sidebar: {
+      title: "Activați stările proiectului",
+      description:
+        "Activați stările proiectului pentru a vizualiza și gestiona proprietăți precum starea, prioritatea, datele scadente și altele.",
+    },
   },
   settings_empty_state: {
     teamspace: {

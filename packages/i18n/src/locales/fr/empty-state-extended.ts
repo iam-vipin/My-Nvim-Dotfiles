@@ -71,6 +71,11 @@ export default {
         "Les pages sont un espace de repérage de pensées dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, organisez-les à l'aide d'une bibliothèque de composants, et gardez-les tous dans le contexte de votre projet.",
       cta_primary: "Créer votre page",
     },
+    project_overview_state_sidebar: {
+      title: "Activer les états du projet",
+      description:
+        "Activez les états du projet pour afficher et gérer les propriétés comme l'état, la priorité, les dates d'échéance et plus encore.",
+    },
   },
   settings_empty_state: {
     teamspace: {

@@ -70,6 +70,10 @@ export default {
         "Stránky sú priestorom pre zachytenie myšlienok v Plane. Robte poznámky zo stretnutí, jednoducho ich formátujte, vkladajte pracovné položky, usporiadajte ich pomocou knižnice komponentov a udržujte všetko v kontexte vášho projektu.",
       cta_primary: "Vytvorte svoju stránku",
     },
+    project_overview_state_sidebar: {
+      title: "Povoliť stavy projektu",
+      description: "Povoľte stavy projektu na zobrazenie a správu vlastností ako stav, priorita, termíny a ďalšie.",
+    },
   },
   settings_empty_state: {
     teamspace: {

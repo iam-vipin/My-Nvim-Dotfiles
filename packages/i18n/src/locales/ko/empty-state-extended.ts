@@ -68,6 +68,10 @@ export default {
         "페이지는 Plane의 생각 포착 공간입니다. 회의록을 기록하고, 쉽게 서식을 지정하고, 작업 항목을 삽입하고, 구성 요소 라이브러리를 사용하여 배치하고, 프로젝트 컨텍스트에 모두 보관하세요.",
       cta_primary: "페이지 생성",
     },
+    project_overview_state_sidebar: {
+      title: "프로젝트 상태 활성화",
+      description: "프로젝트 상태를 활성화하여 상태, 우선순위, 마감일 등의 속성을 보고 관리하세요.",
+    },
   },
   settings_empty_state: {
     teamspace: {

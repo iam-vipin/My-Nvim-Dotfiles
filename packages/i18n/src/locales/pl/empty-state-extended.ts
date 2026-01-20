@@ -71,6 +71,11 @@ export default {
         "Strony to przestrzeń do wychwytywania myśli w Plane. Zapisuj notatki ze spotkań, łatwo je formatuj, osadzaj elementy robocze, układaj je za pomocą biblioteki komponentów i zachowuj wszystkie w kontekście projektu.",
       cta_primary: "Utwórz swoją stronę",
     },
+    project_overview_state_sidebar: {
+      title: "Włącz stany projektu",
+      description:
+        "Włącz stany projektu, aby wyświetlać i zarządzać właściwościami takimi jak stan, priorytet, terminy i inne.",
+    },
   },
   settings_empty_state: {
     teamspace: {

@@ -72,6 +72,11 @@ export default {
         "Các trang là không gian ghi lại suy nghĩ trong Plane. Ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng các mục công việc, bố trí chúng bằng thư viện các thành phần và giữ chúng tất cả trong bối cảnh dự án của bạn.",
       cta_primary: "Tạo trang của bạn",
     },
+    project_overview_state_sidebar: {
+      title: "Kích hoạt trạng thái dự án",
+      description:
+        "Kích hoạt Trạng thái Dự án để xem và quản lý các thuộc tính như trạng thái, mức độ ưu tiên, ngày đến hạn và hơn thế nữa.",
+    },
   },
   settings_empty_state: {
     teamspace: {

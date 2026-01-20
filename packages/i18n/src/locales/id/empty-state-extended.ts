@@ -70,6 +70,11 @@ export default {
         "Halaman adalah ruang penangkapan pemikiran di Plane. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda.",
       cta_primary: "Buat halaman Anda",
     },
+    project_overview_state_sidebar: {
+      title: "Aktifkan status proyek",
+      description:
+        "Aktifkan Status Proyek untuk melihat dan mengelola properti seperti status, prioritas, tanggal jatuh tempo, dan lainnya.",
+    },
   },
   settings_empty_state: {
     teamspace: {

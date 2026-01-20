@@ -25,6 +25,7 @@ import {
   ProjectHorizontalStackIllustration,
   SettingsHorizontalStackIllustration,
   StateHorizontalStackIllustration,
+  StateSquareHorizontalStackIllustration,
   TemplateHorizontalStackIllustration,
   TokenHorizontalStackIllustration,
   UnknownHorizontalStackIllustration,
@@ -86,6 +87,10 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <StateHorizontalStackIllustration className="w-20 h-20" />,
     title: "State",
+  },
+  {
+    asset: <StateSquareHorizontalStackIllustration className="w-20 h-20" />,
+    title: "State Square",
   },
   {
     asset: <TemplateHorizontalStackIllustration className="w-20 h-20" />,

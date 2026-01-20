@@ -52,7 +52,7 @@ export function SidebarRoot(props: TSidebarRootProps) {
         </Tabs.List>
         <div className="pt-4 flex-1 overflow-y-auto">
           {tabs.map((tab) => (
-            <Tabs.Content key={tab.key} value={tab.key}>
+            <Tabs.Content key={tab.key} value={tab.key} className="h-full">
               {tab.content}
             </Tabs.Content>
           ))}

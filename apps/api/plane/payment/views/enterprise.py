@@ -216,7 +216,7 @@ class InstanceLicenseSyncEndpoint(BaseAPIView):
                         "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
                     },
                     json={
-                        "members_list": users,
+                        "members_list": list(users),
                     },
                 )
                 # raise an exception if the request is not successful

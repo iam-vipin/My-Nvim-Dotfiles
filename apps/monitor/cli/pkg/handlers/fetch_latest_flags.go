@@ -26,6 +26,11 @@ func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) err
 	// where the database is locked and we are not able to save the data.
 	for _, license := range licenses {
 		err := db.Db.Transaction(func(tx *gorm.DB) error {
+			// Check if this is an enterprise license - use different sync path
+			if license.ProductType == "ENTERPRISE" {
+				return refreshEnterpriseLicenseHandler(ctx, api, &license, tx)
+			}
+
 			// Job One: Verify the license and update the license data
 			updatedLicense, activationReponse, err := RefreshLicense(ctx, api, &license, tx)
 			// If the license is paid, update the users with the member list provided
@@ -56,6 +61,127 @@ func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) err
 		if err != nil {
 			fmt.Println("Failed to update flags for license", license.LicenseKey, license.WorkspaceSlug, err)
 		}
+	}
+
+	return nil
+}
+
+// refreshEnterpriseLicenseHandler handles the sync for enterprise licenses
+func refreshEnterpriseLicenseHandler(ctx context.Context, api prime_api.IPrimeMonitorApi, license *db.License, tx *gorm.DB) error {
+	// Acquire all the members for the license
+	members := []db.UserLicense{}
+	if err := tx.Where("license_id = ?", license.ID).Find(&members).Error; err != nil {
+		return err
+	}
+
+	workspaceMembers := []prime_api.WorkspaceMember{}
+	for _, member := range members {
+		workspaceMembers = append(workspaceMembers, prime_api.WorkspaceMember{
+			UserId:   member.UserID.String(),
+			UserRole: member.Role,
+		})
+	}
+
+	// Use the enterprise sync endpoint
+	data, err := api.SyncEnterpriseLicense(prime_api.EnterpriseLicenseSyncPayload{
+		LicenceKey:  license.LicenseKey,
+		MembersList: workspaceMembers,
+	})
+
+	if err != nil {
+		// Check if we should deactivate based on last verification time
+		verificationThreshold := LICENSE_VERIFICATION_FAILED_THRESHOLD
+		shouldDeactivate := false
+
+		if api.IsAirgapped() && license.CurrentPeriodEndDate != nil {
+			shouldDeactivate = time.Since(*license.CurrentPeriodEndDate) > 0
+		} else {
+			shouldDeactivate = license.LastVerifiedAt != nil && time.Since(*license.LastVerifiedAt) > verificationThreshold
+		}
+
+		if license.LastVerifiedAt != nil && shouldDeactivate {
+			// Delete the enterprise license and related data
+			if err := tx.Where("license_id = ?", license.ID).Delete(&db.UserLicense{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("license_id = ?", license.ID).Delete(&db.Flags{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Delete(&license).Error; err != nil {
+				return err
+			}
+			return nil
+		}
+
+		// If airgapped, return without error to preserve existing license
+		if api.IsAirgapped() {
+			return nil
+		}
+
+		return fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
+	}
+
+	// If airgapped, skip user and flag refresh
+	if api.IsAirgapped() {
+		return nil
+	}
+
+	// Update the last verified timestamp
+	now := time.Now()
+	license.LastVerifiedAt = &now
+	if err := tx.Save(license).Error; err != nil {
+		return err
+	}
+
+	// Refresh enterprise license users
+	if data != nil {
+		// Delete existing members
+		if err := tx.Where("license_id = ?", license.ID).Delete(&db.UserLicense{}).Error; err != nil {
+			return err
+		}
+
+		// Insert new members
+		membersToPush := []db.UserLicense{}
+		for _, member := range data.MemberList {
+			userUUID, _ := uuid.Parse(member.UserId)
+			memberData := db.UserLicense{
+				UserID:    userUUID,
+				LicenseID: license.ID,
+				Role:      member.UserRole,
+				Synced:    true,
+				IsActive:  member.IsActive,
+			}
+			membersToPush = append(membersToPush, memberData)
+		}
+
+		if len(membersToPush) > 0 {
+			if err := tx.CreateInBatches(membersToPush, 100).Error; err != nil {
+				return err
+			}
+		}
+	}
+
+	// Refresh enterprise feature flags
+	flags, flagErr := api.GetEnterpriseFeatureFlags(license.LicenseKey)
+	if flagErr != nil {
+		return fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
+	}
+
+	flagData := db.Flags{
+		LicenseID:  license.ID,
+		Version:    flags.Version,
+		AesKey:     flags.EncyptedData.AesKey,
+		Nonce:      flags.EncyptedData.Nonce,
+		CipherText: flags.EncyptedData.CipherText,
+		Tag:        flags.EncyptedData.Tag,
+	}
+
+	if err := tx.Where("license_id = ?", license.ID).Delete(&db.Flags{}).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Create(&flagData).Error; err != nil {
+		return err
 	}
 
 	return nil

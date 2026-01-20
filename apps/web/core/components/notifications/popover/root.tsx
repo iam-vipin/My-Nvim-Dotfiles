@@ -20,6 +20,9 @@ import { useState } from "react";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { NotificationsSidebarRoot } from "@/components/workspace-notifications/sidebar";
 import { Popover } from "@plane/propel/popover";
+import { ENotificationQueryParamType, ENotificationLoader } from "@plane/constants";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import useSWR from "swr";
 
 type NotificationsPopoverRootProps = {
   workspaceSlug: string;
@@ -30,6 +33,9 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
   const router = useRouter();
   const pathname = usePathname();
   const { unreadNotificationsCount, viewMode } = useWorkspaceNotifications();
+  const { getNotifications, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
+  const { getWorkspaceBySlug } = useWorkspace();
+  const workspace = getWorkspaceBySlug(workspaceSlug.toString());
 
   const isMentionsEnabled = unreadNotificationsCount.mention_unread_notifications_count > 0;
   const totalNotifications = isMentionsEnabled
@@ -37,6 +43,21 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
     : unreadNotificationsCount.total_unread_notifications_count;
   const isNotificationsPath = pathname.includes(`/${workspaceSlug}/notifications/`);
   const shouldPopoverBeOpen = viewMode === "compact" && !isNotificationsPath && isOpen;
+
+  // fetch workspace notifications
+  const notificationMutation =
+    workspace && notificationIdsByWorkspaceId(workspace.id)
+      ? ENotificationLoader.MUTATION_LOADER
+      : ENotificationLoader.INIT_LOADER;
+  const notificationLoader =
+    workspace && notificationIdsByWorkspaceId(workspace.id)
+      ? ENotificationQueryParamType.CURRENT
+      : ENotificationQueryParamType.INIT;
+
+  useSWR(
+    workspaceSlug ? `WORKSPACE_NOTIFICATION` : null,
+    workspaceSlug ? () => getNotifications(workspaceSlug, notificationMutation, notificationLoader) : null
+  );
 
   const handleSidebarClick = () => {
     if (viewMode === "full") {
@@ -46,7 +67,7 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
   };
 
   const handlePopoverChange = (open: boolean) => {
-    if (!isNotificationsPath) {
+    if (viewMode === "compact" && !isNotificationsPath) {
       setIsOpen(open);
     } else {
       setIsOpen(false);

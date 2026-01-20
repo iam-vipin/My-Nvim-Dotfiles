@@ -15,6 +15,7 @@ import type { TNotificationsViewMode } from "@/store/notifications/workspace-not
 import { useTranslation } from "@plane/i18n";
 import { CenterPanelIcon, FullScreenPanelIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
+import { Tooltip } from "@plane/propel/tooltip";
 import { CheckIcon } from "lucide-react";
 
 const VIEW_MODES = [
@@ -35,9 +36,11 @@ export function ViewModeSelector({ value, onChange }: ViewModeSelectorProps) {
     <Menu
       ariaLabel={t("account_settings.notifications.select_default_view")}
       customButton={
-        <span className="flex items-center justify-center">
-          {CurrentIcon && <CurrentIcon className="h-4 w-4 text-tertiary hover:text-secondary" />}
-        </span>
+        <Tooltip tooltipContent={t("account_settings.notifications.select_default_view")} position="bottom">
+          <span className="flex items-center justify-center">
+            {CurrentIcon && <CurrentIcon className="h-4 w-4 text-tertiary hover:text-secondary" />}
+          </span>
+        </Tooltip>
       }
       optionsClassName="p-1"
     >

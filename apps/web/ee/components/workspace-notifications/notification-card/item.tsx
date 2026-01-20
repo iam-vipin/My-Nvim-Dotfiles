@@ -33,6 +33,7 @@ import { useIssueType } from "@/plane-web/hooks/store";
 import { NotificationOption } from "./options";
 import { NotificationCardPreview } from "./preview";
 import { useRouter } from "@/app/compat/next/navigation";
+import { usePathname } from "next/navigation";
 
 export interface INotificationItem {
   issueId: string;
@@ -57,9 +58,9 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
     containsInboxIssue,
     setCurrentSelectedNotificationId,
     setHighlightedActivityIds,
-    viewMode,
   } = useWorkspaceNotifications();
-
+  const pathname = usePathname();
+  const isInboxPage = pathname.includes("/notifications");
   const groupedNotifications = getNotificationsGroupedByIssue(workspaceId);
   const notificationList = groupedNotifications[issueId];
   const issue = notificationList[0].data?.issue;
@@ -84,6 +85,7 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "left-start",
+    strategy: "fixed",
   });
 
   const getUnreadActivityIds = (notificationList: TNotification[]): string[] =>
@@ -115,7 +117,7 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
         }
       }
 
-      if (viewMode === "compact") {
+      if (!isInboxPage) {
         const workItemLink = generateWorkItemLink({
           workspaceSlug,
           projectId,

@@ -16,7 +16,8 @@ import { useParams, useRouter } from "next/navigation";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType, NOTIFICATION_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ContentWrapper, ERowVariant, Spinner, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { ContentWrapper, ERowVariant, Spinner } from "@plane/ui";
 import { cn, getNumberCount } from "@plane/utils";
 // components
 // hooks
@@ -109,7 +110,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
   return (
     <div
       className={cn(
-        "relative flex-shrink-0 bg-surface-1 h-full transition-all md:border-r border-subtle max-md:overflow-hidden",
+        "relative flex-shrink-0 bg-surface-1 h-full transition-all md:border-r border-subtle",
         sidebarWidthClass
       )}
     >
@@ -139,13 +140,15 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
               />
             </Tooltip>
             {viewMode === "compact" && (
-              <Link
-                to={`/${workspaceSlug}/notifications/`}
-                className={getIconButtonStyling("ghost", "base")}
-                onClick={onFullViewMode}
-              >
-                <MoveDiagonal size={16} />
-              </Link>
+              <Tooltip tooltipContent={t("account_settings.notifications.full")} position="bottom">
+                <Link
+                  to={`/${workspaceSlug}/notifications/`}
+                  className={getIconButtonStyling("ghost", "base")}
+                  onClick={onFullViewMode}
+                >
+                  <MoveDiagonal size={16} />
+                </Link>
+              </Tooltip>
             )}
 
             <ViewModeSelector

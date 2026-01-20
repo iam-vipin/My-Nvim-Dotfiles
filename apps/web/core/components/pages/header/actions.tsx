@@ -35,27 +35,17 @@ type Props = {
 
 export const PageHeaderActions = observer(function PageHeaderActions(props: Props) {
   const { page, storeType } = props;
-  // store hooks
-  const { isContentEditable } = page;
 
   return (
     <div className="flex items-center gap-1">
       <PageArchivedBadge page={page} />
       <PageOfflineBadge page={page} />
-      {isContentEditable && (
-        <>
-          <PageLockControl page={page} storeType={storeType} />
-          <PageMoveControl page={page} />
-        </>
-      )}
+      <PageLockControl page={page} storeType={storeType} />
+      <PageMoveControl page={page} />
       <PageCopyLinkControl page={page} />
       <PageFavoriteControl page={page} />
-      {isContentEditable && (
-        <>
-          <PageCommentControl page={page} storeType={storeType} />
-          <PageShareControl page={page} storeType={storeType} />
-        </>
-      )}
+      <PageCommentControl page={page} storeType={storeType} />
+      <PageShareControl page={page} storeType={storeType} />
       <PageOptionsDropdown page={page} storeType={storeType} />
     </div>
   );

@@ -260,12 +260,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
               ...inbox.issue,
             },
           });
-        else
-          set(
-            this.inboxIssues,
-            [inbox.issue.id],
-            new InboxIssueStore(workspaceSlug, projectId, inbox, this.store.issue, this)
-          );
+        else set(this.inboxIssues, [inbox.issue.id], new InboxIssueStore(workspaceSlug, projectId, inbox, this.store));
       });
     }
   };
@@ -479,7 +474,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
           set(
             this.inboxIssues,
             [inboxIssueResponse.issue.id],
-            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse, this.store.issue, this)
+            new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse, this.store)
           );
           set(
             this,

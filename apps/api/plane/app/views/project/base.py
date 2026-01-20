@@ -18,7 +18,7 @@ import uuid
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
-from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
+from django.db.models import Exists, F, OuterRef, Prefetch, Subquery, Count, Q
 from django.utils import timezone
 
 # Third Party imports
@@ -38,7 +38,6 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
     DeployBoard,
     Intake,
-    ProjectUserProperty,
     Project,
     ProjectIdentifier,
     ProjectMember,
@@ -50,6 +49,7 @@ from plane.db.models import (
     WorkspaceMember,
     APIToken,
 )
+from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
 
 # EE imports
@@ -294,6 +294,15 @@ class ProjectViewSet(BaseViewSet):
                     is_active=True,
                 ).values("role")
             )
+            .annotate(
+                intake_count=Count(
+                    "project_intakeissue",
+                    filter=Q(
+                        project_intakeissue__status=IntakeIssueStatus.PENDING.value,
+                        project_intakeissue__deleted_at__isnull=True,
+                    ),
+                )
+            )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
         )
@@ -344,6 +353,7 @@ class ProjectViewSet(BaseViewSet):
             "sort_order",
             "logo_props",
             "member_role",
+            "intake_count",
             "archived_at",
             "workspace",
             "cycle_view",

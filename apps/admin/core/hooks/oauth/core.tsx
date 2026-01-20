@@ -47,6 +47,7 @@ export const getCoreAuthenticationModesMap: (
       "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
     icon: <Mails className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "ENABLE_MAGIC_LINK_LOGIN",
   },
   "passwords-login": {
     key: "passwords-login",
@@ -54,6 +55,7 @@ export const getCoreAuthenticationModesMap: (
     description: "Allow members to create accounts with passwords and use it with their email addresses to sign in.",
     icon: <KeyRound className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "ENABLE_EMAIL_PASSWORD",
   },
   google: {
     key: "google",
@@ -61,6 +63,7 @@ export const getCoreAuthenticationModesMap: (
     description: "Allow members to log in or sign up for Plane with their Google accounts.",
     icon: <img src={googleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_GOOGLE_ENABLED",
   },
   github: {
     key: "github",
@@ -75,6 +78,7 @@ export const getCoreAuthenticationModesMap: (
       />
     ),
     config: <GithubConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_GITHUB_ENABLED",
   },
   gitlab: {
     key: "gitlab",
@@ -82,6 +86,7 @@ export const getCoreAuthenticationModesMap: (
     description: "Allow members to log in or sign up to plane with their GitLab accounts.",
     icon: <img src={gitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_GITLAB_ENABLED",
   },
   gitea: {
     key: "gitea",
@@ -89,5 +94,6 @@ export const getCoreAuthenticationModesMap: (
     description: "Allow members to log in or sign up to plane with their Gitea accounts.",
     icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_GITEA_ENABLED",
   },
 });

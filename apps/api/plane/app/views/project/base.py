@@ -48,6 +48,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     APIToken,
+    ProjectUserProperty,
 )
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host

@@ -12,7 +12,7 @@
  */
 
 import { orderBy, isEmpty, update, set } from "lodash-es";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { TNotificationTab } from "@plane/constants";
@@ -77,7 +77,6 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   paginatedCount = 300;
   // observables
   loader: TNotificationLoader = undefined;
-  viewMode: TNotificationsViewMode = "full";
   unreadNotificationsCount: TUnreadNotificationsCount = {
     total_unread_notifications_count: 0,
     mention_unread_notifications_count: 0,
@@ -101,7 +100,6 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     makeObservable(this, {
       // observables
       loader: observable.ref,
-      viewMode: observable,
       unreadNotificationsCount: observable,
       notifications: observable,
       currentNotificationTab: observable.ref,
@@ -109,6 +107,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       paginationInfo: observable,
       filters: observable,
       // computed
+      viewMode: computed,
       // helper actions
       setCurrentNotificationTab: action,
       setCurrentSelectedNotificationId: action,
@@ -123,11 +122,18 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       setViewMode: action,
     });
   }
+
   setViewMode = (viewMode: TNotificationsViewMode): void => {
-    set(this, "viewMode", viewMode);
+    if (this.store.user.userProfile.data) {
+      this.store.user.userProfile.data.notification_view_mode = viewMode;
+    }
+    this.store.user.userProfile.updateUserProfile({ notification_view_mode: viewMode });
   };
 
   // computed
+  get viewMode(): TNotificationsViewMode {
+    return this.store.user.userProfile.data?.notification_view_mode || "full";
+  }
 
   // computed functions
   /**

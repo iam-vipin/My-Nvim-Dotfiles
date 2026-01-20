@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { UserService } from "@plane/services";
 import type { TUserProfile } from "@plane/types";
-import { EStartOfTheWeek } from "@plane/types";
+import { EStartOfTheWeek, NOTIFICATION_VIEW_MODES } from "@plane/types";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 
@@ -58,6 +58,7 @@ export class ProfileStore implements IProfileStore {
     is_smooth_cursor_enabled: false,
     is_onboarded: false,
     is_tour_completed: false,
+    notification_view_mode: NOTIFICATION_VIEW_MODES[0].key,
     use_case: undefined,
     billing_address_country: undefined,
     billing_address: undefined,

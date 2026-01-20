@@ -113,7 +113,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
         sidebarWidthClass
       )}
     >
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col overflow-hidden">
         <div className="px-3 py-2 border-b border-subtle flex items-center justify-between mb-2">
           <h4 className="text-18 font-medium">{t("notification.label")}</h4>
           <div className="flex items-center gap-1">
@@ -134,7 +134,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
                 size="base"
                 variant="ghost"
                 icon={RefreshCw}
-                className={loader === ENotificationLoader.MUTATION_LOADER ? "animate-spin" : ""}
+                className={cn(loader === ENotificationLoader.MUTATION_LOADER && "[&>svg]:animate-spin")}
                 onClick={refreshNotifications}
               />
             </Tooltip>
@@ -161,7 +161,11 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
           </div>
         </div>
 
-        <Tabs value={currentNotificationTab} onValueChange={setCurrentNotificationTab}>
+        <Tabs
+          value={currentNotificationTab}
+          onValueChange={setCurrentNotificationTab}
+          className="flex flex-col flex-1 min-h-0"
+        >
           <div className="flex items-center justify-between mx-3">
             <Tabs.List className="w-fit">
               {NOTIFICATION_TABS.map((tab) => (
@@ -179,7 +183,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
             <NotificationSidebarHeaderOptions workspaceSlug={workspaceSlug.toString()} />
           </div>
 
-          <Tabs.Content value={currentNotificationTab} className="py-2">
+          <Tabs.Content value={currentNotificationTab} className="py-2 overflow-auto flex flex-col flex-1">
             {loader === "init-loader" ? (
               <div className="relative w-full h-full overflow-hidden">
                 <NotificationsLoader />

@@ -18,8 +18,8 @@ import { Menu } from "@plane/propel/menu";
 import { CheckIcon } from "lucide-react";
 
 const VIEW_MODES = [
-  { key: "compact", icon: CenterPanelIcon, i18n_label: "notifications.compact" },
-  { key: "full", icon: FullScreenPanelIcon, i18n_label: "notifications.full" },
+  { key: "compact", icon: CenterPanelIcon, i18n_label: "account_settings.notifications.compact" },
+  { key: "full", icon: FullScreenPanelIcon, i18n_label: "account_settings.notifications.full" },
 ] as const;
 
 type ViewModeSelectorProps = {
@@ -33,7 +33,7 @@ export function ViewModeSelector({ value, onChange }: ViewModeSelectorProps) {
 
   return (
     <Menu
-      ariaLabel={t("notifications.select_default_view")}
+      ariaLabel={t("account_settings.notifications.select_default_view")}
       customButton={
         <span className="flex items-center justify-center">
           {CurrentIcon && <CurrentIcon className="h-4 w-4 text-tertiary hover:text-secondary" />}
@@ -41,7 +41,7 @@ export function ViewModeSelector({ value, onChange }: ViewModeSelectorProps) {
       }
       optionsClassName="p-1"
     >
-      <div className="text-tertiary text-12 px-2 py-1">{t("notifications.select_default_view")}</div>
+      <div className="text-tertiary text-12 px-2 py-1">{t("account_settings.notifications.select_default_view")}</div>
       {VIEW_MODES.map(({ key, icon: Icon, i18n_label }) => {
         const selected = key === value;
         return (

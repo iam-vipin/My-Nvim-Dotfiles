@@ -72,7 +72,12 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
           }}
         />
       </Popover.Button>
-      <Popover.Panel side="bottom" align="start" positionerClassName={"z-30"} className={"h-[477px] w-[530px]"}>
+      <Popover.Panel
+        side="bottom"
+        align="start"
+        positionerClassName={"z-30"}
+        className={"h-[477px] w-[530px] overflow-hidden"}
+      >
         <NotificationsSidebarRoot
           viewMode="compact"
           onFullViewMode={() => setIsOpen(false)}

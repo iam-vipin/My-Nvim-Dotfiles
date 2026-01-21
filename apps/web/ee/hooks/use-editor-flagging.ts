@@ -49,6 +49,8 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
   const isEditorSelectionConversionEnabled = useFlag(workspaceSlug, "EDITOR_SELECTION_CONVERSION");
+  const isEditorMultiColumnEnabled = useFlag(workspaceSlug, "EDITOR_MULTI_COLUMN");
+
   // check integrations
   const integrations = getIntegrations(workspaceSlug);
   const hasDrawioIntegration = integrations.includes(E_INTEGRATION_KEYS.DRAWIO);
@@ -129,6 +131,11 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
 
   if (pageId && isEditorSelectionConversionEnabled) {
     document.disabled.delete("selection-conversion");
+  }
+  if (!isEditorMultiColumnEnabled) {
+    document.flagged.add("multi-column");
+    richText.flagged.add("multi-column");
+    liteText.flagged.add("multi-column");
   }
 
   return {

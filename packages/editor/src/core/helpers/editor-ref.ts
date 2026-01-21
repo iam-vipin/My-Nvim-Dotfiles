@@ -30,6 +30,7 @@ import type { CoreEditorRefApi, EditorRefApi, IEditorProps, TEditorCommands } fr
 import { getParagraphCount } from "./common";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
 import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
+import { parseEditorHTMLtoGlobalHTML } from "../utils/editor-html-parser";
 
 type TArgs = Pick<IEditorProps, "getEditorMetaData"> & {
   editor: Editor | null;
@@ -79,11 +80,12 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     getDocument: () => {
       const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
       const documentHTML = editor?.getHTML() ?? "<p></p>";
+      const convertedHTML = parseEditorHTMLtoGlobalHTML(documentHTML);
       const documentJSON = editor?.getJSON() ?? null;
 
       return {
         binary: documentBinary,
-        html: documentHTML,
+        html: convertedHTML,
         json: documentJSON,
       };
     },

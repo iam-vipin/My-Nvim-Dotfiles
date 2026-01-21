@@ -1,0 +1,114 @@
+/* Multi-column layout styles */
+
+/* Custom HTML tags - make them block-level elements */
+.editor-column-list {
+  display: flex;
+  gap: 3rem;
+  align-items: stretch;
+  border-radius: 0.375rem;
+  position: relative;
+}
+
+.editor-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  border-radius: 0.375rem;
+  margin-bottom: 12px;
+  margin-top: 12px;
+  /* flex-grow is set via data-width attribute - handled by browser's attribute selector or inline if needed */
+}
+
+.editor-column:not(:last-child):not(.selected-column)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(-1.5rem - 6px);
+  width: 16px;
+  z-index: 12;
+  pointer-events: auto;
+}
+
+/* Column selection */
+.editor-column.ProseMirror-selectednode {
+  background-color: rgb(var(--color-primary-100), 0.1);
+}
+
+/* Selected column outline - when dropdown is open */
+.editor-column.selected-column {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -8px;
+    right: -8px;
+    bottom: -2px;
+    border: 2px solid var(--border-color-accent-strong);
+    border-radius: 0.375rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Column drag handle - show on hover */
+.editor-column .column-drag-handle-container {
+  & > button {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: auto;
+  }
+}
+
+.editor-column:hover .column-drag-handle-container {
+  & > button {
+    opacity: 1;
+  }
+}
+
+/* Resize handle - hover state */
+.editor-column.column-resize-hover,
+.editor-column.column-resize-hover * {
+  cursor: col-resize !important;
+}
+
+.editor-column.column-resize-hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: calc(-1.5rem - 2px);
+  bottom: 0;
+  width: 4px;
+  height: calc(100% + 2px);
+  background-color: var(--border-color-subtle);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 1;
+  transition: all 0.15s ease;
+}
+
+/* Resize handle - active resizing state */
+.editor-column.column-resize-active,
+.editor-column.column-resize-active * {
+  cursor: col-resize !important;
+}
+
+.editor-column.column-resize-active::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: calc(-1.5rem - 2px);
+  bottom: 0;
+  width: 4px;
+  height: calc(100% + 2px);
+  background-color: var(--border-color-accent-strong);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 1;
+  transition: all 0.15s ease;
+}

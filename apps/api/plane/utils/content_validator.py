@@ -190,6 +190,8 @@ ATTRIBUTES = {
         "data-emoji-url",
         "data-logo-in-use",
         "data-block-type",
+        # multi-column attributes
+        "data-width",
     },
     "a": {"href", "target"},
     # editor node/tag attributes

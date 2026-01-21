@@ -23,6 +23,7 @@ const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
   "EDITOR_EXTERNAL_EMBEDS",
   "EDITOR_VIDEO_ATTACHMENTS",
   "EDITOR_ATTACHMENTS",
+  "EDITOR_MULTI_COLUMN",
 ] as const;
 
 /**
@@ -40,6 +41,7 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
   const isVideoAttachmentsEnabled = getFeatureFlag(anchor, "EDITOR_VIDEO_ATTACHMENTS", false);
   const isMathematicsEnabled = getFeatureFlag(anchor, "EDITOR_MATHEMATICS", false);
   const isExternalEmbedEnabled = getFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS", false);
+  const isMultiColumnEnabled = getFeatureFlag(anchor, "EDITOR_MULTI_COLUMN", false);
 
   const documentDisabled: TExtensions[] = [];
   const documentFlagged: TExtensions[] = [];
@@ -73,6 +75,12 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
     documentFlagged.push("video-attachments");
     richTextFlagged.push("video-attachments");
     liteTextFlagged.push("video-attachments");
+  }
+
+  if (!isMultiColumnEnabled) {
+    documentFlagged.push("multi-column");
+    richTextFlagged.push("multi-column");
+    liteTextFlagged.push("multi-column");
   }
 
   return {

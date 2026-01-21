@@ -47,7 +47,7 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
   return (
     <YChangeNodeViewWrapper
       decorations={decorations}
-      className="callout-component editor-callout-component group/callout-node relative bg-layer-3 rounded-lg text-primary p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words"
+      className="callout-component editor-callout-component group/callout-node relative bg-layer-3 rounded-lg text-primary p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words min-w-0"
       style={{ backgroundColor: activeBackgroundColor }}
     >
       <CalloutBlockLogoSelector
@@ -69,7 +69,7 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
           updateStoredBackgroundColor(val);
         }}
       />
-      <NodeViewContent as="div" className="w-full break-words" />
+      <NodeViewContent as="div" className="w-full break-words min-w-0" />
     </YChangeNodeViewWrapper>
   );
 }

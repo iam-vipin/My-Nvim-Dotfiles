@@ -260,6 +260,7 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["callout", "comment", "message", "info", "alert"],
             command: ({ editor, range }: CommandProps) => insertCallout(editor, range),
           },
+
           {
             commandKey: "divider",
             key: "divider",
@@ -379,10 +380,13 @@ export const getSlashCommandFilteredSections =
       ...coreEditorAdditionalSlashCommandOptions({
         disabledExtensions,
         flaggedExtensions,
+        editor,
       }),
     ]?.forEach((item) => {
       const sectionToPushTo = SLASH_COMMAND_SECTIONS.find((s) => s.key === item.section) ?? SLASH_COMMAND_SECTIONS[0];
-      const itemIndexToPushAfter = sectionToPushTo.items.findIndex((i) => i.commandKey === item.pushAfter);
+      const itemIndexToPushAfter = sectionToPushTo.items.findIndex(
+        (i) => i.commandKey === item.pushAfter || i.key === item.pushAfter
+      );
       if (itemIndexToPushAfter !== -1) {
         sectionToPushTo.items.splice(itemIndexToPushAfter + 1, 0, item);
       } else {

@@ -124,6 +124,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
+            data-tour="work-item-step-1"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>

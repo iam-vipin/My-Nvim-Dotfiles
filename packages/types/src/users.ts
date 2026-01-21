@@ -102,6 +102,7 @@ export type TUserProfile = {
   start_of_the_week: EStartOfTheWeek;
   is_app_rail_docked?: boolean;
   notification_view_mode: TNotificationsViewMode;
+  is_navigation_tour_completed?: boolean;
 };
 
 export interface IInstanceAdminStatus {

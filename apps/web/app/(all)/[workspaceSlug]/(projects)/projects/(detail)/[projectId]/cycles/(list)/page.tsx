@@ -39,6 +39,9 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// components
+import { FeatureTour } from "@/components/tour";
+// types
 import type { Route } from "./+types/page";
 
 function ProjectCyclesPage({ params }: Route.ComponentProps) {
@@ -108,6 +111,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
           isOpen={createModal}
           handleClose={() => setCreateModal(false)}
         />
+        <FeatureTour tourType="cycles" />
         {totalCycles === 0 ? (
           <div className="h-full place-items-center">
             <EmptyStateDetailed

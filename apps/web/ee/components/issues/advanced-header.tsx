@@ -120,6 +120,7 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         {canUserCreateIssue ? (
           <Button
             size="lg"
+            data-tour="work-item-step-1"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}

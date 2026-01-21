@@ -43,7 +43,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         <WorkspaceMenuRoot variant="top-navigation" />
       </div>
       {/* Power K Search */}
-      <div className="shrink-0">
+      <div className="shrink-0" data-tour="navigation-step-1">
         <TopNavPowerK />
       </div>
       {/* Additional Actions */}

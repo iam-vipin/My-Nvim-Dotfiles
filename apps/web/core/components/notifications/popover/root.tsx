@@ -81,7 +81,7 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
           variant={"button"}
           item={{
             icon: (
-              <div className="relative">
+              <div className="relative" data-tour="navigation-step-2">
                 <InboxIcon className="size-5" />
                 {totalNotifications > 0 && (
                   <span className="absolute top-0 right-0 size-2 rounded-full bg-danger-primary" />

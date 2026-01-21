@@ -37,6 +37,7 @@ export default defineConfig({
     "src/toast/index.ts",
     "src/toolbar/index.ts",
     "src/tooltip/index.ts",
+    "src/tour/index.ts",
     "src/utils/index.ts",
     "src/video-player/index.ts",
     "src/icons/index.ts",

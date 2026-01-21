@@ -29,6 +29,9 @@ import { InboxIssueRoot } from "@/components/inbox";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// components
+import { FeatureTour } from "@/components/tour";
+// types
 import type { Route } from "./+types/page";
 
 function ProjectInboxPage({ params }: Route.ComponentProps) {
@@ -86,6 +89,7 @@ function ProjectInboxPage({ params }: Route.ComponentProps) {
   return (
     <div className="flex h-full flex-col">
       <PageHead title={pageTitle} />
+      <FeatureTour tourType="intake" />
       <div className="w-full h-full overflow-hidden">
         <InboxIssueRoot
           workspaceSlug={workspaceSlug}

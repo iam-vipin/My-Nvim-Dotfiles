@@ -90,7 +90,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         </div>
       </div>
       {/* Power K Search */}
-      <div className="desktop-header-actions shrink-0">
+      <div className="desktop-header-actions shrink-0" data-tour="navigation-step-1">
         {isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}
       </div>
       {/* Additional Actions */}
@@ -98,7 +98,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         <NotificationsPopoverRoot workspaceSlug={workspaceSlug?.toString()} />
         <HelpMenuRoot />
         {shouldRenderPiChat && (
-          <div>
+          <div data-tour="top-navigation-ai">
             <Tooltip tooltipContent="Ask AI" position="bottom">
               <button
                 className={cn(

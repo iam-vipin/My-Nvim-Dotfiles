@@ -82,6 +82,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
                   variant="ghost"
                   icon={PreferencesIcon}
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
+                  data-tour="navigation-step-3"
                 />
               )}
               <AppSidebarToggleButton />

@@ -41,6 +41,8 @@ from .project import (
     ProjectFeature,
     ProjectActivity,
     ProjectMemberActivity,
+    ProjectLabel,
+    ProjectLabelAssociation,
 )
 from .workspace import (
     WorkspaceFeature,

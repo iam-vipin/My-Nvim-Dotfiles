@@ -99,6 +99,9 @@ class RecurringWorkitemTask(ChangeTrackerMixin, ProjectBaseModel):
         verbose_name = "Recurring Workitem Task"
         verbose_name_plural = "Recurring Workitem Tasks"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["enabled", "next_scheduled_at"], name="rwt_enabled_next_idx"),
+        ]
 
     def __str__(self):
         return f"<{self.workitem_blueprint.name} {self.start_at}>"
@@ -303,6 +306,7 @@ class RecurringWorkitemTask(ChangeTrackerMixin, ProjectBaseModel):
             should_trigger = is_new or schedule_fields_changed or was_just_enabled
             if should_trigger:
                 from plane.ee.bgtasks.recurring_work_item_scheduler import schedule_on_create_or_enable
+
                 schedule_on_create_or_enable.delay(str(self.id))
 
     def _migrate_to_batch_scheduler(self):
@@ -374,7 +378,7 @@ class RecurringWorkitemTask(ChangeTrackerMixin, ProjectBaseModel):
                 return "Every day at 00:05"
             return f"Every {interval_count} days at 00:05"
         elif interval_type == self.INTERVAL_WEEKLY:
-            day_name = local_dt.strftime('%A') if local_dt else "the scheduled day"
+            day_name = local_dt.strftime("%A") if local_dt else "the scheduled day"
             if interval_count == 1:
                 return f"Every week on {day_name} at 00:05"
             return f"Every {interval_count} weeks on {day_name} at 00:05"
@@ -384,7 +388,7 @@ class RecurringWorkitemTask(ChangeTrackerMixin, ProjectBaseModel):
                 return f"Every month on day {day_num} at 00:05"
             return f"Every {interval_count} months on day {day_num} at 00:05"
         elif interval_type == self.INTERVAL_YEARLY:
-            date_str = local_dt.strftime('%B %d') if local_dt else "the scheduled date"
+            date_str = local_dt.strftime("%B %d") if local_dt else "the scheduled date"
             if interval_count == 1:
                 return f"Every year on {date_str} at 00:05"
             return f"Every {interval_count} years on {date_str} at 00:05"

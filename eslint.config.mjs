@@ -151,7 +151,7 @@ export default defineConfig([
     files: ["**/*.{ts,tsx}"],
     extends: [importPlugin.flatConfigs.recommended, importPlugin.flatConfigs.typescript],
     settings: {
-      "import/ignore": ["next/link", "next/navigation", "next/script"],
+      "import/ignore": ["next/link", "next/navigation"],
       "import/resolver": {
         typescript: {
           alwaysTryTypes: true,
@@ -162,7 +162,7 @@ export default defineConfig([
     },
     rules: {
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
-      "import/no-unresolved": ["error", { ignore: ["next/link", "next/navigation", "next/script"] }],
+      "import/no-unresolved": ["error", { ignore: ["next/link", "next/navigation"] }],
     },
   },
   {

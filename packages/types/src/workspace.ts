@@ -91,6 +91,10 @@ export type Properties = {
   updated_on: boolean;
 };
 
+export type TExploredFeatures = "github_integrated" | "slack_integrated" | "ai_chat_tried";
+
+export type TTips = "mobile_app_download";
+
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
@@ -120,6 +124,8 @@ export interface IWorkspaceMemberMe {
   workspace: string;
   draft_issue_count: number;
   active_cycles_count: number;
+  explored_features: Record<TExploredFeatures, boolean | null>;
+  tips: Record<TTips, boolean | null>;
 }
 
 export interface ILastActiveWorkspaceDetails {

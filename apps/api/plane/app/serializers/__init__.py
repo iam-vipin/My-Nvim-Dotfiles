@@ -35,6 +35,7 @@ from .workspace import (
     WorkspaceHomePreferenceSerializer,
     StickySerializer,
     WorkspaceUserMeSerializer,
+    WorkspaceMemberUserOnboardingSerializer,
 )
 from .project import (
     ProjectSerializer,

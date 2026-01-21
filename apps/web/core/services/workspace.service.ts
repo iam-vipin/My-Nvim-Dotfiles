@@ -33,6 +33,8 @@ import type {
   IWorkspaceSidebarNavigationItem,
   IWorkspaceSidebarNavigation,
   IWorkspaceUserPropertiesResponse,
+  TExploredFeatures,
+  TTips,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -129,6 +131,17 @@ export class WorkspaceService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
+      });
+  }
+
+  async updateMemberOnboarding(
+    workspaceSlug: string,
+    data: { explored_features?: Partial<Record<TExploredFeatures, boolean>>; tips?: Partial<Record<TTips, boolean>> }
+  ): Promise<IWorkspaceMemberMe> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/workspace-member/me/onboarding/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 

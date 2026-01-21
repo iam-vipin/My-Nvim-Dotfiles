@@ -30,6 +30,7 @@ from plane.app.serializers import (
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkSpaceMemberSerializer,
+    WorkspaceMemberUserOnboardingSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from plane.utils.cache import invalidate_cache
@@ -342,6 +343,34 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
         )
         serializer = WorkspaceMemberMeSerializer(workspace_member)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# For WorkspaceMember fields:
+# - getting_started_checklist
+# - tips
+# - explored_features
+class WorkspaceMemberUserOnboardingEndpoint(BaseAPIView):
+    def patch(self, request, slug):
+        try:
+            workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member_id=request.user.id)
+
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "You are not a member of this workspace"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = WorkspaceMemberUserOnboardingSerializer(
+            workspace_member,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_200_OK)
 
 
 class WorkspaceProjectMemberEndpoint(BaseAPIView):

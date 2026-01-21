@@ -15,7 +15,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { AlertTriangle, RefreshCw, Hash, Plus } from "lucide-react";
-import { SLACK_INTEGRATION_TRACKER_EVENTS, SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { E_SLACK_ENTITY_TYPE, E_SLACK_PROJECT_UPDATES_EVENTS } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
@@ -227,12 +226,7 @@ export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connect
               {t("slack_integration.project_updates.description")}
             </div>
           </div>
-          <Button
-            variant="secondary"
-            className="h-8 w-8 rounded-sm p-0"
-            onClick={handleOpenCreateModal}
-            data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CHANNEL_MAPPING_HEADER_ADD_BUTTON}
-          >
+          <Button variant="secondary" className="h-8 w-8 rounded-sm p-0" onClick={handleOpenCreateModal}>
             <Plus className="h-5 w-5" />
             <span className="sr-only">{t("slack_integration.project_updates.add_new_project_update")}</span>
           </Button>

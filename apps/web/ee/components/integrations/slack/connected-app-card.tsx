@@ -14,7 +14,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Unplug } from "lucide-react";
-import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -55,11 +54,7 @@ export const ConnectedAppCard = observer(function ConnectedAppCard(props: TConne
           placement="bottom"
           closeOnSelect
           customButton={
-            <Button
-              variant="ghost"
-              loading={isLoading}
-              data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_WORKSPACE_CONTEXT_MENU}
-            >
+            <Button variant="ghost" loading={isLoading}>
               {isLoading ? t("common.disconnecting") : t("common.connected")}
               <ChevronDownIcon height={12} width={12} />
             </Button>

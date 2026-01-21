@@ -11,12 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
@@ -81,21 +80,10 @@ export const PublishTemplateFormRoot = observer(function PublishTemplateFormRoot
         {/* Form Actions */}
         <div className="flex items-center justify-between gap-2 pt-4">
           <div className="flex w-full items-center justify-end gap-2">
-            <Button
-              variant="secondary"
-              className={cn(COMMON_BUTTON_CLASS_NAME)}
-              onClick={handleFormCancel}
-              data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.PUBLISH_FORM_CANCEL_BUTTON}
-            >
+            <Button variant="secondary" className={cn(COMMON_BUTTON_CLASS_NAME)} onClick={handleFormCancel}>
               {t("common.cancel")}
             </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              className={cn("shadow-sm")}
-              loading={isSubmitting}
-              data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.PUBLISH_FORM_SUBMIT_BUTTON}
-            >
+            <Button variant="primary" type="submit" className={cn("shadow-sm")} loading={isSubmitting}>
               {isSubmitting ? t("common.confirming") : t("common.save_changes")}
             </Button>
           </div>

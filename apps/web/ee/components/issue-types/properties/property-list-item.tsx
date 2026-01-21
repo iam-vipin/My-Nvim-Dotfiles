@@ -59,12 +59,6 @@ type TIssuePropertyListItem = {
   operationMode?: TOperationMode;
   customPropertyOperations: TCustomPropertyOperations;
   isUpdateAllowed: boolean;
-  trackers?: {
-    [key in "create" | "update" | "delete" | "quickActions"]?: {
-      button?: string;
-      eventName?: string;
-    };
-  };
 };
 
 export type TIssuePropertyFormError = {
@@ -79,14 +73,8 @@ const defaultIssuePropertyError: TIssuePropertyFormError = {
 };
 
 export const IssuePropertyListItem = observer(function IssuePropertyListItem(props: TIssuePropertyListItem) {
-  const {
-    customPropertyId,
-    issuePropertyCreateListData,
-    operationMode,
-    customPropertyOperations,
-    isUpdateAllowed,
-    trackers,
-  } = props;
+  const { customPropertyId, issuePropertyCreateListData, operationMode, customPropertyOperations, isUpdateAllowed } =
+    props;
   const {
     getPropertyDetail,
     getSortedActivePropertyOptions,
@@ -475,7 +463,6 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
               onDisable={async () => handlePropertyDataChange("is_active", false, true)}
               onDelete={handleDelete}
               onIssuePropertyOperationMode={(mode) => setIssuePropertyOperationMode(mode)}
-              trackers={trackers}
             />
           </div>
         </div>

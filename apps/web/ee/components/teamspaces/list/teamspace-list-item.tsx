@@ -15,7 +15,6 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { TeamsIcon } from "@plane/propel/icons";
 // components
@@ -72,14 +71,10 @@ export const TeamspaceListItem = observer(function TeamspaceListItem(props: Team
                 teamspaceId={teamspaceId}
                 workspaceSlug={workspaceSlug.toString()}
                 isEditingAllowed={isEditingAllowed && isTeamspaceMember}
-                trackerElement={TEAMSPACE_TRACKER_ELEMENTS.LIST_ITEM_QUICK_ACTIONS}
               />
             </>
           ) : (
-            <JoinTeamspaceButton
-              teamspaceId={teamspaceId}
-              trackerElement={TEAMSPACE_TRACKER_ELEMENTS.LIST_ITEM_JOIN_BUTTON}
-            />
+            <JoinTeamspaceButton teamspaceId={teamspaceId} />
           )}
         </>
       }

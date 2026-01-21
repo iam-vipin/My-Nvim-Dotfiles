@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { Shapes } from "lucide-react";
 import { PlusIcon } from "@plane/propel/icons";
 // ui
-import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ETemplateType } from "@plane/types";
@@ -165,7 +165,6 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
             variant="ghost"
             className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded-sm text-caption-sm-medium text-secondary hover:bg-layer-transparent-hover"
             onClick={redirectToCreateTemplatePage}
-            data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_PROJECT_MODAL_CREATE_BUTTON}
           >
             <PlusIcon className="size-3.5" />
             {t("templates.dropdown.add.project")}

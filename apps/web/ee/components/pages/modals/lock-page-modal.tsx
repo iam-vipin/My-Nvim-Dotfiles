@@ -13,7 +13,6 @@
 
 import { useState } from "react";
 // plane imports
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { ToggleSwitch } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // hooks
@@ -64,7 +63,6 @@ export function LockPageModal({
       }
       successMessage={`Page ${page.is_locked ? "unlocked" : "locked"} successfully.`}
       errorMessage={`Page could not be ${page.is_locked ? "unlocked" : "locked"}. Please try again.`}
-      eventName={page.is_locked ? PROJECT_PAGE_TRACKER_EVENTS.unlock : PROJECT_PAGE_TRACKER_EVENTS.lock}
     />
   );
 }

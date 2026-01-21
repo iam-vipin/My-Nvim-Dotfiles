@@ -32,12 +32,6 @@ type TIssuePropertyList = {
   containerRef: React.RefObject<HTMLDivElement>;
   lastElementRef: React.RefObject<HTMLDivElement>;
   isUpdateAllowed: boolean;
-  trackers?: {
-    [key in "create" | "update" | "delete" | "quickActions"]?: {
-      button?: string;
-      eventName?: string;
-    };
-  };
 };
 
 export const IssuePropertyList = observer(function IssuePropertyList(props: TIssuePropertyList) {
@@ -48,7 +42,6 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
     containerRef,
     lastElementRef,
     isUpdateAllowed,
-    trackers,
   } = props;
 
   const handlePropertiesReorder = useCallback(
@@ -92,7 +85,6 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
                   customPropertyId={property.id}
                   customPropertyOperations={customPropertyOperations}
                   isUpdateAllowed={isUpdateAllowed}
-                  trackers={trackers}
                 />
               </IssuePropertyOptionsProvider>
             )}
@@ -116,7 +108,6 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
               issuePropertyCreateListData={issueProperty}
               customPropertyOperations={customPropertyOperations}
               isUpdateAllowed
-              trackers={trackers}
             />
           </IssuePropertyOptionsProvider>
         ))}

@@ -17,8 +17,6 @@ import { useParams } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Disclosure } from "@headlessui/react";
-// constants
-import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // utils
 import { cn } from "@plane/utils";
 // types
@@ -55,7 +53,6 @@ export const SectionHeader = React.memo(function SectionHeader({
         {sectionType !== "archived" && sectionType !== "shared" && (
           <button
             className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
-            data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.SIDEBAR}
             onClick={() => {
               handleCreatePage(sectionType);
             }}

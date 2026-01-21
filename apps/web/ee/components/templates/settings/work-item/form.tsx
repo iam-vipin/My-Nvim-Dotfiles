@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -268,29 +268,10 @@ export const WorkItemTemplateFormRoot = observer(function WorkItemTemplateFormRo
               </div>
               {/* Form Actions */}
               <div className="flex items-center justify-end gap-2 pt-8 border-t border-subtle">
-                <Button
-                  variant="secondary"
-                  className={cn(COMMON_BUTTON_CLASS_NAME)}
-                  onClick={handleFormCancel}
-                  data-ph-element={
-                    currentLevel === ETemplateLevel.WORKSPACE
-                      ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_CANCEL_BUTTON
-                      : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_CANCEL_BUTTON
-                  }
-                >
+                <Button variant="secondary" className={cn(COMMON_BUTTON_CLASS_NAME)} onClick={handleFormCancel}>
                   {t("common.cancel")}
                 </Button>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className={cn("shadow-sm")}
-                  loading={isSubmitting}
-                  data-ph-element={
-                    currentLevel === ETemplateLevel.WORKSPACE
-                      ? WORKITEM_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_SUBMIT_BUTTON
-                      : WORKITEM_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_SUBMIT_BUTTON
-                  }
-                >
+                <Button variant="primary" type="submit" className={cn("shadow-sm")} loading={isSubmitting}>
                   {isSubmitting
                     ? t("common.confirming")
                     : operation === EWorkItemFormOperation.CREATE

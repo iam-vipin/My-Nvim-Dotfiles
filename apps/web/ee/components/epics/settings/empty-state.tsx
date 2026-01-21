@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -23,7 +22,6 @@ import { EProductSubscriptionEnum } from "@plane/types";
 // plane web hooks
 import { SettingsHeading } from "@/components/settings/heading";
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { epicsTrackers } from "../trackers";
 
 type TIssueTypeEmptyState = {
   workspaceSlug: string;
@@ -45,12 +43,8 @@ export const EpicsEmptyState = observer(function EpicsEmptyState(props: TIssueTy
   // derived values
   const isEpicsSettingsEnabled = useFlag(workspaceSlug, "EPICS");
 
-  // trackers
-  const trackers = epicsTrackers({ workspaceSlug, projectId });
-
   // handlers
   const handleEnableEpic = async () => {
-    trackers.toggleEpicsClicked();
     setIsLoading(true);
     await enableEpics(workspaceSlug, projectId)
       .then(() => {
@@ -59,7 +53,6 @@ export const EpicsEmptyState = observer(function EpicsEmptyState(props: TIssueTy
           title: "Success!",
           message: "Epics is enabled for this project",
         });
-        trackers.toggleEpicsSuccess("enable");
       })
       .catch(() => {
         setToast({
@@ -67,7 +60,6 @@ export const EpicsEmptyState = observer(function EpicsEmptyState(props: TIssueTy
           title: "Error!",
           message: "Failed to enable epics",
         });
-        trackers.toggleEpicsError("enable");
       })
       .finally(() => {
         setIsLoading(false);

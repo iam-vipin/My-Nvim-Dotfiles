@@ -28,18 +28,12 @@ type TIssuePropertyQuickActions = {
   onDisable: () => Promise<void>;
   onDelete: () => Promise<void>;
   onIssuePropertyOperationMode: (mode: TOperationMode) => void;
-  trackers?: {
-    [key in "create" | "update" | "delete" | "quickActions"]?: {
-      button?: string;
-      eventName?: string;
-    };
-  };
 };
 
 export const IssuePropertyQuickActions = observer(function IssuePropertyQuickActions(
   props: TIssuePropertyQuickActions
 ) {
-  const { isPropertyDisabled, onDisable, onDelete, onIssuePropertyOperationMode, trackers } = props;
+  const { isPropertyDisabled, onDisable, onDelete, onIssuePropertyOperationMode } = props;
   // plane hooks
   const { t } = useTranslation();
   // states

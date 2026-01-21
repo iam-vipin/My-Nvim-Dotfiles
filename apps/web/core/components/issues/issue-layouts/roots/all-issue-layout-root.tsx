@@ -11,17 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
-// assets
-import emptyView from "@/app/assets/empty-state/view.svg?url";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceActiveLayout } from "@/components/views/helper";
@@ -156,14 +154,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
         {({ filter: globalWorkItemsFilter }) => (
           <div className="h-full overflow-hidden bg-surface-1">
             <div className="flex h-full w-full flex-col border-b border-strong">
-              {globalWorkItemsFilter && (
-                <WorkItemFiltersRow
-                  filter={globalWorkItemsFilter}
-                  trackerElements={{
-                    saveView: GLOBAL_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON,
-                  }}
-                />
-              )}
+              {globalWorkItemsFilter && <WorkItemFiltersRow filter={globalWorkItemsFilter} />}
               <WorkspaceActiveLayout
                 activeLayout={activeLayout}
                 isDefaultView={isDefaultView}

@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
 import { ToggleSwitch } from "@plane/ui";
@@ -59,5 +58,5 @@ export function ProjectFeatureToggle(props: Props) {
     );
   }
 
-  return <ToggleSwitch {...toggleSwitchProps} data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE} />;
+  return <ToggleSwitch {...toggleSwitchProps} />;
 }

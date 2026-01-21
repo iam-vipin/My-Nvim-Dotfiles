@@ -14,7 +14,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
@@ -60,11 +59,7 @@ export const InstallationCard = observer(function InstallationCard(props: TInsta
             <Loader.Item width="70px" height="30px" />
           </Loader>
         ) : (
-          <Button
-            onClick={handleInstall}
-            loading={isAppInstalling}
-            data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_APP_BUTTON}
-          >
+          <Button onClick={handleInstall} loading={isAppInstalling}>
             {isAppInstalling ? t("common.installing") : t("common.install")}
           </Button>
         )}

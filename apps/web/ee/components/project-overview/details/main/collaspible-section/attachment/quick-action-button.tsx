@@ -19,7 +19,6 @@ import { useDropzone } from "react-dropzone";
 
 import { PlusIcon } from "@plane/propel/icons";
 // plane ui
-import { PROJECT_OVERVIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 // plane web hooks
@@ -95,12 +94,7 @@ export const ProjectAttachmentActionButton = observer(function ProjectAttachment
         e.stopPropagation();
       }}
     >
-      <button
-        {...getRootProps()}
-        type="button"
-        disabled={disabled}
-        data-ph-element={PROJECT_OVERVIEW_TRACKER_ELEMENTS.ATTACHMENT_DROPZONE}
-      >
+      <button {...getRootProps()} type="button" disabled={disabled}>
         <input {...getInputProps()} />
         {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
       </button>

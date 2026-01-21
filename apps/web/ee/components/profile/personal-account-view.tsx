@@ -13,7 +13,6 @@
 
 // plane imports
 import type { TPersonalAccountProvider, TUserConnection } from "@plane/constants";
-import { USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { GithubIcon, SlackIcon } from "@plane/propel/icons";
 import { CONFIG_VIEWS } from "./config-views";
@@ -73,7 +72,6 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
             onClick={isUserConnected ? () => handleDisconnection(provider.key) : () => handleConnection(provider.key)}
             variant={isUserConnected ? "error-outline" : "primary"}
             className="w-20 h-6 ml-auto"
-            data-ph-element={USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS.CONNECTION_CONNECT_DISCONNECT_BUTTON}
           >
             {isUserConnected ? "Disconnect" : "Connect"}
           </Button>
@@ -84,7 +82,6 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
             onClick={isUserConnected ? () => handleDisconnection(provider.key) : () => handleConnection(provider.key)}
             variant={isUserConnected ? "error-outline" : "primary"}
             className="w-20 h-6 ml-auto"
-            data-ph-element={USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS.CONNECTION_CONNECT_DISCONNECT_BUTTON}
           >
             {isUserConnected ? "Disconnect" : "Connect"}
           </Button>

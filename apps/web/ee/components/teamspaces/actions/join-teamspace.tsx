@@ -23,7 +23,6 @@ import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type TJoinTeamButtonProps = {
   teamspaceId: string;
-  trackerElement?: string;
 };
 
 export const JoinTeamspaceButton = observer(function JoinTeamspaceButton(props: TJoinTeamButtonProps) {

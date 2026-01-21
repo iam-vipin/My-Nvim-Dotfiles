@@ -12,8 +12,6 @@
  */
 
 import type { AsanaPATAuthState } from "@plane/etl/asana";
-// plane web types
-import type { TStepperBlock } from "@/plane-web/silo/types/ui";
 
 // authentication PAT form field types
 export type TAsanaPATFormFields = Omit<AsanaPATAuthState, "workspaceId" | "userId" | "apiToken">;
@@ -32,6 +30,16 @@ export type TImporterStepKeys =
   | E_IMPORTER_STEPS.MAP_STATES
   | E_IMPORTER_STEPS.MAP_PRIORITY
   | E_IMPORTER_STEPS.SUMMARY;
+
+export type TStepperBlock<T> = {
+  key: T;
+  icon?: () => React.ReactNode;
+  i18n_title: string;
+  i18n_description: string;
+  component: () => React.ReactNode;
+  prevStep: T | undefined;
+  nextStep: T | undefined;
+};
 
 export type TImporterStep = TStepperBlock<TImporterStepKeys>;
 

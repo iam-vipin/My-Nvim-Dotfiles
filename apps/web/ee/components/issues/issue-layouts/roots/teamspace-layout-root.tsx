@@ -11,12 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
@@ -111,14 +110,7 @@ export const TeamspaceLayoutRoot = observer(function TeamspaceLayoutRoot() {
       >
         {({ filter: teamspaceWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {teamspaceWorkItemsFilter && (
-              <WorkItemFiltersRow
-                filter={teamspaceWorkItemsFilter}
-                trackerElements={{
-                  saveView: TEAMSPACE_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON,
-                }}
-              />
-            )}
+            {teamspaceWorkItemsFilter && <WorkItemFiltersRow filter={teamspaceWorkItemsFilter} />}
             <TeamspaceWorkItemLayoutContent issueLoader={issueLoader} teamspaceId={teamspaceId} />
             <IssuePeekOverview />
           </div>

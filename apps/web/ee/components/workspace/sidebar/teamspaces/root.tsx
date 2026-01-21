@@ -17,7 +17,7 @@ import { useParams } from "next/navigation";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
@@ -90,7 +90,6 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
                   onClick={() => {
                     toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
                   }}
-                  data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.APP_SIDEBAR_ADD_BUTTON}
                   className="hidden group-hover:inline-flex text-placeholder"
                   aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                 />

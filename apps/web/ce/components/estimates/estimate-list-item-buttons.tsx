@@ -12,7 +12,6 @@
  */
 
 import { observer } from "mobx-react";
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { TrashIcon } from "@plane/propel/icons";
 
 type TEstimateListItem = {
@@ -33,7 +32,6 @@ export const EstimateListItemButtons = observer(function EstimateListItemButtons
       <button
         className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded-sm cursor-pointer transition-colors overflow-hidden hover:bg-layer-1"
         onClick={() => onDeleteClick && onDeleteClick(estimateId)}
-        data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
       >
         <TrashIcon width={12} height={12} />
       </button>

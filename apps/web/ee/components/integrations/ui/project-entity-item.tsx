@@ -12,7 +12,6 @@
  */
 
 import { EditIcon, TrashIcon, PlaneLogo } from "@plane/propel/icons";
-import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { IProject } from "@plane/types";
@@ -56,7 +55,6 @@ export function ProjectEntityItem(props: TProjectEntityItem) {
             variant="secondary"
             className="h-7 w-7 rounded-md p-0 hover:bg-accent-primary/10 hover:text-accent-primary transition-colors"
             onClick={handleEditOpen}
-            data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >
             <EditIcon className="h-3.5 w-3.5" />
           </Button>
@@ -64,7 +62,6 @@ export function ProjectEntityItem(props: TProjectEntityItem) {
             variant="secondary"
             className="h-7 w-7 rounded-md p-0 hover:bg-danger-subtle hover:text-danger-primary transition-colors"
             onClick={handleDeleteOpen}
-            data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >
             <TrashIcon className="h-3.5 w-3.5" />
           </Button>

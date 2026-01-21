@@ -33,11 +33,10 @@ type Props = {
   isEditingAllowed: boolean;
   hideEdit?: boolean;
   buttonClassName?: string;
-  trackerElement: string;
 };
 
 export const TeamQuickActions = observer(function TeamQuickActions(props: Props) {
-  const { teamspaceId, workspaceSlug, parentRef, isEditingAllowed, hideEdit, buttonClassName, trackerElement } = props;
+  const { teamspaceId, workspaceSlug, parentRef, isEditingAllowed, hideEdit, buttonClassName } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks

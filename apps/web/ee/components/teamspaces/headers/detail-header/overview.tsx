@@ -16,7 +16,6 @@ import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
 import { LinkIcon } from "@plane/propel/icons";
 // plane imports
-import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
@@ -84,7 +83,6 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
         isEditingAllowed={isEditingAllowed && isTeamspaceMember}
         buttonClassName={commonButtonClassName}
         hideEdit
-        trackerElement={TEAMSPACE_TRACKER_ELEMENTS.HEADER_QUICK_ACTIONS}
       />
     </div>
   );

@@ -28,7 +28,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports
-import { epicsTrackers } from "../trackers";
 import { EpicsEmptyState } from "./empty-state";
 import { EpicPropertiesRoot } from "./epics-properties";
 
@@ -48,12 +47,8 @@ export const EpicsRoot = observer(function EpicsRoot() {
   const projectFeatures = getProjectFeatures(projectId?.toString());
   const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
-  // trackers
-  const trackers = epicsTrackers({ workspaceSlug: workspaceSlug?.toString(), projectId: projectId?.toString() });
-
   const handleEnableDisableEpic = async () => {
     setIsLoading(true);
-    trackers.toggleEpicsClicked();
 
     const epicStatusPromise = isEpicsEnabled
       ? disableEpics(workspaceSlug?.toString(), projectId?.toString())
@@ -72,14 +67,7 @@ export const EpicsRoot = observer(function EpicsRoot() {
       },
     });
 
-    // trackers
-    await epicStatusPromise
-      .then(() => {
-        trackers.toggleEpicsSuccess(isEpicsEnabled ? "disable" : "enable");
-      })
-      .catch(() => {
-        trackers.toggleEpicsError(isEpicsEnabled ? "disable" : "enable");
-      });
+    await epicStatusPromise;
 
     setIsLoading(false);
   };

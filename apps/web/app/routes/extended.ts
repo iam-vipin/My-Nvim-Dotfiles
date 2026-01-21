@@ -527,11 +527,6 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
               ":workspaceSlug/settings/projects/:projectId/epics",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/epics/page.tsx"
             ),
-            // Project Integrations
-            route(
-              ":workspaceSlug/settings/projects/:projectId/integrations",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/integrations/page.tsx"
-            ),
             // Project Updates
             route(
               ":workspaceSlug/settings/projects/:projectId/project-updates",

@@ -11,21 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { v4 } from "uuid";
+// plane imports
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
-// plane constants
-// plane i18n
-import { CUSTOMER_PROPERTY_TRACKER_ELEMENTS, CUSTOMER_PROPERTY_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// plane types
 import { Button } from "@plane/propel/button";
 import type { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
-// plane ui
 import { Collapsible } from "@plane/ui";
-// helpers
 import { cn } from "@plane/utils";
 // plane web components
 import { CustomerPropertiesEmptyState } from "@/plane-web/components/customers/settings/properties";
@@ -138,18 +132,6 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
                 lastElementRef={lastElementRef}
                 properties={sortedProperties}
                 isUpdateAllowed={false}
-                trackers={{
-                  create: {
-                    button: CUSTOMER_PROPERTY_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON,
-                    eventName: CUSTOMER_PROPERTY_TRACKER_EVENTS.CREATE,
-                  },
-                  update: {
-                    eventName: CUSTOMER_PROPERTY_TRACKER_EVENTS.UPDATE,
-                  },
-                  delete: {
-                    eventName: CUSTOMER_PROPERTY_TRACKER_EVENTS.DELETE,
-                  },
-                }}
               />
               <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
                 <Button
@@ -161,7 +143,6 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
                       ...defaultCustomProperty,
                     });
                   }}
-                  data-ph-element={CUSTOMER_PROPERTY_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON}
                 >
                   <PlusIcon className="h-3.5 w-3.5" />
                   {t("customers.properties.add.primary_button")}

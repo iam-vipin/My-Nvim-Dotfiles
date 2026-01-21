@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { IMPORTER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // helpers
@@ -103,23 +102,13 @@ export function StepperNavigation<T>(props: TStepperNavigation<T>) {
 
   return (
     <div className="shrink-0 relative flex items-center gap-2 w-full py-4 justify-between border-t border-subtle">
-      <Button
-        variant="secondary"
-        onClick={() => handleStep("previous")}
-        disabled={currentStep?.prevStep === undefined}
-        data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_CONFIRGURE_BACK_BUTTON}
-      >
+      <Button variant="secondary" onClick={() => handleStep("previous")} disabled={currentStep?.prevStep === undefined}>
         {t("common.back")}
       </Button>
       {children ? (
         children
       ) : (
-        <Button
-          variant="secondary"
-          onClick={() => handleStep("next")}
-          disabled={currentStep?.nextStep === undefined}
-          data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_CONFIRGURE_NEXT_BUTTON}
-        >
+        <Button variant="secondary" onClick={() => handleStep("next")} disabled={currentStep?.nextStep === undefined}>
           {t("common.next")}
         </Button>
       )}

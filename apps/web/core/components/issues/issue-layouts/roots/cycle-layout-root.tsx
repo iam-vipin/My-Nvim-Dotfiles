@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { TransferIssues } from "@/components/cycles/transfer-issues";
@@ -118,14 +118,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
                   disabled={!isEmpty(cycleDetails?.progress_snapshot)}
                 />
               )}
-              {cycleWorkItemsFilter && (
-                <WorkItemFiltersRow
-                  filter={cycleWorkItemsFilter}
-                  trackerElements={{
-                    saveView: PROJECT_VIEW_TRACKER_ELEMENTS.CYCLE_HEADER_SAVE_AS_VIEW_BUTTON,
-                  }}
-                />
-              )}
+              {cycleWorkItemsFilter && <WorkItemFiltersRow filter={cycleWorkItemsFilter} />}
               <div className="h-full w-full overflow-auto">
                 <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId} isCompletedCycle={isCompletedCycle} />
               </div>

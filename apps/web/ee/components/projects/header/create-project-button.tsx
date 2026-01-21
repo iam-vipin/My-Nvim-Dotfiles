@@ -11,10 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
@@ -34,7 +33,6 @@ export const ProjectCreateButton = observer(function ProjectCreateButton() {
   if (!isAuthorizedUser) return <></>;
   return (
     <Button
-      data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
       onClick={() => {
         toggleCreateProjectModal(true);
       }}

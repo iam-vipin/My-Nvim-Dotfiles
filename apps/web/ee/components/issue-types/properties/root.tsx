@@ -31,8 +31,6 @@ import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// plane web imports
-import { epicsPropertiesTrackers } from "@/plane-web/components/epics/trackers";
 // local imports
 import { IssueTypePropertiesEmptyState } from "./empty-state";
 import { IssuePropertyList } from "./property-list";
@@ -106,15 +104,6 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
     }
   }, []);
 
-  const trackers = useMemo(
-    () =>
-      epicsPropertiesTrackers({
-        workspaceSlug: currentWorkspace?.slug,
-        projectId: issueType?.project_ids?.[0],
-      }),
-    [currentWorkspace?.slug, issueType?.project_ids]
-  );
-
   const customPropertyOperations = useMemo(
     () => ({
       // helper method to get the property detail
@@ -127,46 +116,25 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
       },
       // helper method to create a property
       createProperty: async (data: TIssuePropertyPayload) => {
-        try {
-          trackers.epicPropertyOperation("create", data.id, data.is_active);
-          const response = await issueType?.createProperty?.(data);
-          trackers.epicPropertyOperationSuccess("create", data.id);
-          return response;
-        } catch (error) {
-          trackers.epicPropertyOperationError("create", error as Error, data.id);
-          throw error;
-        }
+        const response = await issueType?.createProperty?.(data);
+        return response;
       },
       // helper method to update a property
       updateProperty: async (propertyId: string, data: TIssuePropertyPayload) => {
-        try {
-          const updatedProperty = issueType?.getPropertyById(propertyId)?.updateProperty;
-          if (!updatedProperty) return;
-          trackers.epicPropertyOperation("update", propertyId, data.is_active);
-          await updatedProperty(issueTypeId, data);
-          trackers.epicPropertyOperationSuccess("update", propertyId);
-        } catch (error) {
-          trackers.epicPropertyOperationError("update", error as Error, propertyId);
-          throw error;
-        }
+        const updatedProperty = issueType?.getPropertyById(propertyId)?.updateProperty;
+        if (!updatedProperty) return;
+        await updatedProperty(issueTypeId, data);
       },
       // helper method to delete a property
       deleteProperty: async (propertyId: string) => {
-        try {
-          trackers.epicPropertyOperation("delete", propertyId);
-          await issueType?.deleteProperty?.(propertyId);
-          trackers.epicPropertyOperationSuccess("delete", propertyId);
-        } catch (error) {
-          trackers.epicPropertyOperationError("delete", error as Error, propertyId);
-          throw error;
-        }
+        await issueType?.deleteProperty?.(propertyId);
       },
       // helper method to remove a property from the create list
       removePropertyListItem: (value: TIssuePropertyCreateList) => {
         handleIssuePropertyCreateList("remove", value);
       },
     }),
-    [issueType, issueTypeId, handleIssuePropertyCreateList, trackers]
+    [issueType, issueTypeId, handleIssuePropertyCreateList]
   );
 
   return (

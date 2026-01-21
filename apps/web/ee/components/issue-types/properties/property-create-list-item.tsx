@@ -22,12 +22,6 @@ export type TIssuePropertyCreateListItem = {
   issuePropertyCreateListData?: TIssuePropertyCreateList;
   customPropertyOperations: TCustomPropertyOperations;
   isUpdateAllowed: boolean;
-  trackers?: {
-    [key in "create" | "update" | "delete" | "quickActions"]?: {
-      button?: string;
-      eventName?: string;
-    };
-  };
 };
 
 export const IssuePropertyCreateListItem = observer(
@@ -35,7 +29,7 @@ export const IssuePropertyCreateListItem = observer(
     props: TIssuePropertyCreateListItem,
     ref: React.Ref<HTMLDivElement>
   ) {
-    const { issuePropertyCreateListData, customPropertyOperations, isUpdateAllowed, trackers } = props;
+    const { issuePropertyCreateListData, customPropertyOperations, isUpdateAllowed } = props;
 
     return (
       <div ref={ref}>
@@ -44,7 +38,6 @@ export const IssuePropertyCreateListItem = observer(
           operationMode="create"
           customPropertyOperations={customPropertyOperations}
           isUpdateAllowed={isUpdateAllowed}
-          trackers={trackers}
         />
       </div>
     );

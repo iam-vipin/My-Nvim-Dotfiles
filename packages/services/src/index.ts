@@ -16,7 +16,6 @@ export * from "./automations";
 export * from "./developer";
 export * from "./auth";
 export * from "./cycle";
-export * from "./dashboard";
 export * from "./dashboards";
 export * from "./instance";
 export * from "./intake";

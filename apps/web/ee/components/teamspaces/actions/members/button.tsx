@@ -16,7 +16,6 @@ import { observer } from "mobx-react";
 
 import { PlusIcon } from "@plane/propel/icons";
 // helpers
-import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
 import { cn } from "@plane/utils";
 // components
@@ -50,7 +49,6 @@ export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersBu
           size="base"
           icon={PlusIcon}
           onClick={() => setIsAddMembersModalOpen(true)}
-          data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.OVERVIEW_ADD_MEMBER_BUTTON}
           aria-label="Add member"
         />
       )}
@@ -58,7 +56,6 @@ export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersBu
         <button
           className="group flex items-center gap-x-2 cursor-pointer"
           onClick={() => setIsAddMembersModalOpen(true)}
-          data-ph-element={TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_ADD_MEMBER_BUTTON}
         >
           <div
             className={cn(

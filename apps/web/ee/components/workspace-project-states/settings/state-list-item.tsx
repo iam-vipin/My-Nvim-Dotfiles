@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -19,7 +18,6 @@ import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
 import { EditIcon } from "@plane/propel/icons";
-import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DropIndicator } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -203,7 +201,6 @@ export const ProjectStateListItem = observer(function ProjectStateListItem(props
             <button
               className="flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-secondary hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
-              data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >
               <EditIcon className="w-3 h-3" />
             </button>

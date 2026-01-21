@@ -21,8 +21,8 @@ import LinearLogo from "@/app/assets/services/linear.svg?url";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web components
-import type { TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
-import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
+import type { TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
+import { AuthFormInput } from "@/plane-web/components/importers/ui/auth-form-input";
 // plane web types
 import type { TImporterPATError } from "@/plane-web/types";
 import type { TLinearPATFormFields } from "@/plane-web/types/importers/linear";

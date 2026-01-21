@@ -21,8 +21,8 @@ import AsanaLogo from "@/app/assets/services/asana.svg?url";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web components
-import type { TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
-import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
+import type { TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
+import { AuthFormInput } from "@/plane-web/components/importers/ui/auth-form-input";
 // plane web types
 import type { TImporterPATError } from "@/plane-web/types";
 import type { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";

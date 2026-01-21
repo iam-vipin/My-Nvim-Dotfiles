@@ -17,7 +17,7 @@ import { useParams } from "next/navigation";
 import { Circle } from "lucide-react";
 import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -120,7 +120,6 @@ export const AdvancedIssuesHeader = observer(function AdvancedIssuesHeader() {
         {canUserCreateIssue ? (
           <Button
             size="lg"
-            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}

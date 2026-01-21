@@ -17,7 +17,6 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // plane imports
-import { TEAMSPACE_UPGRADE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -38,7 +37,6 @@ export const TeamspaceUpgrade = observer(function TeamspaceUpgrade() {
     if (isPlaneOneInstance) {
       return (
         <a
-          data-ph-element={TEAMSPACE_UPGRADE_TRACKER_ELEMENTS.HIGHER_SUBSCRIPTION_BUTTON}
           href="https://prime.plane.so/"
           target="_blank"
           className={getButtonStyling("primary", "base")}
@@ -50,11 +48,7 @@ export const TeamspaceUpgrade = observer(function TeamspaceUpgrade() {
     }
 
     return (
-      <Button
-        data-ph-element={TEAMSPACE_UPGRADE_TRACKER_ELEMENTS.UPGRADE_BUTTON}
-        variant="primary"
-        onClick={() => togglePaidPlanModal(true)}
-      >
+      <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
         <Crown className="h-3.5 w-3.5" />
         Upgrade
       </Button>

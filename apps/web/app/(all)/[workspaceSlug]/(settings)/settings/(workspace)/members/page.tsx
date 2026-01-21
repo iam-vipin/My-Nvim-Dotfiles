@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // types
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
@@ -161,12 +161,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
                     Import
                   </Button>
                 )}
-                <Button
-                  variant="primary"
-                  size="lg"
-                  onClick={() => setInviteModal(true)}
-                  data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
-                >
+                <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
                   {t("workspace_settings.settings.members.add_member")}
                 </Button>
               </>

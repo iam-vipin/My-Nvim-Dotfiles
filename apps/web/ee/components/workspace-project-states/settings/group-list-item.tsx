@@ -11,13 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 
 import { PlusIcon, ChevronDownIcon } from "@plane/propel/icons";
 // helpers
-import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { cn } from "@plane/utils";
 // components
 import {
@@ -83,7 +81,6 @@ export const ProjectStateGroupListItem = observer(function ProjectStateGroupList
         <div
           className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-accent-primary/80 hover:text-accent-primary"
           onClick={() => !createState && setCreateState(true)}
-          data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
         >
           <PlusIcon className="w-4 h-4" />
         </div>

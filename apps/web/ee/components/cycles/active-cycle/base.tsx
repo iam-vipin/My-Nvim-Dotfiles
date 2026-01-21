@@ -13,13 +13,9 @@
 
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 // plane imports
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { useTranslation } from "@plane/i18n";
-// assets
-import activeCycleDark from "@/app/assets/empty-state/cycle/active-dark.webp?url";
-import activeCycleLight from "@/app/assets/empty-state/cycle/active-light.webp?url";
 // local imports
 import ActiveCycleDetail from "./details";
 import { CycleProgressHeader } from "./progress-header";
@@ -36,12 +32,8 @@ export const ActiveCycleBase = observer(function ActiveCycleBase(props: IActiveC
   const { workspaceSlug, projectId, cycleId } = props;
   // plane hooks
   const { t } = useTranslation();
-  // theme hook
-  const { resolvedTheme } = useTheme();
   // store hooks
   const cycleDetails = useCycleDetails({ workspaceSlug, projectId, cycleId });
-  // derived values
-  const activeCycleResolvedPath = resolvedTheme === "light" ? activeCycleLight : activeCycleDark;
 
   if (!cycleDetails.cycle || isEmpty(cycleDetails.cycle))
     return (

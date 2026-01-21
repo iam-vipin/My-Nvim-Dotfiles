@@ -11,12 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
@@ -99,14 +98,7 @@ export const ProjectEpicsLayoutRoot = observer(function ProjectEpicsLayoutRoot()
       >
         {({ filter: epicWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {epicWorkItemsFilter && (
-              <WorkItemFiltersRow
-                filter={epicWorkItemsFilter}
-                trackerElements={{
-                  saveView: PROJECT_VIEW_TRACKER_ELEMENTS.PROJECT_HEADER_SAVE_AS_VIEW_BUTTON,
-                }}
-              />
-            )}
+            {epicWorkItemsFilter && <WorkItemFiltersRow filter={epicWorkItemsFilter} />}
             <div className="relative h-full w-full overflow-auto bg-layer-2">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (

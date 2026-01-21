@@ -12,7 +12,6 @@
  */
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -91,11 +90,7 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
               {t("gitlab_integration.project_connections_description")}
             </div>
           </div>
-          <Button
-            variant="secondary"
-            onClick={() => setModalCreateOpen(true)}
-            data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.GITLAB_ADD_PROJECT_BUTTON}
-          >
+          <Button variant="secondary" onClick={() => setModalCreateOpen(true)}>
             {t("common.add")}
           </Button>
         </div>
@@ -137,11 +132,7 @@ export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
               {t("gitlab_integration.plane_project_connection_description")}
             </div>
           </div>
-          <Button
-            variant="secondary"
-            onClick={() => setModalProjectCreateOpen(true)}
-            data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.PLANE_ADD_PROJECT_BUTTON}
-          >
+          <Button variant="secondary" onClick={() => setModalProjectCreateOpen(true)}>
             {t("common.add")}
           </Button>
         </div>

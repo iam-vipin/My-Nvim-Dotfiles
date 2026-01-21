@@ -13,7 +13,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
-import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EGitlabEntityConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -89,12 +88,7 @@ export const ProjectIssueSyncRoot = observer(function ProjectIssueSyncRoot({
             {t("gitlab_integration.project_issue_sync_description")}
           </div>
         </div>
-        <Button
-          variant="secondary"
-          className="h-8 w-8 rounded-sm p-0"
-          onClick={() => setModalCreateOpen(true)}
-          data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.REPOSITORY_MAPPING_HEADER_ADD_BUTTON}
-        >
+        <Button variant="secondary" className="h-8 w-8 rounded-sm p-0" onClick={() => setModalCreateOpen(true)}>
           <Plus className="h-5 w-5" />
         </Button>
       </div>

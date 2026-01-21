@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionTier, LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EProductSubscriptionTier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IPaymentProduct } from "@plane/types";
@@ -86,7 +86,6 @@ export const SubscriptionButton = observer(function SubscriptionButton(props: TS
       <Button
         variant="primary"
         size="lg"
-        data-ph-element={LICENSE_TRACKER_ELEMENTS.BILLING_PAGE_COMPARISON_SECTION_UPGRADE_BUTTON}
         onClick={() => handleSubscriptionUpgrade(subscriptionType)}
         className={COMMON_BUTTON_STYLE}
         disabled={!!upgradeLoader}

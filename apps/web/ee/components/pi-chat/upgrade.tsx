@@ -16,7 +16,6 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
-import { PLANE_INTELLIGENCE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -37,7 +36,6 @@ export const PiChatUpgrade = observer(function PiChatUpgrade() {
     if (isPlaneOneInstance) {
       return (
         <a
-          data-ph-element={PLANE_INTELLIGENCE_TRACKER_ELEMENTS.HIGHER_SUBSCRIPTION_BUTTON}
           href="https://prime.plane.so/"
           target="_blank"
           className={getButtonStyling("primary", "base")}
@@ -49,11 +47,7 @@ export const PiChatUpgrade = observer(function PiChatUpgrade() {
     }
 
     return (
-      <Button
-        data-ph-element={PLANE_INTELLIGENCE_TRACKER_ELEMENTS.UPGRADE_BUTTON}
-        variant="primary"
-        onClick={() => togglePaidPlanModal(true)}
-      >
+      <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
         Upgrade
       </Button>
     );

@@ -13,7 +13,6 @@
 
 import { observer } from "mobx-react";
 import { LoaderIcon } from "lucide-react";
-import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
@@ -48,7 +47,6 @@ export const TrialDetails = observer(function TrialDetails(props: TTrialDetailsP
   if (isTrialAllowed) {
     return (
       <Button
-        data-ph-element={LICENSE_TRACKER_ELEMENTS.BILLING_PAGE_TRIAL_BUTTON}
         variant="ghost"
         size="lg"
         onClick={() => handleTrial(subscriptionType)}

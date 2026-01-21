@@ -11,12 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
@@ -112,14 +112,7 @@ export const TeamspaceViewLayoutRoot = observer(function TeamspaceViewLayoutRoot
       >
         {({ filter: teamspaceViewWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {teamspaceViewWorkItemsFilter && (
-              <WorkItemFiltersRow
-                filter={teamspaceViewWorkItemsFilter}
-                trackerElements={{
-                  saveView: TEAMSPACE_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON,
-                }}
-              />
-            )}
+            {teamspaceViewWorkItemsFilter && <WorkItemFiltersRow filter={teamspaceViewWorkItemsFilter} />}
             <div className="relative h-full w-full overflow-auto">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (

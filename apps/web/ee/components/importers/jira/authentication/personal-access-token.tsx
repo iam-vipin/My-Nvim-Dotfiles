@@ -23,8 +23,8 @@ import JiraLogo from "@/app/assets/services/jira.svg?url";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web components
-import type { TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
-import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
+import type { TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
+import { AuthFormInput } from "@/plane-web/components/importers/ui/auth-form-input";
 // plane web types
 import type { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
 import ImporterHeader from "../../header";

@@ -11,12 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { ETemplateLevel, PAGE_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TPageTemplateForm, PartialDeep } from "@plane/types";
@@ -111,29 +111,10 @@ export const PageTemplateFormRoot = observer(function PageTemplateFormRoot(props
             {/* Form Actions */}
             <div className="flex items-center justify-end gap-2 pt-8 mt-8 border-t border-subtle">
               <div className="flex items-center justify-end gap-2">
-                <Button
-                  variant="secondary"
-                  className={cn(COMMON_BUTTON_CLASS_NAME)}
-                  onClick={handleFormCancel}
-                  data-ph-element={
-                    props.currentLevel === ETemplateLevel.WORKSPACE
-                      ? PAGE_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_CANCEL_BUTTON
-                      : PAGE_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_CANCEL_BUTTON
-                  }
-                >
+                <Button variant="secondary" className={cn(COMMON_BUTTON_CLASS_NAME)} onClick={handleFormCancel}>
                   {t("common.cancel")}
                 </Button>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className={cn("shadow-sm")}
-                  loading={isSubmitting}
-                  data-ph-element={
-                    props.currentLevel === ETemplateLevel.WORKSPACE
-                      ? PAGE_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_SUBMIT_BUTTON
-                      : PAGE_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_SUBMIT_BUTTON
-                  }
-                >
+                <Button variant="primary" type="submit" className={cn("shadow-sm")} loading={isSubmitting}>
                   {isSubmitting
                     ? t("common.confirming")
                     : operation === EPageFormOperation.CREATE

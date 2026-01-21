@@ -33,13 +33,7 @@ type UpdateTeamspaceProjectsButtonProps = {
   variant?: "default" | "empty-state";
   teamspaceId: string;
   isEditingAllowed: boolean;
-  trackerElement: string;
-  renderButton?: (args: {
-    open: () => void;
-    isEditingAllowed: boolean;
-    areProjectsPresent: boolean;
-    trackerElement: string;
-  }) => ReactNode;
+  renderButton?: (args: { open: () => void; isEditingAllowed: boolean; areProjectsPresent: boolean }) => ReactNode;
 };
 
 const TOOLTIP_CONTENT = "Contact teamspace admin";
@@ -47,7 +41,7 @@ const TOOLTIP_CONTENT = "Contact teamspace admin";
 export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspaceProjectsButton(
   props: UpdateTeamspaceProjectsButtonProps
 ) {
-  const { variant = "default", teamspaceId, isEditingAllowed, trackerElement, renderButton } = props;
+  const { variant = "default", teamspaceId, isEditingAllowed, renderButton } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -98,7 +92,7 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
       />
 
       {renderButton ? (
-        <>{renderButton({ open, isEditingAllowed, areProjectsPresent: Boolean(areProjectsPresent), trackerElement })}</>
+        <>{renderButton({ open, isEditingAllowed, areProjectsPresent: Boolean(areProjectsPresent) })}</>
       ) : (
         <>
           {variant === "default" && (
@@ -109,7 +103,6 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
                 prependIcon={<BriefcaseIcon />}
                 onClick={open}
                 disabled={!isEditingAllowed}
-                data-ph-element={trackerElement}
                 className={cn(
                   "group/projects transition-[width] ease-linear duration-700",
                   !isEditingAllowed && "cursor-not-allowed"
@@ -137,7 +130,6 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
                   className="flex-shrink-0 mt-2 text-caption-sm-medium"
                   onClick={open}
                   disabled={!isEditingAllowed}
-                  data-ph-element={trackerElement}
                 >
                   Link a project
                 </Button>

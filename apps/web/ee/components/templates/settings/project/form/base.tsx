@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { EProjectPriority, PROJECT_TEMPLATE_TRACKER_ELEMENTS, RANDOM_EMOJI_CODES } from "@plane/constants";
+import { EProjectPriority, RANDOM_EMOJI_CODES } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -487,7 +487,6 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                   disabled={isSubmitting}
-                  data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_UPDATE_FORM_CANCEL_BUTTON}
                 >
                   {t("common.cancel")}
                 </Button>
@@ -497,7 +496,6 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
                   className={cn("shadow-sm")}
                   loading={isSubmitting}
                   disabled={isSubmitting}
-                  data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_UPDATE_FORM_SUBMIT_BUTTON}
                 >
                   {isSubmitting
                     ? t("common.confirming")

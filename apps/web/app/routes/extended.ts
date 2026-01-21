@@ -471,8 +471,12 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/(importers)/confluence/page.tsx"
             ),
             route(
-              ":workspaceSlug/settings/imports/csv",
-              "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/(importers)/csv/page.tsx"
+              ":workspaceSlug/settings/imports/csv-import",
+              "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/(importers)/csv-import/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/imports/flatfile",
+              "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/(importers)/flatfile/page.tsx"
             ),
             route(
               ":workspaceSlug/settings/imports/jira",

@@ -61,6 +61,7 @@ import { BaseDashboardsStore } from "./dashboards/base-dashboards.store";
 import type { IGlobalViewStore } from "./global-view.store";
 import { GlobalViewStore } from "./global-view.store";
 import type {
+  ICSVImporterStore,
   IJiraStore,
   IJiraServerStore,
   ILinearStore,
@@ -68,7 +69,15 @@ import type {
   IAsanaStore,
   IZipImporterStore,
 } from "./importers";
-import { JiraStore, JiraServerStore, LinearStore, AsanaStore, FlatfileStore, ZipImporterStore } from "./importers";
+import {
+  CSVImporterStore,
+  JiraStore,
+  JiraServerStore,
+  LinearStore,
+  AsanaStore,
+  FlatfileStore,
+  ZipImporterStore,
+} from "./importers";
 // initiative
 import type { IClickUpStore } from "./importers/clickup/root.store";
 import { ClickUpStore } from "./importers/clickup/root.store";
@@ -159,6 +168,7 @@ export class RootStore extends CoreRootStore {
   globalView: IGlobalViewStore;
   // importers
   jiraImporter: IJiraStore;
+  csvImporter: ICSVImporterStore;
   jiraServerImporter: IJiraServerStore;
   linearImporter: ILinearStore;
   asanaImporter: IAsanaStore;
@@ -229,6 +239,7 @@ export class RootStore extends CoreRootStore {
     this.globalView = new GlobalViewStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
+    this.csvImporter = new CSVImporterStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
@@ -297,6 +308,7 @@ export class RootStore extends CoreRootStore {
     this.globalView = new GlobalViewStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
+    this.csvImporter = new CSVImporterStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);

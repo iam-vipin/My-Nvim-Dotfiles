@@ -75,6 +75,8 @@ class CSVFormatter(BaseFormatter):
 
     def _normalize_header(self, header: str) -> str:
         """Transform 'Display Name' → 'display_name' (reverse of prettify)"""
+        if not header:
+            return ""
         return header.strip().lower().replace(" ", "_")
 
     def _flatten(self, row: Dict, parent_key: str = "") -> Dict:
@@ -155,7 +157,13 @@ class CSVFormatter(BaseFormatter):
 
         # Normalize headers: 'Email' → 'email', 'Display Name' → 'display_name'
         if normalize_headers:
-            rows = [{self._normalize_header(k): v for k, v in row.items()} for row in rows]
+            rows = [
+                {self._normalize_header(k): v for k, v in row.items() if self._normalize_header(k)}
+                for row in rows
+            ]
+        else:
+            # Filter out None/empty headers even without normalization
+            rows = [{k: v for k, v in row.items() if k} for row in rows]
 
         if self.flatten:
             rows = [self._unflatten(row) for row in rows]
@@ -185,6 +193,8 @@ class XLSXFormatter(BaseFormatter):
 
     def _normalize_header(self, header: str) -> str:
         """Transform 'Display Name' → 'display_name' (reverse of prettify)"""
+        if not header:
+            return ""
         return header.strip().lower().replace(" ", "_")
 
     def _format_value(self, value: Any) -> Any:

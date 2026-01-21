@@ -9,13 +9,8 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .issue import IssueExportSerializer, IssueImportSerializer
-from .user import UserImportSerializer
+from .workitem import ProjectWorkItemImportEndpoint
 
 __all__ = [
-    # Export Serializers
-    "IssueExportSerializer",
-    # Import Serializers
-    "IssueImportSerializer",
-    "UserImportSerializer",
+    "ProjectWorkItemImportEndpoint",
 ]

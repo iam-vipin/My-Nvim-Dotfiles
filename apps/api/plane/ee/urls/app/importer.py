@@ -9,13 +9,17 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .issue import IssueExportSerializer, IssueImportSerializer
-from .user import UserImportSerializer
+from django.urls import path
 
-__all__ = [
-    # Export Serializers
-    "IssueExportSerializer",
-    # Import Serializers
-    "IssueImportSerializer",
-    "UserImportSerializer",
+# Module imports
+from plane.ee.views.app.importer import ProjectWorkItemImportEndpoint
+
+urlpatterns = [
+    # Import Work Items from CSV
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/import/",
+        ProjectWorkItemImportEndpoint.as_view(),
+        name="import-work-item",
+    ),
 ]
+

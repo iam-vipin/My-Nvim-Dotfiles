@@ -15,8 +15,8 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { CircleX, Loader, RefreshCcw } from "lucide-react";
-import { InfoIcon, ProjectIcon } from "@plane/propel/icons";
+import { CircleX, Download, InfoIcon, Loader, RefreshCcw } from "lucide-react";
+import { IMPORTER_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TJobStatus } from "@plane/etl/core";
 import { E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
@@ -29,12 +29,17 @@ import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
 import { DashboardLoaderTable, IconFieldRender, SyncJobStatus } from "./";
+import { ProjectIcon } from "@plane/propel/icons";
 
 export type TImporterConfig<T> = {
   serviceName: string;
   hideProject?: boolean;
   hideWorkspace?: boolean;
   hideDeactivate?: boolean;
+  hideBatches?: boolean;
+  hideRerun?: boolean;
+  hideCancel?: boolean;
+  showSummary?: boolean;
   getWorkspaceName: (job: TImportJob<T>) => string;
   getProjectName: (job: TImportJob<T>) => string;
   getPlaneProject: (job: TImportJob<T>) =>
@@ -81,7 +86,18 @@ export interface IBaseDashboardProps<T> {
 
 export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDashboardProps<T>) {
   const { config, useImporterHook } = props;
-  const { serviceName, logo, swrKey, modals, getWorkspaceName, getProjectName, getPlaneProject } = config;
+  const {
+    serviceName,
+    swrKey,
+    modals,
+    getWorkspaceName,
+    getProjectName,
+    getPlaneProject,
+    hideBatches,
+    hideRerun,
+    hideCancel,
+    showSummary,
+  } = config;
   const { t } = useTranslation();
 
   // hooks
@@ -195,6 +211,35 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     }
   };
 
+  const handleDownloadSummary = (job: TImportJob<T>) => {
+    const summary = {
+      job_id: job.id,
+      status: job.status,
+      initiator_id: job.initiator_id,
+      workspace_id: job.workspace_id,
+      config: job.config,
+      report: {
+        total_issue_count: job.report.total_issue_count,
+        imported_issue_count: job.report.imported_issue_count,
+        errored_issue_count: job.report.errored_issue_count,
+        start_time: job.report.start_time,
+        end_time: job.report.end_time,
+      },
+      success_metadata: job.success_metadata,
+      error_metadata: job.error_metadata,
+    };
+
+    const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `import-summary-${job.id}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const RerunModalComponent = modals?.rerun || RerunModal;
   const CancelModalComponent = modals?.cancel || CancelModal;
 
@@ -273,10 +318,15 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                         </td>
                       )}
                       <td className="p-3 whitespace-nowrap text-center">{t("importers.status")}</td>
-                      <td className="p-3 whitespace-nowrap text-center">{t("importers.total_batches")}</td>
-                      <td className="p-3 whitespace-nowrap text-center">{t("importers.imported_batches")}</td>
-                      <td className="p-3 whitespace-nowrap text-center">{t("importers.re_run")}</td>
-                      <td className="p-3 whitespace-nowrap text-center">{t("importers.cancel")}</td>
+                      {!hideBatches && (
+                        <>
+                          <td className="p-3 whitespace-nowrap text-center">{t("importers.total_batches")}</td>
+                          <td className="p-3 whitespace-nowrap text-center">{t("importers.imported_batches")}</td>
+                        </>
+                      )}
+                      {!hideRerun && <td className="p-3 whitespace-nowrap text-center">{t("importers.re_run")}</td>}
+                      {!hideCancel && <td className="p-3 whitespace-nowrap text-center">{t("importers.cancel")}</td>}
+                      {showSummary && <td className="p-3 whitespace-nowrap text-center">Summary</td>}
                       <td className="p-3 whitespace-nowrap text-center">{t("importers.start_time")}</td>
                     </tr>
                   </thead>
@@ -316,32 +366,54 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                             <td className="p-3 whitespace-nowrap text-center">
                               <SyncJobStatus status={job?.status as TJobStatus} />
                             </td>
-                            <td className="p-3 whitespace-nowrap text-center">
-                              {job?.report.total_batch_count || "-"}
-                            </td>
-                            <td className="p-3 whitespace-nowrap text-center">
-                              {job?.report.imported_batch_count || "-"}
-                            </td>
-                            <td className="p-3 whitespace-nowrap text-center flex justify-center">
-                              <Button
-                                variant="link"
-                                prependIcon={<RefreshCcw className="w-3 h-3" />}
-                                onClick={() => handleRerunOpen(job.id)}
-                                disabled={isReRunDisabled(job)}
-                              >
-                                {t("importers.re_run")}
-                              </Button>
-                            </td>
-                            <td className="p-3 whitespace-nowrap text-center">
-                              <Button
-                                variant="error-outline"
-                                prependIcon={<CircleX className="w-3 h-3" />}
-                                onClick={() => handleCancelOpen(job.id)}
-                                disabled={isCancelDisabled(job)}
-                              >
-                                {t("importers.cancel")}
-                              </Button>
-                            </td>
+                            {!hideBatches && (
+                              <>
+                                <td className="p-3 whitespace-nowrap text-center">
+                                  {job?.report.total_batch_count || "-"}
+                                </td>
+                                <td className="p-3 whitespace-nowrap text-center">
+                                  {job?.report.imported_batch_count || "-"}
+                                </td>
+                              </>
+                            )}
+                            {!hideRerun && (
+                              <td className="p-3 whitespace-nowrap text-center flex justify-center">
+                                <Button
+                                  variant="link"
+                                  prependIcon={<RefreshCcw className="w-3 h-3" />}
+                                  onClick={() => handleRerunOpen(job.id)}
+                                  disabled={isReRunDisabled(job)}
+                                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_RE_RUN_BUTTON}
+                                >
+                                  {t("importers.re_run")}
+                                </Button>
+                              </td>
+                            )}
+                            {!hideCancel && (
+                              <td className="p-3 whitespace-nowrap text-center">
+                                <Button
+                                  variant="error-outline"
+                                  prependIcon={<CircleX className="w-3 h-3" />}
+                                  onClick={() => handleCancelOpen(job.id)}
+                                  disabled={isCancelDisabled(job)}
+                                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_CANCEL_BUTTON}
+                                >
+                                  {t("importers.cancel")}
+                                </Button>
+                              </td>
+                            )}
+                            {showSummary && (
+                              <td className="p-3 whitespace-nowrap text-center">
+                                <Button
+                                  variant="secondary"
+                                  prependIcon={<Download className="w-3 h-3" />}
+                                  onClick={() => handleDownloadSummary(job)}
+                                  disabled={job?.status !== E_JOB_STATUS.FINISHED && job?.status !== E_JOB_STATUS.ERROR}
+                                >
+                                  Download
+                                </Button>
+                              </td>
+                            )}
                             <td className="p-3 whitespace-nowrap text-center">
                               {job?.report.start_time
                                 ? `${renderFormattedDate(job?.report.start_time)} ${renderFormattedTime(job?.report.start_time, "12-hour")}`

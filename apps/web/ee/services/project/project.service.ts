@@ -126,6 +126,21 @@ export class ProjectService extends CeProjectService {
         throw error?.response;
       });
   }
+
+  // Work item CSV import
+  async importWorkItemsFromCSV(
+    workspaceSlug: string,
+    projectId: string,
+    assetId: string
+  ): Promise<{ message: string; job_id: string }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/import/`, {
+      asset_id: assetId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 const projectService = new ProjectService();

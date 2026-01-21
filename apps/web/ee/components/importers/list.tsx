@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // assets
 import AsanaLogo from "@/app/assets/services/asana.svg?url";
 import ClickUpLogo from "@/app/assets/services/clickup.svg?url";
 import ConfluenceLogo from "@/app/assets/services/confluence.svg?url";
+import CSVLogo from "@/app/assets/services/csv.svg?url";
 import JiraLogo from "@/app/assets/services/jira.svg?url";
 import LinearLogo from "@/app/assets/services/linear.svg?url";
 import NotionLogo from "@/app/assets/services/notion.svg?url";
@@ -90,6 +90,14 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     title: "Confluence",
     i18n_description: "confluence_importer.confluence_importer_description",
     logo: ConfluenceLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.CSV_IMPORTER,
+    key: "csv-import",
+    title: "CSV",
+    i18n_description: "csv_importer.csv_importer_description",
+    logo: CSVLogo,
     beta: true,
   },
 ];

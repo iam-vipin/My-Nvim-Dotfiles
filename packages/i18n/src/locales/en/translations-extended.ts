@@ -1967,6 +1967,16 @@ export default {
       description_configure_csv: "Please upload your CSV file and configure the fields to be mapped to Plane fields.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Import work items from CSV files into Plane projects.",
+    steps: {
+      title_select_project: "Select Project",
+      description_select_project: "Please select the Plane project where you want to import your work items.",
+      title_upload_csv: "Upload CSV",
+      description_upload_csv:
+        "Upload your CSV file containing work items. The file should include columns for name, description, priority, dates, and state group.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Import your ClickUp data into Plane projects.",
     select_service_space: "Select {serviceName} Space",

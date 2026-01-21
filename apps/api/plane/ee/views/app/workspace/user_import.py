@@ -68,12 +68,14 @@ class WorkspaceMembersImportEndpoint(BaseAPIView):
         result = importer.from_string(content, CSVFormatter())
 
         # Build response from result
-        users_created = sum(
-            1 for item in result.created if isinstance(item, dict) and item.get("user_created")
-        )
-        wm_created = sum(
-            1 for item in result.created if isinstance(item, dict) and item.get("workspace_member_created")
-        )
+        users_created = 0
+        wm_created = 0
+        for item in result.created.values():
+            if isinstance(item, dict):
+                if item.get("user_created"):
+                    users_created += 1
+                if item.get("workspace_member_created"):
+                    wm_created += 1
 
         return Response({
             "total_rows": result.total,

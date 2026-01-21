@@ -33,7 +33,7 @@ export function ImportersListItem(props: Props) {
   const { t } = useTranslation();
   // derived values
   const isFeatureEnabled = useFlag(workspaceSlug, provider.flag);
-  const importerUnderFlags = ["notion", "confluence"];
+  const importerUnderFlags = ["notion", "confluence", "csv-import"];
 
   if (!isFeatureEnabled && importerUnderFlags.includes(provider.key)) {
     return null;

@@ -11,11 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./use-csv-importer";
-export * from "./user-jira";
-export * from "./user-linear";
-export * from "./user-asana";
-export * from "./user-jira-server";
-export * from "./user-flatfile";
-export * from "./use-clickup";
-export * from "./use-zip-importer";
+import { useContext } from "react";
+// context
+import { StoreContext } from "@/lib/store-context";
+// types
+import type { ICSVImporterStore } from "@/plane-web/store/importers/csv";
+
+export const useCSVImporter = (): ICSVImporterStore => {
+  const context = useContext(StoreContext);
+  if (context === undefined) throw new Error("useCSVImporter must be used within StoreProvider");
+
+  return context.csvImporter;
+};

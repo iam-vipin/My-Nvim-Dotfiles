@@ -11,9 +11,216 @@
 
 # Third party imports
 from rest_framework import serializers
+from typing import Dict, Any
 
 # Module imports
 from plane.app.serializers import IssueSerializer
+from plane.app.serializers.base import BaseSerializer
+from plane.db.models import Issue, State, ProjectIssueType, StateGroup
+
+
+class IssueImportSerializer(BaseSerializer):
+    """
+    Import serializer for creating issues from CSV data.
+
+    Accepts simple direct fields and resolves state from state_group.
+
+    Context (required):
+        - project_id: UUID of the project
+
+    Context (optional, for bulk optimization):
+        Use build_context(project_id) to pre-fetch all required data:
+        - state_map: Dict mapping state_group -> State instance
+        - default_state: Default State instance
+        - issue_types: List of IssueType instances
+        - default_issue_type: Default IssueType instance
+    """
+
+    state_group = serializers.ChoiceField(
+        choices=StateGroup.choices,
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="State group to resolve state from: backlog, unstarted, started, completed, cancelled",
+    )
+
+    # Explicitly define fields to handle blank CSV values
+    description_html = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Issue description in HTML format",
+    )
+    priority = serializers.ChoiceField(
+        choices=Issue.PRIORITY_CHOICES,
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Issue priority",
+    )
+    start_date = serializers.DateField(
+        required=False,
+        allow_null=True,
+        help_text="Issue start date (YYYY-MM-DD format)",
+    )
+    target_date = serializers.DateField(
+        required=False,
+        allow_null=True,
+        help_text="Issue target/due date (YYYY-MM-DD format)",
+    )
+
+    class Meta:
+        model = Issue
+        fields = [
+            "name",
+            "description_html",
+            "priority",
+            "start_date",
+            "target_date",
+            "state_group",
+        ]
+
+    @staticmethod
+    def build_context(project_id) -> Dict[str, Any]:
+        """
+        Pre-fetch all required data for bulk import optimization.
+
+        Call this once before processing multiple rows to avoid N+1 queries.
+
+        Args:
+            project_id: The project UUID
+
+        Returns:
+            Dict containing:
+            - state_map: {state_group: State} mapping
+            - default_state: The project's default State
+            - issue_types: List of IssueType instances for the project
+            - default_issue_type: The default IssueType for the project
+        """
+        # Fetch and map states by group
+        states = State.objects.filter(project_id=project_id).order_by("group", "sequence")
+        state_map = {}
+        default_state = None
+
+        for state in states:
+            # Take first state per group (lowest sequence)
+            if state.group not in state_map:
+                state_map[state.group] = state
+            # Track default state
+            if state.default:
+                default_state = state
+
+        # Fetch project issue types with related issue type data
+        project_issue_types = ProjectIssueType.objects.filter(
+            project_id=project_id
+        ).select_related("issue_type").order_by("level")
+
+        # Extract issue types and find default
+        issue_types = []
+        default_issue_type = None
+
+        for pit in project_issue_types:
+            if pit.issue_type and pit.issue_type.is_active:
+                issue_types.append(pit.issue_type)
+                if pit.is_default:
+                    default_issue_type = pit.issue_type
+
+        # Fallback to first issue type if no default found
+        if not default_issue_type and issue_types:
+            default_issue_type = issue_types[0]
+
+        return {
+            "state_map": state_map,
+            "default_state": default_state,
+            "issue_types": issue_types,
+            "default_issue_type": default_issue_type,
+        }
+
+    def to_internal_value(self, data):
+        # Normalize empty or whitespace-only date values to None
+        start_date = data.get("start_date")
+        if not start_date or (isinstance(start_date, str) and start_date.strip() == ""):
+            data["start_date"] = None
+
+        target_date = data.get("target_date")
+        if not target_date or (isinstance(target_date, str) and target_date.strip() == ""):
+            data["target_date"] = None
+
+        return super(IssueImportSerializer, self).to_internal_value(data)
+
+    def validate_description_html(self, value):
+        """Convert blank/empty descriptions to default paragraph."""
+        if not value or value.strip() == "":
+            return "<p></p>"
+        return value
+
+    def validate_priority(self, value):
+        """Convert blank priority to 'none'."""
+        if not value or value == "":
+            return "none"
+        return value
+
+    def _resolve_state(self, state_group):
+        """
+        Resolve state from state_group using cached map or query.
+
+        Args:
+            state_group: The state group name (backlog, unstarted, etc.)
+
+        Returns:
+            State instance or None
+        """
+        if self.context.get("state_map") is None:
+            self.context.update(self.build_context(self.context["project_id"]))
+
+        state_map = self.context.get("state_map")
+        default_state = self.context.get("default_state")
+
+        if not state_group:
+            return default_state
+        return state_map.get(state_group)
+
+    def validate(self, attrs):
+        """Validate date constraints."""
+        start_date = attrs.get("start_date")
+        target_date = attrs.get("target_date")
+
+        if start_date and target_date and start_date > target_date:
+            raise serializers.ValidationError(
+                {"target_date": "Target date cannot be earlier than start date."}
+            )
+
+        return attrs
+
+    def create(self, validated_data):
+        """
+        Create an Issue instance from validated data.
+
+        Resolves state from state_group, assigns default issue type if available,
+        and marks external_source as csv.
+        """
+        project_id = self.context["project_id"]
+
+        # Extract state_group (not a model field)
+        state_group = validated_data.pop("state_group", None)
+
+        # Resolve state from state_group
+        state = self._resolve_state(state_group)
+
+        # Get default issue type from context if available
+        default_issue_type = self.context.get("default_issue_type")
+        type_id = default_issue_type.id if default_issue_type else None
+
+        # Create issue manually to handle created_by_id
+        issue = Issue(
+            **validated_data,
+            project_id=project_id,
+            state=state,
+            type_id=type_id,
+            external_source="csv",
+        )
+        issue.save(created_by_id=self.context.get("created_by_id"))
+
+        return issue
 
 
 class IssueExportSerializer(IssueSerializer):

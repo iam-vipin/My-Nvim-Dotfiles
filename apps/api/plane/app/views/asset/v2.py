@@ -388,6 +388,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
             FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
             FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
+            FileAsset.EntityTypeContext.WORK_ITEM_IMPORT,
             FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
         }
 
@@ -591,6 +592,7 @@ class StaticFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.USER_COVER,
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
+            FileAsset.EntityTypeContext.WORK_ITEM_IMPORT,
             FileAsset.EntityTypeContext.PROJECT_COVER,
             FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
             FileAsset.EntityTypeContext.CUSTOMER_LOGO,

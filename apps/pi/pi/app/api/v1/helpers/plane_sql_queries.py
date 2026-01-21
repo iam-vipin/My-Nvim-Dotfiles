@@ -18,9 +18,16 @@ from typing import Optional
 from typing import Tuple
 
 from pi import logger
+from pi import settings
+from pi.app.utils.encryption import decrypt_from_string
 from pi.core.db.plane import PlaneDBPool
+from pi.core.db.plane import PlaneDBSync
 
 log = logger.getChild("helpers.db_queries")
+
+# Cache for OAuth credentials to avoid repeated database queries
+_oauth_credentials_cache: Optional[Tuple[Optional[str], Optional[str]]] = None
+_oauth_cache_initialized: bool = False
 
 
 async def get_issue_details(issue_id: str) -> Optional[Dict[str, Any]]:
@@ -1101,6 +1108,30 @@ async def get_workspace_plans_batch(workspace_ids: List[str]) -> Dict[str, str]:
     except Exception as e:
         log.error(f"Error fetching workspace plans for {len(workspace_ids)} workspaces: {e}")
         return {}
+
+
+async def get_all_workspace_ids() -> List[str]:
+    """
+    Get all workspace IDs from the Plane database.
+
+    Returns:
+        List of workspace IDs (as strings)
+    """
+    query = """
+    SELECT id::text as workspace_id
+    FROM workspaces
+    WHERE deleted_at IS NULL
+    ORDER BY created_at DESC
+    """
+
+    try:
+        results = await PlaneDBPool.fetch(query)
+        workspace_ids = [row["workspace_id"] for row in results]
+        log.info(f"Fetched {len(workspace_ids)} workspace IDs")
+        return workspace_ids
+    except Exception as e:
+        log.error(f"Error fetching all workspace IDs: {e}")
+        return []
 
 
 async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
@@ -2337,3 +2368,80 @@ async def get_label_details_for_artifact(label_id: str) -> Optional[Dict[str, An
     except Exception as e:
         log.error(f"Error fetching label details for {label_id}: {e}")
         return None
+
+
+def get_oauth_credentials_sync() -> Tuple[Optional[str], Optional[str]]:
+    """
+    Get OAuth credentials with caching (synchronous, for module-level use).
+
+    Loads from application_secrets table where plain text secrets are stored encrypted.
+
+    Returns:
+        Tuple[Optional[str], Optional[str]]: (client_id, client_secret)
+    """
+    global _oauth_credentials_cache, _oauth_cache_initialized
+
+    # Return cached value if already initialized
+    if _oauth_cache_initialized:
+        if _oauth_credentials_cache:
+            return _oauth_credentials_cache
+        return (None, None)
+
+    # Generate keys based on OAuth slug
+    # Key format: x-{slug}-client_id where slug has underscores instead of hyphens
+    slug_key = settings.plane_api.PI_OAUTH_SLUG.replace("-", "_")
+    client_id_key = f"x-{slug_key}-client_id"
+    client_secret_key = f"x-{slug_key}-client_secret"
+
+    # Load from application_secrets table
+    query = """
+    SELECT key, value, is_secured
+    FROM application_secrets
+    WHERE key IN (%s, %s)
+    """
+    try:
+        results = PlaneDBSync.fetch(query, (client_id_key, client_secret_key))
+
+        client_id = None
+        client_secret = None
+
+        if results:
+            for row in results:
+                key = row["key"]
+                value = str(row["value"]) if row["value"] is not None else None
+                is_secured = row.get("is_secured", False)
+
+                if key == client_id_key:
+                    client_id = value
+                elif key == client_secret_key:
+                    # Decrypt the client secret if it's secured
+                    if is_secured and value:
+                        try:
+                            client_secret = decrypt_from_string(value)
+                        except Exception as e:
+                            log.error(f"Failed to decrypt client_secret for slug {settings.plane_api.PI_OAUTH_SLUG}: {e}")
+                            client_secret = None
+                    else:
+                        # If not secured, use the value as-is
+                        client_secret = value
+                        log.debug(f"Loaded unencrypted client_secret for slug: {settings.plane_api.PI_OAUTH_SLUG}")
+
+            if client_id and client_secret:
+                _oauth_credentials_cache = (client_id, client_secret)
+                log.info(f"Loaded OAuth credentials for slug: {settings.plane_api.PI_OAUTH_SLUG}")
+            else:
+                log.warning(f"Incomplete OAuth credentials found for slug: {settings.plane_api.PI_OAUTH_SLUG}")
+        else:
+            log.warning(f"No OAuth credentials found in application_secrets for keys: {client_id_key}, {client_secret_key}")
+    except Exception as e:
+        log.warning(f"Could not load OAuth credentials from database: {e}")
+
+    _oauth_cache_initialized = True
+    return _oauth_credentials_cache or (None, None)
+
+
+def clear_oauth_credentials_cache() -> None:
+    """Clear cached OAuth credentials (useful for testing or credential rotation)."""
+    global _oauth_credentials_cache, _oauth_cache_initialized
+    _oauth_credentials_cache = None
+    _oauth_cache_initialized = False

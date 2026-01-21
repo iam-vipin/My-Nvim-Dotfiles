@@ -132,8 +132,9 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         # Skip feature flag checks if server is not configured
-        if not settings.FEATURE_FLAG_SERVER_AUTH_TOKEN or not settings.FEATURE_FLAG_SERVER_BASE_URL:
-            logger.warning("Feature flag server not configured - skipping feature flag checks")
+        if not settings.FEATURE_FLAG_SERVER_BASE_URL:
+            # if not settings.FEATURE_FLAG_SERVER_AUTH_TOKEN or not settings.FEATURE_FLAG_SERVER_BASE_URL:
+            logger.warning("Feature flag base url not configured - skipping feature flag checks")
             return await call_next(request)
 
         # Check if this endpoint requires feature flag validation

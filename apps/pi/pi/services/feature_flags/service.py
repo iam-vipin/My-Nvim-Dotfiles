@@ -61,7 +61,9 @@ class FeatureFlagService:
             if context.workspace_slug is None:
                 logger.warning(f"workspace_slug is None for feature flag check: {flag}")
                 return False
-            return await is_feature_enabled(flag, context.workspace_slug, context.user_id)
+            result = await is_feature_enabled(flag, context.workspace_slug, context.user_id)
+            logger.info(f"Feature flag {flag} for workspace {context.workspace_slug} : {result}")
+            return result
         except Exception as e:
             logger.error(f"Error checking feature flag {flag}: {e}")
             return False
@@ -119,8 +121,10 @@ class FeatureFlagService:
         return [
             self.flags.PI_CHAT,
             self.flags.PI_DEDUPE,
+            self.flags.PI_CONVERSE,
             self.flags.PI_ACTION_EXECUTION,
             self.flags.PI_SONNET_4,
+            self.flags.PI_FILE_UPLOADS,
         ]
 
 

@@ -9,6 +9,11 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+"""
+API code example generator.
+Converts MDX API documentation to code examples in multiple languages.
+"""
+
 from .mdx_to_code import mdx_to_curl
 from .mdx_to_code import mdx_to_go
 from .mdx_to_code import mdx_to_java
@@ -26,13 +31,21 @@ converters = [
 ]
 
 
-def convert_md_code(mdx_input, converter):
+def convert_md_code(mdx_input: str, converter) -> str:
     """Converts MDX content to specific code format using the provided converter."""
     return converter(mdx_input)
 
 
-def process_file_content(file_content):
-    """Processes file content by converting MDX code blocks to multiple language formats."""
+def generate_api_code_examples(file_content: str) -> str:
+    """
+    Processes API reference file content by converting MDX code blocks to multiple language formats.
+
+    Args:
+        file_content: Raw MDX content from API reference file
+
+    Returns:
+        Enhanced content with code examples in multiple languages
+    """
     if "overview" in file_content.lower():
         return file_content
 

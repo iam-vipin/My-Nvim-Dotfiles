@@ -16,6 +16,7 @@ import { PI_URL } from "@plane/constants";
 import type { TDuplicateIssuePayload, TDuplicateIssueResponse } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
+import type { TFeatureFlagsResponse } from "./feature-flag.service";
 
 export class PIService extends APIService {
   constructor() {
@@ -24,6 +25,14 @@ export class PIService extends APIService {
 
   async getDuplicateIssues(data: Partial<TDuplicateIssuePayload>): Promise<TDuplicateIssueResponse> {
     return this.post(`/api/v1/dupes/issues/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getPiFeatureFlag(workspaceSlug: string): Promise<TFeatureFlagsResponse> {
+    return this.get(`/api/v1/flags/`, { params: { workspace_slug: workspaceSlug } })
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

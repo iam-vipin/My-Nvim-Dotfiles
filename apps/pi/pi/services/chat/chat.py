@@ -56,7 +56,6 @@ from .templates import preset_question_flow
 # from .multi_tool_orch import agent_chaining_order
 from .utils import StandardAgentResponse
 from .utils import conv_history_from_app_query
-from .utils import is_model_enabled_for_workspace
 from .utils import process_conv_history
 
 log = logger.getChild(__name__)
@@ -363,7 +362,7 @@ class PlaneChatBot(ChatKit):
         user_id = data.user_id
         # is_temp = data.is_temp
         user_meta = data.context
-        workspace_in_context = data.workspace_in_context if await is_model_enabled_for_workspace(str(chat_id), switch_llm, db) else False
+        workspace_in_context = data.workspace_in_context
         workspace_slug = data.workspace_slug
         attachment_ids = data.attachment_ids or []
         step_order = 0

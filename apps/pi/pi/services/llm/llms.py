@@ -52,9 +52,67 @@ class LLMConfig:
     reasoning_effort: Optional[str] = None
     use_responses_api: Optional[bool] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.seed is None:
             self.seed = settings.llm_config.OPENAI_RANDOM_SEED
+
+    @classmethod
+    def openai(
+        cls,
+        model: str,
+        *,
+        streaming: bool = False,
+        temperature: float = 0.2,
+        seed: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        frequency_penalty: Optional[float] = None,
+        reasoning_effort: Optional[str] = None,
+        use_responses_api: Optional[bool] = None,
+        base_url: Optional[str] = None,
+        api_key: Optional[str] = None,
+    ) -> "LLMConfig":
+        """Create an OpenAI LLM configuration."""
+        return cls(
+            model=model,
+            temperature=temperature,
+            streaming=streaming,
+            seed=seed,
+            max_completion_tokens=max_completion_tokens,
+            frequency_penalty=frequency_penalty,
+            reasoning_effort=reasoning_effort,
+            use_responses_api=use_responses_api,
+            base_url=base_url or settings.llm_config.OPENAI_BASE_URL,
+            api_key=api_key or settings.llm_config.OPENAI_API_KEY,
+        )
+
+    @classmethod
+    def anthropic(
+        cls,
+        model: str,
+        *,
+        streaming: bool = False,
+        temperature: float = 0.2,
+        seed: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        frequency_penalty: Optional[float] = None,
+        reasoning_effort: Optional[str] = None,
+        use_responses_api: Optional[bool] = None,
+        base_url: Optional[str] = None,
+        api_key: Optional[str] = None,
+    ) -> "LLMConfig":
+        """Create an Anthropic LLM configuration (OpenAI-compatible gateway)."""
+        return cls(
+            model=model,
+            temperature=temperature,
+            streaming=streaming,
+            seed=seed,
+            max_completion_tokens=max_completion_tokens,
+            frequency_penalty=frequency_penalty,
+            reasoning_effort=reasoning_effort,
+            use_responses_api=use_responses_api,
+            base_url=base_url or settings.llm_config.CLAUDE_BASE_URL,
+            api_key=api_key or settings.llm_config.CLAUDE_API_KEY,
+        )
 
 
 class TrackedLLM(Runnable):
@@ -229,9 +287,12 @@ def create_openai_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
         "model": config.model,
         "temperature": config.temperature,
         "streaming": config.streaming,
-        "base_url": base_url,
         **overrides,
     }
+
+    # Only include base_url if explicitly provided (for Azure OpenAI, proxies, etc.)
+    if base_url:
+        openai_params["base_url"] = base_url
 
     # Only add seed parameter for non-Claude models (Claude doesn't support seed)
     if config.seed is not None and not config.model.startswith("anthropic."):
@@ -255,11 +316,6 @@ def create_openai_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
     llm = ChatOpenAI(**openai_params)
 
     if track_tokens:
-        # Map LiteLLM model names and internal GPT-5 variants back to database-friendly model keys for token tracking
-        litellm_to_db_mapping = {
-            settings.llm_model.LITE_LLM_CLAUDE_SONNET_4: "claude-sonnet-4",
-        }
-
         # Handle GPT-5 variants - we need to determine which variant based on reasoning_effort
         if config.model == "gpt-5":
             if config.reasoning_effort == "low":
@@ -267,7 +323,7 @@ def create_openai_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
             else:  # medium or any other reasoning effort maps to standard
                 tracking_model_key = "gpt-5-standard"
         else:
-            tracking_model_key = litellm_to_db_mapping.get(config.model, config.model)
+            tracking_model_key = config.model
 
         return TrackedLLM(llm, tracking_model_key)
     else:
@@ -335,43 +391,37 @@ def create_anthropic_llm(config: LLMConfig, track_tokens: bool = True, **overrid
 
 # Pre-configured LLM instances
 _DEFAULT_CONFIGS = {
-    "default": LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=False),
-    "stream": LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=True),
-    "decomposer": LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0, streaming=False),
-    "fast": LLMConfig(model=settings.llm_model.GPT_4O_MINI, temperature=0.2, streaming=False),
-    "fast_stream": LLMConfig(model=settings.llm_model.GPT_4O_MINI, temperature=0.2, streaming=True),
-    "gpt5_standard_default": LLMConfig(
-        model="gpt-5",  # Use base GPT-5 model name for OpenAI API
+    "default": LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=False, temperature=0.2),
+    "stream": LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2),
+    "decomposer": LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=False, temperature=0.0),
+    "fast": LLMConfig.openai(settings.llm_model.GPT_4O_MINI, streaming=False, temperature=0.2),
+    "fast_stream": LLMConfig.openai(settings.llm_model.GPT_4O_MINI, streaming=True, temperature=0.2),
+    "gpt5_standard_default": LLMConfig.openai(
+        "gpt-5",
         streaming=False,
         reasoning_effort="medium",
-        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,
     ),
-    "gpt5_standard_stream": LLMConfig(
-        model="gpt-5",  # Use base GPT-5 model name for OpenAI API
+    "gpt5_standard_stream": LLMConfig.openai(
+        "gpt-5",
         streaming=True,
         reasoning_effort="medium",
-        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,
     ),
-    "gpt5_fast_default": LLMConfig(
-        model="gpt-5",  # Use base GPT-5 model name for OpenAI API
+    "gpt5_fast_default": LLMConfig.openai(
+        "gpt-5",
         streaming=False,
         reasoning_effort="low",
-        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,
     ),
-    "gpt5_fast_stream": LLMConfig(
-        model="gpt-5",  # Use base GPT-5 model name for OpenAI API
+    "gpt5_fast_stream": LLMConfig.openai(
+        "gpt-5",
         streaming=True,
         reasoning_effort="low",
-        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+        use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,
     ),
-    "gpt5_1_default": LLMConfig(
-        model="gpt-5.1",
-        streaming=False,
-    ),
-    "gpt5_1_stream": LLMConfig(
-        model="gpt-5.1",
-        streaming=True,
-    ),
+    "gpt5_1_default": LLMConfig.openai("gpt-5.1", streaming=False),
+    "gpt5_1_stream": LLMConfig.openai("gpt-5.1", streaming=True),
     "gpt5_2_default": LLMConfig(
         model="gpt-5.2",
         streaming=False,
@@ -382,73 +432,17 @@ _DEFAULT_CONFIGS = {
     ),
 }
 
-
-# Anthropic configs
-def _create_anthropic_config(
-    model: str,
-    streaming: bool = False,
-    temperature: float = 0.2,
-) -> LLMConfig:
-    """Factory function to create Anthropic LLM configurations with consistent defaults."""
-    return LLMConfig(
-        model=model,
-        temperature=temperature,
-        streaming=streaming,
-        base_url=settings.llm_config.CLAUDE_BASE_URL,
-        api_key=settings.llm_config.CLAUDE_API_KEY,
-    )
-
-
 _ANTHROPIC_CONFIGS = {
-    "claude-sonnet-4-0-default": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0),
-    "claude-sonnet-4-0-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True),
-    "claude-sonnet-4-0-decomposer": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0),
-    "claude-sonnet-4-0-fast": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0),
-    "claude-sonnet-4-0-fast-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True),
-    "claude-sonnet-4-5-default": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5),
-    "claude-sonnet-4-5-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True),
-    "claude-sonnet-4-5-decomposer": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5),
-    "claude-sonnet-4-5-fast": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5),
-    "claude-sonnet-4-5-fast-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True),
-}
-
-# LiteLLM configs
-_LITE_LLM_CONFIGS = {
-    "claude-sonnet-4-default": LLMConfig(
-        model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-        temperature=0.2,
-        streaming=False,
-        base_url=settings.llm_config.LITE_LLM_HOST,
-        api_key=settings.llm_config.LITE_LLM_API_KEY,
-    ),
-    "claude-sonnet-4-stream": LLMConfig(
-        model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-        temperature=0.2,
-        streaming=True,
-        base_url=settings.llm_config.LITE_LLM_HOST,
-        api_key=settings.llm_config.LITE_LLM_API_KEY,
-    ),
-    "claude-sonnet-4-decomposer": LLMConfig(
-        model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-        temperature=0.2,
-        streaming=False,
-        base_url=settings.llm_config.LITE_LLM_HOST,
-        api_key=settings.llm_config.LITE_LLM_API_KEY,
-    ),
-    "claude-sonnet-4-fast": LLMConfig(
-        model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-        temperature=0.2,
-        streaming=False,
-        base_url=settings.llm_config.LITE_LLM_HOST,
-        api_key=settings.llm_config.LITE_LLM_API_KEY,
-    ),
-    "claude-sonnet-4-fast-stream": LLMConfig(
-        model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-        temperature=0.2,
-        streaming=True,
-        base_url=settings.llm_config.LITE_LLM_HOST,
-        api_key=settings.llm_config.LITE_LLM_API_KEY,
-    ),
+    "claude-sonnet-4-0-default": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0),
+    "claude-sonnet-4-0-stream": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True),
+    "claude-sonnet-4-0-decomposer": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0, temperature=0.0),
+    "claude-sonnet-4-0-fast": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0),
+    "claude-sonnet-4-0-fast-stream": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True),
+    "claude-sonnet-4-5-default": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5),
+    "claude-sonnet-4-5-stream": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True),
+    "claude-sonnet-4-5-decomposer": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, temperature=0.0),
+    "claude-sonnet-4-5-fast": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5),
+    "claude-sonnet-4-5-fast-stream": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True),
 }
 
 
@@ -537,8 +531,6 @@ class LLMFactory:
 
         if config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
-        elif config_name and config_name in _LITE_LLM_CONFIGS:
-            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
             return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
@@ -551,8 +543,6 @@ class LLMFactory:
 
         if config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
-        elif config_name and config_name in _LITE_LLM_CONFIGS:
-            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
             return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
@@ -565,8 +555,6 @@ class LLMFactory:
 
         if config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
-        elif config_name and config_name in _LITE_LLM_CONFIGS:
-            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
             return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
@@ -579,8 +567,6 @@ class LLMFactory:
 
         if config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
-        elif config_name and config_name in _LITE_LLM_CONFIGS:
-            return create_openai_llm(_LITE_LLM_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
             return create_openai_llm(_DEFAULT_CONFIGS[config_name])
         else:
@@ -591,11 +577,13 @@ class LLMFactory:
     def create_openai(cls, **kwargs: Any) -> Any:
         """Create OpenAI model with direct parameters."""
         track_tokens = kwargs.pop("track_tokens", True)
-        config = LLMConfig(
-            model=kwargs.pop("model", settings.llm_model.GPT_4O),
+        config = LLMConfig.openai(
+            kwargs.pop("model", settings.llm_model.GPT_4O),
             temperature=kwargs.pop("temperature", 0.2),
             streaming=kwargs.pop("streaming", False),
             seed=kwargs.pop("seed", settings.llm_config.OPENAI_RANDOM_SEED),
+            base_url=kwargs.pop("base_url", None),
+            api_key=kwargs.pop("api_key", None),
         )
         return create_openai_llm(config, track_tokens=track_tokens, **kwargs)
 
@@ -604,24 +592,25 @@ def get_chat_llm(llm_name: str) -> Any:
     """Get chat LLM by name with fallback handling."""
     try:
         if llm_name.lower() == "gpt-4o":
-            config = LLMConfig(model=settings.llm_model.GPT_4O, temperature=0.2, streaming=True)
+            config = LLMConfig.openai(settings.llm_model.GPT_4O, streaming=True, temperature=0.2)
         elif llm_name.lower() == "gpt-4.1":
-            config = LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=True)
+            config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
         elif llm_name.lower() == "gpt-5-standard":
-            config = LLMConfig(
-                model="gpt-5",  # Use base GPT-5 model name for OpenAI API
+            config = LLMConfig.openai(
+                "gpt-5",
                 streaming=True,
                 reasoning_effort="medium",
-                use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+                use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,
             )
         elif llm_name.lower() == "gpt-5-fast":
-            config = LLMConfig(
-                model="gpt-5",  # Use base GPT-5 model name for OpenAI API
+            config = LLMConfig.openai(
+                "gpt-5",
                 streaming=True,
                 reasoning_effort="low",
-                use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+                use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,
             )
         elif llm_name.lower() == "gpt-5.1":
+            config = LLMConfig.openai("gpt-5.1", streaming=True)
             config = LLMConfig(
                 model="gpt-5.1",
                 streaming=True,
@@ -641,35 +630,19 @@ def get_chat_llm(llm_name: str) -> Any:
                 model="gpt-5-nano",
                 streaming=True,
             )
-        elif llm_name.lower() in ["claude-sonnet-4"]:
-            config = LLMConfig(
-                model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-                temperature=0.2,
-                streaming=True,
-                base_url=settings.llm_config.LITE_LLM_HOST,
-                api_key=settings.llm_config.LITE_LLM_API_KEY,
-            )
         elif llm_name.lower() == "claude-sonnet-4-0":
-            config = _create_anthropic_config(
-                model=settings.llm_model.CLAUDE_SONNET_4_0,
-                streaming=True,
-            )
-            return create_anthropic_llm(config)
+            config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True)
         elif llm_name.lower() == "claude-sonnet-4-5":
-            config = _create_anthropic_config(
-                model=settings.llm_model.CLAUDE_SONNET_4_5,
-                streaming=True,
-            )
-            return create_anthropic_llm(config)
+            config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True)
         else:
             # Fallback to default (GPT-4.1)
-            config = LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=True)
+            config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
 
         return create_openai_llm(config)
 
     except Exception as e:
         log.error(f"Failed to create LLM client ({llm_name!r}): {e}")
-        fallback_config = LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=True)
+        fallback_config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
         return create_openai_llm(fallback_config)
 
 
@@ -684,38 +657,21 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
         model = model_map.get(operation_type.lower(), llm_model)
         # Create a base config and pass SQL-specific parameters via overrides. This keeps the
         # specialised settings local to this helper without extending the generic LLMConfig.
-        if model == "claude-sonnet-4":
-            config = LLMConfig(
-                model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-                temperature=0.2,
+        if model == "claude-sonnet-4-0":
+            config = LLMConfig.anthropic(
+                settings.llm_model.CLAUDE_SONNET_4_0,
                 streaming=False,
-                base_url=settings.llm_config.LITE_LLM_HOST,
-                api_key=settings.llm_config.LITE_LLM_API_KEY,
-            )
-            # Claude doesn't support frequency_penalty, so don't pass it
-            return create_openai_llm(
-                config,
-                max_completion_tokens=4096,
-            )
-        elif model == "claude-sonnet-4-0":
-            config = LLMConfig(
-                model=settings.llm_model.CLAUDE_SONNET_4_0,
                 temperature=0.2,
-                streaming=False,
-                base_url=settings.llm_config.CLAUDE_BASE_URL,
-                api_key=settings.llm_config.CLAUDE_API_KEY,
             )
             return create_anthropic_llm(
                 config,
                 max_completion_tokens=4096,
             )
         elif model == "claude-sonnet-4-5":
-            config = LLMConfig(
-                model=settings.llm_model.CLAUDE_SONNET_4_5,
-                temperature=0.2,
+            config = LLMConfig.anthropic(
+                settings.llm_model.CLAUDE_SONNET_4_5,
                 streaming=False,
-                base_url=settings.llm_config.CLAUDE_BASE_URL,
-                api_key=settings.llm_config.CLAUDE_API_KEY,
+                temperature=0.2,
             )
             return create_anthropic_llm(config, max_completion_tokens=4096)
         elif model in ["gpt-5-standard", "gpt-5-fast"]:
@@ -727,8 +683,8 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
             else:  # gpt-5-fast
                 model_reasoning_effort = "low"
 
-            config = LLMConfig(
-                model="gpt-5",  # Use base GPT-5 model name for OpenAI API
+            config = LLMConfig.openai(
+                "gpt-5",
                 streaming=False,
                 reasoning_effort=model_reasoning_effort,
                 use_responses_api=False,  # Disabled for clean SQL output
@@ -740,10 +696,7 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
             )
         elif model == "gpt-5.1":
             # GPT-5.1 basic config for SQL generation
-            config = LLMConfig(
-                model="gpt-5.1",
-                streaming=False,
-            )
+            config = LLMConfig.openai("gpt-5.1", streaming=False)
             return create_openai_llm(config, max_completion_tokens=4096)
         elif model == "gpt-5.2":
             # GPT-5.2 config for SQL generation with extended context
@@ -753,7 +706,7 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
             )
             return create_openai_llm(config, max_completion_tokens=4096)
         else:
-            config = LLMConfig(model=model, temperature=0.2, streaming=False)
+            config = LLMConfig.openai(model, temperature=0.2, streaming=False)
             return create_openai_llm(
                 config,
                 max_completion_tokens=4096,
@@ -762,20 +715,20 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
 
     except Exception as e:
         log.error(f"Failed to create SQL agent LLM for operation '{operation_type}': {e}")
-        fallback_config = LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=False)
+        fallback_config = LLMConfig.openai(settings.llm_model.GPT_4_1, temperature=0.2, streaming=False)
         return create_openai_llm(fallback_config)
 
 
 def get_dupes_llm() -> BaseLanguageModel:
     """Get specialized LLM for duplicate detection using GPT-4.1 nano for speed and cost efficiency."""
     try:
-        config = LLMConfig(model=settings.llm_model.GPT_4_1_NANO, temperature=0.0, streaming=False)
+        config = LLMConfig.openai(settings.llm_model.GPT_4_1_NANO, temperature=0.0, streaming=False)
         return create_openai_llm(config)
 
     except Exception as e:
         log.error(f"Failed to create dupes LLM: {e}")
         # Fallback to fast LLM if nano is not available
-        fallback_config = LLMConfig(model=settings.llm_model.GPT_4O_MINI, temperature=0.0, streaming=False)
+        fallback_config = LLMConfig.openai(settings.llm_model.GPT_4O_MINI, temperature=0.0, streaming=False)
         return create_openai_llm(fallback_config)
 
 

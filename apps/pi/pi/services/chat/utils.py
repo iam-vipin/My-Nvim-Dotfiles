@@ -24,13 +24,11 @@ from langchain_core.messages import AIMessage
 from langchain_core.messages import BaseMessage
 from langchain_core.messages import HumanMessage
 from pydantic import UUID4
-from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
 from pi.app.api.v1.helpers.plane_sql_queries import get_user_timezone_context_for_prompt
-from pi.app.models import LlmModel
 from pi.services.retrievers.pg_store.attachment import get_attachments_with_base64_data
 
 log = logger.getChild(__name__)
@@ -58,49 +56,6 @@ def mask_uuids_in_text(text: str) -> str:
         return f"xxxx-{uuid_str[-4:]}"
 
     return re.sub(uuid_pattern, replace_uuid, text)
-
-
-async def is_model_enabled_for_workspace(chat_id: str, model_name: str, db: AsyncSession) -> bool:
-    """
-    Check if a model supports workspace context functionality.
-
-    Args:
-        model_name: The model key/name to check (e.g., "gpt-4o", "gpt-4.1", "claude-sonnet-4")
-        db: Database session for querying active models
-
-    Returns:
-        bool: True if the model supports workspace context, False otherwise
-    """
-    try:
-        # Model name mapping for user-friendly names to actual LiteLLM model names
-        model_name_mapping = {
-            "claude-sonnet-4": settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-        }
-
-        # Map user-friendly model names to actual model names for TESTED_FOR_WORKSPACE check
-        actual_model_name = model_name_mapping.get(model_name, model_name)
-
-        # First check if the model is in the tested workspace models list from config
-        if actual_model_name in TESTED_FOR_WORKSPACE:
-            return True
-
-        # As a fallback, check if the model exists and is active in the database
-        stmt = select(LlmModel).where(LlmModel.model_key == model_name, LlmModel.is_active)
-        result = await db.execute(stmt)
-        model = result.scalar_one_or_none()
-        if model is not None:
-            log.warning(
-                f"ChatID: {chat_id} - Input model_name: {model_name} not in TESTED_FOR_WORKSPACE: {TESTED_FOR_WORKSPACE}, but still using it as it is active in the database"  # noqa: E501
-            )  # noqa: E501
-
-        # If model exists and is active, consider it workspace-enabled
-        # This allows for future models to be workspace-enabled by default
-        return model is not None
-
-    except Exception as e:
-        log.error(f"Error checking workspace support for model {model_name}: {e}")
-        # If there's an error, default to False for safety
-        return False
 
 
 # Standard Agent Response Format - All agents should return this format

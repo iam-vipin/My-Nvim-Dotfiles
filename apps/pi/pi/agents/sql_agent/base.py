@@ -224,30 +224,33 @@ async def select_relevant_tables(
     # Handle failure case
     if response == "TABLE_SELECTION_FAILURE":
         log.error("Table selection failed after all retries")
-        # If using GPT-5 models, try fallback with GPT-4.1
-        if llm_model in ["gpt-5-standard", "gpt-5-fast"]:
-            log.info("Attempting table selection fallback with GPT-4.1 due to GPT-5 token limits")
-            try:
-                fallback_response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model="gpt-4.1", chat_id=chat_id)
-                if fallback_response != "TABLE_SELECTION_FAILURE":
-                    log.info("Table selection fallback successful")
-                    # Use the same robust response handling as main flow
-                    parsed_response = fallback_response.get("parsed") if isinstance(fallback_response, dict) else fallback_response
-                    fallback_dict: Dict[str, Any]
+        has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
+        if has_openai_key:
+            fallback_model = settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST.get("openai")
+        else:
+            fallback_model = settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST.get("anthropic")
+        log.info(f"Attempting table selection fallback with {fallback_model} replacing {llm_model}")
+        try:
+            fallback_response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model=fallback_model, chat_id=chat_id)
+            if fallback_response != "TABLE_SELECTION_FAILURE":
+                log.info("Table selection fallback successful")
+                # Use the same robust response handling as main flow
+                parsed_response = fallback_response.get("parsed") if isinstance(fallback_response, dict) else fallback_response
+                fallback_dict: Dict[str, Any]
 
-                    if isinstance(parsed_response, BaseModel):
-                        # Convert Pydantic model to a plain dictionary.
-                        fallback_dict = parsed_response.model_dump()
-                    elif isinstance(parsed_response, dict):
-                        # Already a dictionary – cast for clarity.
-                        fallback_dict = cast(Dict[str, Any], parsed_response)
-                    else:
-                        # Fallback to an empty dictionary for unexpected response types including None.
-                        fallback_dict = {}
+                if isinstance(parsed_response, BaseModel):
+                    # Convert Pydantic model to a plain dictionary.
+                    fallback_dict = parsed_response.model_dump()
+                elif isinstance(parsed_response, dict):
+                    # Already a dictionary – cast for clarity.
+                    fallback_dict = cast(Dict[str, Any], parsed_response)
+                else:
+                    # Fallback to an empty dictionary for unexpected response types including None.
+                    fallback_dict = {}
 
-                    return [fallback_dict]
-            except Exception as e:
-                log.error(f"Table selection fallback also failed: {e}")
+                return [fallback_dict]
+        except Exception as e:
+            log.error(f"Table selection fallback also failed: {e}")
         return [{"relevant_tables": []}]
 
     # Get the parsed structured response for the actual data

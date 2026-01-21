@@ -1496,10 +1496,12 @@ def build_cache_search_body(query_text: str, threshold: float):
     """
     Build the body for the neural search query to the cache index.
     """
+    from pi.services.retrievers.pg_store import get_ml_model_id_sync
+
     return {
         "min_score": threshold,
         "_source": ["retrieved_tables", "query"],
-        "query": {"neural": {"query_vector": {"query_text": query_text, "model_id": settings.vector_db.ML_MODEL_ID, "k": 10}}},
+        "query": {"neural": {"query_vector": {"query_text": query_text, "model_id": get_ml_model_id_sync(), "k": 10}}},
     }
 
 

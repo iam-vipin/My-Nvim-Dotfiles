@@ -24,10 +24,10 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi import settings
 from pi.app.models import LlmModel
 from pi.app.models import LlmModelPricing
 from pi.app.models.llm import LlmModelUsageTracking
-from pi.config import settings
 from pi.core.db.fixtures.llms import LLMS_DATA
 
 log = logger.getChild(__name__)
@@ -35,27 +35,61 @@ log = logger.getChild(__name__)
 
 async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str) -> Union[List[Dict[str, Any]], Tuple[int, Dict[str, str]]]:
     """
-    Retrieves all active LLM models.
+    Retrieves all active LLM models filtered by available API keys.
+
+    Only shows models for which the corresponding API key is configured:
+    - OpenAI models (gpt-*) are shown only if OPENAI_API_KEY is present
+    - Claude models (claude-*) are shown only if CLAUDE_API_KEY is present
+
     Returns either a list of models (success) or a tuple of (status_code, response_content) for errors
     """
     try:
-        models_list = []
+        models_list: list[dict[str, Any]] = []
 
         statement = select(LlmModel).where(LlmModel.is_active.is_(True))  # type: ignore[attr-defined]
         execution = await db.execute(statement)
         db_models = execution.scalars().all()
 
-        # Visible models for users (extendable via feature flags later)
-        # NOTE: Hide gpt-5-standard from user selection to reduce latency
-        user_visible_models = ["gpt-4.1", "gpt-5-fast", "gpt-5.2", "claude-sonnet-4-0", "claude-sonnet-4-5"]
+        # Check which API keys are available
+        has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
+        has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
 
-        # Define desired display order
-        model_order = ["gpt-5.2", "gpt-5-fast", "gpt-4.1", "claude-sonnet-4-5", "claude-sonnet-4-0"]
+        openai_user_visible_models = list(settings.llm_config.USER_VISIBLE_MODELS_OPENAI)
+        anthropic_user_visible_models = list(settings.llm_config.USER_VISIBLE_MODELS_ANTHROPIC)
+
+        # Build a stable, de-duplicated include list preserving configured order.
+        models_to_include: list[str] = []
+        if has_openai_key:
+            models_to_include.extend(openai_user_visible_models)
+        if has_claude_key:
+            models_to_include.extend(anthropic_user_visible_models)
+
+        # De-dupe while preserving order (mypy-friendly).
+        deduped: list[str] = []
+        seen: set[str] = set()
+        for m in models_to_include:
+            if m in seen:
+                continue
+            seen.add(m)
+            deduped.append(m)
+        models_to_include = deduped
+
+        # Default selection preference:
+        # - If OpenAI key exists, prefer OpenAI default (existing behavior).
+        # - Else if Anthropic key exists, prefer Anthropic default.
+        default_model_key = None
+        if has_openai_key:
+            default_model_key = settings.llm_config.PROVIDER_DEFAULT_MODELS.get("openai")
+        elif has_claude_key:
+            default_model_key = settings.llm_config.PROVIDER_DEFAULT_MODELS.get("anthropic")
 
         default_found = False
-        for db_model in db_models:
-            # Only include models that should be visible to users
-            if db_model.model_key not in user_visible_models:
+        order = {key: idx for idx, key in enumerate(models_to_include)}
+        db_models_sorted = sorted(db_models, key=lambda m: order.get(m.model_key, 10**9))
+
+        for db_model in db_models_sorted:
+            # Only include models that should be visible to users and have API keys
+            if db_model.model_key not in models_to_include:
                 continue
             # Map database model to frontend format
             model_entry = {
@@ -63,17 +97,17 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
                 "name": db_model.name,
                 "description": db_model.description or "",
                 "type": "language_model",
-                # Set default model based on config
-                "is_default": (db_model.model_key == settings.llm_model.DEFAULT and not default_found),
+                # Set default model based on availability
+                "is_default": bool(default_model_key and db_model.model_key == default_model_key and not default_found),
             }
             if model_entry["is_default"]:
                 default_found = True
 
             models_list.append(model_entry)
 
-        # Sort models_list based on the defined order
-        # Models not in model_order will appear at the end in their original order
-        models_list.sort(key=lambda x: model_order.index(x["id"]) if x["id"] in model_order else len(model_order))
+        # If the configured default model isn't available/visible, fall back to first model.
+        if models_list and not any(m.get("is_default") for m in models_list):
+            models_list[0]["is_default"] = True
 
         return models_list
     except Exception as e:
@@ -86,7 +120,7 @@ async def get_llm_model_id_from_key(model_key: str, db: Optional[AsyncSession] =
     Get LLM model UUID from model key.
 
     Args:
-        model_key: The model key (e.g., "gpt-4o", "gpt-4.1", "claude-sonnet-4")
+        model_key: The model key (e.g., "gpt-4o", "gpt-4.1")
         db: Database session (optional, will use local mapping if not provided)
 
     Returns:

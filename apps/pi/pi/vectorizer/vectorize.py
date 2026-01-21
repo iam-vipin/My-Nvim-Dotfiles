@@ -32,6 +32,7 @@ from aiolimiter import AsyncLimiter  # New import for Cohere RPM limiting
 from pi import logger
 from pi.config import Settings
 from pi.core.vectordb import VectorStore
+from pi.services.retrievers.pg_store import get_ml_model_id_sync
 
 from .docs import process_repo_contents
 from .utils import _print_start_banner
@@ -45,7 +46,7 @@ BATCH_IN: int = settings.BATCH_SIZE  # texts to embed per /predict call
 BULK_SIZE: int = BATCH_IN  # (Deprecated): docs per bulk-API request
 SCROLL_TIMEOUT: str = settings.SCROLL_TIMEOUT  # keep_alive for PIT id's
 FEED_SLICES: int = settings.FEED_SLICES  # how many parallel scroll slices
-ML_MODEL_ID: str = settings.ML_MODEL_ID  # OpenSearch-ML model id
+ML_MODEL_ID: str | None = get_ml_model_id_sync()  # OpenSearch-ML model id
 MAX_RETRIES: int = 3  # attempts per failed batch
 BULK_CONCURRENCY: int = FEED_SLICES  # simultaneous bulk requests allowed
 WORKSPACE_ID: str | None = None  # Deprecated: use explicit workspace_id param instead

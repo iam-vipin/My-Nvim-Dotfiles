@@ -31,7 +31,6 @@ llm_id_map = {
     "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
     "gpt-5.1": "e8f9a0b1-c2d3-4567-8901-abcdef123456",
     "gpt-5.2": "f9a0b1c2-d3e4-5678-9012-bcdef2345678",
-    "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
     "claude-sonnet-4-0": "60cf738d-3f6b-4fe4-b088-8c902528657f",
     "gpt-5-mini": "5e5d7fa1-0a75-4318-87c6-7595c7b7133d",
     "gpt-5-nano": "0394e887-8140-4505-b4f9-5e9c59b40396",
@@ -105,14 +104,6 @@ LLMS_DATA = [
         "max_tokens": 400000,
     },
     {
-        "id": llm_id_map["claude-sonnet-4"],
-        "name": "Claude Sonnet 4",
-        "description": "Anthropic's Claude Sonnet 4 model.",
-        "provider": "Anthropic",
-        "model_key": "claude-sonnet-4",
-        "max_tokens": 200000,
-    },
-    {
         "id": llm_id_map["claude-sonnet-4-0"],
         "name": "Claude Sonnet 4.0",
         "description": "Anthropic's Claude Sonnet 4.0 model.",
@@ -180,6 +171,7 @@ async def sync_llms():
 
             await session.commit()
             typer.echo("LLMs synced successfully.")
+            typer.echo("-" * 60)
         except Exception as e:
             await session.rollback()
             typer.echo(f"An error occurred during sync: {e}")

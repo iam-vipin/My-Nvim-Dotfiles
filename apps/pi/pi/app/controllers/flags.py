@@ -1,0 +1,185 @@
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+
+"""Feature availability controller.
+
+This module returns a simple `{FEATURE_KEY: bool}` map for a workspace.
+
+Availability rule:
+- If feature-flag server is configured: available = env_ready AND remote_enabled
+- Else: available = env_ready
+"""
+
+from __future__ import annotations
+
+import asyncio
+from dataclasses import dataclass
+from typing import Dict
+from typing import Iterable
+
+from pi import logger
+from pi import settings
+from pi.services.feature_flags import FeatureFlagContext
+from pi.services.feature_flags import feature_flag_service
+
+FeatureKey = str
+
+log = logger.getChild("controllers.flags")
+
+# Dependency map: children depend on parent.
+_DEPENDENCIES: dict[FeatureKey, list[FeatureKey]] = {
+    settings.feature_flags.PI_CHAT: [
+        settings.feature_flags.PI_CONVERSE,
+        settings.feature_flags.PI_FILE_UPLOADS,
+    ]
+}
+
+
+def _has_value(value: object) -> bool:
+    """True iff value is not None and not empty/whitespace when converted to str."""
+    return value is not None and bool(str(value).strip())
+
+
+def _flag_server_configured() -> bool:
+    """Remote flag checks are meaningful only when base URL + auth token exist."""
+    return _has_value(settings.FEATURE_FLAG_SERVER_BASE_URL) and _has_value(settings.FEATURE_FLAG_SERVER_AUTH_TOKEN)
+
+
+async def _get_ml_model_id_source() -> tuple[bool, str]:
+    """
+    Returns:
+        (present, source) where source is one of: "env", "db", "missing"
+    """
+    if _has_value(settings.vector_db.ML_MODEL_ID):
+        return True, "env"
+
+    from pi.services.retrievers.pg_store import get_ml_model_id_sync
+
+    ml_model_id = await asyncio.to_thread(get_ml_model_id_sync)
+    if _has_value(ml_model_id):
+        return True, "db"
+    return False, "missing"
+
+
+@dataclass(frozen=True)
+class _EnvCapabilities:
+    openai_or_claude: bool
+    opensearch: bool
+    cohere: bool
+    ml_model_id: bool
+    ml_model_id_source: str  # "env" | "db" | "missing"
+    groq: bool
+    uploads: bool
+
+    @property
+    def cohere_or_ml_model(self) -> bool:
+        return self.cohere or self.ml_model_id
+
+
+async def _compute_env_capabilities() -> _EnvCapabilities:
+    openai_or_claude = _has_value(settings.llm_config.OPENAI_API_KEY) or _has_value(settings.llm_config.CLAUDE_API_KEY)
+    opensearch = (
+        _has_value(settings.vector_db.OPENSEARCH_URL)
+        and _has_value(settings.vector_db.OPENSEARCH_USER)
+        and _has_value(settings.vector_db.OPENSEARCH_PASSWORD)
+    )
+    cohere = _has_value(settings.llm_config.COHERE_API_KEY)
+    groq = _has_value(settings.llm_config.GROQ_API_KEY)
+    uploads = (
+        _has_value(settings.AWS_ACCESS_KEY_ID)
+        and _has_value(settings.AWS_SECRET_ACCESS_KEY)
+        and _has_value(settings.AWS_S3_BUCKET)
+        and _has_value(settings.AWS_S3_REGION)
+    )
+
+    # ML model id: env fast path, else DB fallback (cached in helper).
+    ml_model_id_source = "env" if _has_value(settings.vector_db.ML_MODEL_ID) else "missing"
+    ml_model_id = _has_value(settings.vector_db.ML_MODEL_ID)
+    if not ml_model_id and not cohere:
+        present, source = await _get_ml_model_id_source()
+        ml_model_id = present
+        ml_model_id_source = source
+
+    return _EnvCapabilities(
+        openai_or_claude=openai_or_claude,
+        opensearch=opensearch,
+        cohere=cohere,
+        ml_model_id=bool(ml_model_id),
+        ml_model_id_source=ml_model_id_source,
+        groq=groq,
+        uploads=uploads,
+    )
+
+
+def _env_readiness_from_caps(caps: _EnvCapabilities) -> Dict[FeatureKey, bool]:
+    return {
+        settings.feature_flags.PI_CHAT: bool(caps.openai_or_claude and caps.opensearch and caps.cohere_or_ml_model),
+        settings.feature_flags.PI_DEDUPE: bool(caps.cohere_or_ml_model),
+        settings.feature_flags.PI_CONVERSE: bool(caps.groq),
+        settings.feature_flags.PI_FILE_UPLOADS: bool(caps.uploads),
+    }
+
+
+def _remote_gated_features() -> Iterable[FeatureKey]:
+    return (
+        settings.feature_flags.PI_CHAT,
+        settings.feature_flags.PI_DEDUPE,
+        settings.feature_flags.PI_CONVERSE,
+    )
+
+
+async def _evaluate_remote_flags(*, user_id: str, workspace_slug: str, flags: Iterable[FeatureKey]) -> Dict[FeatureKey, bool]:
+    context = FeatureFlagContext(user_id=str(user_id), workspace_slug=str(workspace_slug))
+    flags_list = list(flags)
+    results = await asyncio.gather(*(feature_flag_service.is_enabled(flag, context) for flag in flags_list))
+    return dict(zip(flags_list, results, strict=False))
+
+
+def _combine_env_and_remote(env_ready: Dict[FeatureKey, bool], remote_enabled: Dict[FeatureKey, bool]) -> Dict[FeatureKey, bool]:
+    return {k: bool(env_ready.get(k, False) and remote_enabled.get(k, True)) for k in env_ready.keys()}
+
+
+def _apply_dependencies(flags: Dict[FeatureKey, bool]) -> Dict[FeatureKey, bool]:
+    out = dict(flags)
+    for parent, children in _DEPENDENCIES.items():
+        if not out.get(parent, False):
+            for child in children:
+                out[child] = False
+    return out
+
+
+async def get_workspace_feature_availability(
+    *,
+    user_id: str,
+    workspace_slug: str,
+) -> Dict[FeatureKey, bool]:
+    caps = await _compute_env_capabilities()
+    env_ready = _env_readiness_from_caps(caps)
+
+    # No remote server configured: env-only readiness + dependency forcing.
+    if not _flag_server_configured():
+        combined = _apply_dependencies(env_ready)
+        log.info("Flags (env-only): %s", combined)
+        return combined
+
+    remote_enabled = await _evaluate_remote_flags(user_id=user_id, workspace_slug=workspace_slug, flags=_remote_gated_features())
+    combined = _combine_env_and_remote(env_ready, remote_enabled)
+    combined = _apply_dependencies(combined)
+
+    log.info(
+        "Flags computed (workspace_slug=%s) env_ready=%s remote_enabled=%s combined=%s",
+        workspace_slug,
+        env_ready,
+        remote_enabled,
+        combined,
+    )
+
+    return combined

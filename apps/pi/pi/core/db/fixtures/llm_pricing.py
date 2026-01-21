@@ -82,13 +82,6 @@ PRICING_DATA = [
         "cached_text_input_price": 0.175,
     },
     {
-        "id": "7d9e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a",
-        "llm_model_id": llm_id_map["claude-sonnet-4"],
-        "text_input_price": 3.00,
-        "text_output_price": 15.00,
-        "cached_text_input_price": 1.50,
-    },
-    {
         "id": "0344a9f5-92f6-40f8-8cb0-288cf13b0a96",
         "llm_model_id": llm_id_map["claude-sonnet-4-0"],
         "text_input_price": 3.00,
@@ -150,9 +143,9 @@ async def sync_llm_pricing():
                             updated = True
 
                     if updated:
-                        typer.echo(f"Updated pricing for {model_id}")
+                        typer.echo(f"Updated pricing for {llm_model.name}")
                     else:
-                        typer.echo(f"Pricing unchanged for {model_id}")
+                        typer.echo(f"Pricing unchanged for {llm_model.name}")
                 else:
                     new_pricing = LlmModelPricing(
                         id=pricing["id"],
@@ -162,10 +155,11 @@ async def sync_llm_pricing():
                         cached_text_input_price=pricing["cached_text_input_price"],
                     )
                     session.add(new_pricing)
-                    typer.echo(f"Created pricing for {model_id}")
+                    typer.echo(f"Created pricing for {llm_model.name}")
 
             await session.commit()
             typer.echo("LLM pricing synced successfully.")
+            typer.echo("-" * 60)
 
         except Exception as e:
             await session.rollback()

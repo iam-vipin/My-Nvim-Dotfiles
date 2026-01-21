@@ -437,6 +437,7 @@ LIVE_SERVER_SECRET_KEY = os.environ.get("LIVE_SERVER_SECRET_KEY", "")
 PI_BASE_URL = os.environ.get("PI_BASE_URL", "")
 PI_BASE_PATH = os.environ.get("PI_BASE_PATH", "/pi")
 PI_URL = urljoin(PI_BASE_URL, PI_BASE_PATH)
+PI_INTERNAL_SECRET = os.environ.get("PI_INTERNAL_SECRET", "")
 
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")

@@ -18,6 +18,7 @@ from typing import Dict
 from opensearchpy import ConnectionTimeout
 from opensearchpy import OpenSearch
 from opensearchpy import RequestError
+from opensearchpy import TransportError
 from opensearchpy._async.client import AsyncOpenSearch
 
 from pi import logger
@@ -36,7 +37,6 @@ OPENSEARCH_PASSWORD = settings.vector_db.OPENSEARCH_PASSWORD
 ISSUE_INDEX = settings.vector_db.ISSUE_INDEX
 PAGES_INDEX = settings.vector_db.PAGES_INDEX
 DOCS_INDEX = settings.vector_db.DOCS_INDEX
-ML_MODEL_ID = settings.vector_db.ML_MODEL_ID
 WORKSPACE_ID = None  # Deprecated: use explicit workspace_id param instead
 
 
@@ -197,7 +197,9 @@ class VectorStore:
         """
         Synchronously search for similar docs content based on semantic similarity.
         """
-        neural_query = {"neural": {"content_semantic": {"query_text": query, "model_id": ML_MODEL_ID, "k": 10}}}
+        from pi.services.retrievers.pg_store import get_ml_model_id_sync
+
+        neural_query = {"neural": {"content_semantic": {"query_text": query, "model_id": get_ml_model_id_sync(), "k": 10}}}
         response = self.os.search(index=DOCS_INDEX, body={"query": neural_query})
         return parse_semantic_search_response(response, threshold, *output_fields)
 
@@ -210,7 +212,9 @@ class VectorStore:
         """
         Asynchronously search for similar docs content based on semantic similarity.
         """
-        neural_query = {"neural": {"content_semantic": {"query_text": query, "model_id": ML_MODEL_ID, "k": 10}}}
+        from pi.services.retrievers.pg_store import get_ml_model_id_sync
+
+        neural_query = {"neural": {"content_semantic": {"query_text": query, "model_id": get_ml_model_id_sync(), "k": 10}}}
         response = await self.async_os.search(index=DOCS_INDEX, body={"query": neural_query})
         return parse_semantic_search_response(response, threshold, *output_fields)
 
@@ -673,3 +677,127 @@ class VectorStore:
         """
         log.warning("_vector_watch_loop is deprecated - live sync now uses API-driven approach")
         return
+
+    # ──────────────── ML Model Setup Operations ────────────────
+    def configure_ml_commons(self, allow_non_ml_nodes: bool = False) -> dict:
+        """
+        Configure ML Commons settings for OpenSearch.
+
+        Args:
+            allow_non_ml_nodes: If True, allows ML to run on non-ML nodes (useful for dev)
+
+        Returns:
+            dict: OpenSearch cluster settings update response
+        """
+        settings_body = {"persistent": {"plugins.ml_commons.only_run_on_ml_node": not allow_non_ml_nodes}}
+        return self.os.cluster.put_settings(body=settings_body)
+
+    def configure_trusted_endpoints(self, endpoint_patterns: list[str]) -> dict:
+        """
+        Configure trusted connector endpoints for ML Commons.
+
+        Args:
+            endpoint_patterns: List of regex patterns for trusted endpoints
+
+        Returns:
+            dict: OpenSearch cluster settings update response
+        """
+        settings_body = {"persistent": {"plugins.ml_commons.trusted_connector_endpoints_regex": endpoint_patterns}}
+        return self.os.cluster.put_settings(body=settings_body)
+
+    def create_ml_connector(self, connector_config: dict) -> dict:
+        """
+        Create an ML connector in OpenSearch.
+
+        Args:
+            connector_config: Connector configuration dictionary
+
+        Returns:
+            dict: Response containing connector_id
+        """
+        # Let opensearch-py handle JSON serialization so the request matches other
+        # plugin calls like model register/deploy.
+        # log.debug(
+        #     "Creating ML connector with config keys: %s",
+        #     list(connector_config.keys()),
+        # )
+
+        try:
+            response = self.os.transport.perform_request(
+                "POST",
+                "/_plugins/_ml/connectors/_create",
+                body=connector_config,
+            )
+            connector_id = response.get("connector_id")
+            log.debug("Connector created successfully: %s", connector_id)
+            return response
+        except TransportError as e:
+            # Log maximum detail from the server; this usually includes the full
+            # JSON error body from OpenSearch.
+            log.error(
+                "Failed to create ML connector: status=%s error=%s info=%s",
+                getattr(e, "status_code", None),
+                getattr(e, "error", None),
+                getattr(e, "info", None),
+            )
+            raise
+        except Exception as e:
+            log.error("Failed to create ML connector (unexpected): %s", e, exc_info=True)
+            raise
+
+    def register_ml_model(self, model_config: dict) -> dict:
+        """
+        Register an ML model with a connector.
+
+        Args:
+            model_config: Model registration configuration
+
+        Returns:
+            dict: Response containing model_id
+
+        Example model_config:
+            {
+                "name": "cohere_4_0_embed",
+                "function_name": "remote",
+                "connector_id": "connector_id_here",
+                "description": "Cohere embed-v4.0 model"
+            }
+        """
+        return self.os.transport.perform_request("POST", "/_plugins/_ml/models/_register", body=model_config)
+
+    def deploy_ml_model(self, model_id: str) -> dict:
+        """
+        Deploy a registered ML model.
+
+        Args:
+            model_id: OpenSearch ML model ID
+
+        Returns:
+            dict: Deployment response
+        """
+        return self.os.transport.perform_request("POST", f"/_plugins/_ml/models/{model_id}/_deploy")
+
+    def get_ml_model_status(self, model_id: str) -> dict:
+        """
+        Get the status of an ML model.
+
+        Args:
+            model_id: OpenSearch ML model ID
+
+        Returns:
+            dict: Model status information
+        """
+        return self.os.transport.perform_request("GET", f"/_plugins/_ml/models/{model_id}")
+
+    def test_ml_model(self, model_id: str, parameters: dict) -> dict:
+        """
+        Test inference with an ML model.
+
+        Args:
+            model_id: OpenSearch ML model ID
+            parameters: Test parameters (e.g., {"texts": ["hello world"]})
+
+        Returns:
+            dict: Inference response
+        """
+        return self.os.transport.perform_request("POST", f"/_plugins/_ml/models/{model_id}/_predict", body={"parameters": parameters})

@@ -56,7 +56,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // hooks
   const { currentWorkspace } = useWorkspace();
   // store hooks
-  const { fetchFeatureFlags, fetchIntegrations } = useFeatureFlags();
+  const { fetchFeatureFlags, fetchIntegrations, fetchAiFeatureFlags } = useFeatureFlags();
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
@@ -93,7 +93,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false, errorRetryCount: 1 }
   );
-  const flagsLoader = featureFlagsResponse.isLoading;
+  const aiFeatureFlagsResponse: SWRResponse<TFeatureFlagsResponse, Error> = useSWR(
+    workspaceId ? `AI_FLAGS_${workspaceSlug}` : null,
+    workspaceId ? () => fetchAiFeatureFlags(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false, errorRetryCount: 1 }
+  );
+  const flagsLoader = featureFlagsResponse.isLoading || aiFeatureFlagsResponse.isLoading;
   const flagsError = featureFlagsResponse.error;
   // fetching integrations
   useSWR(

@@ -35,13 +35,18 @@ async def is_feature_enabled(feature_flag: str, workspace_slug: str, user_id: st
                 },
                 timeout=10,
             )
+
             if response.status_code == 200:
                 resp = response.json()
-                # logger.info(f"Feature flag response: {resp}")
+
+                if "values" in resp:
+                    return resp["values"].get(feature_flag, False)
+
                 return resp.get("value", False)
-            else:
-                logger.error(f"Failed to fetch feature flag. Status code: {response.status_code}")
-                return False
+
+            logger.error(f"Failed to fetch feature flag. Status code: {response.status_code}")
+            return False
+
     except httpx.RequestError as e:
         logger.error(f"Error checking feature flag: {e}")
         return False

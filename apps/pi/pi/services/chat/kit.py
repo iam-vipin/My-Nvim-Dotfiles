@@ -63,13 +63,11 @@ class ChatKit(AttachmentMixin):
 
         # Use factory to create tracked tool LLM
         from pi.services.llm.llms import LLMConfig
-        from pi.services.llm.llms import _create_anthropic_config
         from pi.services.llm.llms import create_anthropic_llm
         from pi.services.llm.llms import create_openai_llm
 
         # Model name mapping for user-friendly names to actual LiteLLM model names
         claude_model_name_mapping = {
-            "claude-sonnet-4": settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
             "claude-sonnet-4-0": settings.llm_model.CLAUDE_SONNET_4_0,
             "claude-sonnet-4-5": settings.llm_model.CLAUDE_SONNET_4_5,
         }
@@ -78,7 +76,7 @@ class ChatKit(AttachmentMixin):
         if not switch_llm:
             switch_llm = settings.llm_model.GPT_4_1
             TOOL_LLM = settings.llm_model.GPT_4_1
-            tool_config = LLMConfig(model=TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
+            tool_config = LLMConfig.openai(TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
         else:
             # Map user-friendly model names to actual model names
             actual_model_name = claude_model_name_mapping.get(switch_llm, switch_llm)
@@ -88,25 +86,15 @@ class ChatKit(AttachmentMixin):
                 if actual_model_name in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5]:
                     # Direct Anthropic API models
                     TOOL_LLM = actual_model_name
-                    tool_config = _create_anthropic_config(model=TOOL_LLM)
-                elif actual_model_name == settings.llm_model.LITE_LLM_CLAUDE_SONNET_4:
-                    # This is a LiteLLM model
-                    TOOL_LLM = settings.llm_model.LITE_LLM_CLAUDE_SONNET_4
-                    tool_config = LLMConfig(
-                        model=TOOL_LLM,
-                        temperature=0.2,
-                        streaming=tool_llm_streaming,
-                        base_url=settings.llm_config.LITE_LLM_HOST,
-                        api_key=settings.llm_config.LITE_LLM_API_KEY,
-                    )
+                    tool_config = LLMConfig.anthropic(TOOL_LLM, streaming=tool_llm_streaming, temperature=0.2)
                 else:
                     raise ValueError(f"Unsupported model: {actual_model_name}")
 
             elif switch_llm == "gpt-5-standard":
                 # This is GPT-5 Standard with medium reasoning
                 TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
-                tool_config = LLMConfig(
-                    model=TOOL_LLM,
+                tool_config = LLMConfig.openai(
+                    TOOL_LLM,
                     streaming=tool_llm_streaming,
                     reasoning_effort="medium",
                     use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
@@ -114,8 +102,8 @@ class ChatKit(AttachmentMixin):
             elif switch_llm == "gpt-5-fast":
                 # This is GPT-5 Fast with low reasoning
                 TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
-                tool_config = LLMConfig(
-                    model=TOOL_LLM,
+                tool_config = LLMConfig.openai(
+                    TOOL_LLM,
                     streaming=tool_llm_streaming,
                     reasoning_effort="low",
                     use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
@@ -123,14 +111,11 @@ class ChatKit(AttachmentMixin):
             elif switch_llm == "gpt-5.1":
                 # This is GPT-5.1
                 TOOL_LLM = "gpt-5.1"
-                tool_config = LLMConfig(
-                    model=TOOL_LLM,
-                    streaming=False,
-                )
+                tool_config = LLMConfig.openai(TOOL_LLM, streaming=False)
             else:
                 # This is a regular OpenAI model
                 TOOL_LLM = switch_llm
-                tool_config = LLMConfig(model=TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
+                tool_config = LLMConfig.openai(TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
 
         # Initialize LLMs using LLMFactory with centralized model name mapping
         self.llm = llms.LLMFactory.get_default_llm(switch_llm)
@@ -227,11 +212,7 @@ class ChatKit(AttachmentMixin):
             from pi.services.llm.llms import create_openai_llm
 
             # Create a lightweight LLM for context extraction
-            context_llm_config = LLMConfig(
-                model=settings.llm_model.GPT_4_1,
-                temperature=0.1,
-                streaming=False,
-            )
+            context_llm_config = LLMConfig.openai(settings.llm_model.GPT_4_1, temperature=0.1, streaming=False)
             context_llm = create_openai_llm(context_llm_config)
             context_llm.set_tracking_context(message_id, db, MessageMetaStepType.ATTACHMENT_CONTEXT_EXTRACTION)
 
@@ -419,13 +400,8 @@ Provide concise, relevant context from the attachment(s):"""
         from pi.config import settings
         from pi.services.actions.oauth_url_encoder import OAuthUrlEncoder
 
-        # Use internal API URL if properly configured, otherwise derive from OAuth redirect URI
-        if settings.server.INTERNAL_API_URL and not settings.server.INTERNAL_API_URL.endswith("plane-pi.plane.so"):
-            base_url = settings.server.INTERNAL_API_URL.rstrip("/")
-        else:
-            # Fall back to OAuth redirect URI host (which contains the ngrok URL)
-            redirect = urlparse(settings.plane_api.OAUTH_REDIRECT_URI)
-            base_url = f"{redirect.scheme}://{redirect.netloc}"
+        redirect = urlparse(settings.plane_api.OAUTH_REDIRECT_URI)
+        base_url = f"{redirect.scheme}://{redirect.netloc}"
 
         # Create clean, encrypted OAuth URL
         oauth_encoder = OAuthUrlEncoder()

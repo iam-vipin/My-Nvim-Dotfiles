@@ -79,4 +79,13 @@ APPLICATIONS = {
         "redirect_uris": f"{settings.SILO_URL}/api/apps/drawio/auth/callback",
         "skip_authorization": False,
     },
+    "plane_ai": {
+        "key": "plane_ai",
+        "name": "Plane AI",
+        "slug": "plane-ai",
+        "short_description": "Plane AI Integration",
+        "description_html": "<p>Plane AI Integration</p>",
+        "redirect_uris": f"{settings.PI_URL}/api/v1/oauth/callback/",
+        "skip_authorization": True,
+    },
 }

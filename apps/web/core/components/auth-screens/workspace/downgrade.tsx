@@ -20,13 +20,15 @@ import { Button } from "@plane/propel/button";
 import { PlaneLockup } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
+// store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 import { GlobalModals } from "@/plane-web/components/common/modal/global";
 
-export const WorkspaceDisabledPage = observer(function WorkspaceDisabledPage() {
+export const WorkspaceDowngradePage = observer(function WorkspaceDowngradePage() {
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();

@@ -32,9 +32,10 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkItemDetailRevalidation } from "@/lib/socket/hooks/work-item-detail";
+// layouts
+import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
 import type { Route } from "./+types/page";
 import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";

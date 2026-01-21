@@ -12,11 +12,14 @@
  */
 
 import { Outlet } from "react-router";
+// layouts
+import { WorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
+// lib
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WithSocketProviderHOC } from "@/lib/socket/provider/hoc";
+// plane web imports
 import { WorkspaceContentWrapper } from "@/plane-web/components/workspace/content-wrapper";
 import { AppRailVisibilityProvider } from "@/plane-web/hooks/app-rail";
-import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { GlobalModals } from "@/plane-web/components/common/modal/global";
 import type { Route } from "./+types/layout";
 
@@ -25,7 +28,7 @@ export default function WorkspaceLayout(props: Route.ComponentProps) {
 
   return (
     <AuthenticationWrapper>
-      <WorkspaceAuthWrapper>
+      <WorkspaceAuthWrapper workspaceSlug={workspaceSlug}>
         <WithSocketProviderHOC workspaceSlug={workspaceSlug}>
           <AppRailVisibilityProvider>
             <WorkspaceContentWrapper>

@@ -26,8 +26,8 @@ import type {
   TImporterClickUpDataPayload,
   TClickUpImporterStepKeys,
   TClickUpImporterStep,
-} from "@/plane-web/types/importers/clickup";
-import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
+} from "@/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/types/importers/clickup";
 import type { IClickUpAuthStore } from "./auth.store";
 import { ClickUpAuthStore } from "./auth.store";
 import type { IClickUpDataStore } from "./data.store";

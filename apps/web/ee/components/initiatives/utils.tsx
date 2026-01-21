@@ -29,7 +29,7 @@ import { getFileURL } from "@plane/utils";
 
 // PLane-web
 import { rootStore } from "@/lib/store-context";
-import type { TInitiative } from "@/plane-web/types";
+import type { TInitiative } from "@/types";
 
 export type TInitiativeGroup = {
   id: string;

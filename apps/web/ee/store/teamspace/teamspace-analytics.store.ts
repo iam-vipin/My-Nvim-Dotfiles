@@ -20,7 +20,7 @@ import type { TLoader, TTeamspaceRelations, TTeamspaceStatistics, TTeamspaceProg
 // plane web imports
 import { TeamspaceAnalyticsService } from "@/plane-web/services/teamspace/teamspace-analytics.service";
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/types/teamspace";
 
 const DEFAULT_TEAM_STATISTICS_FILTER: TStatisticsFilter = {
   data_key: ETeamspaceAnalyticsDataKeys.PROJECTS,

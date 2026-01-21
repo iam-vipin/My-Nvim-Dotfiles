@@ -23,7 +23,7 @@ import LinearLogo from "@/app/assets/services/linear.svg?url";
 import NotionLogo from "@/app/assets/services/notion.svg?url";
 // plane web imports
 import { ImportersListItem } from "@/plane-web/components/importers";
-import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
+import type { TFeatureFlags } from "@/types/feature-flag";
 
 export type ImporterProps = {
   flag: TFeatureFlags;

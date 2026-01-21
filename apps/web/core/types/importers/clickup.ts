@@ -13,7 +13,7 @@
 
 import type { TClickUpAuthState } from "@plane/etl/clickup";
 // plane web types
-import type { TStepperBlock } from "@/plane-web/types/importers";
+import type { TStepperBlock } from "@/types/importers";
 
 // authentication PAT form field types
 export type TClickUpPATFormFields = Omit<

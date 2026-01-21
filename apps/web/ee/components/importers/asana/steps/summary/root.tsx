@@ -26,7 +26,7 @@ import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-
 // plane web hooks
 import { useAsanaImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
+import { E_IMPORTER_STEPS } from "@/types/importers/asana";
 import ImporterTable from "../../../ui/table";
 
 export const SummaryRoot = observer(function SummaryRoot() {

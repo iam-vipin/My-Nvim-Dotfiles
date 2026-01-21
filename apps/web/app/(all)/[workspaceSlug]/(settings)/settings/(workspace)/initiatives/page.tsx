@@ -31,7 +31,7 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { InitiativeLabelList } from "@/plane-web/components/initiatives/components/labels/initiative-label-list";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { InitiativesWorkspaceSettingsHeader } from "./header";

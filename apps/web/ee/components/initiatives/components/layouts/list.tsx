@@ -23,7 +23,7 @@ import { BaseListLayout } from "@/components/base-layouts/list/layout";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiative } from "@/plane-web/types";
+import type { TInitiative } from "@/types";
 import { getGroupList, getInitiativeUpdatePayload } from "../../utils";
 import { InitiativeBlock } from "../initiative-block";
 

@@ -27,7 +27,7 @@ import { ArchiveRestoreProjectModal } from "@/components/project/archive-restore
 import { DeleteProjectModal } from "@/components/project/delete-project-modal";
 import { JoinProjectModal } from "@/components/project/join-project-modal";
 // plane web imports
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 
 type Props = {
   workspaceSlug: string;

@@ -16,8 +16,8 @@ import { NewTabIcon, InfoIcon } from "@plane/propel/icons";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { EDITABLE_ARTIFACT_TYPES } from "@/plane-web/types";
-import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import { EDITABLE_ARTIFACT_TYPES } from "@/types";
+import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { FollowUpDetail } from "./follow-up";
 import { Toast } from "./toast";
 

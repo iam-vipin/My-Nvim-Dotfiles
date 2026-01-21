@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 
 type Props = {
   project: TProject;

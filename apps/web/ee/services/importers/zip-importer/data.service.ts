@@ -14,7 +14,7 @@
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type { TServiceAuthConfiguration } from "@plane/etl/core";
-import type { EZipDriverType, TDocImporterJobConfig } from "@/plane-web/types/importers/zip-importer";
+import type { EZipDriverType, TDocImporterJobConfig } from "@/types/importers/zip-importer";
 
 export interface IUploadUrlResponse {
   success: boolean;

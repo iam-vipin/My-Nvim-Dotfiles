@@ -16,7 +16,7 @@ import type { TBaseActivityVerbs } from "@plane/types";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 // helpers
-import type { TInitiativeActivity } from "@/plane-web/types/initiative";
+import type { TInitiativeActivity } from "@/types/initiative";
 import type { TInitiativeActivityFields } from "./helper";
 import { getInitiativeActivityKey, INITIATIVE_UPDATES_HELPER_MAP } from "./helper";
 

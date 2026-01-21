@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { Spinner } from "@plane/ui";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 // local imports
 import { PowerKInitiativesMenu } from "../../menus/initiatives";
 

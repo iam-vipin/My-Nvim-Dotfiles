@@ -24,7 +24,7 @@ import type {
   TInitiativeStats,
   TExternalInitiativeFilterExpression,
   TInitiativeUserProperties,
-} from "@/plane-web/types/initiative";
+} from "@/types/initiative";
 import { APIService } from "@/services/api.service";
 
 export class InitiativeService extends APIService {

@@ -16,7 +16,7 @@ import { Briefcase } from "lucide-react";
 import { PiChatEditorWithRef } from "@plane/editor";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Card } from "@plane/ui";
-import type { TArtifact } from "@/plane-web/types";
+import type { TArtifact } from "@/types";
 import { Properties } from "../preview-cards/properties";
 
 type TProps = {

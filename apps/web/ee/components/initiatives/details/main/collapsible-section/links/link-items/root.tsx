@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TInitiativeLink } from "@/plane-web/types/initiative";
+import type { TInitiativeLink } from "@/types/initiative";
 
 export type TLinkOperations = {
   create: (data: Partial<TInitiativeLink>) => Promise<void>;

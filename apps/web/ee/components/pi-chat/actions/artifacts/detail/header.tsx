@@ -20,7 +20,7 @@ import { Header as HeaderUI, Row, CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import type { TArtifact } from "@/plane-web/types";
+import type { TArtifact } from "@/types";
 import { getIcon } from "../../preview-block";
 
 const buttonClass =

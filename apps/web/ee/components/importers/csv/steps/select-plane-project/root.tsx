@@ -26,8 +26,8 @@ import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui
 // hooks
 import { useCSVImporter } from "@/plane-web/hooks/store";
 // types
-import type { TCSVImporterDataPayload } from "@/plane-web/types/importers/csv";
-import { E_CSV_IMPORTER_STEPS } from "@/plane-web/types/importers/csv";
+import type { TCSVImporterDataPayload } from "@/types/importers/csv";
+import { E_CSV_IMPORTER_STEPS } from "@/types/importers/csv";
 
 type TFormData = TCSVImporterDataPayload[E_CSV_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 

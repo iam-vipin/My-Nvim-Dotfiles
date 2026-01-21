@@ -23,7 +23,7 @@ import { BaseTimeLineStore as ExtendableTimelineStore } from "@/ce/store/timelin
 import { getDateFromPositionOnGantt } from "@/components/gantt-chart/views";
 // Plane-web
 import type { EDependencyPosition } from "@/plane-web/constants";
-import type { DependencyDraggingDetails, Relation } from "@/plane-web/types";
+import type { DependencyDraggingDetails, Relation } from "@/types";
 // local
 import type { RootStore } from "../root.store";
 import { buildDependencyTree, getBlockUpdates, getNewRelationsMap, getPositionOfBlock, getRelationType } from "./utils";

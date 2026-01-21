@@ -26,7 +26,7 @@ import { getFileIcon } from "@/components/icons";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-import type { TFocus, TPiAttachment } from "@/plane-web/types/pi-chat";
+import type { TFocus, TPiAttachment } from "@/types/pi-chat";
 
 type Props = {
   disabled?: boolean;

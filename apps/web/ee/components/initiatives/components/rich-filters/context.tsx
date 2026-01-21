@@ -20,7 +20,7 @@ import type { IUserLite } from "@plane/types";
 import { useMember } from "@/hooks/store/use-member";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TExternalInitiativeFilterExpression, TInitiativeFilterKeys } from "@/plane-web/types/initiative";
+import type { TExternalInitiativeFilterExpression, TInitiativeFilterKeys } from "@/types/initiative";
 import { InitiativesFilterAdapter } from "./adapter";
 import { useInitiativesFilterConfigs } from "./use-initiatives-filter-configs";
 

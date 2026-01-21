@@ -32,7 +32,7 @@ import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/membe
 import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
 import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 import { useFlag, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 type TProjectAttributesProps = {
   workspaceSlug: string;

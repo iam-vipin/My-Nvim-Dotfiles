@@ -12,7 +12,7 @@
  */
 
 import type { TIssueActivity } from "@plane/types";
-import { getRelationActivityContent as getCERelationActivityContent } from "ce/components/relations";
+import { getRelationActivityContent as getCERelationActivityContent } from "@/ce/components/relations/activity";
 
 export const getRelationActivityContent = (activity: TIssueActivity | undefined): string | undefined => {
   if (!activity) return;

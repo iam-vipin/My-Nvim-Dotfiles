@@ -25,7 +25,7 @@ import { calculateTimeAgoShort, copyTextToClipboard } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLink } from "@/plane-web/types/initiative";
+import type { TInitiativeLink } from "@/types/initiative";
 // local components
 import type { TLinkOperationsModal } from "./link-list";
 

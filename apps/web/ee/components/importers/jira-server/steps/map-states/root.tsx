@@ -28,8 +28,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraServerImporter } from "@/plane-web/hooks/store";
 //  plane web types
-import type { TImporterDataPayload } from "@/plane-web/types/importers/jira-server";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
+import type { TImporterDataPayload } from "@/types/importers/jira-server";
+import { E_IMPORTER_STEPS } from "@/types/importers/jira-server";
 
 import ImporterTable from "../../../ui/table";
 

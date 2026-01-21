@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 // plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states";
-import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts } from "@/types/workspace-project-filters";
 // local imports
 import { ProjectBoardLayout } from "./board";
 import { BaseProjectRoot } from "./gallery/base-gallery-root";

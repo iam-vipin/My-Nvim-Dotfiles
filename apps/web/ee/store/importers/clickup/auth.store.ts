@@ -22,7 +22,7 @@ import { ClickUpAuthService } from "@/plane-web/services/importers/clickup/auth.
 import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TClickUpPATFormFields } from "@/plane-web/types/importers/clickup";
+import type { TClickUpPATFormFields } from "@/types/importers/clickup";
 
 export interface IClickUpAuthStore {
   // observables

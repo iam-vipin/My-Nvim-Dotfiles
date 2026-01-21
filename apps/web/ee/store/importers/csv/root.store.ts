@@ -24,8 +24,8 @@ import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/im
 import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TCSVImporterDataPayload, TCSVImporterStepKeys, TCSVImporterStep } from "@/plane-web/types/importers/csv";
-import { E_CSV_IMPORTER_STEPS } from "@/plane-web/types/importers/csv";
+import type { TCSVImporterDataPayload, TCSVImporterStepKeys, TCSVImporterStep } from "@/types/importers/csv";
+import { E_CSV_IMPORTER_STEPS } from "@/types/importers/csv";
 
 const defaultImporterData: TCSVImporterDataPayload = {
   [E_CSV_IMPORTER_STEPS.SELECT_PLANE_PROJECT]: {

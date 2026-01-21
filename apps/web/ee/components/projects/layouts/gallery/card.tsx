@@ -26,8 +26,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import type { TProject } from "@/plane-web/types/projects";
-import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import type { TProject } from "@/types/projects";
+import { EProjectScope } from "@/types/workspace-project-filters";
 // local imports
 import { JoinButton } from "../../common/join-button";
 import { Attributes } from "../attributes";

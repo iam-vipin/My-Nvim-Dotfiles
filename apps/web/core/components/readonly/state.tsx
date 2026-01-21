@@ -22,8 +22,8 @@ import { cn } from "@plane/utils";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states/project-state-icon";
-import { EProjectStateGroup } from "@/plane-web/types/workspace-project-states";
-import type { TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
+import { EProjectStateGroup } from "@/types/workspace-project-states";
+import type { TProjectStateGroupKey } from "@/types/workspace-project-states";
 import type { TStateGroups } from "@plane/types";
 
 export type TReadonlyStateProps = {

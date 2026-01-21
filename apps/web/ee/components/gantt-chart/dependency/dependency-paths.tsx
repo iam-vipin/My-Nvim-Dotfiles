@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
-import type { Relation } from "@/plane-web/types";
+import type { Relation } from "@/types";
 //
 import { DependencyPathModal } from "./dependency-modal";
 import { TimelineDependencyPathItem } from "./dependency-path-item";

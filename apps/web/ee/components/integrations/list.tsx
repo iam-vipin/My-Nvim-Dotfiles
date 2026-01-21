@@ -23,7 +23,7 @@ import SentryLogo from "@/app/assets/services/sentry.svg?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
 // plane web imports
 import { IntegrationListItem } from "@/plane-web/components/integrations";
-import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
+import type { TFeatureFlags } from "@/types/feature-flag";
 
 export type IntegrationProps = {
   flag: TFeatureFlags;

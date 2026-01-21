@@ -20,8 +20,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { ProjectLayoutRoot } from "@/plane-web/components/projects/layouts";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import type { TProjectFilters, TProjectAttributes } from "@/plane-web/types/workspace-project-filters";
-import { EProjectFilters, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectFilters, TProjectAttributes } from "@/types/workspace-project-filters";
+import { EProjectFilters, EProjectScope } from "@/types/workspace-project-filters";
 import { ProjectAppliedFiltersList } from "./applied-filters";
 
 type TWorkspaceProjectsRoot = {

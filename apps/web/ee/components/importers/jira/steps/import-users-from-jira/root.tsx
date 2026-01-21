@@ -27,8 +27,8 @@ import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-
 // plane web hooks
 import { useJiraImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
-import type { TImporterDataPayload } from "@/plane-web/types/importers/jira";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira";
+import type { TImporterDataPayload } from "@/types/importers/jira";
+import { E_IMPORTER_STEPS } from "@/types/importers/jira";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA];
 

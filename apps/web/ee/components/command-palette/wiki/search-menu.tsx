@@ -23,7 +23,7 @@ import useDebounce from "@/hooks/use-debounce";
 // plane web imports
 import { PowerKModalNoSearchResultsCommand } from "@/plane-web/components/command-palette/power-k/search/no-results-command";
 import { AppService } from "@/plane-web/services/app.service";
-import type { IAppSearchResults } from "@/plane-web/types";
+import type { IAppSearchResults } from "@/types";
 // local imports
 import { WikiAppPowerKModalSearchResults } from "./search-results";
 // services init

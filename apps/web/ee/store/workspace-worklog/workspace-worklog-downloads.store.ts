@@ -32,7 +32,7 @@ import type {
   TWorklogDownloadPaginatedInfo,
   TWorklogFilterQueryParams,
   TWorklogQueryParams,
-} from "@/plane-web/types/";
+} from "@/types";
 
 type TWorklogLoader = EWorklogDownloadLoader | undefined;
 type TWorklogQueryParamType = EWorklogDownloadQueryParamType;

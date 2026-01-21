@@ -15,7 +15,7 @@ import { useRef } from "react";
 //types
 import { observer } from "mobx-react";
 import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectDisplayFilters } from "@/types/workspace-project-filters";
 //components
 
 import { HeaderColumn } from "./columns/header-column";

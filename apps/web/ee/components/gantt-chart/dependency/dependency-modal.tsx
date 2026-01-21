@@ -32,7 +32,7 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
 import type { EDependencyPosition } from "@/plane-web/constants";
 import { getRelationType } from "@/plane-web/store/timeline/utils";
-import type { Relation } from "@/plane-web/types";
+import type { Relation } from "@/types";
 // local imports
 import { IssueIdentifier } from "../../issues/issue-details/issue-identifier";
 import { useTimeLineRelationOptions } from "../../relations";

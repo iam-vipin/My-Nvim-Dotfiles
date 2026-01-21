@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts } from "@/types/workspace-project-filters";
 // local imports
 import { DisplayFilterGroupBy } from "./group-by";
 import { DisplayFilterSortBy } from "./sort-by";

@@ -16,7 +16,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane web imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { DeDupeIssueButtonLabel } from "./issue-block/button-label";

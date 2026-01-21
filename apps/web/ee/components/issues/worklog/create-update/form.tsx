@@ -19,7 +19,7 @@ import { Input, TextArea } from "@plane/ui";
 // plane web helpers
 import { convertHoursMinutesToMinutes } from "@plane/utils";
 // plane web types
-import type { TWorklog } from "@/plane-web/types";
+import type { TWorklog } from "@/types";
 
 type TWorklogForm = {
   hours: string;

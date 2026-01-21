@@ -24,6 +24,7 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -31,11 +32,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { CustomerUpgrade, CustomerSettingsRoot } from "@/plane-web/components/customers";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { useCustomers, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { CustomersWorkspaceSettingsHeader } from "./header";
-import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function CustomerSettingsPage({ params }: Route.ComponentProps) {
   // router

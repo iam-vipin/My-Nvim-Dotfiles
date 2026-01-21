@@ -19,7 +19,7 @@ import { EditIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { EDITABLE_ARTIFACT_TYPES } from "@/plane-web/types";
+import { EDITABLE_ARTIFACT_TYPES } from "@/types";
 
 interface IPreviewHOC {
   children: ReactNode;

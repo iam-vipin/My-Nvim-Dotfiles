@@ -22,7 +22,7 @@ import SentryLogo from "@/app/assets/logos/integrations/sentry.png?url";
 import SlackLogo from "@/app/assets/logos/integrations/slack.png?url";
 // plane web imports
 import { AppList } from "@/plane-web/components/marketplace";
-import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
+import type { TFeatureFlags } from "@/types/feature-flag";
 
 // list all the applications
 // have tabs to filter by category

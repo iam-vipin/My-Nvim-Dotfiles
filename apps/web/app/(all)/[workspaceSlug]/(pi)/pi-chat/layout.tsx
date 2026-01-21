@@ -19,7 +19,7 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { EmptyPiChat } from "@/plane-web/components/pi-chat/empty";
 import { PiChatLayout } from "@/plane-web/components/pi-chat/layout";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/layout";
 import { PiAppSidebar } from "./sidebar";

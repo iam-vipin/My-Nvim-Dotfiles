@@ -23,7 +23,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 // local imports
 import { GroupDragOverlay } from "./group-drag-overlay";
 import { ProjectBoardGroupItemHeader } from "./group-item-header";

@@ -43,7 +43,7 @@ import {
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/types";
 
 type TIssueActivityBlock = {
   createdAt: string | undefined;

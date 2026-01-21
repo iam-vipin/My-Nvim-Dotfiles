@@ -29,7 +29,7 @@ import {
 //  plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/types/integrations";
 import { MappingLoader } from "../../../ui";
 
 export const projectMapInit: TProjectMap = {

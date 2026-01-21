@@ -19,7 +19,7 @@ import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { UnauthorizedView } from "../unauthorized";
-import type { TTemplate } from "@/plane-web/types";
+import type { TTemplate } from "@/types";
 
 type TProps = {
   isFullScreen: boolean;

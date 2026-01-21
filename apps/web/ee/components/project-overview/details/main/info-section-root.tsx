@@ -20,7 +20,7 @@ import { EUserProjectRoles } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // types
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@/types";
 // local components
 import { useLinks } from "./collaspible-section/links/use-links";
 import { DescriptionBox } from "./info-section/description-box";

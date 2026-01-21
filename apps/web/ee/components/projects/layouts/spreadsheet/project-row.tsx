@@ -28,7 +28,7 @@ import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 import { ProjectColumn } from "./project-column";
 
 interface Props {

@@ -22,7 +22,7 @@ import useDebounce from "@/hooks/use-debounce";
 // services
 import { store } from "@/lib/store-context";
 import { PIService } from "@/plane-web/services";
-import { EWorkspaceFeatures } from "../types/workspace-feature";
+import { EWorkspaceFeatures } from "../../core/types/workspace-feature";
 import { useFlag } from "./store";
 
 const piService = new PIService();

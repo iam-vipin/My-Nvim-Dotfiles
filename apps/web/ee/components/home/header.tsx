@@ -20,7 +20,7 @@ import { Maximize } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { BetaBadge } from "../common/beta";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { InputBox } from "../pi-chat/input";

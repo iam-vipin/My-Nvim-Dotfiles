@@ -15,9 +15,9 @@ import type { LucideIcon } from "lucide-react";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { BoardLayoutIcon, CardLayoutIcon, ListLayoutIcon, TimelineLayoutIcon } from "@plane/propel/icons";
 // plane web types
-import type { TProjectGroupBy, TProjectSortBy, TProjectSortOrder } from "@/plane-web/types/workspace-project-filters";
-import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
-import { EProjectAccess, EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import type { TProjectGroupBy, TProjectSortBy, TProjectSortOrder } from "@/types/workspace-project-filters";
+import { EProjectLayouts, EProjectScope } from "@/types/workspace-project-filters";
+import { EProjectAccess, EProjectPriority } from "@/types/workspace-project-states";
 
 // scope constants
 type TProjectScopeMapObject<T> = { key: T; label: string };

@@ -27,7 +27,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 // local
 import { getGroupList } from "../../utils";
 import { InitiativeGanttBlock, InitiativeGanttSidebarBlock } from "../initiative-gantt-block";

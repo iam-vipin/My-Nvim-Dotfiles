@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 // plane web imports
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 // local imports
 import { PriorityDropdown } from "../../../dropdowns/priority-dropdown";
 

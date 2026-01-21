@@ -25,7 +25,7 @@ import { PROJECT_LAYOUTS } from "@/plane-web/constants/project";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types
-import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts, EProjectScope } from "@/types/workspace-project-filters";
 
 type TProjectLayoutSelection = {
   workspaceSlug: string;

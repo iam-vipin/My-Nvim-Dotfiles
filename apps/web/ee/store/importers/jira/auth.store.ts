@@ -21,7 +21,7 @@ import { JiraAuthService } from "@/plane-web/services/importers/jira/auth.servic
 // store types
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TJiraPATFormFields } from "@/plane-web/types/importers/jira";
+import type { TJiraPATFormFields } from "@/types/importers/jira";
 
 export interface IJiraAuthStore {
   // observables

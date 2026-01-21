@@ -16,7 +16,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // plane web types
-import type { TWorkspaceFeature, TWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { TWorkspaceFeature, TWorkspaceFeatures } from "@/types/workspace-feature";
 // services
 import { APIService } from "@/services/api.service";
 

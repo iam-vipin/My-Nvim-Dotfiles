@@ -21,7 +21,7 @@ import type { SpreadsheetStoreType } from "@/components/issues/issue-layouts/spr
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 
 type Props = {
   project: TProject;

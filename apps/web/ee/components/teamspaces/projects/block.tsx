@@ -33,7 +33,7 @@ import { QuickActions } from "@/plane-web/components/projects/quick-actions";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types
-import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { EProjectScope } from "@/types/workspace-project-filters";
 
 // types
 interface TeamspaceProjectBlockProps {

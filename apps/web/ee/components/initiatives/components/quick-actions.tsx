@@ -27,7 +27,7 @@ import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // Plane-web
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 // local components
 import { CreateUpdateInitiativeModal } from "./create-update-initiatives-modal";
 import { InitiativeDeleteModal } from "./initiative-delete-modal";

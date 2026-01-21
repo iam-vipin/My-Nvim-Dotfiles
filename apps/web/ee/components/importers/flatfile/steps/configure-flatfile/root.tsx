@@ -28,7 +28,7 @@ import DynamicFlatfileProvider from "@/plane-web/components/importers/flatfile/s
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // types
 import { useFlatfileImporter } from "@/plane-web/hooks/store/importers/user-flatfile";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers";
+import { E_IMPORTER_STEPS } from "@/types/importers";
 import { getWorkbookConfig } from "./workbook";
 
 export const ConfigureFlatfile = observer(function ConfigureFlatfile() {

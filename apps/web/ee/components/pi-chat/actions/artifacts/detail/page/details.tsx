@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import type { EditorRefApi } from "@plane/editor";
 import type { TPage } from "@plane/types";
 // local imports
-import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { usePageData } from "../../useArtifactData";
 import { PiChatArtifactsFooter } from "../footer";
 import { PageFormRoot } from "./root";

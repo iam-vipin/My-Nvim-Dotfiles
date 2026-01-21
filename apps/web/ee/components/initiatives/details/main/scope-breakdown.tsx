@@ -24,7 +24,7 @@ import { SectionEmptyState } from "@/plane-web/components/common/layout/main/com
 import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
+import type { TInitiativeAnalyticData } from "@/types/initiative";
 
 type TDataCardProps = {
   workspaceSlug: string;

@@ -19,7 +19,7 @@ import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-it
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import type { IAppSearchResults } from "@/plane-web/types";
+import type { IAppSearchResults } from "@/types";
 // local imports
 import { WIKI_APP_POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
 

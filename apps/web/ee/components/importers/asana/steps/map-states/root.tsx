@@ -30,8 +30,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web types
-import type { TImporterDataPayload } from "@/plane-web/types/importers/asana";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
+import type { TImporterDataPayload } from "@/types/importers/asana";
+import { E_IMPORTER_STEPS } from "@/types/importers/asana";
 import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];

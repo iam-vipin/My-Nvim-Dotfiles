@@ -25,7 +25,7 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 // hooks
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeActivityComment } from "@/plane-web/types/initiative";
+import type { TInitiativeActivityComment } from "@/types/initiative";
 import { useCommentOperations } from "./helper";
 
 type Props = {

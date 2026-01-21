@@ -26,7 +26,7 @@ import { SelectProject } from "@/plane-web/components/integrations/github/common
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/types/integrations";
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 import { MapProjectPRState } from "./common";

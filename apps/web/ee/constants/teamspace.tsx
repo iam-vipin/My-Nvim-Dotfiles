@@ -28,7 +28,7 @@ import { getPageName } from "@plane/utils";
 // store
 import { store } from "@/lib/store-context";
 // plane web types
-import type { TTeamspaceActivityDetailsHelperMap } from "@/plane-web/types";
+import type { TTeamspaceActivityDetailsHelperMap } from "@/types";
 
 export const DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA: TCreateUpdateTeamspaceModal = {
   isOpen: false,

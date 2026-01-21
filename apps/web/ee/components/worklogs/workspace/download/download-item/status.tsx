@@ -15,7 +15,7 @@ import type { FC } from "react";
 // helpers
 import { cn } from "@plane/utils";
 // plane web types
-import type { TWorklogDownloadStatus } from "@/plane-web/types";
+import type { TWorklogDownloadStatus } from "@/types";
 
 export function WorklogDownloadStatus(props: { status: TWorklogDownloadStatus | undefined; loader: boolean }) {
   const { status, loader } = props;

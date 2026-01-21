@@ -14,7 +14,7 @@
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // store
 import { store } from "@/lib/store-context";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   home: undefined,

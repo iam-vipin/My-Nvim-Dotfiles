@@ -18,7 +18,7 @@ import { PriorityIcon } from "@plane/propel/icons";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types
-import type { TPlanePriorityData } from "@/plane-web/types/importers";
+import type { TPlanePriorityData } from "@/types/importers";
 
 type TMapPrioritiesSelection = {
   value: string | undefined;

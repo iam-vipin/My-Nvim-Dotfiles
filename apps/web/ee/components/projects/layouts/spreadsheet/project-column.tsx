@@ -20,7 +20,7 @@ import { EUserProjectRoles } from "@plane/types";
 import { useUserPermissions } from "@/hooks/store/user";
 import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
 import { SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 
 type Props = {
   projectDetails: TProject;

@@ -19,7 +19,7 @@ import { InitiativeIcon } from "@plane/propel/icons";
 // components
 import { PowerKMenuBuilder } from "@/components/power-k/menus/builder";
 // plane web imports
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 
 type Props = {
   initiatives: TInitiative[];

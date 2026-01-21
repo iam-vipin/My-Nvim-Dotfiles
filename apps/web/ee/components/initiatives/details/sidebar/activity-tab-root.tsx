@@ -23,7 +23,7 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeActivity, TInitiativeActivityComment } from "@/plane-web/types/initiative";
+import type { TInitiativeActivity, TInitiativeActivityComment } from "@/types/initiative";
 // local components
 import { InitiativeActivityItem } from "./activity/activity-block";
 

@@ -19,7 +19,7 @@ import { ProjectStateForm } from "@/plane-web/components/workspace-project-state
 // plane web hooks
 import { useProjectState } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/types/workspace-project-states";
 
 type TProjectStateUpdate = {
   workspaceSlug: string;

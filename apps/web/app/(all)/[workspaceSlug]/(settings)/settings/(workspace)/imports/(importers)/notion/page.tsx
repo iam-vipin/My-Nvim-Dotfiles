@@ -21,8 +21,8 @@ import { ZipImporterDashboard } from "@/plane-web/components/importers/zip-impor
 import { StepsRoot } from "@/plane-web/components/importers/zip-importer/steps/root";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
-import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/types/importers/zip-importer";
+import { EZipDriverType } from "@/types/importers/zip-importer";
 
 function NotionImporter() {
   const {

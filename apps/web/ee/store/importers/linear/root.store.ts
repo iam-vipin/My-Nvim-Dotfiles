@@ -31,8 +31,8 @@ import type {
   TImporterLinearDataPayload,
   TImporterLinearStepKeys,
   TLinearImporterStep,
-} from "@/plane-web/types/importers/linear";
-import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
+} from "@/types/importers/linear";
+import { E_LINEAR_IMPORTER_STEPS } from "@/types/importers/linear";
 
 // constants
 const defaultImporterData: TImporterLinearDataPayload = {

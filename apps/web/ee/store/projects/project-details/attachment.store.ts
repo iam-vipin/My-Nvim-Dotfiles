@@ -17,7 +17,7 @@ import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // services
 import { ProjectAttachmentService } from "@/plane-web/services";
-import type { TProjectAttachment, TProjectAttachmentMap, TProjectAttachmentIdMap } from "@/plane-web/types";
+import type { TProjectAttachment, TProjectAttachmentMap, TProjectAttachmentIdMap } from "@/types";
 import type { IProjectStore } from "../projects";
 
 export type TAttachmentUploadStatus = {

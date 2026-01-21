@@ -19,7 +19,7 @@ import { convertMinutesToHoursAndMinutes } from "@plane/utils";
 // plane web hooks
 import { useWorklog } from "@/plane-web/hooks/store";
 // plane web types
-import type { TWorklog } from "@/plane-web/types";
+import type { TWorklog } from "@/types";
 import { WorklogFormRoot } from "./form";
 
 type TWorklogUpdate = {

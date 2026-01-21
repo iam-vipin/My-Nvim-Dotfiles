@@ -30,8 +30,8 @@ import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 // plane web types
-import type { TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
-import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
+import type { TImporterClickUpDataPayload } from "@/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/types/importers/clickup";
 
 type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 

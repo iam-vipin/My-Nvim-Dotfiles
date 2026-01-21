@@ -18,7 +18,7 @@ import { PopoverMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { useWorkspaceWorklogDownloads, useWorkspaceWorklogs } from "@/plane-web/hooks/store";
-import type { TWorklogDownload } from "@/plane-web/types";
+import type { TWorklogDownload } from "@/types";
 
 type TDownloadFormat = "csv" | "xlsx";
 

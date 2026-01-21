@@ -32,8 +32,8 @@ import {
 } from "@/plane-web/store/importers";
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TImporterDataPayload, TImporterStepKeys, TImporterStep } from "@/plane-web/types/importers/jira-server";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
+import type { TImporterDataPayload, TImporterStepKeys, TImporterStep } from "@/types/importers/jira-server";
+import { E_IMPORTER_STEPS } from "@/types/importers/jira-server";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {

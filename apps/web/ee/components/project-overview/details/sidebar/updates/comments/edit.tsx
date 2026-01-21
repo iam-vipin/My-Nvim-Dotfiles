@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/ui";
-import type { TProjectUpdatesComment } from "@/plane-web/types";
+import type { TProjectUpdatesComment } from "@/types";
 import type { TActivityOperations } from "./comment-list";
 
 type TProps = {

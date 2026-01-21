@@ -12,7 +12,7 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { TProjectUpdateReaction } from "@/plane-web/types";
+import type { TProjectUpdateReaction } from "@/types";
 // services
 import { APIService } from "@/services/api.service";
 // types

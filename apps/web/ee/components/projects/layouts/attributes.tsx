@@ -29,8 +29,8 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import type { TProject } from "@/plane-web/types/projects";
-import type { EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import type { TProject } from "@/types/projects";
+import type { EProjectPriority } from "@/types/workspace-project-states";
 // local imports
 import { MembersDropdown } from "../dropdowns/members-dropdown";
 import { PriorityDropdown } from "../dropdowns/priority-dropdown";

@@ -17,7 +17,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { FilledCheck, FilledCross } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { EExecutionStatus } from "@/plane-web/types";
+import { EExecutionStatus } from "@/types";
 import { getIcon, PreviewBlock } from "./preview-block";
 
 type TProps = {

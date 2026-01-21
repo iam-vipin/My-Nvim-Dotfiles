@@ -14,11 +14,9 @@
 import { CircleDot, XCircle } from "lucide-react";
 import { RelatedIcon, DuplicatePropertyIcon } from "@plane/propel/icons";
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
-import type { TIssueRelationTypes } from "../../types";
+import type { TCoreWorkItemRelationTypes } from "@/types/gantt-chart";
 
-export * from "./activity";
-
-export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject> = {
+export const ISSUE_RELATION_OPTIONS: Record<TCoreWorkItemRelationTypes, TRelationObject> = {
   relates_to: {
     key: "relates_to",
     i18n_label: "issue.relation.relates_to",

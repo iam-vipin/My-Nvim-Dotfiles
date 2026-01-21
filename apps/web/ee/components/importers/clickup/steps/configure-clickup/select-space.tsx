@@ -21,7 +21,7 @@ import { Loader } from "@plane/ui";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
-import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/types/importers/clickup";
 
 type TConfigureClickUpSelectSpace = {
   value: string | undefined;

@@ -28,7 +28,7 @@ import { convertMinutesToHoursMinutesString, getPageName, renderFormattedDate } 
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
 import { getRelationActivityContent, ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/types";
 
 // Get the key for the issue property type based on the property type and relation type
 export const getEpicActivityKey = (activityField: TEpicActivityFields | undefined, activityVerb: TEpicActivityVerbs) =>

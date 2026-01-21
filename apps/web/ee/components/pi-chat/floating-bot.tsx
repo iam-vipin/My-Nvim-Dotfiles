@@ -18,7 +18,7 @@ import { cn } from "@plane/utils";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useAIAssistant } from "@/plane-web/hooks/use-ai-assistant";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";

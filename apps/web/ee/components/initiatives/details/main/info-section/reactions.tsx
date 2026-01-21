@@ -24,7 +24,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeReaction } from "@/plane-web/types/initiative";
+import type { TInitiativeReaction } from "@/types/initiative";
 
 export type TIssueReaction = {
   workspaceSlug: string;

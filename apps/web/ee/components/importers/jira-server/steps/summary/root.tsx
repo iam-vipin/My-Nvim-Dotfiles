@@ -26,7 +26,7 @@ import { Loader } from "@plane/ui";
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
 import { useJiraServerImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
+import { E_IMPORTER_STEPS } from "@/types/importers/jira-server";
 import ImporterTable from "../../../ui/table";
 
 export const SummaryRoot = observer(function SummaryRoot() {

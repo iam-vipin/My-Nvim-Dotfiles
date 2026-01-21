@@ -19,7 +19,7 @@ import { renderFormattedDate } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
-import type { TProjectUpdatesComment } from "@/plane-web/types";
+import type { TProjectUpdatesComment } from "@/types";
 import { UpdateQuickActions } from "../quick-actions";
 import { UpdateReaction } from "../update-reaction";
 import { EditComment } from "./edit";

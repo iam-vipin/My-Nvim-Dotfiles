@@ -23,7 +23,7 @@ import { AlertModalCore } from "@plane/ui";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 
 interface IInitiativeDelete {
   initiative: TInitiative;

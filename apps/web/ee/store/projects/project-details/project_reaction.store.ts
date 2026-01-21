@@ -18,7 +18,7 @@ import { groupReactions } from "@plane/utils";
 // services
 import { ProjectReactionService } from "@/plane-web/services/project/project_reaction.service";
 // types
-import type { TProjectReaction } from "@/plane-web/types";
+import type { TProjectReaction } from "@/types";
 
 export interface IProjectReactionStore {
   projectReactions: Record<string, TProjectReaction[]>;

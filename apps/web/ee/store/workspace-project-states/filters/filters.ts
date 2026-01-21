@@ -19,7 +19,7 @@ import type { RootStore } from "@/plane-web/store/root.store";
 import type { IProjectFilterHelper } from "@/plane-web/store/workspace-project-states/filters";
 import { ProjectFilterHelper } from "@/plane-web/store/workspace-project-states/filters";
 // plane web types
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 import type {
   TProjectAttributes,
   TProjectDisplayFilters,
@@ -27,8 +27,8 @@ import type {
   TProjectLayouts,
   TProjectScope,
   TProjectsLayoutStructure,
-} from "@/plane-web/types/workspace-project-filters";
-import { EProjectFilters, EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+} from "@/types/workspace-project-filters";
+import { EProjectFilters, EProjectLayouts, EProjectScope } from "@/types/workspace-project-filters";
 
 export interface IProjectFilterStore extends IProjectFilterHelper {
   // constants

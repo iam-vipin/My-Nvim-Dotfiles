@@ -21,7 +21,7 @@ import { shouldFilterTeam, orderTeams } from "@plane/utils";
 // plane web services
 import { TeamspaceService } from "@/plane-web/services/teamspace/teamspace.service";
 // plane web types
-import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/types/workspace-feature";
 // root store
 import type { RootStore } from "../root.store";
 

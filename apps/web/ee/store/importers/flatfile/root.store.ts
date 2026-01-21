@@ -24,8 +24,8 @@ import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/im
 import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TImporterDataPayload, TImporterStepKeys, TImporterStep } from "@/plane-web/types/importers/flatfile";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/flatfile";
+import type { TImporterDataPayload, TImporterStepKeys, TImporterStep } from "@/types/importers/flatfile";
+import { E_IMPORTER_STEPS } from "@/types/importers/flatfile";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {

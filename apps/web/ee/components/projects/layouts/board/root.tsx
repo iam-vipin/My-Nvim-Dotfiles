@@ -18,7 +18,7 @@ import { ContentWrapper } from "@plane/ui";
 import { ProjectBoardGroup } from "@/plane-web/components/projects/layouts/board/group";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts } from "@/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 
 export const ProjectBoardLayout = observer(function ProjectBoardLayout() {

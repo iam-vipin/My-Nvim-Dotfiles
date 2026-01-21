@@ -28,7 +28,7 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 
 export const usePowerKInitiativeContextBasedActions = (): TPowerKCommandConfig[] => {
   // navigation

@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import type { TPiAttachment } from "@/plane-web/types/pi-chat";
+import type { TPiAttachment } from "@/types/pi-chat";
 import { ImagePreview } from "./image-preview";
 import { PreviewUploads } from "./root";
 import { TemplatePreview } from "./template-preview";

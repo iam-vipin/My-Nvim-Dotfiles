@@ -14,7 +14,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // plane web types
-import type { TPagePublishSettings } from "@/plane-web/types";
+import type { TPagePublishSettings } from "@/types";
 // services
 import { APIService } from "@/services/api.service";
 

@@ -25,7 +25,7 @@ import { cn } from "@plane/utils";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
-import type { TWorkloadFilter } from "@/plane-web/types/teamspace";
+import type { TWorkloadFilter } from "@/types/teamspace";
 // local imports
 import { TeamspaceProgressBanner } from "./banner";
 import { TeamspaceProgressChart } from "./chart";

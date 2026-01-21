@@ -24,8 +24,8 @@ import { CircularProgressIndicator } from "@plane/ui";
 // plane web hooks
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
-import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/types/importers/zip-importer";
+import { E_IMPORTER_STEPS } from "@/types/importers/zip-importer";
 import { StepperNavigation } from "../../../ui";
 
 interface UploadedFile {

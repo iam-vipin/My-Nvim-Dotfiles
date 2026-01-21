@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // plane web imports
 import { computedFn } from "mobx-utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
-import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/types";
 
 type TArtifactVersionHistory = {
   original: TArtifact;

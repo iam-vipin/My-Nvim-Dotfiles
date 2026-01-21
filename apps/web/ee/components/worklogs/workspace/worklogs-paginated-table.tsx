@@ -21,7 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 // plane web types
-import type { TWorklog } from "@/plane-web/types";
+import type { TWorklog } from "@/types";
 
 export type TWorklogsPaginatedTableRoot = {
   workspaceSlug: string;

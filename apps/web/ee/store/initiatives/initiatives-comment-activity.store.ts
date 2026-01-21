@@ -23,7 +23,7 @@ import type {
   TInitiativeReaction,
   TInitiativeActivity,
   TInitiativeActivityComment,
-} from "@/plane-web/types/initiative";
+} from "@/types/initiative";
 //
 import type { InitiativeStore } from "./initiatives.store";
 

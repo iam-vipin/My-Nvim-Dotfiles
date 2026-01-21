@@ -16,7 +16,7 @@ import { CloseIcon } from "@plane/propel/icons";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import type { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/types/workspace-project-states";
 
 type Props = {
   handleRemove: (val: string) => void;

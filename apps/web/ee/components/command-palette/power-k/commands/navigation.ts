@@ -25,7 +25,7 @@ import { useUser } from "@/hooks/store/user";
 import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 import { useFeatureFlags } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 
 export type TPowerKNavigationCommandKeysExtended =
   | "nav_workspace_active_cycle"

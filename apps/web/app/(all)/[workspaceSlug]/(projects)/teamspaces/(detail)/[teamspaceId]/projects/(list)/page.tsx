@@ -28,7 +28,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { TeamspaceProjectsWithGroupingRoot } from "@/plane-web/components/teamspaces/projects/grouping-root";
 import { TeamspaceProjectsWithoutGroupingRoot } from "@/plane-web/components/teamspaces/projects/non-grouping-root";
 import { useFlag, useTeamspaces, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/page";
 
 function TeamspaceProjectsPage({ params }: Route.ComponentProps) {

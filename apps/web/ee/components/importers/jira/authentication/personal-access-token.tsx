@@ -26,7 +26,7 @@ import { useJiraImporter } from "@/plane-web/hooks/store";
 import type { TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
 import { AuthFormInput } from "@/plane-web/components/importers/ui/auth-form-input";
 // plane web types
-import type { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
+import type { TImporterPATError, TJiraPATFormFields } from "@/types";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 

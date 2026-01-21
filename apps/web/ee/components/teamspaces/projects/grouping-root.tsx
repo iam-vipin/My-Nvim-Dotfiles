@@ -20,7 +20,7 @@ import { WorkspaceProjectsRoot } from "@/plane-web/components/projects";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types
-import { EProjectFilters, EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { EProjectFilters, EProjectLayouts, EProjectScope } from "@/types/workspace-project-filters";
 
 export type TTeamspaceProjectsWithGroupingRootProps = {
   workspaceSlug: string;

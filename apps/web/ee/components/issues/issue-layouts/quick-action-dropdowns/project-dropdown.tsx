@@ -22,7 +22,7 @@ import { CustomSearchSelect } from "@plane/ui";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // plane web types
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@/types";
 
 type ProjectOptionProps = {
   project: TProject;

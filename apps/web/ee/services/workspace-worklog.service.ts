@@ -22,7 +22,7 @@ import type {
   TWorklogIssueTotalCount,
   TWorklogPaginatedInfo,
   TWorklogQueryParams,
-} from "@/plane-web/types";
+} from "@/types";
 // services
 import { APIService } from "@/services/api.service";
 

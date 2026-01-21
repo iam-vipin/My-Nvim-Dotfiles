@@ -25,7 +25,7 @@ import { ProjectForm, StateForm } from "@/plane-web/components/integrations/gitl
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
+import type { TProjectMap } from "@/types/integrations/gitlab";
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 

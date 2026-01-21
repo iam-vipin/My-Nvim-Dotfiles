@@ -23,7 +23,7 @@ import { findTotalDaysInRange, renderFormattedDate } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { EProjectScope } from "@/types/workspace-project-filters";
 import { JoinButton } from "../../common/join-button";
 
 type Props = {

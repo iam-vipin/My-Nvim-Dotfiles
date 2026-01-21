@@ -18,7 +18,7 @@ import { INITIATIVE_DEFAULT_DISPLAY_FILTERS } from "@plane/constants";
 import type { TInitiativeDisplayFilters } from "@plane/types";
 // Plane-web
 import { InitiativeService } from "@/plane-web/services/initiative.service";
-import type { TExternalInitiativeFilterExpression } from "@/plane-web/types/initiative";
+import type { TExternalInitiativeFilterExpression } from "@/types/initiative";
 import type { RootStore } from "../root.store";
 
 export interface IInitiativeFilterStore {

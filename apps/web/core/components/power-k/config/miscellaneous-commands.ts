@@ -25,7 +25,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { isPiAllowed } from "@/helpers/pi-chat";
 import { useTheme, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { usePathname } from "next/navigation";
 
 export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {

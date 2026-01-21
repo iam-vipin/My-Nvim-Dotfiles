@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TIssueRelationTypes } from "../types";
+import type { TIssueRelationTypes } from "../../core/types";
 
 export const REVERSE_RELATIONS: { [key in TIssueRelationTypes]: TIssueRelationTypes } = {
   blocked_by: "blocking",

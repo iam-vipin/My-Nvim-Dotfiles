@@ -24,7 +24,7 @@ import { store } from "@/lib/store-context";
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
 // hooks
 import { useFeatureFlags } from "../hooks/store/use-feature-flags";
-import { EWorkspaceFeatures } from "../types/workspace-feature";
+import { EWorkspaceFeatures } from "../../core/types/workspace-feature";
 
 /**
  * @description extensions disabled in various editors

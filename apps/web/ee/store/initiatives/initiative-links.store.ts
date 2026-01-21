@@ -14,7 +14,7 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // Plane-web
-import type { TInitiativeLink } from "@/plane-web/types/initiative";
+import type { TInitiativeLink } from "@/types/initiative";
 //
 import type { InitiativeStore } from "./initiatives.store";
 

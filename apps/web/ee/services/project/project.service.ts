@@ -16,7 +16,7 @@
 // plane imports
 import type { TProject, TProjectLink, TStateAnalytics } from "@plane/types";
 // plane web imports
-import type { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
+import type { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/types";
 // services
 import { ProjectService as CeProjectService } from "@/services/project";
 

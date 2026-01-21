@@ -22,7 +22,7 @@ import { LinearAuthService } from "@/plane-web/services/importers/linear/auth.se
 // store types
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
+import type { TLinearPATFormFields } from "@/types/importers/linear";
 
 export interface ILinearAuthStore {
   // observables

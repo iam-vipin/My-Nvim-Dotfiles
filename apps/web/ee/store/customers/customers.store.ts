@@ -32,7 +32,7 @@ import type {
 // store
 import { convertToEpoch } from "@plane/utils";
 import type { RootStore } from "@/plane-web/store/root.store";
-import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/types/workspace-feature";
 import { RequestAttachmentStore } from "./attachment.store";
 import { WorkItemCustomersStore } from "./work-item-customers.store";
 

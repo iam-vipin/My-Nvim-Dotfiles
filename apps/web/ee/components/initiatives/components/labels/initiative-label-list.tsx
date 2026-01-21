@@ -28,7 +28,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initiative-label-inline";
 import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";

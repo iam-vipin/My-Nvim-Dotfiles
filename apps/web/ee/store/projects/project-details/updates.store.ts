@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { ProjectUpdateService } from "@/plane-web/services";
 // types
-import type { TProjectUpdate, TProjectUpdateReaction } from "@/plane-web/types";
+import type { TProjectUpdate, TProjectUpdateReaction } from "@/types";
 import type { IUpdateCommentStore } from "./comment.store";
 import { ProjectUpdateCommentStore } from "./comment.store";
 import type { IProjectUpdatesReactionStore } from "./update_reaction.store";

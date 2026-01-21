@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type { TEpicStats, TLoader } from "@plane/types";
 import type { InitiativeService } from "@/plane-web/services/initiative.service";
-import type { TInitiativeAnalytics } from "@/plane-web/types/initiative";
+import type { TInitiativeAnalytics } from "@/types/initiative";
 import type { RootStore } from "../root.store";
 import type { IInitiativeEpicsFilterStore } from "./initiative-epics-filter.store";
 import { InitiativeEpicsFilterStore } from "./initiative-epics-filter.store";

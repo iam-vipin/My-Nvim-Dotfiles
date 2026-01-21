@@ -12,7 +12,7 @@
  */
 
 // plane web types
-import type { TStepperBlock } from "@/plane-web/types/importers";
+import type { TStepperBlock } from "@/types/importers";
 
 // importer steps types
 export enum E_CSV_IMPORTER_STEPS {

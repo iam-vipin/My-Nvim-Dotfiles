@@ -23,8 +23,8 @@ import type { TProject } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useTeamspaces, useFlag } from "@/plane-web/hooks/store";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
-import { E_IMPORTER_STEPS, EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/types/importers/zip-importer";
+import { E_IMPORTER_STEPS, EDocImporterDestinationType } from "@/types/importers/zip-importer";
 import { StepperNavigation, Dropdown } from "../../../ui";
 
 export const SelectDestination = observer(function SelectDestination({ driverType }: TZipImporterProps) {

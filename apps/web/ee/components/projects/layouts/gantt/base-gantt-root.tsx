@@ -26,8 +26,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
-import type { TProject } from "@/plane-web/types/projects";
-import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import type { TProject } from "@/types/projects";
+import { EProjectLayouts } from "@/types/workspace-project-filters";
 // local imports
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectGanttBlock } from "./blocks";

@@ -35,8 +35,8 @@ import type {
   TInitiativeAnalytics,
   TInitiativeReaction,
   TInitiativeStats,
-} from "@/plane-web/types/initiative";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+} from "@/types/initiative";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 // local imports
 import type { RootStore } from "../root.store";

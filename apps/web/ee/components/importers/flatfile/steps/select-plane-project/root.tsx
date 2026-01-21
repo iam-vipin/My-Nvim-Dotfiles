@@ -28,8 +28,8 @@ import { Loader } from "@plane/ui";
 import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
-import type { TImporterDataPayload } from "@/plane-web/types/importers/flatfile";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/flatfile";
+import type { TImporterDataPayload } from "@/types/importers/flatfile";
+import { E_IMPORTER_STEPS } from "@/types/importers/flatfile";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 

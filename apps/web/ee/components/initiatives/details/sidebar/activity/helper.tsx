@@ -23,7 +23,7 @@ import {
 } from "@plane/propel/icons";
 import type { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
-import type { TInitiativeActivity } from "@/plane-web/types/initiative";
+import type { TInitiativeActivity } from "@/types/initiative";
 
 // Get the key for the issue property type based on the property type and relation type
 export const getInitiativeActivityKey = (

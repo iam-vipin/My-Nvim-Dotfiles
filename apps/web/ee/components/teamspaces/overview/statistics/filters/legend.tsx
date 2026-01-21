@@ -23,7 +23,7 @@ import {
   WORKSPACE_PROJECT_STATE_GROUPS,
   WORKSPACE_PROJECT_STATE_PRIORITY,
 } from "@/plane-web/constants/workspace-project-states";
-import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/types/teamspace";
 
 export const StatisticsLegend = observer(function StatisticsLegend(props: TStatisticsFilterProps<"legend">) {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;

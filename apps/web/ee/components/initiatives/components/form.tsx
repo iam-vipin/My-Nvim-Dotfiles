@@ -42,7 +42,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 
 // plane web components
-import type { TInitiative } from "@/plane-web/types";
+import type { TInitiative } from "@/types";
 
 // local components
 import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";

@@ -19,7 +19,7 @@ import { CustomMenu } from "@plane/ui";
 import useLocalStorage from "@/hooks/use-local-storage";
 import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
 import { SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
-import type { TProjectDisplayFilters, TProjectSortBy } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectDisplayFilters, TProjectSortBy } from "@/types/workspace-project-filters";
 //types
 //constants
 

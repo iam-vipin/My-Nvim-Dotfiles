@@ -50,7 +50,7 @@ import { CoreRootStore } from "@/store/root.store";
 // theme
 import type { IThemeStore } from "./theme.store";
 import { ThemeStore } from "./theme.store";
-import { EZipDriverType } from "../types/importers/zip-importer";
+import { EZipDriverType } from "@/types/importers/zip-importer";
 // automations
 import type { IAutomationsRootStore } from "./automations/root.store";
 import { AutomationsRootStore } from "./automations/root.store";

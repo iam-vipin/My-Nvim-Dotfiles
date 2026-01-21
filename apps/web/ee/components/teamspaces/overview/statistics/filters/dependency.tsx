@@ -19,7 +19,7 @@ import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { TEAM_STATISTICS_DEPENDENCY_MAP } from "@/plane-web/constants/teamspace";
-import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/types/teamspace";
 
 export const StatisticsDependencyFilter = observer(function StatisticsDependencyFilter(
   props: TStatisticsFilterProps<"dependency_type">

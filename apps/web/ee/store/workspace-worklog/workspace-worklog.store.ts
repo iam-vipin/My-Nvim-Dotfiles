@@ -34,7 +34,7 @@ import type {
   TWorklogIssueTotalCount,
   TWorklogPaginatedInfo,
   TWorklogQueryParams,
-} from "@/plane-web/types";
+} from "@/types";
 
 type TWorklogLoader = EWorklogLoader | undefined;
 type TWorklogQueryParamType = EWorklogQueryParamType;

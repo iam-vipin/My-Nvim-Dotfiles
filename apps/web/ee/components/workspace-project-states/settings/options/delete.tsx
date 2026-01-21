@@ -26,7 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/types/workspace-project-states";
 
 type TProjectStateDelete = {
   workspaceSlug: string;

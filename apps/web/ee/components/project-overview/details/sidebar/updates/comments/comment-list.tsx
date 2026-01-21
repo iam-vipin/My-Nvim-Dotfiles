@@ -19,7 +19,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
-import type { TProjectUpdatesComment } from "@/plane-web/types";
+import type { TProjectUpdatesComment } from "@/types";
 import { CommentBlock } from "./comment-block";
 
 type TProps = {

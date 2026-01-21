@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { ContentWrapper } from "@plane/ui";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
-import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts } from "@/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectCard } from "./card";
 

@@ -20,7 +20,7 @@ import type { TIssueRelationIdMap, TIssueRelationMap, TIssueRelation, TIssue } f
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 // Plane-web
 import { REVERSE_RELATIONS } from "@/plane-web/constants/gantt-chart";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/types";
 // services
 import { IssueRelationService } from "@/services/issue";
 // types

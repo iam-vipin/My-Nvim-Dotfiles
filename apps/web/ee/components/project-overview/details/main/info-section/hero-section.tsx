@@ -28,7 +28,7 @@ import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@/types";
 import { Tooltip } from "@plane/propel/tooltip";
 
 type THeroSection = {

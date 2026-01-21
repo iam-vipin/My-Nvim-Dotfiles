@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectDisplayFilters } from "@/types/workspace-project-filters";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
 interface Props {

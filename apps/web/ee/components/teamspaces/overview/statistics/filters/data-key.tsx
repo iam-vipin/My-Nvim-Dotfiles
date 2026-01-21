@@ -19,7 +19,7 @@ import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { TEAM_STATISTICS_DATA_KEY_MAP } from "@/plane-web/constants/teamspace";
-import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/types/teamspace";
 
 export const StatisticsDataKeyFilter = observer(function StatisticsDataKeyFilter(
   props: TStatisticsFilterProps<"data_key">

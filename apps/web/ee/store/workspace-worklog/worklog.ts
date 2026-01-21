@@ -18,7 +18,7 @@ import worklogService from "@/plane-web/services/workspace-worklog.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TWorklog, TWorklogIssue } from "@/plane-web/types";
+import type { TWorklog, TWorklogIssue } from "@/types";
 
 export interface IWorklog extends TWorklog {
   // computed

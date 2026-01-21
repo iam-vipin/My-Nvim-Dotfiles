@@ -33,7 +33,7 @@ import type {
   TUpdatedArtifact,
   TPiAttachment,
   TTemplate,
-} from "../types";
+} from "../../core/types";
 
 type TChatHistoryResponse = {
   results: {

@@ -23,7 +23,7 @@ import type {
   TProjectAttributesResponse,
   TProjectFeatures,
   TProjectFeaturesList,
-} from "@/plane-web/types";
+} from "@/types";
 import type { IProjectAttachmentStore } from "./project-details/attachment.store";
 import { ProjectAttachmentStore } from "./project-details/attachment.store";
 import type { IProjectLinkStore } from "./project-details/link.store";

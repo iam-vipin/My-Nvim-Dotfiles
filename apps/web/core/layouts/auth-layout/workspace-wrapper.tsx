@@ -58,7 +58,7 @@ import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
 
 type WorkspaceAuthWrapper = {

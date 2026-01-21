@@ -25,8 +25,8 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { WorkspaceProjectsRoot } from "@/plane-web/components/projects";
 import { useProjectFilter, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { EProjectLayouts } from "@/types/workspace-project-filters";
 
 export const ProjectPageRoot = observer(function ProjectPageRoot() {
   // router

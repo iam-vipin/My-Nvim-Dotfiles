@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import type { TProject } from "@plane/types";
 import { Card, cn } from "@plane/ui";
 import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
-import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { useProjectData } from "../useArtifactData";
 import { PiChatArtifactsFooter } from "./footer";
 import { getRandomCoverImage } from "@/helpers/cover-image.helper";

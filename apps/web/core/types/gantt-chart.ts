@@ -11,19 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { EDependencyPosition, ETimelineRelation } from "../constants";
+import type { EDependencyPosition, ETimelineRelation } from "../../ee/constants";
 
-export type TIssueRelationTypes =
-  | "blocking"
-  | "blocked_by"
-  | "duplicate"
-  | "relates_to"
+export type TCoreWorkItemRelationTypes = "blocking" | "blocked_by" | "duplicate" | "relates_to";
+export type TExtendedWorkItemRelationTypes =
   | "start_before"
   | "start_after"
   | "finish_before"
   | "finish_after"
   | "implements"
   | "implemented_by";
+export type TIssueRelationTypes = TCoreWorkItemRelationTypes | TExtendedWorkItemRelationTypes;
 
 export type DependencyTree = {
   dependencyId: string;

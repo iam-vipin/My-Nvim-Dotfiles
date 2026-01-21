@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";
 // plane web imports
-import type { TProjectsBoardLayoutStructure } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectsBoardLayoutStructure } from "@/types/workspace-project-filters";
 // local imports
 import { ProjectBoardGroupItem } from "./group-item";
 

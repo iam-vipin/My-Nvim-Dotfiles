@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TArtifact } from "@/plane-web/types";
+import type { TArtifact } from "@/types";
 import { PreviewCard } from "../preview-cards/root";
 
 export function PiChatArtifactsListRoot(props: { artifacts: TArtifact[] }) {

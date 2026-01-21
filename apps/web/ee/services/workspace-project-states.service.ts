@@ -16,7 +16,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // plane web types
-import type { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/types/workspace-project-states";
 // services
 import { APIService } from "@/services/api.service";
 

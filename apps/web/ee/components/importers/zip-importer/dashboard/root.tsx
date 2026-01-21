@@ -23,8 +23,8 @@ import { Button } from "@plane/propel/button";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // plane web hooks
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
-import { EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/types/importers/zip-importer";
+import { EDocImporterDestinationType } from "@/types/importers/zip-importer";
 import { DashboardLoaderTable, SyncJobStatus } from "../../common/dashboard";
 
 export const ZipImporterDashboard = observer(function ZipImporterDashboard({

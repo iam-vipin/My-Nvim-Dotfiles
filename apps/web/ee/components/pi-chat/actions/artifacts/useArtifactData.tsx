@@ -15,7 +15,7 @@ import { useEffect, useRef } from "react";
 import { isEmpty } from "lodash-es";
 import type { ICycle, IModule, TIssue, TIssuePriorities, TPage, TProject } from "@plane/types";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { getRandomCoverImage } from "@/helpers/cover-image.helper";
 import { getRandomEmoji } from "@plane/utils";
 

@@ -24,7 +24,7 @@ import { EntityForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
+import type { TProjectMap } from "@/types/integrations/gitlab";
 // local imports
 import { projectMapInit } from "../root";
 

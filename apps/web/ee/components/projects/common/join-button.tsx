@@ -20,7 +20,7 @@ import { cn } from "@plane/utils";
 // components
 import { JoinProjectModal } from "@/components/project/join-project-modal";
 // plane web imports
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 
 type Props = {
   project: TProject;

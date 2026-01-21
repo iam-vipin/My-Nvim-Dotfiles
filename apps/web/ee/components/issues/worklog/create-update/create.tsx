@@ -17,7 +17,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 // plane web types
-import type { TWorklog } from "@/plane-web/types";
+import type { TWorklog } from "@/types";
 import { WorklogFormRoot } from "./form";
 
 type TWorklogCreate = {

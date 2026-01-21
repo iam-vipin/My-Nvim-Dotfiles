@@ -22,7 +22,7 @@ import { ProjectsBaseHeader } from "@/components/project/header";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { ProjectScopeDropdown } from "../dropdowns/scope-dropdown";
 import { ProjectAttributesDropdown } from "./attributes-dropdown";

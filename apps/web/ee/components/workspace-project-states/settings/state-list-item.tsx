@@ -38,7 +38,7 @@ import type {
   TProjectState,
   TProjectStateGroupKey,
   TProjectStateIdsByGroup,
-} from "@/plane-web/types/workspace-project-states";
+} from "@/types/workspace-project-states";
 
 type TProjectStateListItem = {
   workspaceSlug: string;

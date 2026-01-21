@@ -32,7 +32,7 @@ import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store"
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { DE_DUPE_SELECT_GROUP } from "@/plane-web/constants/de-dupe";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { DeDupeIssueButtonLabel } from "../issue-block/button-label";
 import { DeDupeIssueBlockRoot } from "./block-root";

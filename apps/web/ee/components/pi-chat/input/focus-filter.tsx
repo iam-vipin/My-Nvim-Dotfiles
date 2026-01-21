@@ -33,7 +33,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import type { TFocus } from "@/plane-web/types";
+import type { TFocus } from "@/types";
 
 type TProps = {
   workspaceId: string;

@@ -26,7 +26,7 @@ import { cn } from "@plane/utils";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
-import type { TStatisticsFilter } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilter } from "@/types/teamspace";
 // local imports
 import { TeamspaceStatisticsMap } from "./chart";
 import { StatisticsDataKeyFilter } from "./filters/data-key";

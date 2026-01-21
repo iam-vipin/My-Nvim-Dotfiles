@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import { Button } from "@plane/propel/button";
 // plane web types
-import type { TDefaultPaginatedInfo } from "@/plane-web/types";
+import type { TDefaultPaginatedInfo } from "@/types";
 
 type TPaginationBar = {
   perPage: number;

@@ -96,7 +96,6 @@ export class AIService extends APIService {
 
   async getRevisionTypes(): Promise<TAIBlockRevisionTypesResponse> {
     return this.get("/api/v1/pages/blocks/revision/types/")
-
       .then((response: AxiosResponse<TAIBlockRevisionTypesResponse>) => response.data)
       .catch((error: AxiosError) => {
         throw error?.response?.data;

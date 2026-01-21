@@ -19,7 +19,7 @@ import { PublishPageService } from "@/plane-web/services/page";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TPagePublishSettings } from "@/plane-web/types";
+import type { TPagePublishSettings } from "@/types";
 
 export interface IPublishPageStore {
   // observables

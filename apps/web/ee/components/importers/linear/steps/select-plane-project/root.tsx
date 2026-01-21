@@ -30,8 +30,8 @@ import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web types
-import type { TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
-import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
+import type { TImporterLinearDataPayload } from "@/types/importers/linear";
+import { E_LINEAR_IMPORTER_STEPS } from "@/types/importers/linear";
 
 type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 

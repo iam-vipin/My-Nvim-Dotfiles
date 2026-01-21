@@ -21,8 +21,8 @@ import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { SPREADSHEET_PROPERTY_LIST } from "@/plane-web/constants/project/spreadsheet";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // types
-import type { TProject } from "@/plane-web/types/projects";
-import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import type { TProject } from "@/types/projects";
+import type { TProjectDisplayFilters } from "@/types/workspace-project-filters";
 // local components
 import { SpreadsheetTable } from "./spreadsheet-table";
 

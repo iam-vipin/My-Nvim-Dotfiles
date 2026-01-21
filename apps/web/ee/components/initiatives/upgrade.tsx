@@ -28,7 +28,7 @@ import InitiativesUpgradeLight from "@/app/assets/empty-state/initiatives/upgrad
 // hooks
 import { useFlag, useWorkspaceFeatures, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // types
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 type Props = {
   workspaceSlug: string;

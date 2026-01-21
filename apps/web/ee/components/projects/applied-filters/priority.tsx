@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // constants
 import { CloseIcon, PriorityIcon } from "@plane/propel/icons";
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project/default-root";
-import type { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectPriority } from "@/types/workspace-project-filters";
 
 type Props = {
   handleRemove: (val: TProjectPriority) => void;

@@ -36,8 +36,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
-import type { TProject } from "@/plane-web/types/projects";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { TProject } from "@/types/projects";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import ProjectAttributes from "./attributes";
 import { ProjectCreateLoader } from "./loader";

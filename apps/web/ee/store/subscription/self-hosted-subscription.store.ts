@@ -21,7 +21,7 @@ import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subs
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
+import type { TSelfHostedSubscription } from "@/types/self-hosted-subscription";
 
 const paymentService = new PaymentService();
 

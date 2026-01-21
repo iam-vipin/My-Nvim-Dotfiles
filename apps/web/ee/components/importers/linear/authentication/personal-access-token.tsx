@@ -24,8 +24,8 @@ import { useLinearImporter } from "@/plane-web/hooks/store";
 import type { TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
 import { AuthFormInput } from "@/plane-web/components/importers/ui/auth-form-input";
 // plane web types
-import type { TImporterPATError } from "@/plane-web/types";
-import type { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
+import type { TImporterPATError } from "@/types";
+import type { TLinearPATFormFields } from "@/types/importers/linear";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 

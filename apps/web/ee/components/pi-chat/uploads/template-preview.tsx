@@ -15,7 +15,7 @@ import { File } from "lucide-react";
 import { CircularProgressIndicator } from "@plane/ui";
 import { ImageToolbarRoot } from "@/plane-web/components/common/image-toolbar";
 import { useUploadStatus } from "@/plane-web/components/common/image-toolbar/use-upload-status";
-import type { TPiAttachment } from "@/plane-web/types/pi-chat";
+import type { TPiAttachment } from "@/types/pi-chat";
 
 type Props = {
   attachment: TPiAttachment;

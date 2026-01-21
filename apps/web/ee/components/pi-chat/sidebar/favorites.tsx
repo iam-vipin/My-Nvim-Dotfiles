@@ -14,7 +14,7 @@
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import type { TUserThreads } from "@/plane-web/types";
+import type { TUserThreads } from "@/types";
 import { SidebarItem } from "./sidebar-item";
 
 type TProps = {

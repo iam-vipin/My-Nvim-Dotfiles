@@ -31,7 +31,7 @@ import {
   WorkspaceProjectStatesRoot,
 } from "@/plane-web/components/workspace-project-states";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { ProjectStatessWorkspaceSettingsHeader } from "./header";

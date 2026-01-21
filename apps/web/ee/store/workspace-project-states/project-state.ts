@@ -18,7 +18,7 @@ import projectStateService from "@/plane-web/services/workspace-project-states.s
 // store
 import type { RootStore } from "@/plane-web/store/root.store";
 // types
-import type { TProjectState, TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState, TProjectStateGroupKey } from "@/types/workspace-project-states";
 
 export interface IProjectState extends TProjectState {
   // constants

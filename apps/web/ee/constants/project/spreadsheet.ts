@@ -23,7 +23,7 @@ import { SpreadsheetMembersColumn } from "@/plane-web/components/projects/layout
 import { SpreadsheetPriorityColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/priority-column";
 import { SpreadsheetStateColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/state-column";
 import { SpreadsheetUpdatedOnColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/updated-on-column";
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 
 export interface IProjectDisplayProperties {
   priority?: boolean;

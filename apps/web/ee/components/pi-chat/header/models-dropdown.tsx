@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-import type { TAiModels } from "@/plane-web/types";
+import type { TAiModels } from "@/types";
 
 export type TModelsDropdown = {
   className?: string;

@@ -26,8 +26,8 @@ import type {
   TWorkspaceFeature,
   EWorkspaceFeatures,
   TWorkspaceFeatureLoader,
-} from "@/plane-web/types/workspace-feature";
-import { EWorkspaceFeatureLoader } from "@/plane-web/types/workspace-feature";
+} from "@/types/workspace-feature";
+import { EWorkspaceFeatureLoader } from "@/types/workspace-feature";
 
 export interface IWorkspaceFeatureStore {
   // observables

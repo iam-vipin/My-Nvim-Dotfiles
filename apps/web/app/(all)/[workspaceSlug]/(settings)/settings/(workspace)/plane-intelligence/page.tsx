@@ -31,7 +31,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { PiChatUpgrade } from "@/plane-web/components/pi-chat/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { PlaneAIWorkspaceSettingsHeader } from "./header";

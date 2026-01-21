@@ -23,14 +23,14 @@ import type { RootStore } from "@/plane-web/store/root.store";
 import type { IProjectState } from "@/plane-web/store/workspace-project-states";
 import { ProjectState } from "@/plane-web/store/workspace-project-states";
 // plane web types
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type {
   TProjectState,
   TProjectStateGroupKey,
   TProjectStateLoader,
   TProjectStateIdsByGroup,
-} from "@/plane-web/types/workspace-project-states";
-import { EProjectStateGroup, EProjectStateLoader } from "@/plane-web/types/workspace-project-states";
+} from "@/types/workspace-project-states";
+import { EProjectStateGroup, EProjectStateLoader } from "@/types/workspace-project-states";
 
 export interface IWorkspaceProjectStatesStore {
   // constants

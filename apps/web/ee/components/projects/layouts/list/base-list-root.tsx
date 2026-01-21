@@ -15,7 +15,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts } from "@/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { List } from "./default";
 

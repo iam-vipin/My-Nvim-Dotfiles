@@ -12,7 +12,7 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { TProjectActivity } from "@/plane-web/types";
+import type { TProjectActivity } from "@/types";
 import { APIService } from "@/services/api.service";
 
 export class ProjectActivityService extends APIService {

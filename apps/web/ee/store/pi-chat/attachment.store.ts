@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
-import type { TPiAttachment } from "@/plane-web/types/pi-chat";
+import type { TPiAttachment } from "@/types/pi-chat";
 import type { IPiChatStore } from "./pi-chat";
 // services
 

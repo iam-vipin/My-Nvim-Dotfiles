@@ -17,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // PLane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLink } from "@/plane-web/types/initiative";
+import type { TInitiativeLink } from "@/types/initiative";
 
 export type TLinkOperations = {
   create: (data: Partial<TInitiativeLink>) => Promise<void>;

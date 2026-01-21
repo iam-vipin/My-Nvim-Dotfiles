@@ -27,7 +27,7 @@ import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-
 // plane web hooks
 import { useLinearImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
-import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
+import { E_LINEAR_IMPORTER_STEPS } from "@/types/importers/linear";
 import ImporterTable from "../../../ui/table";
 
 export const SummaryRoot = observer(function SummaryRoot() {

@@ -18,7 +18,7 @@ import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/fi
 // constants
 import { PROJECT_GROUP_BY_OPTIONS } from "@/plane-web/constants/project";
 // types
-import type { TProjectGroupBy } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectGroupBy } from "@/types/workspace-project-filters";
 
 type TDisplayFilterGroupBy = {
   filterValue: TProjectGroupBy | undefined;

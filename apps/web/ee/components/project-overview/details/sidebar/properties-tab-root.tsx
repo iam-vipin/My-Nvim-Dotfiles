@@ -47,9 +47,9 @@ import { PriorityDropdown } from "@/plane-web/components/projects/dropdowns/prio
 import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TProject } from "@/plane-web/types";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-import type { EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import type { TProject } from "@/types";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import type { EProjectPriority } from "@/types/workspace-project-states";
 // assets
 
 type Props = {

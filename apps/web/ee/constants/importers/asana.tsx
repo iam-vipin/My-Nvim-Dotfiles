@@ -21,8 +21,8 @@ import {
   MapPriorityRoot,
 } from "@/plane-web/components/importers/asana";
 // plane web types
-import type { TImporterStep } from "@/plane-web/types/importers/asana";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
+import type { TImporterStep } from "@/types/importers/asana";
+import { E_IMPORTER_STEPS } from "@/types/importers/asana";
 
 export const IMPORTER_STEPS: TImporterStep[] = [
   {

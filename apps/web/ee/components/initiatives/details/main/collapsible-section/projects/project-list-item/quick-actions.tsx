@@ -22,7 +22,7 @@ import { CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 
 type Props = {
   workspaceSlug: string;

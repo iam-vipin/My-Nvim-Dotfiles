@@ -19,7 +19,7 @@ import { ChevronDownIcon } from "@plane/propel/icons";
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/types/teamspace";
 
 export const StatisticsDueByFilter = observer(function StatisticsDueByFilter(
   props: TStatisticsFilterProps<"target_date">

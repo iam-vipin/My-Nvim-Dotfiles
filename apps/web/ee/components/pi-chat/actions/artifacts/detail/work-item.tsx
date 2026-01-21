@@ -17,7 +17,7 @@ import type { TIssue } from "@plane/types";
 import { Card, cn } from "@plane/ui";
 import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
 import { IssueFormRoot } from "@/components/issues/issue-modal/form";
-import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { useWorkItemData } from "../useArtifactData";
 import { PiChatArtifactsFooter } from "./footer";
 

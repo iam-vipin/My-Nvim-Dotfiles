@@ -24,7 +24,7 @@ import {
   ProjectStateCreate,
 } from "@/plane-web/components/workspace-project-states";
 // plane web types
-import type { TProjectStateGroupKey, TProjectStateIdsByGroup } from "@/plane-web/types/workspace-project-states";
+import type { TProjectStateGroupKey, TProjectStateIdsByGroup } from "@/types/workspace-project-states";
 
 type TGroupItem = {
   workspaceSlug: string;

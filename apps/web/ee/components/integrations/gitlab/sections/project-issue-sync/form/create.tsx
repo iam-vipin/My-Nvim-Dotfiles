@@ -13,7 +13,7 @@
 
 import type { Dispatch, SetStateAction } from "react";
 import type { TGitlabEntityConnection, TIssueStateMap } from "@plane/types";
-import type { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/types/integrations";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";

@@ -16,12 +16,7 @@ import { computed, makeObservable, observable, runInAction } from "mobx";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type {
-  TWorklogDownloadFormat,
-  TWorklogDownloadStatus,
-  TWorklogDownload,
-  TWorklogFilter,
-} from "@/plane-web/types";
+import type { TWorklogDownloadFormat, TWorklogDownloadStatus, TWorklogDownload, TWorklogFilter } from "@/types";
 
 export interface IWorklogDownload extends TWorklogDownload {
   // computed

@@ -27,7 +27,7 @@ import {
 //  plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
+import type { TProjectMap } from "@/types/integrations/gitlab";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,

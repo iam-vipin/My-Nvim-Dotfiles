@@ -26,7 +26,7 @@ import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 // helpers
 // plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import type { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/types/projects";
 // local imports
 import { MembersDropdown } from "../dropdowns/members-dropdown";
 import { StateDropdown } from "../dropdowns/state-dropdown";

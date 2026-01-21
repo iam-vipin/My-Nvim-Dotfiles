@@ -29,12 +29,8 @@ import type {
   TImporterStep,
   TImporterDataPayload,
   TDocImporterJobConfig,
-} from "@/plane-web/types/importers/zip-importer";
-import {
-  E_IMPORTER_STEPS,
-  EZipDriverType,
-  EDocImporterDestinationType,
-} from "@/plane-web/types/importers/zip-importer";
+} from "@/types/importers/zip-importer";
+import { E_IMPORTER_STEPS, EZipDriverType, EDocImporterDestinationType } from "@/types/importers/zip-importer";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {

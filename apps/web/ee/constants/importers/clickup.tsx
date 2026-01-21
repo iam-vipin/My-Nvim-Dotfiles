@@ -21,8 +21,8 @@ import {
   MapPriorityRoot,
 } from "@/plane-web/components/importers/clickup";
 // types
-import type { TClickUpImporterStep } from "@/plane-web/types/importers/clickup";
-import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
+import type { TClickUpImporterStep } from "@/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/types/importers/clickup";
 
 export const IMPORTER_CLICKUP_STEPS_V1: TClickUpImporterStep[] = [
   {

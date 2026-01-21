@@ -20,7 +20,7 @@ import { DescriptionInput } from "@/components/editor/rich-text/description-inpu
 import { DescriptionInputLoader } from "@/components/editor/rich-text/description-input/loader";
 // hooks
 import { useUser } from "@/hooks/store/user";
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@/types";
 import { Actions } from "./actions";
 import { ProjectReaction } from "./update-reaction";
 

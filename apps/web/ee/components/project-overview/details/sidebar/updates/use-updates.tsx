@@ -15,7 +15,7 @@ import { useMemo } from "react";
 import useSWR from "swr";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
-import type { TProjectUpdate } from "@/plane-web/types";
+import type { TProjectUpdate } from "@/types";
 
 export type TUpdateOperations = {
   create: (data: Partial<TProjectUpdate>) => Promise<void>;

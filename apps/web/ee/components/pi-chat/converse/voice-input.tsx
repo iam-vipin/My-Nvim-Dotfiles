@@ -19,7 +19,7 @@ import type { TPiChatEditorRefApi } from "@plane/editor";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
-import type { TFocus, TPiLoaders } from "@/plane-web/types";
+import type { TFocus, TPiLoaders } from "@/types";
 import { Waveform } from "./voice-chart";
 
 // eslint-disable-next-line react-refresh/only-export-components

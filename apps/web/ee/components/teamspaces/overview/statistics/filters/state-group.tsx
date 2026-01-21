@@ -19,7 +19,7 @@ import type { TStateGroups } from "@plane/types";
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/types/teamspace";
 
 export const StatisticsStateGroupFilter = observer(function StatisticsStateGroupFilter(
   props: TStatisticsFilterProps<"state_group">

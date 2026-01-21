@@ -19,7 +19,7 @@ import type { TFetchStatus, TLoader, TProjectAnalyticsCount, TProjectAnalyticsCo
 // helpers
 import { orderProjects, shouldFilterProject } from "@plane/utils";
 // services
-import type { TProject, TPartialProject } from "@/plane-web/types/projects";
+import type { TProject, TPartialProject } from "@/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store

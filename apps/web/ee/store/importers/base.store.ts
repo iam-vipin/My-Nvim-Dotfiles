@@ -19,8 +19,8 @@ import type { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/type
 import externalApiTokenService from "@/plane-web/services/importers/root.service";
 // plane web root store
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { TPlanePriorityData } from "@/plane-web/types/importers";
-import { E_PLANE_PRIORITY } from "@/plane-web/types/importers";
+import type { TPlanePriorityData } from "@/types/importers";
+import { E_PLANE_PRIORITY } from "@/types/importers";
 
 export type TBaseLoader = "fetch-projects" | "fetch_states" | undefined;
 

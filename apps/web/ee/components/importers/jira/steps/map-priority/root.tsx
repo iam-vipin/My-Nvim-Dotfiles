@@ -27,9 +27,9 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
-import type { TPlanePriorityData } from "@/plane-web/types";
-import type { TImporterDataPayload } from "@/plane-web/types/importers/jira";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira";
+import type { TPlanePriorityData } from "@/types";
+import type { TImporterDataPayload } from "@/types/importers/jira";
+import { E_IMPORTER_STEPS } from "@/types/importers/jira";
 import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];

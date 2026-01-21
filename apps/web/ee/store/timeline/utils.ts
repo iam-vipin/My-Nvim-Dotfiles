@@ -19,7 +19,7 @@ import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { getItemPositionWidth } from "@/components/gantt-chart/views";
 // Plane-web
 import { EDependencyPosition, ETimelineRelation } from "@/plane-web/constants";
-import type { DependencyTree, Relation, TIssueRelationTypes } from "@/plane-web/types";
+import type { DependencyTree, Relation, TIssueRelationTypes } from "@/types";
 
 /**
  * Dependency details for each relation ship type, Used while building dependency tree

@@ -21,7 +21,7 @@ import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types
-import type { TProjectStateGroupKey, TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectStateGroupKey, TProjectState } from "@/types/workspace-project-states";
 
 type TProjectStateCreate = {
   workspaceSlug: string;

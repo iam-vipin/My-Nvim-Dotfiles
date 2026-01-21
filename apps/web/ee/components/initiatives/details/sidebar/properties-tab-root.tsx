@@ -39,7 +39,7 @@ import { SidebarContentWrapper } from "@/plane-web/components/common/layout/side
 import { InitiativeLabelDropdown } from "@/plane-web/components/initiatives/components/labels/initiative-label-dropdown";
 import { InitiativeStateDropdown } from "@/plane-web/components/initiatives/components/states/initiative-state-dropdown";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/types/initiative";
 
 type Props = {
   workspaceSlug: string;

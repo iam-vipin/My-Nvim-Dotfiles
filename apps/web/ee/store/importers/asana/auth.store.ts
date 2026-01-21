@@ -21,7 +21,7 @@ import { AsanaAuthService } from "@/plane-web/services/importers/asana/auth.serv
 // store types
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
+import type { TAsanaPATFormFields } from "@/types/importers/asana";
 
 export interface IAsanaAuthStore {
   // observables

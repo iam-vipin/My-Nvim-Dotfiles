@@ -17,8 +17,8 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useUserPermissions } from "@/hooks/store/user";
 import { revalidateProjectData } from "@/helpers/swr";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import type { TDialogue } from "@/plane-web/types";
-import { EExecutionStatus } from "@/plane-web/types";
+import type { TDialogue } from "@/types";
+import { EExecutionStatus } from "@/types";
 import { ConfirmBlock } from "./confirm-block";
 import { SummaryBlock } from "./summary";
 

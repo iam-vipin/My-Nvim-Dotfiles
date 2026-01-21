@@ -18,7 +18,7 @@ import { Card } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { ModuleForm } from "@/components/modules";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import type { TUpdatedArtifact, TArtifact } from "@/plane-web/types";
+import type { TUpdatedArtifact, TArtifact } from "@/types";
 import { useModuleData } from "../useArtifactData";
 import { PiChatArtifactsFooter } from "./footer";
 

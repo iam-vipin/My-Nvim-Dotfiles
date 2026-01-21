@@ -26,7 +26,7 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers";
+import { E_IMPORTER_STEPS } from "@/types/importers";
 import ImporterTable from "../../../ui/table";
 
 export const SummaryRoot = observer(function SummaryRoot() {

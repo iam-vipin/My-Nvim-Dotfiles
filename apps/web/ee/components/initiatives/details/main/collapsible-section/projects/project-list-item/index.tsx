@@ -28,7 +28,7 @@ import { Attributes } from "@/plane-web/components/projects/layouts/attributes";
 // local components
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { QuickActions } from "./quick-actions";
 
 type Props = {

@@ -30,7 +30,7 @@ import { InitiativeScopeRoot } from "@/plane-web/components/initiatives/scope/ro
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/page";
 
 function IssueDetailsPage({ params }: Route.ComponentProps) {

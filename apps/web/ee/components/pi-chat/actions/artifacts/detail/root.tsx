@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { CycleDetail } from "./cycle";
 import { EpicDetail } from "./epic";
 import { Header } from "./header";

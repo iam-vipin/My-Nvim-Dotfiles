@@ -27,7 +27,7 @@ import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-
 // plane web hooks
 import { useClickUpImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
-import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/types/importers/clickup";
 
 export const SummaryRoot = observer(function SummaryRoot() {
   // hooks

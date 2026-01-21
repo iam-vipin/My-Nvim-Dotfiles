@@ -29,7 +29,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import type { TChatContextData, TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
+import type { TChatContextData, TFocus, TPiAttachment, TPiLoaders } from "@/types";
 // local imports
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import AudioRecorder, { SPEECH_LOADERS } from "../converse/voice-input";

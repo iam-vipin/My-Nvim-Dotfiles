@@ -17,8 +17,8 @@ import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
 import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/plane-web/constants/importers/notion";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
-import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/types/importers/zip-importer";
+import { EZipDriverType } from "@/types/importers/zip-importer";
 
 export const StepsRoot = observer(function StepsRoot({ driverType, logo, serviceName }: TZipImporterProps) {
   const { currentStepIndex, resetImporterData } = useZipImporter(driverType);

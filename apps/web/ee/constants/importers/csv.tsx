@@ -15,8 +15,8 @@ import { FileUp, Layers3 } from "lucide-react";
 // components
 import { SelectPlaneProject, UploadCSV } from "@/plane-web/components/importers/csv";
 // plane web types
-import type { TCSVImporterStep } from "@/plane-web/types/importers/csv";
-import { E_CSV_IMPORTER_STEPS } from "@/plane-web/types/importers/csv";
+import type { TCSVImporterStep } from "@/types/importers/csv";
+import { E_CSV_IMPORTER_STEPS } from "@/types/importers/csv";
 
 export const CSV_IMPORTER_STEPS: TCSVImporterStep[] = [
   {

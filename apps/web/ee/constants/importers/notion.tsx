@@ -19,8 +19,8 @@ import NotionLogo from "@/app/assets/services/notion.svg?url";
 import { UploadZip } from "@/plane-web/components/importers/zip-importer";
 // plane web types
 import { SelectDestination } from "@/plane-web/components/importers/zip-importer/steps/select-destination";
-import type { TImporterStep } from "@/plane-web/types/importers/zip-importer";
-import { E_IMPORTER_STEPS, EZipDriverType } from "@/plane-web/types/importers/zip-importer";
+import type { TImporterStep } from "@/types/importers/zip-importer";
+import { E_IMPORTER_STEPS, EZipDriverType } from "@/types/importers/zip-importer";
 
 export const NOTION_IMPORTER_STEPS: TImporterStep[] = [
   {

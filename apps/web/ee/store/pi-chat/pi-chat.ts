@@ -37,8 +37,8 @@ import type {
   TSSEActionsEvent,
   TSSETitleResponse,
   TTemplate,
-} from "@/plane-web/types";
-import { ESource, EExecutionStatus } from "@/plane-web/types";
+} from "@/types";
+import { ESource, EExecutionStatus } from "@/types";
 import { ArtifactsStore } from "./artifacts";
 import { PiChatAttachmentStore } from "./attachment.store";
 import type { TSearchResults, EAiFeedback } from "@plane/types";

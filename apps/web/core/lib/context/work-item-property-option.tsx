@@ -25,23 +25,25 @@ const defaultIssuePropertyOption: Partial<Partial<TIssuePropertyOption>> = {
   is_default: false,
 };
 
-export type TIssuePropertyOptionsContext = {
+export type TWorkItemPropertyOptionsContext = {
   propertyOptions: TIssuePropertyOptionCreateUpdateData[];
   setPropertyOptions: React.Dispatch<React.SetStateAction<TIssuePropertyOptionCreateUpdateData[]>>;
   handlePropertyOptionsList: (mode: TCreationListModes, value: TIssuePropertyOptionCreateUpdateData) => void;
   resetOptions: () => void;
 };
 
-export const IssuePropertyOptionContext = createContext<TIssuePropertyOptionsContext | undefined>(undefined);
+const WorkItemPropertyOptionContext = createContext<TWorkItemPropertyOptionsContext | undefined>(undefined);
 
-type TIssuePropertyOptionsProviderProps = {
+export { WorkItemPropertyOptionContext };
+
+type TWorkItemPropertyOptionsProviderProps = {
   customPropertyId: string | undefined;
   customPropertyOperations: TCustomPropertyOperations;
   children: React.ReactNode;
 };
 
-export const IssuePropertyOptionsProvider = observer(function IssuePropertyOptionsProvider(
-  props: TIssuePropertyOptionsProviderProps
+export const WorkItemPropertyOptionsProvider = observer(function WorkItemPropertyOptionsProvider(
+  props: TWorkItemPropertyOptionsProviderProps
 ) {
   const { customPropertyId, customPropertyOperations, children } = props;
   const { getSortedActivePropertyOptions } = customPropertyOperations;
@@ -112,7 +114,7 @@ export const IssuePropertyOptionsProvider = observer(function IssuePropertyOptio
   }, [handlePropertyOptionsList, options]);
 
   return (
-    <IssuePropertyOptionContext.Provider
+    <WorkItemPropertyOptionContext.Provider
       value={{
         propertyOptions: sortedOptions,
         setPropertyOptions: setOptions,
@@ -121,6 +123,6 @@ export const IssuePropertyOptionsProvider = observer(function IssuePropertyOptio
       }}
     >
       {children}
-    </IssuePropertyOptionContext.Provider>
+    </WorkItemPropertyOptionContext.Provider>
   );
 });

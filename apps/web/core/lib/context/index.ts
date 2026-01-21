@@ -11,4 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./issue-property-option";
+export * from "./work-item-property-option";

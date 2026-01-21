@@ -17,7 +17,7 @@ import { useCallback } from "react";
 import type { EIssuePropertyType, IIssueProperty } from "@plane/types";
 import { calculateSortOrder } from "@plane/utils";
 // plane web imports
-import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
+import { WorkItemPropertyOptionsProvider } from "@/lib/context/work-item-property-option";
 // local imports
 import { IssuePropertyCreateListItem } from "./property-create-list-item";
 import { IssuePropertyListItem } from "./property-list-item";
@@ -76,7 +76,7 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
           <Sortable
             data={properties}
             render={(property) => (
-              <IssuePropertyOptionsProvider
+              <WorkItemPropertyOptionsProvider
                 key={property.id}
                 customPropertyId={property.id}
                 customPropertyOperations={customPropertyOperations}
@@ -86,7 +86,7 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
                   customPropertyOperations={customPropertyOperations}
                   isUpdateAllowed={isUpdateAllowed}
                 />
-              </IssuePropertyOptionsProvider>
+              </WorkItemPropertyOptionsProvider>
             )}
             onChange={(data, movedItem) => {
               handlePropertiesReorder(data, movedItem).catch((error) => {
@@ -98,7 +98,7 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
         )}
         {/* Issue properties create list */}
         {issuePropertyCreateList.map((issueProperty, index) => (
-          <IssuePropertyOptionsProvider
+          <WorkItemPropertyOptionsProvider
             key={issueProperty.key}
             customPropertyId={issueProperty.id}
             customPropertyOperations={customPropertyOperations}
@@ -109,7 +109,7 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
               customPropertyOperations={customPropertyOperations}
               isUpdateAllowed
             />
-          </IssuePropertyOptionsProvider>
+          </WorkItemPropertyOptionsProvider>
         ))}
       </div>
     </div>

@@ -15,19 +15,18 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { CopyLinkIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
-import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
+import { generateWorkItemLink } from "@plane/utils";
+// components
+import { CopyBranchNameButton } from "@/components/work-item/copy-branch-name";
+import { CopyWorkItemURLButton } from "@/components/work-item/copy-work-item-url";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
@@ -44,16 +43,12 @@ type Props = {
 export const IssueDetailQuickActions = observer(function IssueDetailQuickActions(props: Props) {
   const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
-
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
-
   // router
   const router = useAppRouter();
-
   // hooks
   const { data: currentUser } = useUser();
-  const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
   const {
     issue: { getIssueById },
@@ -80,24 +75,6 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     projectIdentifier,
     sequenceId: issue?.sequence_id,
   });
-
-  // handlers
-  const handleCopyText = async () => {
-    try {
-      const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-      await copyTextToClipboard(`${originURL}${workItemLink}`);
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("common.link_copied"),
-        message: t("common.copied_to_clipboard"),
-      });
-    } catch (_error) {
-      setToast({
-        title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
-      });
-    }
-  };
 
   const handleDeleteIssue = async () => {
     try {
@@ -164,9 +141,20 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
             />
           </WithFeatureFlagHOC>
           <div className="flex flex-wrap items-center gap-2 text-tertiary">
-            <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-              <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
-            </Tooltip>
+            {currentUser && issue?.sequence_id && projectIdentifier && (
+              <CopyBranchNameButton
+                user={currentUser}
+                projectIdentifier={projectIdentifier}
+                sequenceId={issue?.sequence_id}
+              />
+            )}
+            {workspaceSlug && projectIdentifier && issue?.sequence_id && (
+              <CopyWorkItemURLButton
+                workspaceSlug={workspaceSlug}
+                projectIdentifier={projectIdentifier}
+                sequenceId={issue?.sequence_id}
+              />
+            )}
             <WorkItemDetailQuickActions
               parentRef={parentRef}
               issue={issue}

@@ -205,12 +205,15 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             project_issue_types__project_id=project_id, is_epic=False, is_default=True
         ).first()
 
+        issue_data = request.data.get("issue", {})
+        description_json = issue_data.get("description_json") or issue_data.get("description") or {}
+
         # create an issue
         issue = Issue.objects.create(
-            name=request.data.get("issue", {}).get("name"),
-            description=request.data.get("issue", {}).get("description", {}),
-            description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
-            priority=request.data.get("issue", {}).get("priority", "none"),
+            name=issue_data.get("name"),
+            description_json=description_json,
+            description_html=issue_data.get("description_html", "<p></p>"),
+            priority=issue_data.get("priority", "none"),
             project_id=project_id,
             state_id=triage_state.id,
             type=issue_type,
@@ -414,10 +417,11 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
             # Only allow guests to edit name and description
             if project_member.role <= 5:
+                issue_description_json = issue_data.get("description_json") or issue_data.get("description") or {}
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get("description_html", issue.description_html),
-                    "description": issue_data.get("description", issue.description),
+                    "description_json": issue_description_json,
                 }
 
             issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)

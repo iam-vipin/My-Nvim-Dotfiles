@@ -49,7 +49,7 @@ def get_valid_update_fields():
     """Get list of fields that can be updated"""
     return [
         "name",
-        "description",
+        "description_json",
         "description_html",
         "description_binary",
         "access",
@@ -133,7 +133,7 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
                 data=page_data,
                 context={
                     "owned_by_id": page_data.get("owned_by", request.user.id),
-                    "description": page_data.get("description", {}),
+                    "description_json": page_data.get("description_json", {}),
                     "description_binary": page_data.get("description_binary", None),
                     "description_html": page_data.get("description_html", "<p></p>"),
                 },
@@ -288,7 +288,7 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
                 data=page_data,
                 context={
                     "owned_by_id": page_data.get("owned_by", request.user.id),
-                    "description": page_data.get("description", {}),
+                    "description_json": page_data.get("description_json", {}),
                     "description_binary": page_data.get("description_binary", None),
                     "description_html": page_data.get("description_html", "<p></p>"),
                     "project_id": project.id,
@@ -462,7 +462,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
                 data=page_data,
                 context={
                     "owned_by_id": page_data.get("owned_by", request.user.id),
-                    "description": page_data.get("description", {}),
+                    "description_json": page_data.get("description_json", {}),
                     "description_binary": page_data.get("description_binary", None),
                     "description_html": page_data.get("description_html", "<p></p>"),
                     "workspace_id": workspace.id,

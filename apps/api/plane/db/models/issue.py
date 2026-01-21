@@ -160,7 +160,7 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -396,7 +396,6 @@ class IssueAssignee(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.assignee.email}"
-
 
 
 class IssueLink(ProjectBaseModel):
@@ -863,7 +862,7 @@ class IssueDescriptionVersion(ProjectBaseModel):
                 description_binary=issue.description_binary,
                 description_html=issue.description_html,
                 description_stripped=issue.description_stripped,
-                description_json=issue.description,
+                description_json=issue.description_json,
             )
             return True
         except Exception as e:

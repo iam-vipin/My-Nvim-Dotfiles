@@ -23,6 +23,7 @@ import type {
   TSearchResponse,
   TAIBlockGenerateInputPartial,
   TFeedback,
+  TDocumentPayload,
 } from "@plane/types";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -147,10 +148,10 @@ export const useExtendedEditorProps = (
       const document = editorRef.getDocument();
       if (!document) return;
 
-      const payload = {
+      const payload: TDocumentPayload = {
         description_binary: document.binary ? convertBinaryDataToBase64String(document.binary) : "",
         description_html: document.html,
-        description: document.json ?? {},
+        description_json: document.json ?? {},
       };
 
       await page.updateDescription(payload);

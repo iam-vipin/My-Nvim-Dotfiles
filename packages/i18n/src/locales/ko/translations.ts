@@ -12,6 +12,13 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance:
+      "현재 이 문제를 해결하고 있습니다. 즉시 도움이 필요하시면,",
+    reach_out_to_us: "저희에게 연락해 주세요",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our: "그렇지 않으면 가끔 페이지를 새로고침하거나 저희",
+    status_page: "상태 페이지를 방문해 주세요",
+  },
   sidebar: {
     projects: "프로젝트",
     pages: "페이지",

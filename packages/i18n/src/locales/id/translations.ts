@@ -12,6 +12,14 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance:
+      "Kami sedang mengerjakan ini. Jika Anda memerlukan bantuan segera,",
+    reach_out_to_us: "hubungi kami",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our:
+      "Jika tidak, coba segarkan halaman sesekali atau kunjungi",
+    status_page: "halaman status kami",
+  },
   sidebar: {
     projects: "Projek",
     pages: "Halaman",

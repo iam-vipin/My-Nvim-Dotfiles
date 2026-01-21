@@ -12,6 +12,14 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance:
+      "Pracujemy nad tym. Jeśli potrzebujesz natychmiastowej pomocy,",
+    reach_out_to_us: "skontaktuj się z nami",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our:
+      "W przeciwnym razie spróbuj od czasu do czasu odświeżyć stronę lub odwiedź naszą",
+    status_page: "stronę statusu",
+  },
   sidebar: {
     projects: "Projekty",
     pages: "Strony",

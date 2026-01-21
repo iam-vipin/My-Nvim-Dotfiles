@@ -12,6 +12,12 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance: "我们正在处理此问题。如果您需要紧急协助，",
+    reach_out_to_us: "请联系我们",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our: "否则，请偶尔刷新页面或访问我们的",
+    status_page: "状态页面",
+  },
   sidebar: {
     projects: "项目",
     pages: "页面",

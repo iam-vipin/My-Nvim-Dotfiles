@@ -12,6 +12,13 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance: "Lucrăm la asta. Dacă aveți nevoie de asistență imediată,",
+    reach_out_to_us: "contactați-ne",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our:
+      "Altfel, încercați să reîmprospătați pagina din când în când sau vizitați",
+    status_page: "pagina noastră de stare",
+  },
   sidebar: {
     projects: "Proiecte",
     pages: "Documentație",

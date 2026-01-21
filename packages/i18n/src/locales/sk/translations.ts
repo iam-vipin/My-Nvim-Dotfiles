@@ -12,6 +12,13 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance: "Pracujeme na tom. Ak potrebujete okamžitú pomoc,",
+    reach_out_to_us: "kontaktujte nás",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our:
+      "Inak skúste občas obnoviť stránku alebo navštívte našu",
+    status_page: "stránku stavu",
+  },
   sidebar: {
     projects: "Projekty",
     pages: "Stránky",

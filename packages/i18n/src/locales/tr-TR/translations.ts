@@ -12,6 +12,13 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance: "Bu konuda çalışıyoruz. Acil yardıma ihtiyacınız varsa,",
+    reach_out_to_us: "bize ulaşın",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our:
+      "Aksi takdirde, sayfayı ara sıra yenilemeyi deneyin veya",
+    status_page: "durum sayfamızı ziyaret edin",
+  },
   sidebar: {
     projects: "Projeler",
     pages: "Sayfalar",

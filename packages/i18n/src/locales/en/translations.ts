@@ -12,6 +12,13 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance: "We're working on this. If you need immediate assistance,",
+    reach_out_to_us: "reach out to us",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our:
+      "Otherwise, try refreshing the page occasionally or visit our",
+    status_page: "Status page",
+  },
   submit: "Submit",
   cancel: "Cancel",
   loading: "Loading",

@@ -12,6 +12,12 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance: "我們正在處理此問題。如果您需要緊急協助，",
+    reach_out_to_us: "請聯絡我們",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our: "否則，請偶爾重新整理頁面或造訪我們的",
+    status_page: "狀態頁面",
+  },
   sidebar: {
     projects: "專案",
     pages: "頁面",

@@ -12,6 +12,14 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance:
+      "Chúng tôi đang xử lý vấn đề này. Nếu bạn cần hỗ trợ ngay lập tức,",
+    reach_out_to_us: "hãy liên hệ với chúng tôi",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our:
+      "Nếu không, hãy thử làm mới trang thỉnh thoảng hoặc truy cập",
+    status_page: "trang trạng thái của chúng tôi",
+  },
   sidebar: {
     projects: "Dự án",
     pages: "Trang",

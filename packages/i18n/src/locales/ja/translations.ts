@@ -12,6 +12,13 @@
  */
 
 export default {
+  cloud_maintenance_message: {
+    we_are_working_on_this_if_you_need_immediate_assistance:
+      "現在この問題に取り組んでいます。緊急のサポートが必要な場合は、",
+    reach_out_to_us: "お問い合わせください",
+    otherwise_try_refreshing_the_page_occasionally_or_visit_our: "それ以外の場合は、時々ページを更新するか、こちらの",
+    status_page: "ステータスページ",
+  },
   sidebar: {
     projects: "プロジェクト",
     pages: "ページ",

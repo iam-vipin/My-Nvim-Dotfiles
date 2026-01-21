@@ -11,12 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
-// hooks
+// plane imports
+import { WEBSITE_URL } from "@plane/constants";
 import { Loader } from "@plane/ui";
-import { ProductUpdatesFallback } from "@/components/global/product-updates/fallback";
+// hooks
 import { useInstance } from "@/hooks/store/use-instance";
+import { ProductUpdatesFallback } from "@/components/global/product-updates/fallback";
+
+const CHANGELOG_BASE_URL = WEBSITE_URL ? `${WEBSITE_URL}/changelog-preview` : null;
 
 export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog() {
   // refs
@@ -27,12 +31,13 @@ export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog
   // store hooks
   const { config } = useInstance();
   // derived values
-  const changeLogUrl = config?.instance_changelog_url;
-  const shouldShowFallback = !changeLogUrl || changeLogUrl === "" || hasError;
+  const category = config?.is_self_managed ? "self-hosted" : "cloud";
+  const changelogUrl = CHANGELOG_BASE_URL ? `${CHANGELOG_BASE_URL}?limit=5&category=${category}` : null;
+  const shouldShowFallback = !changelogUrl || hasError;
 
   // timeout fallback - if iframe doesn't load within 15 seconds, show error
   useEffect(() => {
-    if (!changeLogUrl || changeLogUrl === "") {
+    if (!changelogUrl) {
       setIsLoading(false);
       isLoadingRef.current = false;
       return;
@@ -53,7 +58,7 @@ export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [changeLogUrl]);
+  }, [changelogUrl]);
 
   const handleIframeLoad = () => {
     setTimeout(() => {
@@ -79,14 +84,14 @@ export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog
   }
 
   return (
-    <div className="flex flex-col h-[550px] vertical-scrollbar scrollbar-xs overflow-hidden overflow-y-scroll px-6 mx-0.5 relative">
+    <div className="flex flex-col h-[550px] overflow-hidden px-6 mx-0.5 relative">
       {isLoading && (
         <Loader className="flex flex-col gap-3 absolute inset-0 w-full h-full items-center justify-center">
           <Loader.Item height="95%" width="95%" />
         </Loader>
       )}
       <iframe
-        src={changeLogUrl}
+        src={changelogUrl}
         className={`w-full h-full ${isLoading ? "opacity-0" : "opacity-100"} transition-opacity duration-200`}
         onLoad={handleIframeLoad}
         onError={handleIframeError}

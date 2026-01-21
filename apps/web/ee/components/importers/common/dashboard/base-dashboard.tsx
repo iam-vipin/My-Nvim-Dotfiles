@@ -16,7 +16,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { CircleX, Download, InfoIcon, Loader, RefreshCcw } from "lucide-react";
-import { IMPORTER_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TJobStatus } from "@plane/etl/core";
 import { E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
@@ -383,7 +382,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                                   prependIcon={<RefreshCcw className="w-3 h-3" />}
                                   onClick={() => handleRerunOpen(job.id)}
                                   disabled={isReRunDisabled(job)}
-                                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_RE_RUN_BUTTON}
                                 >
                                   {t("importers.re_run")}
                                 </Button>
@@ -396,7 +394,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                                   prependIcon={<CircleX className="w-3 h-3" />}
                                   onClick={() => handleCancelOpen(job.id)}
                                   disabled={isCancelDisabled(job)}
-                                  data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_CANCEL_BUTTON}
                                 >
                                   {t("importers.cancel")}
                                 </Button>

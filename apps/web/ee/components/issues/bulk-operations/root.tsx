@@ -24,7 +24,7 @@ import { cn } from "@plane/utils";
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
-import { hideFloatingBot, showFloatingBot } from "@/plane-web/helpers/pi-chat.helper";
+import { hideFloatingBot, showFloatingBot } from "@/helpers/pi-chat";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";

@@ -22,13 +22,13 @@ import { ProjectMemberList } from "@/components/project/member-list";
 import { ProjectSettingsMemberDefaults } from "@/components/project/project-settings-member-defaults";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// helpers
+import { getProjectSettingsPageLabelI18nKey } from "@/helpers/settings/project";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces/teamspace-list";
-import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
-// local imports
 import type { Route } from "./+types/page";
 import { MembersProjectSettingsHeader } from "./header";
 

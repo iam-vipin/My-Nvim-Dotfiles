@@ -39,7 +39,7 @@ import { store } from "@/lib/store-context";
 // plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties/common/issue-property-logo";
-import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
+import { getWorkItemCustomPropertyActivityMessage } from "@/helpers/workitem/activity";
 import { useIssueType } from "@/plane-web/hooks/store";
 
 const commonTextClassName = "text-primary font-medium";

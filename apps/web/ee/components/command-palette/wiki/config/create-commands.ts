@@ -21,7 +21,7 @@ import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
 // plane web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+import { getIsWorkspaceCreationDisabled } from "@/helpers/workspace";
 
 export type TPowerKCreationCommandKeys = "create_work_item" | "create_workspace";
 

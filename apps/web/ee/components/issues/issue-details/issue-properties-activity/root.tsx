@@ -11,13 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { EIssueServiceType } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
-import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
+import { getWorkItemCustomPropertyActivityMessage } from "@/helpers/workitem/activity";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { IssueActivityBlockComponent } from "./common";

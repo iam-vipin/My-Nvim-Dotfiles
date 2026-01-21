@@ -22,7 +22,7 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 // plane web constants
 import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teamspace";
 // plane web helpers
-import { getTeamspaceActivityKey } from "@/plane-web/helpers/teamspace-helper";
+import { getTeamspaceActivityKey } from "@/helpers/teamspace/activity";
 // plane web services
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";
 

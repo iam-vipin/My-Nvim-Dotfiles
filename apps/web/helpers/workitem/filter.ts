@@ -11,6 +11,20 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+// lib
 import { store } from "@/lib/store-context";
 
-export const updateEpicAnalytics = () => ({ updateAnalytics: store.epicAnalytics.updateEpicAnalytics });
+export const shouldRenderColumn = (key: string): boolean => {
+  const isEstimateEnabled = store.projectRoot.project.currentProjectDetails?.estimate !== null;
+  const isCustomersFeatureEnabled = store.customersStore.isCustomersFeatureEnabled;
+  switch (key) {
+    case "estimate":
+      return isEstimateEnabled;
+    case "customer_count":
+      return !!isCustomersFeatureEnabled;
+    case "customer_request_count":
+      return !!isCustomersFeatureEnabled;
+    default:
+      return true;
+  }
+};

@@ -87,7 +87,6 @@ export class AIService extends APIService {
   }
 
   async generateBlockContent(data: TAIBlockGenerateInput): Promise<TAIBlockDetails> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.post(`/api/v1/pages/blocks/generate/`, data)
       .then((response: AxiosResponse<TAIBlockDetails>) => response.data)
       .catch((error: AxiosError) => {
@@ -96,14 +95,12 @@ export class AIService extends APIService {
   }
 
   async getRevisionTypes(): Promise<TAIBlockRevisionTypesResponse> {
-    return (
-      this.get("/api/v1/pages/blocks/revision/types/")
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        .then((response: AxiosResponse<TAIBlockRevisionTypesResponse>) => response.data)
-        .catch((error: AxiosError) => {
-          throw error?.response?.data;
-        })
-    );
+    return this.get("/api/v1/pages/blocks/revision/types/")
+
+      .then((response: AxiosResponse<TAIBlockRevisionTypesResponse>) => response.data)
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
+      });
   }
 
   async revisionBlockContent(data: { block_id: string; revision_type: string }): Promise<{

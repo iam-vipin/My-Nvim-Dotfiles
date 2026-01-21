@@ -30,7 +30,7 @@ import {
 } from "@/hooks/use-navigation-preferences";
 // helpers
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
-import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 // types
 import type { TPersonalNavigationItemKey } from "@/types/navigation-preferences";
 

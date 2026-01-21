@@ -18,7 +18,7 @@ import { useParams } from "next/navigation";
 import { PlaneNewIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
-import { isAppRailFeatureEnabled } from "@/plane-web/helpers/app-rail.helper";
+import { isAppRailFeatureEnabled } from "@/helpers/app-rail";
 
 type WithDockItemsProps = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];

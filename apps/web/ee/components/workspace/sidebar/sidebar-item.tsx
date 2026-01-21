@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useParams } from "next/navigation";
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { SidebarItemBase } from "@/components/workspace/sidebar/sidebar-item";
-import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 import { UpgradeBadge } from "../upgrade-badge";
 
 type Props = {

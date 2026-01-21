@@ -23,7 +23,6 @@ export * from "./auth";
 export * from "./automations";
 export * from "./calendar";
 export * from "./charts";
-export * from "./command-palette";
 export * from "./common";
 export * from "./customers";
 export * from "./cycle";

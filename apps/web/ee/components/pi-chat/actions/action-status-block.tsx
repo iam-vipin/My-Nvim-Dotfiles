@@ -15,7 +15,7 @@ import { useState } from "react";
 import { InfoIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useUserPermissions } from "@/hooks/store/user";
-import { revalidateProjectData } from "@/plane-web/helpers/swr.helper";
+import { revalidateProjectData } from "@/helpers/swr";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TDialogue } from "@/plane-web/types";
 import { EExecutionStatus } from "@/plane-web/types";

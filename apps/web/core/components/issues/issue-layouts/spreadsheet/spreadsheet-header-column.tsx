@@ -16,7 +16,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 //components
-import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
+import { shouldRenderColumn } from "@/helpers/workitem/filter";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { HeaderColumn } from "./columns/header-column";
 

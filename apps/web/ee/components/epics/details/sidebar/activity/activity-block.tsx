@@ -22,7 +22,7 @@ import { EIssueServiceType } from "@plane/types";
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 // helpers
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
+import { getWorkItemCustomPropertyActivityMessage } from "@/helpers/workitem/activity";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import type { TEpicActivityFields } from "./helper";
 import { getEpicActivityKey, EPIC_UPDATES_HELPER_MAP } from "./helper";

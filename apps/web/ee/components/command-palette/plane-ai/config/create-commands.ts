@@ -15,7 +15,7 @@ import { SquarePlus } from "lucide-react";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // plane web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+import { getIsWorkspaceCreationDisabled } from "@/helpers/workspace";
 
 export type TPowerKCreationCommandKeys = "create_work_item" | "create_workspace";
 

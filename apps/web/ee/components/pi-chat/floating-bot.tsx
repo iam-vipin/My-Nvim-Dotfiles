@@ -22,7 +22,7 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";
-import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
+import { isPiAllowed } from "@/helpers/pi-chat";
 
 const getEntityData = (
   params: Record<string, string | undefined>

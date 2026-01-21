@@ -22,7 +22,7 @@ import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
 // plane web imports
-import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 import { useDashboards } from "@/plane-web/hooks/store";
 
 export type TPowerKCreationCommandKeysExtended =

@@ -11,6 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export const hideFloatingBot = () => {};
+// plane imports
+import type { TTeamspaceActivityKeys, TTeamspaceActivityVerbs, TTeamspaceActivityFields } from "@plane/types";
 
-export const showFloatingBot = () => {};
+// Get the key for the issue property type based on the property type and relation type
+export const getTeamspaceActivityKey = (
+  activityField: TTeamspaceActivityFields | undefined,
+  activityVerb: TTeamspaceActivityVerbs
+) => `${activityField ? `${activityField}_` : ""}${activityVerb}` as TTeamspaceActivityKeys;

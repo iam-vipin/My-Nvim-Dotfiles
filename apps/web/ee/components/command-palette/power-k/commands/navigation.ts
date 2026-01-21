@@ -22,7 +22,7 @@ import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/
 import { handlePowerKNavigate } from "@/components/power-k/utils/navigation";
 // hooks
 import { useUser } from "@/hooks/store/user";
-import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 import { useFeatureFlags } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import type { TInitiative } from "@/plane-web/types/initiative";

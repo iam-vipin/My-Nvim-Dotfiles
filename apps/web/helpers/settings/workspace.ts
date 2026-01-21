@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { E_FEATURE_FLAGS } from "@plane/constants";
-import type { TRenderSettingsLink } from "@/ce/helpers/workspace.helper";
 import { store } from "@/lib/store-context";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+
+export type TRenderSettingsLink = (workspaceSlug: string, settingKey: string) => boolean;
 
 export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, settingKey) => {
   const isApplicationsEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.APPLICATIONS, false);

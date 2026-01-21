@@ -28,11 +28,7 @@ import type {
   TSupportedFilterForUpdate,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import {
-  useTeamIssueActions,
-  useTeamProjectWorkItemsActions,
-  useTeamViewIssueActions,
-} from "@/plane-web/helpers/issue-action-helper";
+// local imports
 import { useIssues } from "./store/use-issues";
 
 export interface IssueActions {
@@ -57,12 +53,12 @@ export interface IssueActions {
 }
 
 export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
-  const teamIssueActions = useTeamIssueActions();
+  const teamWorkItemActions = useTeamWorkItemActions();
   const projectIssueActions = useProjectIssueActions();
   const projectEpicsActions = useProjectEpicsActions();
   const cycleIssueActions = useCycleIssueActions();
   const moduleIssueActions = useModuleIssueActions();
-  const teamViewIssueActions = useTeamViewIssueActions();
+  const teamViewWorkItemActions = useTeamViewWorkItemActions();
   const projectViewIssueActions = useProjectViewIssueActions();
   const globalIssueActions = useGlobalIssueActions();
   const profileIssueActions = useProfileIssueActions();
@@ -72,13 +68,13 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
 
   switch (storeType) {
     case EIssuesStoreType.TEAM_VIEW:
-      return teamViewIssueActions;
+      return teamViewWorkItemActions;
     case EIssuesStoreType.PROJECT_VIEW:
       return projectViewIssueActions;
     case EIssuesStoreType.PROFILE:
       return profileIssueActions;
     case EIssuesStoreType.TEAM:
-      return teamIssueActions;
+      return teamWorkItemActions;
     case EIssuesStoreType.ARCHIVED:
       return archivedIssueActions;
     case EIssuesStoreType.CYCLE:
@@ -824,5 +820,233 @@ const useWorkspaceDraftIssueActions = () => {
       updateFilters,
     }),
     [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters]
+  );
+};
+
+export const useTeamWorkItemActions: () => IssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const teamspaceId = routerTeamSpaceId?.toString();
+  // store hooks
+  const { issues: workItems, issuesFilter: workItemsFilter } = useIssues(EIssuesStoreType.TEAM);
+
+  const fetchIssues = useCallback(
+    async (loadType: TLoader, options: IssuePaginationOptions) => {
+      if (!workspaceSlug || !teamspaceId) return;
+      return workItems.fetchIssues(workspaceSlug, teamspaceId, loadType, options);
+    },
+    [workItems.fetchIssues, workspaceSlug, teamspaceId]
+  );
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !teamspaceId) return;
+      return workItems.fetchNextIssues(workspaceSlug.toString(), teamspaceId.toString(), groupId, subGroupId);
+    },
+    [workItems.fetchIssues, workspaceSlug, teamspaceId]
+  );
+
+  const createIssue = useCallback(
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.createIssue(workspaceSlug, projectId, data, teamspaceId);
+    },
+    [workItems.createIssue, workspaceSlug]
+  );
+  const updateIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data);
+    },
+    [workItems.updateIssue, workspaceSlug]
+  );
+  const removeIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.removeIssue(workspaceSlug, projectId, issueId);
+    },
+    [workItems.removeIssue, workspaceSlug]
+  );
+  const archiveIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.archiveIssue(workspaceSlug, projectId, issueId);
+    },
+    [workItems.archiveIssue, workspaceSlug]
+  );
+
+  const updateFilters = useCallback(
+    async (_projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+      if (!workspaceSlug) return;
+      return await workItemsFilter.updateFilters(workspaceSlug, teamspaceId, filterType, filters);
+    },
+    [workItemsFilter.updateFilters, teamspaceId, workspaceSlug]
+  );
+
+  return useMemo(
+    () => ({
+      fetchIssues,
+      fetchNextIssues,
+      createIssue,
+      updateIssue,
+      removeIssue,
+      archiveIssue,
+      updateFilters,
+    }),
+    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, archiveIssue, updateFilters]
+  );
+};
+
+export const useTeamViewWorkItemActions: () => IssueActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId, viewId: routerViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const teamspaceId = routerTeamSpaceId?.toString();
+  const viewId = routerViewId?.toString();
+  // store hooks
+  const { issues: workItems, issuesFilter: workItemsFilter } = useIssues(EIssuesStoreType.TEAM_VIEW);
+
+  const fetchIssues = useCallback(
+    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
+      if (!workspaceSlug || !teamspaceId || !viewId) return;
+      return workItems.fetchIssues(workspaceSlug, teamspaceId, viewId, loadType, options);
+    },
+    [workItems.fetchIssues, workspaceSlug, teamspaceId, viewId]
+  );
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !teamspaceId || !viewId) return;
+      return workItems.fetchNextIssues(workspaceSlug, teamspaceId, viewId, groupId, subGroupId);
+    },
+    [workItems.fetchIssues, workspaceSlug, teamspaceId, viewId]
+  );
+
+  const createIssue = useCallback(
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId || !teamspaceId) return;
+      return await workItems.createIssue(workspaceSlug, projectId, data, teamspaceId);
+    },
+    [workItems.createIssue, workspaceSlug]
+  );
+  const updateIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data);
+    },
+    [workItems.updateIssue, workspaceSlug]
+  );
+  const removeIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.removeIssue(workspaceSlug, projectId, issueId);
+    },
+    [workItems.removeIssue, workspaceSlug]
+  );
+  const archiveIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.archiveIssue(workspaceSlug, projectId, issueId);
+    },
+    [workItems.archiveIssue, workspaceSlug]
+  );
+
+  const updateFilters = useCallback(
+    async (_projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+      if (!viewId || !workspaceSlug) return;
+      return await workItemsFilter.updateFilters(workspaceSlug, teamspaceId, filterType, filters, viewId);
+    },
+    [workItemsFilter.updateFilters, viewId, teamspaceId, workspaceSlug]
+  );
+
+  return useMemo(
+    () => ({
+      fetchIssues,
+      fetchNextIssues,
+      createIssue,
+      updateIssue,
+      removeIssue,
+      archiveIssue,
+      updateFilters,
+    }),
+    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, archiveIssue, updateFilters]
+  );
+};
+
+export const useTeamProjectWorkItemsActions: () => IssueActions = () => {
+  // router
+  const {
+    workspaceSlug: routerWorkspaceSlug,
+    teamspaceId: routerTeamSpaceId,
+    projectId: routerProjectId,
+  } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const teamspaceId = routerTeamSpaceId?.toString();
+  const projectId = routerProjectId?.toString();
+  // store hooks
+  const { issues: workItems, issuesFilter: workItemsFilter } = useIssues(EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS);
+
+  const fetchIssues = useCallback(
+    async (loadType: TLoader, options: IssuePaginationOptions) => {
+      if (!workspaceSlug || !teamspaceId || !projectId) return;
+      return workItems.fetchIssues(workspaceSlug, teamspaceId, projectId, loadType, options);
+    },
+    [workItems.fetchIssues, workspaceSlug, teamspaceId, projectId]
+  );
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !teamspaceId || !projectId) return;
+      return workItems.fetchNextIssues(workspaceSlug, teamspaceId, projectId, groupId, subGroupId);
+    },
+    [workItems.fetchIssues, workspaceSlug, teamspaceId, projectId]
+  );
+
+  const createIssue = useCallback(
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId || !teamspaceId) return;
+      return await workItems.createIssue(workspaceSlug, projectId, data, teamspaceId);
+    },
+    [workItems.createIssue, workspaceSlug]
+  );
+  const updateIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.updateIssue(workspaceSlug, projectId, issueId, data);
+    },
+    [workItems.updateIssue, workspaceSlug]
+  );
+  const removeIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.removeIssue(workspaceSlug, projectId, issueId);
+    },
+    [workItems.removeIssue, workspaceSlug]
+  );
+  const archiveIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await workItems.archiveIssue(workspaceSlug, projectId, issueId);
+    },
+    [workItems.archiveIssue, workspaceSlug]
+  );
+
+  const updateFilters = useCallback(
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+      if (!projectId || !workspaceSlug) return;
+      return await workItemsFilter.updateFilters(workspaceSlug, teamspaceId, filterType, filters, projectId);
+    },
+    [workItemsFilter.updateFilters, projectId, teamspaceId, workspaceSlug]
+  );
+
+  return useMemo(
+    () => ({
+      fetchIssues,
+      fetchNextIssues,
+      createIssue,
+      updateIssue,
+      removeIssue,
+      archiveIssue,
+      updateFilters,
+    }),
+    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, archiveIssue, updateFilters]
   );
 };

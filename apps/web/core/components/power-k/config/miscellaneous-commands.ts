@@ -23,7 +23,7 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePowerK } from "@/hooks/store/use-power-k";
-import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
+import { isPiAllowed } from "@/helpers/pi-chat";
 import { useTheme, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { usePathname } from "next/navigation";

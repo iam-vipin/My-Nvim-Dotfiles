@@ -18,12 +18,7 @@ import { computedFn } from "mobx-utils";
 import type { TLoader, TPublishViewDetails, TPublishViewSettings, TTeamspaceView, TViewFilters } from "@plane/types";
 import { EViewAccess } from "@plane/types";
 // plane web helpers
-import {
-  getValidatedViewFilters,
-  getViewName,
-  orderViews,
-  shouldFilterView,
-} from "@/plane-web/helpers/teamspace-view-helper";
+import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@/helpers/teamspace/view";
 // plane web services
 import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
 // plane web store

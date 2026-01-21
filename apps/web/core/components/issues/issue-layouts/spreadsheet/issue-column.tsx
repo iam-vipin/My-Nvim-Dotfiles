@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 // components
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
-import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
+import { shouldRenderColumn } from "@/helpers/workitem/filter";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 type Props = {

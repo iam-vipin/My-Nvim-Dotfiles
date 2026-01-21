@@ -17,7 +17,7 @@ import { getIssuePropertyTypeKey, joinUrlPath, renderFormattedDate } from "@plan
 // store context
 import { store } from "@/lib/store-context";
 
-export type TGetWorkItemAdditionalPropertiesActivityMessageParams = {
+type TGetWorkItemAdditionalPropertiesActivityMessageParams = {
   action: TBaseActivityVerbs | undefined;
   newValue: string | undefined;
   oldValue: string | undefined;
@@ -30,7 +30,7 @@ type TGetWorkItemAdditionalPropertiesActivityMessage = (
 ) => React.ReactNode;
 
 // ------------ TEXT ------------
-export const getWorkItemTextPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+const getWorkItemTextPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
   const { newValue, action, propertyDetail } = props;
   // derived values
   const propertyName = propertyDetail?.display_name;
@@ -53,7 +53,7 @@ export const getWorkItemTextPropertyActivityMessage: TGetWorkItemAdditionalPrope
 };
 
 // ------------ NUMBER ------------
-export const getWorkItemNumberPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+const getWorkItemNumberPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
   const { newValue, action, propertyDetail } = props;
   // derived values
   const propertyName = propertyDetail?.display_name;
@@ -76,7 +76,7 @@ export const getWorkItemNumberPropertyActivityMessage: TGetWorkItemAdditionalPro
 };
 
 // ------------ DROPDOWN ------------
-export const getWorkItemDropdownPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+const getWorkItemDropdownPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
   const { newValue, action, propertyDetail, oldValue } = props;
   // derived values
   const propertyName = propertyDetail?.display_name;
@@ -112,7 +112,7 @@ export const getWorkItemDropdownPropertyActivityMessage: TGetWorkItemAdditionalP
 };
 
 // ------------ BOOLEAN ------------
-export const getWorkItemBooleanPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+const getWorkItemBooleanPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
   const { newValue, action, propertyDetail } = props;
   // derived values
   const propertyName = propertyDetail?.display_name;
@@ -131,7 +131,7 @@ export const getWorkItemBooleanPropertyActivityMessage: TGetWorkItemAdditionalPr
 };
 
 // ------------ DATE ------------
-export const getWorkItemDatePropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+const getWorkItemDatePropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
   const { newValue, action, propertyDetail, oldValue } = props;
   const propertyName = propertyDetail?.display_name;
 
@@ -160,7 +160,7 @@ export const getWorkItemDatePropertyActivityMessage: TGetWorkItemAdditionalPrope
 };
 
 // ------------ RELATION USER ------------
-export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
   const { newValue, action, propertyDetail, oldValue, workspaceId } = props;
   // derived values
   const propertyName = propertyDetail?.display_name;
@@ -214,7 +214,7 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
 };
 
 // ------------ URL ------------
-export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
   const { newValue, action, propertyDetail } = props;
   const propertyName = propertyDetail?.display_name;
 
@@ -236,8 +236,7 @@ export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalProper
 };
 
 // ------------ RELATION ISSUE ------------
-export const getWorkItemRelationIssuePropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () =>
-  null;
+const getWorkItemRelationIssuePropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () => null;
 
 // ------------ CUSTOM PROPERTY MESSAGE HELPER ------------
 export const getWorkItemCustomPropertyActivityMessage = (

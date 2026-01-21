@@ -147,6 +147,7 @@ EE_ATTRIBUTES = {
         "data-name",
         "data-file-size",
         "data-file-type",
+        "status",
         "data-preview",
         "data-accepted-file-type",
     },
@@ -154,7 +155,7 @@ EE_ATTRIBUTES = {
     "inline-math-component": {"latex", "id"},
     "block-math-component": {"latex", "id"},
     # drawio components (generic)
-    "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode"},
+    "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode", "status"},
     "ai-block-component": {"data-id"},
 }
 

@@ -18,9 +18,10 @@ import { cn } from "@plane/utils";
 import { useDrawioAwareness } from "../hooks/use-awareness";
 import { useDrawioMessageHandler } from "../hooks/use-drawio-message-handler";
 // types
-import { EDrawioAttributeNames, EDrawioMode } from "../types";
+import { EDrawioAttributeNames, EDrawioMode, EDrawioStatus } from "../types";
 // constants
 import { DRAWIO_DIAGRAM_URL, DRAWIO_BOARD_URL } from "../utils/constants";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // components
 import type { DrawioIframeRef } from "./iframe";
 import { DrawioIframe } from "./iframe";
@@ -49,6 +50,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
   const imageSrc = node.attrs[EDrawioAttributeNames.IMAGE_SRC];
   const xmlSrc = node.attrs[EDrawioAttributeNames.XML_SRC];
   const mode = node.attrs[EDrawioAttributeNames.MODE];
+  const status = node.attrs[EDrawioAttributeNames.STATUS];
   // hooks
   const {
     userEditingThisDiagram,
@@ -70,7 +72,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
   // Computed loading states
   const showImageLoader = !(resolvedImageSrc || liveImageData) || !initialLoadComplete || hasErroredOnFirstLoad;
 
-  // Local-first approach: Only resolve backend URL if we don't have local data
+  // Local-first approach: Only resolve backend URL if we don't have local data & update status
   useEffect(() => {
     // If we have live image data from iframe or awareness, don't fetch from backend
     if (liveImageData) {
@@ -99,7 +101,12 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
     };
     setIsGettingImageSrc(true);
     getSvgSource();
-  }, [imageSrc, getDiagramSrc, imageKey, clearLiveImageData, setDiagramError, liveImageData]);
+
+    // Update status to UPLOADED if the diagram is uploaded and the status is PENDING
+    if (status === EDrawioStatus.PENDING) {
+      updateAttributes({ [EDrawioAttributeNames.STATUS]: EDrawioStatus.UPLOADED });
+    }
+  }, [imageSrc, getDiagramSrc, imageKey, clearLiveImageData, setDiagramError, liveImageData, status, updateAttributes]);
 
   // Load XML content for editing
   const loadXmlContent = useCallback(async (): Promise<string> => {
@@ -123,6 +130,21 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
     setInitialLoadComplete(true);
     setHasErroredOnFirstLoad(false);
   }, []);
+
+  // Auto-open modal if openDialog flag is set (when inserted via slash command)
+  useEffect(() => {
+    const drawioStorage = editor.storage[ADDITIONAL_EXTENSIONS.DRAWIO];
+    const isEmpty = !imageSrc && !xmlSrc;
+
+    if (drawioStorage?.openDialog && isEmpty && editor.isEditable && !isFlagged) {
+      // Reset the flag to prevent re-opening
+      drawioStorage.openDialog = false;
+      // Open the modal
+      setEditingState(true);
+      setIsModalOpen(true);
+      setIsLoading(true);
+    }
+  }, [editor, imageSrc, xmlSrc, isFlagged, setEditingState, diagramId]);
 
   // Message handler hook
   const { handleMessage } = useDrawioMessageHandler({

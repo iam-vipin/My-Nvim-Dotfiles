@@ -126,7 +126,6 @@ export const useDrawioMessageHandler = ({
                 console.error("❌ Error processing diagram export:", error);
               }
             }
-            handleCloseModal();
             break;
 
           case "exit":

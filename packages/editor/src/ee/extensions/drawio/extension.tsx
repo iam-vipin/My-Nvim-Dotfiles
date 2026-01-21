@@ -32,6 +32,7 @@ export function DrawioExtension(props: DrawioProps) {
     addOptions() {
       const { fileHandler } = props;
       const { getAssetSrc, restore, getFileContent, upload, reupload } = fileHandler;
+      const duplicate = "duplicate" in fileHandler ? fileHandler.duplicate : undefined;
 
       return {
         ...this.parent?.(),
@@ -42,6 +43,7 @@ export function DrawioExtension(props: DrawioProps) {
         restoreDiagram: restore,
         uploadDiagram: upload,
         reuploadDiagram: reupload,
+        duplicateDiagram: duplicate,
         logoSpinner: props.logoSpinner,
       };
     },

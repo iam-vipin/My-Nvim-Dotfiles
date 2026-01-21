@@ -13,11 +13,12 @@
 
 // UUID generation is handled in commands.ts when needed
 import type { TDrawioBlockAttributes } from "../types";
-import { EDrawioAttributeNames, EDrawioMode } from "../types";
+import { EDrawioAttributeNames, EDrawioMode, EDrawioStatus } from "../types";
 
 export const DEFAULT_DRAWIO_ATTRIBUTES: TDrawioBlockAttributes = {
   [EDrawioAttributeNames.ID]: null, // Will be generated when needed
   [EDrawioAttributeNames.IMAGE_SRC]: null, // SVG file source/URL
   [EDrawioAttributeNames.XML_SRC]: null, // XML .drawio file source/URL
   [EDrawioAttributeNames.MODE]: EDrawioMode.DIAGRAM, // Default to diagram mode
+  [EDrawioAttributeNames.STATUS]: EDrawioStatus.PENDING, // Default status
 };

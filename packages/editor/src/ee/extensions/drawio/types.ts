@@ -21,11 +21,20 @@ export enum EDrawioAttributeNames {
   IMAGE_SRC = "data-image-src", // SVG file source/URL
   XML_SRC = "data-xml-src", // XML .drawio file source/URL
   MODE = "data-mode", // Mode: "diagram" or "board"
+  STATUS = "status", // Status: pending, uploading, uploaded, duplicating, duplication-failed
 }
 
 export enum EDrawioMode {
   DIAGRAM = "diagram",
   BOARD = "board",
+}
+
+export enum EDrawioStatus {
+  PENDING = "pending",
+  UPLOADING = "uploading",
+  UPLOADED = "uploaded",
+  DUPLICATING = "duplicating",
+  DUPLICATION_FAILED = "duplication-failed",
 }
 
 // Core Types with strict mapping
@@ -34,6 +43,7 @@ export type TDrawioBlockAttributes = {
   [EDrawioAttributeNames.IMAGE_SRC]: string | null; // SVG file source/URL for display
   [EDrawioAttributeNames.XML_SRC]: string | null; // XML .drawio file source/URL for editing
   [EDrawioAttributeNames.MODE]: EDrawioMode; // Mode: diagram or board
+  [EDrawioAttributeNames.STATUS]: EDrawioStatus; // Status: pending, uploading, uploaded, duplicating, duplication-failed
 };
 
 export type InsertDrawioCommandProps = {
@@ -49,6 +59,7 @@ export type DrawioExtensionOptions = {
   restoreDiagram: TFileHandler["restore"];
   uploadDiagram: TFileHandler["upload"];
   reuploadDiagram?: TFileHandler["reupload"];
+  duplicateDiagram?: TFileHandler["duplicate"];
   logoSpinner?: React.ComponentType;
 };
 

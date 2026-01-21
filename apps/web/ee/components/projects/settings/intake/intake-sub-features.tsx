@@ -29,7 +29,7 @@ import { cn, copyTextToClipboard } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
-import type { TIntakeFeatureList } from "@/plane-web/constants/project/settings/features";
+import type { TIntakeFeatureList } from "@/constants/project/settings/features";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { IntakeFormsRoot } from "./forms-root";
 import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";

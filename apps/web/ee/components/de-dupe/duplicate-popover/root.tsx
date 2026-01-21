@@ -30,7 +30,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { DE_DUPE_SELECT_GROUP } from "@/plane-web/constants/de-dupe";
+import { DE_DUPE_SELECT_GROUP } from "@/constants/de-dupe";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports

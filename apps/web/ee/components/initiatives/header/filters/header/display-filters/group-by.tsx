@@ -17,7 +17,7 @@ import type { TInitiativeDisplayFilters, TInitiativeGroupByOptions } from "@plan
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // Plane-web
-import { INITIATIVE_GROUP_BY_OPTIONS } from "@/plane-web/constants/initiative";
+import { INITIATIVE_GROUP_BY_OPTIONS } from "@/constants/initiative";
 
 type Props = {
   displayFilters: TInitiativeDisplayFilters | undefined;

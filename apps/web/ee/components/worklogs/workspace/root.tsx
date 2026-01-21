@@ -25,7 +25,7 @@ import {
   WorklogLoader,
 } from "@/plane-web/components/worklogs";
 // constants
-import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/workspace-worklog";
+import { EWorklogLoader, EWorklogQueryParamType } from "@/constants/workspace-worklog";
 // hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 import { SettingsHeading } from "@/components/settings/heading";

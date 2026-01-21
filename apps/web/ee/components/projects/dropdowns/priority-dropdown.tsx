@@ -33,7 +33,7 @@ import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
+import { PROJECT_PRIORITIES } from "@/constants/project";
 import type { TProjectPriority } from "@/types/workspace-project-filters";
 import { EProjectPriority } from "@/types/workspace-project-states";
 // constants

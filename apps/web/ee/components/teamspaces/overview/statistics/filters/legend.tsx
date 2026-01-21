@@ -18,11 +18,8 @@ import { ChevronDownIcon } from "@plane/propel/icons";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { TEAM_STATISTICS_LEGEND_MAP } from "@/plane-web/constants/teamspace";
-import {
-  WORKSPACE_PROJECT_STATE_GROUPS,
-  WORKSPACE_PROJECT_STATE_PRIORITY,
-} from "@/plane-web/constants/workspace-project-states";
+import { TEAM_STATISTICS_LEGEND_MAP } from "@/constants/teamspace";
+import { WORKSPACE_PROJECT_STATE_GROUPS, WORKSPACE_PROJECT_STATE_PRIORITY } from "@/constants/workspace-project-states";
 import type { TStatisticsFilterProps } from "@/types/teamspace";
 
 export const StatisticsLegend = observer(function StatisticsLegend(props: TStatisticsFilterProps<"legend">) {

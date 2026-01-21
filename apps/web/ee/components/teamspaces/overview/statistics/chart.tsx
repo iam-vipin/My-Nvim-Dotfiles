@@ -28,10 +28,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
-import {
-  WORKSPACE_PROJECT_STATE_GROUPS,
-  WORKSPACE_PROJECT_STATE_PRIORITY,
-} from "@/plane-web/constants/workspace-project-states";
+import { WORKSPACE_PROJECT_STATE_GROUPS, WORKSPACE_PROJECT_STATE_PRIORITY } from "@/constants/workspace-project-states";
 import { useTeamspaces, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
 

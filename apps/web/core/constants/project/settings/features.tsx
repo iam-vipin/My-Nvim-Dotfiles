@@ -13,12 +13,8 @@
 
 import { ListTodo, Mail, Timer, Users, Zap } from "lucide-react";
 // plane imports
-import { MilestoneIcon } from "@plane/propel/icons";
-import type { TProperties } from "@/ce/constants/project/settings/features";
-import {
-  PROJECT_BASE_FEATURES_LIST as CE_PROJECT_BASE_FEATURES_LIST,
-  PROJECT_FEATURES_LIST as CE_PROJECT_FEATURES_LIST,
-} from "@/ce/constants/project/settings/features";
+import { CycleIcon, IntakeIcon, MilestoneIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
+import type { IProject } from "@plane/types";
 
 export type TIntakeFeatureKeys = "in_app" | "email" | "form";
 export type TIntakeResponsibilityKeys = "notify_assignee";
@@ -89,11 +85,71 @@ export const INTAKE_RESPONSIBILITY_LIST: TIntakeResponsibilityList = {
   },
 };
 
-export const PROJECT_BASE_FEATURES_LIST = {
-  ...CE_PROJECT_BASE_FEATURES_LIST,
+export type TProperties = {
+  key: string;
+  property: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  isPro: boolean;
+  isEnabled: boolean;
+  renderChildren?: (currentProjectDetails: IProject, workspaceSlug: string) => React.ReactNode;
+  href?: string;
+};
+
+type TProjectBaseFeatureKeys = "cycles" | "modules" | "views" | "pages" | "inbox";
+
+type TBaseFeatureList = {
+  [key in TProjectBaseFeatureKeys]: TProperties;
+};
+
+export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
   cycles: {
-    ...CE_PROJECT_BASE_FEATURES_LIST.cycles,
+    key: "cycles",
+    property: "cycle_view",
+    title: "Cycles",
+    description: "Timebox work as you see fit per project and change frequency from one period to the next.",
+    icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
     href: "/cycles",
+    isPro: false,
+    isEnabled: true,
+  },
+  modules: {
+    key: "modules",
+    property: "module_view",
+    title: "Modules",
+    description: "Group work into sub-project-like set-ups with their own leads and assignees.",
+    icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  views: {
+    key: "views",
+    property: "issue_views_view",
+    title: "Views",
+    description: "Save sorts, filters, and display options for later or share them.",
+    icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  pages: {
+    key: "pages",
+    property: "page_view",
+    title: "Pages",
+    description: "Write anything like you write anything.",
+    icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  inbox: {
+    key: "intake",
+    property: "inbox_view",
+    title: "Intake",
+    description: "Consider and discuss work items before you add them to your project.",
+    icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+    href: "/intake",
   },
 };
 
@@ -122,10 +178,26 @@ export const PROJECT_OTHER_FEATURES_LIST: TOtherFeatureList = {
   },
 };
 
-export const PROJECT_FEATURES_LIST = {
-  ...CE_PROJECT_FEATURES_LIST,
+type TProjectFeatures = {
   project_features: {
-    ...CE_PROJECT_FEATURES_LIST.project_features,
+    key: string;
+    title: string;
+    description: string;
+    featureList: TBaseFeatureList;
+  };
+  project_others: {
+    key: string;
+    title: string;
+    description: string;
+    featureList: TOtherFeatureList;
+  };
+};
+
+export const PROJECT_FEATURES_LIST: TProjectFeatures = {
+  project_features: {
+    key: "projects_and_issues",
+    title: "Projects and work items",
+    description: "Toggle these on or off this project.",
     featureList: PROJECT_BASE_FEATURES_LIST,
   },
   project_others: {

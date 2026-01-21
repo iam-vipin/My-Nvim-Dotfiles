@@ -18,7 +18,7 @@ import ClickUpLogo from "@/app/assets/services/clickup.svg?url";
 // plane web components
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
-import { IMPORTER_CLICKUP_STEPS } from "@/plane-web/constants/importers/clickup";
+import { IMPORTER_CLICKUP_STEPS } from "@/constants/importers/clickup";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 

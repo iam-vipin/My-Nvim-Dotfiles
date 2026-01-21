@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import { Loader } from "@plane/ui";
 // plane web types
-import { EWorklogDownloadLoader } from "@/plane-web/constants/workspace-worklog";
+import { EWorklogDownloadLoader } from "@/constants/workspace-worklog";
 
 export type TWorklogDownloadLoader = {
   loader?: EWorklogDownloadLoader;

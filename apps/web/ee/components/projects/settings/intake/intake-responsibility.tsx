@@ -26,7 +26,7 @@ import { cn, getSubscriptionName } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { SettingsHeading } from "@/components/settings/heading";
 // plane web imports
-import type { TIntakeResponsibilityList } from "@/plane-web/constants/project/settings/features";
+import type { TIntakeResponsibilityList } from "@/constants/project/settings/features";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { useIntakeResponsibility } from "@/plane-web/hooks/store/use-intake-responsibility";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";

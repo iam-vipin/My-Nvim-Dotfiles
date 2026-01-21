@@ -18,8 +18,8 @@ import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { useUserPermissions } from "@/hooks/store/user";
-import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import { SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
+import type { IProjectDisplayProperties } from "@/constants/project/spreadsheet";
+import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/project/spreadsheet";
 import type { TProject } from "@/types/projects";
 
 type Props = {

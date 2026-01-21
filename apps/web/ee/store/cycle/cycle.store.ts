@@ -16,7 +16,7 @@ import { set, sortBy } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type { ICycle } from "@plane/types";
-import type { CYCLE_ACTION } from "@/plane-web/constants/cycle";
+import type { CYCLE_ACTION } from "@/constants/cycle";
 import { CycleUpdateService, CycleService } from "@/plane-web/services/cycle.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TCycleUpdateReaction, TCycleUpdates } from "@/types";

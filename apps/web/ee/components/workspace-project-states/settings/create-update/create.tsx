@@ -17,7 +17,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web components
 import { ProjectStateForm } from "@/plane-web/components/workspace-project-states";
 // plane web constants
-import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
+import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/constants/workspace-project-states";
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types

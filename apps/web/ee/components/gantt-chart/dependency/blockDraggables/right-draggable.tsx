@@ -24,7 +24,7 @@ import { BLOCK_HEIGHT, HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-c
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
-import { EDependencyPosition } from "@/plane-web/constants";
+import { EDependencyPosition } from "@/constants/gantt-chart";
 
 type RightDependencyDraggableProps = {
   block: IGanttBlock;

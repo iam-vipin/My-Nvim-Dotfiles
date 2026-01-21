@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web hooks
-import { PROJECT_ACCESS } from "@/plane-web/constants/project";
+import { PROJECT_ACCESS } from "@/constants/project";
 import type { TProjectAccess } from "@/types/workspace-project-filters";
 import type { EProjectAccess } from "@/types/workspace-project-states";
 

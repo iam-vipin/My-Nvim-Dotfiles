@@ -15,7 +15,7 @@ import type { FC, MouseEvent } from "react";
 import { Loader, RefreshCcw } from "lucide-react";
 import { Button } from "@plane/propel/button";
 // plane web constants
-import { EWorklogDownloadLoader, EWorklogDownloadQueryParamType } from "@/plane-web/constants/workspace-worklog";
+import { EWorklogDownloadLoader, EWorklogDownloadQueryParamType } from "@/constants/workspace-worklog";
 // hooks
 import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
 

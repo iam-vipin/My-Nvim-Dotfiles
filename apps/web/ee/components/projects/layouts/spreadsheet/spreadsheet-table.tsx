@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 // components
-import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
+import type { IProjectDisplayProperties } from "@/constants/project/spreadsheet";
 import type { TProject } from "@/types/projects";
 import type { TProjectDisplayFilters } from "@/types/workspace-project-filters";
 import { SpreadsheetProjectRow } from "./project-row";

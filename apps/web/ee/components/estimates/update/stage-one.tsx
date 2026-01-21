@@ -16,7 +16,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TEstimateUpdateStageKeys } from "@plane/types";
 // plane web constants
-import { ESTIMATE_OPTIONS_STAGE_ONE } from "@/plane-web/constants/estimates";
+import { ESTIMATE_OPTIONS_STAGE_ONE } from "@/constants/estimates";
 
 type TEstimateUpdateStageOne = {
   estimateEditType?: TEstimateUpdateStageKeys;

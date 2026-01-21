@@ -28,7 +28,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
-import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import { PROJECT_FEATURES_LIST } from "@/constants/project/settings";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";

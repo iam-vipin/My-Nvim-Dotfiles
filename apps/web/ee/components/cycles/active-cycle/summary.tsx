@@ -22,7 +22,7 @@ import type { TCycleEstimateSystemAdvanced, TCycleProgress, TStateGroups } from 
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
+import { ESTIMATE_TYPE } from "@/constants/cycle";
 // local imports
 import { getColors } from "./cycle-chart/helper";
 import { summaryDataFormatter } from "./formatter";

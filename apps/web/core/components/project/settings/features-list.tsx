@@ -24,7 +24,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
-import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import { PROJECT_FEATURES_LIST } from "@/constants/project/settings";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports
 import { ProjectFeatureToggle } from "./helper";

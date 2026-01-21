@@ -25,7 +25,7 @@ import {
   WorkspaceWorklogDownloadRefresh,
 } from "@/plane-web/components/worklogs";
 // plane web constants
-import { EWorklogDownloadLoader, EWorklogDownloadQueryParamType } from "@/plane-web/constants/workspace-worklog";
+import { EWorklogDownloadLoader, EWorklogDownloadQueryParamType } from "@/constants/workspace-worklog";
 // hooks
 import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
 

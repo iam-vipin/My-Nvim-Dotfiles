@@ -18,7 +18,7 @@ import { ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu, getButtonStyling, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web constants
-import { PROJECT_SCOPES } from "@/plane-web/constants/project";
+import { PROJECT_SCOPES } from "@/constants/project";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types

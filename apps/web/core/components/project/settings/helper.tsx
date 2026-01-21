@@ -14,7 +14,7 @@
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
 import { ToggleSwitch } from "@plane/ui";
-import type { TProperties } from "@/ce/constants/project/settings/features";
+import type { TProperties } from "@/constants/project/settings/features";
 
 type Props = {
   featureItem: TProperties;

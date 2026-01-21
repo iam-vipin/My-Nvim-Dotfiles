@@ -13,7 +13,7 @@
 
 import type { FC } from "react";
 // plane web constants
-import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
+import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/constants/workspace-project-states";
 // plane web types
 import type { TProjectStateGroupKey } from "@/types/workspace-project-states";
 import { EProjectStateGroup } from "@/types/workspace-project-states";

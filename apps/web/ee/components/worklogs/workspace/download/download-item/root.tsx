@@ -22,7 +22,7 @@ import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { WorklogDownloadStatus } from "@/plane-web/components/worklogs";
 // plane web constants
-import { EWorklogDownloadLoader } from "@/plane-web/constants/workspace-worklog";
+import { EWorklogDownloadLoader } from "@/constants/workspace-worklog";
 // plane web hooks
 import { useWorklogDownload, useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
 

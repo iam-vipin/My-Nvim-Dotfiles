@@ -18,7 +18,7 @@ import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { convertToEpoch } from "@plane/utils";
 // plane web constants
-import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/workspace-worklog";
+import { EWorklogLoader, EWorklogQueryParamType } from "@/constants/workspace-worklog";
 // plane web services
 import worklogService from "@/plane-web/services/workspace-worklog.service";
 // plane web store

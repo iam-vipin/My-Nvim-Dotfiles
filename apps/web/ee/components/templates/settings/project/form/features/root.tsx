@@ -19,8 +19,8 @@ import type { TProjectTemplateForm } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // plane web imports
 import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common";
-import type { TProjectFeatureForTemplateKeys } from "@/plane-web/constants";
-import { PROJECT_FEATURES_LIST_FOR_TEMPLATE } from "@/plane-web/constants";
+import { PROJECT_FEATURES_LIST_FOR_TEMPLATE } from "@/constants/project/settings/features";
+import type { TProjectFeatureForTemplateKeys } from "@/constants/project/settings/features";
 // local imports
 import { ProjectFeatureChildren } from "./children";
 

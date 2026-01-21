@@ -21,7 +21,7 @@ import {
   WorkspaceWorklogDownloadPaginationBar,
 } from "@/plane-web/components/worklogs";
 // plane web constants
-import { EWorklogDownloadLoader } from "@/plane-web/constants/workspace-worklog";
+import { EWorklogDownloadLoader } from "@/constants/workspace-worklog";
 // plane web hooks
 import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
 import type { IWorklogDownload } from "@/plane-web/store/workspace-worklog";

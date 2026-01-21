@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // constants
-import { PROJECT_SORT_BY_OPTIONS } from "@/plane-web/constants/project";
+import { PROJECT_SORT_BY_OPTIONS } from "@/constants/project";
 // types
 import type { TProjectSortBy } from "@/types/workspace-project-filters";
 

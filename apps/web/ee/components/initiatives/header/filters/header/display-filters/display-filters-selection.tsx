@@ -15,7 +15,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // components
 import type { TInitiativeDisplayFilters } from "@plane/types";
-import { INITIATIVE_GROUP_BY_OPTIONS, INITIATIVE_ORDER_BY_OPTIONS } from "@/plane-web/constants/initiative";
+import { INITIATIVE_GROUP_BY_OPTIONS, INITIATIVE_ORDER_BY_OPTIONS } from "@/constants/initiative";
 import { FilterGroupBy, FilterOrderBy } from "./";
 // Plane-web
 

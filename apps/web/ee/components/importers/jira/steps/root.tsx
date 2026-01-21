@@ -18,7 +18,7 @@ import JiraLogo from "@/app/assets/services/jira.svg?url";
 // plane web components
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
-import { IMPORTER_STEPS } from "@/plane-web/constants/importers";
+import { IMPORTER_STEPS } from "@/constants/importers";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 

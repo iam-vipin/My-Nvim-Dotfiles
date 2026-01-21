@@ -16,7 +16,7 @@ import { computed, makeObservable, observable } from "mobx";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { LinearConfig } from "@plane/etl/linear";
 // plane web constants
-import { IMPORTER_LINEAR_STEPS } from "@/plane-web/constants/importers/linear";
+import { IMPORTER_LINEAR_STEPS } from "@/constants/importers/linear";
 // plane web store types
 import type {
   IImporterBaseStore,

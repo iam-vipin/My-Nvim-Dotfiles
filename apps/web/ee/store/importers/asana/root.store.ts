@@ -16,7 +16,7 @@ import { computed, makeObservable, observable } from "mobx";
 import type { AsanaConfig } from "@plane/etl/asana";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // plane web constants
-import { IMPORTER_STEPS } from "@/plane-web/constants/importers/asana";
+import { IMPORTER_STEPS } from "@/constants/importers/asana";
 // plane web store types
 import type {
   IImporterBaseStore,

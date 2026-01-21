@@ -18,7 +18,7 @@ import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // plane web imports
-import { SPREADSHEET_PROPERTY_LIST } from "@/plane-web/constants/project/spreadsheet";
+import { SPREADSHEET_PROPERTY_LIST } from "@/constants/project/spreadsheet";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // types
 import type { TProject } from "@/types/projects";

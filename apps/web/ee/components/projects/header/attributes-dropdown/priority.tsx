@@ -17,7 +17,7 @@ import { PriorityIcon } from "@plane/propel/icons";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web constants
-import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
+import { PROJECT_PRIORITIES } from "@/constants/project";
 // plane web types
 import type { TProjectPriority } from "@/types/workspace-project-filters";
 

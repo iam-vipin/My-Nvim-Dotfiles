@@ -23,7 +23,7 @@ import { cn } from "@plane/utils";
 // plane web imports
 import { isEstimateSystemEnabled } from "@/plane-web/components/estimates/helper";
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
-import { ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
+import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 
 type TProps = {
   estimateType?: TEstimateSystemKeys;

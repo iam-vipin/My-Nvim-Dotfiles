@@ -37,7 +37,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
 // plane web hooks
-import { DEFAULT_INITIATIVE_STATE } from "@/plane-web/constants/initiative";
+import { DEFAULT_INITIATIVE_STATE } from "@/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 

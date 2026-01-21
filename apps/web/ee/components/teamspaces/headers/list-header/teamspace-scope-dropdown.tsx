@@ -17,7 +17,7 @@ import { ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web constants
-import { TEAMSPACE_SCOPE_MAP } from "@/plane-web/constants/teamspace";
+import { TEAMSPACE_SCOPE_MAP } from "@/constants/teamspace";
 // plane web hooks
 import { useTeamspaceFilter, useTeamspaces } from "@/plane-web/hooks/store";
 

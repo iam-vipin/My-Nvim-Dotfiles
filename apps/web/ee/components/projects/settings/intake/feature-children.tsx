@@ -19,7 +19,8 @@ import type { IProject } from "@plane/types";
 import { SettingsHeading } from "@/components/settings/heading";
 // plane web imports
 import IntakeResponsibility from "@/plane-web/components/projects/settings/intake/intake-responsibility";
-import { INTAKE_FEATURES_LIST, INTAKE_RESPONSIBILITY_LIST } from "@/plane-web/constants";
+import { INTAKE_FEATURES_LIST, INTAKE_RESPONSIBILITY_LIST } from "@/constants/project/settings/features";
+// hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
 import IntakeSubFeatures from "./intake-sub-features";

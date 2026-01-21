@@ -24,7 +24,7 @@ import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // hooks
 import { useEstimatePoint } from "@/hooks/store/estimates";
 // plane web constants
-import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@/plane-web/constants/estimates";
+import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@/constants/estimates";
 
 type TEstimatePointItemSwitchPreview = {
   estimateId: string;

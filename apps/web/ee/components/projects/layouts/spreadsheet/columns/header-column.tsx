@@ -17,8 +17,8 @@ import { CheckIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 //hooks
 import useLocalStorage from "@/hooks/use-local-storage";
-import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import { SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
+import type { IProjectDisplayProperties } from "@/constants/project/spreadsheet";
+import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/project/spreadsheet";
 import type { TProjectDisplayFilters, TProjectSortBy } from "@/types/workspace-project-filters";
 //types
 //constants

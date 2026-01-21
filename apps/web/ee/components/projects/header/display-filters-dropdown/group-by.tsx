@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // constants
-import { PROJECT_GROUP_BY_OPTIONS } from "@/plane-web/constants/project";
+import { PROJECT_GROUP_BY_OPTIONS } from "@/constants/project";
 // types
 import type { TProjectGroupBy } from "@/types/workspace-project-filters";
 

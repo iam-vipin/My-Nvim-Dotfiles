@@ -29,7 +29,7 @@ import {
   ProjectStateIcon,
 } from "@/plane-web/components/workspace-project-states";
 // plane web constants
-import { getCurrentStateSequence } from "@/plane-web/constants/workspace-project-states";
+import { getCurrentStateSequence } from "@/constants/workspace-project-states";
 // plane web hooks
 import { useProjectState, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types

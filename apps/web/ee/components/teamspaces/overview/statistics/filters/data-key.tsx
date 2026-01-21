@@ -18,7 +18,7 @@ import { ChevronDownIcon } from "@plane/propel/icons";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { TEAM_STATISTICS_DATA_KEY_MAP } from "@/plane-web/constants/teamspace";
+import { TEAM_STATISTICS_DATA_KEY_MAP } from "@/constants/teamspace";
 import type { TStatisticsFilterProps } from "@/types/teamspace";
 
 export const StatisticsDataKeyFilter = observer(function StatisticsDataKeyFilter(

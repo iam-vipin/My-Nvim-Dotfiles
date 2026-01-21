@@ -15,7 +15,7 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
-import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/plane-web/constants/importers/notion";
+import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/constants/importers/notion";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import type { TZipImporterProps } from "@/types/importers/zip-importer";
 import { EZipDriverType } from "@/types/importers/zip-importer";

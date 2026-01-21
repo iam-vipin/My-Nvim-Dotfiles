@@ -21,7 +21,7 @@ import { CustomMenu } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
-import { PROJECT_LAYOUTS } from "@/plane-web/constants/project";
+import { PROJECT_LAYOUTS } from "@/constants/project";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types

@@ -23,7 +23,7 @@ import {
   EstimatePointSwitchRoot,
 } from "@/plane-web/components/estimates";
 // plane web constants
-import { EEstimateUpdateStages } from "@/plane-web/constants/estimates";
+import { EEstimateUpdateStages } from "@/constants/estimates";
 
 type TUpdateEstimateModal = {
   workspaceSlug: string;

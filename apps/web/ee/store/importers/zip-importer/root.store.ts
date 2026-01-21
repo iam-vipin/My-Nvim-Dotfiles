@@ -17,7 +17,7 @@ import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { TServiceAuthConfiguration } from "@plane/etl/core";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // plane web store types
-import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/plane-web/constants/importers/notion";
+import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/constants/importers/notion";
 import { ZipImporterService } from "@/plane-web/services/importers/zip-importer/data.service";
 import { SiloAssetsService } from "@/plane-web/services/importers/zip-importer/silo-assets.service";
 import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/importers";

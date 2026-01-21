@@ -30,7 +30,7 @@ import {
 // plane imports
 import type { ICycle, TCycleEstimateSystemAdvanced, TProgressChartData } from "@plane/types";
 // helpers
-import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
+import { ESTIMATE_TYPE } from "@/constants/cycle";
 import { chartHelper, getColors } from "./helper";
 import { renderScopeLabel } from "./labels";
 import { CustomizedXAxisTicks, CustomizedYAxisTicks } from "./ticks";

@@ -28,7 +28,7 @@ import { useEstimate, useEstimatePoint } from "@/hooks/store/estimates";
 // plane web components
 import { EstimatePointDropdown } from "@/plane-web/components/estimates";
 // plane web constants
-import { estimateCount } from "@/plane-web/constants/estimates";
+import { estimateCount } from "@/constants/estimates";
 
 export const EstimatePointDelete = observer(function EstimatePointDelete(props: TEstimatePointDelete) {
   const {

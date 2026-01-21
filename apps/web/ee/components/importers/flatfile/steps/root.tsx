@@ -18,7 +18,7 @@ import CSVLogo from "@/app/assets/services/csv.svg?url";
 // plane web imports
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
-import { IMPORTER_STEPS } from "@/plane-web/constants/importers/flatfile";
+import { IMPORTER_STEPS } from "@/constants/importers/flatfile";
 // hooks
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
 

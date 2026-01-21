@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import AsanaLogo from "@/app/assets/services/asana.svg";
 // plane web imports
 import { Stepper } from "@/plane-web/components/importers/ui";
-import { IMPORTER_STEPS } from "@/plane-web/constants/importers/asana";
+import { IMPORTER_STEPS } from "@/constants/importers/asana";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 
 export const StepsRoot = observer(function StepsRoot() {

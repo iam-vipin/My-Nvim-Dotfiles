@@ -18,7 +18,7 @@ import type { ChartDataType, IGanttBlock, TIssueRelationMap } from "@plane/types
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { getItemPositionWidth } from "@/components/gantt-chart/views";
 // Plane-web
-import { EDependencyPosition, ETimelineRelation } from "@/plane-web/constants";
+import { EDependencyPosition, ETimelineRelation } from "@/constants/gantt-chart";
 import type { DependencyTree, Relation, TIssueRelationTypes } from "@/types";
 
 /**

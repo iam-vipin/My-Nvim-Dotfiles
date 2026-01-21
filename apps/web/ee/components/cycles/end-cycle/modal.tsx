@@ -24,7 +24,7 @@ import { CycleDropdown } from "@/components/dropdowns/cycle";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
-import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
+import { CYCLE_ACTION } from "@/constants/cycle";
 
 type EndCycleModalProps = {
   isOpen: boolean;

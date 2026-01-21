@@ -23,7 +23,7 @@ import type { TBarItem, TChartData } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn, renderFormattedDateWithoutYear } from "@plane/utils";
 // plane web imports
-import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/plane-web/constants/teamspace";
+import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/constants/teamspace";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
 

@@ -18,7 +18,7 @@ import LinearLogo from "@/app/assets/services/linear.svg?url";
 // plane web components
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
-import { IMPORTER_LINEAR_STEPS } from "@/plane-web/constants/importers/linear";
+import { IMPORTER_LINEAR_STEPS } from "@/constants/importers/linear";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
 

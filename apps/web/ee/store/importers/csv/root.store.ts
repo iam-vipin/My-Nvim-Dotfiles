@@ -16,7 +16,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // plane imports
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // constants
-import { CSV_IMPORTER_STEPS } from "@/plane-web/constants/importers/csv";
+import { CSV_IMPORTER_STEPS } from "@/constants/importers/csv";
 // services
 import projectService from "@/plane-web/services/project/project.service";
 // plane web store types

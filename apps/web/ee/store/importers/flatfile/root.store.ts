@@ -18,7 +18,7 @@ import type { TServiceAuthConfiguration } from "@plane/etl/core";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { FlatfileConfig } from "@plane/etl/flatfile";
 // plane web store types
-import { IMPORTER_STEPS } from "@/plane-web/constants/importers/flatfile";
+import { IMPORTER_STEPS } from "@/constants/importers/flatfile";
 import { FlatfileAuthService } from "@/plane-web/services/importers/flatfile/auth.service";
 import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/importers";
 import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";

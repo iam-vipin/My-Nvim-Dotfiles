@@ -15,7 +15,7 @@
 import { API_BASE_URL } from "@plane/constants";
 // services
 import type { TCycleConfig } from "@plane/types";
-import type { CYCLE_ACTION } from "@/plane-web/constants/cycle";
+import type { CYCLE_ACTION } from "@/constants/cycle";
 import { APIService } from "@/services/api.service";
 import { CycleService as CycleServiceCore } from "@/services/cycle.service";
 import type { TCycleUpdateReaction, TCycleUpdates } from "../../core/types";

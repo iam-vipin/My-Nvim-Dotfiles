@@ -11,19 +11,26 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { LucideIcon } from "lucide-react";
-// plane imports
+import {
+  DashboardIcon,
+  CycleIcon,
+  FavoriteFolderIcon,
+  ModuleIcon,
+  PageIcon,
+  ProjectIcon,
+  ViewsIcon,
+} from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CycleIcon, FavoriteFolderIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import type { IFavorite } from "@plane/types";
 
-export const FAVORITE_ITEM_ICONS: Record<string, React.FC<ISvgIcons> | LucideIcon> = {
+export const FAVORITE_ITEM_ICONS: Record<string, React.FC<ISvgIcons>> = {
   page: PageIcon,
   project: ProjectIcon,
   view: ViewsIcon,
   module: ModuleIcon,
   cycle: CycleIcon,
   folder: FavoriteFolderIcon,
+  workspace_dashboard: DashboardIcon,
 };
 
 export const FAVORITE_ITEM_LINKS: {
@@ -51,5 +58,9 @@ export const FAVORITE_ITEM_LINKS: {
   page: {
     itemLevel: "project",
     getLink: (favorite) => `pages/${favorite.entity_identifier}`,
+  },
+  workspace_dashboard: {
+    itemLevel: "workspace",
+    getLink: (favorite) => `dashboards/${favorite.entity_identifier}`,
   },
 };

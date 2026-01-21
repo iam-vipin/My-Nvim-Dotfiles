@@ -30,7 +30,7 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
-import type { EDependencyPosition } from "@/plane-web/constants";
+import type { EDependencyPosition } from "@/constants/gantt-chart";
 import { getRelationType } from "@/plane-web/store/timeline/utils";
 import type { Relation } from "@/types";
 // local imports

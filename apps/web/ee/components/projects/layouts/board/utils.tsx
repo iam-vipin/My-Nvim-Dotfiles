@@ -19,8 +19,8 @@ import type { IWorkspace, IWorkspaceMember } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
-import { PROJECT_PRIORITY_MAP } from "@/plane-web/constants/project";
-import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
+import { PROJECT_PRIORITY_MAP } from "@/constants/project";
+import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/constants/workspace-project-states";
 import type { GroupDetails, TProjectPriority } from "@/types/workspace-project-filters";
 import type { EProjectStateGroup, TProjectState, TProjectStateGroupKey } from "@/types/workspace-project-states";
 

@@ -32,8 +32,8 @@ import { useEstimate } from "@/hooks/store/estimates";
 // plane web components
 import { EstimatePointItemSwitchPreview, EstimateSwitchDropdown } from "@/plane-web/components/estimates";
 // plane web constants
-import type { EEstimateUpdateStages } from "@/plane-web/constants/estimates";
-import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
+import type { EEstimateUpdateStages } from "@/constants/estimates";
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/constants/estimates";
 
 type TEstimatePointSwitchRoot = {
   setEstimateEditType?: Dispatch<SetStateAction<TEstimateUpdateStageKeys | undefined>>;

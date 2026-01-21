@@ -20,7 +20,7 @@ import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // ce imports
-import type { TProperties } from "@/ce/constants/project";
+import type { TProperties } from "@/constants/project/settings/features";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports

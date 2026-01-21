@@ -19,11 +19,11 @@ import type { TProjectTemplateForm } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import type { TIntakeFeatureKeys, TProjectFeatureForTemplateKeys } from "@/plane-web/constants";
-import { INTAKE_FEATURES_LIST } from "@/plane-web/constants";
+import type { PROJECT_FEATURES_LIST_FOR_TEMPLATE, TIntakeFeatureKeys } from "@/constants/project/settings/features";
+import { INTAKE_FEATURES_LIST } from "@/constants/project/settings/features";
 
 type TProjectFeatureChildrenProps = {
-  feature: TProjectFeatureForTemplateKeys;
+  feature: keyof typeof PROJECT_FEATURES_LIST_FOR_TEMPLATE;
 };
 
 const IntakeFeatureChildren = observer(function IntakeFeatureChildren() {

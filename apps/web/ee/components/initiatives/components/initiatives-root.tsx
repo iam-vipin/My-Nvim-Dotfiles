@@ -29,7 +29,7 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
-import { DEFAULT_INITIATIVE_LAYOUT } from "@/plane-web/constants/initiative";
+import { DEFAULT_INITIATIVE_LAYOUT } from "@/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
 import InitiativeLayoutLoader from "./initiative-layout-loader";

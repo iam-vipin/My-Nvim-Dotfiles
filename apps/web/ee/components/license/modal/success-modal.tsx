@@ -26,7 +26,7 @@ import {
   ENTERPRISE_PLAN_FEATURES_MAP,
   ONE_PLAN_FEATURES_MAP,
   PRO_PLAN_FEATURES_MAP,
-} from "@/plane-web/constants/license";
+} from "@/constants/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

@@ -15,7 +15,7 @@ import { cloneDeep, orderBy, set, unset } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web constants
-import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
+import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/constants/workspace-project-states";
 // plane web services
 import projectStateService from "@/plane-web/services/workspace-project-states.service";
 // plane web store

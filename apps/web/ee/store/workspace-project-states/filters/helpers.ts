@@ -14,7 +14,7 @@
 import { includes, isEmpty, orderBy, reverse, sortBy } from "lodash-es";
 // plane web constants
 import { storage } from "@/lib/local-storage";
-import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
+import { PROJECT_PRIORITIES } from "@/constants/project";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types

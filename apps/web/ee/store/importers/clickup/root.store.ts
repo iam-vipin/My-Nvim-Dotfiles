@@ -16,7 +16,7 @@ import { computed, makeObservable, observable } from "mobx";
 import type { TClickUpConfig } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // plane web constants
-import { IMPORTER_CLICKUP_STEPS } from "@/plane-web/constants/importers/clickup";
+import { IMPORTER_CLICKUP_STEPS } from "@/constants/importers/clickup";
 // plane web store types
 import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/importers";
 import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";

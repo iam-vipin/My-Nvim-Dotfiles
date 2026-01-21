@@ -19,7 +19,7 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { StartCycleModal } from "@/plane-web/components/cycles";
-import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
+import { CYCLE_ACTION } from "@/constants/cycle";
 import { useFlag } from "@/plane-web/hooks/store";
 type Props = {
   cycleId: string;

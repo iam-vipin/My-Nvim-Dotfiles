@@ -12,7 +12,7 @@
  */
 
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
-import { EDependencyPosition } from "@/plane-web/constants";
+import { EDependencyPosition } from "@/constants/gantt-chart";
 
 const minControlX = 50;
 const maxControlX = 250;

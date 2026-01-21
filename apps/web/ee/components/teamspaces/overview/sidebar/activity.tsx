@@ -20,7 +20,7 @@ import { Loader } from "@plane/ui";
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web constants
-import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teamspace";
+import { TEAM_UPDATES_HELPER_MAP } from "@/constants/teamspace";
 // plane web helpers
 import { getTeamspaceActivityKey } from "@/helpers/teamspace/activity";
 // plane web services

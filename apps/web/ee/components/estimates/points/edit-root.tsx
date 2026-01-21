@@ -26,8 +26,8 @@ import { EstimatePointItemPreview } from "@/components/estimates/points/preview"
 // hooks
 import { useEstimate } from "@/hooks/store/estimates";
 // plane web constants
-import type { EEstimateUpdateStages } from "@/plane-web/constants/estimates";
-import { estimateCount } from "@/plane-web/constants/estimates";
+import type { EEstimateUpdateStages } from "@/constants/estimates";
+import { estimateCount } from "@/constants/estimates";
 
 type TEstimatePointEditRoot = {
   workspaceSlug: string;

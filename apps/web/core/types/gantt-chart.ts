@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { EDependencyPosition, ETimelineRelation } from "../../ee/constants";
+import type { EDependencyPosition, ETimelineRelation } from "@/constants/gantt-chart";
 
 export type TCoreWorkItemRelationTypes = "blocking" | "blocked_by" | "duplicate" | "relates_to";
 export type TExtendedWorkItemRelationTypes =

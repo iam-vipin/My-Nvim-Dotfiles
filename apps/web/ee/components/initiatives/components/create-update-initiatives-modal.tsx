@@ -21,7 +21,7 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
 // Plane web
-import { DEFAULT_INITIATIVE_STATE } from "@/plane-web/constants/initiative";
+import { DEFAULT_INITIATIVE_STATE } from "@/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiative } from "@/types";
 // local

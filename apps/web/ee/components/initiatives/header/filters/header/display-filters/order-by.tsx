@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import type { TInitiativeOrderByOptions } from "@plane/types";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // Plane-web
-import { INITIATIVE_ORDER_BY_OPTIONS } from "@/plane-web/constants/initiative";
+import { INITIATIVE_ORDER_BY_OPTIONS } from "@/constants/initiative";
 
 type Props = {
   selectedOrderBy: TInitiativeOrderByOptions | undefined;

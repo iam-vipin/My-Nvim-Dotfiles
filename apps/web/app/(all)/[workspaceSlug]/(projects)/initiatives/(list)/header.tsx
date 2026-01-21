@@ -31,7 +31,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
 import { InitiativesFiltersToggle } from "@/plane-web/components/initiatives/components/rich-filters/toggle";
 import { HeaderFilters } from "@/plane-web/components/initiatives/header/filters";
-import { DEFAULT_INITIATIVE_LAYOUT } from "@/plane-web/constants/initiative";
+import { DEFAULT_INITIATIVE_LAYOUT } from "@/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 export const InitiativesListHeader = observer(function InitiativesListHeader() {

@@ -18,7 +18,7 @@ import { Popover } from "@headlessui/react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { CloseIcon } from "@plane/propel/icons";
 // plane web components
-import { INTAKE_FEATURES_LIST } from "@/plane-web/constants";
+import { INTAKE_FEATURES_LIST } from "@/constants/project/settings/features";
 // hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local components

@@ -265,10 +265,10 @@ urlpatterns = [
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
     ),
-    # Onboading product tour
+    # Onboarding product tour
     path(
         "workspaces/<str:slug>/workspace-member/me/onboarding/",
         WorkspaceMemberUserOnboardingEndpoint.as_view(),
-        name="workspace-member-onboading",
+        name="workspace-member-onboarding",
     ),
 ]

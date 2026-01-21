@@ -352,7 +352,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
 class WorkspaceMemberUserOnboardingEndpoint(BaseAPIView):
     def patch(self, request, slug):
         try:
-            workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member_id=request.user.id)
+            workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
 
         except WorkspaceMember.DoesNotExist:
             return Response(
@@ -370,7 +370,7 @@ class WorkspaceMemberUserOnboardingEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WorkspaceProjectMemberEndpoint(BaseAPIView):

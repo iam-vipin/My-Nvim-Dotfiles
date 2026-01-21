@@ -24,10 +24,11 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   token: IApiToken;
+  workspaceSlug?: string;
 };
 
 export function ApiTokenListItem(props: Props) {
-  const { token } = props;
+  const { token, workspaceSlug } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   // hooks
@@ -35,7 +36,12 @@ export function ApiTokenListItem(props: Props) {
 
   return (
     <>
-      <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
+      <DeleteApiTokenModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        tokenId={token.id}
+        workspaceSlug={workspaceSlug}
+      />
       <div className="group relative flex flex-col justify-center border-b border-subtle py-3">
         <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
           <button

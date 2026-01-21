@@ -1840,8 +1840,11 @@ Bunun yerine yeni bir proje oluşturun`,
         },
       },
       api_tokens: {
+        heading: "API Token'ları",
+        description:
+          "Verilerinizi harici sistemler ve uygulamalarla entegre etmek için güvenli API token'ları oluşturun.",
         title: "API Token'ları",
-        add_token: "API Token'ı ekle",
+        add_token: "Erişim token'ı ekle",
         create_token: "Token oluştur",
         never_expires: "Süresi dolmaz",
         generate_token: "Token oluştur",

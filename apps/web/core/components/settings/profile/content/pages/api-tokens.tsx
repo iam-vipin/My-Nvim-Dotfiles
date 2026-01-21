@@ -37,14 +37,14 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
   const { t } = useTranslation();
 
   if (!tokens) {
-    return <APITokenSettingsLoader />;
+    return <APITokenSettingsLoader title={t("account_settings.api_tokens.title")} />;
   }
 
   return (
     <div className="size-full">
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       <ProfileSettingsHeading
-        title={t("account_settings.api_tokens.heading")}
+        title={t("account_settings.api_tokens.title")}
         description={t("account_settings.api_tokens.description")}
         button={{
           label: t("workspace_settings.settings.api_tokens.add_token"),

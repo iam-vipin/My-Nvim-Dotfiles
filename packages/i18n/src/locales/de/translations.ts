@@ -1846,8 +1846,11 @@ Erstellen Sie ein neues.`,
         },
       },
       api_tokens: {
+        heading: "API-Tokens",
+        description:
+          "Generieren Sie sichere API-Tokens, um Ihre Daten mit externen Systemen und Anwendungen zu integrieren.",
         title: "API-Tokens",
-        add_token: "API-Token hinzufügen",
+        add_token: "Zugriffstoken hinzufügen",
         create_token: "Token erstellen",
         never_expires: "Läuft nie ab",
         generate_token: "Token generieren",

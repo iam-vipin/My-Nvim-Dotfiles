@@ -1577,7 +1577,7 @@ Create a new project instead`,
       heading: "Security",
     },
     api_tokens: {
-      heading: "Personal Access Tokens",
+      title: "Personal Access Tokens",
       description: "Generate secure API tokens to integrate your data with external systems and applications.",
     },
     activity: {
@@ -1745,14 +1745,16 @@ Create a new project instead`,
         },
       },
       api_tokens: {
-        title: "Personal Access Tokens",
-        add_token: "Add personal access token",
+        heading: "Access Tokens",
+        description: "Generate secure API tokens to integrate your data with external systems and applications.",
+        title: "Access Tokens",
+        add_token: "Add access token",
         create_token: "Create token",
         never_expires: "Never expires",
         generate_token: "Generate token",
         generating: "Generating",
         delete: {
-          title: "Delete personal access token",
+          title: "Delete access token",
           description:
             "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
           success: {
@@ -2013,7 +2015,7 @@ Create a new project instead`,
     },
     empty_state: {
       api_tokens: {
-        title: "No personal access tokens created",
+        title: "No access tokens created",
         description:
           "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
       },

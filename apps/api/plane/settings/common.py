@@ -700,5 +700,12 @@ ENABLE_OUTBOX_POLLER = os.environ.get("ENABLE_OUTBOX_POLLER", "0") == "1"
 
 USE_STORAGE_PROXY = os.environ.get("USE_STORAGE_PROXY", "0") == "1"
 
+# API Token limit settings
+
+DEFAULT_API_RATE_LIMIT = os.environ.get("DEFAULT_API_RATE_LIMIT", "60/min")
+PRO_PLAN_API_RATE_LIMIT = os.environ.get("PRO_PLAN_API_RATE_LIMIT", "300/min")
+BUSINESS_PLAN_API_RATE_LIMIT = os.environ.get("BUSINESS_PLAN_API_RATE_LIMIT", "1000/min")
+ENTERPRISE_PLAN_API_RATE_LIMIT = os.environ.get("ENTERPRISE_PLAN_API_RATE_LIMIT", "3000/min")
+
 # Agent settings
 AGENT_RUN_STALE_TIMEOUT_IN_MINS = int(os.environ.get("AGENT_RUN_STALE_TIMEOUT_IN_MINS", 5))

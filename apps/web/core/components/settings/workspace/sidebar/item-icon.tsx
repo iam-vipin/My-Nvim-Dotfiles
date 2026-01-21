@@ -19,6 +19,7 @@ import {
   Building,
   Cable,
   CreditCard,
+  KeyRound,
   PiIcon,
   Shapes,
   Timer,
@@ -50,4 +51,5 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   applications: ToyBrick,
   "plane-intelligence": PiIcon,
   wiki: WikiIcon,
+  "access-tokens": KeyRound,
 };

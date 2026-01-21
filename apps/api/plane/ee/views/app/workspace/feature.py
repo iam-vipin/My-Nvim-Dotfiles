@@ -17,12 +17,12 @@ from rest_framework.response import Response
 from plane.db.models import Project, Workspace
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import WorkspaceFeature, ProjectState, ProjectAttribute
-from plane.ee.permissions import WorkSpaceBasePermission
+from plane.ee.permissions import WorkspaceEntityPermission
 from plane.ee.serializers import WorkspaceFeatureSerializer
 
 
 class WorkspaceFeaturesEndpoint(BaseAPIView):
-    permission_classes = (WorkSpaceBasePermission,)
+    permission_classes = (WorkspaceEntityPermission,)
 
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)

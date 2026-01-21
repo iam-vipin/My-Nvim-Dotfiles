@@ -23,11 +23,13 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import WorkspaceCredentialSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.workspace import WorkSpaceBasePermission
+from plane.app.permissions.workspace import WorkspaceEntityPermission
 
 
 class WorkspaceCredentialView(BaseAPIView):
-    permission_classes = [WorkSpaceBasePermission]
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
 
     @check_feature_flag(FeatureFlag.SILO)
     def delete(self, request, slug, pk):
@@ -41,7 +43,9 @@ class WorkspaceCredentialView(BaseAPIView):
 
 
 class VerifyWorkspaceCredentialView(BaseAPIView):
-    permission_classes = [WorkSpaceBasePermission]
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
 
     @check_feature_flag(FeatureFlag.SILO)
     def get(self, request, slug):

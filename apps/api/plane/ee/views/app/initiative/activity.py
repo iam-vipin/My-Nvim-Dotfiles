@@ -31,7 +31,6 @@ from plane.ee.serializers import (
     InitiativeCommentSerializer,
 )
 from plane.app.permissions import (
-    WorkSpaceBasePermission,
     allow_permission,
     ROLE,
 )
@@ -47,10 +46,6 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class InitiativeActivityEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceBasePermission,
-    ]
-
     @method_decorator(gzip_page)
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission(

@@ -23,7 +23,7 @@ from plane.db.models import Workspace
 from plane.ee.models import ProjectState, ProjectAttribute
 from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import ProjectStateSerializer
-from plane.app.permissions import WorkSpaceBasePermission
+from plane.app.permissions import WorkspaceEntityPermission
 
 # EE imports
 from plane.ee.utils.workspace_feature import (
@@ -33,7 +33,9 @@ from plane.ee.utils.workspace_feature import (
 
 
 class WorkspaceProjectStatesEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceBasePermission]
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
     def get(self, request, slug):
@@ -110,7 +112,9 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectStatesDefaultEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceBasePermission]
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
     def post(self, request, slug, pk):

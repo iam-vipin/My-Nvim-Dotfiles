@@ -23,14 +23,16 @@ from plane.ee.models import IssueWorkLog
 from plane.ee.views.base import BaseAPIView
 from plane.utils.issue_filters import issue_filters
 from plane.ee.serializers import IssueWorkLogSerializer, ExporterHistorySerializer
-from plane.app.permissions import WorkSpaceBasePermission
+from plane.app.permissions import WorkspaceEntityPermission
 from plane.ee.bgtasks.worklogs_export_task import worklogs_export_task
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceWorkLogsEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceBasePermission]
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @method_decorator(gzip_page)
@@ -58,7 +60,9 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
 
 
 class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceBasePermission]
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def post(self, request, slug):

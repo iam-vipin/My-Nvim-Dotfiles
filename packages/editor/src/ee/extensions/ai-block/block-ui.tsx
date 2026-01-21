@@ -11,8 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useMemo, useState } from "react";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 import CustomAIBlockPreview from "./preview";
 import { CustomAIBlockSettings } from "./settings";
 import { EAIBlockAttributeNames } from "./types";
@@ -81,7 +82,7 @@ export function CustomAIBlockUI(props: CustomAIBlockUIProps) {
   };
 
   return (
-    <NodeViewWrapper className="editor-ai-block-node group/ai-block-node">
+    <YChangeNodeViewWrapper decorations={props.decorations} className="editor-ai-block-node group/ai-block-node">
       {isSettingsOpen ? (
         <div className="flex flex-col gap-4 relative bg-layer-2 border shadow-raised-100 rounded-xl my-2 transition-all duration-300 border-subtle-1 overflow-hidden">
           <CustomAIBlockSettings
@@ -106,6 +107,6 @@ export function CustomAIBlockUI(props: CustomAIBlockUIProps) {
           <CustomAIBlockSettingsFooter type="revision" {...actionProps} />
         </div>
       )}
-    </NodeViewWrapper>
+    </YChangeNodeViewWrapper>
   );
 }

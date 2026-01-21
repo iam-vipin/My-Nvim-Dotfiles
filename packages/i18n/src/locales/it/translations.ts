@@ -3128,6 +3128,7 @@ Crea un nuovo progetto invece`,
         version_history: {
           label: "Cronologia versioni",
           current_version: "Versione corrente",
+          highlight_changes: "Evidenzia modifiche",
         },
       },
       assets: {

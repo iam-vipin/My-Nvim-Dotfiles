@@ -3087,6 +3087,7 @@ Vytvořte nový.`,
         version_history: {
           label: "Historie verzí",
           current_version: "Aktuální verze",
+          highlight_changes: "Zvýraznit změny",
         },
       },
       assets: {

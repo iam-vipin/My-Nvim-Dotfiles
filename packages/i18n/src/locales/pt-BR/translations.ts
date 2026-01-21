@@ -3141,6 +3141,7 @@ se você tem certeza de que sua pesquisa está correta.`,
         version_history: {
           label: "Histórico de versões",
           current_version: "Versão atual",
+          highlight_changes: "Destacar alterações",
         },
       },
       assets: {

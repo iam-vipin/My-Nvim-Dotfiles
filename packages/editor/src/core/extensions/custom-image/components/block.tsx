@@ -15,6 +15,8 @@ import { NodeSelection } from "@tiptap/pm/state";
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 // plane imports
 import { cn } from "@plane/utils";
+// version diff support
+import { useYChangeDecorations } from "@/components/editors/version-diff/extensions/use-ychange-decorations";
 // local imports
 import type { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
 import { ensurePixelString, getImageBlockId, isImageDuplicating } from "../utils";
@@ -36,6 +38,7 @@ type CustomImageBlockProps = CustomImageNodeViewProps & {
 export function CustomImageBlock(props: CustomImageBlockProps) {
   // props
   const {
+    decorations,
     editor,
     editorContainer,
     extension,
@@ -49,6 +52,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     downloadSrc: resolvedDownloadSrc,
     updateAttributes,
   } = props;
+
+  // Version diff support - extract ychange decoration info for img element
+  const ychangeInfo = useYChangeDecorations(decorations);
   const {
     width: nodeWidth,
     height: nodeHeight,
@@ -239,12 +245,14 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     >
       <div
         ref={containerRef}
-        className="group/image-component relative inline-block max-w-full"
+        className={cn("group/image-component relative inline-block max-w-full", ychangeInfo.className)}
         onMouseDown={handleImageMouseDown}
         style={{
           width: size.width,
           ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
+          ...ychangeInfo.style,
         }}
+        {...ychangeInfo.dataAttrs}
       >
         {showImageLoader && (
           <div className="animate-pulse bg-layer-1 rounded-md" style={{ width: size.width, height: size.height }} />
@@ -300,6 +308,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
             ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
           }}
         />
+
         {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
         {showImageToolbar && (
           <ImageToolbarRoot

@@ -3040,6 +3040,7 @@ export default {
         version_history: {
           label: "版本历史",
           current_version: "当前版本",
+          highlight_changes: "高亮显示更改",
         },
       },
       assets: {

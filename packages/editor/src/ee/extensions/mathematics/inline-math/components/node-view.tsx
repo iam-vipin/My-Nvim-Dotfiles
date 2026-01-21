@@ -12,9 +12,10 @@
  */
 
 import type { NodeViewProps } from "@tiptap/react";
-import { NodeViewWrapper } from "@tiptap/react";
 // components
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 import { FloatingMathModal } from "../../components/floating-modal";
 // hooks
 import { useMathNodeView } from "../../hooks/use-math-node-view";
@@ -37,7 +38,7 @@ export type InlineMathNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export function InlineMathNodeView(props: InlineMathNodeViewProps) {
-  const { getPos, editor } = props;
+  const { getPos, editor, decorations } = props;
 
   // Use shared hook for common math node logic
   const {
@@ -63,8 +64,9 @@ export function InlineMathNodeView(props: InlineMathNodeViewProps) {
 
   return (
     <>
-      <NodeViewWrapper
+      <YChangeNodeViewWrapper
         as="span"
+        decorations={decorations}
         ref={wrapperRef}
         className={editor.isEditable ? "cursor-pointer" : ""}
         onMouseDown={handleMouseDown}
@@ -81,7 +83,7 @@ export function InlineMathNodeView(props: InlineMathNodeViewProps) {
         ) : (
           <InlineMathView latex={displayLatex} onClick={handleMouseDown} isEditable={editor.isEditable} />
         )}
-      </NodeViewWrapper>
+      </YChangeNodeViewWrapper>
 
       <FloatingMathModal
         isOpen={isModalOpen}

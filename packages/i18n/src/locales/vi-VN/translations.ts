@@ -3122,6 +3122,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
         version_history: {
           label: "Lịch sử phiên bản",
           current_version: "Phiên bản hiện tại",
+          highlight_changes: "Đánh dấu thay đổi",
         },
       },
       assets: {

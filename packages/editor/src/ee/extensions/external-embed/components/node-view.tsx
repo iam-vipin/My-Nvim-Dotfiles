@@ -12,7 +12,8 @@
  */
 
 import type { NodeViewProps } from "@tiptap/core";
-import { NodeViewWrapper } from "@tiptap/react";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // types
 import type { TExternalEmbedBlockAttributes } from "@/types";
 // components
@@ -28,11 +29,15 @@ export type ExternalEmbedNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export function ExternalEmbedNodeView(props: ExternalEmbedNodeViewProps) {
-  const { extension, node, selected } = props;
+  const { decorations, extension, node, selected } = props;
   const ExternalEmbedComponent = extension.options.externalEmbedCallbackComponent;
 
   return (
-    <NodeViewWrapper className="editor-embed-component relative" contentEditable={false}>
+    <YChangeNodeViewWrapper
+      decorations={decorations}
+      className="editor-embed-component relative"
+      contentEditable={false}
+    >
       {!node.attrs.src || node.attrs.src.trim() === "" ? (
         <ExternalEmbedBlock {...props} />
       ) : (
@@ -43,6 +48,6 @@ export function ExternalEmbedNodeView(props: ExternalEmbedNodeViewProps) {
           )}
         </div>
       )}
-    </NodeViewWrapper>
+    </YChangeNodeViewWrapper>
   );
 }

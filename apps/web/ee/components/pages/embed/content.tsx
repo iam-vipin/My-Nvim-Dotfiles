@@ -301,7 +301,7 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
           role="button"
           data-drag-handle
           className={cn(
-            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-layer-1 ease",
+            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-layer-transparent-hover ease",
             {
               "bg-layer-1": draggedInside && isDroppable,
             },

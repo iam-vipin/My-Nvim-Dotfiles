@@ -157,9 +157,9 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const searchParams = useSearchParams();
   const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
   const handleRestoreVersion = useCallback(
-    async (descriptionHTML: string) => {
+    async (descriptionJSON: object) => {
       if (version && isNestedPagesEnabled) {
-        page.setVersionToBeRestored(version, descriptionHTML);
+        page.setVersionToBeRestored(version, descriptionJSON);
         page.setRestorationStatus(true);
         updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
         if (page.id) {
@@ -167,7 +167,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
         }
       } else {
         editorRef.current?.clearEditor();
-        editorRef.current?.setEditorValue(descriptionHTML);
+        editorRef.current?.setEditorValue(descriptionJSON);
       }
     },
     [version, page, handlers, editorRef, isNestedPagesEnabled]
@@ -187,7 +187,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
       <div className="size-full flex flex-col overflow-hidden">
         <PageVersionsOverlay
           editorComponent={PagesVersionEditor}
-          fetchVersionDetails={handlers.fetchVersionDetails}
+          fetchAllVersions={handlers.fetchAllVersions}
           handleRestore={handleRestoreVersion}
           pageId={page.id ?? ""}
           restoreEnabled={isContentEditable}
@@ -222,6 +222,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
         </div>
       </div>
       <PageNavigationPaneRoot
+        config={config}
         storeType={storeType}
         handleClose={handleCloseNavigationPane}
         isNavigationPaneOpen={isNavigationPaneOpen}

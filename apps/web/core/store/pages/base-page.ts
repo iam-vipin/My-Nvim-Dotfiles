@@ -42,7 +42,7 @@ export type TVersionToBeRestored = {
 
 export type TRestorationState = {
   versionId: string | null;
-  descriptionHTML: string | null;
+  descriptionJSON: object | null;
   inProgress: boolean;
 };
 
@@ -74,7 +74,7 @@ export type TBasePage = TPage & {
   duplicate: () => Promise<TPage | undefined>;
   mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
   setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
-  setVersionToBeRestored: (versionId: string | null, descriptionHTML: string | null) => void;
+  setVersionToBeRestored: (versionId: string | null, descriptionJSON: object | null) => void;
   setRestorationStatus: (inProgress: boolean) => void;
   setConfig: (config: TPageConfig, getBasePath?: (params: TPageConfigParams) => string) => void;
   // sub-store
@@ -123,7 +123,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   isSubmitting: TNameDescriptionLoader = "saved";
   restoration: TRestorationState = {
     versionId: null,
-    descriptionHTML: null,
+    descriptionJSON: null,
     inProgress: false,
   };
   isSyncingWithServer: "syncing" | "synced" | "error" = "syncing";
@@ -367,7 +367,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       version_to_be_restored: this.restoration.versionId
         ? {
             versionId: this.restoration.versionId,
-            descriptionHTML: this.restoration.descriptionHTML,
+            descriptionJSON: this.restoration.descriptionJSON,
           }
         : null,
       ...this.asJSONExtended,
@@ -698,14 +698,14 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description set the version to be restored data
    * @param versionId
-   * @param descriptionHTML
+   * @param descriptionJSON
    */
-  setVersionToBeRestored = (versionId: string | null, descriptionHTML: string | null) => {
+  setVersionToBeRestored = (versionId: string | null, descriptionJSON: object | null) => {
     runInAction(() => {
       this.restoration = {
         ...this.restoration,
         versionId,
-        descriptionHTML,
+        descriptionJSON,
       };
     });
   };

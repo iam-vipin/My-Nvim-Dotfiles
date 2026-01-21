@@ -3090,6 +3090,7 @@ Utwórz nowy.`,
         version_history: {
           label: "Historia wersji",
           current_version: "Bieżąca wersja",
+          highlight_changes: "Podświetl zmiany",
         },
       },
       assets: {

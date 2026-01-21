@@ -3112,6 +3112,7 @@ export default {
         version_history: {
           label: "История версий",
           current_version: "Текущая версия",
+          highlight_changes: "Выделить изменения",
         },
       },
       assets: {

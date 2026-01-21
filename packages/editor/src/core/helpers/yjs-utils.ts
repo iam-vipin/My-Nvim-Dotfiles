@@ -42,13 +42,15 @@ const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
  */
 export const applyUpdates = (document: Uint8Array, updates?: Uint8Array): Uint8Array => {
   const yDoc = new Y.Doc();
-  Y.applyUpdate(yDoc, document);
-  if (updates) {
-    Y.applyUpdate(yDoc, updates);
+  try {
+    Y.applyUpdate(yDoc, document);
+    if (updates) {
+      Y.applyUpdate(yDoc, updates);
+    }
+    return Y.encodeStateAsUpdate(yDoc);
+  } finally {
+    yDoc.destroy();
   }
-
-  const encodedDoc = Y.encodeStateAsUpdate(yDoc);
-  return encodedDoc;
 };
 
 /**

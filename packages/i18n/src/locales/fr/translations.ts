@@ -3150,6 +3150,7 @@ si vous êtes sûr que votre recherche est correcte.`,
         version_history: {
           label: "Historique des versions",
           current_version: "Version actuelle",
+          highlight_changes: "Mettre en évidence les modifications",
         },
       },
       assets: {

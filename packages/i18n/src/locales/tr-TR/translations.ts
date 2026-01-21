@@ -3115,6 +3115,7 @@ modüller arşivlenebilir.`,
         version_history: {
           label: "Sürüm geçmişi",
           current_version: "Mevcut sürüm",
+          highlight_changes: "Değişiklikleri vurgula",
         },
       },
       assets: {

@@ -12,9 +12,12 @@
  */
 
 import type { NodeViewProps } from "@tiptap/react";
-import { NodeViewWrapper } from "@tiptap/react";
+// plane utils
+import { cn } from "@plane/utils";
 // plane constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // components
 import { FloatingMathModal } from "../../components/floating-modal";
 // hooks
@@ -38,7 +41,7 @@ export type BlockMathNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export function BlockMathNodeView(props: BlockMathNodeViewProps) {
-  const { getPos, editor } = props;
+  const { decorations, getPos, editor } = props;
 
   // Use shared hook for common math node logic
   const {
@@ -64,9 +67,13 @@ export function BlockMathNodeView(props: BlockMathNodeViewProps) {
 
   return (
     <>
-      <NodeViewWrapper
+      <YChangeNodeViewWrapper
         ref={wrapperRef}
-        className={`editor-mathematics-component relative ${editor.isEditable ? "cursor-pointer" : ""}`}
+        decorations={decorations}
+        className={cn(
+          "block-math-component editor-mathematics-component relative",
+          editor.isEditable && "cursor-pointer"
+        )}
         onMouseDown={handleMouseDown}
         key={nodeAttrs[EMathAttributeNames.ID]}
       >
@@ -86,7 +93,7 @@ export function BlockMathNodeView(props: BlockMathNodeViewProps) {
         ) : (
           <BlockMathView latex={displayLatex} onClick={handleMouseDown} isEditable={editor.isEditable} />
         )}
-      </NodeViewWrapper>
+      </YChangeNodeViewWrapper>
 
       <FloatingMathModal
         isOpen={isModalOpen}

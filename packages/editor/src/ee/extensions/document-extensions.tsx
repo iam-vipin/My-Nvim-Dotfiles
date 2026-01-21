@@ -31,9 +31,10 @@ import {
   IssueEmbedSuggestions,
   WorkItemSuggestionsDropdownRenderer,
   PageEmbedExtension,
+  PageEmbedReadOnlyExtension,
 } from "@/plane-editor/extensions";
 // types
-import type { TExtensions } from "@/types";
+import type { TExtensions, TFileHandler } from "@/types";
 // local imports
 import { CustomAIBlockExtension } from "./ai-block/extension";
 import { CustomCollaborationCaret } from "./collaboration-caret";
@@ -146,14 +147,16 @@ const slashCommandRegistry: {
 
 /**
  * Main extension registry
- * Each entry defines a TipTap extension with its own enabling logic
+ * Each entry defines a TipTap extension with its own enabling logic.
+ * Extensions check `isEditable` to return appropriate variants for read-only mode (e.g., version diff).
  */
 const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
-    // Slash commands extension
+    // Slash commands extension (edit-only)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
     getExtension: (props) => {
-      // Get enabled slash command options from the registry
+      if (!props.isEditable) return undefined;
+
       const slashCommandOptions = slashCommandRegistry
         .filter((command) => command.isEnabled(props.disabledExtensions, props.flaggedExtensions))
         .map((command) => command.getOption(props))
@@ -167,13 +170,11 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     },
   },
   {
-    // Page embed extension
+    // Work item embed extension (works in both modes)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
     getExtension: ({ extendedEditorProps }) => {
       const workItemEmbedConfig = extendedEditorProps.embedHandler?.issue;
-
-      // Only enable if widget callback exists
-      if (!workItemEmbedConfig) return undefined;
+      if (!workItemEmbedConfig?.widgetCallback) return undefined;
 
       return WorkItemEmbedExtension({
         widgetCallback: workItemEmbedConfig.widgetCallback,
@@ -181,13 +182,13 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     },
   },
   {
-    // Work item embed suggestions extension
+    // Work item embed suggestions extension (edit-only)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
-    getExtension: ({ extendedEditorProps }) => {
+    getExtension: ({ isEditable, extendedEditorProps }) => {
+      if (!isEditable) return undefined;
+
       const issueConfig = extendedEditorProps.embedHandler?.issue;
       const searchCallback = issueConfig?.searchCallback;
-
-      // Only enable if search callback exists
       if (!searchCallback) return undefined;
 
       return IssueEmbedSuggestions.configure({
@@ -198,23 +199,29 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     },
   },
   {
-    // Collaboration cursor extension
+    // Collaboration cursor extension (edit-only, requires provider)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-caret"),
-    getExtension: ({ provider, userDetails }) =>
-      provider &&
-      CustomCollaborationCaret({
+    getExtension: ({ isEditable, provider, userDetails }) => {
+      if (!isEditable || !provider) return undefined;
+
+      return CustomCollaborationCaret({
         provider,
         userDetails,
-      }),
+      });
+    },
   },
   {
-    // Page embed extension
+    // Page embed extension (returns read-only variant when not editable)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("nested-pages"),
-    getExtension: ({ extendedEditorProps }) => {
+    getExtension: ({ isEditable, extendedEditorProps }) => {
       const pageConfig = extendedEditorProps.embedHandler?.page;
+      if (!pageConfig?.widgetCallback) return undefined;
 
-      // Only enable if widget callback exists
-      if (!pageConfig) return undefined;
+      if (!isEditable) {
+        return PageEmbedReadOnlyExtension({
+          widgetCallback: pageConfig.widgetCallback,
+        });
+      }
 
       return PageEmbedExtension({
         widgetCallback: pageConfig.widgetCallback,
@@ -227,54 +234,59 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     },
   },
   {
-    // Comment mark extension (for styling)
+    // Comments extension (hides comments in read-only/diff mode)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("comments"),
-    getExtension: ({ extendedEditorProps, flaggedExtensions }) => {
+    getExtension: ({ isEditable, extendedEditorProps, flaggedExtensions }) => {
       const { onClick, onDelete, onRestore, onResolve, onUnresolve, shouldHideComment } =
         extendedEditorProps.commentConfig ?? {};
+
       return CommentsExtension({
         isFlagged: flaggedExtensions.includes("comments"),
-        onCommentClick: onClick,
-        onCommentDelete: onDelete,
-        onCommentRestore: onRestore,
-        onCommentResolve: onResolve,
-        onCommentUnresolve: onUnresolve,
-        shouldHideComment: !!shouldHideComment,
+        onCommentClick: isEditable ? onClick : undefined,
+        onCommentDelete: isEditable ? onDelete : undefined,
+        onCommentRestore: isEditable ? onRestore : undefined,
+        onCommentResolve: isEditable ? onResolve : undefined,
+        onCommentUnresolve: isEditable ? onUnresolve : undefined,
+        shouldHideComment: !isEditable || !!shouldHideComment,
       });
     },
   },
   {
-    // Draw.io extension
+    // Draw.io extension (works in both modes, onClick only in edit mode)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("drawio"),
-    getExtension: ({ flaggedExtensions, fileHandler, extendedEditorProps }) => {
+    getExtension: ({ isEditable, flaggedExtensions, fileHandler, extendedEditorProps }) => {
       const { extensionOptions } = extendedEditorProps ?? {};
       const { onClick } = extensionOptions?.[ADDITIONAL_EXTENSIONS.DRAWIO] ?? {};
+
       return DrawioExtension({
         isFlagged: flaggedExtensions.includes("drawio"),
         fileHandler,
-        onClick,
+        onClick: isEditable ? onClick : undefined,
         logoSpinner: extendedEditorProps?.logoSpinner,
       });
     },
   },
   {
-    // AI block extension
+    // AI block extension (edit-only)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("ai-block"),
-    getExtension: ({ extendedEditorProps }) =>
-      CustomAIBlockExtension({
+    getExtension: ({ isEditable, extendedEditorProps }) => {
+      if (!isEditable) return undefined;
+
+      return CustomAIBlockExtension({
         aiBlockHandlers: extendedEditorProps?.aiBlockHandlers,
         widgetCallback: extendedEditorProps?.widgetCallback,
-      }),
+      });
+    },
   },
 ];
 
 /**
- * Returns all enabled extensions for the document editor
+ * Returns all enabled extensions for the document editor.
+ * Pass `isEditable: false` for read-only mode (e.g., version diff editor).
  */
 export function DocumentEditorAdditionalExtensions(props: TDocumentEditorAdditionalExtensionsProps) {
   const { disabledExtensions, flaggedExtensions } = props;
 
-  // Filter enabled extensions and flatten the result
   const documentExtensions: Extensions = extensionRegistry
     .filter((config) => config.isEnabled(disabledExtensions, flaggedExtensions))
     .map((config) => config.getExtension(props))

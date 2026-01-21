@@ -24,6 +24,7 @@ export default {
   no: "No",
   ok: "OK",
   name: "Name",
+  unknown_user: "Unknown user",
   description: "Description",
   search: "Search",
   add_member: "Add member",
@@ -3132,6 +3133,7 @@ if you are sure your search is right. `,
         version_history: {
           label: "Version history",
           current_version: "Current version",
+          highlight_changes: "Highlight changes",
         },
       },
       assets: {

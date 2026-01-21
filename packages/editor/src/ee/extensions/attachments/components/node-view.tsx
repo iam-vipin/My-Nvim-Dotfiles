@@ -12,10 +12,11 @@
  */
 
 import type { NodeViewProps } from "@tiptap/react";
-import { NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // plane utils
 import { cn } from "@plane/utils";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // local imports
 import type { AttachmentExtension, TAttachmentBlockAttributes } from "../types";
 import { CustomAttachmentBlock } from "./block";
@@ -31,7 +32,7 @@ export type CustomAttachmentNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export function CustomAttachmentNodeView(props: CustomAttachmentNodeViewProps) {
-  const { editor, extension, node } = props;
+  const { decorations, editor, extension, node } = props;
   // states
   const [resolvedSource, setResolvedSource] = useState<string | null>(null);
   const [resolvedDownloadSource, setResolvedDownloadSource] = useState<string | null>(null);
@@ -60,7 +61,8 @@ export function CustomAttachmentNodeView(props: CustomAttachmentNodeViewProps) {
   }, [src, extension.options, resolvedSource, resolvedDownloadSource]);
 
   return (
-    <NodeViewWrapper
+    <YChangeNodeViewWrapper
+      decorations={decorations}
       className={cn("editor-attachment-component", {
         "touch-select-none": isTouchDevice,
       })}
@@ -87,6 +89,6 @@ export function CustomAttachmentNodeView(props: CustomAttachmentNodeViewProps) {
           )}
         </div>
       )}
-    </NodeViewWrapper>
+    </YChangeNodeViewWrapper>
   );
 }

@@ -3135,6 +3135,7 @@ văzute aici`,
         version_history: {
           label: "Istoricul versiunilor",
           current_version: "Versiunea curentă",
+          highlight_changes: "Evidențiază modificările",
         },
       },
       assets: {

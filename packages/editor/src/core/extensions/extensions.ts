@@ -86,7 +86,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     provider,
   } = args;
 
-  const extensions = [
+  const extensions: Extensions = [
     CustomStarterKitExtension({
       enableHistory,
     }),

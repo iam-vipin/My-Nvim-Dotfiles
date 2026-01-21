@@ -236,14 +236,16 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     }
   }, [webhookConnectionParams]);
 
-  const userConfig = useMemo(
-    () => ({
+  const userConfig = useMemo(() => {
+    const userId = currentUser?.id || "default-user";
+    const colorObj = generateRandomColor(userId);
+    const hexColor = hslToHex(colorObj);
+    return {
       id: currentUser?.id ?? "",
       name: currentUser?.display_name ?? "",
-      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
-    }),
-    [currentUser?.display_name, currentUser?.id]
-  );
+      color: hexColor,
+    };
+  }, [currentUser?.display_name, currentUser?.id]);
 
   const blockWidthClassName = cn(
     "block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out",

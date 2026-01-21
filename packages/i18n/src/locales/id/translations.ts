@@ -3125,6 +3125,7 @@ jika Anda yakin pencarian Anda benar. `,
         version_history: {
           label: "Riwayat versi",
           current_version: "Versi saat ini",
+          highlight_changes: "Sorot perubahan",
         },
       },
       assets: {

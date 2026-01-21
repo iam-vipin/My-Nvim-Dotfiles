@@ -3115,6 +3115,7 @@ export default {
         version_history: {
           label: "バージョン履歴",
           current_version: "現在のバージョン",
+          highlight_changes: "変更を強調表示",
         },
       },
       assets: {

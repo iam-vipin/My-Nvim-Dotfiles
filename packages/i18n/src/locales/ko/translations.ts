@@ -3086,6 +3086,7 @@ export default {
         version_history: {
           label: "버전 기록",
           current_version: "현재 버전",
+          highlight_changes: "변경 사항 강조 표시",
         },
       },
       assets: {

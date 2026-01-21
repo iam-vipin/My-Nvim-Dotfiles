@@ -3062,6 +3062,7 @@ export default {
         version_history: {
           label: "版本歷史",
           current_version: "目前版本",
+          highlight_changes: "標示變更",
         },
       },
       assets: {

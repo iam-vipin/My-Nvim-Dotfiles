@@ -3096,6 +3096,7 @@ export default {
         version_history: {
           label: "Історія версій",
           current_version: "Поточна версія",
+          highlight_changes: "Виділити зміни",
         },
       },
       assets: {

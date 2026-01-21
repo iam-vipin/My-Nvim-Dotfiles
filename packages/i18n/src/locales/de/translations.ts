@@ -3116,6 +3116,7 @@ Erstellen Sie ein neues.`,
         version_history: {
           label: "Versionsverlauf",
           current_version: "Aktuelle Version",
+          highlight_changes: "Änderungen hervorheben",
         },
       },
       assets: {

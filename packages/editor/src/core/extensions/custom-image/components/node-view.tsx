@@ -11,9 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
+import type { Decoration } from "@tiptap/pm/view";
 import { useEffect, useRef, useState } from "react";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // local imports
 import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
 import { ECustomImageStatus } from "../types";
@@ -27,10 +29,11 @@ export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "update
     attrs: TCustomImageAttributes;
   };
   updateAttributes: (attrs: Partial<TCustomImageAttributes>) => void;
+  decorations: readonly Decoration[];
 };
 
 export function CustomImageNodeView(props: CustomImageNodeViewProps) {
-  const { editor, extension, node, updateAttributes } = props;
+  const { editor, extension, node, updateAttributes, decorations } = props;
   const { src: imgNodeSrc, status } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(!!imgNodeSrc);
@@ -76,7 +79,11 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
     const getImageSource = async () => {
       try {
         const url = await extension.options.getImageSource?.(imgNodeSrc);
-        setResolvedSrc(url);
+        if (url) {
+          setResolvedSrc(url);
+        } else {
+          setFailedToLoadImage(true);
+        }
         const downloadUrl = await extension.options.getImageDownloadSource?.(imgNodeSrc);
         setResolvedDownloadSrc(downloadUrl);
       } catch (error) {
@@ -85,10 +92,13 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       }
     };
     getImageSource();
-  }, [imgNodeSrc, extension.options]);
+  }, [imgNodeSrc, extension.options, editor.isEditable, status]);
 
   useEffect(() => {
     const handleDuplication = async () => {
+      // Skip duplication in read-only mode (e.g., version diff editor)
+      if (!editor.isEditable) return;
+
       if (status !== ECustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
         return;
       }
@@ -120,15 +130,18 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
     };
 
     handleDuplication();
-  }, [status, imgNodeSrc, extension.options.duplicateImage, updateAttributes]);
+  }, [editor.isEditable, status, imgNodeSrc, extension.options.duplicateImage, updateAttributes]);
 
   useEffect(() => {
+    // Skip duplication retry in read-only mode (e.g., version diff editor)
+    if (!editor.isEditable) return;
+
     if (hasImageDuplicationFailed(status) && !hasRetriedOnMount.current && imgNodeSrc) {
       hasRetriedOnMount.current = true;
       // Add a small delay before retrying to avoid immediate retries
       updateAttributes({ status: ECustomImageStatus.DUPLICATING });
     }
-  }, [status, imgNodeSrc, updateAttributes]);
+  }, [editor.isEditable, status, imgNodeSrc, updateAttributes]);
 
   useEffect(() => {
     if (status === ECustomImageStatus.UPLOADED) {
@@ -142,7 +155,7 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   const shouldShowBlock = hasValidImageSource && !failedToLoadImage && !hasDuplicationFailed;
 
   return (
-    <NodeViewWrapper>
+    <YChangeNodeViewWrapper decorations={decorations} className="custom-image-node">
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
         {shouldShowBlock && !hasDuplicationFailed ? (
           <CustomImageBlock
@@ -165,6 +178,6 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
           />
         )}
       </div>
-    </NodeViewWrapper>
+    </YChangeNodeViewWrapper>
   );
 }

@@ -3090,6 +3090,7 @@ Vytvorte nový.`,
         version_history: {
           label: "História verzií",
           current_version: "Aktuálna verzia",
+          highlight_changes: "Zvýrazniť zmeny",
         },
       },
       assets: {

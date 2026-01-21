@@ -12,8 +12,21 @@
  */
 
 import { LIVE_URL } from "@plane/constants";
-import type { IframelyResponse } from "@plane/types";
+import type { IframelyResponse, TVersionDiffResponse } from "@plane/types";
 import { APIService } from "@/services/api.service";
+
+export type TPageType = "project" | "workspace" | "teamspace";
+
+export type TVersionDiffParams = {
+  pageId: string;
+  versionId: string;
+  previousVersionId?: string;
+  workspaceSlug: string;
+  userId: string;
+  pageType: TPageType;
+  projectId?: string;
+  teamspaceId?: string;
+};
 
 export class LiveService extends APIService {
   constructor() {
@@ -51,6 +64,23 @@ export class LiveService extends APIService {
       params: { url: url },
     });
     return response.data.content;
+  }
+
+  /**
+   * Fetches precomputed version diff from live server
+   * Returns diff data ready for rendering + editors list
+   */
+  async getVersionDiff(params: TVersionDiffParams): Promise<TVersionDiffResponse> {
+    const response = await this.get(
+      `/version-diff`,
+      {
+        params,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
   }
 }
 

@@ -12,7 +12,8 @@
  */
 
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
+import type { Decoration } from "@tiptap/pm/view";
+import { NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
 import { useState } from "react";
@@ -21,6 +22,8 @@ import { CopyIcon, CheckIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 
 // we just have ts support for now
 const lowlight = createLowlight(common);
@@ -28,9 +31,10 @@ lowlight.register("ts", ts);
 
 type Props = {
   node: ProseMirrorNode;
+  decorations?: readonly Decoration[];
 };
 
-export function CodeBlockComponent({ node }: Props) {
+export function CodeBlockComponent({ node, decorations }: Props) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -46,7 +50,7 @@ export function CodeBlockComponent({ node }: Props) {
   };
 
   return (
-    <NodeViewWrapper className="code-block relative group/code">
+    <YChangeNodeViewWrapper decorations={decorations} className="code-block relative group/code">
       <Tooltip tooltipContent="Copy code">
         <button
           type="button"
@@ -69,6 +73,6 @@ export function CodeBlockComponent({ node }: Props) {
       <pre className="bg-layer-3 text-primary rounded-lg p-4 my-2">
         <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
-    </NodeViewWrapper>
+    </YChangeNodeViewWrapper>
   );
 }

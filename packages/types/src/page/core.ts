@@ -83,6 +83,26 @@ export type TPageVersion = {
   updated_by: string;
   workspace: string;
   sub_pages_data: Partial<TPage>[];
+  // Client-side only: populated from Yjs PermanentUserData after loading version diff
+  editors?: string[];
+};
+
+// Version diff response from live server
+export type TVersionDiffData = {
+  docUpdate: string;
+  oldSnapshot: string;
+  newSnapshot: string;
+};
+
+export type TVersionDiffResponse = {
+  currentVersion: {
+    id: string;
+    last_saved_at: string;
+    created_by: string;
+    owned_by: string;
+  };
+  diffData: TVersionDiffData;
+  editors: string[];
 };
 
 export type TDocumentPayload = {

@@ -4405,6 +4405,16 @@ export default {
       description_configure_csv: "CSV 파일을 업로드하고 플레인 필드에 매핑할 필드를 구성하세요.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "CSV 파일에서 Plane 프로젝트로 작업 항목을 가져옵니다.",
+    steps: {
+      title_select_project: "프로젝트 선택",
+      description_select_project: "작업 항목을 가져올 Plane 프로젝트를 선택하십시오.",
+      title_upload_csv: "CSV 업로드",
+      description_upload_csv:
+        "작업 항목이 포함된 CSV 파일을 업로드하십시오. 파일에는 이름, 설명, 우선 순위, 날짜 및 상태 그룹에 대한 열이 포함되어야 합니다.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "클릭업 데이터를 플레인 프로젝트로 임포트하세요.",
     select_service_space: "{serviceName} 스페이스 선택",

@@ -4420,6 +4420,16 @@ Vytvořte nový.`,
         "Nahrajte svůj CSV soubor a nakonfigurujte pole, která mají být mapována na pole Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Importujte pracovní položky ze souborů CSV do projektů Plane.",
+    steps: {
+      title_select_project: "Vybrat projekt",
+      description_select_project: "Vyberte prosím projekt Plane, kam chcete importovat své pracovní položky.",
+      title_upload_csv: "Nahrát CSV",
+      description_upload_csv:
+        "Nahrajte svůj soubor CSV obsahující pracovní položky. Soubor by měl obsahovat sloupce pro název, popis, prioritu, data a skupinu stavů.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Importujte svá ClickUp data do projektů Plane.",
     select_service_space: "Vyberte {serviceName} Space",

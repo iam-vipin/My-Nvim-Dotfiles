@@ -4510,6 +4510,17 @@ si vous êtes sûr que votre recherche est correcte.`,
         "Veuillez télécharger votre fichier CSV et configurer les champs à mapper aux champs Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Importez des éléments de travail à partir de fichiers CSV dans les projets Plane.",
+    steps: {
+      title_select_project: "Sélectionner le projet",
+      description_select_project:
+        "Veuillez sélectionner le projet Plane où vous souhaitez importer vos éléments de travail.",
+      title_upload_csv: "Télécharger le CSV",
+      description_upload_csv:
+        "Téléchargez votre fichier CSV contenant les éléments de travail. Le fichier doit inclure des colonnes pour le nom, la description, la priorité, les dates et le groupe d'état.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Importez vos données ClickUp dans les projets Plane.",
     select_service_space: "Sélectionner l'espace {serviceName}",

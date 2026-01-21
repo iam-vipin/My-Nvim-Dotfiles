@@ -4483,6 +4483,16 @@ văzute aici`,
         "Te rugăm să încarci fișierul tău CSV și să configurezi câmpurile care vor fi mapate la câmpurile Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Importați elemente de lucru din fișiere CSV în proiecte Plane.",
+    steps: {
+      title_select_project: "Selectați proiectul",
+      description_select_project: "Vă rugăm să selectați proiectul Plane unde doriți să importați elementele de lucru.",
+      title_upload_csv: "Încărcați CSV",
+      description_upload_csv:
+        "Încărcați fișierul CSV care conține elemente de lucru. Fișierul ar trebui să includă coloane pentru nume, descriere, prioritate, date și grup de stare.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Importă datele tale ClickUp în proiectele Plane.",
     select_service_space: "Selectează {serviceName} Spațiu",

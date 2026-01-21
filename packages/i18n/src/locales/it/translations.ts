@@ -4476,6 +4476,16 @@ Crea un nuovo progetto invece`,
       description_configure_csv: "Per favore carica il tuo file CSV e configura i campi da mappare ai campi Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Importa elementi di lavoro da file CSV nei progetti Plane.",
+    steps: {
+      title_select_project: "Seleziona progetto",
+      description_select_project: "Seleziona il progetto Plane in cui desideri importare i tuoi elementi di lavoro.",
+      title_upload_csv: "Carica CSV",
+      description_upload_csv:
+        "Carica il tuo file CSV contenente gli elementi di lavoro. Il file dovrebbe includere colonne per nome, descrizione, priorità, date e gruppo di stato.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Importa i tuoi dati ClickUp nei progetti Plane.",
     select_service_space: "Seleziona {serviceName} Spazio",

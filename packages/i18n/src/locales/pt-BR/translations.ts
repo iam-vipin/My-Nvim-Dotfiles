@@ -4492,6 +4492,16 @@ se você tem certeza de que sua pesquisa está correta.`,
         "Por favor, faça upload do seu arquivo CSV e configure os campos a serem mapeados para os campos do Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Importe itens de trabalho de arquivos CSV para projetos Plane.",
+    steps: {
+      title_select_project: "Selecionar projeto",
+      description_select_project: "Selecione o projeto Plane para o qual deseja importar seus itens de trabalho.",
+      title_upload_csv: "Carregar CSV",
+      description_upload_csv:
+        "Carregue seu arquivo CSV contendo itens de trabalho. O arquivo deve incluir colunas para nome, descrição, prioridade, datas e grupo de estados.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Importe seus dados do ClickUp para projetos do Plane.",
     select_service_space: "Selecionar Espaço do {serviceName}",

@@ -4429,6 +4429,16 @@ export default {
         "Будь ласка, завантажте ваш CSV файл і налаштуйте поля, які будуть мапитися до полів Плейн.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Імпортуйте робочі елементи з файлів CSV у проекти Plane.",
+    steps: {
+      title_select_project: "Вибрати проект",
+      description_select_project: "Будь ласка, виберіть проект Plane, куди ви хочете імпортувати ваші робочі елементи.",
+      title_upload_csv: "Завантажити CSV",
+      description_upload_csv:
+        "Завантажте свій CSV-файл, що містить робочі елементи. Файл повинен включати стовпці для назви, опису, пріоритету, дат та групи станів.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Імпортуйте ваші дані ClickUp у проджекти Плейн.",
     select_service_space: "Виберіть {serviceName} Простір",

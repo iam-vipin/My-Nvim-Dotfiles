@@ -4441,6 +4441,16 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
         "Vui lòng tải lên tệp CSV của bạn và cấu hình các trường được ánh xạ đến trường Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Nhập các mục công việc từ tệp CSV vào các dự án Plane.",
+    steps: {
+      title_select_project: "Chọn dự án",
+      description_select_project: "Vui lòng chọn dự án Plane nơi bạn muốn nhập các mục công việc của mình.",
+      title_upload_csv: "Tải lên CSV",
+      description_upload_csv:
+        "Tải lên tệp CSV chứa các mục công việc của bạn. Tệp phải bao gồm các cột cho tên, mô tả, ưu tiên, ngày tháng và nhóm trạng thái.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Nhập dữ liệu ClickUp của bạn vào các dự án Plane.",
     select_service_space: "Chọn {serviceName} Space",

@@ -4344,6 +4344,15 @@ export default {
       description_configure_csv: "請上傳您的 CSV 文件並配置要映射到 Plane 字段的字段。",
     },
   },
+  csv_importer: {
+    csv_importer_description: "從 CSV 檔案匯入工作項到 Plane 專案。",
+    steps: {
+      title_select_project: "選擇專案",
+      description_select_project: "請選擇您要匯入工作項的 Plane 專案。",
+      title_upload_csv: "上傳 CSV",
+      description_upload_csv: "上傳包含工作項的 CSV 檔案。檔案應包含名稱、描述、優先級、日期和狀態組的欄位。",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "將您的 ClickUp 數據遷移到 Plane 專案中。",
     select_service_space: "選擇 {serviceName} 空間",

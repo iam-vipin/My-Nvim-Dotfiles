@@ -4458,6 +4458,16 @@ jika Anda yakin pencarian Anda benar. `,
         "Silakan unggah file CSV Anda dan konfigurasikan bidang yang akan dipetakan ke bidang Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Impor item kerja dari file CSV ke proyek Plane.",
+    steps: {
+      title_select_project: "Pilih Proyek",
+      description_select_project: "Silakan pilih proyek Plane tempat Anda ingin mengimpor item kerja Anda.",
+      title_upload_csv: "Unggah CSV",
+      description_upload_csv:
+        "Unggah file CSV Anda yang berisi item kerja. File tersebut harus menyertakan kolom untuk nama, deskripsi, prioritas, tanggal, dan grup status.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Impor data ClickUp Anda ke dalam projek Plane.",
     select_service_space: "Pilih {serviceName} Space",

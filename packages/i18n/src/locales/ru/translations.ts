@@ -4486,6 +4486,17 @@ export default {
         "Пожалуйста, загрузите ваш файл CSV и настройте поля для сопоставления с полями Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Импорт рабочих элементов из CSV-файлов в проекты Plane.",
+    steps: {
+      title_select_project: "Выбрать проект",
+      description_select_project:
+        "Пожалуйста, выберите проект Plane, в который вы хотите импортировать рабочие элементы.",
+      title_upload_csv: "Загрузить CSV",
+      description_upload_csv:
+        "Загрузите CSV-файл, содержащий рабочие элементы. Файл должен включать столбцы для имени, описания, приоритета, дат и группы состояний.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Импортируйте ваши данные ClickUp в проекты Plane.",
     select_service_space: "Выберите {serviceName} Пространство",

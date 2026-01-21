@@ -4442,6 +4442,16 @@ modüller arşivlenebilir.`,
       description_configure_csv: "Lütfen CSV dosyanızı yükleyin ve Plane alanlarına eşlenecek alanları yapılandırın.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "CSV dosyalarından Plane projelerine iş öğelerini aktarın.",
+    steps: {
+      title_select_project: "Proje Seç",
+      description_select_project: "Lütfen iş öğelerinizi içe aktarmak istediğiniz Plane projesini seçin.",
+      title_upload_csv: "CSV Yükle",
+      description_upload_csv:
+        "İş öğelerini içeren CSV dosyanızı yükleyin. Dosya ad, açıklama, öncelik, tarihler và durum grubu sütunlarını içermelidir.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "ClickUp verilerinizi Plane projelerine import edin.",
     select_service_space: "{serviceName} Space Seçin",

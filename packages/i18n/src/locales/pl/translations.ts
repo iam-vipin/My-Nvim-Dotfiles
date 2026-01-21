@@ -4424,6 +4424,16 @@ Utwórz nowy.`,
       description_configure_csv: "Prześlij plik CSV i skonfiguruj pola, które mają być mapowane do pól Plane.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Importuj elementy pracy z plików CSV do projektów Plane.",
+    steps: {
+      title_select_project: "Wybierz projekt",
+      description_select_project: "Wybierz projekt Plane, do którego chcesz zaimportować elementy pracy.",
+      title_upload_csv: "Prześlij CSV",
+      description_upload_csv:
+        "Prześlij plik CSV zawierający elementy pracy. Plik powinien zawierać kolumny z nazwą, opisem, priorytetem, datami i grupą stanów.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Importuj swoje dane ClickUp do projektów Plane.",
     select_service_space: "Wybierz {serviceName} Space",

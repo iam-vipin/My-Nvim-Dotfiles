@@ -4441,6 +4441,16 @@ export default {
         "CSVファイルをアップロードし、Planeのフィールドにマッピングするフィールドを設定してください。",
     },
   },
+  csv_importer: {
+    csv_importer_description: "CSVファイルからPlaneプロジェクトにワークアイテムをインポートします。",
+    steps: {
+      title_select_project: "プロジェクトを選択",
+      description_select_project: "ワークアイテムをインポートするPlaneプロジェクトを選択してください。",
+      title_upload_csv: "CSVをアップロード",
+      description_upload_csv:
+        "ワークアイテムを含むCSVファイルをアップロードしてください。ファイルには、名前、説明、優先度、日付、およびステータスグループの列が含まれている必要があります。",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "ClickUpのデータをPlaneプロジェクトにインポートします。",
     select_service_space: "{serviceName}スペースを選択",

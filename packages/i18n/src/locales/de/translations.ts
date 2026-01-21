@@ -4472,6 +4472,17 @@ Erstellen Sie ein neues.`,
         "Bitte laden Sie Ihre CSV-Datei hoch und konfigurieren Sie die Felder, die den Plane-Feldern zugeordnet werden sollen.",
     },
   },
+  csv_importer: {
+    csv_importer_description: "Importieren Sie Arbeitselemente aus CSV-Dateien in Plane-Projekte.",
+    steps: {
+      title_select_project: "Projekt auswählen",
+      description_select_project:
+        "Bitte wählen Sie das Plane-Projekt aus, in das Sie Ihre Arbeitselemente importieren möchten.",
+      title_upload_csv: "CSV hochladen",
+      description_upload_csv:
+        "Laden Sie Ihre CSV-Datei mit Arbeitselementen hoch. Die Datei sollte Spalten für Name, Beschreibung, Priorität, Daten und Statusgruppe enthalten.",
+    },
+  },
   clickup_importer: {
     clickup_importer_description: "Importieren Sie Ihre ClickUp-Daten in Plane-Projekte.",
     select_service_space: "Wählen Sie {serviceName} Space",

@@ -16,7 +16,7 @@ import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
-import { SettingsMobileNav } from "@/components/settings/mobile";
+import { SettingsMobileNav } from "@/components/settings/mobile/nav";
 import { ProjectSettingsSidebarRoot } from "@/components/settings/project/sidebar";
 // layouts
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";

@@ -2354,28 +2354,6 @@ export default {
       settings_sub_heading:
         "顧客のリクエストを作業項目に変換し、リクエストに応じて優先順位を設定し、作業項目の状態を顧客記録に反映させます。まもなく、CRMやサポートツールと統合し、顧客属性に基づいたより良い業務管理が可能になります。",
     },
-    features: {
-      intake: {
-        heading: "受付責任",
-        notify_assignee: {
-          title: "担当者に通知",
-          description: "新しい受付リクエストの場合、デフォルトの担当者が通知を通じてアラートを受け取ります",
-        },
-        toasts: {
-          set: {
-            loading: "担当者を設定中...",
-            success: {
-              title: "成功！",
-              message: "担当者が正常に設定されました。",
-            },
-            error: {
-              title: "エラー！",
-              message: "担当者の設定中に問題が発生しました。もう一度お試しください。",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "プロパティ",
@@ -2465,6 +2443,75 @@ export default {
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "サイクル",
+        short_title: "サイクル",
+        description: "このプロジェクト独自のリズムとペースに適応する柔軟な期間で作業をスケジュールします。",
+        toggle_title: "サイクルを有効にする",
+        toggle_description: "集中的な期間で作業を計画します。",
+      },
+      modules: {
+        title: "モジュール",
+        short_title: "モジュール",
+        description: "専任のリーダーと担当者を持つサブプロジェクトに作業を整理します。",
+        toggle_title: "モジュールを有効にする",
+        toggle_description: "プロジェクトメンバーはモジュールを作成および編集できるようになります。",
+      },
+      views: {
+        title: "ビュー",
+        short_title: "ビュー",
+        description: "カスタムソート、フィルター、表示オプションを保存したり、チームと共有したりします。",
+        toggle_title: "ビューを有効にする",
+        toggle_description: "プロジェクトメンバーはビューを作成および編集できるようになります。",
+      },
+      pages: {
+        title: "ページ",
+        short_title: "ページ",
+        description: "自由形式のコンテンツを作成および編集します：メモ、ドキュメント、何でも。",
+        toggle_title: "ページを有効にする",
+        toggle_description: "プロジェクトメンバーはページを作成および編集できるようになります。",
+      },
+      intake: {
+        heading: "受付責任",
+        title: "受付",
+        short_title: "受付",
+        description: "ワークフローを中断することなく、非メンバーがバグ、フィードバック、提案を共有できるようにします。",
+        toggle_title: "受付を有効にする",
+        toggle_description: "プロジェクトメンバーがアプリ内で受付リクエストを作成できるようにします。",
+        notify_assignee: {
+          title: "担当者に通知",
+          description: "新しい受付リクエストの場合、デフォルトの担当者が通知を通じてアラートを受け取ります",
+        },
+        toasts: {
+          set: {
+            loading: "担当者を設定中...",
+            success: {
+              title: "成功！",
+              message: "担当者が正常に設定されました。",
+            },
+            error: {
+              title: "エラー！",
+              message: "担当者の設定中に問題が発生しました。もう一度お試しください。",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "時間追跡",
+        short_title: "時間追跡",
+        description: "作業項目やプロジェクトに費やした時間を記録します。",
+        toggle_title: "時間追跡を有効にする",
+        toggle_description: "プロジェクトメンバーは作業時間を記録できるようになります。",
+      },
+      milestones: {
+        title: "マイルストーン",
+        short_title: "マイルストーン",
+        description: "マイルストーンは、作業項目を共有の完了日に向けて調整するレイヤーを提供します。",
+        toggle_title: "マイルストーンを有効にする",
+        toggle_description: "マイルストーンの期限ごとに作業項目を整理します。",
       },
     },
   },

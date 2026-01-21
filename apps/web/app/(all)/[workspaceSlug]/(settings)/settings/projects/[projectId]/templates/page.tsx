@@ -76,15 +76,18 @@ function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
       <SettingsHeading
         title={t("project_settings.templates.heading")}
         description={t("project_settings.templates.description")}
-        showButton={isAnyTemplatesEnabled && isAnyTemplatesAvailableForProject && hasAdminPermission}
-        customButton={
-          <CreateTemplatesButton
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            currentLevel={ETemplateLevel.PROJECT}
-            buttonSize="base"
-            variant="settings"
-          />
+        control={
+          isAnyTemplatesEnabled &&
+          isAnyTemplatesAvailableForProject &&
+          hasAdminPermission && (
+            <CreateTemplatesButton
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              currentLevel={ETemplateLevel.PROJECT}
+              buttonSize="base"
+              variant="settings"
+            />
+          )
         }
       />
       <WithFeatureFlagHOC

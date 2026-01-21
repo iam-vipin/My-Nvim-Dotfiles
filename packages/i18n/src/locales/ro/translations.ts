@@ -2376,28 +2376,6 @@ Creează un proiect nou.`,
       settings_sub_heading:
         "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului.",
     },
-    features: {
-      intake: {
-        heading: "Responsabilitate de primire",
-        notify_assignee: {
-          title: "Notifică persoanele desemnate",
-          description: "Pentru o nouă cerere de primire, persoanele desemnate implicit vor fi alertate prin notificări",
-        },
-        toasts: {
-          set: {
-            loading: "Setarea persoanelor desemnate...",
-            success: {
-              title: "Succes!",
-              message: "Persoanele desemnate au fost setate cu succes.",
-            },
-            error: {
-              title: "Eroare!",
-              message: "Ceva a mers greșit la setarea persoanelor desemnate. Vă rugăm să încercați din nou.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Proprietăți",
@@ -2488,6 +2466,78 @@ Creează un proiect nou.`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicluri",
+        short_title: "Cicluri",
+        description:
+          "Programați munca în perioade flexibile care se adaptează ritmului și ritmului unic al acestui proiect.",
+        toggle_title: "Activați ciclurile",
+        toggle_description: "Planificați munca în intervale de timp concentrate.",
+      },
+      modules: {
+        title: "Module",
+        short_title: "Module",
+        description: "Organizați munca în subproiecte cu lideri și responsabili dedicați.",
+        toggle_title: "Activați modulele",
+        toggle_description: "Membrii proiectului vor putea crea și edita module.",
+      },
+      views: {
+        title: "Vizualizări",
+        short_title: "Vizualizări",
+        description: "Salvați sortări personalizate, filtre și opțiuni de afișare sau partajați-le cu echipa dvs.",
+        toggle_title: "Activați vizualizările",
+        toggle_description: "Membrii proiectului vor putea crea și edita vizualizări.",
+      },
+      pages: {
+        title: "Pagini",
+        short_title: "Pagini",
+        description: "Creați și editați conținut liber: note, documente, orice.",
+        toggle_title: "Activați paginile",
+        toggle_description: "Membrii proiectului vor putea crea și edita pagini.",
+      },
+      intake: {
+        heading: "Responsabilitate de primire",
+        title: "Recepție",
+        short_title: "Recepție",
+        description:
+          "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
+        toggle_title: "Activați recepția",
+        toggle_description: "Permiteți membrilor proiectului să creeze solicitări de recepție în aplicație.",
+        notify_assignee: {
+          title: "Notifică persoanele desemnate",
+          description: "Pentru o nouă cerere de primire, persoanele desemnate implicit vor fi alertate prin notificări",
+        },
+        toasts: {
+          set: {
+            loading: "Setarea persoanelor desemnate...",
+            success: {
+              title: "Succes!",
+              message: "Persoanele desemnate au fost setate cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message: "Ceva a mers greșit la setarea persoanelor desemnate. Vă rugăm să încercați din nou.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Urmărire timp",
+        short_title: "Urmărire timp",
+        description: "Înregistrați timpul petrecut pe elemente de lucru și proiecte.",
+        toggle_title: "Activați urmărirea timpului",
+        toggle_description: "Membrii proiectului vor putea înregistra timpul lucrat.",
+      },
+      milestones: {
+        title: "Etape importante",
+        short_title: "Etape importante",
+        description:
+          "Etapele importante oferă un strat pentru a alinia elementele de lucru către date comune de finalizare.",
+        toggle_title: "Activați etapele importante",
+        toggle_description: "Organizați elementele de lucru după termenele etapelor importante.",
       },
     },
   },

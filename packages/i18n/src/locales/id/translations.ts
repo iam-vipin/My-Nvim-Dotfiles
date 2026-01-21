@@ -2365,29 +2365,6 @@ Buat proyek baru sebagai gantinya`,
       settings_sub_heading:
         "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gabungkan status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan CRM atau alat Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan.",
     },
-    features: {
-      intake: {
-        heading: "Tanggung jawab penerimaan",
-        notify_assignee: {
-          title: "Beritahu yang ditugaskan",
-          description:
-            "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
-        },
-        toasts: {
-          set: {
-            loading: "Mengatur yang ditugaskan...",
-            success: {
-              title: "Berhasil!",
-              message: "Yang ditugaskan berhasil diatur.",
-            },
-            error: {
-              title: "Kesalahan!",
-              message: "Terjadi kesalahan saat mengatur yang ditugaskan. Silakan coba lagi.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Properti",
@@ -2478,6 +2455,77 @@ Buat proyek baru sebagai gantinya`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Siklus",
+        short_title: "Siklus",
+        description:
+          "Jadwalkan pekerjaan dalam periode fleksibel yang menyesuaikan dengan ritme dan tempo unik proyek ini.",
+        toggle_title: "Aktifkan siklus",
+        toggle_description: "Rencanakan pekerjaan dalam jangka waktu yang terfokus.",
+      },
+      modules: {
+        title: "Modul",
+        short_title: "Modul",
+        description: "Atur pekerjaan menjadi sub-proyek dengan pemimpin dan penerima tugas khusus.",
+        toggle_title: "Aktifkan modul",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit modul.",
+      },
+      views: {
+        title: "Tampilan",
+        short_title: "Tampilan",
+        description: "Simpan pengurutan, filter, dan opsi tampilan kustom atau bagikan dengan tim Anda.",
+        toggle_title: "Aktifkan tampilan",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit tampilan.",
+      },
+      pages: {
+        title: "Halaman",
+        short_title: "Halaman",
+        description: "Buat dan edit konten bebas: catatan, dokumen, apa saja.",
+        toggle_title: "Aktifkan halaman",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit halaman.",
+      },
+      intake: {
+        heading: "Tanggung jawab penerimaan",
+        title: "Penerimaan",
+        short_title: "Penerimaan",
+        description: "Biarkan non-anggota berbagi bug, umpan balik, dan saran; tanpa mengganggu alur kerja Anda.",
+        toggle_title: "Aktifkan penerimaan",
+        toggle_description: "Izinkan anggota proyek membuat permintaan penerimaan dalam aplikasi.",
+        notify_assignee: {
+          title: "Beritahu yang ditugaskan",
+          description:
+            "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
+        },
+        toasts: {
+          set: {
+            loading: "Mengatur yang ditugaskan...",
+            success: {
+              title: "Berhasil!",
+              message: "Yang ditugaskan berhasil diatur.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message: "Terjadi kesalahan saat mengatur yang ditugaskan. Silakan coba lagi.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Pelacakan waktu",
+        short_title: "Pelacakan waktu",
+        description: "Catat waktu yang dihabiskan untuk item kerja dan proyek.",
+        toggle_title: "Aktifkan pelacakan waktu",
+        toggle_description: "Anggota proyek akan dapat mencatat waktu yang dikerjakan.",
+      },
+      milestones: {
+        title: "Tonggak",
+        short_title: "Tonggak",
+        description: "Tonggak menyediakan lapisan untuk menyelaraskan item kerja menuju tanggal penyelesaian bersama.",
+        toggle_title: "Aktifkan tonggak",
+        toggle_description: "Organisir item kerja berdasarkan tenggat tonggak.",
       },
     },
   },

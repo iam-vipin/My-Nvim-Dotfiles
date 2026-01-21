@@ -19,7 +19,7 @@ import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { InfoIcon } from "@plane/propel/icons";
+import { InfoIcon, UpgradeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TCycleConfig } from "@plane/types";
@@ -29,10 +29,10 @@ import { renderFormattedPayloadDate, getDate, cn } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
-//services
-import { useFlag } from "@/plane-web/hooks/store";
-import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+// plane web imports
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { cycleService } from "@/plane-web/services/cycle.service";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 const defaultValues: Partial<TCycleConfig> = {
   title: "",
@@ -49,9 +49,25 @@ const cycleCountOptions = [
   { value: 3, label: "3 cycles" },
 ];
 
-export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
-  const { workspaceSlug, projectId } = useParams();
+type Props = {
+  disabled: boolean;
+};
 
+export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Props) {
+  const { disabled } = props;
+  // params
+  const { workspaceSlug, projectId } = useParams();
+  // states
+  const [isEdit, setIsEdit] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // store hooks
+  const { isProjectFeatureEnabled, toggleProjectFeatures } = useProjectAdvanced();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
+  // translation
+  const { t } = useTranslation();
+  // derived values
+  const isFeatureFlagEnabled = useFlag(workspaceSlug.toString(), "AUTO_SCHEDULE_CYCLES");
+  const isAutoScheduleEnabled = isProjectFeatureEnabled(projectId.toString(), "is_automated_cycle_enabled");
   const {
     control,
     handleSubmit,
@@ -60,18 +76,6 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
   } = useForm<TCycleConfig>({
     defaultValues,
   });
-
-  // states
-  const [isEdit, setIsEdit] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  //hooks
-  const { t } = useTranslation();
-  const { isProjectFeatureEnabled, toggleProjectFeatures } = useProjectAdvanced();
-
-  // derived values
-  const isFeatureFlagEnabled = useFlag(workspaceSlug.toString(), "AUTO_SCHEDULE_CYCLES");
-  const isAutoScheduleEnabled = isProjectFeatureEnabled(projectId.toString(), "is_automated_cycle_enabled");
 
   const fetchCycleConfig = async () => {
     const cycleConfig = await cycleService.getCycleConfig(workspaceSlug.toString(), projectId.toString());
@@ -92,8 +96,6 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
       revalidateOnFocus: false,
     }
   );
-
-  if (!isFeatureFlagEnabled) return null;
 
   const handleReset = () => {
     setIsEdit(false);
@@ -178,7 +180,11 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
   };
 
   return (
-    <div>
+    <div
+      className={cn({
+        "opacity-60 pointer-events-none select-none": disabled && isFeatureFlagEnabled,
+      })}
+    >
       {/* Main toggle */}
       <SettingsBoxedControlItem
         title={
@@ -193,19 +199,30 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
         }
         description={t("project_settings.cycles.auto_schedule.description")}
         control={
-          <div className="flex items-center gap-2">
-            {isAutoScheduleEnabled && !isEdit && !isLoading && (
-              <Button type="button" variant="secondary" onClick={() => setIsEdit(true)}>
-                {t("project_settings.cycles.auto_schedule.edit_button")}
-              </Button>
-            )}
-            <ToggleSwitch value={isAutoScheduleEnabled} onChange={toggleScheduleCycle} size="sm" />
-          </div>
+          isFeatureFlagEnabled ? (
+            <div className="flex items-center gap-2">
+              {isAutoScheduleEnabled && !isEdit && !isLoading && (
+                <Button type="button" variant="secondary" onClick={() => setIsEdit(true)}>
+                  {t("project_settings.cycles.auto_schedule.edit_button")}
+                </Button>
+              )}
+              <ToggleSwitch value={isAutoScheduleEnabled} onChange={toggleScheduleCycle} size="sm" />
+            </div>
+          ) : (
+            <Button
+              variant="secondary"
+              size="lg"
+              prependIcon={<UpgradeIcon />}
+              onClick={() => togglePaidPlanModal(true)}
+            >
+              {t("upgrade")}
+            </Button>
+          )
         }
         className={cn(isAutoScheduleEnabled && "rounded-b-none")}
       />
       {/* Configuration form - only show when enabled */}
-      {isAutoScheduleEnabled && (
+      {isAutoScheduleEnabled && isFeatureFlagEnabled && (
         <div className="border border-t-0 border-subtle bg-layer-1 p-4 rounded-lg rounded-t-none">
           {isLoading ? (
             <Loader className="space-y-5">

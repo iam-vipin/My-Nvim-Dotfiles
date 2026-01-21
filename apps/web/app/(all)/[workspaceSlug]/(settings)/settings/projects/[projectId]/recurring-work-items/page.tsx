@@ -58,9 +58,12 @@ function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps)
       <SettingsHeading
         title={t("recurring_work_items.settings.heading")}
         description={t("recurring_work_items.settings.description")}
-        showButton={isRecurringWorkItemsEnabled && isRecurringWorkItemsAvailableForProject && hasAdminPermission}
-        customButton={
-          <CreateRecurringWorkItemsButton workspaceSlug={workspaceSlug} projectId={projectId} buttonSize="base" />
+        control={
+          isRecurringWorkItemsEnabled &&
+          isRecurringWorkItemsAvailableForProject &&
+          hasAdminPermission && (
+            <CreateRecurringWorkItemsButton workspaceSlug={workspaceSlug} projectId={projectId} buttonSize="base" />
+          )
         }
       />
       <WithFeatureFlagHOC

@@ -81,7 +81,7 @@ function WorkspaceIntegrationsPage() {
         <SettingsHeading
           title={t("workspace_settings.settings.integrations.title")}
           description={t("workspace_settings.settings.integrations.page_description")}
-          appendToRight={
+          control={
             <Link href={`/${workspaceSlug}/settings/integrations/create`} className={getButtonStyling("primary", "lg")}>
               Build your own
             </Link>

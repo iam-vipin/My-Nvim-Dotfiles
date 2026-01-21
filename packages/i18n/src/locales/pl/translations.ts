@@ -2356,28 +2356,6 @@ Utwórz nowy.`,
       settings_sub_heading:
         "Przenieś prośby klientów do elementów pracy, przypisz priorytet według próśb i zbierz stany elementów pracy w rejestrach klientów. Wkrótce zaintregujesz się z CRM lub narzędziem wsparcia, aby jeszcze lepiej zarządzać pracą według atrybutów klienta.",
     },
-    features: {
-      intake: {
-        heading: "Odpowiedzialność za przyjęcie",
-        notify_assignee: {
-          title: "Powiadom przypisanych",
-          description: "Dla nowego żądania przyjęcia domyślni przypisani zostaną powiadomieni poprzez powiadomienia",
-        },
-        toasts: {
-          set: {
-            loading: "Ustawianie przypisanych...",
-            success: {
-              title: "Sukces!",
-              message: "Przypisani ustawieni pomyślnie.",
-            },
-            error: {
-              title: "Błąd!",
-              message: "Coś poszło nie tak podczas ustawiania przypisanych. Spróbuj ponownie.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Właściwości",
@@ -2467,6 +2445,78 @@ Utwórz nowy.`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cykle",
+        short_title: "Cykle",
+        description:
+          "Planuj pracę w elastycznych okresach, które dostosowują się do unikalnego rytmu i tempa tego projektu.",
+        toggle_title: "Włącz cykle",
+        toggle_description: "Planuj pracę w skoncentrowanych ramach czasowych.",
+      },
+      modules: {
+        title: "Moduły",
+        short_title: "Moduły",
+        description: "Organizuj pracę w podprojekty z dedykowanymi liderami i przypisanymi osobami.",
+        toggle_title: "Włącz moduły",
+        toggle_description: "Członkowie projektu będą mogli tworzyć i edytować moduły.",
+      },
+      views: {
+        title: "Widoki",
+        short_title: "Widoki",
+        description: "Zapisuj niestandardowe sortowania, filtry i opcje wyświetlania lub udostępniaj je zespołowi.",
+        toggle_title: "Włącz widoki",
+        toggle_description: "Członkowie projektu będą mogli tworzyć i edytować widoki.",
+      },
+      pages: {
+        title: "Strony",
+        short_title: "Strony",
+        description: "Twórz i edytuj dowolne treści: notatki, dokumenty, cokolwiek.",
+        toggle_title: "Włącz strony",
+        toggle_description: "Członkowie projektu będą mogli tworzyć i edytować strony.",
+      },
+      intake: {
+        heading: "Odpowiedzialność za przyjęcie",
+        title: "Odbiór",
+        short_title: "Odbiór",
+        description:
+          "Pozwól osobom niebędącym członkami dzielić się błędami, opiniami i sugestiami; bez zakłócania przepływu pracy.",
+        toggle_title: "Włącz odbiór",
+        toggle_description: "Pozwól członkom projektu tworzyć żądania odbioru w aplikacji.",
+        notify_assignee: {
+          title: "Powiadom przypisanych",
+          description: "Dla nowego żądania przyjęcia domyślni przypisani zostaną powiadomieni poprzez powiadomienia",
+        },
+        toasts: {
+          set: {
+            loading: "Ustawianie przypisanych...",
+            success: {
+              title: "Sukces!",
+              message: "Przypisani ustawieni pomyślnie.",
+            },
+            error: {
+              title: "Błąd!",
+              message: "Coś poszło nie tak podczas ustawiania przypisanych. Spróbuj ponownie.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Śledzenie czasu",
+        short_title: "Śledzenie czasu",
+        description: "Rejestruj czas spędzony nad elementami pracy i projektami.",
+        toggle_title: "Włącz śledzenie czasu",
+        toggle_description: "Członkowie projektu będą mogli rejestrować przepracowany czas.",
+      },
+      milestones: {
+        title: "Kamienie milowe",
+        short_title: "Kamienie milowe",
+        description:
+          "Kamienie milowe zapewniają warstwę do wyrównania elementów pracy w kierunku wspólnych dat zakończenia.",
+        toggle_title: "Włącz kamienie milowe",
+        toggle_description: "Organizuj elementy pracy według terminów kamieni milowych.",
       },
     },
   },

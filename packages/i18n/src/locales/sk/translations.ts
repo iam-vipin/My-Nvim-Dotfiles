@@ -2354,28 +2354,6 @@ Vytvorte nový.`,
       settings_sub_heading:
         "Preneste požiadavky zákazníkov do pracovných položiek, priraďte prioritu podľa požiadaviek a zlúčte stavy pracovných položiek do záznamov zákazníkov. Čoskoro sa budete môcť integrovať s vašim CRM alebo podporným nástrojom pre ešte lepšiu správu práce podľa atribútov zákazníka.",
     },
-    features: {
-      intake: {
-        heading: "Zodpovednosť za príjem",
-        notify_assignee: {
-          title: "Upozorniť priradených",
-          description: "Pre novú žiadosť o príjem budú predvolení priradení upozornení prostredníctvom oznámení",
-        },
-        toasts: {
-          set: {
-            loading: "Nastavovanie priradených...",
-            success: {
-              title: "Úspech!",
-              message: "Priradení úspešne nastavení.",
-            },
-            error: {
-              title: "Chyba!",
-              message: "Pri nastavovaní priradených sa niečo pokazilo. Skúste to prosím znova.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Vlastnosti",
@@ -2465,6 +2443,76 @@ Vytvorte nový.`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cykly",
+        short_title: "Cykly",
+        description:
+          "Naplánujte prácu v flexibilných obdobiach, ktoré sa prispôsobia jedinečnému rytmu a tempu tohto projektu.",
+        toggle_title: "Povoliť cykly",
+        toggle_description: "Naplánujte prácu v sústredenej časovej osi.",
+      },
+      modules: {
+        title: "Moduly",
+        short_title: "Moduly",
+        description: "Organizujte prácu do podprojektov s vyčlenenými vedúcimi a priradenými osobami.",
+        toggle_title: "Povoliť moduly",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať moduly.",
+      },
+      views: {
+        title: "Zobrazenia",
+        short_title: "Zobrazenia",
+        description: "Uložte vlastné triedenia, filtre a možnosti zobrazenia alebo ich zdieľajte so svojím tímom.",
+        toggle_title: "Povoliť zobrazenia",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať zobrazenia.",
+      },
+      pages: {
+        title: "Stránky",
+        short_title: "Stránky",
+        description: "Vytvárajte a upravujte voľný obsah: poznámky, dokumenty, čokoľvek.",
+        toggle_title: "Povoliť stránky",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať stránky.",
+      },
+      intake: {
+        heading: "Zodpovednosť za príjem",
+        title: "Príjem",
+        short_title: "Príjem",
+        description: "Umožnite nečlenom zdieľať chyby, spätnú väzbu a návrhy; bez narušenia vášho pracovného postupu.",
+        toggle_title: "Povoliť príjem",
+        toggle_description: "Povoliť členom projektu vytvárať žiadosti o príjem v aplikácii.",
+        notify_assignee: {
+          title: "Upozorniť priradených",
+          description: "Pre novú žiadosť o príjem budú predvolení priradení upozornení prostredníctvom oznámení",
+        },
+        toasts: {
+          set: {
+            loading: "Nastavovanie priradených...",
+            success: {
+              title: "Úspech!",
+              message: "Priradení úspešne nastavení.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Pri nastavovaní priradených sa niečo pokazilo. Skúste to prosím znova.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Sledovanie času",
+        short_title: "Sledovanie času",
+        description: "Zaznamenávajte čas strávený na pracovných položkách a projektoch.",
+        toggle_title: "Povoliť sledovanie času",
+        toggle_description: "Členovia projektu budú môcť zaznamenávať odpracovaný čas.",
+      },
+      milestones: {
+        title: "Míľniky",
+        short_title: "Míľniky",
+        description: "Míľniky poskytujú vrstvu na zladenie pracovných položiek smerom k spoločným termínom dokončenia.",
+        toggle_title: "Povoliť míľniky",
+        toggle_description: "Organizujte pracovné položky podľa termínov míľnikov.",
       },
     },
   },

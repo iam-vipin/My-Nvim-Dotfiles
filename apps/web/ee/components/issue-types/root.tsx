@@ -15,6 +15,7 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 // plane web imports
 import { SettingsHeading } from "@/components/settings/heading";
 import { useIssueTypes } from "@/plane-web/hooks/store";
@@ -76,13 +77,13 @@ export const IssueTypesRoot = observer(function IssueTypesRoot(props: TIssueType
       <SettingsHeading
         title={t("project_settings.work_item_types.heading")}
         description={t("project_settings.work_item_types.description")}
-        showButton={isWorkItemTypeEnabled}
-        button={{
-          label: t("work_item_types.create.button"),
-          onClick: () => {
-            setIsModalOpen(true);
-          },
-        }}
+        control={
+          isWorkItemTypeEnabled && (
+            <Button variant="primary" size="lg" onClick={() => setIsModalOpen(true)}>
+              {t("work_item_types.create.button")}
+            </Button>
+          )
+        }
       />
       <div className="h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {isWorkItemTypeEnabled ? (

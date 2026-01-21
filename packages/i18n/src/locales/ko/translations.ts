@@ -2337,28 +2337,6 @@ export default {
       settings_sub_heading:
         "고객 요청을 작업 항목으로 가져오고, 요청에 따라 우선순위를 지정하고, 작업 항목의 상태를 고객 기록에 통합합니다. 곧 CRM이나 지원 도구와 통합하여 고객 속성별로 더 나은 작업 관리를 제공할 예정입니다.",
     },
-    features: {
-      intake: {
-        heading: "인테이크 책임",
-        notify_assignee: {
-          title: "담당자에게 알림",
-          description: "새로운 인테이크 요청의 경우 기본 담당자가 알림을 통해 알림을 받습니다",
-        },
-        toasts: {
-          set: {
-            loading: "담당자 설정 중...",
-            success: {
-              title: "성공!",
-              message: "담당자가 성공적으로 설정되었습니다.",
-            },
-            error: {
-              title: "오류!",
-              message: "담당자 설정 중 문제가 발생했습니다. 다시 시도해 주세요.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "프로퍼티",
@@ -2448,6 +2426,75 @@ export default {
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "사이클",
+        short_title: "사이클",
+        description: "이 프로젝트의 고유한 리듬과 속도에 적응하는 유연한 기간으로 작업을 예약합니다.",
+        toggle_title: "사이클 활성화",
+        toggle_description: "집중된 기간에 작업을 계획합니다.",
+      },
+      modules: {
+        title: "모듈",
+        short_title: "모듈",
+        description: "전담 리더와 담당자가 있는 하위 프로젝트로 작업을 구성합니다.",
+        toggle_title: "모듈 활성화",
+        toggle_description: "프로젝트 멤버가 모듈을 생성하고 편집할 수 있습니다.",
+      },
+      views: {
+        title: "보기",
+        short_title: "보기",
+        description: "사용자 정의 정렬, 필터 및 표시 옵션을 저장하거나 팀과 공유합니다.",
+        toggle_title: "보기 활성화",
+        toggle_description: "프로젝트 멤버가 보기를 생성하고 편집할 수 있습니다.",
+      },
+      pages: {
+        title: "페이지",
+        short_title: "페이지",
+        description: "자유 형식 콘텐츠를 생성하고 편집합니다: 메모, 문서, 무엇이든.",
+        toggle_title: "페이지 활성화",
+        toggle_description: "프로젝트 멤버가 페이지를 생성하고 편집할 수 있습니다.",
+      },
+      intake: {
+        heading: "인테이크 책임",
+        title: "접수",
+        short_title: "접수",
+        description: "워크플로를 방해하지 않고 비회원이 버그, 피드백 및 제안을 공유할 수 있도록 합니다.",
+        toggle_title: "접수 활성화",
+        toggle_description: "프로젝트 멤버가 앱 내에서 접수 요청을 생성할 수 있도록 허용합니다.",
+        notify_assignee: {
+          title: "담당자에게 알림",
+          description: "새로운 인테이크 요청의 경우 기본 담당자가 알림을 통해 알림을 받습니다",
+        },
+        toasts: {
+          set: {
+            loading: "담당자 설정 중...",
+            success: {
+              title: "성공!",
+              message: "담당자가 성공적으로 설정되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message: "담당자 설정 중 문제가 발생했습니다. 다시 시도해 주세요.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "시간 추적",
+        short_title: "시간 추적",
+        description: "작업 항목 및 프로젝트에 소요된 시간을 기록합니다.",
+        toggle_title: "시간 추적 활성화",
+        toggle_description: "프로젝트 멤버가 작업 시간을 기록할 수 있습니다.",
+      },
+      milestones: {
+        title: "마일스톤",
+        short_title: "마일스톤",
+        description: "마일스톤은 작업 항목을 공유 완료 날짜에 맞춰 정렬하는 레이어를 제공합니다.",
+        toggle_title: "마일스톤 활성화",
+        toggle_description: "마일스톤 마감일별로 작업 항목을 구성합니다.",
       },
     },
   },

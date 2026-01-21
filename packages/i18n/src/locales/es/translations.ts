@@ -2385,29 +2385,6 @@ Crea un nuevo proyecto en su lugar`,
       settings_sub_heading:
         "Convierte las solicitudes de los clientes en elementos de trabajo, asigna prioridad según las solicitudes y vincula los estados de los elementos de trabajo a los registros de los clientes. Pronto podrás integrar tu CRM o herramienta de soporte para una mejor gestión del trabajo según los atributos de los clientes.",
     },
-    features: {
-      intake: {
-        heading: "Responsabilidad de ingreso",
-        notify_assignee: {
-          title: "Notificar asignados",
-          description:
-            "Para una nueva solicitud de ingreso, los asignados predeterminados serán alertados mediante notificaciones",
-        },
-        toasts: {
-          set: {
-            loading: "Estableciendo asignados...",
-            success: {
-              title: "¡Éxito!",
-              message: "Asignados establecidos correctamente.",
-            },
-            error: {
-              title: "¡Error!",
-              message: "Algo salió mal al establecer los asignados. Por favor, inténtalo de nuevo.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Propiedades",
@@ -2498,6 +2475,80 @@ Crea un nuevo proyecto en su lugar`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Ciclos",
+        short_title: "Ciclos",
+        description:
+          "Programa el trabajo en períodos flexibles que se adaptan al ritmo y al tempo únicos de este proyecto.",
+        toggle_title: "Habilitar ciclos",
+        toggle_description: "Planifica el trabajo en períodos de tiempo enfocados.",
+      },
+      modules: {
+        title: "Módulos",
+        short_title: "Módulos",
+        description: "Organiza el trabajo en subproyectos con líderes y responsables dedicados.",
+        toggle_title: "Habilitar módulos",
+        toggle_description: "Los miembros del proyecto podrán crear y editar módulos.",
+      },
+      views: {
+        title: "Vistas",
+        short_title: "Vistas",
+        description:
+          "Guarda ordenaciones, filtros y opciones de visualización personalizadas o compártelos con tu equipo.",
+        toggle_title: "Habilitar vistas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar vistas.",
+      },
+      pages: {
+        title: "Páginas",
+        short_title: "Páginas",
+        description: "Crea y edita contenido libre: notas, documentos, cualquier cosa.",
+        toggle_title: "Habilitar páginas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar páginas.",
+      },
+      intake: {
+        heading: "Responsabilidad de ingreso",
+        title: "Recepción",
+        short_title: "Recepción",
+        description:
+          "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
+        toggle_title: "Habilitar recepción",
+        toggle_description: "Permitir a los miembros del proyecto crear solicitudes de recepción en la aplicación.",
+        notify_assignee: {
+          title: "Notificar asignados",
+          description:
+            "Para una nueva solicitud de ingreso, los asignados predeterminados serán alertados mediante notificaciones",
+        },
+        toasts: {
+          set: {
+            loading: "Estableciendo asignados...",
+            success: {
+              title: "¡Éxito!",
+              message: "Asignados establecidos correctamente.",
+            },
+            error: {
+              title: "¡Error!",
+              message: "Algo salió mal al establecer los asignados. Por favor, inténtalo de nuevo.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Seguimiento de tiempo",
+        short_title: "Seguimiento de tiempo",
+        description: "Registra el tiempo dedicado a elementos de trabajo y proyectos.",
+        toggle_title: "Habilitar seguimiento de tiempo",
+        toggle_description: "Los miembros del proyecto podrán registrar el tiempo trabajado.",
+      },
+      milestones: {
+        title: "Hitos",
+        short_title: "Hitos",
+        description:
+          "Los hitos proporcionan una capa para alinear los elementos de trabajo hacia fechas de finalización compartidas.",
+        toggle_title: "Habilitar hitos",
+        toggle_description: "Organiza elementos de trabajo por plazos de hitos.",
       },
     },
   },

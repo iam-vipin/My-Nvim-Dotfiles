@@ -12,27 +12,33 @@
  */
 
 import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
+import { ProjectSettingsFeatureControlItem } from "@/components/settings/project/content/feature-control-item";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
 // local imports
 import type { Route } from "./+types/page";
-import { FeaturesProjectSettingsHeader } from "./header";
+import { FeaturesPagesProjectSettingsHeader } from "./header";
 
-function FeaturesSettingsPage({ params }: Route.ComponentProps) {
+function FeaturesPagesSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
-  // store
+  // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-
   const { currentProjectDetails } = useProject();
+  // translation
+  const { t } = useTranslation();
   // derived values
-  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Features` : undefined;
+  const pageTitle = currentProjectDetails?.name
+    ? `${currentProjectDetails?.name} settings - ${t("project_settings.features.pages.short_title")}`
+    : undefined;
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (workspaceUserInfo && !canPerformProjectAdminActions) {
@@ -40,17 +46,26 @@ function FeaturesSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper header={<FeaturesProjectSettingsHeader />}>
+    <SettingsContentWrapper header={<FeaturesPagesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
-      <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
-        <ProjectFeaturesList
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          isAdmin={canPerformProjectAdminActions}
+      <section className="w-full">
+        <SettingsHeading
+          title={t("project_settings.features.pages.title")}
+          description={t("project_settings.features.pages.description")}
         />
+        <div className="mt-7">
+          <ProjectSettingsFeatureControlItem
+            title={t("project_settings.features.pages.toggle_title")}
+            description={t("project_settings.features.pages.toggle_description")}
+            featureProperty="page_view"
+            projectId={projectId}
+            value={!!currentProjectDetails?.page_view}
+            workspaceSlug={workspaceSlug}
+          />
+        </div>
       </section>
     </SettingsContentWrapper>
   );
 }
 
-export default observer(FeaturesSettingsPage);
+export default observer(FeaturesPagesSettingsPage);

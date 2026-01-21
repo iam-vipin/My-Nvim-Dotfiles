@@ -48,6 +48,7 @@ export interface IPartialProject {
   created_by?: string;
   updated_by?: string;
   intake_count?: number;
+  is_time_tracking_enabled?: boolean;
 }
 
 export interface IProject extends IPartialProject {

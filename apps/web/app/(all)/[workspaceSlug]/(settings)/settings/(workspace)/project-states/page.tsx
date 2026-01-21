@@ -75,7 +75,7 @@ function WorklogsPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("workspace_settings.settings.project_states.title")}
           description={t("workspace_settings.settings.project_states.description")}
-          appendToRight={
+          control={
             isFeatureEnabled && (
               <ToggleSwitch value={isProjectGroupingEnabled} onChange={toggleProjectGroupingFeature} size="sm" />
             )

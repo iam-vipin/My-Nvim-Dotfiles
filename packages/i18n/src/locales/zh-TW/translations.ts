@@ -2317,28 +2317,6 @@ export default {
       settings_sub_heading:
         "將客戶請求帶入工作項目，根據請求分配優先級，並將工作項目狀態匯總到客戶記錄中。很快，您將與您的 CRM 或支援工具整合，以實現更好的客戶屬性工作管理。",
     },
-    features: {
-      intake: {
-        heading: "接收責任",
-        notify_assignee: {
-          title: "通知負責人",
-          description: "對於新的接收請求，預設負責人將透過通知收到提醒",
-        },
-        toasts: {
-          set: {
-            loading: "正在設定負責人...",
-            success: {
-              title: "成功！",
-              message: "負責人設定成功。",
-            },
-            error: {
-              title: "錯誤！",
-              message: "設定負責人時出現問題。請重試。",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "屬性",
@@ -2428,6 +2406,75 @@ export default {
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "週期",
+        short_title: "週期",
+        description: "在靈活的時間段內安排工作，以適應該專案獨特的節奏和步調。",
+        toggle_title: "啟用週期",
+        toggle_description: "在集中的時間段內規劃工作。",
+      },
+      modules: {
+        title: "模組",
+        short_title: "模組",
+        description: "將工作組織成具有專門負責人和受讓人的子專案。",
+        toggle_title: "啟用模組",
+        toggle_description: "專案成員將能夠建立和編輯模組。",
+      },
+      views: {
+        title: "檢視",
+        short_title: "檢視",
+        description: "儲存自訂排序、篩選器和顯示選項，或與團隊共享。",
+        toggle_title: "啟用檢視",
+        toggle_description: "專案成員將能夠建立和編輯檢視。",
+      },
+      pages: {
+        title: "頁面",
+        short_title: "頁面",
+        description: "建立和編輯自由格式的內容：筆記、文件、任何內容。",
+        toggle_title: "啟用頁面",
+        toggle_description: "專案成員將能夠建立和編輯頁面。",
+      },
+      intake: {
+        heading: "接收責任",
+        title: "接收",
+        short_title: "接收",
+        description: "讓非成員分享錯誤、回饋和建議；而不會中斷您的工作流程。",
+        toggle_title: "啟用接收",
+        toggle_description: "允許專案成員在應用程式中建立接收請求。",
+        notify_assignee: {
+          title: "通知負責人",
+          description: "對於新的接收請求，預設負責人將透過通知收到提醒",
+        },
+        toasts: {
+          set: {
+            loading: "正在設定負責人...",
+            success: {
+              title: "成功！",
+              message: "負責人設定成功。",
+            },
+            error: {
+              title: "錯誤！",
+              message: "設定負責人時出現問題。請重試。",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "時間追蹤",
+        short_title: "時間追蹤",
+        description: "記錄在工作項目和專案上花費的時間。",
+        toggle_title: "啟用時間追蹤",
+        toggle_description: "專案成員將能夠記錄工作時間。",
+      },
+      milestones: {
+        title: "里程碑",
+        short_title: "里程碑",
+        description: "里程碑提供了一個層，用於將工作項目對齊到共享的完成日期。",
+        toggle_title: "啟用里程碑",
+        toggle_description: "按里程碑截止日期組織工作項目。",
       },
     },
   },

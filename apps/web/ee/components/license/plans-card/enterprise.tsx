@@ -33,29 +33,23 @@ export const EnterprisePlanCard = observer(function EnterprisePlanCard() {
       planVariant={EProductSubscriptionEnum.ENTERPRISE}
       planDescription={
         <>
-          <div className="text-body-xs-medium text-secondary">
-            Unlimited members, Unlimited Guests, Custom Workflows, Advanced Analytics, and more
-          </div>
+          Unlimited members, Unlimited Guests, Custom Workflows, Advanced Analytics, and more
           {!subscriptionDetail.is_offline_payment ? (
-            <>
+            <div>
               {isSubscriptionCancelled ? (
-                <div className="text-body-xs-medium text-danger-secondary">
-                  Your billing cycle ends on {renderFormattedDate(endDate)}.
-                </div>
+                <>Your billing cycle ends on {renderFormattedDate(endDate)}.</>
               ) : (
-                <div className="text-body-xs-medium text-secondary">
+                <>
                   {startDate
                     ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                     : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
                   • Billable seats: {subscriptionDetail?.purchased_seats}
-                </div>
+                </>
               )}
-              <div className="text-body-xs-medium text-secondary">
-                To manage your subscription or seats, please contact your instance admin.
-              </div>
-            </>
+              <div>To manage your subscription or seats, please contact your instance admin.</div>
+            </div>
           ) : (
-            <div className="text-body-xs-medium text-secondary">
+            <div>
               To manage your subscription, please{" "}
               <a className="text-accent-primary hover:underline" href="mailto:support@plane.so">
                 contact support.

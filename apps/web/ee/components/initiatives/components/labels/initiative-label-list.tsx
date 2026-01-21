@@ -14,15 +14,16 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TInitiativeLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { SettingsHeading2 } from "@/components/settings/heading-2";
+// components
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
@@ -33,7 +34,6 @@ import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initia
 import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";
 import { InitiativeLabelItem } from "./initiative-label-item";
-import { Button } from "@plane/propel/button";
 
 export const InitiativeLabelList = observer(function InitiativeLabelList() {
   const { workspaceSlug } = useParams();
@@ -113,11 +113,12 @@ export const InitiativeLabelList = observer(function InitiativeLabelList() {
         data={selectDeleteLabel ?? null}
         onClose={() => setSelectDeleteLabel(null)}
       />
-      <SettingsHeading2
+      <SettingsHeading
         title={t("initiatives.initiative_settings.labels.heading")}
         description={t("initiatives.initiative_settings.labels.description")}
         control={isEditable && <Button onClick={newLabel}>{t("common.add_label")}</Button>}
         className="border-b-0"
+        variant="h6"
       />
       <div className="mt-4 w-full bg-layer-3 rounded-lg border border-subtle p-2">
         {showLabelForm && (

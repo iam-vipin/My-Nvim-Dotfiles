@@ -11,8 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
+// components
+import { SettingsHeading } from "@/components/settings/heading";
+// plane web imports
 import {
   CustomerSettingsDisabled,
   CustomerPropertiesLoader,
@@ -20,8 +22,6 @@ import {
 } from "@/plane-web/components/customers/settings";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useCustomerProperties } from "@/plane-web/hooks/store/customers/use-customer-properties";
-import {} from "mobx";
-import { SettingsHeading2 } from "@/components/settings/heading-2";
 
 type TCustomerSettingsRoot = {
   workspaceId: string;
@@ -38,9 +38,10 @@ export const CustomerSettingsRoot = observer(function CustomerSettingsRoot(props
   const isLoader = loader || customerPropertiesLoader;
   return (
     <div className="mt-12">
-      <SettingsHeading2
+      <SettingsHeading
         title="Custom properties"
         description="Customize customers properties to match your projects unique work structure"
+        variant="h6"
       />
       <div className="mt-4">
         {isCustomersFeatureEnabled ? (

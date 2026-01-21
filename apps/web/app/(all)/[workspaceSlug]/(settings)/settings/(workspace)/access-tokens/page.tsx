@@ -17,6 +17,7 @@ import useSWR from "swr";
 // plane imports
 import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { WorkspaceAPITokenService } from "@plane/services";
 // component
@@ -82,12 +83,11 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
           <SettingsHeading
             title={t("workspace_settings.settings.api_tokens.heading")}
             description={t("workspace_settings.settings.api_tokens.description")}
-            button={{
-              label: t("workspace_settings.settings.api_tokens.add_token"),
-              onClick: () => {
-                setIsCreateTokenModalOpen(true);
-              },
-            }}
+            control={
+              <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
+                {t("workspace_settings.settings.api_tokens.add_token")}
+              </Button>
+            }
           />
           {tokens.length > 0 ? (
             <div className="flex h-full w-full flex-col">

@@ -546,15 +546,15 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
               ":workspaceSlug/settings/projects/:projectId/workflows",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
             ),
-            // Project Features - Cycles
+            // Project Features - Time Tracking
             route(
-              ":workspaceSlug/settings/projects/:projectId/features/cycles",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/cycles/page.tsx"
+              ":workspaceSlug/settings/projects/:projectId/features/time-tracking",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/time-tracking/page.tsx"
             ),
-            // Project Features - Intake
+            // Project Features - Milestones
             route(
-              ":workspaceSlug/settings/projects/:projectId/features/intake",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/intake/page.tsx"
+              ":workspaceSlug/settings/projects/:projectId/features/milestones",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/milestones/page.tsx"
             ),
             // Recurring Work Items
             layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/layout.tsx", [

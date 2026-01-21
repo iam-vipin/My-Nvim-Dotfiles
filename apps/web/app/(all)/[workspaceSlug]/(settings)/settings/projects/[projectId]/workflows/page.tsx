@@ -107,10 +107,10 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("project_settings.workflows.heading")}
           description={t("project_settings.workflows.description")}
-          appendToRight={
+          control={
             <>
               {isWorkflowFeatureFlagEnabled && (
-                <div className="flex-shrink-0 flex items-center justify-center gap-2 px-4">
+                <div className="shrink-0 flex items-center justify-center gap-2 px-4">
                   <span className="text-11 text-tertiary">{t("common.live")}</span>
                   <ToggleSwitch
                     value={!!isWorkflowEnabled}

@@ -17,7 +17,7 @@ import { Outlet } from "react-router";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
-import { SettingsMobileNav } from "@/components/settings/mobile";
+import { SettingsMobileNav } from "@/components/settings/mobile/nav";
 // plane imports
 import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";

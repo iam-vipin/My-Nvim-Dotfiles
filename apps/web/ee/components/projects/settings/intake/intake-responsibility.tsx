@@ -24,12 +24,12 @@ import { EProductSubscriptionEnum } from "@plane/types";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { SettingsHeading } from "@/components/settings/heading";
 // plane web imports
 import type { TIntakeResponsibilityList } from "@/plane-web/constants/project/settings/features";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { useIntakeResponsibility } from "@/plane-web/hooks/store/use-intake-responsibility";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
-import { SettingsHeading2 } from "@/components/settings/heading-2";
 
 type Props = {
   projectId?: string;
@@ -52,11 +52,10 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
     workspaceSlug && projectId ? () => fetchIntakeAssignees(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
-
-  if (!workspaceSlug || !projectId) return null;
-
   // Derived Values
   const isResponsibilityEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_RESPONSIBILITY);
+
+  if (!workspaceSlug || !projectId) return null;
 
   const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
@@ -80,7 +79,7 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
 
   return (
     <>
-      <SettingsHeading2 title={intakeT("heading")} />
+      <SettingsHeading title={intakeT("heading")} variant="h6" />
       <div className="mt-4 px-4 rounded-lg border transition-all border-subtle bg-layer-2">
         {Object.entries(featureList).map(([featureKey, feature]) => (
           <div key={featureKey} className="gap-y-3 gap-x-8 py-3">

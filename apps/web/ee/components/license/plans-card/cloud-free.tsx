@@ -44,15 +44,11 @@ export const CloudFreePlanCard = observer(function CloudFreePlanCard(props: TClo
       planVariant={EProductSubscriptionEnum.FREE}
       planDescription={
         <>
-          <div className="text-body-xs-medium text-secondary">
-            12 members, unlimited projects, work items, cycles, modules, and pages
-          </div>
-          <div className="text-body-xs-medium text-tertiary">
-            Billable seats when you upgrade: {subscriptionDetail?.billable_members}
-          </div>
+          <div>12 members, unlimited projects, work items, cycles, modules, and pages</div>
+          <div>Billable seats when you upgrade: {subscriptionDetail?.billable_members}</div>
         </>
       }
-      button={
+      control={
         <div className="flex items-center justify-center gap-2">
           {isProductsAPILoading ? (
             <Loader className="w-32">

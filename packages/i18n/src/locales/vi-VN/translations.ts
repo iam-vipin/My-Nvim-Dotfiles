@@ -2364,28 +2364,6 @@ Tạo dự án mới`,
       settings_sub_heading:
         "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng.",
     },
-    features: {
-      intake: {
-        heading: "Trách nhiệm tiếp nhận",
-        notify_assignee: {
-          title: "Thông báo người được chỉ định",
-          description: "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo",
-        },
-        toasts: {
-          set: {
-            loading: "Đang đặt người được chỉ định...",
-            success: {
-              title: "Thành công!",
-              message: "Người được chỉ định đã được đặt thành công.",
-            },
-            error: {
-              title: "Lỗi!",
-              message: "Đã xảy ra lỗi khi đặt người được chỉ định. Vui lòng thử lại.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Thuộc tính",
@@ -2476,6 +2454,77 @@ Tạo dự án mới`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Chu kỳ",
+        short_title: "Chu kỳ",
+        description:
+          "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
+        toggle_title: "Bật chu kỳ",
+        toggle_description: "Lập kế hoạch công việc trong khung thời gian tập trung.",
+      },
+      modules: {
+        title: "Mô-đun",
+        short_title: "Mô-đun",
+        description: "Tổ chức công việc thành các dự án phụ với người dẫn đầu và người được phân công chuyên trách.",
+        toggle_title: "Bật mô-đun",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa mô-đun.",
+      },
+      views: {
+        title: "Chế độ xem",
+        short_title: "Chế độ xem",
+        description: "Lưu các tùy chọn sắp xếp, bộ lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
+        toggle_title: "Bật chế độ xem",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa chế độ xem.",
+      },
+      pages: {
+        title: "Trang",
+        short_title: "Trang",
+        description: "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
+        toggle_title: "Bật trang",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang.",
+      },
+      intake: {
+        heading: "Trách nhiệm tiếp nhận",
+        title: "Tiếp nhận",
+        short_title: "Tiếp nhận",
+        description:
+          "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
+        toggle_title: "Bật tiếp nhận",
+        toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
+        notify_assignee: {
+          title: "Thông báo người được chỉ định",
+          description: "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo",
+        },
+        toasts: {
+          set: {
+            loading: "Đang đặt người được chỉ định...",
+            success: {
+              title: "Thành công!",
+              message: "Người được chỉ định đã được đặt thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message: "Đã xảy ra lỗi khi đặt người được chỉ định. Vui lòng thử lại.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Theo dõi thời gian",
+        short_title: "Theo dõi thời gian",
+        description: "Ghi lại thời gian dành cho các mục công việc và dự án.",
+        toggle_title: "Bật theo dõi thời gian",
+        toggle_description: "Thành viên dự án sẽ có thể ghi lại thời gian làm việc.",
+      },
+      milestones: {
+        title: "Cột mốc",
+        short_title: "Cột mốc",
+        description: "Cột mốc cung cấp một lớp để điều chỉnh các mục công việc theo các ngày hoàn thành chung.",
+        toggle_title: "Bật cột mốc",
+        toggle_description: "Tổ chức các mục công việc theo thời hạn cột mốc.",
       },
     },
   },

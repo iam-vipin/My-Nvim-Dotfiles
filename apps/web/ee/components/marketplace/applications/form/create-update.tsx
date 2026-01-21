@@ -27,7 +27,7 @@ import { EFileAssetType } from "@plane/types";
 import { cn, Dropdown, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
-import { SettingsHeading2 } from "@/components/settings/heading-2";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -184,12 +184,13 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
   return (
     <form onSubmit={handleAppFormSubmit}>
       <div className="flex justify-between items-center gap-4">
-        <SettingsHeading2
+        <SettingsHeading
           title={
             !watch("id")
               ? t("workspace_settings.settings.applications.build_your_own_app")
               : t("workspace_settings.settings.applications.edit_app_details")
           }
+          variant="h6"
         />
         <Button
           type="button"

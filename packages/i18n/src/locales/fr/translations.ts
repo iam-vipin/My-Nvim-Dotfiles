@@ -2386,29 +2386,6 @@ Créez plutôt un nouveau projet`,
       settings_sub_heading:
         "Transformez les demandes des clients en éléments de travail, attribuez une priorité en fonction des demandes et associez les états des éléments de travail aux enregistrements des clients. Bientôt, vous pourrez intégrer votre CRM ou outil de support pour une meilleure gestion du travail selon les attributs des clients.",
     },
-    features: {
-      intake: {
-        heading: "Responsabilité d'ingestion",
-        notify_assignee: {
-          title: "Notifier les responsables",
-          description:
-            "Pour une nouvelle demande d'ingestion, les responsables par défaut seront alertés via des notifications",
-        },
-        toasts: {
-          set: {
-            loading: "Définition des responsables...",
-            success: {
-              title: "Succès !",
-              message: "Responsables définis avec succès.",
-            },
-            error: {
-              title: "Erreur !",
-              message: "Une erreur s'est produite lors de la définition des responsables. Veuillez réessayer.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Propriétés",
@@ -2500,6 +2477,80 @@ Créez plutôt un nouveau projet`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cycles",
+        short_title: "Cycles",
+        description:
+          "Planifiez le travail dans des périodes flexibles qui s'adaptent au rythme et au tempo uniques de ce projet.",
+        toggle_title: "Activer les cycles",
+        toggle_description: "Planifiez le travail dans des périodes ciblées.",
+      },
+      modules: {
+        title: "Modules",
+        short_title: "Modules",
+        description: "Organisez le travail en sous-projets avec des chefs de projet et des responsables dédiés.",
+        toggle_title: "Activer les modules",
+        toggle_description: "Les membres du projet pourront créer et modifier des modules.",
+      },
+      views: {
+        title: "Vues",
+        short_title: "Vues",
+        description:
+          "Enregistrez des tris, des filtres et des options d'affichage personnalisés ou partagez-les avec votre équipe.",
+        toggle_title: "Activer les vues",
+        toggle_description: "Les membres du projet pourront créer et modifier des vues.",
+      },
+      pages: {
+        title: "Pages",
+        short_title: "Pages",
+        description: "Créez et modifiez du contenu libre : notes, documents, n'importe quoi.",
+        toggle_title: "Activer les pages",
+        toggle_description: "Les membres du projet pourront créer et modifier des pages.",
+      },
+      intake: {
+        heading: "Responsabilité d'ingestion",
+        title: "Réception",
+        short_title: "Réception",
+        description:
+          "Permettez aux non-membres de partager des bugs, des commentaires et des suggestions ; sans perturber votre flux de travail.",
+        toggle_title: "Activer la réception",
+        toggle_description: "Permettre aux membres du projet de créer des demandes de réception dans l'application.",
+        notify_assignee: {
+          title: "Notifier les responsables",
+          description:
+            "Pour une nouvelle demande d'ingestion, les responsables par défaut seront alertés via des notifications",
+        },
+        toasts: {
+          set: {
+            loading: "Définition des responsables...",
+            success: {
+              title: "Succès !",
+              message: "Responsables définis avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message: "Une erreur s'est produite lors de la définition des responsables. Veuillez réessayer.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Suivi du temps",
+        short_title: "Suivi du temps",
+        description: "Enregistrez le temps passé sur les éléments de travail et les projets.",
+        toggle_title: "Activer le suivi du temps",
+        toggle_description: "Les membres du projet pourront enregistrer le temps travaillé.",
+      },
+      milestones: {
+        title: "Jalons",
+        short_title: "Jalons",
+        description:
+          "Les jalons fournissent une couche pour aligner les éléments de travail vers des dates d'achèvement partagées.",
+        toggle_title: "Activer les jalons",
+        toggle_description: "Organisez les éléments de travail par échéances de jalons.",
       },
     },
   },

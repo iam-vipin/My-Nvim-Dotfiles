@@ -17,29 +17,25 @@ import type { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 type TPlanCard = {
   planVariant: EProductSubscriptionEnum;
   planDescription: React.ReactNode;
-  button?: React.ReactNode;
+  control?: React.ReactNode;
 };
 
-export const PlanCard = observer(function PlanCard({ planVariant, planDescription, button }: TPlanCard) {
+export const PlanCard = observer(function PlanCard({ planVariant, planDescription, control }: TPlanCard) {
   const { getIsInTrialPeriod } = useWorkspaceSubscription();
   // derived values
   const planName = getSubscriptionName(planVariant);
   const isInTrialPeriod = getIsInTrialPeriod(false);
 
   return (
-    <div className="w-full bg-layer-2 rounded-lg border border-subtle px-4 py-3 flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 md:gap-8">
-      <div className="flex flex-col gap-1.5">
-        <h4 className="text-body-sm-medium text-accent-primary">
-          {planName}
-          {isInTrialPeriod && " trial"}
-        </h4>
-        <div className="text-caption-md-regular text-tertiary">{planDescription}</div>
-      </div>
-      {button && <div className="flex flex-col gap-1 items-center justify-center">{button}</div>}
-    </div>
+    <SettingsBoxedControlItem
+      title={planName + (isInTrialPeriod ? " trial" : "")}
+      description={planDescription}
+      control={control}
+    />
   );
 });

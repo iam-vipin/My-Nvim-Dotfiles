@@ -2375,29 +2375,6 @@ Erstellen Sie ein neues.`,
       settings_sub_heading:
         "Bringen Sie Kundenanfragen zu Arbeitsaufgaben, weisen Sie Priorität nach Anfragen zu und führen Sie den Status von Arbeitsaufgaben in Kundendatensätzen zusammen. Bald werden Sie mit Ihrem CRM oder Support-Tool für eine noch bessere Arbeitsverwaltung nach Kundenattributen integrieren können.",
     },
-    features: {
-      intake: {
-        heading: "Intake-Verantwortung",
-        notify_assignee: {
-          title: "Zuständige benachrichtigen",
-          description:
-            "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert",
-        },
-        toasts: {
-          set: {
-            loading: "Zuständige werden festgelegt...",
-            success: {
-              title: "Erfolg!",
-              message: "Zuständige erfolgreich festgelegt.",
-            },
-            error: {
-              title: "Fehler!",
-              message: "Beim Festlegen der Zuständigen ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Eigenschaften",
@@ -2488,6 +2465,80 @@ Erstellen Sie ein neues.`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Zyklen",
+        short_title: "Zyklen",
+        description:
+          "Planen Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
+        toggle_title: "Zyklen aktivieren",
+        toggle_description: "Planen Sie die Arbeit in fokussierten Zeiträumen.",
+      },
+      modules: {
+        title: "Module",
+        short_title: "Module",
+        description: "Organisieren Sie die Arbeit in Teilprojekte mit engagierten Leitern und Verantwortlichen.",
+        toggle_title: "Module aktivieren",
+        toggle_description: "Projektmitglieder können Module erstellen und bearbeiten.",
+      },
+      views: {
+        title: "Ansichten",
+        short_title: "Ansichten",
+        description:
+          "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
+        toggle_title: "Ansichten aktivieren",
+        toggle_description: "Projektmitglieder können Ansichten erstellen und bearbeiten.",
+      },
+      pages: {
+        title: "Seiten",
+        short_title: "Seiten",
+        description: "Erstellen und bearbeiten Sie freie Inhalte: Notizen, Dokumente, alles.",
+        toggle_title: "Seiten aktivieren",
+        toggle_description: "Projektmitglieder können Seiten erstellen und bearbeiten.",
+      },
+      intake: {
+        heading: "Intake-Verantwortung",
+        title: "Aufnahme",
+        short_title: "Aufnahme",
+        description:
+          "Ermöglichen Sie Nicht-Mitgliedern, Fehler, Feedback und Vorschläge zu teilen, ohne Ihren Workflow zu unterbrechen.",
+        toggle_title: "Aufnahme aktivieren",
+        toggle_description: "Projektmitgliedern erlauben, In-App-Aufnahmeanfragen zu erstellen.",
+        notify_assignee: {
+          title: "Zuständige benachrichtigen",
+          description:
+            "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert",
+        },
+        toasts: {
+          set: {
+            loading: "Zuständige werden festgelegt...",
+            success: {
+              title: "Erfolg!",
+              message: "Zuständige erfolgreich festgelegt.",
+            },
+            error: {
+              title: "Fehler!",
+              message: "Beim Festlegen der Zuständigen ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Zeiterfassung",
+        short_title: "Zeiterfassung",
+        description: "Erfassen Sie die für Arbeitselemente und Projekte aufgewendete Zeit.",
+        toggle_title: "Zeiterfassung aktivieren",
+        toggle_description: "Projektmitglieder können die geleistete Arbeit protokollieren.",
+      },
+      milestones: {
+        title: "Meilensteine",
+        short_title: "Meilensteine",
+        description:
+          "Meilensteine bieten eine Ebene, um Arbeitselemente auf gemeinsame Fertigstellungstermine auszurichten.",
+        toggle_title: "Meilensteine aktivieren",
+        toggle_description: "Organisieren Sie Arbeitselemente nach Meilenstein-Fristen.",
       },
     },
   },

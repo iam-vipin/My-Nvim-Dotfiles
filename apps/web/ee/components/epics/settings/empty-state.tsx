@@ -102,7 +102,7 @@ export const EpicsEmptyState = observer(function EpicsEmptyState(props: TIssueTy
       <SettingsHeading
         title={t("project_settings.epics.heading")}
         description={t("project_settings.epics.description")}
-        appendToRight={cta}
+        control={cta}
       />
       <div className="w-full py-2">
         <div className="flex items-center justify-center h-full w-full">

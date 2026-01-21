@@ -29,21 +29,15 @@ export const SelfHostedFreePlanCard = observer(function SelfHostedFreePlanCard()
       planVariant={EProductSubscriptionEnum.FREE}
       planDescription={
         <>
-          <div className="text-body-xs-medium text-secondary">
-            Your Plane license can only be used to unlock features for one workspace.
-          </div>
-          <div className="text-body-xs-medium text-tertiary">
-            Billable seats when you upgrade: {subscriptionDetail?.billable_members}
-          </div>
+          <div>Your Plane license can only be used to unlock features for one workspace.</div>
+          <div>Billable seats when you upgrade: {subscriptionDetail?.billable_members}</div>
           <SelfManagedLicenseActions showDeactivateButton={false} />
         </>
       }
-      button={
-        <>
-          <Button variant="primary" size="lg" onClick={() => toggleLicenseActivationModal(true)}>
-            Activate this workspace
-          </Button>
-        </>
+      control={
+        <Button variant="primary" size="lg" onClick={() => toggleLicenseActivationModal(true)}>
+          Activate this workspace
+        </Button>
       }
     />
   );

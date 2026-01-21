@@ -16,12 +16,13 @@ import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TLoader, TBaseActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-import type { TLoader, TBaseActivity } from "@plane/types";
+// components
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity/sort-root";
-import { CloseIcon } from "@plane/propel/icons";
-import { getButtonStyling } from "@plane/propel/button";
 
 type TActivityContentWrapperProps = {
   children: ReactNode;
@@ -62,12 +63,7 @@ export const ActivityContentWrapper = observer(function ActivityContentWrapper(p
           {membersActivity && membersActivity.length > 0 && (
             <ActivitySortRoot sortOrder={membersActivitySortOrder} toggleSort={toggleMembersActivitySortOrder} />
           )}
-          <button
-            className={cn(getButtonStyling("secondary", "base"), "py-1 px-2 text-tertiary cursor-pointer")}
-            onClick={toggleMembersActivitySidebar}
-          >
-            <CloseIcon className="size-3" />
-          </button>
+          <IconButton variant="secondary" onClick={toggleMembersActivitySidebar} icon={CloseIcon} />
         </div>
       </div>
       <div className="px-7 overflow-y-scroll h-full">

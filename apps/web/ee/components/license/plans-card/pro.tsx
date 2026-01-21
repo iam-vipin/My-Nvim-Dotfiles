@@ -77,39 +77,29 @@ export const ProPlanCard = observer(function ProPlanCard(props: TProPlanCardProp
   };
 
   if (!subscriptionDetail) return null;
+
   return (
     <PlanCard
       planVariant={EProductSubscriptionEnum.PRO}
       planDescription={
         <>
-          <div className="text-body-xs-medium text-secondary">
-            Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more
-          </div>
+          Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isInTrialPeriod && (
-                <div
-                  className={cn(
-                    "text-body-xs-medium text-tertiary",
-                    subscriptionDetail.show_trial_banner && "text-danger-secondary"
-                  )}
-                >
+                <div className={cn(subscriptionDetail.show_trial_banner && "text-danger-secondary")}>
                   Pro trial ends{" "}
                   {subscriptionDetail.remaining_trial_days === 0
                     ? "today"
                     : `in ${subscriptionDetail.remaining_trial_days} days`}{" "}
-                  <span className="text-body-sm-medium text-tertiary">
-                    • Billable seats when you upgrade: {subscriptionDetail?.purchased_seats}
-                  </span>
+                  <span>• Billable seats when you upgrade: {subscriptionDetail?.purchased_seats}</span>
                 </div>
               )}
               {!isInTrialPeriod &&
                 (isSubscriptionCancelled ? (
-                  <div className="text-body-xs-medium text-danger-secondary">
-                    Your billing cycle ends on {renderFormattedDate(endDate)}.
-                  </div>
+                  <div>Your billing cycle ends on {renderFormattedDate(endDate)}.</div>
                 ) : (
-                  <div className="text-body-xs-medium text-secondary">
+                  <div>
                     {startDate
                       ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                       : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
@@ -128,7 +118,7 @@ export const ProPlanCard = observer(function ProPlanCard(props: TProPlanCardProp
           <SelfManagedLicenseActions />
         </>
       }
-      button={
+      control={
         isSubscriptionManagementEnabled && (
           <div className="flex items-center gap-2.5">
             <Button

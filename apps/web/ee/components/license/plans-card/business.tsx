@@ -83,26 +83,22 @@ export const BusinessPlanCard = observer(function BusinessPlanCard(props: TBusin
       planVariant={EProductSubscriptionEnum.BUSINESS}
       planDescription={
         <>
-          <div className="text-body-xs-medium text-secondary">
-            Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more
-          </div>
+          Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more
           {!subscriptionDetail.is_offline_payment ? (
-            <>
+            <div>
               {isSubscriptionCancelled ? (
-                <div className="text-body-xs-medium text-danger-secondary">
-                  Your billing cycle ends on {renderFormattedDate(endDate)}.
-                </div>
+                <>Your billing cycle ends on {renderFormattedDate(endDate)}.</>
               ) : (
-                <div className="text-body-xs-medium text-secondary">
+                <>
                   {startDate
                     ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                     : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
                   • Billable seats: {subscriptionDetail?.purchased_seats}
-                </div>
+                </>
               )}
-            </>
+            </div>
           ) : (
-            <div className="text-body-xs-medium text-secondary">
+            <div>
               To manage your subscription, please{" "}
               <a className="text-accent-primary hover:underline" href="mailto:support@plane.so">
                 contact support.
@@ -112,7 +108,7 @@ export const BusinessPlanCard = observer(function BusinessPlanCard(props: TBusin
           <SelfManagedLicenseActions />
         </>
       }
-      button={
+      control={
         isSubscriptionManagementEnabled && (
           <div className="flex items-center gap-2.5">
             <Button

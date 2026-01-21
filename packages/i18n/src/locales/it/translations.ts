@@ -2367,29 +2367,6 @@ Crea un nuovo progetto invece`,
       settings_sub_heading:
         "Trasforma le richieste dei clienti in elementi di lavoro, assegna priorità in base alle richieste e collega gli stati degli elementi di lavoro ai record dei clienti. Presto potrai integrare il tuo CRM o strumento di supporto per una gestione del lavoro ancora migliore in base agli attributi dei clienti.",
     },
-    features: {
-      intake: {
-        heading: "Responsabilità di accettazione",
-        notify_assignee: {
-          title: "Notifica assegnatari",
-          description:
-            "Per una nuova richiesta di accettazione, gli assegnatari predefiniti saranno avvisati tramite notifiche",
-        },
-        toasts: {
-          set: {
-            loading: "Impostazione degli assegnatari...",
-            success: {
-              title: "Successo!",
-              message: "Assegnatari impostati con successo.",
-            },
-            error: {
-              title: "Errore!",
-              message: "Qualcosa è andato storto durante l'impostazione degli assegnatari. Riprova.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Proprietà",
@@ -2480,6 +2457,80 @@ Crea un nuovo progetto invece`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicli",
+        short_title: "Cicli",
+        description:
+          "Pianifica il lavoro in periodi flessibili che si adattano al ritmo e al tempo unici di questo progetto.",
+        toggle_title: "Abilita cicli",
+        toggle_description: "Pianifica il lavoro in periodi di tempo mirati.",
+      },
+      modules: {
+        title: "Moduli",
+        short_title: "Moduli",
+        description: "Organizza il lavoro in sotto-progetti con responsabili e assegnatari dedicati.",
+        toggle_title: "Abilita moduli",
+        toggle_description: "I membri del progetto potranno creare e modificare moduli.",
+      },
+      views: {
+        title: "Viste",
+        short_title: "Viste",
+        description:
+          "Salva ordinamenti, filtri e opzioni di visualizzazione personalizzati o condividili con il tuo team.",
+        toggle_title: "Abilita viste",
+        toggle_description: "I membri del progetto potranno creare e modificare viste.",
+      },
+      pages: {
+        title: "Pagine",
+        short_title: "Pagine",
+        description: "Crea e modifica contenuti liberi: note, documenti, qualsiasi cosa.",
+        toggle_title: "Abilita pagine",
+        toggle_description: "I membri del progetto potranno creare e modificare pagine.",
+      },
+      intake: {
+        heading: "Responsabilità di accettazione",
+        title: "Ricezione",
+        short_title: "Ricezione",
+        description:
+          "Consenti ai non membri di condividere bug, feedback e suggerimenti; senza interrompere il tuo flusso di lavoro.",
+        toggle_title: "Abilita ricezione",
+        toggle_description: "Consenti ai membri del progetto di creare richieste di ricezione nell'app.",
+        notify_assignee: {
+          title: "Notifica assegnatari",
+          description:
+            "Per una nuova richiesta di accettazione, gli assegnatari predefiniti saranno avvisati tramite notifiche",
+        },
+        toasts: {
+          set: {
+            loading: "Impostazione degli assegnatari...",
+            success: {
+              title: "Successo!",
+              message: "Assegnatari impostati con successo.",
+            },
+            error: {
+              title: "Errore!",
+              message: "Qualcosa è andato storto durante l'impostazione degli assegnatari. Riprova.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Monitoraggio del tempo",
+        short_title: "Monitoraggio del tempo",
+        description: "Registra il tempo trascorso su elementi di lavoro e progetti.",
+        toggle_title: "Abilita monitoraggio del tempo",
+        toggle_description: "I membri del progetto potranno registrare il tempo lavorato.",
+      },
+      milestones: {
+        title: "Traguardi",
+        short_title: "Traguardi",
+        description:
+          "I traguardi forniscono un livello per allineare gli elementi di lavoro verso date di completamento condivise.",
+        toggle_title: "Abilita traguardi",
+        toggle_description: "Organizza gli elementi di lavoro per scadenze dei traguardi.",
       },
     },
   },

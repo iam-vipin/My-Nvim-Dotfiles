@@ -2296,28 +2296,6 @@ export default {
       settings_sub_heading:
         "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。",
     },
-    features: {
-      intake: {
-        heading: "接收责任",
-        notify_assignee: {
-          title: "通知负责人",
-          description: "对于新的接收请求，默认负责人将通过通知收到提醒",
-        },
-        toasts: {
-          set: {
-            loading: "正在设置负责人...",
-            success: {
-              title: "成功！",
-              message: "负责人设置成功。",
-            },
-            error: {
-              title: "错误！",
-              message: "设置负责人时出现问题。请重试。",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "属性",
@@ -2407,6 +2385,75 @@ export default {
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "周期",
+        short_title: "周期",
+        description: "在灵活的时间段内安排工作，以适应该项目独特的节奏和步调。",
+        toggle_title: "启用周期",
+        toggle_description: "在集中的时间段内规划工作。",
+      },
+      modules: {
+        title: "模块",
+        short_title: "模块",
+        description: "将工作组织成具有专门负责人和受让人的子项目。",
+        toggle_title: "启用模块",
+        toggle_description: "项目成员将能够创建和编辑模块。",
+      },
+      views: {
+        title: "视图",
+        short_title: "视图",
+        description: "保存自定义排序、过滤器和显示选项，或与团队共享。",
+        toggle_title: "启用视图",
+        toggle_description: "项目成员将能够创建和编辑视图。",
+      },
+      pages: {
+        title: "页面",
+        short_title: "页面",
+        description: "创建和编辑自由格式的内容：笔记、文档、任何内容。",
+        toggle_title: "启用页面",
+        toggle_description: "项目成员将能够创建和编辑页面。",
+      },
+      intake: {
+        heading: "接收责任",
+        title: "接收",
+        short_title: "接收",
+        description: "让非成员分享错误、反馈和建议；而不会中断您的工作流程。",
+        toggle_title: "启用接收",
+        toggle_description: "允许项目成员在应用中创建接收请求。",
+        notify_assignee: {
+          title: "通知负责人",
+          description: "对于新的接收请求，默认负责人将通过通知收到提醒",
+        },
+        toasts: {
+          set: {
+            loading: "正在设置负责人...",
+            success: {
+              title: "成功！",
+              message: "负责人设置成功。",
+            },
+            error: {
+              title: "错误！",
+              message: "设置负责人时出现问题。请重试。",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "时间跟踪",
+        short_title: "时间跟踪",
+        description: "记录在工作项和项目上花费的时间。",
+        toggle_title: "启用时间跟踪",
+        toggle_description: "项目成员将能够记录工作时间。",
+      },
+      milestones: {
+        title: "里程碑",
+        short_title: "里程碑",
+        description: "里程碑提供了一个层，用于将工作项对齐到共享的完成日期。",
+        toggle_title: "启用里程碑",
+        toggle_description: "按里程碑截止日期组织工作项。",
       },
     },
   },

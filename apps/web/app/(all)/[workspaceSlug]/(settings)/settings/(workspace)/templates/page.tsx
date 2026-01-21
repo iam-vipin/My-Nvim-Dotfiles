@@ -72,7 +72,7 @@ function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
       <SettingsHeading
         title={t("workspace_settings.settings.templates.heading")}
         description={t("workspace_settings.settings.templates.description")}
-        appendToRight={
+        control={
           <>
             {isAnyTemplatesEnabled && isAnyTemplatesAvailable && hasAdminPermission && (
               <CreateTemplatesButton

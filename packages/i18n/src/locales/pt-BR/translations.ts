@@ -2381,29 +2381,6 @@ Crie um novo projeto em vez disso`,
       settings_sub_heading:
         "Traga solicitações de clientes para itens de trabalho, atribua prioridade por solicitações e agrupe os estados dos itens de trabalho em registros de clientes. Em breve, você poderá integrar com seu CRM ou ferramenta de Suporte para uma gestão de trabalho ainda melhor por atributos de cliente.",
     },
-    features: {
-      intake: {
-        heading: "Responsabilidade de recebimento",
-        notify_assignee: {
-          title: "Notificar responsáveis",
-          description:
-            "Para uma nova solicitação de recebimento, os responsáveis padrão serão alertados via notificações",
-        },
-        toasts: {
-          set: {
-            loading: "Definindo responsáveis...",
-            success: {
-              title: "Sucesso!",
-              message: "Responsáveis definidos com sucesso.",
-            },
-            error: {
-              title: "Erro!",
-              message: "Algo deu errado ao definir os responsáveis. Por favor, tente novamente.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Propriedades",
@@ -2494,6 +2471,78 @@ Crie um novo projeto em vez disso`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Ciclos",
+        short_title: "Ciclos",
+        description: "Agende o trabalho em períodos flexíveis que se adaptam ao ritmo e ao tempo únicos deste projeto.",
+        toggle_title: "Ativar ciclos",
+        toggle_description: "Planeje o trabalho em períodos de tempo focados.",
+      },
+      modules: {
+        title: "Módulos",
+        short_title: "Módulos",
+        description: "Organize o trabalho em subprojetos com líderes e responsáveis dedicados.",
+        toggle_title: "Ativar módulos",
+        toggle_description: "Os membros do projeto poderão criar e editar módulos.",
+      },
+      views: {
+        title: "Visualizações",
+        short_title: "Visualizações",
+        description: "Salve ordenações, filtros e opções de exibição personalizadas ou compartilhe-as com sua equipe.",
+        toggle_title: "Ativar visualizações",
+        toggle_description: "Os membros do projeto poderão criar e editar visualizações.",
+      },
+      pages: {
+        title: "Páginas",
+        short_title: "Páginas",
+        description: "Crie e edite conteúdo livre: notas, documentos, qualquer coisa.",
+        toggle_title: "Ativar páginas",
+        toggle_description: "Os membros do projeto poderão criar e editar páginas.",
+      },
+      intake: {
+        heading: "Responsabilidade de recebimento",
+        title: "Recepção",
+        short_title: "Recepção",
+        description:
+          "Permita que não membros compartilhem bugs, feedback e sugestões; sem interromper seu fluxo de trabalho.",
+        toggle_title: "Ativar recepção",
+        toggle_description: "Permitir que membros do projeto criem solicitações de recepção no aplicativo.",
+        notify_assignee: {
+          title: "Notificar responsáveis",
+          description:
+            "Para uma nova solicitação de recebimento, os responsáveis padrão serão alertados via notificações",
+        },
+        toasts: {
+          set: {
+            loading: "Definindo responsáveis...",
+            success: {
+              title: "Sucesso!",
+              message: "Responsáveis definidos com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message: "Algo deu errado ao definir os responsáveis. Por favor, tente novamente.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Rastreamento de tempo",
+        short_title: "Rastreamento de tempo",
+        description: "Registre o tempo gasto em itens de trabalho e projetos.",
+        toggle_title: "Ativar rastreamento de tempo",
+        toggle_description: "Os membros do projeto poderão registrar o tempo trabalhado.",
+      },
+      milestones: {
+        title: "Marcos",
+        short_title: "Marcos",
+        description:
+          "Os marcos fornecem uma camada para alinhar itens de trabalho em direção a datas de conclusão compartilhadas.",
+        toggle_title: "Ativar marcos",
+        toggle_description: "Organize itens de trabalho por prazos de marcos.",
       },
     },
   },

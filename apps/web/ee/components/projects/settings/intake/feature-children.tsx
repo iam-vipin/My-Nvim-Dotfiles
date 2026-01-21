@@ -15,14 +15,15 @@ import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { IProject } from "@plane/types";
-// plane web components
+// components
+import { SettingsHeading } from "@/components/settings/heading";
+// plane web imports
 import IntakeResponsibility from "@/plane-web/components/projects/settings/intake/intake-responsibility";
 import { INTAKE_FEATURES_LIST, INTAKE_RESPONSIBILITY_LIST } from "@/plane-web/constants";
-// hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+// local imports
 import IntakeSubFeatures from "./intake-sub-features";
 import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";
-import { SettingsHeading2 } from "@/components/settings/heading-2";
 
 type Props = {
   currentProjectDetails: IProject;
@@ -37,17 +38,16 @@ export const IntakeFeatureChildren = observer(function IntakeFeatureChildren({
 
   return (
     <>
-      <SettingsHeading2 title="Intake sources" />
-      <div className="mt-4 px-4 rounded-lg border transition-all border-subtle bg-layer-2">
-        {isEmailEnabled || isFormEnabled ? (
-          <IntakeSubFeatures projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />
-        ) : (
-          <IntakeSubFeaturesUpgrade projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />
-        )}
-      </div>
-
+      <IntakeResponsibility projectId={currentProjectDetails?.id} featureList={INTAKE_RESPONSIBILITY_LIST} />
       <div className="mt-12">
-        <IntakeResponsibility projectId={currentProjectDetails?.id} featureList={INTAKE_RESPONSIBILITY_LIST} />
+        <SettingsHeading title="Intake sources" variant="h6" />
+        <div className="mt-4 px-4 rounded-lg border transition-all border-subtle bg-layer-2">
+          {isEmailEnabled || isFormEnabled ? (
+            <IntakeSubFeatures projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />
+          ) : (
+            <IntakeSubFeaturesUpgrade projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />
+          )}
+        </div>
       </div>
     </>
   );

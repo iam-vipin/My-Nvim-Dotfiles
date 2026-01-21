@@ -2354,28 +2354,6 @@ Bunun yerine yeni bir proje oluşturun`,
       settings_sub_heading:
         "Kastımer taleplerini iş öğelerine dönüştürün, taleplere göre önceliklendirin ve iş öğesi durumlarını kastımer kayıtlarıyla senkronize edin. Yakında CRM veya destek araçlarınızla entegre olarak kastımer özelliklerine göre daha iyi iş yönetimi yapabileceksiniz.",
     },
-    features: {
-      intake: {
-        heading: "Alım sorumluluğu",
-        notify_assignee: {
-          title: "Atanan kişileri bildir",
-          description: "Yeni bir alım talebi için varsayılan atanan kişiler bildirimler aracılığıyla uyarılacaktır",
-        },
-        toasts: {
-          set: {
-            loading: "Atanan kişiler ayarlanıyor...",
-            success: {
-              title: "Başarılı!",
-              message: "Atanan kişiler başarıyla ayarlandı.",
-            },
-            error: {
-              title: "Hata!",
-              message: "Atanan kişileri ayarlarken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
-            },
-          },
-        },
-      },
-    },
     epics: {
       properties: {
         title: "Propertiler",
@@ -2465,6 +2443,77 @@ Bunun yerine yeni bir proje oluşturun`,
             },
           },
         },
+      },
+    },
+    features: {
+      cycles: {
+        title: "Döngüler",
+        short_title: "Döngüler",
+        description: "Bu projenin benzersiz ritmine ve hızına uyum sağlayan esnek dönemlerde iş planlayın.",
+        toggle_title: "Döngüleri etkinleştir",
+        toggle_description: "Odaklanmış zaman dilimlerinde iş planlayın.",
+      },
+      modules: {
+        title: "Modüller",
+        short_title: "Modüller",
+        description: "İşi özel liderler ve atananlarla alt projelere organize edin.",
+        toggle_title: "Modülleri etkinleştir",
+        toggle_description: "Proje üyeleri modüller oluşturabilir ve düzenleyebilir.",
+      },
+      views: {
+        title: "Görünümler",
+        short_title: "Görünümler",
+        description: "Özel sıralamalar, filtreler ve görüntüleme seçeneklerini kaydedin veya ekibinizle paylaşın.",
+        toggle_title: "Görünümleri etkinleştir",
+        toggle_description: "Proje üyeleri görünümler oluşturabilir ve düzenleyebilir.",
+      },
+      pages: {
+        title: "Sayfalar",
+        short_title: "Sayfalar",
+        description: "Serbest biçimli içerik oluşturun ve düzenleyin: notlar, belgeler, herhangi bir şey.",
+        toggle_title: "Sayfaları etkinleştir",
+        toggle_description: "Proje üyeleri sayfalar oluşturabilir ve düzenleyebilir.",
+      },
+      intake: {
+        heading: "Alım sorumluluğu",
+        title: "Alım",
+        short_title: "Alım",
+        description:
+          "Üye olmayanların hataları, geri bildirimleri ve önerileri paylaşmasına izin verin; iş akışınızı aksatmadan.",
+        toggle_title: "Alımı etkinleştir",
+        toggle_description: "Proje üyelerinin uygulama içinde alım talepleri oluşturmasına izin verin.",
+        notify_assignee: {
+          title: "Atanan kişileri bildir",
+          description: "Yeni bir alım talebi için varsayılan atanan kişiler bildirimler aracılığıyla uyarılacaktır",
+        },
+        toasts: {
+          set: {
+            loading: "Atanan kişiler ayarlanıyor...",
+            success: {
+              title: "Başarılı!",
+              message: "Atanan kişiler başarıyla ayarlandı.",
+            },
+            error: {
+              title: "Hata!",
+              message: "Atanan kişileri ayarlarken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+            },
+          },
+        },
+      },
+      time_tracking: {
+        title: "Zaman takibi",
+        short_title: "Zaman takibi",
+        description: "İş öğelerine ve projelere harcanan zamanı kaydedin.",
+        toggle_title: "Zaman takibini etkinleştir",
+        toggle_description: "Proje üyeleri çalışılan zamanı kaydedebilecektir.",
+      },
+      milestones: {
+        title: "Kilometre taşları",
+        short_title: "Kilometre taşları",
+        description:
+          "Kilometre taşları, iş öğelerini ortak tamamlanma tarihlerine doğru hizalamak için bir katman sağlar.",
+        toggle_title: "Kilometre taşlarını etkinleştir",
+        toggle_description: "İş öğelerini kilometre taşı son tarihleri ile organize edin.",
       },
     },
   },

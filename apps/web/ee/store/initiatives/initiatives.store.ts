@@ -27,8 +27,8 @@ import type {
 import { convertToISODateString } from "@plane/utils";
 
 // plane-web imports
-import { InitiativeLabelsService } from "@/plane-web/services/initiative-labels.service";
-import { InitiativeService } from "@/plane-web/services/initiative.service";
+import { InitiativeLabelsService } from "@/services/initiative-labels.service";
+import { InitiativeService } from "@/services/initiative.service";
 import type {
   TExternalInitiativeFilterExpression,
   TInitiative,

@@ -18,7 +18,7 @@ import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // constants
 import { CSV_IMPORTER_STEPS } from "@/constants/importers/csv";
 // services
-import projectService from "@/plane-web/services/project/project.service";
+import projectService from "@/services/project/project.service";
 // plane web store types
 import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/importers";
 import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";

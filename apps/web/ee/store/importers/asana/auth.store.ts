@@ -17,7 +17,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { AsanaAuthState, AsanaPATAuthState } from "@plane/etl/asana";
 import type { TServiceAuthConfiguration } from "@plane/etl/core";
 // plane web services
-import { AsanaAuthService } from "@/plane-web/services/importers/asana/auth.service";
+import { AsanaAuthService } from "@/services/importers/asana/auth.service";
 // store types
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types

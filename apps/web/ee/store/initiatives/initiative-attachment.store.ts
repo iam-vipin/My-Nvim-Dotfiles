@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 import type { TInitiativeAttachment, TInitiativeAttachmentIdMap, TInitiativeAttachmentMap } from "@plane/types";
-import { InitiativeAttachmentService } from "@/plane-web/services/initiative_attachment.service";
+import { InitiativeAttachmentService } from "@/services/initiative_attachment.service";
 import type { IInitiativeStore } from "./initiatives.store";
 // services
 

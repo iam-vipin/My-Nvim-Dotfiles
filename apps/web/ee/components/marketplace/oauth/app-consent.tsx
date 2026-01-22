@@ -26,8 +26,8 @@ import { getFileURL } from "@plane/utils";
 import ConnectSvg from "@/app/assets/marketplace/connect.svg?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
-import type { TConsentParams } from "@/plane-web/services/marketplace";
-import { ApplicationService, OAuthService } from "@/plane-web/services/marketplace";
+import type { TConsentParams } from "@/services/marketplace";
+import { ApplicationService, OAuthService } from "@/services/marketplace";
 import { AuthService } from "@/services/auth.service";
 import {
   ApplicationPermissionText,

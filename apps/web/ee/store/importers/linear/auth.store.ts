@@ -18,7 +18,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { TServiceAuthConfiguration } from "@plane/etl/core";
 import type { LinearAuthState, LinearPATAuthState } from "@plane/etl/linear";
 // plane web services
-import { LinearAuthService } from "@/plane-web/services/importers/linear/auth.service";
+import { LinearAuthService } from "@/services/importers/linear/auth.service";
 // store types
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types

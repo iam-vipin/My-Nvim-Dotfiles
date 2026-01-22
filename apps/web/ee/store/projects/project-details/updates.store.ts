@@ -14,7 +14,7 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { ProjectUpdateService } from "@/plane-web/services";
+import { ProjectUpdateService } from "@/services/project/project_update.service";
 // types
 import type { TProjectUpdate, TProjectUpdateReaction } from "@/types";
 import type { IUpdateCommentStore } from "./comment.store";

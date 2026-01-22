@@ -27,7 +27,7 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 import { MilestoneWorkItemActionButton } from "./quick-action-button";
 
 const workspaceService = new WorkspaceService();

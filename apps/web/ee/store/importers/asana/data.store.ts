@@ -19,7 +19,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { AsanaWorkspace, AsanaProject, AsanaSection, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
 // plane web services
 import type { IAdditionalUsersResponse } from "@plane/types";
-import { AsanaService } from "@/plane-web/services/importers/asana/data.service";
+import { AsanaService } from "@/services/importers/asana/data.service";
 // plane web store types
 import type { RootStore } from "@/plane-web/store/root.store";
 

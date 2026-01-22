@@ -26,7 +26,7 @@ import { SentryIntegrationRoot } from "@/plane-web/components/integrations/sentr
 //  plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 import type { Route } from "./+types/page";
 
 const siloAppService = new SiloAppService();

@@ -13,7 +13,7 @@
 
 import { action, makeObservable } from "mobx";
 import type { TIssue, TIssueServiceType } from "@plane/types";
-import { IssueService } from "@/plane-web/services/issue/issue.service";
+import { IssueService } from "@/services/issue/issue.service";
 import type { IIssueDetail as IIssueDetailCore } from "@/store/issue/issue-details/root.store";
 import { IssueDetail as IssueDetailCore } from "@/store/issue/issue-details/root.store";
 import type { IIssueRootStore } from "@/store/issue/root.store";

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// plane web constants
+// plane imports
 import { PI_URL } from "@plane/constants";
 import type {
   TAIBlockTypesResponse,
@@ -19,18 +19,38 @@ import type {
   TAIBlockGenerateInput,
   TAIBlockRevisionTypesResponse,
   TFeedback,
+  TDuplicateIssuePayload,
+  TDuplicateIssueResponse,
 } from "@plane/types";
+// services
 import { APIService } from "@/services/api.service";
 import type { AxiosError, AxiosResponse } from "axios";
+import type { TFeatureFlagsResponse } from "./feature-flag.service";
 
 /**
- * Service class for handling AI-related API operations
- * Extends the base APIService class to interact with AI endpoints
+ * Service class for handling PI-related API operations
+ * Extends the base APIService class to interact with PI endpoints
  * @extends {APIService}
  */
-export class AIService extends APIService {
+export class PIService extends APIService {
   constructor() {
     super(PI_URL);
+  }
+
+  async getDuplicateIssues(data: Partial<TDuplicateIssuePayload>): Promise<TDuplicateIssueResponse> {
+    return this.post(`/api/v1/dupes/issues/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getPiFeatureFlag(workspaceSlug: string): Promise<TFeatureFlagsResponse> {
+    return this.get(`/api/v1/flags/`, { params: { workspace_slug: workspaceSlug } })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 
   /**

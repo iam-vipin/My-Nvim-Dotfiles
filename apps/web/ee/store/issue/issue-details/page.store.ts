@@ -15,7 +15,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type { TIssuePage } from "@plane/types";
 import { getPageName } from "@plane/utils";
-import { IssuePageService } from "@/plane-web/services/issue/issue-page.service";
+import { IssuePageService } from "@/services/issue/issue-page.service";
 import type { IIssueRootStore } from "@/store/issue/root.store";
 
 export interface IWorkItemPagesInterface {

@@ -33,7 +33,7 @@ import { EIssuesStoreType } from "@plane/types";
 // helpers
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // plane web services
-import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
+import { TeamspaceViewService } from "@/services/teamspace/teamspace-views.service";
 // store
 import type { IBaseIssueFilterStore } from "@/store/issue/helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "@/store/issue/helpers/issue-filter-helper.store";

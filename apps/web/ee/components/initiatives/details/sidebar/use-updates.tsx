@@ -13,7 +13,7 @@
 
 import { useMemo } from "react";
 import type { EUpdateStatus } from "@plane/types";
-import { InitiativesUpdateService } from "@/plane-web/services";
+import { InitiativesUpdateService } from "@/services/initiative-updates.service";
 
 const initiativeUpdateService = new InitiativesUpdateService();
 

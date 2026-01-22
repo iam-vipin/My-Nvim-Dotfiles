@@ -30,11 +30,11 @@ const PROJECT_PAGES_STORAGE_KEYS: TPageFilterStorageKeys = {
   filters: "project-pages-filters",
 };
 // plane web store
-import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
-import { PageShareService } from "@/plane-web/services/page/page-share.service";
+import type { TPageSharedUser } from "@/services/page/page-share.service";
+import { PageShareService } from "@/services/page/page-share.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
-import { ProjectPageService } from "@/services/page";
+import { ProjectPageService } from "@/services/page/project-page.service";
 // store
 import type { CoreRootStore } from "../root.store";
 import type { TProjectPage } from "./project-page";

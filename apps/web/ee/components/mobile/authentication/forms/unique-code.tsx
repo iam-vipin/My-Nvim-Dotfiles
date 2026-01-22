@@ -22,7 +22,7 @@ import { Input, Spinner } from "@plane/ui";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // services
-import mobileAuthService from "@/plane-web/services/mobile.service";
+import mobileAuthService from "@/services/mobile.service";
 
 type TMobileAuthUniqueCodeForm = {
   authMode: TMobileAuthModes;

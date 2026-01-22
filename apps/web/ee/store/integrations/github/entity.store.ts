@@ -21,7 +21,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import type { TGithubEntityConnection } from "@plane/types";
 import { E_INTEGRATION_KEYS } from "@plane/types";
-import { GithubEntityService } from "@/plane-web/services/integrations/github";
+import { GithubEntityService } from "@/services/integrations/github";
 // plane web store
 import type { IGithubStore } from "@/plane-web/store/integrations";
 

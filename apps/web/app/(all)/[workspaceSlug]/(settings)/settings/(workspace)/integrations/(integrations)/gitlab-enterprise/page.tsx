@@ -27,7 +27,7 @@ import { UserAuthentication, IntegrationRoot, GitlabHeader } from "@/plane-web/c
 // plane web hooks
 import { useFlag, useGitlabIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 

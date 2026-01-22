@@ -22,7 +22,7 @@ import type { IWorkspaceProductSubscription, TProrationPreview } from "@plane/ty
 import { getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { SelectSeatsStep, ConfirmPriceStep } from "./steps";
-import { PaymentService } from "@/plane-web/services/payment.service";
+import { PaymentService } from "@/services/payment.service";
 
 const paymentService = new PaymentService();
 

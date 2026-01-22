@@ -18,7 +18,7 @@ import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import type { TPiChatEditorRefApi } from "@plane/editor";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
-import { PiChatService } from "@/plane-web/services/pi-chat.service";
+import { PiChatService } from "@/services/pi-chat.service";
 import type { TFocus, TPiLoaders } from "@/types";
 import { Waveform } from "./voice-chart";
 

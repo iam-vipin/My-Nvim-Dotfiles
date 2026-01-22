@@ -28,7 +28,7 @@ import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-it
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // constants
 import { SearchItems } from "./search-item";
 import { SearchFilters } from "./search-filters";

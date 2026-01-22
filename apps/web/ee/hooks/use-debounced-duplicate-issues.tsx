@@ -21,7 +21,7 @@ import { getTextContent } from "@plane/utils";
 import useDebounce from "@/hooks/use-debounce";
 // services
 import { store } from "@/lib/store-context";
-import { PIService } from "@/plane-web/services";
+import { PIService } from "@/services/pi.service";
 import { EWorkspaceFeatures } from "../../core/types/workspace-feature";
 import { useFlag } from "./store";
 

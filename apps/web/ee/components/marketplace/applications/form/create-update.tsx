@@ -35,7 +35,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { AppImageUploadModal } from "@/plane-web/components/common/modal/upload-app-image";
 import { GeneratedCredentialsModal } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
-import { WorkspaceService } from "@/plane-web/services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import { InputField } from "./fields/input-field";
 import { RichTextField } from "./fields/rich-text-field";

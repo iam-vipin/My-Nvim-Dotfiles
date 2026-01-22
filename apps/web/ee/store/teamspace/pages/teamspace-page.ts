@@ -21,7 +21,7 @@ import type { TPage } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { getPageName } from "@plane/utils";
 // plane web services
-import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
+import { TeamspacePageService } from "@/services/teamspace/teamspace-pages.service";
 // store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TPageInstance } from "@/store/pages/base-page";

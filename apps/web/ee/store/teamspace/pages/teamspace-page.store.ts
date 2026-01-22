@@ -31,9 +31,9 @@ const TEAMSPACE_PAGES_STORAGE_KEYS: TPageFilterStorageKeys = {
   filters: "teamspace-pages-filters",
 };
 // plane web services
-import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
-import { PageShareService } from "@/plane-web/services/page/page-share.service";
-import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
+import type { TPageSharedUser } from "@/services/page/page-share.service";
+import { PageShareService } from "@/services/page/page-share.service";
+import { TeamspacePageService } from "@/services/teamspace/teamspace-pages.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // services

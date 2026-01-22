@@ -28,10 +28,11 @@ import { Input, ToggleSwitch, CustomSelect, Loader } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate, cn } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
+//services
+import { cycleService } from "@/services/cycle-updates.service";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // plane web imports
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { cycleService } from "@/plane-web/services/cycle.service";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 const defaultValues: Partial<TCycleConfig> = {

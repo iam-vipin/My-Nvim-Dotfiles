@@ -18,8 +18,8 @@ import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // plane web imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { DraftIssuePropertyValuesService } from "@/plane-web/services/issue-types/draft-issue-property-values.service";
-import { IssuePropertyValuesService } from "@/plane-web/services/issue-types/issue-property-values.service";
+import { DraftIssuePropertyValuesService } from "@/services/issue-types/draft-issue-property-values.service";
+import { IssuePropertyValuesService } from "@/services/issue-types/issue-property-values.service";
 // local imports
 import { IssueAdditionalPropertiesBase } from "./additional-properties-base";
 

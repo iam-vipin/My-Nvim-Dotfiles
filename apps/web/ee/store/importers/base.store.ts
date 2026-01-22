@@ -16,7 +16,7 @@ import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/types";
 // plane web services
-import externalApiTokenService from "@/plane-web/services/importers/root.service";
+import externalApiTokenService from "@/services/importers/root.service";
 // plane web root store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TPlanePriorityData } from "@/types/importers";

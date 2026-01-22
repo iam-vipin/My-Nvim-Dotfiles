@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane package imports
@@ -27,7 +26,7 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 // services
-import { ProjectActivityService } from "@/plane-web/services";
+import { ProjectActivityService } from "@/services/project/project-activity.service";
 
 type Props = {
   workspaceSlug: string;

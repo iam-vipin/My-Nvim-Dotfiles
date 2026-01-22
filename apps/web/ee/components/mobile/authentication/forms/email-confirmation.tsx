@@ -23,7 +23,7 @@ import { checkEmailValidity, cn } from "@plane/utils";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 // plane web services
-import mobileAuthService from "@/plane-web/services/mobile.service";
+import mobileAuthService from "@/services/mobile.service";
 
 type TMobileAuthEmailValidationForm = {
   email: string;

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { mutate } from "swr";
 // plane imports
@@ -46,8 +46,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web imports
 import { useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
-import { IssueService } from "@/plane-web/services/issue/issue.service";
-import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+import { IssueService } from "@/services/issue/issue.service";
+import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/services/issue-types";
 // local imports
 import { ConversionToastActionItems } from "../conversion-toast-action-items";
 

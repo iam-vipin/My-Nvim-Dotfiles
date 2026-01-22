@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import type { TProjectLink, TProjectLinkMap, TProjectLinkIdMap } from "@plane/types";
 // types
-import { ProjectService } from "@/plane-web/services";
+import { ProjectService } from "@/services/project/project.service";
 import type { IProjectStore } from "../projects";
 
 export interface IProjectLinkStoreActions {

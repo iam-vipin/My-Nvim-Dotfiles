@@ -15,7 +15,7 @@ import { set, update } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
 import { computedFn } from "mobx-utils";
-import { ProjectService } from "@/plane-web/services";
+import { ProjectService } from "@/services/project/project.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type {
   TProject,

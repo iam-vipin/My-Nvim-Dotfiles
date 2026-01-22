@@ -30,7 +30,7 @@ import {
   MobileAuthInvitationWrapper,
 } from "@/plane-web/components/mobile";
 // services
-import mobileAuthService from "@/plane-web/services/mobile.service";
+import mobileAuthService from "@/services/mobile.service";
 
 const UNIQUE_CODE_ERROR_CODES = [
   EMobileAuthErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,

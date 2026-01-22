@@ -16,7 +16,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspaceProductSubscription } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // plane web imports
-import { PaymentService } from "@/plane-web/services/payment.service";
+import { PaymentService } from "@/services/payment.service";
 import { useMember } from "@/hooks/store/use-member";
 
 const paymentService = new PaymentService();

@@ -18,7 +18,7 @@ import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
 import type { TGithubRepository } from "@plane/types";
-import { GithubDataService } from "@/plane-web/services/integrations/github";
+import { GithubDataService } from "@/services/integrations/github";
 // plane web store
 import type { IGithubStore } from "@/plane-web/store/integrations";
 

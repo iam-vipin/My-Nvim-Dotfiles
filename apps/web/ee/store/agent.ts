@@ -14,12 +14,13 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 // plane web imports
-import { WorkspaceService, AgentRunService } from "@/plane-web/services";
 import type { RootStore } from "@/plane-web/store/root.store";
-
 import type { TAgentRun, TAgentRunActivity } from "@plane/types";
 import { EAgentRunStatus } from "@plane/types";
 import { computedFn } from "mobx-utils";
+import { WorkspaceService } from "@/services/workspace.service";
+import { AgentRunService } from "@/services/agent.service";
+
 type TActivityPaginationInfo = {
   nextCursor: string | null;
   prevCursor: string | null;

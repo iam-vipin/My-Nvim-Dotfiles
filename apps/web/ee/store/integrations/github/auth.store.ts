@@ -20,9 +20,9 @@ import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { GithubAuthorizeState, GithubUserAuthState } from "@plane/etl/github";
 // plane web services
 import type { TGithubAppConfig, TGithubWorkspaceConnection, TGithubWorkspaceUserConnection } from "@plane/types";
-import { GithubAuthService } from "@/plane-web/services/integrations/github";
+import { GithubAuthService } from "@/services/integrations/github";
 // plane web store
-import { ApplicationService } from "@/plane-web/services/marketplace";
+import { ApplicationService } from "@/services/marketplace";
 import type { IGithubStore } from "@/plane-web/store/integrations";
 
 export interface IGithubAuthStore {

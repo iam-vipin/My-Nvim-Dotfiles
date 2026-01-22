@@ -20,7 +20,7 @@ import { EViewAccess } from "@plane/types";
 // plane web helpers
 import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@/helpers/teamspace/view";
 // plane web services
-import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
+import { TeamspaceViewService } from "@/services/teamspace/teamspace-views.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 

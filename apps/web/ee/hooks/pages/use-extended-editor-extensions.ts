@@ -36,7 +36,7 @@ import { AIBlockWidget } from "@/plane-web/components/pages/editor/ai/ai-block-w
 // plane web hooks
 import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 // store
-import { AIService } from "@/plane-web/services/ai.service";
+import { PIService } from "@/services/pi.service";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import type { EPageStoreType } from "../store";
@@ -52,7 +52,7 @@ export type TExtendedEditorExtensionsConfig = Pick<
   | "widgetCallback"
 >;
 
-const aiService = new AIService();
+const piService = new PIService();
 
 export type TExtendedEditorExtensionsHookParams = {
   workspaceSlug: string;
@@ -134,13 +134,13 @@ export const useExtendedEditorProps = (
       project_id: projectId,
     };
     const generateBlockContent = async (data: TAIBlockGenerateInputPartial) =>
-      await aiService.generateBlockContent({
+      await piService.generateBlockContent({
         ...data,
         ...payload,
       });
     const revisionBlockContent = async (data: { block_id: string; revision_type: string }) =>
-      await aiService.revisionBlockContent(data);
-    const postFeedback = async (data: TFeedback) => await aiService.postFeedback({ ...data, ...payload });
+      await piService.revisionBlockContent(data);
+    const postFeedback = async (data: TFeedback) => await piService.postFeedback({ ...data, ...payload });
     const saveDocument = async () => {
       const editorRef = page.editor.editorRef;
       if (!editorRef) return;

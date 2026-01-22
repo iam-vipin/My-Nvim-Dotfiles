@@ -33,7 +33,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // services
 import { AddAttachmentButton } from "./attachments/add-attachment-btn";
 

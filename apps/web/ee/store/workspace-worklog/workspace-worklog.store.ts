@@ -20,7 +20,7 @@ import { convertToEpoch } from "@plane/utils";
 // plane web constants
 import { EWorklogLoader, EWorklogQueryParamType } from "@/constants/workspace-worklog";
 // plane web services
-import worklogService from "@/plane-web/services/workspace-worklog.service";
+import worklogService from "@/services/workspace-worklog.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IWorklog } from "@/plane-web/store/workspace-worklog";

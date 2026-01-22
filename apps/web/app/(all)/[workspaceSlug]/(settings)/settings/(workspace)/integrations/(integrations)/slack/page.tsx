@@ -28,7 +28,7 @@ import { SlackIntegrationRoot } from "@/plane-web/components/integrations/slack"
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 import type { Route } from "./+types/page";
 
 const siloAppService = new SiloAppService();

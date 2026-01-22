@@ -16,8 +16,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane web services
-import { PaymentService } from "@/plane-web/services/payment.service";
-import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
+import { PaymentService } from "@/services/payment.service";
+import selfHostedSubscriptionService from "@/services/self-hosted-subscription.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types

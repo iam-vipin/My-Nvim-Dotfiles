@@ -22,7 +22,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserApplication } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { OAuthService } from "@/plane-web/services/marketplace";
+import { OAuthService } from "@/services/marketplace";
 
 type ApplicationInstallationDetailsProps = {
   app: TUserApplication;

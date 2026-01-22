@@ -25,8 +25,8 @@ import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
-import type { TPageType } from "@/plane-web/services/live.service";
-import { liveService } from "@/plane-web/services/live.service";
+import type { TPageType } from "@/services/live.service";
+import { liveService } from "@/services/live.service";
 // plane web imports
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // local imports

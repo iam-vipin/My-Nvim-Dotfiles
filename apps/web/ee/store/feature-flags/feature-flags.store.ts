@@ -18,10 +18,10 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { TExtensions } from "@plane/editor";
 import type { E_INTEGRATION_KEYS } from "@plane/types";
 // plane-web
-import type { TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
-import { FeatureFlagService } from "@/plane-web/services/feature-flag.service";
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
-import { PIService } from "@/plane-web/services/pi.service";
+import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
+import { FeatureFlagService } from "@/services/feature-flag.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
+import { PIService } from "@/services/pi.service";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 

@@ -19,8 +19,8 @@ import type { TSentryConfig, TSentryConnectionData } from "@plane/etl/sentry";
 import type { TWorkspaceConnection } from "@plane/types";
 // plane web services
 // plane web store
-import { SentryIntegrationService } from "@/plane-web/services/integrations/sentry/sentry.service";
-import { ApplicationService } from "@/plane-web/services/marketplace";
+import { SentryIntegrationService } from "@/services/integrations/sentry/sentry.service";
+import { ApplicationService } from "@/services/marketplace";
 import type { RootStore } from "@/plane-web/store/root.store";
 import { IntegrationBaseStore } from "../base.store";
 // base integration store

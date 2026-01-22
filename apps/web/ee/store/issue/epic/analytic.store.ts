@@ -17,7 +17,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import type { IEpicService, TEpicAnalytics, TEpicAnalyticsGroup, TEpicStats, TLoader } from "@plane/types";
 // plane web imports
-import { epicService } from "@/plane-web/services/issue-types/epics";
+import { epicService } from "@/services/issue-types/epics";
 import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IEpicAnalyticStore {

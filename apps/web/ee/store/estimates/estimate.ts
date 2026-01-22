@@ -24,7 +24,7 @@ import type {
 import type { IEstimate as ICeEstimate } from "@/ce/store/estimates/estimate";
 import { Estimate as CeEstimate } from "@/ce/store/estimates/estimate";
 // plane web service
-import estimateService from "@/plane-web/services/project/estimate.service";
+import estimateService from "@/services/project/estimate.service";
 // store
 import { EstimatePoint } from "@/store/estimates/estimate-point";
 import type { CoreRootStore } from "@/store/root.store";

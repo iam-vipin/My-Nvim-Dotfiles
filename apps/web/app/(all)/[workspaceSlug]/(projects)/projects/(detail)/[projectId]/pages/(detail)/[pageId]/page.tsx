@@ -36,9 +36,10 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // services
-import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+import { ProjectPageService } from "@/services/page/project-page.service";
+import { ProjectPageVersionService } from "@/services/page/project-page-version.service";
 import type { Route } from "./+types/page";
 const workspaceService = new WorkspaceService();
 const projectPageService = new ProjectPageService();

@@ -15,7 +15,7 @@ import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type { TEpicStats, TLoader } from "@plane/types";
-import type { InitiativeService } from "@/plane-web/services/initiative.service";
+import type { InitiativeService } from "@/services/initiative.service";
 import type { TInitiativeAnalytics } from "@/types/initiative";
 import type { RootStore } from "../root.store";
 import type { IInitiativeEpicsFilterStore } from "./initiative-epics-filter.store";

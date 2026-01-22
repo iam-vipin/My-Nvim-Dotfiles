@@ -28,7 +28,7 @@ import DefaultLayout from "@/layouts/default-layout";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // assets
 import { AppConsent } from "@/plane-web/components/marketplace";
-import { ApplicationService } from "@/plane-web/services/marketplace";
+import { ApplicationService } from "@/services/marketplace";
 
 const applicationService = new ApplicationService();
 function OAuthPage() {

@@ -16,7 +16,7 @@ import { makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { groupReactions } from "@plane/utils";
 // services
-import { ProjectReactionService } from "@/plane-web/services/project/project_reaction.service";
+import { ProjectReactionService } from "@/services/project/project_reaction.service";
 // types
 import type { TProjectReaction } from "@/types";
 

@@ -21,7 +21,7 @@ import type { TMobileCSRFToken } from "@plane/types";
 import { Input, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // services
-import mobileAuthService from "@/plane-web/services/mobile.service";
+import mobileAuthService from "@/services/mobile.service";
 // components
 import { MobilePasswordStrengthMeter } from "./password-strength-meter";
 

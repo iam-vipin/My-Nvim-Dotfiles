@@ -16,7 +16,7 @@ import { computedFn } from "mobx-utils";
 import { MilestoneInstance } from "@plane/shared-state";
 import type { TMilestone } from "@plane/types";
 // services
-import milestoneService from "@/plane-web/services/milestone.service";
+import milestoneService from "@/services/milestone.service";
 // stores
 import type { RootStore } from "../root.store";
 import type { IWorkItemMilestoneStore } from "./work-items.store";

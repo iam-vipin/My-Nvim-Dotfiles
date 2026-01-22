@@ -33,7 +33,7 @@ import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
 import type { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
 // plane web imports
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { PaymentService } from "@/plane-web/services/payment.service";
+import { PaymentService } from "@/services/payment.service";
 // local imports
 import { TrialButton } from "./trial-button";
 

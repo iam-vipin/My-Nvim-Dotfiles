@@ -16,7 +16,7 @@ import { useState } from "react";
 import { PlusIcon } from "@plane/propel/icons";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
-import milestoneService from "@/plane-web/services/milestone.service";
+import milestoneService from "@/services/milestone.service";
 
 type Props = {
   projectId: string;

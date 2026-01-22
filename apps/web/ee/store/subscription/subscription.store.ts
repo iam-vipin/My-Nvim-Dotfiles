@@ -19,7 +19,7 @@ import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA, SUBSCRIPTION_WITH_SEATS_MANAGEM
 import type { IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
 // services
-import { PaymentService } from "@/plane-web/services/payment.service";
+import { PaymentService } from "@/services/payment.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 

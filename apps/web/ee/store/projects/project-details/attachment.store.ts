@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // services
-import { ProjectAttachmentService } from "@/plane-web/services";
+import { ProjectAttachmentService } from "@/services/project/project_attachment.service";
 import type { TProjectAttachment, TProjectAttachmentMap, TProjectAttachmentIdMap } from "@/types";
 import type { IProjectStore } from "../projects";
 

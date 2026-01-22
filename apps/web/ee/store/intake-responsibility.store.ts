@@ -14,7 +14,7 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // services
-import { IntakeResponsibilityService } from "@/plane-web/services/intake-responsibility.service";
+import { IntakeResponsibilityService } from "@/services/intake-responsibility.service";
 // store
 import type { RootStore } from "@/plane-web/store/root.store";
 

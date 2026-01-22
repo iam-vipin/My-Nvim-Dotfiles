@@ -28,7 +28,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { IMPORTERS_LIST } from "@/plane-web/components/importers";
 import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { OAuthService } from "@/plane-web/services/marketplace/oauth.service";
+import { OAuthService } from "@/services/marketplace/oauth.service";
 import { AppTileLogo } from "./tile-logo";
 
 // display app details like name, logo, description

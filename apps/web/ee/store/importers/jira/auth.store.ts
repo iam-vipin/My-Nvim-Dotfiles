@@ -17,7 +17,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { TServiceAuthConfiguration } from "@plane/etl/core";
 import type { JiraAuthState, JiraPATAuthState } from "@plane/etl/jira";
 // plane web services
-import { JiraAuthService } from "@/plane-web/services/importers/jira/auth.service";
+import { JiraAuthService } from "@/services/importers/jira/auth.service";
 // store types
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types

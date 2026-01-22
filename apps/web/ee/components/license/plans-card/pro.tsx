@@ -23,7 +23,7 @@ import { cn, renderFormattedDate } from "@plane/utils";
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { PaymentService } from "@/plane-web/services/payment.service";
+import { PaymentService } from "@/services/payment.service";
 
 const paymentService = new PaymentService();
 

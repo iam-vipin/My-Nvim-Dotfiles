@@ -31,7 +31,7 @@ import type {
 } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 // plane web imports
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import projectMemberService from "@/services/project/project-member.service";

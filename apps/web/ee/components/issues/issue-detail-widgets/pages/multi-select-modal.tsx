@@ -34,7 +34,7 @@ import { IssueIdentifier } from "@/ce/components/issues/issue-details/issue-iden
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { WorkspacePageService } from "@/plane-web/services/page";
+import { WorkspacePageService } from "@/services/page/workspace-page.service";
 
 const service = new WorkspacePageService();
 

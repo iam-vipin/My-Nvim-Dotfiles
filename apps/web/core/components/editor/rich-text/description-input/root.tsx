@@ -27,7 +27,7 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import { DescriptionInputLoader } from "./loader";
 // services init

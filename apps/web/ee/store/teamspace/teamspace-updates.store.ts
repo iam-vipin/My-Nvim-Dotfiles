@@ -27,7 +27,7 @@ import type {
 } from "@plane/types";
 // plane web imports
 import { groupReactions } from "@plane/utils";
-import { TeamspaceUpdatesService } from "@/plane-web/services/teamspace/teamspace-updates.service";
+import { TeamspaceUpdatesService } from "@/services/teamspace/teamspace-updates.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITeamspaceUpdatesStore {

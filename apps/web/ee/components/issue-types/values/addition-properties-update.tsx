@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -20,7 +19,7 @@ import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // plane web imports
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+import { IssuePropertyValuesService } from "@/services/issue-types";
 // local imports
 import type { TIssueAdditionalPropertyValuesUpdateProps } from "./addition-properties-update-base";
 import { IssueAdditionalPropertyValuesUpdateBase } from "./addition-properties-update-base";

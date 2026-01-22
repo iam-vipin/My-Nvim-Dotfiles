@@ -28,7 +28,7 @@ import { Button, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 import { FileService } from "@/services/file.service";
 
 const fileService = new FileService();

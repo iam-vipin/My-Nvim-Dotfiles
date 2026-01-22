@@ -19,7 +19,7 @@ import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
 import type { TGitlabEntityConnection } from "@plane/types";
-import { GitlabEntityService } from "@/plane-web/services/integrations/gitlab";
+import { GitlabEntityService } from "@/services/integrations/gitlab";
 // plane web store
 import type { IGitlabStore } from "@/plane-web/store/integrations";
 

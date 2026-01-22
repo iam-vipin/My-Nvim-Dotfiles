@@ -30,8 +30,8 @@ import { useWorkspaceInvitationActions } from "@/hooks/use-workspace-invitation"
 // plane web imports
 import { AddSeatsForm } from "@/plane-web/components/workspace/billing/manage-seats";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { PaymentService } from "@/plane-web/services/payment.service";
-// local imports
+import { PaymentService } from "@/services/payment.service";
+// local components
 import { InvitationDescription } from "./description";
 import { InvitationLimitReactInfo } from "./limit-reached-info";
 import { calculateInviteCounts, checkInviteLimitReached } from "./helpers";

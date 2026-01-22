@@ -35,9 +35,9 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-import { WorkspaceService } from "@/plane-web/services";
-import { TeamspacePageVersionService } from "@/plane-web/services/teamspace/teamspace-page-version.service";
-import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
+import { WorkspaceService } from "@/services/workspace.service";
+import { TeamspacePageVersionService } from "@/services/teamspace/teamspace-page-version.service";
+import { TeamspacePageService } from "@/services/teamspace/teamspace-pages.service";
 import type { Route } from "./+types/page";
 const workspaceService = new WorkspaceService();
 const teamspacePageService = new TeamspacePageService();

@@ -17,9 +17,9 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { TClickUpAuthState } from "@plane/etl/clickup";
 import type { TServiceAuthConfiguration } from "@plane/etl/core";
 // plane web services
-import { ClickUpAuthService } from "@/plane-web/services/importers/clickup/auth.service";
+import { ClickUpAuthService } from "@/services/importers/clickup/auth.service";
 // store types
-import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
+import { ApplicationService } from "@/services/marketplace/application.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
 import type { TClickUpPATFormFields } from "@/types/importers/clickup";

@@ -22,7 +22,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import type { TEditorMentionComponentProps } from "../root";
 import { EditorWorkItemMentionContent } from "./content";

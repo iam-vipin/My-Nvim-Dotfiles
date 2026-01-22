@@ -32,10 +32,10 @@ const WORKSPACE_PAGES_STORAGE_KEYS: TPageFilterStorageKeys = {
   filters: "workspace-pages-filters",
 };
 // plane web services
-import { WorkspacePageService } from "@/plane-web/services/page";
+import { WorkspacePageService } from "@/services/page/workspace-page.service";
 // services
-import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
-import { PageShareService } from "@/plane-web/services/page/page-share.service";
+import type { TPageSharedUser } from "@/services/page/page-share.service";
+import { PageShareService } from "@/services/page/page-share.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TWorkspacePage } from "./workspace-page";

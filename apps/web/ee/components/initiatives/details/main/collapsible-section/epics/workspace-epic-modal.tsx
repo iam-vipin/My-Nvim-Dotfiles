@@ -31,7 +31,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { getSelectedEpicDetails } from "@/plane-web/components/initiatives/utils";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // core imports
 import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
 // local imports

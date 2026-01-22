@@ -17,7 +17,7 @@ import useSWR from "swr";
 import { PlaneLogo } from "@plane/propel/icons";
 import type { TMobileWorkspaceInvitation } from "@plane/types";
 // plane web mobile services
-import mobileAuthService from "@/plane-web/services/mobile.service";
+import mobileAuthService from "@/services/mobile.service";
 
 type TMobileAuthInvitationWrapper = {
   invitationId: string | undefined;

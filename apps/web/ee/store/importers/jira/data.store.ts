@@ -18,7 +18,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { JiraResource, JiraProject, JiraStatus, JiraPriority, ImportedJiraUser } from "@plane/etl/jira";
 import type { IAdditionalUsersResponse } from "@plane/types";
 // plane web services
-import { JiraService } from "@/plane-web/services/importers/jira/data.service";
+import { JiraService } from "@/services/importers/jira/data.service";
 // plane web store types
 import type { RootStore } from "@/plane-web/store/root.store";
 

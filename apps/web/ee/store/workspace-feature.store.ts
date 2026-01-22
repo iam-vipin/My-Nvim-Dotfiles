@@ -17,7 +17,7 @@ import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane web services
-import workspaceFeatureService from "@/plane-web/services/workspace-feature.service";
+import workspaceFeatureService from "@/services/workspace-feature.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types

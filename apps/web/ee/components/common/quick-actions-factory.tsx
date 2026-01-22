@@ -31,8 +31,8 @@ import { EndCycleModal } from "@/plane-web/components/cycles/end-cycle";
 import { ExportModal } from "@/plane-web/components/issues/issue-layouts/export-modal";
 import type { TExportProvider } from "@/plane-web/components/issues/issue-layouts/export-modal";
 import { useFlag } from "@/plane-web/hooks/store";
-import exportService from "@/plane-web/services/export.service";
 import { useUserPermissions } from "@/hooks/store/user";
+import exportService from "@/services/export.service";
 
 type FeatureResult = {
   items: TContextMenuItem[];

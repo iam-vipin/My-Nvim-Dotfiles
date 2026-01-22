@@ -26,7 +26,7 @@ import { EIssueServiceType } from "@plane/types";
 // helpers
 import { convertToEpoch } from "@plane/utils";
 // plane web services
-import { IssuePropertiesActivityService } from "@/plane-web/services/issue-types";
+import { IssuePropertiesActivityService } from "@/services/issue-types";
 // plane web store
 import { IssuePropertiesActivity } from "@/plane-web/store/issue-types";
 import type { RootStore } from "@/plane-web/store/root.store";

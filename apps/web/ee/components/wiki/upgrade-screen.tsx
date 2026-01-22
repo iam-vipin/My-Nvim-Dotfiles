@@ -31,7 +31,7 @@ import publishPagesDarkImage from "@/app/assets/wiki-upgrade-flow/publish-dark.p
 import publishPagesLightImage from "@/app/assets/wiki-upgrade-flow/publish-light.png?url";
 // plane web imports
 import { EPageStoreType, usePageStore, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { WorkspacePageService } from "@/plane-web/services/page/workspace-page.service";
+import { WorkspacePageService } from "@/services/page/workspace-page.service";
 // services
 const workspacePageService = new WorkspacePageService();
 

@@ -18,8 +18,8 @@ import { computedFn } from "mobx-utils";
 // types
 import type { TLoader, TUserApplication, TApplicationCategory } from "@plane/types";
 // services
-import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
-import { CategoryService } from "@/plane-web/services/marketplace/category.service";
+import { ApplicationService } from "@/services/marketplace/application.service";
+import { CategoryService } from "@/services/marketplace/category.service";
 // store
 import type { RootStore } from "@/plane-web/store/root.store";
 

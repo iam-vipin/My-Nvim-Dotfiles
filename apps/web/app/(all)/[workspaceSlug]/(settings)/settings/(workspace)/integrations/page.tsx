@@ -31,7 +31,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { AppListRoot } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 

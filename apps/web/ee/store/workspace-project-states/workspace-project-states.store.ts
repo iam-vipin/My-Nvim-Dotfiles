@@ -17,7 +17,7 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web constants
 import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/constants/workspace-project-states";
 // plane web services
-import projectStateService from "@/plane-web/services/workspace-project-states.service";
+import projectStateService from "@/services/workspace-project-states.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IProjectState } from "@/plane-web/store/workspace-project-states";

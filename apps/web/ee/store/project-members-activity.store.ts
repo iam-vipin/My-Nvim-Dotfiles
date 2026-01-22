@@ -19,7 +19,7 @@ import { E_SORT_ORDER } from "@plane/constants";
 import type { TLoader } from "@plane/types";
 import type { TProjectMemberActivity } from "@/plane-web/components/projects/members/siderbar/activity/helper";
 // services
-import { ProjectMembersActivityService } from "@/plane-web/services/project-members-activity.service";
+import { ProjectMembersActivityService } from "@/services/project-members-activity.service";
 // store
 import type { RootStore } from "@/plane-web/store/root.store";
 

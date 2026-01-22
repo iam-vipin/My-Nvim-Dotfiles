@@ -14,7 +14,7 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane web services
-import projectStateService from "@/plane-web/services/workspace-project-states.service";
+import projectStateService from "@/services/workspace-project-states.service";
 // store
 import type { RootStore } from "@/plane-web/store/root.store";
 // types

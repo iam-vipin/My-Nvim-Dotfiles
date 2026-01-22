@@ -20,7 +20,7 @@ import type { IProjectView, TViewFilters } from "@plane/types";
 // helpers
 import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@plane/utils";
 // services
-import { ViewService } from "@/plane-web/services";
+import { ViewService } from "@/services/project/view.service";
 // store
 import type { CoreRootStore } from "./root.store";
 

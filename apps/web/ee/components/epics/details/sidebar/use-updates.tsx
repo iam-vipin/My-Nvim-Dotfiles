@@ -19,7 +19,7 @@ import { EUpdateEntityType } from "@plane/types";
 import { useUser } from "@/hooks/store/user";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
-import { EpicsUpdateService } from "@/plane-web/services";
+import { EpicsUpdateService } from "@/services/epic-updates.service";
 
 const epicService = new EpicsUpdateService();
 

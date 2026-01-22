@@ -18,7 +18,7 @@ import { computedFn } from "mobx-utils";
 import { EStatisticsLegend, ETeamspaceAnalyticsDataKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
 import type { TLoader, TTeamspaceRelations, TTeamspaceStatistics, TTeamspaceProgressSummary } from "@plane/types";
 // plane web imports
-import { TeamspaceAnalyticsService } from "@/plane-web/services/teamspace/teamspace-analytics.service";
+import { TeamspaceAnalyticsService } from "@/services/teamspace/teamspace-analytics.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/types/teamspace";
 

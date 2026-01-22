@@ -22,7 +22,7 @@ import type {
   TBulkOperationsPayload,
 } from "@plane/types";
 // services
-import { TeamspaceWorkItemsService } from "@/plane-web/services/teamspace/teamspace-work-items.service";
+import { TeamspaceWorkItemsService } from "@/services/teamspace/teamspace-work-items.service";
 // base class
 import type { IBaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
 import { BaseIssuesStore } from "@/store/issue/helpers/base-issues.store";

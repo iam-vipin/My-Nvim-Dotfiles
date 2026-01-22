@@ -17,8 +17,8 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { PI_URL } from "@plane/constants";
 // plane web imports
-import { WorkspaceService } from "@/plane-web/services";
-import { PiChatService } from "@/plane-web/services/pi-chat.service";
+import { WorkspaceService } from "@/services/workspace.service";
+import { PiChatService } from "@/services/pi-chat.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type {
   TAiModels,

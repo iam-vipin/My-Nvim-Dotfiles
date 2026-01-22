@@ -19,7 +19,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
 import type { IGitlabEntity } from "@plane/etl/gitlab";
 import type { TGitlabRepository } from "@plane/types";
-import { GitlabDataService } from "@/plane-web/services/integrations/gitlab";
+import { GitlabDataService } from "@/services/integrations/gitlab";
 // plane web store
 import type { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types

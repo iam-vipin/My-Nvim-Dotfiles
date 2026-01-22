@@ -18,7 +18,7 @@ import type { TCycleConfig } from "@plane/types";
 import type { CYCLE_ACTION } from "@/constants/cycle";
 import { APIService } from "@/services/api.service";
 import { CycleService as CycleServiceCore } from "@/services/cycle.service";
-import type { TCycleUpdateReaction, TCycleUpdates } from "../../core/types";
+import type { TCycleUpdateReaction, TCycleUpdates } from "../types";
 
 export class CycleUpdateService extends APIService {
   constructor() {

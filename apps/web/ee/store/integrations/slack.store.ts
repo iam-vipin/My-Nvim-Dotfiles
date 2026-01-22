@@ -24,9 +24,9 @@ import type {
 } from "@plane/etl/slack";
 import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 // plane web services
-import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";
+import { SlackIntegrationService } from "@/services/integrations/slack.service";
 // plane web store
-import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
+import { ApplicationService } from "@/services/marketplace/application.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // base integration store
 import { IntegrationBaseStore } from "./base.store";

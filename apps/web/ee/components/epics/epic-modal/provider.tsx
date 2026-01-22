@@ -34,7 +34,7 @@ import { useUser } from "@/hooks/store/user/user-user";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
-import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+import { IssuePropertyValuesService } from "@/services/issue-types";
 // local components
 import { ConversionToastActionItems } from "../../issues/conversion-toast-action-items";
 

@@ -42,7 +42,7 @@ import {
 } from "@/plane-web/components/license";
 import { PlansComparison } from "@/plane-web/components/workspace/billing/comparison";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { PaymentService } from "@/plane-web/services/payment.service";
+import { PaymentService } from "@/services/payment.service";
 
 const paymentService = new PaymentService();
 

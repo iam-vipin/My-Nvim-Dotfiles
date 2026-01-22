@@ -37,7 +37,7 @@ import {
   issuePropertyService,
   issueTypeService,
   epicService,
-} from "@/plane-web/services/issue-types";
+} from "@/services/issue-types";
 // plane web stores
 import { IssueType } from "@/plane-web/store/issue-types";
 import type { RootStore } from "@/plane-web/store/root.store";

@@ -17,7 +17,7 @@ import { computedFn } from "mobx-utils";
 // types
 import type { ICycle, TLoader } from "@plane/types";
 // plane web services
-import { TeamspaceCycleService } from "@/plane-web/services/teamspace/teamspace-cycles.service";
+import { TeamspaceCycleService } from "@/services/teamspace/teamspace-cycles.service";
 // plane web store
 import type { ICycleStore } from "@/plane-web/store/cycle";
 import type { RootStore } from "@/plane-web/store/root.store";

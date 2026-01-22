@@ -19,7 +19,7 @@ import { ETeamspaceScope } from "@plane/constants";
 import type { TLoader, TTeamspace, TTeamspaceMember, TTeamspaceEntities, TNameDescriptionLoader } from "@plane/types";
 import { shouldFilterTeam, orderTeams } from "@plane/utils";
 // plane web services
-import { TeamspaceService } from "@/plane-web/services/teamspace/teamspace.service";
+import { TeamspaceService } from "@/services/teamspace/teamspace.service";
 // plane web types
 import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/types/workspace-feature";
 // root store

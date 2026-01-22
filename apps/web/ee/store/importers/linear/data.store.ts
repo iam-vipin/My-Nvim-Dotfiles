@@ -18,7 +18,7 @@ import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { LinearOrganization, LinearTeam, LinearState } from "@plane/etl/linear";
 import type { IAdditionalUsersResponse } from "@plane/types";
 // plane web services
-import { LinearService } from "@/plane-web/services/importers/linear/data.service";
+import { LinearService } from "@/services/importers/linear/data.service";
 // plane web store types
 import type { RootStore } from "@/plane-web/store/root.store";
 

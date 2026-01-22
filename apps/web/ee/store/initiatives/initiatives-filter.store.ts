@@ -17,7 +17,7 @@ import { computedFn } from "mobx-utils";
 import { INITIATIVE_DEFAULT_DISPLAY_FILTERS } from "@plane/constants";
 import type { TInitiativeDisplayFilters } from "@plane/types";
 // Plane-web
-import { InitiativeService } from "@/plane-web/services/initiative.service";
+import { InitiativeService } from "@/services/initiative.service";
 import type { TExternalInitiativeFilterExpression } from "@/types/initiative";
 import type { RootStore } from "../root.store";
 

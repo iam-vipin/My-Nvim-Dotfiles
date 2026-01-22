@@ -323,6 +323,7 @@ CELERY_IMPORTS = (
     "plane.payment.bgtasks.update_license_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
+    "plane.bgtasks.copy_project_data_task",
     # issue version tasks
     "plane.bgtasks.issue_version_sync",
     "plane.bgtasks.issue_description_version_sync",

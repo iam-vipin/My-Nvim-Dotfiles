@@ -14,7 +14,7 @@
 import { useParams } from "next/navigation";
 // plane web components
 import { WorkspaceActiveCyclesList, WorkspaceActiveCyclesUpgrade } from "@/plane-web/components/active-cycles";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 
 export function WorkspaceActiveCyclesRoot() {
   // router

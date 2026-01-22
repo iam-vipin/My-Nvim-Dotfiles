@@ -14,9 +14,9 @@
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
-import { FlatfileDashboardRoot } from "@/plane-web/components/importers/flatfile";
-import { StepsRoot } from "@/plane-web/components/importers/flatfile/steps";
+import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
+import { FlatfileDashboardRoot } from "@/components/importers/flatfile";
+import { StepsRoot } from "@/components/importers/flatfile/steps";
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
 
 function FlatfileImporter() {

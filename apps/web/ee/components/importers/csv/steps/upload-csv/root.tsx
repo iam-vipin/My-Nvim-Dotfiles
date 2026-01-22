@@ -28,7 +28,7 @@ import { FileText, Upload, CheckCircle2, AlertCircle, Loader, AlertTriangle } fr
 // propel icons
 import { CloseIcon } from "@plane/propel/icons";
 // components
-import { StepperNavigation } from "@/plane-web/components/importers/ui";
+import { StepperNavigation } from "@/components/importers/ui/stepper";
 // hooks
 import { useCSVImporter } from "@/plane-web/hooks/store";
 // services

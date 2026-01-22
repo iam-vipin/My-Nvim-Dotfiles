@@ -13,12 +13,7 @@
 
 import { Layers2, Layers3, ReceiptText } from "lucide-react";
 // components
-import {
-  SelectPlaneProjectRoot,
-  ConfigureLinearRoot,
-  MapStatesRoot,
-  SummaryRoot,
-} from "@/plane-web/components/importers/linear";
+import { SelectPlaneProjectRoot, ConfigureLinearRoot, MapStatesRoot, SummaryRoot } from "@/components/importers/linear";
 // types
 import type { TLinearImporterStep } from "@/types/importers/linear";
 import { E_LINEAR_IMPORTER_STEPS } from "@/types/importers/linear";

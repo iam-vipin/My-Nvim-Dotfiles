@@ -19,7 +19,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { EIssuePropertyType, TIssueProperty, TIssuePropertyDisplayContext } from "@plane/types";
 import { cn, getFormattedWorkItemProperties } from "@plane/utils";
 // local imports
-import { IssuePropertyLogo } from "../issue-types/properties/common/issue-property-logo";
+import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
 
 function PropertyDetail({ property }: { property: Partial<TIssueProperty<EIssuePropertyType>> | undefined }) {
   if (!property) return null;

@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { CustomerRequestSearchEmptyState } from "@/plane-web/components/customers";
+import { CustomerRequestSearchEmptyState } from "@/components/customers";
 import { WorkItemRequestListItem } from "@/plane-web/components/issues/issue-detail-widgets";
 import { WorkItemRequestForm } from "@/plane-web/components/issues/issue-detail-widgets/customer-requests/form";
 import { useCustomers } from "@/plane-web/hooks/store";

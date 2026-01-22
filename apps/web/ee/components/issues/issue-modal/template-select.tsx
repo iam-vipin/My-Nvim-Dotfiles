@@ -25,7 +25,7 @@ import type { TWorkItemTemplateSelect } from "@/ce/components/issues/issue-modal
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WorkItemTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
+import { WorkItemTemplateDropdown } from "@/components/templates/dropdowns";
 import { useFlag } from "@/plane-web/hooks/store";
 
 export const WorkItemTemplateSelect = observer(function WorkItemTemplateSelect(props: TWorkItemTemplateSelect) {

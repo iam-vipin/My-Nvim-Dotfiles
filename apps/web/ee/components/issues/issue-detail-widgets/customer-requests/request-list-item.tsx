@@ -23,8 +23,8 @@ import { getFileURL } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { SourceItem, SourceCreateUpdateModal, RequestAttachmentsCollapsible } from "@/plane-web/components/customers";
-import { CustomerRequestQuickActions } from "@/plane-web/components/customers/actions";
+import { SourceItem, SourceCreateUpdateModal, RequestAttachmentsCollapsible } from "@/components/customers";
+import { CustomerRequestQuickActions } from "@/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
 // local imports
 import { WorkItemRequestForm } from "./form";

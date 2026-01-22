@@ -22,7 +22,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // components
 import { AuthHeaderBase } from "@/components/auth-screens/header";
 // plane web imports
-import { LDAPRoot } from "@/plane-web/components/auth/ldap/root";
+import { LDAPRoot } from "@/components/auth/ldap/root";
 
 function LDAPAuthPage() {
   return (

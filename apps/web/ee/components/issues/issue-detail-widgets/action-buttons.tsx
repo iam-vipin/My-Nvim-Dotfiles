@@ -17,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import { PageIcon } from "@plane/propel/icons";
 import type { TWorkItemAdditionalWidgetActionButtonsProps } from "@/ce/components/issues/issue-detail-widgets/action-buttons";
 import { IssueDetailWidgetButton } from "@/components/issues/issue-detail-widgets/widget-button";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { PagesActionButton } from "./pages";
 
 export function WorkItemAdditionalWidgetActionButtons(props: TWorkItemAdditionalWidgetActionButtonsProps) {

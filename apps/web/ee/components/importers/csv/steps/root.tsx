@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // assets
 import CSVLogo from "@/app/assets/services/csv.svg?url";
 // plane web imports
-import { Stepper } from "@/plane-web/components/importers/ui";
+import { Stepper } from "@/components/importers/ui/stepper";
 // plane web constants
 import { CSV_IMPORTER_STEPS } from "@/constants/importers/csv";
 // hooks

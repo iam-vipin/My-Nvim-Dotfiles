@@ -17,7 +17,7 @@ import { v4 } from "uuid";
 // plane imports
 import type { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
 // local imports
-import type { TCustomPropertyOperations } from "@/plane-web/components/issue-types/properties/property-list-item";
+import type { TCustomPropertyOperations } from "@/components/work-item-types/properties/property-list-item";
 // default values
 const defaultIssuePropertyOption: Partial<Partial<TIssuePropertyOption>> = {
   id: undefined,

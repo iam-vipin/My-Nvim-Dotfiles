@@ -31,7 +31,7 @@ import { TeamspaceViewBoardLayout } from "@/plane-web/components/issues/issue-la
 import { TeamspaceViewCalendarLayout } from "@/plane-web/components/issues/issue-layouts/calendar/teamspace-view-root";
 import { TeamspaceViewListLayout } from "@/plane-web/components/issues/issue-layouts/list/teamspace-view-root";
 import { TeamspaceViewTableLayout } from "@/plane-web/components/issues/issue-layouts/table/teamspace-view-root";
-import { TeamspaceLevelWorkItemFiltersHOC } from "@/plane-web/components/work-item-filters/filters-hoc/teamspace-level";
+import { TeamspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/teamspace-level";
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 
 function TeamspaceViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {

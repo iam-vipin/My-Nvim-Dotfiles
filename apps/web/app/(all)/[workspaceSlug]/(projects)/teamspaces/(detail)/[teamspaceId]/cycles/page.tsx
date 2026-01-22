@@ -18,9 +18,9 @@ import { Tabs } from "@plane/propel/tabs";
 import { Loader } from "@plane/ui";
 // plane web components
 import { CyclePeekOverview } from "@/components/cycles/cycle-peek-overview";
-import { TeamCompletedCyclesRoot } from "@/plane-web/components/teamspaces/cycles/completed";
-import { TeamCurrentCyclesRoot } from "@/plane-web/components/teamspaces/cycles/current";
-import { TeamUpcomingCyclesRoot } from "@/plane-web/components/teamspaces/cycles/upcoming";
+import { TeamCompletedCyclesRoot } from "@/components/teamspaces/cycles/completed";
+import { TeamCurrentCyclesRoot } from "@/components/teamspaces/cycles/current";
+import { TeamUpcomingCyclesRoot } from "@/components/teamspaces/cycles/upcoming";
 // plane web hooks
 import { useTeamspaceCycles } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";

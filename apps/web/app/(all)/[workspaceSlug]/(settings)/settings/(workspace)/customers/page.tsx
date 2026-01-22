@@ -29,8 +29,8 @@ import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-it
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { CustomerUpgrade, CustomerSettingsRoot } from "@/plane-web/components/customers";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { CustomerUpgrade, CustomerSettingsRoot } from "@/components/customers";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { useCustomers, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports

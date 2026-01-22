@@ -14,9 +14,9 @@
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { EmptyPiChat } from "@/plane-web/components/pi-chat/empty";
-import { PiChatLayout } from "@/plane-web/components/pi-chat/layout";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { EmptyPiChat } from "@/components/pi-chat/empty";
+import { PiChatLayout } from "@/components/pi-chat/layout";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/layout";

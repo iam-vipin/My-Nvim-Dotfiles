@@ -22,7 +22,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import type { TProjectTemplateSelect } from "@/ce/components/projects/create/template-select";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { ProjectTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
+import { ProjectTemplateDropdown } from "@/components/templates/dropdowns";
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";

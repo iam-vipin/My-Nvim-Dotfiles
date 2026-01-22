@@ -16,7 +16,7 @@ import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // plane web components
-import { TeamsOverviewRoot } from "@/plane-web/components/teamspaces/overview/root";
+import { TeamsOverviewRoot } from "@/components/teamspaces/overview/root";
 // plane web hooks
 import { useFlag, useTeamspaces, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";

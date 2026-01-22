@@ -12,8 +12,8 @@
  */
 
 import { observer } from "mobx-react";
-import { AgentSidecar } from "../agents/sidecar";
-import { PiChatFloatingBot } from "../pi-chat/floating-bot";
+import { AgentSidecar } from "@/components/agents/sidecar";
+import { PiChatFloatingBot } from "@/components/pi-chat/floating-bot";
 import { useTheme } from "@/plane-web/hooks/store";
 
 export const WorkspaceSidecar = observer(function WorkspaceSidecar() {

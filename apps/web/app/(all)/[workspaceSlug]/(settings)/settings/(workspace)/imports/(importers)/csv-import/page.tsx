@@ -17,7 +17,7 @@ import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
+import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
 import { CSVDashboardRoot, CSVStepsRoot } from "@/plane-web/components/importers/csv";
 // hooks
 import { useCSVImporter } from "@/plane-web/hooks/store";

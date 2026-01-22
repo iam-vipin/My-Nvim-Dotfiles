@@ -19,7 +19,7 @@ import { ProjectBreadcrumb as CEProjectBreadcrumb } from "@/ce/components/breadc
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local components
-import { WithFeatureFlagHOC } from "../feature-flags";
+import { WithFeatureFlagHOC } from "../../../core/components/feature-flags";
 
 type TProjectBreadcrumbProps = {
   workspaceSlug: string;

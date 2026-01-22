@@ -11,14 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomSearchSelect } from "@plane/ui";
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { ProjectStateIcon } from "../../workspace-project-states";
+import { ProjectStateIcon } from "@/components/workspace-project-states/project-state-icon";
 
 export type TStateDropdown = {
   workspaceSlug: string;

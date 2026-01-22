@@ -20,7 +20,7 @@ import { EPillSize, Pill } from "@plane/propel/pill";
 import { cn } from "@plane/propel/utils";
 import type { IIssueType } from "@plane/types";
 import { Checkbox } from "@plane/ui";
-import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties/common/issue-property-logo";
+import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
 
 type Props = {
   onSelect: (value: string[]) => void;

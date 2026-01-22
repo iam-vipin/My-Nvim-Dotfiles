@@ -24,12 +24,10 @@ import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import {
-  WorkspaceProjectStatesUpgrade,
-  WorkspaceProjectStatesRoot,
-} from "@/plane-web/components/workspace-project-states";
+// components
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { WorkspaceProjectStatesUpgrade, WorkspaceProjectStatesRoot } from "@/components/workspace-project-states";
+// plane web hooks
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports

@@ -22,9 +22,9 @@ import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { BetaBadge } from "../common/beta";
-import { WithFeatureFlagHOC } from "../feature-flags";
-import { InputBox } from "../pi-chat/input";
-import { UnauthorizedView } from "../pi-chat/unauthorized";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { InputBox } from "@/components/pi-chat/input";
+import { UnauthorizedView } from "@/components/pi-chat/unauthorized";
 
 export const HomePageHeader = observer(function HomePageHeader() {
   const { workspaceSlug } = useParams();

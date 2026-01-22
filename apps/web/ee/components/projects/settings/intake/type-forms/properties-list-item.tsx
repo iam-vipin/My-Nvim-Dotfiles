@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
 import { EPillSize, Pill } from "@plane/propel/pill";
-import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties/common/issue-property-logo";
+import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
 import { useIssueProperty } from "@/plane-web/hooks/store";
 
 type Props = {

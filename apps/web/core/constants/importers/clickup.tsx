@@ -19,7 +19,7 @@ import {
   MapStatesRoot,
   SummaryRoot,
   MapPriorityRoot,
-} from "@/plane-web/components/importers/clickup";
+} from "@/components/importers/clickup";
 // types
 import type { TClickUpImporterStep } from "@/types/importers/clickup";
 import { E_CLICKUP_IMPORTER_STEPS } from "@/types/importers/clickup";

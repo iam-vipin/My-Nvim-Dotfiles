@@ -20,7 +20,7 @@ import type { TWorkItemAdditionalWidgetCollapsiblesProps } from "@/ce/components
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { CustomerRequestsCollapsible } from "@/plane-web/components/issues/issue-detail-widgets";
 import { useCustomers } from "@/plane-web/hooks/store";
 // local imports

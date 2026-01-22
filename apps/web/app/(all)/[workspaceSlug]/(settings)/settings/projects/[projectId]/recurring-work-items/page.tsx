@@ -24,10 +24,10 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { CreateRecurringWorkItemsButton } from "@/plane-web/components/recurring-work-items/settings/create-button";
-import { RecurringWorkItemsSettingsRoot } from "@/plane-web/components/recurring-work-items/settings/root";
-import { RecurringWorkItemsUpgrade } from "@/plane-web/components/recurring-work-items/settings/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { CreateRecurringWorkItemsButton } from "@/components/recurring-work-items/settings/create-button";
+import { RecurringWorkItemsSettingsRoot } from "@/components/recurring-work-items/settings/root";
+import { RecurringWorkItemsUpgrade } from "@/components/recurring-work-items/settings/upgrade";
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports

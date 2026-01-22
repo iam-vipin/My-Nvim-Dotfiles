@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
+import { ProjectStateIcon } from "@/components/workspace-project-states";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import type { TProjectState } from "@/types/workspace-project-states";
 

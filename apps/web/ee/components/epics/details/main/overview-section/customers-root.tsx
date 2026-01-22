@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web
 import { Loader } from "@plane/ui";
-import { CustomerRequestEmptyState } from "@/plane-web/components/customers";
+import { CustomerRequestEmptyState } from "@/components/customers";
 import { WorkItemRequestCollapsibleContent } from "@/plane-web/components/issues/issue-detail-widgets";
 import { useCustomers } from "@/plane-web/hooks/store";
 

@@ -19,7 +19,7 @@ import {
   MapStatesRoot,
   SummaryRoot,
   MapPriorityRoot,
-} from "@/plane-web/components/importers/asana";
+} from "@/components/importers/asana";
 // plane web types
 import type { TImporterStep } from "@/types/importers/asana";
 import { E_IMPORTER_STEPS } from "@/types/importers/asana";

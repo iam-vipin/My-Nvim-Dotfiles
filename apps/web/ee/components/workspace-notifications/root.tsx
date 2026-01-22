@@ -12,7 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { NotificationCardListRoot as NotificationCardListRootCe } from "ce/components/workspace-notifications/notification-card/root";
 import type { TNotificationListRoot } from "ce/components/workspace-notifications/root";
 import { NotificationCardListRoot as NotificationCardListRootEe } from "./notification-card/root";

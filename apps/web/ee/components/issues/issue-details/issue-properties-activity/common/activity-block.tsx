@@ -21,7 +21,7 @@ import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties/common/issue-property-logo";
+import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { IssueUser } from "./issue-user";

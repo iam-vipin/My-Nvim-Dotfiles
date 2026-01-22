@@ -27,9 +27,9 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { InitiativeLabelList } from "@/plane-web/components/initiatives/components/labels/initiative-label-list";
-import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { InitiativeLabelList } from "@/components/initiatives/components/labels/initiative-label-list";
+import { InitiativesUpgrade } from "@/components/initiatives/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports

@@ -40,8 +40,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 // plane web imports
-import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns/issue-type";
-import type { TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns/issue-type";
+import { IssueTypeDropdown } from "@/components/work-item-types/dropdowns/issue-type";
+import type { TIssueTypeOptionTooltip } from "@/components/work-item-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 

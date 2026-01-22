@@ -26,7 +26,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports
-import { WithFeatureFlagHOC } from "../feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 
 type TProjectItemsRootProps = {
   workspaceSlug: string;

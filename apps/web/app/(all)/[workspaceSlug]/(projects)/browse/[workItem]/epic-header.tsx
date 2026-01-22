@@ -37,7 +37,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 
 export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
   // router

@@ -22,7 +22,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // components
 import { AuthHeaderBase } from "@/components/auth-screens/header";
 // plane web imports
-import { SSORoot } from "@/plane-web/components/auth/sso/root";
+import { SSORoot } from "@/components/auth/sso/root";
 
 function SSOAuthPage() {
   return (

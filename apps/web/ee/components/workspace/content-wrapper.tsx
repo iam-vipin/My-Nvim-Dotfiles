@@ -21,7 +21,7 @@ import { AppRailRoot } from "@/components/navigation";
 import { StickyActionBar } from "@/components/stickies/action-bar";
 // plane web imports
 import { useAppRailVisibility } from "@/lib/app-rail";
-import { PiChatArtifactsRoot } from "@/plane-web/components/pi-chat/actions/artifacts/detail/root";
+import { PiChatArtifactsRoot } from "@/components/pi-chat/actions/artifacts/detail/root";
 import { TopNavigationRoot } from "../navigations";
 import { WorkspaceSidecar } from "./sidecar";
 

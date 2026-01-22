@@ -29,7 +29,7 @@ import { APPLICATIONS_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { AppListRoot } from "@/plane-web/components/marketplace";
+import { AppListRoot } from "@/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
 import { SiloAppService } from "@/services/integrations/silo.service";
 

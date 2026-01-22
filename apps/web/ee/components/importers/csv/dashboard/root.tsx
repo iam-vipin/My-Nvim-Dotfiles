@@ -19,7 +19,7 @@ import CSVLogo from "@/app/assets/services/csv.svg?url";
 // plane web imports
 import { useCSVImporter } from "@/plane-web/hooks/store";
 // components
-import { BaseDashboard } from "../../common/dashboard/base-dashboard";
+import { BaseDashboard } from "@/components/importers/common/dashboard/base-dashboard";
 
 /**
  * Dashboard root for CSV importer.

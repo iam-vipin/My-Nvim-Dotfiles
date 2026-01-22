@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // components
 import type { TIssuePriorities, TIssueServiceType } from "@plane/types";
@@ -23,7 +21,7 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
-import type { TCustomerWorkItemOperations } from "../../customers/work-items/helper";
+import type { TCustomerWorkItemOperations } from "@/components/customers/work-items/helper";
 
 type Props = {
   workspaceSlug: string;

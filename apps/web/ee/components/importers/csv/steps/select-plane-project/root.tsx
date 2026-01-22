@@ -22,7 +22,8 @@ import { ProjectIcon } from "@plane/propel/icons";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui";
+import { StepperNavigation } from "@/components/importers/ui/stepper";
+import { Dropdown } from "@/components/importers/ui/dropdown";
 // hooks
 import { useCSVImporter } from "@/plane-web/hooks/store";
 // types

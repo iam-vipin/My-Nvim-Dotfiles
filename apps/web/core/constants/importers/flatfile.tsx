@@ -13,7 +13,7 @@
 
 import { Layers3 } from "lucide-react";
 // components
-import { SelectPlaneProject, ConfigureFlatfile } from "@/plane-web/components/importers/flatfile";
+import { SelectPlaneProject, ConfigureFlatfile } from "@/components/importers/flatfile";
 // plane web types
 import type { TImporterStep } from "@/types/importers/flatfile";
 import { E_IMPORTER_STEPS } from "@/types/importers/flatfile";

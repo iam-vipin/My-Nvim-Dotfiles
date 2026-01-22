@@ -26,7 +26,7 @@ import type { TIssueFields, TIssueTypeSelectProps } from "@/ce/components/issues
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
-import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns/issue-type";
+import { IssueTypeDropdown } from "@/components/work-item-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Partial<TIssueFields>>(

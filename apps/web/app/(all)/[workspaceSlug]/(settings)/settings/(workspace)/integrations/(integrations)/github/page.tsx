@@ -23,7 +23,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { GithubHeader, IntegrationRoot, UserAuthentication } from "@/plane-web/components/integrations/github";
+import { GithubHeader, IntegrationRoot, UserAuthentication } from "@/components/integrations/github";
 // plane web hooks
 import { useFlag, useGithubIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images

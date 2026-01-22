@@ -24,7 +24,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { SidebarRoot } from "@/plane-web/components/common/layout/sidebar";
 // local components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
-import { UpdatesWrapper } from "@/plane-web/components/updates/root";
+import { UpdatesWrapper } from "@/components/updates/root";
 import { EpicSidebarActivityRoot } from "./activity-tab-root";
 import { EpicSidebarCommentsRoot } from "./comment-tab-root";
 import { EpicSidebarPropertiesRoot } from "./properties-tab-root";

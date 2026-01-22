@@ -21,7 +21,7 @@ import { ActivityBlockComponent } from "@/components/common/activity/activity-bl
 import { PROJECT_MEMBER_ACTIVITY } from "@/constants/fetch-keys";
 // plane web imports
 import { getProjectMemberActivityDetails } from "@/plane-web/components/projects/members/siderbar/activity/helper";
-import { ActivityContentWrapper } from "@/plane-web/components/settings/activity-content-wrapper";
+import { ActivityContentWrapper } from "@/components/settings/activity-content-wrapper";
 import { useProjectMembersActivity } from "@/plane-web/hooks/store/projects/use-project-members-activity";
 import { useMember } from "@/hooks/store/use-member";
 

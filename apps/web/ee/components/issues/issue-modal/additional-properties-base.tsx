@@ -18,7 +18,7 @@ import { EWorkItemTypeEntity } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // plane web components
-import { IssueAdditionalPropertyValuesCreate } from "@/plane-web/components/issue-types/values/create";
+import { IssueAdditionalPropertyValuesCreate } from "@/components/work-item-types/values/create";
 
 type TIssueAdditionalPropertiesBaseProps = {
   areCustomPropertiesInitializing: boolean;

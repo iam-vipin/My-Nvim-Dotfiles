@@ -19,8 +19,8 @@ import { useTranslation } from "@plane/i18n";
 import { extractWorkItemFormDataBlueprint } from "@plane/utils";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
-import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common/collapsible-wrapper";
-import { WorkItemBlueprintListItem } from "@/plane-web/components/templates/settings/work-item/blueprint/list/list-item";
+import { TemplateCollapsibleWrapper } from "@/components/templates/settings/common/collapsible-wrapper";
+import { WorkItemBlueprintListItem } from "@/components/templates/settings/work-item/blueprint/list/list-item";
 import { useWorkItemTemplates } from "@/plane-web/hooks/store";
 
 export const TemplateSubWorkitemsList = observer(function TemplateSubWorkitemsList() {

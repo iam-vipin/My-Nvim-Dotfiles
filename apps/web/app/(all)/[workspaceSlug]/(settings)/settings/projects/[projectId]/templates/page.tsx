@@ -24,13 +24,9 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import {
-  CreateTemplatesButton,
-  TemplatesUpgrade,
-  ProjectTemplatesSettingsRoot,
-} from "@/plane-web/components/templates/settings";
+// plane web components
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { CreateTemplatesButton, TemplatesUpgrade, ProjectTemplatesSettingsRoot } from "@/components/templates/settings";
 import { useFlag, usePageTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // local imports
 import type { Route } from "./+types/page";

@@ -19,7 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 // plane web imports
-import { CustomerDropDown } from "@/plane-web/components/customers";
+import { CustomerDropDown } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type TProps = {

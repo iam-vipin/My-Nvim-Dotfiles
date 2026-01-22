@@ -24,7 +24,7 @@ import { usePageFallback } from "@/hooks/use-page-fallback";
 // plane web import
 import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { PageModals } from "@/plane-web/components/pages";
-import { NestedPagesDownloadBanner } from "@/plane-web/components/wiki/nested-pages-download-banner";
+import { NestedPagesDownloadBanner } from "@/components/wiki/nested-pages-download-banner";
 import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";

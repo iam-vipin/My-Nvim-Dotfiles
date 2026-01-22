@@ -27,8 +27,8 @@ import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-it
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { TeamspaceUpgrade } from "@/components/teamspaces/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports

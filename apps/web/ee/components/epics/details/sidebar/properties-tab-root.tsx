@@ -43,8 +43,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
-import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";
-import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values/addition-properties-update";
+import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
+import { IssueAdditionalPropertyValuesUpdate } from "@/components/work-item-types/values/addition-properties-update";
 // common components
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 // helpers

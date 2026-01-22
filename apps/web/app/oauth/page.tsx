@@ -20,6 +20,7 @@ import { PlaneLockup } from "@plane/propel/icons";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
+import { AppConsent } from "@/components/marketplace";
 // constants
 import { APPLICATION_BY_CLIENT_ID } from "@/constants/fetch-keys";
 // layouts
@@ -27,7 +28,6 @@ import DefaultLayout from "@/layouts/default-layout";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // assets
-import { AppConsent } from "@/plane-web/components/marketplace";
 import { ApplicationService } from "@/services/marketplace";
 
 const applicationService = new ApplicationService();

@@ -34,7 +34,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { WithFeatureFlagHOC } from "../../feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { ConvertWorkItemAction } from "../conversions";
 import { ProjectEpicQuickActions } from "../quick-actions/epic-quick-action";
 

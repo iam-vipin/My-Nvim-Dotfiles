@@ -25,7 +25,7 @@ import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loa
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { InitiativeScopeRoot } from "@/plane-web/components/initiatives/scope/root";
+import { InitiativeScopeRoot } from "@/components/initiatives/scope/root";
 // Plane-web
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";

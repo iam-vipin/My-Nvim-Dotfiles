@@ -16,7 +16,7 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useModule } from "@/hooks/store/use-module";
 import { useProjectView } from "@/hooks/store/use-project-view";
-import { getIcon } from "../components/pi-chat/helper";
+import { getIcon } from "@/components/pi-chat/helper";
 
 export const useAIAssistant = (
   entityType: "issue" | "cycle" | "module" | "page" | "view",

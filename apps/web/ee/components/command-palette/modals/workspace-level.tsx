@@ -18,11 +18,11 @@ import { WorkspaceLevelModals as BaseWorkspaceLevelModals } from "@/ce/component
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components
-import { CreateUpdateCustomerModal } from "@/plane-web/components/customers/customer-modal";
-import { CreateUpdateWorkspaceDashboardModal } from "@/plane-web/components/dashboards/modals";
-import { CreateUpdateInitiativeModal } from "@/plane-web/components/initiatives/components/create-update-initiatives-modal";
-import { CreateOrUpdateTeamspaceModal } from "@/plane-web/components/teamspaces/create-update";
-import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
+import { CreateUpdateCustomerModal } from "@/components/customers/customer-modal";
+import { CreateUpdateWorkspaceDashboardModal } from "@/components/dashboards/modals";
+import { CreateUpdateInitiativeModal } from "@/components/initiatives/components/create-update-initiatives-modal";
+import { CreateOrUpdateTeamspaceModal } from "@/components/teamspaces/create-update/modal";
+import { CreateUpdateTeamspaceViewModal } from "@/components/teamspaces/views/modals/create-update";
 import { useDashboards } from "@/plane-web/hooks/store";
 
 export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props: TWorkspaceLevelModalsProps) {

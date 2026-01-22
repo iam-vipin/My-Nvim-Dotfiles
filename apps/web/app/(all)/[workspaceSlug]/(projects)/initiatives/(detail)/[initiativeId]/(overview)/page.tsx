@@ -27,7 +27,7 @@ import { PageHead } from "@/components/core/page-title";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
-import { InitiativeDetailRoot } from "@/plane-web/components/initiatives/details/root";
+import { InitiativeDetailRoot } from "@/components/initiatives/details/root";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

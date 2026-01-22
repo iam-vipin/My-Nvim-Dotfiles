@@ -13,7 +13,7 @@
 
 import { useParams } from "next/navigation";
 import { IssuesHeader as CeIssueHeader } from "@/ce/components/issues/header";
-import { WithFeatureFlagHOC } from "../feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { AdvancedIssuesHeader } from "./advanced-header";
 
 export function IssuesHeader() {

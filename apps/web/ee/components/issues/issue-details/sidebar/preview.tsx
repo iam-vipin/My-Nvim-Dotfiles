@@ -22,7 +22,7 @@ import type { TCustomer } from "@plane/types";
 import { getFileURL, formatURLForDisplay } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { useMember } from "@/hooks/store/use-member";
-import { getAbbreviatedNumber } from "@/plane-web/components/customers/utils";
+import { getAbbreviatedNumber } from "@/components/customers/utils";
 type TProps = {
   customer: TCustomer;
   workspaceSlug: string;

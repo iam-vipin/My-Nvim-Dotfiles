@@ -28,8 +28,8 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { PiChatUpgrade } from "@/plane-web/components/pi-chat/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { PiChatUpgrade } from "@/components/pi-chat/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports

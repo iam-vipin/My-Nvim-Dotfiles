@@ -19,7 +19,7 @@ import {
   MapStatesRoot,
   MapPriorityRoot,
   SummaryRoot,
-} from "@/plane-web/components/importers/jira-server";
+} from "@/components/importers/jira-server";
 // types
 import type { TImporterStep } from "@/types/importers/jira-server";
 import { E_IMPORTER_STEPS } from "@/types/importers/jira-server";

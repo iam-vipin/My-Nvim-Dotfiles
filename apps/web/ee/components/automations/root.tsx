@@ -21,7 +21,7 @@ import type { TCustomAutomationsRootProps } from "@/ce/components/automations/ro
 // plane web imports
 import { CreateAutomationButton } from "@/plane-web/components/automations/create-button";
 import { AutomationsListRoot } from "@/plane-web/components/automations/list/root";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags/with-feature-flag-hoc";
+import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
 export const CustomAutomationsRoot = observer(function CustomAutomationsRoot(props: TCustomAutomationsRootProps) {

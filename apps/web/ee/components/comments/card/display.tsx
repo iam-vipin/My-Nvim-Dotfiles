@@ -29,7 +29,7 @@ import { useMember } from "@/hooks/store/use-member";
 // local imports
 import type { CommentRepliesRootHandle } from "../replies/root";
 import { CommentRepliesRoot } from "../replies/root";
-import { AgentCommentHeader } from "../../agents/comment-header";
+import { AgentCommentHeader } from "@/components/agents/comment-header";
 
 type Props = TCommentCardDisplayProps & {
   enableReplies: boolean;

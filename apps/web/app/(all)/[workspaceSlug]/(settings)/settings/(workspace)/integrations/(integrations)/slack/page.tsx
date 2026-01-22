@@ -23,7 +23,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { SlackIntegrationRoot } from "@/plane-web/components/integrations/slack";
+import { SlackIntegrationRoot } from "@/components/integrations/slack";
 //  plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants

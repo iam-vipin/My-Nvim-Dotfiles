@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { set, unset } from "lodash";
+import { set, unset } from "lodash-es";
 import { makeObservable, observable, runInAction, action, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";

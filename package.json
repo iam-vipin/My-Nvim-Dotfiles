@@ -82,7 +82,9 @@
       "qs": "6.14.1",
       "preact": "10.28.2",
       "diff": "8.0.3",
-      "undici": "7.18.2"
+      "undici": "7.18.2",
+      "lodash": "4.17.23",
+      "lodash-es": "catalog:"
     },
     "onlyBuiltDependencies": [
       "@sentry/cli",

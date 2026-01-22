@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -219,6 +220,36 @@ func (a *AirgappedPrimeApi) fixTimestampFormat(jsonStr string) string {
 	return jsonStr
 }
 
+// activateMembersBySeats takes a list of members and the number of available seats,
+// sorts members by role (higher roles first), and marks the first N members as active
+// where N is the number of seats. Remaining members are marked as inactive.
+func (a *AirgappedPrimeApi) activateMembersBySeats(members []WorkspaceMember, seats int) []WorkspaceMember {
+	if len(members) == 0 {
+		return members
+	}
+
+	// Create a copy to avoid modifying the original slice
+	result := make([]WorkspaceMember, len(members))
+	copy(result, members)
+
+	// Sort by role in descending order (higher role = higher priority)
+	// Typically: Admin (20) > Member (15) > Guest (5)
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].UserRole > result[j].UserRole
+	})
+
+	// Activate members up to seat limit, deactivate the rest
+	for i := range result {
+		if i < seats {
+			result[i].IsActive = true
+		} else {
+			result[i].IsActive = false
+		}
+	}
+
+	return result
+}
+
 /*
 We provide a non nil error here, as the route handler handles the deactivate as
 if the deactivation is successfull, it will proceed to delete the license from the database
@@ -309,11 +340,15 @@ func (a *AirgappedPrimeApi) SyncEnterpriseLicense(payload EnterpriseLicenseSyncP
 		}
 	}
 
-	// Step 4: Set workspace information and return response
+	// Step 3: Set workspace information
 	licensePayload.WorkspaceID = uuid.New().String()
 	licensePayload.WorkspaceSlug = uuid.New().String()
 
-	licensePayload.WorkspaceActivationResponse.MemberList = payload.MembersList
+	// Step 4: Activate members based on available seats
+	// Sort by role (admins first) and activate up to the seat limit
+	seats := licensePayload.WorkspaceActivationResponse.Seats
+	activatedMembers := a.activateMembersBySeats(payload.MembersList, seats)
+	licensePayload.WorkspaceActivationResponse.MemberList = activatedMembers
 
 	// Initialize the response
 	response := &EnterpriseLicenseActivateResponse{

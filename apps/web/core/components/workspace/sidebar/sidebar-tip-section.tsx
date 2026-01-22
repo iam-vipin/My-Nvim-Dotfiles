@@ -51,7 +51,6 @@ export const SidebarTipSection = observer(() => {
   const activeTip = useMemo(() => {
     if (!currentWorkspaceInfo?.tips) return TIPS_CONFIG[0];
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return TIPS_CONFIG.find((tip) => currentWorkspaceInfo.tips[tip.id] !== true) ?? null;
   }, [currentWorkspaceInfo?.tips]);
 
@@ -84,14 +83,16 @@ export const SidebarTipSection = observer(() => {
     <div className="absolute bottom-0 left-0 right-0 z-100 flex justify-center items-center p-2.5 w-full">
       <div className="w-full z-100 flex rounded-lg flex-col border border-subtle-1 bg-surface-2 shadow-raised-100">
         <span className="relative min-h-36 w-full bg-layer-1 rounded-t-lg" style={backgroundStyle}>
-          <IconButton
-            icon={CloseIcon}
-            className="absolute top-2 right-2"
-            onClick={handleDismissTip}
-            variant="ghost"
-            size="sm"
-            aria-label="Dismiss tip"
-          />
+          <div className="absolute top-2 right-2 rounded-full size-5 flex items-center justify-center backdrop-blur-sm bg-white/30 hover:bg-white/50 transition-colors z-10">
+            <IconButton
+              icon={CloseIcon}
+              onClick={handleDismissTip}
+              variant="ghost"
+              size="sm"
+              className="text-white"
+              aria-label="Dismiss tip"
+            />
+          </div>
         </span>
         <div className="flex flex-col gap-1 p-3">
           <span className="text-body-xs-semibold text-primary">{activeTip.title}</span>

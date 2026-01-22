@@ -100,15 +100,15 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           viewportClassName="flex flex-col gap-3 overflow-x-hidden h-full w-full overflow-y-auto px-3 pt-3 pb-0.5"
         >
           {children}
-        </ScrollArea>
-        {/* Help Section */}
-        <div className="flex flex-col">
           {isWorkspaceAdmin && (
-            <div className="flex flex-col gap-2 p-3">
+            <div className="flex flex-col gap-2">
               <SidebarTrySection />
               <SidebarTipSection />
             </div>
           )}
+        </ScrollArea>
+        {/* Help Section */}
+        <div className="flex flex-col">
           <div className="flex items-center justify-between p-3 border-t border-subtle bg-surface-1 h-12">
             <WorkspaceEditionBadge />
           </div>

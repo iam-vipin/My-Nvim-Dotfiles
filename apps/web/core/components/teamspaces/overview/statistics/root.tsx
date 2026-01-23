@@ -20,7 +20,7 @@ import { Loader as Spinner } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TreeMapIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { Collapsible, CollapsibleButton } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent, CollapsibleButton } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
@@ -117,79 +117,85 @@ export const TeamspaceStatisticsRoot = observer(function TeamspaceStatisticsRoot
 
   return (
     <Collapsible
-      isOpen={isOpen}
-      onToggle={handleToggle}
-      title={
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (open !== isOpen) {
+          handleToggle();
+        }
+      }}
+      className="py-2"
+    >
+      <CollapsibleTrigger>
         <CollapsibleButton
           isOpen={isOpen}
           title="Team's stats"
           className="border-none px-0"
           titleClassName={cn(isOpen ? "text-primary" : "text-tertiary hover:text-secondary")}
         />
-      }
-      className="py-2"
-    >
-      <div ref={statisticsContainerRef}>
-        {!showEmptyState ? (
-          <>
-            <div className="flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-2">
-              <div className={COMMON_FILTER_LIST_CLASSNAME}>
-                <StatisticsDataKeyFilter
-                  value={teamspaceStatisticsFilter.data_key}
-                  isLoading={isLoading}
-                  buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
-                  chevronClassName={COMMON_CHEVRON_CLASSNAME}
-                  handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("data_key", value)}
-                />
-                <StatisticsStateGroupFilter
-                  value={teamspaceStatisticsFilter.state_group}
-                  isLoading={isLoading}
-                  buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
-                  chevronClassName={COMMON_CHEVRON_CLASSNAME}
-                  handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("state_group", value)}
-                />
-                <StatisticsDependencyFilter
-                  value={teamspaceStatisticsFilter.dependency_type}
-                  isLoading={isLoading}
-                  buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
-                  chevronClassName={COMMON_CHEVRON_CLASSNAME}
-                  handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("dependency_type", value)}
-                />
-                <StatisticsDueByFilter
-                  value={teamspaceStatisticsFilter.target_date}
-                  isLoading={isLoading}
-                  buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
-                  chevronClassName={COMMON_CHEVRON_CLASSNAME}
-                  handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("target_date", value)}
-                />
-                {teamspaceStatisticsLoader && ["init-loader", "mutation"].includes(teamspaceStatisticsLoader) && (
-                  <Spinner size={14} className="animate-spin flex-shrink-0" />
-                )}
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div ref={statisticsContainerRef}>
+          {!showEmptyState ? (
+            <>
+              <div className="flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className={COMMON_FILTER_LIST_CLASSNAME}>
+                  <StatisticsDataKeyFilter
+                    value={teamspaceStatisticsFilter.data_key}
+                    isLoading={isLoading}
+                    buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
+                    chevronClassName={COMMON_CHEVRON_CLASSNAME}
+                    handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("data_key", value)}
+                  />
+                  <StatisticsStateGroupFilter
+                    value={teamspaceStatisticsFilter.state_group}
+                    isLoading={isLoading}
+                    buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
+                    chevronClassName={COMMON_CHEVRON_CLASSNAME}
+                    handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("state_group", value)}
+                  />
+                  <StatisticsDependencyFilter
+                    value={teamspaceStatisticsFilter.dependency_type}
+                    isLoading={isLoading}
+                    buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
+                    chevronClassName={COMMON_CHEVRON_CLASSNAME}
+                    handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("dependency_type", value)}
+                  />
+                  <StatisticsDueByFilter
+                    value={teamspaceStatisticsFilter.target_date}
+                    isLoading={isLoading}
+                    buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
+                    chevronClassName={COMMON_CHEVRON_CLASSNAME}
+                    handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("target_date", value)}
+                  />
+                  {teamspaceStatisticsLoader && ["init-loader", "mutation"].includes(teamspaceStatisticsLoader) && (
+                    <Spinner size={14} className="animate-spin flex-shrink-0" />
+                  )}
+                </div>
               </div>
-            </div>
-            <TeamspaceStatisticsMap teamspaceId={teamspaceId} />
-            {teamspaceStatisticsFilter.data_key === "projects" && isSettingsEnabled && (
-              <StatisticsLegend
-                value={teamspaceStatisticsFilter.legend}
-                isLoading={isLoading}
-                buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
-                chevronClassName={COMMON_CHEVRON_CLASSNAME}
-                handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("legend", value)}
-              />
-            )}
-          </>
-        ) : (
-          <SectionEmptyState
-            heading={t("teamspace_analytics.empty_state.stats.general.title")}
-            subHeading={t("teamspace_analytics.empty_state.stats.general.description")}
-            icon={<TreeMapIcon className="size-6 text-placeholder" />}
-            variant="solid"
-            iconVariant="round"
-            size="md"
-            contentClassName="gap-1"
-          />
-        )}
-      </div>
+              <TeamspaceStatisticsMap teamspaceId={teamspaceId} />
+              {teamspaceStatisticsFilter.data_key === "projects" && isSettingsEnabled && (
+                <StatisticsLegend
+                  value={teamspaceStatisticsFilter.legend}
+                  isLoading={isLoading}
+                  buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
+                  chevronClassName={COMMON_CHEVRON_CLASSNAME}
+                  handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("legend", value)}
+                />
+              )}
+            </>
+          ) : (
+            <SectionEmptyState
+              heading={t("teamspace_analytics.empty_state.stats.general.title")}
+              subHeading={t("teamspace_analytics.empty_state.stats.general.description")}
+              icon={<TreeMapIcon className="size-6 text-placeholder" />}
+              variant="solid"
+              iconVariant="round"
+              size="md"
+              contentClassName="gap-1"
+            />
+          )}
+        </div>
+      </CollapsibleContent>
     </Collapsible>
   );
 });

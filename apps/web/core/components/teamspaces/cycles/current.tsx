@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Disclosure } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
@@ -31,6 +32,34 @@ type TTeamCurrentCyclesRoot = {
   teamspaceId: string;
   workspaceSlug: string;
 };
+
+const ProjectActiveCycleCollapsible = observer(function ProjectActiveCycleCollapsible({
+  projectId,
+  cycleId,
+  workspaceSlug,
+}: {
+  projectId: string;
+  cycleId: string;
+  workspaceSlug: string;
+}) {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <Collapsible className="flex flex-shrink-0 flex-col" open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle-1 bg-layer-1 cursor-pointer">
+        <CycleListProjectGroupHeader projectId={projectId} isExpanded={isOpen} />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <ProjectActiveCycleRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          cycleId={cycleId}
+          showHeader={false}
+        />
+      </CollapsibleContent>
+    </Collapsible>
+  );
+});
 
 export const TeamCurrentCyclesRoot = observer(function TeamCurrentCyclesRoot(props: TTeamCurrentCyclesRoot) {
   const { teamspaceId, workspaceSlug } = props;
@@ -58,23 +87,12 @@ export const TeamCurrentCyclesRoot = observer(function TeamCurrentCyclesRoot(pro
   return (
     <ContentWrapper variant={ERowVariant.HUGGING} className="relative">
       {Object.entries(groupedActiveCycleIds).map(([projectId, cycleId]) => (
-        <Disclosure as="div" key={projectId} className="flex flex-shrink-0 flex-col" defaultOpen>
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle-1 bg-layer-1 cursor-pointer">
-                <CycleListProjectGroupHeader projectId={projectId} isExpanded={open} />
-              </Disclosure.Button>
-              <Disclosure.Panel>
-                <ProjectActiveCycleRoot
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  cycleId={cycleId}
-                  showHeader={false}
-                />
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
+        <ProjectActiveCycleCollapsible
+          key={projectId}
+          projectId={projectId}
+          cycleId={cycleId}
+          workspaceSlug={workspaceSlug}
+        />
       ))}
     </ContentWrapper>
   );

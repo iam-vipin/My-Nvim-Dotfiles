@@ -23,7 +23,8 @@ import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FolderPlus } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
@@ -187,15 +188,19 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
 
   return (
     <>
-      <Disclosure as="div" defaultOpen ref={containerRef}>
+      <Collapsible
+        defaultOpen
+        ref={containerRef}
+        open={isFavoriteMenuOpen}
+        onOpenChange={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
+      >
         <div
           ref={elementRef}
           className={cn(
             "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover"
           )}
         >
-          <Disclosure.Button
-            as="button"
+          <CollapsibleTrigger
             type="button"
             className={cn(
               "w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder",
@@ -211,7 +216,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
             )}
           >
             <span className="text-13 font-semibold">{t("favorites")}</span>
-          </Disclosure.Button>
+          </CollapsibleTrigger>
           <div className="flex items-center opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
             <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
               <IconButton
@@ -225,8 +230,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                 icon={FolderPlus}
               />
             </Tooltip>
-            <Disclosure.Button
-              as="button"
+            <CollapsibleTrigger
               type="button"
               className="p-0.5 rounded-sm hover:bg-layer-transparent-hover flex-shrink-0 grid place-items-center"
               onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
@@ -241,7 +245,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                   "rotate-90": isFavoriteMenuOpen,
                 })}
               />
-            </Disclosure.Button>
+            </CollapsibleTrigger>
           </div>
         </div>
         <Transition
@@ -254,7 +258,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           leaveTo="transform scale-95 opacity-0"
         >
           {isFavoriteMenuOpen && (
-            <Disclosure.Panel as="div" className="flex flex-col mt-0.5 gap-0.5" static>
+            <CollapsibleContent className="flex flex-col mt-0.5 gap-0.5">
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
@@ -286,10 +290,10 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                     </>
                   ))
               )}
-            </Disclosure.Panel>
+            </CollapsibleContent>
           )}
         </Transition>
-      </Disclosure>
+      </Collapsible>
     </>
   );
 });

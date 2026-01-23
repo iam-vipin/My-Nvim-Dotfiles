@@ -11,10 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React, { useMemo } from "react";
 // ui
-import { Collapsible, CollapsibleButton } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent, CollapsibleButton } from "@plane/propel/collapsible";
 // local components
 import { SectionWrapper } from "../common/section-wrapper";
 
@@ -52,8 +51,16 @@ export function CollapsibleDetailSection(props: TCollapsibleDetailSectionProps) 
 
   return (
     <SectionWrapper>
-      <Collapsible isOpen={isOpen} onToggle={onToggle} title={collapsibleButton} buttonClassName="w-full">
-        {collapsibleContent}
+      <Collapsible
+        open={isOpen}
+        onOpenChange={(open: boolean) => {
+          if (open !== isOpen) {
+            onToggle();
+          }
+        }}
+      >
+        <CollapsibleTrigger className="w-full">{collapsibleButton}</CollapsibleTrigger>
+        <CollapsibleContent>{collapsibleContent}</CollapsibleContent>
       </Collapsible>
     </SectionWrapper>
   );

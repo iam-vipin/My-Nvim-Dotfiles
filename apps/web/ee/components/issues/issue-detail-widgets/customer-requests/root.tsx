@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import {
@@ -48,19 +48,24 @@ export const CustomerRequestsCollapsible = observer(function CustomerRequestsCol
 
   return (
     <Collapsible
-      isOpen={isCollapsibleOpen}
-      onToggle={() => toggleOpenWidget("customer_requests")}
-      title={
+      open={isCollapsibleOpen}
+      onOpenChange={(open) => {
+        if (open !== isCollapsibleOpen) {
+          toggleOpenWidget("customer_requests");
+        }
+      }}
+    >
+      <CollapsibleTrigger className="w-full">
         <CustomerRequestsCollapsibleTitle
           workspaceSlug={workspaceSlug}
           isOpen={isCollapsibleOpen}
           workItemId={workItemId}
           disabled={disabled}
         />
-      }
-      buttonClassName="w-full"
-    >
-      <WorkItemRequestCollapsibleContent workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <WorkItemRequestCollapsibleContent workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
+      </CollapsibleContent>
     </Collapsible>
   );
 });

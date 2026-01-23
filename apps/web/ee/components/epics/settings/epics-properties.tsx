@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import type { TLoader, IIssueType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components
@@ -54,12 +54,8 @@ export const EpicPropertiesRoot = observer(function EpicPropertiesRoot(props: Ep
           getClassName?.(isOpen)
         )}
       >
-        <Collapsible
-          key={epicId}
-          isOpen={isOpen}
-          defaultOpen
-          onToggle={() => setIsOpen(!isOpen)}
-          title={
+        <Collapsible key={epicId} open={isOpen} defaultOpen onOpenChange={setIsOpen} className={cn("p-2")}>
+          <CollapsibleTrigger className={cn("flex w-full py-2 gap-2 items-center justify-between")}>
             <div className={cn("flex items-center w-full px-2 gap-2 cursor-pointer")}>
               <div className={cn("flex w-full gap-2 items-center truncate")}>
                 <div className="flex-shrink-0">
@@ -87,17 +83,16 @@ export const EpicPropertiesRoot = observer(function EpicPropertiesRoot(props: Ep
                 </div>
               </div>
             </div>
-          }
-          className={cn("p-2")}
-          buttonClassName={cn("flex w-full py-2 gap-2 items-center justify-between")}
-        >
-          <div className="p-2">
-            <IssuePropertiesRoot
-              issueTypeId={epicId}
-              propertiesLoader={propertiesLoader}
-              getWorkItemTypeById={getWorkItemTypeById}
-            />
-          </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="p-2">
+              <IssuePropertiesRoot
+                issueTypeId={epicId}
+                propertiesLoader={propertiesLoader}
+                getWorkItemTypeById={getWorkItemTypeById}
+              />
+            </div>
+          </CollapsibleContent>
         </Collapsible>
       </div>
     </div>

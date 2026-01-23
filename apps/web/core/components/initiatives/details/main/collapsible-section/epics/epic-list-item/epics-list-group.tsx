@@ -18,7 +18,7 @@ import { CircleDashed } from "lucide-react";
 import { ALL_ISSUES } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import type { IGroupByColumn } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 import { EpicListItem } from "./root";
 
@@ -42,11 +42,9 @@ export const EpicsGroup = observer(function EpicsGroup(props: TEpicsGroupProps) 
 
   return (
     <>
-      <Collapsible
-        isOpen={isCollapsibleOpen}
-        onToggle={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
-        title={
-          !isAllIssues && (
+      <Collapsible open={isCollapsibleOpen} onOpenChange={setIsCollapsibleOpen}>
+        {!isAllIssues && (
+          <CollapsibleTrigger className={cn("hidden", !isAllIssues && "block")}>
             <div className="flex items-center gap-2 p-3">
               <ChevronRightIcon
                 className={cn("size-3.5 transition-all text-placeholder", {
@@ -60,22 +58,22 @@ export const EpicsGroup = observer(function EpicsGroup(props: TEpicsGroupProps) 
               <span className="text-13 text-primary font-medium">{group.name}</span>
               <span className="text-13 text-placeholder">{epicIds.length}</span>
             </div>
-          )
-        }
-        buttonClassName={cn("hidden", !isAllIssues && "block")}
-      >
-        {/* Epics list */}
-        <div className="pl-2">
-          {epicIds?.map((epicId) => (
-            <EpicListItem
-              key={epicId}
-              workspaceSlug={workspaceSlug}
-              epicId={epicId}
-              initiativeId={initiativeId}
-              disabled={disabled}
-            />
-          ))}
-        </div>
+          </CollapsibleTrigger>
+        )}
+        <CollapsibleContent>
+          {/* Epics list */}
+          <div className="pl-2">
+            {epicIds?.map((epicId) => (
+              <EpicListItem
+                key={epicId}
+                workspaceSlug={workspaceSlug}
+                epicId={epicId}
+                initiativeId={initiativeId}
+                disabled={disabled}
+              />
+            ))}
+          </div>
+        </CollapsibleContent>
       </Collapsible>
     </>
   );

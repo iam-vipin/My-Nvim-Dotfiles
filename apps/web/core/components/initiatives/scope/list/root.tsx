@@ -16,7 +16,7 @@ import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // assets
 import initiativesListDark from "@/app/assets/empty-state/initiatives/scope/initiatives-list-dark.webp?url";
 import initiativesListLight from "@/app/assets/empty-state/initiatives/scope/initiatives-list-light.webp?url";
@@ -65,49 +65,47 @@ export const InitiativeScopeListView = observer(function InitiativeScopeListView
     <div className="h-full w-full overflow-y-auto">
       {/**Epics List */}
       {epicIds.length > 0 && (
-        <Collapsible
-          title={
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="w-full">
             <ListHeader
               count={epicIds.length}
               label={t("common.epics")}
               handleAdd={handleAddEpic}
               icon={<EpicIcon className="size-4" />}
             />
-          }
-          buttonClassName="w-full"
-          defaultOpen
-        >
-          {epicIds?.map((epicId) => (
-            <EpicListItem
-              key={epicId}
-              workspaceSlug={workspaceSlug}
-              epicId={epicId}
-              initiativeId={initiativeId}
-              disabled={disabled}
-            />
-          ))}
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            {epicIds?.map((epicId) => (
+              <EpicListItem
+                key={epicId}
+                workspaceSlug={workspaceSlug}
+                epicId={epicId}
+                initiativeId={initiativeId}
+                disabled={disabled}
+              />
+            ))}
+          </CollapsibleContent>
         </Collapsible>
       )}
       {/**Projects List */}
       {projectIds.length > 0 && (
-        <Collapsible
-          title={
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="w-full">
             <ListHeader
               count={projectIds.length}
               label={t("common.projects")}
               handleAdd={handleAddProject}
               icon={<ProjectIcon className="size-4" />}
             />
-          }
-          buttonClassName="w-full"
-          defaultOpen
-        >
-          <ProjectList
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            projectIds={projectIds}
-            disabled={disabled}
-          />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ProjectList
+              workspaceSlug={workspaceSlug}
+              initiativeId={initiativeId}
+              projectIds={projectIds}
+              disabled={disabled}
+            />
+          </CollapsibleContent>
         </Collapsible>
       )}
     </div>

@@ -19,7 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Switch } from "@plane/propel/switch";
 import type { IState } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";
@@ -62,12 +62,8 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
 
   return (
     <div className="flex flex-col w-full">
-      <Collapsible
-        isOpen={isOpen}
-        onToggle={() => setIsOpen((prevState) => !prevState)}
-        className="w-full"
-        buttonClassName="w-full"
-        title={
+      <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
+        <CollapsibleTrigger className="w-full">
           <div className="flex w-full items-center gap-2 py-2.5 px-3 bg-layer-1">
             <div className="w-fit flex-shrink-0">
               <StateItemTitle
@@ -109,16 +105,17 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
               </div>
             </div>
           </div>
-        }
-      >
-        <StateItemContent
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          disabled
-          state={state}
-          transitionIds={currentTransitionIds}
-          shouldEnableNewTransitionAddition={shouldEnableAddition}
-        />
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <StateItemContent
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            disabled
+            state={state}
+            transitionIds={currentTransitionIds}
+            shouldEnableNewTransitionAddition={shouldEnableAddition}
+          />
+        </CollapsibleContent>
       </Collapsible>
     </div>
   );

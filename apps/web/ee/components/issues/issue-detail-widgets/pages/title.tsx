@@ -16,7 +16,7 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
-import { CollapsibleButton } from "@plane/ui";
+import { CollapsibleButton } from "@plane/propel/collapsible";
 // components
 import { PagesActionButton } from "./quick-action-button";
 

@@ -15,7 +15,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
@@ -51,10 +52,9 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
   if (!teamspace) return null;
 
   return (
-    <Disclosure as="div" className="flex flex-col">
+    <Collapsible className="flex flex-col" open={isExpanded} onOpenChange={setIsExpanded}>
       <div className="group group/teamspace-item hover:bg-surface-2 px-2 py-1 rounded-md flex items-center">
-        <Disclosure.Button
-          as="button"
+        <CollapsibleTrigger
           className="flex-1 flex items-center gap-1.5 py-[1px] text-left outline-none justify-between w-full"
           onClick={() => handleLinkClick()}
         >
@@ -67,9 +67,8 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
             <Logo logo={teamspace.logo_props} size={16} />
             <p className="text-body-xs-medium text-secondary leading-5 font-medium truncate">{teamspace.name}</p>
           </div>
-        </Disclosure.Button>
-        <Disclosure.Button
-          as="button"
+        </CollapsibleTrigger>
+        <CollapsibleTrigger
           className="flex-shrink-0 size-4 text-tertiary transition-all opacity-0 group-hover/teamspace-item:opacity-100"
           onClick={() => setIsExpanded(!isExpanded)}
         >
@@ -78,7 +77,7 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
               "rotate-90": isExpanded,
             })}
           />
-        </Disclosure.Button>
+        </CollapsibleTrigger>
       </div>
 
       <Transition
@@ -91,7 +90,7 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
         leaveTo="transform scale-95 opacity-0"
       >
         {isExpanded && projectIds.length > 0 && (
-          <Disclosure.Panel as="div" className="flex flex-col gap-0.5 ml-4 mt-1" static>
+          <CollapsibleContent className="flex flex-col gap-0.5 ml-4 mt-1">
             {projectIds.map((projectId) => {
               const project = getProjectById(projectId);
               if (!project) return null;
@@ -115,9 +114,9 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
                 </Link>
               );
             })}
-          </Disclosure.Panel>
+          </CollapsibleContent>
         )}
       </Transition>
-    </Disclosure>
+    </Collapsible>
   );
 });

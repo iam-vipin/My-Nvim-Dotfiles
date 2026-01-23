@@ -16,7 +16,7 @@ import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
 import type { TLoader, IIssueType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 // local imports
 import { IssueTypeLogo } from "./common/issue-type-logo";
@@ -72,14 +72,20 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
       >
         <Collapsible
           key={issueTypeId}
-          isOpen={isOpen}
-          onToggle={() => onToggle(issueTypeId)}
-          title={
-            <div
-              className={cn("flex items-center w-full px-2 gap-2 cursor-pointer", {
-                "cursor-not-allowed": isCollapseDisabled,
-              })}
-            >
+          open={isOpen}
+          onOpenChange={(open) => {
+            if (open !== isOpen) {
+              onToggle(issueTypeId);
+            }
+          }}
+          className={cn("p-2")}
+        >
+          <CollapsibleTrigger
+            className={cn("flex w-full py-2 gap-2 items-center justify-between", {
+              "cursor-not-allowed": isCollapseDisabled,
+            })}
+          >
+            <div className={cn("flex items-center w-full px-2 gap-2 cursor-pointer")}>
               <div className={cn("flex w-full gap-2 items-center truncate")}>
                 <div className="flex-shrink-0">
                   <ChevronRightIcon
@@ -125,17 +131,16 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
                 />
               </div>
             </div>
-          }
-          className={cn("p-2")}
-          buttonClassName={cn("flex w-full py-2 gap-2 items-center justify-between")}
-        >
-          <div className="p-2">
-            <IssuePropertiesRoot
-              issueTypeId={issueTypeId}
-              propertiesLoader={propertiesLoader}
-              getWorkItemTypeById={getWorkItemTypeById}
-            />
-          </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="p-2">
+              <IssuePropertiesRoot
+                issueTypeId={issueTypeId}
+                propertiesLoader={propertiesLoader}
+                getWorkItemTypeById={getWorkItemTypeById}
+              />
+            </div>
+          </CollapsibleContent>
         </Collapsible>
       </div>
     </div>

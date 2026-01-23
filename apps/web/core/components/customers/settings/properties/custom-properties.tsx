@@ -19,7 +19,9 @@ import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+// plane ui
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
+// helpers
 import { cn } from "@plane/utils";
 // plane web components
 import { CustomerPropertiesEmptyState } from "@/components/customers/settings/properties";
@@ -102,10 +104,8 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
 
   return (
     <div className="group/issue-type bg-layer-1 rounded-md">
-      <Collapsible
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-        title={
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger className={cn("flex w-full py-3 gap-2 items-center justify-between")}>
           <div className="flex w-full gap-2 cursor-pointer items-center px-4">
             <div className="flex-shrink-0">
               <ChevronRightIcon
@@ -119,40 +119,40 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
               <p className="text-13 text-tertiary">{t("customers.properties.custom.info")}</p>
             </div>
           </div>
-        }
-        buttonClassName={cn("flex w-full py-3 gap-2 items-center justify-between")}
-      >
-        <div className="pb-4">
-          {isAnyPropertiesAvailable ? (
-            <>
-              <IssuePropertyList
-                issuePropertyCreateList={customerPropertyCreateList}
-                customPropertyOperations={customPropertyOperations}
-                containerRef={containerRef}
-                lastElementRef={lastElementRef}
-                properties={sortedProperties}
-                isUpdateAllowed={false}
-              />
-              <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
-                <Button
-                  variant="secondary"
-                  className="rounded-md"
-                  onClick={() => {
-                    handleCustomerPropertiesCreate("add", {
-                      key: v4(),
-                      ...defaultCustomProperty,
-                    });
-                  }}
-                >
-                  <PlusIcon className="h-3.5 w-3.5" />
-                  {t("customers.properties.add.primary_button")}
-                </Button>
-              </div>
-            </>
-          ) : (
-            <CustomerPropertiesEmptyState handleCustomerPropertiesCreate={handleCustomerPropertiesCreate} />
-          )}
-        </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="pb-4">
+            {isAnyPropertiesAvailable ? (
+              <>
+                <IssuePropertyList
+                  issuePropertyCreateList={customerPropertyCreateList}
+                  customPropertyOperations={customPropertyOperations}
+                  containerRef={containerRef}
+                  lastElementRef={lastElementRef}
+                  properties={sortedProperties}
+                  isUpdateAllowed={true}
+                />
+                <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
+                  <Button
+                    variant="secondary"
+                    className="rounded-md"
+                    onClick={() => {
+                      handleCustomerPropertiesCreate("add", {
+                        key: v4(),
+                        ...defaultCustomProperty,
+                      });
+                    }}
+                  >
+                    <PlusIcon className="h-3.5 w-3.5" />
+                    {t("customers.properties.add.primary_button")}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <CustomerPropertiesEmptyState handleCustomerPropertiesCreate={handleCustomerPropertiesCreate} />
+            )}
+          </div>
+        </CollapsibleContent>
       </Collapsible>
     </div>
   );

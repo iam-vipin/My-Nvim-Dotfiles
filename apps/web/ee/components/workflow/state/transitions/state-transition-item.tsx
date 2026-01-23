@@ -19,7 +19,8 @@ import { TrashIcon, ApproverIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { Collapsible, AlertModalCore } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
+import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -123,13 +124,19 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
         content={t("workflows.confirmation_modals.delete_state_change.description")}
       />
       <Collapsible
-        isOpen={isOpen}
-        onToggle={handleToggle}
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (open !== isOpen) {
+            handleToggle();
+          }
+        }}
         className="w-full"
-        buttonClassName={cn("flex w-full items-center justify-between", {
-          "cursor-not-allowed": !areApproversAvailable,
-        })}
-        title={
+      >
+        <CollapsibleTrigger
+          className={cn("flex w-full items-center justify-between", {
+            "cursor-not-allowed": !areApproversAvailable,
+          })}
+        >
           <div className="flex w-full items-center">
             <div className="flex w-full items-center justify-start gap-1 py-1">
               <span className="text-11 font-medium text-tertiary">
@@ -200,15 +207,16 @@ export const StateTransitionItem = observer(function StateTransitionItem(props: 
               </div>
             </div>
           </div>
-        }
-      >
-        {areApproversAvailable && (
-          <StateTransitionApprovers
-            parentStateId={parentStateId}
-            stateTransition={stateTransition}
-            handleApproversUpdate={handleApproversUpdate}
-          />
-        )}
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          {areApproversAvailable && (
+            <StateTransitionApprovers
+              parentStateId={parentStateId}
+              stateTransition={stateTransition}
+              handleApproversUpdate={handleApproversUpdate}
+            />
+          )}
+        </CollapsibleContent>
       </Collapsible>
     </div>
   );

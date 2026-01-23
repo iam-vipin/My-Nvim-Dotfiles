@@ -11,15 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { CIRCULAR_WIDGET_CHART_TYPES, NUMBER_WIDGET_Y_AXIS_METRICS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CollapsibleContent, Collapsible, CollapsibleTrigger } from "@plane/propel/collapsible";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import type { EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
 import { EWidgetChartTypes } from "@plane/types";
-import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local components
 import { WidgetConfigSidebarCircularChartConfig } from "./circular-chart-config";
@@ -46,10 +46,8 @@ export function WidgetConfigSidebarAxisConfig(props: Props) {
 
   return (
     <div className="flex-shrink-0 space-y-3 text-13">
-      <Collapsible
-        isOpen={isCollapsibleIcon}
-        onToggle={() => setIsCollapsibleIcon((prev) => !prev)}
-        title={
+      <Collapsible open={isCollapsibleIcon} onOpenChange={setIsCollapsibleIcon}>
+        <CollapsibleTrigger>
           <div className="flex items-center gap-0.5 p-1 -ml-1 hover:bg-layer-1 rounded-sm transition-colors">
             <h6 className="font-semibold text-secondary">{t("dashboards.widget.common.widget_configuration")}</h6>
             <div className="flex-shrink-0 size-4 grid place-items-center">
@@ -60,38 +58,39 @@ export function WidgetConfigSidebarAxisConfig(props: Props) {
               />
             </div>
           </div>
-        }
-      >
-        <div className="mt-3 flex flex-col gap-y-1">
-          {selectedChartType === EWidgetChartTypes.NUMBER ? (
-            <Controller
-              control={control}
-              name="y_axis_metric"
-              render={({ field: { value, onChange } }) => (
-                <WidgetMetricSelect
-                  onChange={(val: EWidgetYAxisMetric) => {
-                    onChange(val);
-                    handleSubmit({ y_axis_metric: val });
-                  }}
-                  options={NUMBER_WIDGET_Y_AXIS_METRICS_LIST}
-                  placeholder={t("dashboards.widget.common.add_metric")}
-                  title={t("chart.metric")}
-                  value={value}
-                />
-              )}
-            />
-          ) : shouldSHowCircularChartConfig ? (
-            <>
-              <WidgetConfigSidebarCircularChartConfig handleSubmit={handleSubmit} />
-            </>
-          ) : (
-            <>
-              <WidgetConfigSidebarXAxisConfig handleSubmit={handleSubmit} />
-              <WidgetConfigSidebarYAxisConfig handleSubmit={handleSubmit} />
-              <WidgetConfigSidebarGroupingConfig handleSubmit={handleSubmit} />
-            </>
-          )}
-        </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="mt-3 flex flex-col gap-y-1">
+            {selectedChartType === EWidgetChartTypes.NUMBER ? (
+              <Controller
+                control={control}
+                name="y_axis_metric"
+                render={({ field: { value, onChange } }) => (
+                  <WidgetMetricSelect
+                    onChange={(val: EWidgetYAxisMetric) => {
+                      onChange(val);
+                      handleSubmit({ y_axis_metric: val });
+                    }}
+                    options={NUMBER_WIDGET_Y_AXIS_METRICS_LIST}
+                    placeholder={t("dashboards.widget.common.add_metric")}
+                    title={t("chart.metric")}
+                    value={value}
+                  />
+                )}
+              />
+            ) : shouldSHowCircularChartConfig ? (
+              <>
+                <WidgetConfigSidebarCircularChartConfig handleSubmit={handleSubmit} />
+              </>
+            ) : (
+              <>
+                <WidgetConfigSidebarXAxisConfig handleSubmit={handleSubmit} />
+                <WidgetConfigSidebarYAxisConfig handleSubmit={handleSubmit} />
+                <WidgetConfigSidebarGroupingConfig handleSubmit={handleSubmit} />
+              </>
+            )}
+          </div>
+        </CollapsibleContent>
       </Collapsible>
     </div>
   );

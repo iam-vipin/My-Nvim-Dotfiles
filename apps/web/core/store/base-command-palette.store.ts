@@ -114,7 +114,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     );
   }
   // computedFn
-  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId]);
+  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId] ?? false);
 
   /**
    * Toggles the project list open state

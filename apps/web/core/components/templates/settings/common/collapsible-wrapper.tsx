@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { DropdownIcon } from "@plane/propel/icons";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 
 type TChildProps = {
@@ -55,9 +55,17 @@ export const TemplateCollapsibleWrapper = observer(function TemplateCollapsibleW
 
   return (
     <Collapsible
-      isOpen={isOpen}
-      onToggle={() => setIsOpen(!isOpen)}
-      title={
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className={cn("w-full py-3", {
+        "border-subtle": borderVariant === "strong",
+        "border-subtle-1": borderVariant === "light",
+        "border-b": borderPosition === "bottom",
+        "border-t": borderPosition === "top",
+        "border-none": !showBorder || borderVariant === "none",
+      })}
+    >
+      <CollapsibleTrigger className="w-full">
         <div className="flex w-full items-center gap-3 py-3">
           <DropdownIcon
             className={cn("size-2 text-tertiary hover:text-secondary duration-300", {
@@ -88,17 +96,10 @@ export const TemplateCollapsibleWrapper = observer(function TemplateCollapsibleW
             </div>
           </div>
         </div>
-      }
-      className={cn("w-full py-3", {
-        "border-subtle": borderVariant === "strong",
-        "border-subtle-1": borderVariant === "light",
-        "border-b": borderPosition === "bottom",
-        "border-t": borderPosition === "top",
-        "border-none": !showBorder || borderVariant === "none",
-      })}
-      buttonClassName="w-full"
-    >
-      {typeof children === "function" ? children({ isOpen, setIsOpen }) : children}
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        {typeof children === "function" ? children({ isOpen, setIsOpen }) : children}
+      </CollapsibleContent>
     </Collapsible>
   );
 });

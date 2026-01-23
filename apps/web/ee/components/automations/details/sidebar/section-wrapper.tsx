@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
-import { Disclosure, Transition } from "@headlessui/react";
+import React, { useState } from "react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
@@ -27,41 +27,35 @@ type TProps = {
 
 export function AutomationDetailsSidebarSectionWrapper(props: TProps) {
   const { actionButtons, children, defaultOpen = true, headerActions, title } = props;
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <Disclosure as="section" defaultOpen={defaultOpen} className="flex-grow w-full">
-      {({ open }) => (
-        <>
-          <div className="px-3">
-            <Disclosure.Button
-              className={cn(
-                "group/section-wrapper flex items-center gap-2 py-1.5 px-1 flex-shrink-0 w-full hover:rounded-sm hover:text-primary hover:bg-layer-transparent-hover"
-              )}
-              aria-label="Toggle section"
-            >
-              <h3 className="flex-shrink-0 text-9 font-semibold uppercase text-tertiary">{title}</h3>
-              <div className="flex-grow h-px" />
-              {typeof headerActions === "function" ? headerActions(open) : headerActions}
-              <div className="flex-shrink-0 size-4 rounded-sm grid place-items-center outline-none border-none">
-                <ChevronRightIcon className={cn("size-3.5 transition-transform", { "rotate-90": open })} />
-              </div>
-            </Disclosure.Button>
+    <Collapsible
+      render={<section />}
+      defaultOpen={defaultOpen}
+      className="flex-grow w-full"
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <div className="px-3">
+        <CollapsibleTrigger
+          className={cn(
+            "group/section-wrapper flex items-center gap-2 py-1.5 px-1 flex-shrink-0 w-full hover:rounded-sm hover:text-primary hover:bg-layer-transparent-hover"
+          )}
+          aria-label="Toggle section"
+        >
+          <h3 className="flex-shrink-0 text-9 font-semibold uppercase text-tertiary">{title}</h3>
+          <div className="flex-grow h-px" />
+          {typeof headerActions === "function" ? headerActions(isOpen) : headerActions}
+          <div className="flex-shrink-0 size-4 rounded-sm grid place-items-center outline-none border-none">
+            <ChevronRightIcon className={cn("size-3.5 transition-transform", { "rotate-90": isOpen })} />
           </div>
-          <Transition
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
-          >
-            <Disclosure.Panel className="mt-2 space-y-3">
-              <div className="space-y-3 px-4">{children}</div>
-              {actionButtons}
-            </Disclosure.Panel>
-          </Transition>
-        </>
-      )}
-    </Disclosure>
+        </CollapsibleTrigger>
+      </div>
+      <CollapsibleContent className="mt-2 space-y-3">
+        <div className="space-y-3 px-4">{children}</div>
+        {actionButtons}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

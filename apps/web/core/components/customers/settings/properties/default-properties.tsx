@@ -17,7 +17,7 @@ import { AlignLeft, Hash, CircleChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -67,10 +67,8 @@ export function CustomerDefaultProperties() {
   const { t } = useTranslation();
   return (
     <div className="group/issue-type bg-layer-1 rounded-md px-4">
-      <Collapsible
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-        title={
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger className={cn("flex w-full py-3 gap-2 items-center justify-between")}>
           <div className="flex w-full gap-2 cursor-pointer items-center">
             <div className="flex-shrink-0">
               <ChevronRightIcon
@@ -83,20 +81,20 @@ export function CustomerDefaultProperties() {
               <h3 className="text-14 font-medium">{t("customers.properties.default.title")}</h3>
             </div>
           </div>
-        }
-        buttonClassName={cn("flex w-full py-3 gap-2 items-center justify-between")}
-      >
-        <div className="flex flex-wrap gap-2 pb-4">
-          {DEFAULT_PROPERTIES_LIST.map((property) => (
-            <div
-              key={property.i18n_title}
-              className="flex items-center gap-2 bg-surface-1 border border-subtle-1 rounded-md p-2 cursor-default"
-            >
-              <property.icon className="size-4" />
-              <p className="text-13 text-tertiary">{t(property.i18n_title)}</p>
-            </div>
-          ))}
-        </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="flex flex-wrap gap-2 pb-4">
+            {DEFAULT_PROPERTIES_LIST.map((property) => (
+              <div
+                key={property.i18n_title}
+                className="flex items-center gap-2 bg-surface-1 border border-subtle-1 rounded-md p-2 cursor-default"
+              >
+                <property.icon className="size-4" />
+                <p className="text-13 text-tertiary">{t(property.i18n_title)}</p>
+              </div>
+            ))}
+          </div>
+        </CollapsibleContent>
       </Collapsible>
     </div>
   );

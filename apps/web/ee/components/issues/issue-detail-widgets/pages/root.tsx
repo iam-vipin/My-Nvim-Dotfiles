@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { PagesCollapsibleContent } from "./content";
@@ -45,9 +45,15 @@ export const PagesCollapsible = observer(function PagesCollapsible(props: TProps
   if (!projectId || count === 0) return null;
   return (
     <Collapsible
-      isOpen={isCollapsibleOpen}
-      onToggle={() => toggleOpenWidget("pages")}
-      title={
+      open={isCollapsibleOpen}
+      onOpenChange={(open) => {
+        if (open !== isCollapsibleOpen) {
+          toggleOpenWidget("pages");
+        }
+      }}
+      className="max-h-fit"
+    >
+      <CollapsibleTrigger className="w-full">
         <PagesCollapsibleTitle
           issueServiceType={issueServiceType}
           workspaceSlug={workspaceSlug}
@@ -56,18 +62,17 @@ export const PagesCollapsible = observer(function PagesCollapsible(props: TProps
           disabled={disabled}
           count={count}
         />
-      }
-      buttonClassName="w-full"
-      className="max-h-fit "
-    >
-      <PagesCollapsibleContent
-        workItemId={workItemId}
-        workspaceSlug={workspaceSlug}
-        disabled={disabled}
-        projectId={projectId}
-        data={issuePages.map((pageId) => pagesMap[pageId])}
-        issueServiceType={issueServiceType}
-      />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <PagesCollapsibleContent
+          workItemId={workItemId}
+          workspaceSlug={workspaceSlug}
+          disabled={disabled}
+          projectId={projectId}
+          data={issuePages.map((pageId) => pagesMap[pageId])}
+          issueServiceType={issueServiceType}
+        />
+      </CollapsibleContent>
     </Collapsible>
   );
 });

@@ -22,7 +22,7 @@ import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -287,7 +287,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
-      <Disclosure key={`${project.id}_${URLProjectId}`} defaultOpen={isProjectListOpen} as="div">
+      <Collapsible open={isProjectListOpen} onOpenChange={(open) => setIsProjectListOpen(open)}>
         <div
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
@@ -298,7 +298,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
+              "group/project-item relative w-full p-1 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
                 "bg-layer-transparent-active": shouldHighlightProject,
@@ -334,8 +334,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             <>
               <ControlLink href={defaultTabUrl} className="flex-grow flex truncate" onClick={handleItemClick}>
                 {isAccordionMode ? (
-                  <Disclosure.Button
-                    as="button"
+                  <CollapsibleTrigger
                     type="button"
                     className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {})}
                     aria-label={
@@ -348,7 +347,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                       <Logo logo={project.logo_props} size={16} />
                     </div>
                     <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
-                  </Disclosure.Button>
+                  </CollapsibleTrigger>
                 ) : (
                   <div className="flex-grow flex items-center gap-1.5 text-left select-none w-full">
                     <div className="size-4 grid place-items-center flex-shrink-0">
@@ -470,27 +469,15 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               </div>
             </>
           </div>
-          {isAccordionMode && (
-            <Transition
-              show={isProjectListOpen}
-              enter="transition duration-100 ease-out"
-              enterFrom="transform scale-95 opacity-0"
-              enterTo="transform scale-100 opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform scale-100 opacity-100"
-              leaveTo="transform scale-95 opacity-0"
-            >
-              {isProjectListOpen && (
-                <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
-                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-layer-3" />
-                  <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-                </Disclosure.Panel>
-              )}
-            </Transition>
+          {isAccordionMode && isProjectListOpen && (
+            <CollapsibleContent className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5" keepMounted>
+              <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-layer-3" />
+              <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+            </CollapsibleContent>
           )}
           {isLastChild && <DropIndicator isVisible={instruction === "DRAG_BELOW"} />}
         </div>
-      </Disclosure>
+      </Collapsible>
     </>
   );
 });

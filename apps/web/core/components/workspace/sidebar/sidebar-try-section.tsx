@@ -14,7 +14,7 @@
 import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 import { observer } from "mobx-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 import type { TExploredFeatures } from "@plane/types";
@@ -24,6 +24,7 @@ import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@plane/propel/collapsible";
 
 type TTrySectionItem = {
   title: string;
@@ -89,8 +90,8 @@ export const SidebarTrySection = observer(() => {
   }
 
   return (
-    <Disclosure as="div" className="flex flex-col" defaultOpen>
-      <Disclosure.Button
+    <Collapsible render={<div />} className="flex flex-col" defaultOpen>
+      <CollapsibleTrigger
         className="group w-full flex items-center gap-2 px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover"
         onClick={toggleOpen}
       >
@@ -100,7 +101,7 @@ export const SidebarTrySection = observer(() => {
             "rotate-90": isOpen,
           })}
         />
-      </Disclosure.Button>
+      </CollapsibleTrigger>
       <Transition
         show={isOpen}
         enter="transition duration-100 ease-out"
@@ -110,7 +111,7 @@ export const SidebarTrySection = observer(() => {
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-95 opacity-0"
       >
-        <Disclosure.Panel as="div" className="flex flex-col gap-1" static>
+        <CollapsibleContent className="flex flex-col gap-1">
           {unexploredItems.map((item) => (
             <SidebarNavItem key={item.feature} className="group h-7">
               <Link
@@ -130,8 +131,8 @@ export const SidebarTrySection = observer(() => {
               />
             </SidebarNavItem>
           ))}
-        </Disclosure.Panel>
+        </CollapsibleContent>
       </Transition>
-    </Disclosure>
+    </Collapsible>
   );
 });

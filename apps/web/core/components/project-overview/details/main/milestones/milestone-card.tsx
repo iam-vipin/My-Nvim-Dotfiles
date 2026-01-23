@@ -20,7 +20,8 @@ import { Pill, EPillSize } from "@plane/propel/pill";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
 import { Button } from "@plane/propel/button";
-import { CircularProgressIndicator, cn, Collapsible, CollapsibleButton } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent, CollapsibleButton } from "@plane/propel/collapsible";
+import { CircularProgressIndicator, cn } from "@plane/ui";
 import { getMilestoneIconProps, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -113,10 +114,8 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
       {/* Linked Work items collapsible */}
       <div className="border-t border-subtle-1 pt-1">
         {milestone.progress.total_items ? (
-          <Collapsible
-            isOpen={isLinkedWorkItemsOpen}
-            onToggle={() => setIsLinkedWorkItemsOpen(!isLinkedWorkItemsOpen)}
-            title={
+          <Collapsible open={isLinkedWorkItemsOpen} onOpenChange={setIsLinkedWorkItemsOpen}>
+            <CollapsibleTrigger className="w-full">
               <CollapsibleButton
                 isOpen={isLinkedWorkItemsOpen}
                 title={"Linked Work items"}
@@ -146,10 +145,10 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
                 titleClassName="text-body-xs-regular"
                 className="border-none h-min px-0"
               />
-            }
-            buttonClassName="w-full"
-          >
-            <MilestoneWorkItemsList milestoneId={milestoneId} workspaceSlug={workspaceSlug} projectId={projectId} />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <MilestoneWorkItemsList milestoneId={milestoneId} workspaceSlug={workspaceSlug} projectId={projectId} />
+            </CollapsibleContent>
           </Collapsible>
         ) : (
           <div className="pt-2">

@@ -27,7 +27,7 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
 };
-export const ProjectMilestoneCollapsibleRoot = observer(function ProjectMilestoneCollapsibleRoot(props: Props) {
+export const ProjectMilestoneCollapsible = observer(function ProjectMilestoneCollapsible(props: Props) {
   const { workspaceSlug, projectId } = props;
   // state
   const [isCreateUpdateMilestoneModalOpen, setIsCreateUpdateMilestoneModalOpen] = useState(false);

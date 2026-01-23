@@ -11,12 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useState } from "react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@plane/propel/collapsible";
 import { observer } from "mobx-react";
-import { Collapsible } from "@plane/ui";
-import { RequestAttachmentsCollapsibleContent } from "@/components/customers";
+import { useState } from "react";
 import { RequestAttachmentCollapsibleTitle } from "./collapsible-title";
+import { RequestAttachmentsCollapsibleContent } from "./content";
 
 type TProps = {
   workspaceSlug: string;
@@ -31,8 +30,8 @@ export const RequestAttachmentsCollapsible = observer(function RequestAttachment
   const [isOpen, setOpen] = useState<boolean>(false);
 
   return (
-    <Collapsible
-      title={
+    <Collapsible open={isOpen} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="flex justify-between items-center w-full">
         <RequestAttachmentCollapsibleTitle
           workspaceSlug={workspaceSlug}
           requestId={requestId}
@@ -40,17 +39,15 @@ export const RequestAttachmentsCollapsible = observer(function RequestAttachment
           isOpen={isOpen}
           disabled={!isEditable}
         />
-      }
-      buttonClassName="flex justify-between items-center w-full"
-      isOpen={isOpen}
-      onToggle={() => setOpen(!isOpen)}
-    >
-      <RequestAttachmentsCollapsibleContent
-        workspaceSlug={workspaceSlug}
-        requestId={requestId}
-        customerId={customerId}
-        disabled={!isEditable}
-      />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <RequestAttachmentsCollapsibleContent
+          workspaceSlug={workspaceSlug}
+          requestId={requestId}
+          customerId={customerId}
+          disabled={!isEditable}
+        />
+      </CollapsibleContent>
     </Collapsible>
   );
 });

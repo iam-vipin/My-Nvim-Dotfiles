@@ -169,13 +169,13 @@ export default defineConfig([
           paths: [
             {
               name: "@headlessui/react",
-              importNames: ["Switch"],
-              message: "Use Switch from @plane/propel/switch instead of @headlessui/react",
+              importNames: ["Disclosure", "Switch", "Tabs"],
+              message: "Use @plane/propel components instead of @headlessui/react",
             },
             {
               name: "@plane/ui",
-              importNames: ["Switch","ToggleSwitch"],
-              message: "Use Switch and ToggleSwitch from @plane/propel/switch instead of @plane/ui",
+              importNames: ["Collapsible", "CollapsibleButton", "Switch", "Tabs"],
+              message: "Use @plane/propel components instead of @plane/ui",
             },
           ],
         },

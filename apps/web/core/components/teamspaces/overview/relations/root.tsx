@@ -17,8 +17,8 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ERelationType } from "@plane/constants";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent, CollapsibleButton } from "@plane/propel/collapsible";
 import { Tabs } from "@plane/propel/tabs";
-import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
@@ -97,9 +97,15 @@ export const TeamspaceRelationsRoot = observer(function TeamspaceRelationsRoot(p
 
   return (
     <Collapsible
-      isOpen={isOpen}
-      onToggle={handleToggle}
-      title={
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (open !== isOpen) {
+          handleToggle();
+        }
+      }}
+      className="py-2"
+    >
+      <CollapsibleTrigger>
         <CollapsibleButton
           isOpen={isOpen}
           title="Relations"
@@ -109,10 +115,8 @@ export const TeamspaceRelationsRoot = observer(function TeamspaceRelationsRoot(p
             teamspaceRelationsLoader === "init-loader" && "cursor-not-allowed"
           )}
         />
-      }
-      className="py-2"
-    >
-      <>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
         <div ref={relationsContainerRef} className="flex w-full h-full">
           <Tabs defaultValue={TEAM_RELATION_TYPE_LIST[0].key}>
             <Tabs.List className={"w-fit"}>
@@ -134,7 +138,7 @@ export const TeamspaceRelationsRoot = observer(function TeamspaceRelationsRoot(p
         <Suspense fallback={<></>}>
           <IssuePeekOverview />
         </Suspense>
-      </>
+      </CollapsibleContent>
     </Collapsible>
   );
 });

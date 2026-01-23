@@ -19,7 +19,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { BarIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { Collapsible, CollapsibleButton } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent, CollapsibleButton } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
@@ -119,52 +119,58 @@ export const TeamspaceProgressRoot = observer(function TeamspaceProgressRoot(pro
 
   return (
     <Collapsible
-      isOpen={isOpen}
-      onToggle={handleToggle}
-      title={
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (open !== isOpen) {
+          handleToggle();
+        }
+      }}
+      className="py-2"
+    >
+      <CollapsibleTrigger>
         <CollapsibleButton
           isOpen={isOpen}
           title="Team's progress"
           className="border-none px-0"
           titleClassName={cn(isOpen ? "text-primary" : "text-tertiary hover:text-secondary")}
         />
-      }
-      className="py-2"
-    >
-      <div ref={progressContainerRef} className="flex flex-col gap-2">
-        {!showEmptyState ? (
-          <>
-            <TeamspaceProgressBanner teamspaceId={teamspaceId} />
-            <div className="w-full h-full grid grid-cols-5 gap-3 py-2">
-              <div className="w-full h-full col-span-5 lg:col-span-3">
-                {filter.xAxisKey && filter.yAxisKey && (
-                  <TeamspaceProgressChart
-                    teamspaceId={teamspaceId}
-                    data={teamspaceProgress?.distribution || []}
-                    xAxisKey={filter.xAxisKey}
-                    yAxisKey={filter.yAxisKey}
-                    handleXAxisKeyChange={(key) => handleTeamspaceProgressFilterChange({ xAxisKey: key })}
-                  />
-                )}
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div ref={progressContainerRef} className="flex flex-col gap-2">
+          {!showEmptyState ? (
+            <>
+              <TeamspaceProgressBanner teamspaceId={teamspaceId} />
+              <div className="w-full h-full grid grid-cols-5 gap-3 py-2">
+                <div className="w-full h-full col-span-5 lg:col-span-3">
+                  {filter.xAxisKey && filter.yAxisKey && (
+                    <TeamspaceProgressChart
+                      teamspaceId={teamspaceId}
+                      data={teamspaceProgress?.distribution || []}
+                      xAxisKey={filter.xAxisKey}
+                      yAxisKey={filter.yAxisKey}
+                      handleXAxisKeyChange={(key) => handleTeamspaceProgressFilterChange({ xAxisKey: key })}
+                    />
+                  )}
+                </div>
+                <div className="w-full h-full col-span-5 lg:col-span-2">
+                  <TeamspaceProgressSummary teamspaceId={teamspaceId} />
+                </div>
               </div>
-              <div className="w-full h-full col-span-5 lg:col-span-2">
-                <TeamspaceProgressSummary teamspaceId={teamspaceId} />
-              </div>
-            </div>
-          </>
-        ) : (
-          <SectionEmptyState
-            heading={t("teamspace_analytics.empty_state.progress.title")}
-            subHeading={t("teamspace_analytics.empty_state.progress.description")}
-            icon={<BarIcon className="size-6 text-placeholder" />}
-            variant="solid"
-            iconVariant="round"
-            size="md"
-            containerClassName="mb-4"
-            contentClassName="gap-1"
-          />
-        )}
-      </div>
+            </>
+          ) : (
+            <SectionEmptyState
+              heading={t("teamspace_analytics.empty_state.progress.title")}
+              subHeading={t("teamspace_analytics.empty_state.progress.description")}
+              icon={<BarIcon className="size-6 text-placeholder" />}
+              variant="solid"
+              iconVariant="round"
+              size="md"
+              containerClassName="mb-4"
+              contentClassName="gap-1"
+            />
+          )}
+        </div>
+      </CollapsibleContent>
     </Collapsible>
   );
 });

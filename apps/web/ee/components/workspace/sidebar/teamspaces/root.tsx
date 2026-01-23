@@ -15,7 +15,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -65,10 +66,13 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
 
   return (
     <>
-      <Disclosure as="div" defaultOpen>
-        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
-          <Disclosure.Button
-            as="button"
+      <Collapsible
+        defaultOpen
+        open={isTeamspaceListItemOpen}
+        onOpenChange={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
+      >
+        <div className="group w-full flex items-center justify-between px-1.5  py-2 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
+          <CollapsibleTrigger
             type="button"
             className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
             onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
@@ -79,7 +83,7 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
             )}
           >
             <span className="text-13 font-semibold">{t("teamspaces.label")}</span>
-          </Disclosure.Button>
+          </CollapsibleTrigger>
           <div className="flex items-center gap-1">
             {isAdmin && (
               <Tooltip tooltipHeading="Create teamspace" tooltipContent="">
@@ -122,7 +126,7 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
           leaveTo="transform scale-95 opacity-0"
         >
           {isTeamspaceListItemOpen && (
-            <Disclosure.Panel as="div" className="flex flex-col mt-0.5 gap-0.5" static>
+            <CollapsibleContent className="flex flex-col mt-0.5 gap-0.5">
               {joinedTeamSpaceIds.map((teamspaceId) => (
                 <TeamspaceSidebarListItem
                   key={teamspaceId}
@@ -130,10 +134,10 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
                   handleLinkClick={handleLinkClick}
                 />
               ))}
-            </Disclosure.Panel>
+            </CollapsibleContent>
           )}
         </Transition>
-      </Disclosure>
+      </Collapsible>
     </>
   );
 });

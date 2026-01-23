@@ -11,14 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@plane/propel/collapsible";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { Disclosure, Transition } from "@headlessui/react";
+import { useMemo, useState } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { getDate } from "@plane/utils";
@@ -109,71 +109,69 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   const isCycleDateValid = isCycleStartDateValid && isCycleEndDateValid;
 
   if (!cycleDetails) return <></>;
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <div className="border-t border-subtle space-y-4 py-5">
-      <Disclosure defaultOpen>
-        {({ open }) => (
-          <div className="flex flex-col">
-            {/* progress bar header */}
-            {isCycleDateValid ? (
-              <div className="relative w-full flex justify-between items-center gap-2">
-                <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
-                </Disclosure.Button>
-                <Disclosure.Button className="ml-auto">
-                  {open ? (
-                    <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                  ) : (
-                    <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
-              </div>
-            ) : (
-              <div className="relative w-full flex justify-between items-center gap-2">
+      <Collapsible defaultOpen open={isOpen} onOpenChange={setIsOpen}>
+        <div className="flex flex-col">
+          {/* progress bar header */}
+          {isCycleDateValid ? (
+            <div className="relative w-full flex justify-between items-center gap-2">
+              <CollapsibleTrigger className="relative flex items-center gap-2 w-full">
                 <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
-              </div>
-            )}
-            <Transition show={open}>
-              <Disclosure.Panel className="flex flex-col divide-y divide-subtle-1">
-                {cycleStartDate && cycleEndDate ? (
-                  <>
-                    {isCycleDateValid && (
-                      <SidebarChartRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
-                    )}
-                    {/* progress detailed view */}
-                    {chartDistributionData && (
-                      <div className="w-full py-4">
-                        <CycleProgressStats
-                          cycleId={cycleId}
-                          distribution={chartDistributionData}
-                          groupedIssues={groupedIssues}
-                          handleFiltersUpdate={updateFilterValueFromSidebar.bind(
-                            updateFilterValueFromSidebar,
-                            EIssuesStoreType.CYCLE,
-                            cycleId
-                          )}
-                          isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
-                          plotType={plotType}
-                          selectedFilters={{
-                            assignees: selectedAssignees,
-                            labels: selectedLabels,
-                            stateGroups: selectedStateGroups,
-                          }}
-                          totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                        />
-                      </div>
-                    )}
-                  </>
+              </CollapsibleTrigger>
+              <CollapsibleTrigger className="ml-auto">
+                {isOpen ? (
+                  <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
                 ) : (
-                  <div className="my-2 py-2 text-13 text-tertiary  bg-surface-2 rounded-md px-2 w-full">
-                    {t("no_data_yet")}
+                  <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+              </CollapsibleTrigger>
+            </div>
+          ) : (
+            <div className="relative w-full flex justify-between items-center gap-2">
+              <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
+            </div>
+          )}
+          <CollapsibleContent className="flex flex-col divide-y divide-subtle-1">
+            {cycleStartDate && cycleEndDate ? (
+              <>
+                {isCycleDateValid && (
+                  <SidebarChartRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
+                )}
+                {/* progress detailed view */}
+                {chartDistributionData && (
+                  <div className="w-full py-4">
+                    <CycleProgressStats
+                      cycleId={cycleId}
+                      distribution={chartDistributionData}
+                      groupedIssues={groupedIssues}
+                      handleFiltersUpdate={updateFilterValueFromSidebar.bind(
+                        updateFilterValueFromSidebar,
+                        EIssuesStoreType.CYCLE,
+                        cycleId
+                      )}
+                      isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
+                      plotType={plotType}
+                      selectedFilters={{
+                        assignees: selectedAssignees,
+                        labels: selectedLabels,
+                        stateGroups: selectedStateGroups,
+                      }}
+                      totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
+                    />
                   </div>
                 )}
-              </Disclosure.Panel>
-            </Transition>
-          </div>
-        )}
-      </Disclosure>
+              </>
+            ) : (
+              <div className="my-2 py-2 text-13 text-tertiary  bg-surface-2 rounded-md px-2 w-full">
+                {t("no_data_yet")}
+              </div>
+            )}
+          </CollapsibleContent>
+        </div>
+      </Collapsible>
     </div>
   );
 });

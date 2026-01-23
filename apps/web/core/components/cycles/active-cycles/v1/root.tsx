@@ -11,8 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Disclosure } from "@headlessui/react";
+import { useState } from "react";
 import { observer } from "mobx-react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
@@ -115,28 +116,26 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: ActiveCy
     cycleIssueDetails,
   } = useActiveCycleDetails({ workspaceSlug, projectId, cycleId });
 
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <>
       {showHeader ? (
-        <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
-                <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={open} />
-              </Disclosure.Button>
-              <Disclosure.Panel>
-                <ActiveCyclesComponent
-                  cycleId={cycleId}
-                  activeCycle={activeCycle}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  handleFiltersUpdate={handleFiltersUpdate}
-                  cycleIssueDetails={cycleIssueDetails}
-                />
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
+        <Collapsible className="flex flex-shrink-0 flex-col" open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleTrigger className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
+            <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={isOpen} />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ActiveCyclesComponent
+              cycleId={cycleId}
+              activeCycle={activeCycle}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              handleFiltersUpdate={handleFiltersUpdate}
+              cycleIssueDetails={cycleIssueDetails}
+            />
+          </CollapsibleContent>
+        </Collapsible>
       ) : (
         <ActiveCyclesComponent
           cycleId={cycleId}

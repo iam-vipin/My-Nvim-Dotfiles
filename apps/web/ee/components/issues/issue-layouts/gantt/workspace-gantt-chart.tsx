@@ -126,29 +126,27 @@ export const WorkspaceGanttChart = observer(function WorkspaceGanttChart(props: 
   const nextPageResults = getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
 
   return (
-    <IssuesStoreContext.Provider value={EIssuesStoreType.GLOBAL}>
-      <IssueLayoutHOC layout={EIssueLayoutTypes.GANTT}>
-        <div className="h-full w-full">
-          <GanttChartRoot
-            border={false}
-            title={t("issue.label", { count: 2 })}
-            loaderTitle={t("issue.label", { count: 2 })}
-            blockIds={issueIds}
-            blockUpdateHandler={updateIssueBlockStructure}
-            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
-            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
-            enableBlockLeftResize={checkBlockPermissions}
-            enableBlockRightResize={checkBlockPermissions}
-            enableAddBlock={checkBlockPermissions}
-            loadMoreBlocks={loadMoreIssues}
-            canLoadMoreBlocks={!!nextPageResults}
-            updateBlockDates={updateBlockDates}
-            enableDependency={checkBlockPermissions}
-            showAllBlocks
-            enableBlockMove={checkBlockPermissions}
-          />
-        </div>
-      </IssueLayoutHOC>
-    </IssuesStoreContext.Provider>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.GANTT}>
+      <div className="h-full w-full">
+        <GanttChartRoot
+          border={false}
+          title={t("issue.label", { count: 2 })}
+          loaderTitle={t("issue.label", { count: 2 })}
+          blockIds={issueIds}
+          blockUpdateHandler={updateIssueBlockStructure}
+          blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
+          sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
+          enableBlockLeftResize={checkBlockPermissions}
+          enableBlockRightResize={checkBlockPermissions}
+          enableAddBlock={checkBlockPermissions}
+          loadMoreBlocks={loadMoreIssues}
+          canLoadMoreBlocks={!!nextPageResults}
+          updateBlockDates={updateBlockDates}
+          enableDependency={checkBlockPermissions}
+          showAllBlocks
+          enableBlockMove={checkBlockPermissions}
+        />
+      </div>
+    </IssueLayoutHOC>
   );
 });

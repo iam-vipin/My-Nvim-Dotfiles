@@ -48,7 +48,8 @@ export type KanbanStoreType =
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.EPIC;
+  | EIssuesStoreType.EPIC
+  | EIssuesStoreType.GLOBAL;
 
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;

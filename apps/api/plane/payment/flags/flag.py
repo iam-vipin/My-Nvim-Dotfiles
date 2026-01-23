@@ -82,6 +82,8 @@ class FeatureFlag(Enum):
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
     # Workspace gantt view
     GLOBAL_VIEWS_TIMELINE = "GLOBAL_VIEWS_TIMELINE"
+    # Workspace additional layouts
+    GLOBAL_VIEWS_CAL_BOARD = "GLOBAL_VIEWS_CAL_BOARD"
     # Shared Pages
     SHARED_PAGES = "SHARED_PAGES"
     # Copy Work Item

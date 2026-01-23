@@ -272,6 +272,17 @@ export const ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS: TFiltersLayoutOptions = {
       values: ["sub_issue"],
     },
   },
+  kanban: {
+    display_properties: ["key", "issue_type"],
+    display_filters: {
+      group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project"],
+      sub_group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project", null],
+    },
+    extra_options: {
+      access: true,
+      values: ["sub_issue", "show_empty_groups"],
+    },
+  },
 };
 
 export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_INITIATIVES_PAGE: (keyof IIssueFilterOptions)[] = [

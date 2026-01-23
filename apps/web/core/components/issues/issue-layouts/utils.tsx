@@ -304,22 +304,28 @@ const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGrou
   return assigneeColumns;
 };
 
-const getCreatedByColumns = (): IGroupByColumn[] | undefined => {
-  const {
-    project: { projectMemberIds },
-    getUserDetails,
-  } = store.memberRoot;
-  if (!projectMemberIds) return;
-  // Map project member ids to group by created by columns
-  return projectMemberIds.map((memberId) => {
+const getCreatedByColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGroupByColumn[] | undefined => {
+  const { getUserDetails } = store.memberRoot;
+  // derived values
+  const { memberIds, includeNone } = getScopeMemberIds({ isWorkspaceLevel, projectId });
+  const createdByColumns: IGroupByColumn[] = [];
+  if (!memberIds) return [];
+
+  memberIds.forEach((memberId) => {
     const member = getUserDetails(memberId);
-    return {
+    if (!member) return;
+    createdByColumns.push({
       id: memberId,
       name: member?.display_name || "",
       icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
-      payload: {},
-    };
+      payload: { assignee_ids: [memberId] },
+    });
   });
+  if (includeNone) {
+    createdByColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
+  }
+
+  return createdByColumns;
 };
 
 export const getDisplayPropertiesCount = (

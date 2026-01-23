@@ -107,7 +107,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
-    const filteredParams = handleIssueQueryParamsByLayout(EIssueLayoutTypes.SPREADSHEET, "my_issues");
+    const filteredParams = handleIssueQueryParamsByLayout(userFilters.displayFilters?.layout, "my_issues");
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
@@ -249,10 +249,13 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             _filters.displayFilters.sub_group_by = null;
             updatedDisplayFilters.sub_group_by = null;
           }
-          // set group_by to state if layout is switched to kanban and group_by is null
-          if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
-            _filters.displayFilters.group_by = "state";
-            updatedDisplayFilters.group_by = "state";
+          // set group_by to state group if layout is switched to kanban and group_by is null or set to state
+          if (
+            _filters.displayFilters.layout === "kanban" &&
+            (_filters.displayFilters.group_by === null || _filters.displayFilters.group_by === "state") // At workspace level state is not available. This resets state to state group
+          ) {
+            _filters.displayFilters.group_by = "state_detail.group";
+            updatedDisplayFilters.group_by = "state_detail.group";
           }
 
           runInAction(() => {

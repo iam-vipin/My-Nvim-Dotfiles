@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { LockIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS } from "@plane/constants";
@@ -21,6 +21,7 @@ import type { TWorkspaceLayoutProps } from "@/components/views/helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useFlag } from "@/plane-web/hooks/store";
 import { WorkspaceGanttRoot } from "../issues/issue-layouts/gantt/root";
+import { WorkspaceViewBoardLayout } from "../issues/issue-layouts/board/workspace-view-root";
 
 export type TLayoutSelectionProps = {
   onChange: (layout: EIssueLayoutTypes) => void;
@@ -28,7 +29,14 @@ export type TLayoutSelectionProps = {
   workspaceSlug: string;
 };
 
-const ALLOWED_LAYOUTS = [EIssueLayoutTypes.SPREADSHEET, EIssueLayoutTypes.GANTT];
+/**
+ * Configuration for layouts and their feature flags
+ * To add a new layout:
+ * 1. Add a useFlag call for the feature flag
+ * 2. Add an entry to LAYOUT_CONFIGS with { layout, enabled }
+ * SPREADSHEET layout is always available (no feature flag required)
+ */
+const DEFAULT_LAYOUT = EIssueLayoutTypes.SPREADSHEET;
 
 /**
  * @description Global view layout selection component
@@ -36,32 +44,55 @@ const ALLOWED_LAYOUTS = [EIssueLayoutTypes.SPREADSHEET, EIssueLayoutTypes.GANTT]
  * @returns {React.ReactNode}
  */
 export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceSlug }: TLayoutSelectionProps) {
-  const isGanttLayoutEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
-
   const {
     issuesFilter: { updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
 
-  /** To handle layout switch when downgraded and to reset default layout to SPREADSHEET*/
+  // Feature flag checks for each layout
+  const isGanttEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
+  const isKanbanEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CAL_BOARD");
+  // Add new layout feature flags here, e.g.:
+  // const isCalendarEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CALENDAR");
+
+  // Configuration mapping layouts to their enabled state
+  const LAYOUT_CONFIGS = useMemo(
+    () => [
+      { layout: EIssueLayoutTypes.GANTT, enabled: isGanttEnabled },
+      { layout: EIssueLayoutTypes.KANBAN, enabled: isKanbanEnabled },
+      // Add new layouts here, e.g.:
+      // { layout: EIssueLayoutTypes.CALENDAR, enabled: isCalendarEnabled },
+    ],
+    [isGanttEnabled, isKanbanEnabled]
+  );
+
+  // Compute enabled layouts
+  const enabledLayouts = useMemo(() => {
+    const layouts = [DEFAULT_LAYOUT]; // SPREADSHEET is always available
+    LAYOUT_CONFIGS.forEach(({ layout, enabled }) => {
+      if (enabled) layouts.push(layout);
+    });
+    return layouts;
+  }, [LAYOUT_CONFIGS]);
+
+  /** Handle layout switch when downgraded or unsupported layout is selected */
   useEffect(() => {
-    const shouldSwitchToSpreadsheet =
-      !ALLOWED_LAYOUTS.includes(selectedLayout) ||
-      (!isGanttLayoutEnabled && selectedLayout === EIssueLayoutTypes.GANTT);
-
-    if (shouldSwitchToSpreadsheet) {
-      onChange(EIssueLayoutTypes.SPREADSHEET);
+    if (!enabledLayouts.includes(selectedLayout)) {
+      onChange(DEFAULT_LAYOUT);
     }
-  }, [isGanttLayoutEnabled, selectedLayout, workspaceSlug, updateFilters, onChange]);
+  }, [enabledLayouts, selectedLayout, workspaceSlug, updateFilters, onChange]);
 
-  if (!isGanttLayoutEnabled) return null;
+  // Show layout selection only if there are multiple layouts available
+  if (enabledLayouts.length <= 1) return null;
 
-  return <LayoutSelection layouts={ALLOWED_LAYOUTS} onChange={onChange} selectedLayout={selectedLayout} />;
+  return <LayoutSelection layouts={enabledLayouts} onChange={onChange} selectedLayout={selectedLayout} />;
 }
 
 export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.GANTT:
       return <WorkspaceGanttRoot {...props} />;
+    case EIssueLayoutTypes.KANBAN:
+      return <WorkspaceViewBoardLayout globalViewId={props.globalViewId} workspaceSlug={props.workspaceSlug} />;
     default:
       return null;
   }
@@ -71,7 +102,7 @@ export function AdditionalHeaderItems({ isLocked }: { isLocked: boolean }) {
   if (!isLocked) return null;
   return (
     <div className="h-6 min-w-[76px] flex items-center justify-center gap-1.5 px-2 rounded-sm text-accent-primary bg-accent-primary/20 text-11 font-medium">
-      <LockIcon className="size-3.5 flex-shrink-0" /> Locked
+      <LockIcon className="size-3.5 shrink-0" /> Locked
     </div>
   );
 }

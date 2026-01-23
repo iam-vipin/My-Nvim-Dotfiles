@@ -17,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import type { UseTourParams, UseTourReturn } from "@plane/types";
 import type { TTourStep } from "@plane/propel/tour";
 import { preloadTourAssets } from "@plane/propel/tour";
-import { useUser } from "@/hooks/store/user";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
 /**
@@ -48,6 +48,10 @@ export const useTour = (params: UseTourParams): UseTourReturn => {
   const { resolvedTheme } = useTheme();
   const userStore = useUser();
   const workspaceStore = useWorkspace();
+  const {
+    data: { product_tour },
+    updateUserProfile,
+  } = useUserProfile();
 
   // Fetch workspace properties if needed
   useEffect(() => {
@@ -72,8 +76,7 @@ export const useTour = (params: UseTourParams): UseTourReturn => {
     }
 
     if (storageType === "workspace_properties" && workspaceSlug && propertyKey) {
-      const properties = workspaceStore?.getProjectNavigationPreferences(workspaceSlug);
-      return properties?.product_tour?.[propertyKey] ?? false;
+      return product_tour?.[propertyKey] ?? false;
     }
 
     return false;
@@ -122,12 +125,12 @@ export const useTour = (params: UseTourParams): UseTourReturn => {
   const completeTour = useCallback(async () => {
     try {
       if (storageType === "user_profile") {
-        await userStore?.userProfile?.updateUserProfile({
+        await updateUserProfile({
           is_navigation_tour_completed: true,
         });
       } else if (storageType === "workspace_properties" && workspaceSlug && propertyKey) {
-        const currentTours = workspaceStore?.getProjectNavigationPreferences(workspaceSlug)?.product_tour || {};
-        await workspaceStore?.updateProjectNavigationPreferences(workspaceSlug, {
+        const currentTours = product_tour || {};
+        await updateUserProfile({
           product_tour: {
             ...currentTours,
             [propertyKey]: true,
@@ -174,12 +177,12 @@ export const useTour = (params: UseTourParams): UseTourReturn => {
     try {
       // Skip = Complete: Mark tour as completed in backend
       if (storageType === "user_profile") {
-        await userStore?.userProfile?.updateUserProfile({
+        await updateUserProfile({
           is_navigation_tour_completed: true,
         });
       } else if (storageType === "workspace_properties" && workspaceSlug && propertyKey) {
-        const currentTours = workspaceStore?.getProjectNavigationPreferences(workspaceSlug)?.product_tour || {};
-        await workspaceStore?.updateProjectNavigationPreferences(workspaceSlug, {
+        const currentTours = product_tour || {};
+        await updateUserProfile({
           product_tour: {
             ...currentTours,
             [propertyKey]: true,

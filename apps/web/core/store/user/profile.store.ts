@@ -74,6 +74,7 @@ export class ProfileStore implements IUserProfileStore {
     start_of_the_week: EStartOfTheWeek.SUNDAY,
     is_app_rail_docked: true,
     is_navigation_tour_completed: false,
+    product_tour: undefined,
   };
 
   // services

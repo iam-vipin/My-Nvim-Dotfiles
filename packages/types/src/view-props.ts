@@ -22,7 +22,6 @@ import type {
   TExtendedWorkItemFilterProperty,
 } from "./view-props-extended";
 import { WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED } from "./view-props-extended";
-import type { TProductTour } from "./tour";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -241,7 +240,6 @@ export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
 export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {
   navigation_project_limit?: number;
   navigation_control_preference?: "ACCORDION" | "TABBED";
-  product_tour?: TProductTour;
   // Note: show_limited_projects is derived from navigation_project_limit (0 = false, >0 = true)
 }
 

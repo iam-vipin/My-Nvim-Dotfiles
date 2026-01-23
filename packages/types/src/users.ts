@@ -12,7 +12,7 @@
  */
 
 import type { TUserPermissions } from "./enums";
-import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
+import type { IIssueActivity, TIssuePriorities, TProductTour, TStateGroups } from ".";
 import type { TLoginMediums } from "./instance";
 
 /**
@@ -103,6 +103,7 @@ export type TUserProfile = {
   is_app_rail_docked?: boolean;
   notification_view_mode: TNotificationsViewMode;
   is_navigation_tour_completed?: boolean;
+  product_tour?: TProductTour;
 };
 
 export interface IInstanceAdminStatus {

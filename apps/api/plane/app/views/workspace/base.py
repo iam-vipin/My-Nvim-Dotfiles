@@ -97,12 +97,14 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value([
-                {
-                    "key": "DISABLE_WORKSPACE_CREATION",
-                    "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-                }
-            ])
+            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
+                [
+                    {
+                        "key": "DISABLE_WORKSPACE_CREATION",
+                        "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
+                    }
+                ]
+            )
 
             if DISABLE_WORKSPACE_CREATION == "1":
                 return Response(
@@ -157,7 +159,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 track_event.delay(
                     user_id=request.user.id,
                     event_name=WORKSPACE_CREATED,
-                    slug=data["slug"],
+                    workspace_slug=data["slug"],
                     event_properties={
                         "user_id": request.user.id,
                         "workspace_id": data["id"],
@@ -224,7 +226,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 track_event.delay(
                     user_id=request.user.id,
                     event_name=WORKSPACE_DELETED,
-                    slug=workspace.slug,
+                    workspace_slug=workspace.slug,
                     event_properties={
                         "user_id": request.user.id,
                         "workspace_id": workspace.id,

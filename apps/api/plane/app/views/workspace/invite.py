@@ -152,7 +152,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             track_event.delay(
                 user_id=request.user.id,
                 event_name=USER_INVITED_TO_WORKSPACE,
-                slug=slug,
+                workspace_slug=slug,
                 event_properties={
                     "user_id": request.user.id,
                     "workspace_id": workspace.id,
@@ -269,7 +269,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     track_event.delay(
                         user_id=user.id,
                         event_name=USER_JOINED_WORKSPACE,
-                        slug=slug,
+                        workspace_slug=slug,
                         event_properties={
                             "user_id": user.id,
                             "workspace_id": workspace_invite.workspace.id,
@@ -343,7 +343,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             track_event.delay(
                 user_id=request.user.id,
                 event_name=USER_JOINED_WORKSPACE,
-                slug=invitation.workspace.slug,
+                workspace_slug=invitation.workspace.slug,
                 event_properties={
                     "user_id": request.user.id,
                     "workspace_id": invitation.workspace.id,

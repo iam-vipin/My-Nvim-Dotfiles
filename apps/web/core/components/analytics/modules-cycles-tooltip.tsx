@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { StartDatePropertyIcon } from "@plane/propel/icons";
 import { Card, ECardSpacing } from "@plane/ui";

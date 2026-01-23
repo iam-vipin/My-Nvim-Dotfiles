@@ -17,6 +17,25 @@ import type { EditorView } from "@tiptap/pm/view";
 import type { UniqueIDOptions } from "./extension";
 
 /**
+ * Finds duplicate items in an array using Set for O(n) performance.
+ * Much faster than the naive O(n²) indexOf approach.
+ */
+export function findDuplicates(items: any[]): any[] {
+  const seen = new Set();
+  const duplicates = new Set<any>();
+
+  for (const item of items) {
+    if (seen.has(item)) {
+      duplicates.add(item);
+    } else {
+      seen.add(item);
+    }
+  }
+
+  return Array.from(duplicates);
+}
+
+/**
  * Utility function to create IDs for nodes that don't have them
  */
 export const createIdsForView = (view: EditorView, options: UniqueIDOptions) => {

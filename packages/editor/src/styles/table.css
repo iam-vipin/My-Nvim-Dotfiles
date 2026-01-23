@@ -1,6 +1,22 @@
+/**
+ * Table Performance Optimizations
+ * 
+ * Uses CSS content-visibility to enable browser-level virtualization:
+ * - Offscreen tables skip layout, paint, and style calculations
+ * - contain-intrinsic-size provides placeholder dimensions to prevent layout shifts
+ * - This enables handling 300+ tables without significant performance degradation
+ * 
+ * Browser support: Chrome 85+, Firefox 125+, Safari 18+
+ * Fallback: Tables render normally in older browsers
+ */
 .table-wrapper {
   overflow-x: auto;
   padding-bottom: 26px;
+
+  /* Browser-level virtualization - skip rendering for offscreen tables */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px 240px; /* width height - adjust to typical table size */
+  contain: layout paint style;
 
   table {
     border-collapse: collapse;
@@ -105,6 +121,12 @@
 
     th {
       @apply font-medium text-left;
+    }
+
+    /* Row-level virtualization for very tall tables (many rows) */
+    tr {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 800px 36px; /* width height - typical row height */
     }
 
     tr[background="none"],

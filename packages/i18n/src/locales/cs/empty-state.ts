@@ -258,7 +258,13 @@ export default {
       title: "Zatím žádný osobní token",
       description:
         "Generujte bezpečné API tokeny pro připojení vašeho pracovního prostoru s externími systémy a aplikacemi.",
-      cta_primary: "Přidat API token",
+      cta_primary: "Přidat přístupový token",
+    },
+    workspace_tokens: {
+      title: "Zatím žádný přístupový token",
+      description:
+        "Generujte bezpečné API tokeny pro připojení vašeho pracovního prostoru s externími systémy a aplikacemi.",
+      cta_primary: "Přidat přístupový token",
     },
     webhooks: {
       title: "Zatím nebyl přidán žádný Webhook",

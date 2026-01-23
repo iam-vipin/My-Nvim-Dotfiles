@@ -253,7 +253,12 @@ export default {
     tokens: {
       title: "No Personal token yet",
       description: "Generate secure API tokens to connect your workspace with external systems and applications.",
-      cta_primary: "Add API token",
+      cta_primary: "Add access token",
+    },
+    workspace_tokens: {
+      title: "No Access tokens yet",
+      description: "Generate secure API tokens to connect your workspace with external systems and applications.",
+      cta_primary: "Add access token",
     },
     webhooks: {
       title: "No Webhook added yet",

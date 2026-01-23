@@ -265,6 +265,12 @@ export default {
         "Hasilkan token API yang aman untuk menghubungkan ruang kerja Anda dengan sistem dan aplikasi eksternal.",
       cta_primary: "Tambahkan token API",
     },
+    workspace_tokens: {
+      title: "Belum ada token API",
+      description:
+        "Hasilkan token API yang aman untuk menghubungkan ruang kerja Anda dengan sistem dan aplikasi eksternal.",
+      cta_primary: "Tambahkan token API",
+    },
     webhooks: {
       title: "Belum ada Webhook yang ditambahkan",
       description: "Otomatisasi notifikasi ke layanan eksternal ketika peristiwa proyek terjadi.",

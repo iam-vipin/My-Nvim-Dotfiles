@@ -272,6 +272,12 @@ export default {
         "Generieren Sie sichere API-Tokens, um Ihren Workspace mit externen Systemen und Anwendungen zu verbinden.",
       cta_primary: "API-Token hinzufügen",
     },
+    workspace_tokens: {
+      title: "Noch keine API-Tokens",
+      description:
+        "Generieren Sie sichere API-Tokens, um Ihren Workspace mit externen Systemen und Anwendungen zu verbinden.",
+      cta_primary: "API-Token hinzufügen",
+    },
     webhooks: {
       title: "Noch kein Webhook hinzugefügt",
       description: "Automatisieren Sie Benachrichtigungen an externe Dienste, wenn Projektereignisse auftreten.",

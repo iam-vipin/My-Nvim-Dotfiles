@@ -102,11 +102,11 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
               <div className="h-full w-full flex items-center justify-center">
                 <EmptyStateCompact
                   assetKey="token"
-                  title={t("settings_empty_state.tokens.title")}
-                  description={t("settings_empty_state.tokens.description")}
+                  title={t("settings_empty_state.workspace_tokens.title")}
+                  description={t("settings_empty_state.workspace_tokens.description")}
                   actions={[
                     {
-                      label: t("settings_empty_state.tokens.cta_primary"),
+                      label: t("settings_empty_state.workspace_tokens.cta_primary"),
                       onClick: () => {
                         setIsCreateTokenModalOpen(true);
                       },

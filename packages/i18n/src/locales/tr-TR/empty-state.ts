@@ -265,6 +265,12 @@ export default {
         "Çalışma alanınızı harici sistemler ve uygulamalarla bağlamak için güvenli API token'ları oluşturun.",
       cta_primary: "API token'ı ekle",
     },
+    workspace_tokens: {
+      title: "Henüz Erişim token'ı yok",
+      description:
+        "Çalışma alanınızı harici sistemler ve uygulamalarla bağlamak için güvenli API token'ları oluşturun.",
+      cta_primary: "Erişim token'ı ekle",
+    },
     webhooks: {
       title: "Henüz Webhook eklenmedi",
       description: "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",

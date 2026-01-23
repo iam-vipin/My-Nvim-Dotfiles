@@ -269,6 +269,12 @@ export default {
         "Générez des jetons API sécurisés pour connecter votre espace de travail avec des systèmes et applications externes.",
       cta_primary: "Ajouter un jeton API",
     },
+    workspace_tokens: {
+      title: "Aucun jeton API pour le moment",
+      description:
+        "Générez des jetons API sécurisés pour connecter votre espace de travail avec des systèmes et applications externes.",
+      cta_primary: "Ajouter un jeton API",
+    },
     webhooks: {
       title: "Aucun Webhook ajouté pour le moment",
       description:

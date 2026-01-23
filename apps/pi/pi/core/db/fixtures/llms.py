@@ -24,6 +24,7 @@ from pi.core.db.plane_pi.lifecycle import get_async_session
 
 llm_id_map = {
     "gpt-4o": "46812713-ca2d-4411-ac21-838b553501f0",
+    "gpt-4o-search-preview": "9f7d3f1e-3b1d-4a5c-9a8f-1a6f0d8d2c3b",
     "gpt-4o-mini": "059fdc71-75b5-4897-93d5-b61e0ed11b7e",
     "gpt-4.1": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
     "gpt-4.1-nano": "fa8e33df-7130-4d3d-b4d8-ca627d3208af",
@@ -45,6 +46,14 @@ LLMS_DATA = [
         "description": "OpenAI's GPT-4o model.",
         "provider": "OpenAI",
         "model_key": "gpt-4o",
+        "max_tokens": 128000,
+    },
+    {
+        "id": llm_id_map["gpt-4o-search-preview"],
+        "name": "GPT-4o Search Preview",
+        "description": "OpenAI's GPT-4o search preview model for web search.",
+        "provider": "OpenAI",
+        "model_key": "gpt-4o-search-preview",
         "max_tokens": 128000,
     },
     {

@@ -22,10 +22,11 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { TIssuePage, TIssueServiceType } from "@plane/types";
 import { EPageAccess } from "@plane/types";
 import { Button } from "@plane/propel/button";
-import { ToggleSwitch, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
+import { ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
 // types
 // components
 import { getPageName, getTabIndex } from "@plane/utils";
@@ -170,7 +171,7 @@ const PagesMultiSelectModal = observer(function PagesMultiSelectModal(props: {
           </div>
           <div className="w-full flex items-center gap-2 text-13 text-secondary justify-end">
             <span className="text-11 font-medium text-secondary">{t("issue.pages.show_wiki_pages")}</span>
-            <ToggleSwitch value={showWikiPages} onChange={() => setShowWikiPages(!showWikiPages)} />
+            <Switch value={showWikiPages} onChange={() => setShowWikiPages(!showWikiPages)} />
           </div>
         </div>
 

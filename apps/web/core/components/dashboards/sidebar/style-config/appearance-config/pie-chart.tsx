@@ -16,7 +16,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { PIE_CHART_VALUE_TYPE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TDashboardWidget, TDashboardWidgetConfig, TWidgetPieChartValuesType } from "@plane/types";
-import { CustomSelect, ToggleSwitch } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";
 import { WidgetConfigSelectButton } from "../../select-button";
@@ -46,7 +47,7 @@ export function PieChartAppearanceConfig(props: Props) {
               name="config.show_values"
               render={({ field: { value, onChange } }) => (
                 <div className="flex-shrink-0 px-2">
-                  <ToggleSwitch
+                  <Switch
                     value={!!value}
                     onChange={(val) => {
                       onChange(val);

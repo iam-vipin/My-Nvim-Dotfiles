@@ -16,8 +16,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Switch } from "@plane/propel/switch";
 import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // ce imports
 import type { TProperties } from "@/constants/project/settings/features";
@@ -114,10 +114,9 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                                   togglePaidPlanModal(true);
                                 }}
                               >
-                                <ToggleSwitch
+                                <Switch
                                   value={false}
                                   onChange={() => {}}
-                                  size="sm"
                                   className={isAdmin ? "opacity-30" : ""}
                                   disabled={!isAdmin}
                                 />

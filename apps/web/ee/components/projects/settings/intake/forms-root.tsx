@@ -18,7 +18,8 @@ import { SPACE_BASE_URL, SPACE_BASE_PATH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { RenewModal } from "./renew-modal";
@@ -115,11 +116,10 @@ export function IntakeFormsRoot(props: Props) {
                     disabled={isAdmin}
                   >
                     <div>
-                      <ToggleSwitch
+                      <Switch
                         value={Boolean(isFormEnabled)}
                         onChange={() => handleSubmit()}
                         disabled={!isEnabled || !isAdmin}
-                        size="sm"
                       />
                     </div>
                   </Tooltip>

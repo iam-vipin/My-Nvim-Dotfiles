@@ -17,7 +17,8 @@ import { ListFilter } from "lucide-react";
 import { AUTOMATION_ACTIVITY_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TAutomationActivityType } from "@plane/types";
-import { CustomSelect, ToggleSwitch } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -43,7 +44,7 @@ export const AutomationDetailsSidebarActivityHeaderFilters = observer(
       <div className="shrink-0 flex items-center gap-2">
         <div className="shrink-0 flex items-center gap-2">
           <span className="text-secondary text-11 font-medium">{t("automations.activity.filters.show_fails")}</span>
-          <ToggleSwitch
+          <Switch
             value={isShowFailsToggleEnabled}
             onChange={() => {
               updateFilters?.({

@@ -22,9 +22,10 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { Combobox } from "@plane/propel/combobox";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Switch } from "@plane/propel/switch";
 import type { IProject, IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
@@ -181,12 +182,11 @@ export const FocusFilter = observer(function FocusFilter(props: TProps) {
             <div className="text-wrap font-medium text-tertiary text-11">
               Turn this off if you don&apos;t want AI to use your work from Plane.
             </div>
-            <ToggleSwitch
+            <Switch
               value={focus.isInWorkspaceContext ?? false}
               onChange={() => {
                 updateFocus("isInWorkspaceContext", !focus.isInWorkspaceContext);
               }}
-              size="sm"
             />
           </div>
         </div>

@@ -20,8 +20,8 @@ import { PlusIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { EIssuePropertyType, IIssueProperty, IIssueType, TProjectTemplateForm } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { IssueTypeListItem } from "@/components/work-item-types/issue-type-list-item";
@@ -148,7 +148,7 @@ export const ProjectWorkItemTypes = observer(function ProjectWorkItemTypes(props
               control={control}
               name="project.is_issue_type_enabled"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch value={Boolean(value)} onChange={() => onChange(!value)} size="sm" />
+                <Switch value={Boolean(value)} onChange={() => onChange(!value)} />
               )}
             />
           </div>

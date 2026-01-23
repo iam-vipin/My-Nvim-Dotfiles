@@ -13,7 +13,7 @@
 
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import type { TProperties } from "@/constants/project/settings/features";
 
 type Props = {
@@ -31,16 +31,15 @@ export function ProjectFeatureToggle(props: Props) {
     handleSubmit(featureItem.key, featureItem.property);
   };
 
-  // ToggleSwitch props
+  // Switch props
   const toggleSwitchProps = {
     value,
     onChange: handleToggle,
     disabled,
-    size: "sm" as const,
   };
 
   if (isCreateModal) {
-    return <ToggleSwitch {...toggleSwitchProps} />;
+    return <Switch {...toggleSwitchProps} />;
   }
 
   if (featureItem.href) {
@@ -58,5 +57,5 @@ export function ProjectFeatureToggle(props: Props) {
     );
   }
 
-  return <ToggleSwitch {...toggleSwitchProps} />;
+  return <Switch {...toggleSwitchProps} />;
 }

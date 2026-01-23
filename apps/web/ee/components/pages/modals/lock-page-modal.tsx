@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 // plane imports
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { getPageName } from "@plane/utils";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
@@ -52,7 +52,7 @@ export function LockPageModal({
               ? "This will allow others to edit this page."
               : "This will prevent others from editing this page."}
           </div>
-          <ToggleSwitch
+          <Switch
             className="mt-4"
             value={actionType}
             onChange={() => {

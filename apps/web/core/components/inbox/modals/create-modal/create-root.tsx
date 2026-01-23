@@ -20,8 +20,8 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { TIssue } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -247,7 +247,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               role="button"
               tabIndex={getIndex("create_more")}
             >
-              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+              <Switch value={createMore} onChange={() => {}} />
               <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">

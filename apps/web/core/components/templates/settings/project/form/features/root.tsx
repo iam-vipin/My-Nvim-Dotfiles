@@ -16,7 +16,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TProjectTemplateForm } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // plane web imports
 import { TemplateCollapsibleWrapper } from "@/components/templates/settings/common";
 import { PROJECT_FEATURES_LIST_FOR_TEMPLATE } from "@/constants/project/settings/features";
@@ -49,7 +49,7 @@ export const ProjectFeatures = observer(function ProjectFeatures() {
                 control={control}
                 name={`project.${feature.property}` as keyof TProjectTemplateForm}
                 render={({ field: { value, onChange } }) => (
-                  <ToggleSwitch value={Boolean(value)} onChange={() => onChange(!value)} size="sm" />
+                  <Switch value={Boolean(value)} onChange={() => onChange(!value)} />
                 )}
               />
             </div>

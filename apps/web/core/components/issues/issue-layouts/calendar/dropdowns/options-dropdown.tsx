@@ -22,8 +22,8 @@ import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { EIssueFilterType, CALENDAR_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { Switch } from "@plane/propel/switch";
 import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // hooks
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import useSize from "@/hooks/use-window-size";
@@ -157,7 +157,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                     onClick={handleToggleWeekends}
                   >
                     {t("common.actions.show_weekends")}
-                    <ToggleSwitch
+                    <Switch
                       value={showWeekends}
                       onChange={() => {
                         if (windowWidth <= 768) closePopover(); // close the popover on mobile

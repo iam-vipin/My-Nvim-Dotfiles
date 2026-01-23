@@ -16,9 +16,8 @@ import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
-import { cn } from "@plane/utils";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -106,11 +105,7 @@ function CustomerSettingsPage({ params }: Route.ComponentProps) {
             title="Enable customers"
             description="Link customer requests to work items and track progress by customer."
             control={
-              isFeatureFlagEnabled && (
-                <div className={cn(isCustomersFeatureEnabled && "cursor-not-allowed")}>
-                  <ToggleSwitch value={!!isCustomersFeatureEnabled} onChange={toggleCustomersFeature} size="sm" />
-                </div>
-              )
+              isFeatureFlagEnabled && <Switch value={!!isCustomersFeatureEnabled} onChange={toggleCustomersFeature} />
             }
           />
         </div>

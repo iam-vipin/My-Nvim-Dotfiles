@@ -17,8 +17,8 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserProjectRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -112,11 +112,7 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
               {isWorkflowFeatureFlagEnabled && (
                 <div className="shrink-0 flex items-center justify-center gap-2 px-4">
                   <span className="text-11 text-tertiary">{t("common.live")}</span>
-                  <ToggleSwitch
-                    value={!!isWorkflowEnabled}
-                    onChange={handleEnableDisableWorkflow}
-                    disabled={isLoading}
-                  />
+                  <Switch value={!!isWorkflowEnabled} onChange={handleEnableDisableWorkflow} disabled={isLoading} />
                   <WorkflowSettingsQuickActions projectId={projectId} workspaceSlug={workspaceSlug} />
                 </div>
               )}

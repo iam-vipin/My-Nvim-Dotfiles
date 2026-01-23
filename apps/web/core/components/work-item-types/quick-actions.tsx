@@ -18,9 +18,10 @@ import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Switch } from "@plane/propel/switch";
 import type { IIssueType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
-import { CustomMenu, ToggleSwitch } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -118,7 +119,7 @@ export const IssueTypeQuickActions = observer(function IssueTypeQuickActions(pro
             position="bottom"
           >
             <div className="ml-2 grid place-items-center">
-              <ToggleSwitch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
+              <Switch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
             </div>
           </Tooltip>
         )}

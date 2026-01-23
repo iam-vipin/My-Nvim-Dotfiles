@@ -18,8 +18,8 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Switch } from "@plane/propel/switch";
 import { EWorkItemTypeEntity } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
@@ -92,7 +92,7 @@ export const EpicsRoot = observer(function EpicsRoot() {
               position="top"
             >
               <div>
-                <ToggleSwitch value={!!isEpicsEnabled} onChange={handleEnableDisableEpic} disabled={isLoading} />
+                <Switch value={!!isEpicsEnabled} onChange={handleEnableDisableEpic} disabled={isLoading} />
               </div>
             </Tooltip>
           </div>

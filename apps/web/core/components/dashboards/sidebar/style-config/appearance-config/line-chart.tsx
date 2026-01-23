@@ -17,7 +17,7 @@ import { LINE_CHART_LINE_TYPES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
 import { EWidgetChartModels } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";
 import { WidgetColorPicker } from "./color-picker";
@@ -82,7 +82,7 @@ export function LineChartAppearanceConfig(props: Props) {
             name="config.smoothing"
             render={({ field: { value, onChange } }) => (
               <div className="px-2">
-                <ToggleSwitch
+                <Switch
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);
@@ -102,7 +102,7 @@ export function LineChartAppearanceConfig(props: Props) {
             name="config.show_markers"
             render={({ field: { value, onChange } }) => (
               <div className="px-2">
-                <ToggleSwitch
+                <Switch
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);

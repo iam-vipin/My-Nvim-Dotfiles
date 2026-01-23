@@ -15,8 +15,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -95,10 +96,9 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
                 disabled={!isTeamspacesFeatureEnabled}
                 position="left"
               >
-                <ToggleSwitch
+                <Switch
                   value={isTeamspacesFeatureEnabled}
                   onChange={toggleTeamsFeature}
-                  size="sm"
                   disabled={isTeamspacesFeatureEnabled}
                 />
               </Tooltip>

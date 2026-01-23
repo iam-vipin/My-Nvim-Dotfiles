@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports
 import type { TProjectTemplateForm } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { cn } from "@plane/utils";
 // plane web imports
 import type { PROJECT_FEATURES_LIST_FOR_TEMPLATE, TIntakeFeatureKeys } from "@/constants/project/settings/features";
@@ -81,11 +81,10 @@ const IntakeFeatureChildren = observer(function IntakeFeatureChildren() {
                       <div className="text-body-xs-medium leading-5 align-top ">{feature.title}</div>
                       <p className="text-body-xs-regular text-tertiary text-wrap mt-1">{feature.description} </p>
                     </div>
-                    <ToggleSwitch
+                    <Switch
                       value={isFeatureEnabled}
                       onChange={() => setFeatureStatus(intakeSettingsKey, !isFeatureEnabled)}
                       disabled={!feature.isEnabled}
-                      size="sm"
                     />
                   </div>
                 </div>

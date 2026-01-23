@@ -15,7 +15,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // local components
 import { WidgetPropertyWrapper } from "../property-wrapper";
 
@@ -41,7 +41,7 @@ export function WidgetConfigSidebarGuidesConfig(props: Props) {
             name="config.show_legends"
             render={({ field: { value, onChange } }) => (
               <div className="px-2">
-                <ToggleSwitch
+                <Switch
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);
@@ -61,7 +61,7 @@ export function WidgetConfigSidebarGuidesConfig(props: Props) {
             name="config.show_tooltip"
             render={({ field: { value, onChange } }) => (
               <div className="px-2">
-                <ToggleSwitch
+                <Switch
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);

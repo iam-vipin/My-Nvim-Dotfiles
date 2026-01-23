@@ -15,7 +15,8 @@ import { Controller } from "react-hook-form";
 import type { Control, ControllerRenderProps, FieldPath, FieldValues } from "react-hook-form";
 // plane imports
 import { Input } from "@plane/propel/input";
-import { Loader, TextArea, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader, TextArea } from "@plane/ui";
 
 type TProviderFormField<T extends FieldValues> = {
   name: FieldPath<T>;
@@ -56,7 +57,7 @@ export function ProviderFormField<T extends FieldValues>(props: TProviderFormFie
             if (customRender) {
               return <>{customRender(formField)}</>;
             }
-            return <ToggleSwitch value={formField.value} onChange={formField.onChange} size="sm" />;
+            return <Switch value={formField.value} onChange={formField.onChange} />;
           }}
         />
       </div>

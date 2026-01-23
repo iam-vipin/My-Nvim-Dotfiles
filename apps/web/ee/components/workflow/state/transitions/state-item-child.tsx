@@ -17,8 +17,9 @@ import { observer } from "mobx-react";
 import { InfoIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Switch } from "@plane/propel/switch";
 import type { IState } from "@plane/types";
-import { Collapsible, ToggleSwitch } from "@plane/ui";
+import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";
@@ -91,8 +92,7 @@ export const StateItemChild = observer(function StateItemChild(props: StateItemC
                     )}
                   </span>
                   {!isDefaultState && (
-                    <ToggleSwitch
-                      size="sm"
+                    <Switch
                       value={isIssueCreationAllowedForState}
                       onChange={() => handleToggleAllowWorkItemCreation()}
                       label={t("workflows.workflow_states.work_item_creation")}

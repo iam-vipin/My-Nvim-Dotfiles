@@ -18,8 +18,8 @@ import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { UpgradeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserProjectRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
@@ -94,10 +94,9 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
             description="See all updates on demand from anyone in this project. Easily track updates across four preset categories."
             control={
               isProjectUpdatesAvailableInPlan ? (
-                <ToggleSwitch
+                <Switch
                   value={!!currentProjectDetails?.["is_project_updates_enabled"]}
                   onChange={toggleUpdatesFeature}
-                  size="sm"
                 />
               ) : (
                 <Button

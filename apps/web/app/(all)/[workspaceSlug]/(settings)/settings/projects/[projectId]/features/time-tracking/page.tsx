@@ -18,7 +18,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { UpgradeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -94,7 +94,7 @@ function FeaturesTimeTrackingSettingsPage({ params }: Route.ComponentProps) {
             description={t("project_settings.features.time_tracking.toggle_description")}
             control={
               isTimeTrackingAvailableInPlan ? (
-                <ToggleSwitch value={isTimeTrackingEnabled} onChange={handleToggle} size="sm" />
+                <Switch value={isTimeTrackingEnabled} onChange={handleToggle} />
               ) : (
                 <Button
                   variant="secondary"

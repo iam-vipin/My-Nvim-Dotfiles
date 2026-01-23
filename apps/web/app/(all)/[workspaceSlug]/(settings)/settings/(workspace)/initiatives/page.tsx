@@ -15,9 +15,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
-// components
+// component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
@@ -96,9 +96,7 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
             <SettingsBoxedControlItem
               title={t("project_settings.initiatives.title")}
               description={t("project_settings.initiatives.description")}
-              control={
-                <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />
-              }
+              control={<Switch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} />}
             />
           </div>
           <div className="mt-12">

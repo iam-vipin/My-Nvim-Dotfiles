@@ -24,7 +24,8 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TCycleConfig } from "@plane/types";
 import { Button } from "@plane/propel/button";
-import { Input, ToggleSwitch, CustomSelect, Loader } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Input, CustomSelect, Loader } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate, cn } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -207,7 +208,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
                   {t("project_settings.cycles.auto_schedule.edit_button")}
                 </Button>
               )}
-              <ToggleSwitch value={isAutoScheduleEnabled} onChange={toggleScheduleCycle} size="sm" />
+              <Switch value={isAutoScheduleEnabled} onChange={toggleScheduleCycle} />
             </div>
           ) : (
             <Button
@@ -487,9 +488,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
                   <Controller
                     name="is_auto_rollover_enabled"
                     control={control}
-                    render={({ field }) => (
-                      <ToggleSwitch value={field.value} onChange={field.onChange} disabled={!isEdit} size="sm" />
-                    )}
+                    render={({ field }) => <Switch value={field.value} onChange={field.onChange} disabled={!isEdit} />}
                   />
                 </div>
               </div>

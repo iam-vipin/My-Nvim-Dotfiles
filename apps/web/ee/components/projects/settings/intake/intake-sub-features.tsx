@@ -21,9 +21,10 @@ import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Switch } from "@plane/propel/switch";
 import type { TInboxForm } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // ce imports
 import { useProject } from "@/hooks/store/use-project";
@@ -158,11 +159,10 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                             disabled={isAdmin}
                           >
                             <div>
-                              <ToggleSwitch
+                              <Switch
                                 value={Boolean(settings[key as keyof TInboxForm])}
                                 onChange={() => handleSubmit(key as keyof TInboxForm)}
                                 disabled={!feature.isEnabled || !isAdmin}
-                                size="sm"
                               />
                             </div>
                           </Tooltip>

@@ -17,8 +17,8 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PiIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -92,7 +92,7 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
           <SettingsBoxedControlItem
             title="Turn on AI for this workspace."
             description="Your new smart teammate, ready when you are."
-            control={<ToggleSwitch value={isPlaneIntelligenceFeatureEnabled} onChange={toggleTeamsFeature} size="sm" />}
+            control={<Switch value={isPlaneIntelligenceFeatureEnabled} onChange={toggleTeamsFeature} />}
           />
         </div>
       </WithFeatureFlagHOC>

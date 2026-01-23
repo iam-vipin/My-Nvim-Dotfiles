@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { MessageSquare } from "lucide-react";
 import type { IFormattedInstanceConfiguration } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -79,10 +79,9 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
           </div>
 
           <div className="ml-auto">
-            <ToggleSwitch
+            <Switch
               value={isIntercomEnabled ? true : false}
               onChange={enableIntercomConfig}
-              size="sm"
               disabled={!isTelemetryEnabled || isSubmitting || initialLoader}
             />
           </div>

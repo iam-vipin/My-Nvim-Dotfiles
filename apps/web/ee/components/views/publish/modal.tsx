@@ -22,8 +22,9 @@ import { NewTabIcon, GlobeIcon } from "@plane/propel/icons";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { IProjectView, TPublishViewSettings } from "@plane/types";
-import { EModalWidth, Loader, ModalCore, ToggleSwitch } from "@plane/ui";
+import { EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useProjectView } from "@/hooks/store/use-project-view";
@@ -207,9 +208,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
                 <Controller
                   control={control}
                   name="is_comments_enabled"
-                  render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
-                  )}
+                  render={({ field: { onChange, value } }) => <Switch value={!!value} onChange={onChange} />}
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
@@ -217,9 +216,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
                 <Controller
                   control={control}
                   name="is_reactions_enabled"
-                  render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
-                  )}
+                  render={({ field: { onChange, value } }) => <Switch value={!!value} onChange={onChange} />}
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
@@ -227,9 +224,7 @@ export const PublishViewModal = observer(function PublishViewModal(props: Props)
                 <Controller
                   control={control}
                   name="is_votes_enabled"
-                  render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
-                  )}
+                  render={({ field: { onChange, value } }) => <Switch value={!!value} onChange={onChange} />}
                 />
               </div>
             </div>

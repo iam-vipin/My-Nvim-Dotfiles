@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -74,9 +74,7 @@ function WorklogsPage({ params }: Route.ComponentProps) {
           title={t("workspace_settings.settings.project_states.title")}
           description={t("workspace_settings.settings.project_states.description")}
           control={
-            isFeatureEnabled && (
-              <ToggleSwitch value={isProjectGroupingEnabled} onChange={toggleProjectGroupingFeature} size="sm" />
-            )
+            isFeatureEnabled && <Switch value={isProjectGroupingEnabled} onChange={toggleProjectGroupingFeature} />
           }
         />
         <div className="mt-6">

@@ -16,7 +16,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TProjectTemplateForm } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { cn } from "@plane/utils";
 // plane web imports
 import { EpicPropertiesRoot } from "@/plane-web/components/epics/settings/epics-properties";
@@ -41,7 +41,7 @@ export const ProjectEpicWorkItemType = observer(function ProjectEpicWorkItemType
               control={control}
               name="project.is_epic_enabled"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch value={Boolean(value)} onChange={() => onChange(!value)} size="sm" />
+                <Switch value={Boolean(value)} onChange={() => onChange(!value)} />
               )}
             />
           </div>

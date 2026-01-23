@@ -22,9 +22,10 @@ import { EApplicationAuthorizationGrantType, AUTHORIZATION_GRANT_TYPES_MAP } fro
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { TUserApplication } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { cn, Dropdown, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { cn, Dropdown, Loader, Tooltip } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
@@ -363,11 +364,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
             </div>
           </div>
           <div className="text-11 text-tertiary flex items-center gap-2">
-            <ToggleSwitch
-              value={watch("is_mentionable") ?? false}
-              onChange={(value) => setValue("is_mentionable", value)}
-              size="sm"
-            />
+            <Switch value={watch("is_mentionable") ?? false} onChange={(value) => setValue("is_mentionable", value)} />
             <span>{t("workspace_settings.settings.applications.enable_app_mentions")}</span>
             <Tooltip
               tooltipContent={t("workspace_settings.settings.applications.enable_app_mentions_tooltip")}

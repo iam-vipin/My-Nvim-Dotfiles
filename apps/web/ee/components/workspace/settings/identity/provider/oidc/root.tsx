@@ -18,7 +18,7 @@ import { SSO_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { isSSOError } from "@plane/services";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // assets
 import OIDCLogo from "@/app/assets/logos/oidc-logo.svg?url";
 // hooks
@@ -180,7 +180,7 @@ export function OIDCRoot(props: TOIDCRoot) {
             <Controller
               control={control}
               name="is_enabled"
-              render={({ field: { value, onChange } }) => <ToggleSwitch value={value} onChange={onChange} size="sm" />}
+              render={({ field: { value, onChange } }) => <Switch value={value} onChange={onChange} />}
             />
           }
         />

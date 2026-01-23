@@ -163,6 +163,23 @@ export default defineConfig([
     rules: {
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "import/no-unresolved": ["error", { ignore: ["next/link", "next/navigation"] }],
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@headlessui/react",
+              importNames: ["Switch"],
+              message: "Use Switch from @plane/propel/switch instead of @headlessui/react",
+            },
+            {
+              name: "@plane/ui",
+              importNames: ["Switch","ToggleSwitch"],
+              message: "Use Switch and ToggleSwitch from @plane/propel/switch instead of @plane/ui",
+            },
+          ],
+        },
+      ],
     },
   },
   {

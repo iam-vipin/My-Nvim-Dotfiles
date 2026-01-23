@@ -18,7 +18,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
 import { EWidgetChartModels } from "@plane/types";
-import { Input, ToggleSwitch } from "@plane/ui";
+import { Input } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";
 import { WidgetColorPicker } from "./color-picker";
@@ -105,7 +106,7 @@ export function AreaChartAppearanceConfig(props: Props) {
             name="config.show_border"
             render={({ field: { value, onChange } }) => (
               <div className="px-2">
-                <ToggleSwitch
+                <Switch
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);
@@ -125,7 +126,7 @@ export function AreaChartAppearanceConfig(props: Props) {
             name="config.smoothing"
             render={({ field: { value, onChange } }) => (
               <div className="px-2">
-                <ToggleSwitch
+                <Switch
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);
@@ -145,7 +146,7 @@ export function AreaChartAppearanceConfig(props: Props) {
             name="config.show_markers"
             render={({ field: { value, onChange } }) => (
               <div className="px-2">
-                <ToggleSwitch
+                <Switch
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);

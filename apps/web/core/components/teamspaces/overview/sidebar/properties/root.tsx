@@ -158,7 +158,7 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 divide-y divide-custom-border-100">
+    <div className="relative flex flex-col gap-y-2 divide-y divide-subtle-1">
       <div className=" flex flex-col gap-2">
         <div className="flex gap-2 justify-between">
           <span className="text-body-xs-semibold">Properties</span>

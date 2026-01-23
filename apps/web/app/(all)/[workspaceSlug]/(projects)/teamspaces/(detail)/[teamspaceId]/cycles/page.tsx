@@ -79,8 +79,8 @@ function TeamspaceCyclesPage({ params }: Route.ComponentProps) {
   return (
     <div className="flex w-full h-full">
       <Tabs defaultValue={TEAM_CYCLES_TABS[0].key}>
-        <div className="flex items-center px-6 py-3 border-b border-custom-border-200 divide-x divide-subtle-1">
-          <Tabs.List>
+        <div className="flex items-center px-6 py-3 border-b border-subtle-1 divide-x divide-subtle-1">
+          <Tabs.List className="w-min">
             {TEAM_CYCLES_TABS.map((tab) => (
               <Tabs.Trigger key={tab.key} value={tab.key}>
                 {tab.label}

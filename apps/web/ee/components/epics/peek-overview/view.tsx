@@ -114,7 +114,8 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
         }
       }
     },
-    issueId
+    issueId,
+    ["main-sidebar"]
   );
 
   const handleKeyDown = () => {

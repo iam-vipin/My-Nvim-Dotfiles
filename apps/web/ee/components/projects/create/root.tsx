@@ -72,7 +72,7 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
   const { addProjectToFavorites, createProject, updateProject } = useProject();
   const { projectCreationLoader, createProjectUsingTemplate } = useProjectAdvanced();
   // states
-  const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
+  const [shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier] = useState(true);
   // store hooks
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
@@ -273,7 +273,7 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
 
   const handleClose = () => {
     onClose();
-    setIsChangeInIdentifierRequired(true);
+    setShouldAutoSyncIdentifier(true);
     setTimeout(() => {
       reset();
     }, 300);
@@ -298,10 +298,8 @@ export const CreateProjectFormBase = observer(function CreateProjectFormBase(pro
             <ProjectCommonAttributes
               setValue={setValue}
               isMobile={isMobile}
-              shouldAutoSyncIdentifier={false}
-              setShouldAutoSyncIdentifier={() => {}}
-              // isChangeInIdentifierRequired={isChangeInIdentifierRequired}
-              // setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+              shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
+              setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
               handleFormOnChange={handleFormChange}
             />
             <ProjectAttributes

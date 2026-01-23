@@ -27,7 +27,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // plane web imports
-import { EndCycleModal } from "@/plane-web/components/cycles/end-cycle";
+import { EndCycleModal } from "@/components/cycles/end-cycle";
 import { ExportModal } from "@/plane-web/components/issues/issue-layouts/export-modal";
 import type { TExportProvider } from "@/plane-web/components/issues/issue-layouts/export-modal";
 import { useFlag } from "@/plane-web/hooks/store";

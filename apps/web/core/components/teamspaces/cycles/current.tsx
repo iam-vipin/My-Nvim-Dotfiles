@@ -23,8 +23,7 @@ import currentCyclesLight from "@/app/assets/empty-state/teams/current-cycles-li
 // components
 import { CycleListProjectGroupHeader } from "@/components/cycles/list/cycle-list-project-group-header";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// plane web components
-import { ActiveCycleRoot } from "@/plane-web/components/cycles/active-cycle";
+import { ProjectActiveCycleRoot } from "@/components/cycles/active-cycles/root";
 // hooks
 import { useTeamspaceCycles } from "@/plane-web/hooks/store";
 
@@ -66,7 +65,7 @@ export const TeamCurrentCyclesRoot = observer(function TeamCurrentCyclesRoot(pro
                 <CycleListProjectGroupHeader projectId={projectId} isExpanded={open} />
               </Disclosure.Button>
               <Disclosure.Panel>
-                <ActiveCycleRoot
+                <ProjectActiveCycleRoot
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   cycleId={cycleId}

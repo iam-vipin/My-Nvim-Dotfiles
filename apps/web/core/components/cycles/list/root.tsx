@@ -11,15 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { ActiveCycleRoot } from "@/plane-web/components/cycles";
+import { ProjectActiveCycleRoot } from "@/components/cycles/active-cycles/root";
 // local imports
 import { CyclePeekOverview } from "../cycle-peek-overview";
 import { CycleListGroupHeader } from "./cycle-list-group-header";
@@ -47,8 +45,7 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
           </>
         ) : (
           <>
-            <ActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} />
-
+            <ProjectActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} />
             {upcomingCycleIds && (
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
                 {({ open }) => (

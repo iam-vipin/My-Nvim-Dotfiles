@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { IActiveCycle } from "./active-cycle";
 import type { TPaginationInfo } from "./common";
-import type { ICycle } from "./cycle";
 import type { TUserPermissions } from "./enums";
 import type { EProductSubscriptionEnum } from "./payment";
 import type { TProjectMembership } from "./project";
@@ -242,7 +242,7 @@ export interface IWorkspaceActiveCyclesResponse {
   next_page_results: boolean;
   prev_cursor: string;
   prev_page_results: boolean;
-  results: ICycle[];
+  results: IActiveCycle[];
   total_pages: number;
 }
 

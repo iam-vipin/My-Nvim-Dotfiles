@@ -25,7 +25,7 @@ import { ProjectSettingsFeatureControlItem } from "@/components/settings/project
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { AutoScheduleCycles } from "@/plane-web/components/cycles/settings";
+import { AutoScheduleCycles } from "@/components/cycles/settings";
 // plane web imports
 import type { Route } from "./+types/page";
 import { FeaturesCyclesProjectSettingsHeader } from "./header";

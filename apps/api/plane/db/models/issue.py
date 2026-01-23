@@ -35,7 +35,6 @@ from plane.db.mixins import ChangeTrackerMixin
 from .state import StateGroup
 
 # ee imports
-from plane.db.models.intake import IntakeIssueStatus
 
 
 def get_default_properties():

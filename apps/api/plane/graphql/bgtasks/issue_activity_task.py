@@ -1064,7 +1064,7 @@ def update_milestone_issue_activity(
             field="milestones",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"updated milestone from {milestone.title if milestone else ''} to {milestone.title if milestone else ''}",
+            comment=f"updated milestone from {milestone.title if milestone else ''} to {milestone.title if milestone else ''}",  # noqa: E501
             old_identifier=requested_data.get("milestone_id"),
             new_identifier=requested_data.get("milestone_id"),
             epoch=epoch,

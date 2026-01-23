@@ -43,7 +43,6 @@ from plane.db.models import (
     State,
     IssueAssignee,
     IssueLabel,
-    FileAsset,
 )
 from plane.bgtasks.copy_s3_object import copy_assets, sync_with_external_service
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -245,13 +244,14 @@ class AddCommentAction(ActionNode):
 
         """
         try:
-            file_assets = FileAsset.objects.filter(
-                issue_id=issue.id,
-                project_id=issue.project_id,
-                workspace_id=issue.workspace_id,
-                entity_type="automation_comment",
-                entity_id=str(context.get("automation_id")),
-            ).values_list("asset_id", flat=True)
+            # TODO: review this and remove if it is unnecessary
+            # file_assets = FileAsset.objects.filter(
+            #     issue_id=issue.id,
+            #     project_id=issue.project_id,
+            #     workspace_id=issue.workspace_id,
+            #     entity_type="automation_comment",
+            #     entity_id=str(context.get("automation_id")),
+            # ).values_list("asset_id", flat=True)
 
             duplicated_assets = copy_assets(
                 entity_name="automation_comment",
@@ -657,8 +657,8 @@ class ChangePropertyAction(ActionNode):
             elif property_name == "label_ids":
                 new_label_ids = self._handle_labels_property(issue, self.params.change_type, rendered_values)
 
-                current_label_ids_set = {str(l) for l in (old_value or [])}
-                desired_label_ids_set = {str(l) for l in (new_label_ids or [])}
+                current_label_ids_set = {str(l) for l in (old_value or [])}  # noqa: E741
+                desired_label_ids_set = {str(l) for l in (new_label_ids or [])}  # noqa: E741
 
                 labels_to_remove = list(current_label_ids_set - desired_label_ids_set)
                 labels_to_add = list(desired_label_ids_set - current_label_ids_set)

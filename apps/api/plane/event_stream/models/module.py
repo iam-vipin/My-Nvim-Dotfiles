@@ -45,7 +45,7 @@ class ModuleIssueProxy(ModuleIssue):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             # Handle both soft deletes (deleted_at updated to not null) and regular updates
@@ -97,7 +97,7 @@ class ModuleIssueProxy(ModuleIssue):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]

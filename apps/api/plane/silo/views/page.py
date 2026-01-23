@@ -446,7 +446,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
 
         try:
             workspace = Workspace.objects.get(slug=slug)
-            teamspace = Teamspace.objects.get(id=team_space_id, workspace=workspace)
+            _ = Teamspace.objects.get(id=team_space_id, workspace=workspace)
         except (Workspace.DoesNotExist, Teamspace.DoesNotExist):
             return Response({"error": "Workspace or teamspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -540,7 +540,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
 
         try:
             workspace = Workspace.objects.get(slug=slug)
-            teamspace = Teamspace.objects.get(id=team_space_id, workspace=workspace)
+            _ = Teamspace.objects.get(id=team_space_id, workspace=workspace)
         except (Workspace.DoesNotExist, Teamspace.DoesNotExist):
             return Response({"error": "Workspace or teamspace not found"}, status=status.HTTP_404_NOT_FOUND)
 

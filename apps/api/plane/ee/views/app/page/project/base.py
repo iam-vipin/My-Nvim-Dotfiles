@@ -71,8 +71,6 @@ from plane.ee.permissions.page import ProjectPagePermission
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
-from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 class PageExtendedViewSet(BaseViewSet):

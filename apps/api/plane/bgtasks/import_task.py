@@ -78,6 +78,7 @@ def _build_context(schema_type: str, workspace_id: str, project_id: Optional[str
 
         # Pre-fetch all required data for bulk optimization
         from plane.utils.porters import IssueImportSerializer
+
         import_context = IssueImportSerializer.build_context(project_id)
         context.update(import_context)
 
@@ -168,12 +169,14 @@ def csv_import_task(
         report.imported_issue_count = result.success_count
         report.errored_issue_count = result.error_count
         report.end_time = timezone.now()
-        report.save(update_fields=[
-            "total_issue_count",
-            "imported_issue_count",
-            "errored_issue_count",
-            "end_time",
-        ])
+        report.save(
+            update_fields=[
+                "total_issue_count",
+                "imported_issue_count",
+                "errored_issue_count",
+                "end_time",
+            ]
+        )
 
         # Update job with success/error metadata
         job.success_metadata = {

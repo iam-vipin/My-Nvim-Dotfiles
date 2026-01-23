@@ -73,9 +73,13 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             try:
                 periodic_task_id = recurring_task.periodic_task.id
                 recurring_task.periodic_task.delete()
-                logger.info(f"Cleaned up legacy PeriodicTask {periodic_task_id} for recurring task {recurring_workitem_task_id}")
+                logger.info(
+                    f"Cleaned up legacy PeriodicTask {periodic_task_id} for recurring task {recurring_workitem_task_id}"
+                )
             except Exception as cleanup_error:
-                logger.warning(f"Failed to clean up legacy PeriodicTask for {recurring_workitem_task_id}: {cleanup_error}")
+                logger.warning(
+                    f"Failed to clean up legacy PeriodicTask for {recurring_workitem_task_id}: {cleanup_error}"
+                )
             recurring_task.periodic_task = None
             # Initialize next_scheduled_at for batch scheduler - calculate next future date
             # to avoid iterating through past dates one by one
@@ -237,7 +241,9 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         # Advance to next scheduled time for batch scheduler
         next_scheduled = recurring_task.advance_to_next_schedule()
         if next_scheduled:
-            logger.info(f"Advanced recurring task {recurring_workitem_task_id} to next scheduled time: {next_scheduled}")
+            logger.info(
+                f"Advanced recurring task {recurring_workitem_task_id} to next scheduled time: {next_scheduled}"
+            )
 
         logger.info(f"Successfully created work item {work_item.id} from recurring task {recurring_workitem_task_id}")
 

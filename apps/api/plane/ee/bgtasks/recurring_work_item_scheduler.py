@@ -58,14 +58,16 @@ def schedule_batch():
     # Get all enabled, non-expired tasks due within window
     # CRITICAL: periodic_task__isnull=True ensures we don't double-schedule
     # legacy tasks that still have a PeriodicTask
-    tasks = RecurringWorkitemTask.objects.filter(
-        enabled=True,
-        periodic_task__isnull=True,  # Only NEW tasks (legacy handled by old system)
-        next_scheduled_at__isnull=False,
-        next_scheduled_at__lte=window_end,
-    ).filter(
-        Q(end_at__isnull=True) | Q(end_at__gt=now)
-    ).select_related("workitem_blueprint", "project", "workspace")
+    tasks = (
+        RecurringWorkitemTask.objects.filter(
+            enabled=True,
+            periodic_task__isnull=True,  # Only NEW tasks (legacy handled by old system)
+            next_scheduled_at__isnull=False,
+            next_scheduled_at__lte=window_end,
+        )
+        .filter(Q(end_at__isnull=True) | Q(end_at__gt=now))
+        .select_related("workitem_blueprint", "project", "workspace")
+    )
 
     scheduled_count = 0
 

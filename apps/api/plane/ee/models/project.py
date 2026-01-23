@@ -310,9 +310,9 @@ class ProjectLabel(BaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            last_id = ProjectLabel.objects.filter(workspace=self.workspace).aggregate(
-                largest=models.Max("sort_order")
-            )["largest"]
+            last_id = ProjectLabel.objects.filter(workspace=self.workspace).aggregate(largest=models.Max("sort_order"))[
+                "largest"
+            ]
 
             if last_id is not None:
                 self.sort_order = last_id + 10000

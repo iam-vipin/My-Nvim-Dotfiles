@@ -73,7 +73,7 @@ APPLICATIONS = {
         "key": "drawio",
         "name": "Drawio",
         "slug": "drawio",
-        "short_description": "Create and edit powerful diagrams and whiteboards directly inside Plane Pages with draw.io.",
+        "short_description": "Create and edit powerful diagrams and whiteboards directly inside Plane Pages with draw.io.",  # noqa: E501
         "description_html": "<p>Drawio Integration</p>",
         "setup_url": f"{settings.SILO_URL}/api/apps/drawio/auth/consent-url/",
         "redirect_uris": f"{settings.SILO_URL}/api/apps/drawio/auth/callback",

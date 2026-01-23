@@ -110,9 +110,9 @@ class IssueImportSerializer(BaseSerializer):
                 default_state = state
 
         # Fetch project issue types with related issue type data
-        project_issue_types = ProjectIssueType.objects.filter(
-            project_id=project_id
-        ).select_related("issue_type").order_by("level")
+        project_issue_types = (
+            ProjectIssueType.objects.filter(project_id=project_id).select_related("issue_type").order_by("level")
+        )
 
         # Extract issue types and find default
         issue_types = []
@@ -185,9 +185,7 @@ class IssueImportSerializer(BaseSerializer):
         target_date = attrs.get("target_date")
 
         if start_date and target_date and start_date > target_date:
-            raise serializers.ValidationError(
-                {"target_date": "Target date cannot be earlier than start date."}
-            )
+            raise serializers.ValidationError({"target_date": "Target date cannot be earlier than start date."})
 
         return attrs
 
@@ -231,10 +229,10 @@ class IssueExportSerializer(IssueSerializer):
     """
 
     identifier = serializers.SerializerMethodField()
-    project_name = serializers.CharField(source='project.name', read_only=True, default="")
-    project_identifier = serializers.CharField(source='project.identifier', read_only=True, default="")
-    state_name = serializers.CharField(source='state.name', read_only=True, default="")
-    created_by_name = serializers.CharField(source='created_by.full_name', read_only=True, default="")
+    project_name = serializers.CharField(source="project.name", read_only=True, default="")
+    project_identifier = serializers.CharField(source="project.identifier", read_only=True, default="")
+    state_name = serializers.CharField(source="state.name", read_only=True, default="")
+    created_by_name = serializers.CharField(source="created_by.full_name", read_only=True, default="")
 
     assignees = serializers.SerializerMethodField()
     parent = serializers.SerializerMethodField()
@@ -297,11 +295,7 @@ class IssueExportSerializer(IssueSerializer):
         return f"{obj.parent.project.identifier}-{obj.parent.sequence_id}"
 
     def get_labels(self, obj):
-        return [
-            il.label.name
-            for il in obj.label_issue.all()
-            if il.deleted_at is None
-        ]
+        return [il.label.name for il in obj.label_issue.all() if il.deleted_at is None]
 
     def get_cycle_name(self, obj):
         """Return the cycle name (one-to-one relationship)."""
@@ -330,7 +324,7 @@ class IssueExportSerializer(IssueSerializer):
     def get_estimate(self, obj):
         """Return estimate point value."""
         if obj.estimate_point:
-            return obj.estimate_point.value if hasattr(obj.estimate_point, 'value') else str(obj.estimate_point)
+            return obj.estimate_point.value if hasattr(obj.estimate_point, "value") else str(obj.estimate_point)
         return ""
 
     def get_links(self, obj):
@@ -363,7 +357,7 @@ class IssueExportSerializer(IssueSerializer):
         """Return list of comments with author and timestamp."""
         return [
             {
-                "comment": comment.comment_stripped if hasattr(comment, 'comment_stripped') else comment.comment_html,
+                "comment": comment.comment_stripped if hasattr(comment, "comment_stripped") else comment.comment_html,
                 "created_by": comment.actor.full_name if comment.actor else "",
                 "created_at": comment.created_at.strftime("%Y-%m-%d %H:%M:%S") if comment.created_at else "",
             }

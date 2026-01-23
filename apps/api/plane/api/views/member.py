@@ -164,7 +164,7 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
         if request.data.get("email") is None or request.data.get("display_name") is None:
             return Response(
                 {
-                    "error": "Expected email, display_name, workspace_slug, project_id, one or more of the fields are missing."
+                    "error": "Expected email, display_name, workspace_slug, project_id, one or more of the fields are missing."  # noqa: E501
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

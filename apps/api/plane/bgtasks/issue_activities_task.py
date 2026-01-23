@@ -1061,6 +1061,10 @@ def update_milestone_issue_activity(
     if issue:
         issue.updated_at = timezone.now()
         issue.save(update_fields=["updated_at"])
+
+    old_milestone_title = old_milestone.title if old_milestone else ""
+    new_milestone_title = milestone.title if milestone else ""
+    comment = f"updated milestone from {old_milestone_title} to {new_milestone_title}"
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1071,7 +1075,7 @@ def update_milestone_issue_activity(
             field="milestones",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"updated milestone from {old_milestone.title if old_milestone else ''} to {milestone.title if milestone else ''}",
+            comment=comment,
             old_identifier=old_milestone.id if old_milestone else None,
             new_identifier=milestone.id if milestone else None,
             epoch=epoch,

@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 @dataclass
 class ImportResult:
     """Tracks import success/failures"""
+
     success_count: int = 0
     error_count: int = 0
     created: Dict[int, Any] = field(default_factory=dict)  # row_index: identifier or metadata dict
@@ -94,17 +95,17 @@ class DataImporter:
             return instance
 
         # Check if it's an Issue instance with project and sequence_id
-        if hasattr(instance, 'project') and hasattr(instance, 'sequence_id'):
+        if hasattr(instance, "project") and hasattr(instance, "sequence_id"):
             project = instance.project
-            if hasattr(project, 'identifier'):
+            if hasattr(project, "identifier"):
                 return f"{project.identifier}-{instance.sequence_id}"
 
         # Check if it's a User with email
-        if hasattr(instance, 'email'):
+        if hasattr(instance, "email"):
             return instance.email
 
         # Fallback to string representation or ID
-        if hasattr(instance, 'id'):
+        if hasattr(instance, "id"):
             return str(instance.id)
 
         return str(instance)
@@ -116,17 +117,18 @@ class DataImporter:
         Returns True if the serializer has a custom ListSerializer with validate() override.
         This indicates batch-level validation (e.g., seat limits).
         """
-        if not hasattr(self.serializer_class, 'Meta'):
+        if not hasattr(self.serializer_class, "Meta"):
             return False
 
         meta = self.serializer_class.Meta
-        if not hasattr(meta, 'list_serializer_class'):
+        if not hasattr(meta, "list_serializer_class"):
             return False
 
         list_serializer_class = meta.list_serializer_class
 
         # Check if validate() is overridden (indicates batch validation)
         from rest_framework import serializers
+
         base_validate = serializers.ListSerializer.validate
         return list_serializer_class.validate != base_validate
 
@@ -151,11 +153,7 @@ class DataImporter:
         if not rows:
             return result
 
-        serializer = self.serializer_class(
-            data=rows,
-            many=True,
-            **self.serializer_kwargs
-        )
+        serializer = self.serializer_class(data=rows, many=True, **self.serializer_kwargs)
 
         if not serializer.is_valid():
             # Handle validation errors
@@ -217,10 +215,7 @@ class DataImporter:
             return result
 
         for idx, row in enumerate(rows):
-            serializer = self.serializer_class(
-                data=row,
-                **self.serializer_kwargs
-            )
+            serializer = self.serializer_class(data=row, **self.serializer_kwargs)
 
             # Validate row
             if not serializer.is_valid():
@@ -251,7 +246,7 @@ class DataImporter:
 
     def from_file(self, filepath: str, formatter: BaseFormatter, save: bool = True) -> ImportResult:
         """Import from file"""
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
         return self.from_string(content, formatter, save=save)
 

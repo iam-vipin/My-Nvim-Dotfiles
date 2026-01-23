@@ -893,12 +893,12 @@ class IssueViewSet(BaseViewSet):
 
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
         # TODO: review this and remove if it is unnecessary
-        estimate_type = Project.objects.filter(
-            workspace__slug=slug,
-            pk=project_id,
-            estimate__isnull=False,
-            estimate__type="points",
-        ).exists()
+        # estimate_type = Project.objects.filter(
+        #     workspace__slug=slug,
+        #     pk=project_id,
+        #     estimate__isnull=False,
+        #     estimate__type="points",
+        # ).exists()
 
         # Check if state is updated then is the transition allowed
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)

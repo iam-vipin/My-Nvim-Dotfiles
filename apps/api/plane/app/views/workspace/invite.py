@@ -11,7 +11,6 @@
 
 # Python imports
 from datetime import datetime
-import uuid
 import jwt
 
 # Django imports
@@ -26,7 +25,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import WorkSpaceAdminPermission, WorkspaceOwnerPermission
+from plane.app.permissions import WorkspaceOwnerPermission
 from plane.app.serializers import (
     WorkSpaceMemberInviteSerializer,
     WorkSpaceMemberSerializer,

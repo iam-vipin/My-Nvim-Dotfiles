@@ -10,7 +10,6 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # python imports
-import os
 
 # Django imports
 from django.conf import settings

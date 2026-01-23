@@ -141,7 +141,7 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
         issues = Issue.issue_objects.filter(project_id__in=project_ids, workspace__slug=slug)
 
         x_axis = request.GET.get("x_axis", "target_date")
-        y_axis = request.GET.get("y_axis", "issues")
+        _y_axis = request.GET.get("y_axis", "issues")
 
         X_AXIS_MAP = {
             "target_date": "target_date",

@@ -67,7 +67,8 @@ class ProductEndpoint(BaseAPIView):
                 # If paid users are currently the pay workspace count
                 workspace_count = paid_count
 
-                # If free users are more than 5 times the paid users, then workspace count is free users - 5 * paid users
+                # If free users are more than 5 times the paid users,
+                # then workspace count is free users - 5 * paid users
                 if free_count > 5 * paid_count:
                     workspace_count = free_count - 5 * paid_count
 
@@ -196,7 +197,7 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseSyncEndpoint(BaseAPIView):
-    """This endpoint is used to sync the workspace license from the payment server: - This is used by the payment server"""
+    """This endpoint is used to sync the workspace license from the payment server: - This is used by the payment server"""  # noqa: E501
 
     permission_classes = [AllowAny]
 

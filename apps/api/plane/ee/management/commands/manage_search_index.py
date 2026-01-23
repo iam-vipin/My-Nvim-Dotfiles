@@ -14,6 +14,7 @@ import argparse
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
+
 class Command(BaseCommand):
     """Manage opensearch index.
 
@@ -168,7 +169,7 @@ class Command(BaseCommand):
             "--vectorize",
             action="store_true",
             default=False,
-            help="Trigger workspace vectorization for all workspaces after indexing completes (requires --background flag)",
+            help="Trigger workspace vectorization for all workspaces after indexing completes (requires --background flag)",  # noqa: E501
         )
         # Use REMAINDER to capture all remaining arguments including flags
         parser.add_argument(
@@ -195,9 +196,7 @@ class Command(BaseCommand):
 
         # Vectorize flag requires background flag
         if vectorize and not background:
-            self.stderr.write(
-                self.style.ERROR("Error: --vectorize flag requires --background flag to be present.")
-            )
+            self.stderr.write(self.style.ERROR("Error: --vectorize flag requires --background flag to be present."))
             self.stderr.write("Usage example:")
             self.stderr.write("  python manage.py manage_search_index --background --vectorize document index --force")
             return
@@ -205,13 +204,13 @@ class Command(BaseCommand):
         # Vectorize flag only works with 'document index' command
         if vectorize:
             if len(opensearch_args) < 2 or opensearch_args[0] != "document" or opensearch_args[1] != "index":
-                self.stderr.write(
-                    self.style.ERROR("Error: --vectorize flag only works with 'document index' command.")
-                )
+                self.stderr.write(self.style.ERROR("Error: --vectorize flag only works with 'document index' command."))
                 self.stderr.write(f"Current command: {' '.join(opensearch_args)}")
                 self.stderr.write("")
                 self.stderr.write("Correct usage:")
-                self.stderr.write("  python manage.py manage_search_index --background --vectorize document index --force")
+                self.stderr.write(
+                    "  python manage.py manage_search_index --background --vectorize document index --force"
+                )
                 self.stderr.write("")
                 self.stderr.write("Note: Vectorization is only triggered after document indexing, not after:")
                 self.stderr.write("  - index create/delete/rebuild (schema operations)")
@@ -224,26 +223,17 @@ class Command(BaseCommand):
             )
 
             print("Running opensearch command in background with args:", opensearch_args)
-            
+
             # Pass vectorization flag to the background task
-            run_search_index_command.delay(
-                *opensearch_args,
-                vectorize=vectorize
-            )
-            
-            self.stdout.write(
-                self.style.SUCCESS(
-                    "\nIndexing task queued in background."
-                )
-            )
-            
+            run_search_index_command.delay(*opensearch_args, vectorize=vectorize)
+
+            self.stdout.write(self.style.SUCCESS("\nIndexing task queued in background."))
+
             if vectorize:
                 self.stdout.write(
-                    self.style.SUCCESS(
-                        "Vectorization will be triggered automatically after indexing completes."
-                    )
+                    self.style.SUCCESS("Vectorization will be triggered automatically after indexing completes.")
                 )
-                
+
         else:
             print("Running opensearch command with args:", opensearch_args)
             call_command("opensearch", *opensearch_args)

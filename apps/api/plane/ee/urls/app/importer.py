@@ -22,4 +22,3 @@ urlpatterns = [
         name="import-work-item",
     ),
 ]
-

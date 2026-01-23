@@ -18,7 +18,7 @@ from .serializers import IssueExportSerializer
 # Importers
 from .importer import DataImporter
 from .serializers import UserImportSerializer, IssueImportSerializer
-from .extended.serializers import ExtendedIssueExportSerializer as IssueExportSerializer
+from .extended.serializers import ExtendedIssueExportSerializer as IssueExportSerializer  # noqa: F811
 
 __all__ = [
     # Formatters

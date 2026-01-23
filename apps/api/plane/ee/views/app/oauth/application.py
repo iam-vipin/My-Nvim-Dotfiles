@@ -488,7 +488,7 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
 
         # check the role of the user in the workspace
         # if the user is an admin, then they can install the application in the workspace
-        # if the user is a member, then they can install the application in the workspace only if installation is present
+        # if the user is a member, then they can install the application in the workspace only if installation is present  # noqa: E501
         # if the user is a guest, then they cannot install the application in the workspace
 
         workspace_app_installations_data = []

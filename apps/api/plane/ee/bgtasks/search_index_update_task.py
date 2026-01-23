@@ -13,7 +13,6 @@ import requests
 from requests.exceptions import RequestException
 from django.conf import settings
 from celery import shared_task
-from django.conf import settings
 
 
 def trigger_vectorization():
@@ -27,9 +26,9 @@ def trigger_vectorization():
             return False
 
         vectorize_url = f"{pi_url.rstrip('/')}/api/v1/internal/vectorize/all/"
-        
+
         print("Triggering vectorization for all workspaces...")
-        
+
         response = requests.post(
             vectorize_url,
             json={},
@@ -45,10 +44,10 @@ def trigger_vectorization():
 
         accepted = result.get("accepted", [])
         skipped = result.get("skipped", [])
-        
+
         if accepted:
             print(f"Queued {len(accepted)} workspace(s)")
-        
+
         if skipped:
             print(f"Skipped {len(skipped)} workspace(s)")
 

@@ -157,10 +157,7 @@ class CSVFormatter(BaseFormatter):
 
         # Normalize headers: 'Email' → 'email', 'Display Name' → 'display_name'
         if normalize_headers:
-            rows = [
-                {self._normalize_header(k): v for k, v in row.items() if self._normalize_header(k)}
-                for row in rows
-            ]
+            rows = [{self._normalize_header(k): v for k, v in row.items() if self._normalize_header(k)} for row in rows]
         else:
             # Filter out None/empty headers even without normalization
             rows = [{k: v for k, v in row.items() if k} for row in rows]

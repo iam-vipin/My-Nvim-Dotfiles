@@ -104,7 +104,7 @@ class Command(BaseCommand):
         ).first()
         if not source_project:
             raise CommandError(
-                f"Project with identifier '{source_project_identifier}' not found in workspace '{source_workspace_slug}'"
+                f"Project with identifier '{source_project_identifier}' not found in workspace '{source_workspace_slug}'"  # noqa: E501
             )
 
         # Validate target workspace
@@ -139,7 +139,7 @@ class Command(BaseCommand):
                 deleted_at__isnull=True,
             ).exists():
                 raise CommandError(
-                    f"Project with identifier '{new_project_identifier}' already exists in workspace '{target_workspace_slug}'"
+                    f"Project with identifier '{new_project_identifier}' already exists in workspace '{target_workspace_slug}'"  # noqa: E501
                 )
         else:
             new_project_identifier = self._generate_unique_identifier(target_workspace, source_project.identifier)

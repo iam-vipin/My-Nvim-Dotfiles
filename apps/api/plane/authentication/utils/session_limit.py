@@ -34,9 +34,7 @@ def enforce_session_limit(user, current_session_key=None):
     # Get all active web sessions for this user, ordered by expiry date (oldest first)
     # Only count sessions with session_type "web" in device_info
     active_sessions = Session.objects.filter(
-        user_id=str(user.id),
-        expire_date__gt=timezone.now(),
-        device_info__session_type="web"
+        user_id=str(user.id), expire_date__gt=timezone.now(), device_info__session_type="web"
     ).order_by("expire_date")
 
     # Exclude current session if provided

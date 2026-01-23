@@ -128,10 +128,10 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/attachments/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.INITIATIVE_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/initiatives/{self.entity_identifier}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/initiatives/{self.entity_identifier}/attachments/{self.id}/"  # noqa: E501
 
         if self.entity_type == FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/customer-requests/{self.entity_identifier}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/customer-requests/{self.entity_identifier}/attachments/{self.id}/"  # noqa: E501
 
         if self.entity_type in [
             self.EntityTypeContext.ISSUE_DESCRIPTION,

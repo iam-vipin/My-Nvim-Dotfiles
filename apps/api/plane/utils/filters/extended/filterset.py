@@ -394,6 +394,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
         else:
             return has_non_deleted_milestone
 
+
 class InitiativeFilterSet(BaseFilterSet):
     lead = filters.UUIDFilter(field_name="lead")
     lead__in = UUIDInFilter(field_name="lead", lookup_expr="in")

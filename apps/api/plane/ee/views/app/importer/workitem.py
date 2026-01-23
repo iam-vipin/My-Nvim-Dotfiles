@@ -104,4 +104,3 @@ class ProjectWorkItemImportEndpoint(BaseAPIView):
             },
             status=status.HTTP_202_ACCEPTED,
         )
-

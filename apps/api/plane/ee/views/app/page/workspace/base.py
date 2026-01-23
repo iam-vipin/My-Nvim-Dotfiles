@@ -63,7 +63,6 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
-    check_workspace_feature_flag,
 )
 from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import WorkspacePagePermission

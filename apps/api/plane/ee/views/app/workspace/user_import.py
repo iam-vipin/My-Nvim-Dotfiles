@@ -25,6 +25,7 @@ from plane.utils.porters import DataImporter, CSVFormatter, UserImportSerializer
 
 logger = logging.getLogger("plane.api")
 
+
 def fetch_file_from_storage(file_key: str) -> Optional[str]:
     """Fetch file content from S3 storage."""
     try:
@@ -40,6 +41,7 @@ def fetch_file_from_storage(file_key: str) -> Optional[str]:
     except Exception as e:
         logger.error(f"Failed to fetch file from S3: {e}")
         return None
+
 
 class WorkspaceMembersImportEndpoint(BaseAPIView):
     """Import users from CSV synchronously."""
@@ -77,11 +79,13 @@ class WorkspaceMembersImportEndpoint(BaseAPIView):
                 if item.get("workspace_member_created"):
                     wm_created += 1
 
-        return Response({
-            "total_rows": result.total,
-            "successful": result.success_count,
-            "failed": result.error_count,
-            "users_created": users_created,
-            "workspace_members_created": wm_created,
-            "errors": result.errors if result.has_errors else [],
-        })
+        return Response(
+            {
+                "total_rows": result.total,
+                "successful": result.success_count,
+                "failed": result.error_count,
+                "users_created": users_created,
+                "workspace_members_created": wm_created,
+                "errors": result.errors if result.has_errors else [],
+            }
+        )

@@ -143,7 +143,7 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
                     "IssueTypeAPISerializer",
                     value={
                         "name": "Bug",
-                        "description": "A bug is a problem with the software that prevents it from working as expected.",
+                        "description": "A bug is a problem with the software that prevents it from working as expected.",  # noqa: E501
                         "external_id": "1234567890",
                         "external_source": "github",
                     },
@@ -313,7 +313,7 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
                     "IssueTypeAPISerializer",
                     value={
                         "name": "Bug",
-                        "description": "A bug is a problem with the software that prevents it from working as expected.",
+                        "description": "A bug is a problem with the software that prevents it from working as expected.",  # noqa: E501
                         "external_id": "1234567890",
                         "external_source": "github",
                     },

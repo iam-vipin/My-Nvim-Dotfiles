@@ -127,8 +127,4 @@ class ExtendedIssueExportSerializer(IssueExportSerializer):
         """Return list of initiative names from InitiativeEpic (only for epics)."""
         if not (obj.type and obj.type.is_epic):
             return []
-        return [
-            ie.initiative.name
-            for ie in obj.initiative_epics.all()
-            if ie.initiative
-        ]
+        return [ie.initiative.name for ie in obj.initiative_epics.all() if ie.initiative]

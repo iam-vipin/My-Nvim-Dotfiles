@@ -11,6 +11,4 @@
 
 from .issue import ExtendedIssueExportSerializer
 
-__all__ = [
-  "ExtendedIssueExportSerializer"
-]
+__all__ = ["ExtendedIssueExportSerializer"]

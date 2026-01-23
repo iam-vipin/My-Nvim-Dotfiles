@@ -98,7 +98,7 @@ class IssueProxy(Issue):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -340,7 +340,7 @@ class IssueProxy(Issue):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -433,7 +433,7 @@ class IssueAssigneeProxy(IssueAssignee):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -522,7 +522,7 @@ class IssueAssigneeProxy(IssueAssignee):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -615,7 +615,7 @@ class IssueLabelProxy(IssueLabel):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -704,7 +704,7 @@ class IssueLabelProxy(IssueLabel):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -790,7 +790,7 @@ class IssueCommentProxy(IssueComment):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -969,7 +969,7 @@ class IssueCommentProxy(IssueComment):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -1026,7 +1026,7 @@ class IssueLinkProxy(IssueLink):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -1152,7 +1152,7 @@ class IssueLinkProxy(IssueLink):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -1212,7 +1212,7 @@ class IssueAttachmentProxy(FileAsset):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -1341,7 +1341,7 @@ class IssueAttachmentProxy(FileAsset):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -1398,7 +1398,7 @@ class IssueRelationProxy(IssueRelation):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -1523,7 +1523,7 @@ class IssueRelationProxy(IssueRelation):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]

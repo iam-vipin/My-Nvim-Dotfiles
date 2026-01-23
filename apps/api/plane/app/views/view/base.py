@@ -22,7 +22,6 @@ from django.db.models import (
     OuterRef,
     Q,
     Subquery,
-    Prefetch,
     UUIDField,
     Value,
 )
@@ -36,7 +35,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
-from plane.app.serializers import IssueViewSerializer, ViewIssueListSerializer
+from plane.app.serializers import IssueViewSerializer
 from plane.db.models import (
     Issue,
     FileAsset,
@@ -64,10 +63,9 @@ from plane.db.models import UserFavorite
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
-from plane.ee.models import CustomerRequestIssue
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
-from plane.utils.grouper import issue_on_results, issue_group_values, issue_queryset_grouper
+from plane.utils.grouper import issue_on_results, issue_group_values
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 
 

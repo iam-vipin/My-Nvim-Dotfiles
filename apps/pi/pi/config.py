@@ -182,7 +182,7 @@ class LLMConfig:
 
     # Base URLs (default to official endpoints; override via env for proxies/gateways)
     OPENAI_BASE_URL: str = field(default_factory=lambda: os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"))
-    CLAUDE_BASE_URL: str = field(default_factory=lambda: os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com/v1"))
+    CLAUDE_BASE_URL: str = field(default_factory=lambda: os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com"))
     COHERE_BASE_URL: str = field(default_factory=lambda: os.getenv("COHERE_BASE_URL", "https://api.cohere.ai/v1/embed"))
     GROQ_BASE_URL: str = field(default_factory=lambda: os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1"))
 

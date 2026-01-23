@@ -27,7 +27,7 @@ import logging
 import typer
 
 # Suppress noisy logs for management commands
-logging.getLogger().setLevel(logging.WARNING)
+# logging.getLogger().setLevel(logging.WARNING)
 logging.getLogger("pi.celery_app").setLevel(logging.WARNING)
 logging.getLogger("pi.core.db.plane_pi.lifecycle").setLevel(logging.WARNING)
 logging.getLogger("langchain_cohere.utils").setLevel(logging.ERROR)

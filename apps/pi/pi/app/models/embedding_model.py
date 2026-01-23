@@ -33,7 +33,7 @@ class EmbeddingModel(BaseModel, table=True):
     provider: str = Field(nullable=False, max_length=100, description="Embedding provider (e.g., 'cohere', 'azure', 'openai')")
     model_name: str = Field(nullable=False, max_length=255, description="Model identifier (e.g., 'embed-v4.0')")
     base_api_url: str = Field(nullable=False, description="API endpoint URL for the provider")
-    
+
     # Model metadata
     dimension: Optional[int] = Field(default=None, nullable=True, description="Embedding dimension (e.g., 1536, 384, 3072)")
 

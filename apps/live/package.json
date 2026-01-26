@@ -3,16 +3,16 @@
   "version": "1.2.0",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
-  "main": "./dist/start.mjs",
-  "module": "./dist/start.mjs",
+  "main": "./dist/start.js",
+  "module": "./dist/start.js",
   "exports": {
-    ".": "./dist/start.mjs",
+    ".": "./dist/start.js",
     "./package.json": "./package.json"
   },
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit && tsdown",
+    "build": "tsdown",
     "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
     "dev:consumer": "tsdown --watch --onSuccess \"node --env-file=.env ./dist/consumer.mjs\"",
     "start": "node --env-file=.env .",

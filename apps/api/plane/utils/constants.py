@@ -79,6 +79,15 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "applications",
     "workspace-selector",
     "relay",
+    "work-item",
+    "work-items",
+    "work-item-types",
+    "modules",
+    "cycles",
+    "pages",
+    "wiki",
+    "initiative",
+    "initiatives",
 ]
 
 RESTRICTED_ISSUE_PROPERTY_DISPLAY_NAMES = ["state", "due date", "cycle", "modules"]

@@ -46,7 +46,7 @@ const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewH
   return (
     <button
       className={cn(
-        "group w-full flex flex-col gap-2 p-3 rounded-xl bg-surface-1 border border-subtle-1 overflow-hidden hover:shadow-sm animate-fade-in transition-all duration-300",
+        "relative group w-full flex flex-col gap-2 p-3 rounded-xl bg-surface-1 border border-subtle-1 overflow-hidden hover:shadow-sm animate-fade-in transition-all duration-300",
         {
           "border-accent-strong": artifactId === artifactIdInUse,
         }

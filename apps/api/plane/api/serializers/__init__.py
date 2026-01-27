@@ -91,6 +91,12 @@ from .worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
 
 from .page import PageAPISerializer, PageCreateAPISerializer, PageDetailAPISerializer
 
+from .work_item_page import (
+    WorkItemPageSerializer,
+    WorkItemPageCreateSerializer,
+    WorkItemPageLiteSerializer,
+)
+
 from .work_item_property import (
     IssuePropertyAPISerializer,
     IssuePropertyOptionAPISerializer,

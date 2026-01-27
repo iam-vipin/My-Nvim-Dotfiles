@@ -142,3 +142,8 @@ from .workspace_page import (
     WorkspacePageDetailAPIEndpoint,
     WorkspacePageAPIEndpoint,
 )
+
+from .work_item_page import (
+    WorkItemPageListCreateAPIEndpoint,
+    WorkItemPageDetailAPIEndpoint,
+)

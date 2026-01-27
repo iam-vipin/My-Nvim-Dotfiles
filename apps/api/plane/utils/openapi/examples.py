@@ -505,6 +505,39 @@ ISSUE_LINK_EXAMPLE = OpenApiExample(
     },
 )
 
+# Work Item Page Link Request Examples
+WORK_ITEM_PAGE_CREATE_EXAMPLE = OpenApiExample(
+    "WorkItemPageCreateSerializer",
+    value={
+        "page_id": "550e8400-e29b-41d4-a716-446655440000",
+    },
+    description="Example request for linking a page to a work item",
+)
+
+# Work Item Page Link Response Examples
+WORK_ITEM_PAGE_EXAMPLE = OpenApiExample(
+    name="WorkItemPage",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "page": {
+            "id": "550e8400-e29b-41d4-a716-446655440001",
+            "name": "Project Documentation",
+            "description_html": "<p>Documentation for the project</p>",
+            "created_at": "2024-01-01T10:30:00Z",
+            "updated_at": "2024-01-10T15:45:00Z",
+            "created_by": "550e8400-e29b-41d4-a716-446655440002",
+            "is_global": False,
+            "logo_props": {},
+        },
+        "issue": "550e8400-e29b-41d4-a716-446655440003",
+        "project": "550e8400-e29b-41d4-a716-446655440004",
+        "workspace": "550e8400-e29b-41d4-a716-446655440005",
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+        "created_by": "550e8400-e29b-41d4-a716-446655440002",
+    },
+)
+
 # Issue Comment Response Examples
 ISSUE_COMMENT_EXAMPLE = OpenApiExample(
     name="IssueComment",

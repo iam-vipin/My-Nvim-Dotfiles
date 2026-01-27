@@ -103,6 +103,9 @@ from .responses import (
     ASSET_UPDATED_RESPONSE,
     ASSET_DELETED_RESPONSE,
     ASSET_NOT_FOUND_RESPONSE,
+    PAGE_NOT_FOUND_RESPONSE,
+    WORK_ITEM_PAGE_NOT_FOUND_RESPONSE,
+    PAGE_ALREADY_LINKED_RESPONSE,
     create_paginated_response,
 )
 
@@ -122,6 +125,7 @@ from .examples import (
     LABEL_UPDATE_EXAMPLE,
     ISSUE_LINK_CREATE_EXAMPLE,
     ISSUE_LINK_UPDATE_EXAMPLE,
+    WORK_ITEM_PAGE_CREATE_EXAMPLE,
     ISSUE_COMMENT_CREATE_EXAMPLE,
     ISSUE_COMMENT_UPDATE_EXAMPLE,
     ISSUE_ATTACHMENT_UPLOAD_EXAMPLE,
@@ -148,6 +152,7 @@ from .examples import (
     STATE_EXAMPLE,
     LABEL_EXAMPLE,
     ISSUE_LINK_EXAMPLE,
+    WORK_ITEM_PAGE_EXAMPLE,
     ISSUE_COMMENT_EXAMPLE,
     ISSUE_ATTACHMENT_EXAMPLE,
     ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE,
@@ -185,6 +190,7 @@ from .decorators import (
     module_issue_docs,
     state_docs,
     issue_worklog_docs,
+    work_item_page_docs,
 )
 
 # Schema processing hooks
@@ -260,6 +266,9 @@ __all__ = [
     "COMMENT_NOT_FOUND_RESPONSE",
     "LINK_NOT_FOUND_RESPONSE",
     "ATTACHMENT_NOT_FOUND_RESPONSE",
+    "PAGE_NOT_FOUND_RESPONSE",
+    "WORK_ITEM_PAGE_NOT_FOUND_RESPONSE",
+    "PAGE_ALREADY_LINKED_RESPONSE",
     "BAD_SEARCH_REQUEST_RESPONSE",
     "create_paginated_response",
     "PRESIGNED_URL_SUCCESS_RESPONSE",
@@ -286,6 +295,7 @@ __all__ = [
     "LABEL_UPDATE_EXAMPLE",
     "ISSUE_LINK_CREATE_EXAMPLE",
     "ISSUE_LINK_UPDATE_EXAMPLE",
+    "WORK_ITEM_PAGE_CREATE_EXAMPLE",
     "ISSUE_COMMENT_CREATE_EXAMPLE",
     "ISSUE_COMMENT_UPDATE_EXAMPLE",
     "ISSUE_ATTACHMENT_UPLOAD_EXAMPLE",
@@ -312,6 +322,7 @@ __all__ = [
     "STATE_EXAMPLE",
     "LABEL_EXAMPLE",
     "ISSUE_LINK_EXAMPLE",
+    "WORK_ITEM_PAGE_EXAMPLE",
     "ISSUE_COMMENT_EXAMPLE",
     "ISSUE_ATTACHMENT_EXAMPLE",
     "ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE",
@@ -346,6 +357,7 @@ __all__ = [
     "module_issue_docs",
     "state_docs",
     "issue_worklog_docs",
+    "work_item_page_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",
     "generate_operation_summary",

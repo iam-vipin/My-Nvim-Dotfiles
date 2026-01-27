@@ -338,6 +338,37 @@ LINK_NOT_FOUND_RESPONSE = OpenApiResponse(
     ],
 )
 
+# Page-specific Responses
+PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Page not found",
+    examples=[
+        OpenApiExample(
+            name="Page Not Found",
+            value={"error": "Page not found"},
+        )
+    ],
+)
+
+WORK_ITEM_PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Work item page link not found",
+    examples=[
+        OpenApiExample(
+            name="Work Item Page Link Not Found",
+            value={"error": "Work item page link not found"},
+        )
+    ],
+)
+
+PAGE_ALREADY_LINKED_RESPONSE = OpenApiResponse(
+    description="Page is already linked to this work item",
+    examples=[
+        OpenApiExample(
+            name="Page Already Linked",
+            value={"error": "Page is already linked to this work item"},
+        )
+    ],
+)
+
 # Attachment-specific Responses
 ATTACHMENT_NOT_FOUND_RESPONSE = OpenApiResponse(
     description="Attachment not found",

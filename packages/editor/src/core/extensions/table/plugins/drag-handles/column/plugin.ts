@@ -102,7 +102,12 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
           });
 
           dragHandles.push(dragHandle);
-          decorations.push(Decoration.widget(pos, () => dragHandle.element));
+          decorations.push(
+            Decoration.widget(pos, () => dragHandle.element, {
+              key: `col-drag-handle-${col}`,
+              side: -1, 
+            })
+          );
         }
 
         return {

@@ -25,10 +25,12 @@ import {
   ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
   ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
   ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
-  EActivityFilterTypeEE,
   shouldRenderActivity,
   ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
+  EE_ACTIVITY_FILTER_TYPE_OPTIONS,
+  EE_DEFAULT_ACTIVITY_FILTERS,
 } from "./filter-extended";
+import type { TActivityFiltersEE } from "./filter-extended";
 import type { TIssueLayout } from "./layout";
 
 // EE : Extended filters
@@ -361,7 +363,7 @@ export enum EActivityFilterType {
   DEFAULT = "DEFAULT",
 }
 
-export type TActivityFilters = EActivityFilterType | EActivityFilterTypeEE.WORKLOG; // EE: Worklog filter.
+export type TActivityFilters = EActivityFilterType | TActivityFiltersEE;
 
 export type TActivityFilterOptionsKey = Exclude<TActivityFilters, EActivityFilterType.DEFAULT>;
 
@@ -378,9 +380,7 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { l
   [EActivityFilterType.ASSIGNEE]: {
     labelTranslationKey: "common.assignee",
   },
-  [EActivityFilterTypeEE.WORKLOG]: {
-    labelTranslationKey: "common.worklogs",
-  }, // EE: Worklog filter.
+  ...EE_ACTIVITY_FILTER_TYPE_OPTIONS, // EE: Extended activity filters
 };
 
 export type TActivityFilterOption = {
@@ -395,7 +395,7 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.COMMENT,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
-  EActivityFilterTypeEE.WORKLOG, // EE: worklog filter.
+  ...EE_DEFAULT_ACTIVITY_FILTERS, // EE: Extended default activity filters
 ];
 
 export const filterActivityOnSelectedFilters = (
@@ -407,10 +407,11 @@ export const filterActivityOnSelectedFilters = (
     return filters.some((filter) => shouldRenderActivity(activity, filter));
   });
 
+export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE
+
 export const BASE_ACTIVITY_FILTER_TYPES = [
   EActivityFilterType.ACTIVITY,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
   EActivityFilterType.DEFAULT,
 ];
-export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE

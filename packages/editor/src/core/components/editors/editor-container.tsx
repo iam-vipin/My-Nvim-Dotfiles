@@ -1,7 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
-import type { FC, ReactNode } from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useEditorState } from "@tiptap/react";
+import type { ReactNode } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -26,8 +40,16 @@ type Props = {
   state?: TCollabValue["state"];
 };
 
-export function EditorContainer(props: Props) {
+export const EditorContainer = memo(function EditorContainer(props: Props) {
   const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice, provider, state } = props;
+  // Subscribe to focus state changes so memo() doesn't freeze focus-dependent UI
+  const { isFocused, isEditable } = useEditorState({
+    editor,
+    selector: ({ editor: e }) => ({
+      isFocused: e?.isFocused ?? false,
+      isEditable: e?.isEditable ?? false,
+    }),
+  });
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const hasScrolledOnce = useRef(false);
@@ -164,7 +186,7 @@ export function EditorContainer(props: Props) {
         className={cn(
           `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
           {
-            "active-editor": editor?.isFocused && editor?.isEditable,
+            "active-editor": isFocused && isEditable,
           },
           displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
           displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
@@ -176,4 +198,4 @@ export function EditorContainer(props: Props) {
       </div>
     </>
   );
-}
+});

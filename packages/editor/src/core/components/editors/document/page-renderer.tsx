@@ -1,5 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
+import { memo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -35,7 +49,7 @@ type Props = {
   state?: TCollabValue["state"];
 };
 
-export function PageRenderer(props: Props) {
+export const PageRenderer = memo(function PageRenderer(props: Props) {
   const {
     bubbleMenuEnabled,
     disabledExtensions,
@@ -121,4 +135,4 @@ export function PageRenderer(props: Props) {
       )}
     </div>
   );
-}
+});

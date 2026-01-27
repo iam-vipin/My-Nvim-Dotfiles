@@ -95,7 +95,7 @@ export function IntakeFormsRoot(props: Props) {
           handleSubmit={regenerateIntakeForms}
         />
       )}
-      <div className={cn("gap-x-8 gap-y-3 py-3", isToolTip ? "bg-surface-1" : "bg-layer-1")}>
+      <div className="py-3">
         <div className="flex justify-between gap-2">
           <div className="w-full">
             <div className="flex justify-between gap-4">

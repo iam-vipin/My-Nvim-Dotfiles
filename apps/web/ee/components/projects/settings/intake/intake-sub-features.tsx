@@ -141,10 +141,10 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                 />
               );
             return (
-              <div key={featureKey} className={cn("gap-x-8 gap-y-3 py-3", isTooltip ? "bg-surface-1" : "bg-layer-1")}>
-                <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
+              <div key={featureKey} className="gap-x-8 gap-y-3 py-3">
+                <div key={featureKey} className="flex justify-between gap-2">
                   <div className="w-full space-y-2">
-                    <div className={cn("flex justify-between gap-4", {})}>
+                    <div className="flex justify-between gap-4">
                       <div className="flex-1 w-full">
                         <div className="text-13 font-medium leading-5 align-top ">{feature.title}</div>
                         <p className="text-13 text-tertiary text-wrap mt-1">{feature.description} </p>
@@ -176,7 +176,7 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                     </div>
 
                     {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
-                      <div className={cn("rounded-md space-y-2", isTooltip ? "bg-layer-1" : "bg-surface-1")}>
+                      <div className="rounded-md space-y-2">
                         <div className="p-3 space-y-2">
                           <div className="flex gap-2 rounded">
                             {feature.icon} <span className="text-11 font-medium">{feature.fieldName}</span>

@@ -27,6 +27,7 @@ from langchain_core.tools import tool
 from pi import logger
 from pi.services.actions.tool_metadata import ToolMetadata
 from pi.services.actions.tools.base import PlaneToolBase
+from pi.services.chat.helpers.tool_utils import generate_error_message
 
 log = logger.getChild(__name__)
 
@@ -250,16 +251,40 @@ def generate_tool_from_metadata(
         # Format response based on whether it returns an entity
         if result["success"]:
             if metadata.returns_entity_type:
+                # Use custom message from post-handler if available, otherwise generate from tool metadata
+                if "message" not in result or result["message"].startswith("Successfully executed"):
+                    # Extract entity name from response data
+                    from pi.services.chat.helpers.tool_utils import generate_success_message
+
+                    entity_name = None
+                    data = result.get("data", {})
+                    if isinstance(data, dict):
+                        # Try to get name from different possible locations
+                        entity_name = data.get("name")
+                        if not entity_name and "issue_detail" in data:
+                            entity_name = data.get("issue_detail", {}).get("name")
+                    message = generate_success_message(metadata.name, entity_name)
+                else:
+                    message = result.get("message")
                 # Format with entity URL
-                return await PlaneToolBase.format_success_payload_with_url(
-                    f"Successfully executed {metadata.name}", result.get("data"), metadata.returns_entity_type, context
+                formatted_result = await PlaneToolBase.format_success_payload_with_url(
+                    message, result.get("data"), metadata.returns_entity_type, context
                 )
+                # Preserve workitem_entity if present (e.g., from intake post-processor)
+                if "workitem_entity" in result:
+                    formatted_result["workitem_entity"] = result["workitem_entity"]
+                return formatted_result
             else:
                 # Simple success payload
                 return PlaneToolBase.format_success_payload("Action successfully executed", result["data"])
         else:
-            # Error payload
-            return PlaneToolBase.format_error_payload(f"Failed to execute {metadata.name}", result["error"])
+            entity_name = None
+            # Try to extract entity name from kwargs for better error messages
+            if "name" in kwargs:
+                entity_name = kwargs.get("name")
+
+            error_message = generate_error_message(metadata.name, entity_name)
+            return PlaneToolBase.format_error_payload(error_message, result["error"])
 
     # Set function metadata
     tool_func.__name__ = metadata.name

@@ -35,9 +35,7 @@ export const StateWorkflowRoot = observer(function StateWorkflowRoot(props: TPro
 
   return (
     <div className="h-full overflow-auto vertical-scrollbar scrollbar-sm">
-      <div className="flex flex-col py-3 gap-4">
-        <WorkflowStateList workspaceSlug={workspaceSlug} projectId={projectId} states={projectStates} />
-      </div>
+      <WorkflowStateList workspaceSlug={workspaceSlug} projectId={projectId} states={projectStates} />
     </div>
   );
 });

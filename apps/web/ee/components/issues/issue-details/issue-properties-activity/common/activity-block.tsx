@@ -18,10 +18,11 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { calculateTimeAgo, cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties/common/issue-property-logo";
-import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { IssueUser } from "./issue-user";
 
@@ -39,7 +40,12 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
   const { isMobile } = usePlatformOS();
   // plane web hooks
   const { getIssuePropertyById } = useIssueTypes();
-  const { getPropertyActivityById } = useIssuePropertiesActivity();
+  const {
+    activity: {
+      issuePropertiesActivity: { getPropertyActivityById },
+    },
+  } = useIssueDetail();
+
   const { higlightedActivityIds } = useWorkspaceNotifications();
   const propertyDetail = getIssuePropertyById(propertyId);
   // derived values

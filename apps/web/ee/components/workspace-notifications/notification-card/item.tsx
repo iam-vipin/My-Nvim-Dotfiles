@@ -20,7 +20,7 @@ import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import type { TNotification } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { calculateTimeAgo, convertToEpoch, cn } from "@plane/utils";
+import { calculateTimeAgo, convertToEpoch, cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 //store
@@ -32,15 +32,19 @@ import { useIssueType } from "@/plane-web/hooks/store";
 // local imports
 import { NotificationOption } from "./options";
 import { NotificationCardPreview } from "./preview";
+import { useRouter } from "@/app/compat/next/navigation";
+import { usePathname } from "next/navigation";
 
 export interface INotificationItem {
   issueId: string;
   workspaceSlug: string;
   workspaceId: string;
+  onNotificationClick?: () => void;
 }
 export const NotificationItem = observer(function NotificationItem(props: INotificationItem) {
-  const { issueId, workspaceSlug, workspaceId } = props;
-
+  const { issueId, workspaceSlug, workspaceId, onNotificationClick } = props;
+  // router
+  const router = useRouter();
   //states
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -55,7 +59,8 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
     setCurrentSelectedNotificationId,
     setHighlightedActivityIds,
   } = useWorkspaceNotifications();
-
+  const pathname = usePathname();
+  const isInboxPage = pathname.includes("/notifications");
   const groupedNotifications = getNotificationsGroupedByIssue(workspaceId);
   const notificationList = groupedNotifications[issueId];
   const issue = notificationList[0].data?.issue;
@@ -80,6 +85,7 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "left-start",
+    strategy: "fixed",
   });
 
   const getUnreadActivityIds = (notificationList: TNotification[]): string[] =>
@@ -93,11 +99,13 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
   const handleNotificationIssuePeekOverview = async () => {
     setShowPreview(false);
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
+      onNotificationClick?.();
+
       // reset peek view
+
       setPeekIssue(undefined);
       setPeekEpic(undefined);
       setCurrentSelectedNotificationId(notificationList[0].id);
-
       // make the notification as read
       if (unreadCount > 0) {
         try {
@@ -107,6 +115,19 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
         } catch (error) {
           console.error(error);
         }
+      }
+
+      if (!isInboxPage) {
+        const workItemLink = generateWorkItemLink({
+          workspaceSlug,
+          projectId,
+          issueId,
+          projectIdentifier: issue?.identifier,
+          sequenceId: issue?.sequence_id,
+        });
+
+        if (workItemLink) router.push(workItemLink);
+        return;
       }
 
       if (!containsInboxIssue(notificationList)) {
@@ -122,10 +143,13 @@ export const NotificationItem = observer(function NotificationItem(props: INotif
   return (
     <Popover as="div" className={""}>
       <div
-        className={cn("border-b relative transition-all py-4 border-subtle cursor-pointer group w-full", {
-          "bg-layer-1/30": isWorkItemPeeked,
-          "bg-accent-primary/5": unreadCount > 0,
-        })}
+        className={cn(
+          " relative transition-all py-4 cursor-pointer group w-full bg-layer-transparent hover:bg-layer-transparent-hover",
+          {
+            "bg-layer-1/30": isWorkItemPeeked,
+            "bg-accent-primary/5": unreadCount > 0,
+          }
+        )}
         ref={setReferenceElement}
         onClick={(e) => {
           e.preventDefault();

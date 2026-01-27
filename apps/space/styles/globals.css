@@ -3,6 +3,13 @@
 @import "@plane/propel/styles/react-day-picker.css";
 @plugin "@tailwindcss/typography";
 
+/* Scan space app source files for Tailwind classes */
+@source "../app/**/*.{ts,tsx}";
+@source "../core/**/*.{ts,tsx}";
+@source "../ce/**/*.{ts,tsx}";
+@source "../ee/**/*.{ts,tsx}";
+@source "../helpers/**/*.{ts,tsx}";
+
 /* stickies and editor colors */
 :root {
   /* text colors */

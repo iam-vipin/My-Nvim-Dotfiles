@@ -289,7 +289,24 @@ export enum EActivityFilterTypeEE {
   ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY = "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY",
 }
 
+// EE: Activity filter type options for extended filters
+export const EE_ACTIVITY_FILTER_TYPE_OPTIONS: Record<EActivityFilterTypeEE, { labelTranslationKey: string }> = {
+  [EActivityFilterTypeEE.WORKLOG]: {
+    labelTranslationKey: "common.worklogs",
+  },
+  [EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY]: {
+    labelTranslationKey: "common.updates",
+  },
+};
+
+// EE: Default activity filters for extended features
+export const EE_DEFAULT_ACTIVITY_FILTERS: EActivityFilterTypeEE[] = [EActivityFilterTypeEE.WORKLOG];
+
 export const shouldRenderActivity = (activity: TIssueActivityComment, filter: TActivityFilters): boolean =>
   activity.activity_type === filter ||
   (filter === EActivityFilterType.ACTIVITY &&
     activity.activity_type === EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY);
+
+export type TActivityFiltersEE =
+  | EActivityFilterTypeEE.WORKLOG
+  | EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY;

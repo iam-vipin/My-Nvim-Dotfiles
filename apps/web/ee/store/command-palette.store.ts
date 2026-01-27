@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types / constants
 import { DEFAULT_CREATE_UPDATE_CUSTOMER_MODAL_DATA } from "@plane/constants";
 import type {
@@ -19,6 +19,7 @@ import type {
   TCreateUpdateTeamspaceModal,
   TCreateUpdateTeamspaceViewModal,
   TCreateUpdateCustomerModal,
+  TProfileSettingsTabs,
 } from "@plane/types";
 import {
   DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA,
@@ -27,6 +28,7 @@ import {
 // store
 import type { IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
 import { BaseCommandPaletteStore } from "@/store/base-command-palette.store";
+// local imports
 import { DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA } from "../constants/initiative";
 
 export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
@@ -35,6 +37,10 @@ export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   createUpdateTeamspaceViewModal: TCreateUpdateTeamspaceViewModal;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal;
   createUpdateCustomerModal: TCreateUpdateCustomerModal;
+  profileSettingsModal: {
+    activeTab: TProfileSettingsTabs | null;
+    isOpen: boolean;
+  };
   // computed
   isAnyModalOpen: boolean;
   // actions
@@ -42,6 +48,7 @@ export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   toggleCreateTeamspaceViewModal: (value?: TCreateUpdateTeamspaceViewModal) => void;
   toggleCreateInitiativeModal: (value?: TCreateUpdateInitiativeModal) => void;
   toggleCreateCustomerModal: (value?: TCreateUpdateCustomerModal) => void;
+  toggleProfileSettingsModal: (value: { activeTab?: TProfileSettingsTabs | null; isOpen?: boolean }) => void;
 }
 
 export class CommandPaletteStore extends BaseCommandPaletteStore implements ICommandPaletteStore {
@@ -50,6 +57,11 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
   createUpdateTeamspaceViewModal: TCreateUpdateTeamspaceViewModal = DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal = DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA;
   createUpdateCustomerModal: TCreateUpdateCustomerModal = DEFAULT_CREATE_UPDATE_CUSTOMER_MODAL_DATA;
+  profileSettingsModal: ICommandPaletteStore["profileSettingsModal"] = {
+    activeTab: "general",
+    isOpen: false,
+  };
+
   constructor() {
     super();
     makeObservable(this, {
@@ -58,6 +70,7 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       createUpdateTeamspaceViewModal: observable,
       createUpdateInitiativeModal: observable,
       createUpdateCustomerModal: observable,
+      profileSettingsModal: observable,
       // computed
       isAnyModalOpen: computed,
       // actions
@@ -65,6 +78,7 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       toggleCreateTeamspaceViewModal: action,
       toggleCreateInitiativeModal: action,
       toggleCreateCustomerModal: action,
+      toggleProfileSettingsModal: action,
     });
   }
 
@@ -156,5 +170,21 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
         customerId: undefined,
       };
     }
+  };
+
+  /**
+   * Toggles the profile settings modal
+   * @param value
+   * @returns
+   */
+  toggleProfileSettingsModal: ICommandPaletteStore["toggleProfileSettingsModal"] = (payload) => {
+    const updatedSettings: ICommandPaletteStore["profileSettingsModal"] = {
+      ...this.profileSettingsModal,
+      ...payload,
+    };
+
+    runInAction(() => {
+      this.profileSettingsModal = updatedSettings;
+    });
   };
 }

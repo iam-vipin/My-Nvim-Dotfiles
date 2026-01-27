@@ -225,61 +225,60 @@ export const BillingRoot = observer(function BillingRoot() {
   };
 
   return (
-    <section className="relative size-full flex flex-col overflow-y-auto scrollbar-hide">
-      <SettingsHeading
-        title={t("workspace_settings.settings.billing_and_plans.heading")}
-        description={t("workspace_settings.settings.billing_and_plans.description")}
-      />
-      <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
-        <div className="py-6">
-          <div className="p-5 bg-layer-1 rounded-xl">
-            {!subscriptionDetail && (
-              <Loader className="flex w-full justify-between">
-                <Loader.Item height="30px" width="40%" />
-                <Loader.Item height="30px" width="20%" />
-              </Loader>
-            )}
-            {subscriptionDetail && (
-              <>
-                {subscriptionDetail.product === EProductSubscriptionEnum.FREE &&
-                  (subscriptionDetail.is_self_managed ? (
-                    <SelfHostedFreePlanCard />
-                  ) : (
-                    <CloudFreePlanCard
-                      upgradeProductType={EProductSubscriptionEnum.BUSINESS}
-                      isProductsAPILoading={isProductsAPILoading}
-                      trialLoader={trialLoader}
-                      upgradeLoader={upgradeLoader}
-                      handleTrial={handleSelectedPlanTrial}
-                      handleUpgrade={handleSelectedPlanUpgrade}
-                    />
-                  ))}
-                {subscriptionDetail.product === EProductSubscriptionEnum.ONE && <OnePlanCard />}
-                {subscriptionDetail.product === EProductSubscriptionEnum.PRO && (
-                  <ProPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
-                )}
-                {subscriptionDetail.product === EProductSubscriptionEnum.BUSINESS && (
-                  <BusinessPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
-                )}
-                {subscriptionDetail.product === EProductSubscriptionEnum.ENTERPRISE && <EnterprisePlanCard />}
-              </>
-            )}
-          </div>
+    <section className="relative size-full overflow-y-auto scrollbar-hide">
+      <div>
+        <SettingsHeading
+          title={t("workspace_settings.settings.billing_and_plans.heading")}
+          description={t("workspace_settings.settings.billing_and_plans.description")}
+        />
+        <div className="mt-6">
+          {subscriptionDetail ? (
+            <>
+              {subscriptionDetail.product === EProductSubscriptionEnum.FREE &&
+                (subscriptionDetail.is_self_managed ? (
+                  <SelfHostedFreePlanCard />
+                ) : (
+                  <CloudFreePlanCard
+                    upgradeProductType={EProductSubscriptionEnum.BUSINESS}
+                    isProductsAPILoading={isProductsAPILoading}
+                    trialLoader={trialLoader}
+                    upgradeLoader={upgradeLoader}
+                    handleTrial={handleSelectedPlanTrial}
+                    handleUpgrade={handleSelectedPlanUpgrade}
+                  />
+                ))}
+              {subscriptionDetail.product === EProductSubscriptionEnum.ONE && <OnePlanCard />}
+              {subscriptionDetail.product === EProductSubscriptionEnum.PRO && (
+                <ProPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
+              )}
+              {subscriptionDetail.product === EProductSubscriptionEnum.BUSINESS && (
+                <BusinessPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleSelectedPlanUpgrade} />
+              )}
+              {subscriptionDetail.product === EProductSubscriptionEnum.ENTERPRISE && <EnterprisePlanCard />}
+            </>
+          ) : (
+            <Loader className="flex w-full justify-between">
+              <Loader.Item height="30px" width="40%" />
+              <Loader.Item height="30px" width="20%" />
+            </Loader>
+          )}
         </div>
-        <div className="text-18 font-semibold mt-3">All plans</div>
       </div>
-      <PlansComparison
-        products={data}
-        isProductsAPILoading={isProductsAPILoading}
-        trialLoader={trialLoader}
-        upgradeLoader={upgradeLoader}
-        isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
-        handleTrial={handleTrial}
-        handleUpgrade={handleUpgradeSubscription}
-        getBillingFrequency={getBillingFrequency}
-        setBillingFrequency={setBillingFrequency}
-        setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
-      />
+      <div className="mt-10 flex flex-col gap-y-3">
+        <h4 className="text-h6-semibold">All plans</h4>
+        <PlansComparison
+          products={data}
+          isProductsAPILoading={isProductsAPILoading}
+          trialLoader={trialLoader}
+          upgradeLoader={upgradeLoader}
+          isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
+          handleTrial={handleTrial}
+          handleUpgrade={handleUpgradeSubscription}
+          getBillingFrequency={getBillingFrequency}
+          setBillingFrequency={setBillingFrequency}
+          setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
+        />
+      </div>
     </section>
   );
 });

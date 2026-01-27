@@ -42,13 +42,40 @@ export const parseCustomComponents = (args: TArgs): Record<string, Handle> => {
     },
     "mention-component": (_state, node) => {
       const properties = node.properties || {};
-      const userId = String(properties.entity_identifier);
-      const userDetails = metaData.user_mentions.find((user) => user.id === userId);
-      if (!userDetails) return createTextNode("");
-      return createTextNode(`[@${userDetails.display_name || "Unknown user"}](${userDetails.url || ""}) `);
+      const mentionType = String(properties.entity_name);
+
+      let url: string = "";
+      let tag: string = "@";
+      if (mentionType === "user_mention") {
+        const userId = String(properties.entity_identifier);
+        const userDetails = metaData.user_mentions.find((user) => user.id === userId);
+        if (!userDetails) return createTextNode("");
+        url = userDetails.url || "";
+        tag = `@${userDetails.display_name || "Unknown user"}`;
+      }
+
+      return createTextNode(`[${tag}](${url}) `);
     },
-    ...parseExtendedCustomComponents({ metaData }),
+    "attachment-component": (_state, node) => {
+      const properties = node.properties || {};
+      const src = String(properties.src || "");
+      const fileAssetDetails = getFileAssetDetails(src);
+      if (!src || !fileAssetDetails) return createTextNode("");
+      return createTextNode(`[${fileAssetDetails.name}](${fileAssetDetails.url})\n\n`);
+    },
+    "inline-math-component": (_state, node) => {
+      const latexEquation = String(node.properties?.latex || "");
+      return createTextNode(`$${latexEquation}$ `);
+    },
+    "block-math-component": (_state, node) => {
+      const latexEquation = String(node.properties?.latex || "");
+      return createTextNode(`$$\n${latexEquation}\n$$\n\n`);
+    },
+    "external-embed-component": (_state, node) => {
+      const properties = node.properties || {};
+      const src = String(properties.src || "");
+
+      return createTextNode(`[Embed](${src})\n\n`);
+    },
   };
 };
-
-export const parseExtendedCustomComponents = (_args: TArgs): Record<string, Handle> => ({});

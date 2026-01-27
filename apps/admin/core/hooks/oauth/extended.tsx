@@ -30,6 +30,7 @@ export const getExtendedAuthenticationModesMap: (
     description: "Authenticate your users via the OpenID Connect protocol.",
     icon: <img src={oidcLogo} height={22} width={22} alt="OIDC Logo" />,
     config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_OIDC_ENABLED",
   },
   saml: {
     key: "saml",
@@ -37,6 +38,7 @@ export const getExtendedAuthenticationModesMap: (
     description: "Authenticate your users via the Security Assertion Markup Language protocol.",
     icon: <img src={samlLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
     config: <SAMLConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_SAML_ENABLED",
   },
   ldap: {
     key: "ldap",
@@ -44,5 +46,6 @@ export const getExtendedAuthenticationModesMap: (
     description: "Authenticate your users via LDAP directory services.",
     icon: <img src={ldapLogo} height={22} width={22} alt="LDAP Logo" />,
     config: <LDAPConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_LDAP_ENABLED",
   },
 });

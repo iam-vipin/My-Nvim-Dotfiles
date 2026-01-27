@@ -21,11 +21,17 @@ async def _resolve_issue_id(issue_id_val: Any, workspace_slug: Optional[str]) ->
     """Resolve issue_id that may be a UUID or an identifier like 'NEW-15'."""
     if not issue_id_val:
         return None, False
+
+    # Skip placeholder strings (e.g., '<id of workitem: stone3>') used during planning
+    issue_id_str = str(issue_id_val)
+    if issue_id_str.startswith("<id of ") and issue_id_str.endswith(">"):
+        return issue_id_str, False
+
     try:
         import uuid as _uuid
 
-        _uuid.UUID(str(issue_id_val))
-        return str(issue_id_val), False
+        _uuid.UUID(issue_id_str)
+        return issue_id_str, False
     except Exception:
         pass
 
@@ -35,7 +41,7 @@ async def _resolve_issue_id(issue_id_val: Any, workspace_slug: Optional[str]) ->
     try:
         from pi.app.api.v1.helpers.plane_sql_queries import search_workitem_by_identifier
 
-        wi = await search_workitem_by_identifier(str(issue_id_val), str(workspace_slug))
+        wi = await search_workitem_by_identifier(issue_id_str, str(workspace_slug))
         if wi and wi.get("id"):
             return str(wi["id"]), True
     except Exception:
@@ -48,10 +54,16 @@ async def _attach_issue_identifier(action_summary: Dict[str, Any], issue_id: Opt
     """Attach issue_identifier to action_summary if resolvable."""
     if not issue_id:
         return
+
+    # Skip placeholder strings (e.g., '<id of workitem: stone3>') used during planning
+    issue_id_str = str(issue_id)
+    if issue_id_str.startswith("<id of ") and issue_id_str.endswith(">"):
+        return
+
     try:
         from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
 
-        info = await get_issue_identifier_for_artifact(str(issue_id))
+        info = await get_issue_identifier_for_artifact(issue_id_str)
         if info and isinstance(info, dict) and info.get("identifier"):
             action_summary["issue_identifier"] = info["identifier"]
     except Exception:

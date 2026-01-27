@@ -1,3 +1,16 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
 import * as React from "react";
 import { cn } from "../utils";
 import { OAuthButton } from "./oauth-button";
@@ -13,13 +26,13 @@ export type TOAuthOption = {
 type OAuthOptionsProps = {
   options: TOAuthOption[];
   compact?: boolean;
-
+  showDivider?: boolean;
   className?: string;
   containerClassName?: string;
 };
 
 export function OAuthOptions(props: OAuthOptionsProps) {
-  const { options, compact = false, className = "", containerClassName = "" } = props;
+  const { options, compact = false, showDivider = true, className = "", containerClassName = "" } = props;
 
   // Filter enabled options
   const enabledOptions = options.filter((option) => option.enabled !== false);
@@ -47,11 +60,13 @@ export function OAuthOptions(props: OAuthOptionsProps) {
         ))}
       </div>
 
-      <div className="mt-4 flex items-center transition-all duration-300">
-        <hr className="w-full border-strong transition-colors duration-300" />
-        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder transition-colors duration-300">or</p>
-        <hr className="w-full border-strong transition-colors duration-300" />
-      </div>
+      {showDivider && (
+        <div className="mt-4 flex items-center transition-all duration-300">
+          <hr className="w-full border-strong transition-colors duration-300" />
+          <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder transition-colors duration-300">or</p>
+          <hr className="w-full border-strong transition-colors duration-300" />
+        </div>
+      )}
     </div>
   );
 }

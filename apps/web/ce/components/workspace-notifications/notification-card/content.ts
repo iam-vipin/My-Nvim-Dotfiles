@@ -12,15 +12,22 @@
  */
 
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
+import type { TNotificationContentMap } from "@/components/workspace-notifications/sidebar/notification-card/content";
+
+// Additional notification content map for CE (empty - EE extends this)
+export const ADDITIONAL_NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {};
+
+// Fallback action renderer for fields not in the map
 export const renderAdditionalAction = (notificationField: string, verb: string | undefined) => {
   const baseAction = !["comment", "archived_at"].includes(notificationField) ? verb : "";
   return `${baseAction} ${replaceUnderscoreIfSnakeCase(notificationField)}`;
 };
 
+// Fallback value renderer for fields not in the map
 export const renderAdditionalValue = (
-  notificationField: string | undefined,
+  _notificationField: string | undefined,
   newValue: string | undefined,
-  oldValue: string | undefined
+  _oldValue: string | undefined
 ) => newValue;
 
 export const shouldShowConnector = (notificationField: string | undefined) =>

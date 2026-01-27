@@ -28,6 +28,8 @@ import {
 import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/workspace-worklog";
 // hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
+import { SettingsHeading } from "@/components/settings/heading";
+
 type TWorkspaceWorklogRoot = {
   workspaceSlug: string;
   workspaceId: string;
@@ -55,9 +57,7 @@ export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props
 
   return (
     <main className="container mx-auto pr-5 space-y-2 w-full">
-      <h3 className="text-18 font-medium">Worklogs</h3>
-      <div className="text-13 text-tertiary">Download worklogs AKA timesheets for anyone in any project.</div>
-
+      <SettingsHeading title="Worklogs" description="Download worklogs AKA timesheets for anyone in any project." />
       <div>
         {loader === EWorklogLoader.WORKSPACE_INIT_LOADER ? (
           <WorklogLoader loader={loader} />

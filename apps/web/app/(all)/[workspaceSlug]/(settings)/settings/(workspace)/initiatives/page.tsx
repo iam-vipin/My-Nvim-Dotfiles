@@ -14,26 +14,27 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { InitiativeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-// component
 import { ToggleSwitch } from "@plane/ui";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";
-// store hooks
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { InitiativeLabelList } from "@/plane-web/components/initiatives/components/labels/initiative-label-list";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import type { Route } from "./+types/page";
+import { InitiativesWorkspaceSettingsHeader } from "./header";
 
 function InitiativesSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -79,7 +80,7 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
   };
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<InitiativesWorkspaceSettingsHeader />}>
       <div className="w-full">
         <PageHead title={pageTitle} />
         <SettingsHeading
@@ -91,20 +92,16 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
           fallback={<InitiativesUpgrade workspaceSlug={workspaceSlug} redirect />}
           workspaceSlug={workspaceSlug}
         >
-          <div className=" py-6 flex items-center justify-between gap-2 w-full">
-            <div className="flex items-center gap-4">
-              <div className="size-10 bg-layer-1 rounded-md flex items-center justify-center">
-                <InitiativeIcon className="size-5 text-tertiary" />
-              </div>
-              <div className="leading-tight">
-                <h5 className="font-medium">{t("project_settings.initiatives.title")}</h5>
-                <span className="text-placeholder text-13">{t("project_settings.initiatives.description")}</span>
-              </div>
-            </div>
-            <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />
+          <div className="mt-6">
+            <SettingsBoxedControlItem
+              title={t("project_settings.initiatives.title")}
+              description={t("project_settings.initiatives.description")}
+              control={
+                <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />
+              }
+            />
           </div>
-
-          <div className="py-6">
+          <div className="mt-12">
             <InitiativeLabelList />
           </div>
         </WithFeatureFlagHOC>

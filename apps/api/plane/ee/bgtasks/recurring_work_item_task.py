@@ -52,7 +52,9 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         dict: Result of the task execution
     """
     task_log = None
-    task_id = self.request.id
+    # Use Celery task ID if available, otherwise generate one using the same format
+    # Format: recurring_{task_id}_{timestamp} for consistency and debuggability
+    task_id = self.request.id or f"recurring_{recurring_workitem_task_id}_{int(timezone.now().timestamp())}"
 
     try:
         # Get the recurring task
@@ -65,6 +67,20 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         if not recurring_task:
             logger.info(f"Recurring task {recurring_workitem_task_id} not found, skipping execution")
             return {"status": "skipped", "message": "Task not found"}
+
+        # Clean up legacy PeriodicTask if exists (soft transition to batch scheduler)
+        if recurring_task.periodic_task:
+            try:
+                periodic_task_id = recurring_task.periodic_task.id
+                recurring_task.periodic_task.delete()
+                logger.info(f"Cleaned up legacy PeriodicTask {periodic_task_id} for recurring task {recurring_workitem_task_id}")
+            except Exception as cleanup_error:
+                logger.warning(f"Failed to clean up legacy PeriodicTask for {recurring_workitem_task_id}: {cleanup_error}")
+            recurring_task.periodic_task = None
+            # Initialize next_scheduled_at for batch scheduler - calculate next future date
+            # to avoid iterating through past dates one by one
+            recurring_task.next_scheduled_at = recurring_task.calculate_next_scheduled_at(allow_past=False)
+            recurring_task.save(update_fields=["periodic_task", "next_scheduled_at"])
 
         slug = recurring_task.workspace.slug
 
@@ -111,7 +127,19 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             if workflow_state_manager.validate_issue_creation(
                 state_id=workitem_blueprint_first.state.get("id"), user_id=user_id
             ):
-                return
+                error_msg = "Workflow validation failed: user cannot create issues in this state"
+                logger.warning(f"Recurring task {recurring_workitem_task_id}: {error_msg}")
+
+                # Update log with failure
+                task_log.status = RecurringWorkitemTaskLog.TaskStatus.FAILURE
+                task_log.error_message = error_msg
+                task_log.finished_at = django_timezone.now()
+                task_log.save()
+
+                # Still advance schedule to prevent infinite retries on next batch
+                recurring_task.advance_to_next_schedule()
+
+                return {"status": "skipped", "message": error_msg}
 
         # get all the states in the project and create a mapping dict
         state_map = {
@@ -153,7 +181,7 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             for estimate in EstimatePoint.objects.filter(project_id=project_id, workspace_id=workspace_id)
         }
 
-        work_item = create_workitems(
+        work_items = create_workitems(
             workitem_blueprints=workitem_blueprints,
             project_id=project_id,
             workspace_id=workspace_id,
@@ -166,8 +194,23 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             user_id=user_id,
         )
 
+        # Validate that work items were created
+        if not work_items:
+            error_msg = "create_workitems returned no work items"
+            logger.error(f"Recurring task {recurring_workitem_task_id}: {error_msg}")
+
+            task_log.status = RecurringWorkitemTaskLog.TaskStatus.FAILURE
+            task_log.error_message = error_msg
+            task_log.finished_at = django_timezone.now()
+            task_log.save()
+
+            # Advance schedule to prevent infinite retries on next batch
+            recurring_task.advance_to_next_schedule()
+
+            return {"status": "error", "message": error_msg}
+
         # get the first workitem
-        work_item = work_item[0]
+        work_item = work_items[0]
 
         # Update log with success
         task_log.status = RecurringWorkitemTaskLog.TaskStatus.SUCCESS
@@ -190,6 +233,11 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             created_by_id=user_id,
             updated_by_id=user_id,
         )
+
+        # Advance to next scheduled time for batch scheduler
+        next_scheduled = recurring_task.advance_to_next_schedule()
+        if next_scheduled:
+            logger.info(f"Advanced recurring task {recurring_workitem_task_id} to next scheduled time: {next_scheduled}")
 
         logger.info(f"Successfully created work item {work_item.id} from recurring task {recurring_workitem_task_id}")
 

@@ -111,6 +111,10 @@ async def get_issue_identifier_for_artifact(issue_id: str) -> Optional[Dict[str,
 
     Returns project_identifier, sequence_id, identifier, project_id, and name for the issue.
     """
+    # Skip placeholder strings (e.g., '<id of workitem: stone3>') used during planning
+    if issue_id.startswith("<id of ") and issue_id.endswith(">"):
+        return None
+
     query = """
     SELECT
         p.identifier AS project_identifier,
@@ -860,6 +864,7 @@ async def search_state_by_name(name: str, project_id: Optional[str] = None, work
 async def search_user_by_name(
     display_name: Optional[str] = None,
     workspace_slug: Optional[str] = None,
+    project_id: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
@@ -867,12 +872,13 @@ async def search_user_by_name(
 
     - Matches are case-insensitive and partial via ILIKE.
     - At least one of display_name, first_name, last_name should be provided.
+    - If project_id is provided, searches within project members; otherwise searches workspace members.
     """
     # Build dynamic WHERE conditions (prefer AND when both first and last are provided)
     params: list[Any] = []
     param_index = 1
 
-    log.info(f"Searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}')")
+    log.info(f"Searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}', project_id='{project_id}')")
 
     clauses: list[str] = []
 
@@ -919,21 +925,40 @@ async def search_user_by_name(
 
     where_name = " OR ".join(clauses)
 
-    query = f"""
-    SELECT u.id, u.display_name, u.first_name, u.last_name, u.email
-    FROM users u
-    JOIN workspace_members wm ON u.id = wm.member_id
-    JOIN workspaces w ON wm.workspace_id = w.id
-    WHERE ({where_name})
-      AND wm.deleted_at IS NULL
-      AND u.is_active IS TRUE
-      AND u.is_bot IS FALSE
-    """
-
-    if workspace_slug:
-        query += f" AND w.slug = ${param_index}"
-        params.append(workspace_slug)
+    # Choose between project-scoped or workspace-scoped search
+    if project_id:
+        # Project-scoped: search within project members
+        query = f"""
+        SELECT u.id, u.display_name, u.first_name, u.last_name, u.email
+        FROM users u
+        JOIN project_members pm ON u.id = pm.member_id
+        WHERE ({where_name})
+          AND pm.project_id = ${param_index}
+          AND pm.deleted_at IS NULL
+          AND pm.is_active = true
+          AND u.is_active = true
+          AND u.is_bot = false
+        """
+        params.append(project_id)
         param_index += 1
+    else:
+        # Workspace-scoped: search within workspace members
+        query = f"""
+        SELECT u.id, u.display_name, u.first_name, u.last_name, u.email
+        FROM users u
+        JOIN workspace_members wm ON u.id = wm.member_id
+        JOIN workspaces w ON wm.workspace_id = w.id
+        WHERE ({where_name})
+          AND wm.deleted_at IS NULL
+          AND wm.is_active IS TRUE
+          AND u.is_active IS TRUE
+          AND u.is_bot IS FALSE
+        """
+
+        if workspace_slug:
+            query += f" AND w.slug = ${param_index}"
+            params.append(workspace_slug)
+            param_index += 1
 
     query += " LIMIT 20"
     try:
@@ -950,7 +975,7 @@ async def search_user_by_name(
         ]
     except Exception as e:
         log.error(
-            f"Error searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}'): {e}, workspace_slug: {workspace_slug}"  # noqa: E501
+            f"Error searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}'): {e}, workspace_slug: {workspace_slug}, project_id: {project_id}"  # noqa: E501
         )
         return []
 
@@ -1096,6 +1121,11 @@ async def search_workitem_by_identifier(identifier: str, workspace_slug: Optiona
             is_uuid = True
         except (ValueError, AttributeError):
             is_uuid = False
+
+        # Skip placeholder strings (e.g., '<id of workitem: stone3>') used during planning
+        issue_id_str = str(identifier)
+        if issue_id_str.startswith("<id of ") and issue_id_str.endswith(">"):
+            return None
 
         if is_uuid:
             # Handle UUID-based lookup

@@ -15,7 +15,7 @@ import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import type { IUserTheme, TUserProfile } from "@plane/types";
-import { EStartOfTheWeek } from "@plane/types";
+import { NOTIFICATION_VIEW_MODES, EStartOfTheWeek } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 // store
@@ -62,6 +62,7 @@ export class ProfileStore implements IUserProfileStore {
     is_smooth_cursor_enabled: false,
     is_onboarded: false,
     is_tour_completed: false,
+    notification_view_mode: NOTIFICATION_VIEW_MODES[0].key,
     use_case: undefined,
     billing_address_country: undefined,
     billing_address: undefined,

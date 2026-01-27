@@ -105,21 +105,40 @@ class FieldProcessor:
 
     @staticmethod
     def has_meaningful_update(field: str, llm_value: Any) -> bool:
-        """Check if LLM provided a meaningful update for a field."""
+        """Check if LLM provided a meaningful update for a field.
+
+        Design principle: Explicit updates from the LLM are always meaningful, including:
+        - Empty arrays [] for clearing list relationships
+        - None/null for clearing single relationships and dates
+        - Empty strings are NOT meaningful (they're often LLM mistakes)
+        """
         config: Dict[str, Any] = FIELD_CONFIGS.get(field, {})
         field_type = config.get("type")
 
         if field_type == FieldType.LIST_RELATIONSHIP:
+            if not isinstance(llm_value, list):
+                return False
+            if len(llm_value) == 0:
+                return True
             return FieldProcessor._is_valid_list_relationship(llm_value)
 
         elif field_type == FieldType.ID_ARRAY:
-            return isinstance(llm_value, list) and len(llm_value) > 0
+            if not isinstance(llm_value, list):
+                return False
+            return True
 
         elif field_type == FieldType.SINGLE_RELATIONSHIP:
+            if llm_value is None:
+                return True
             if not isinstance(llm_value, dict):
                 return False
             name = llm_value.get("name")
-            return bool(name and name not in ["", "None", None])
+            return bool(name and name not in ["", "None"])
+
+        elif field_type == FieldType.DATE_FIELD:
+            if llm_value is None:
+                return True
+            return llm_value not in ["", {}]
 
         elif field_type == FieldType.STRUCTURED_VALUE:
             if field == "state":
@@ -134,7 +153,7 @@ class FieldProcessor:
                 return bool(name and name not in ["none", "None", ""])
 
         # Default check for other field types
-        return llm_value is not None and llm_value != "" and llm_value != [] and llm_value != {}
+        return llm_value is not None and llm_value != "" and llm_value != {}
 
     @staticmethod
     def transform_existing_value(field: str, value: Any, existing_data: dict) -> Any:
@@ -381,6 +400,11 @@ def construct_entity_url(entity_type: str, entity_id: str, entity_details: dict)
             project_identifier = entity_details.get("project_identifier")
             if project_identifier:
                 return f"/projects/{project_identifier}/settings/states"
+
+        elif entity_type == "intake":
+            project_id = entity_details.get("project_id") or entity_details.get("project")
+            if project_id:
+                return f"/projects/{project_id}/intake/?currentTab=open&inboxIssueId={entity_id}"
 
         elif entity_type == "comment":
             project_identifier = entity_details.get("project_identifier")

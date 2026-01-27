@@ -36,6 +36,11 @@ const RemoveUnusedSeatsModal = lazy(() =>
     default: module.RemoveUnusedSeatsModal,
   }))
 );
+const ProfileSettingsModal = lazy(() =>
+  import("@/components/settings/profile/modal").then((module) => ({
+    default: module.ProfileSettingsModal,
+  }))
+);
 
 type TGlobalModalsProps = {
   workspaceSlug: string;
@@ -103,6 +108,7 @@ export const GlobalModals = observer(function GlobalModals(props: TGlobalModalsP
           workspaceSlug={workspaceSlug}
         />
       )}
+      <ProfileSettingsModal />
     </Suspense>
   );
 });

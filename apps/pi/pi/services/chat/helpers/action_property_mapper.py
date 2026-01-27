@@ -44,14 +44,14 @@ def map_workitem_properties(tool_args: Dict[str, Any]) -> Dict[str, Any]:
         else:
             properties["state"] = {"name": state_val}
 
-    # Assignees: [{"id": "uuid"}, ...]
-    if "assignees" in tool_args and tool_args["assignees"]:
+    # Assignees: [{"id": "uuid"}, ...] or [] to clear
+    if "assignees" in tool_args:
         assignees = tool_args["assignees"]
         if isinstance(assignees, list):
             properties["assignees"] = [{"id": assignee_id} for assignee_id in assignees if assignee_id]
 
-    # Labels: [{"id": "uuid"}, ...]
-    if "labels" in tool_args and tool_args["labels"]:
+    # Labels: [{"id": "uuid"}, ...] or [] to clear
+    if "labels" in tool_args:
         labels = tool_args["labels"]
         if isinstance(labels, list):
             properties["labels"] = [{"id": label_id} for label_id in labels if label_id]

@@ -270,12 +270,12 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
         </SidebarContentWrapper>
       ) : (
         <EmptyStateCompact
-          assetKey="update"
-          title={t("common_empty_state.updates.title")}
-          description={t("common_empty_state.updates.description")}
+          assetKey="state-square"
+          title={t("workspace_empty_state.project_overview_state_sidebar.title")}
+          description={t("workspace_empty_state.project_overview_state_sidebar.description")}
           customButton={
             <Link href={`/${workspaceSlug}/settings/project-states`} className="mt-4 mx-auto">
-              <Button variant="primary"> Enable project grouping</Button>
+              <Button variant="primary">Enable</Button>
             </Link>
           }
           className="px-10"

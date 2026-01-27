@@ -59,7 +59,7 @@ export const ProjectStateGroupList = observer(function ProjectStateGroupList(pro
   };
 
   return (
-    <div className="space-y-5 mt-5">
+    <div className="flex flex-col gap-y-4">
       {Object.entries(groupProjectStates).map(([key, value]) => {
         const groupKey = key as TProjectStateGroupKey;
         const groupStateIds = value;

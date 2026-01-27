@@ -24,7 +24,7 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { TWorkspaceMemberImportSummary } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
@@ -343,50 +343,22 @@ export const MembersImportModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="w-full max-w-lg transform rounded-lg border border-subtle bg-surface-1 p-6 shadow-custom-shadow-md transition-all">
-                {summary ? (
-                  <SummaryView summary={summary} onClose={handleClose} onReset={handleReset} />
-                ) : (
-                  <UploadView
-                    file={file}
-                    isImporting={isImporting}
-                    progress={progress}
-                    dropzone={dropzone}
-                    onFileRemove={() => setFile(null)}
-                    onImport={() => void handleImport()}
-                    onClose={handleClose}
-                  />
-                )}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.LG}>
+      <div className="p-4">
+        {summary ? (
+          <SummaryView summary={summary} onClose={handleClose} onReset={handleReset} />
+        ) : (
+          <UploadView
+            file={file}
+            isImporting={isImporting}
+            progress={progress}
+            dropzone={dropzone}
+            onFileRemove={() => setFile(null)}
+            onImport={() => void handleImport()}
+            onClose={handleClose}
+          />
+        )}
+      </div>
+    </ModalCore>
   );
 });

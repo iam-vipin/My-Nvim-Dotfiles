@@ -71,6 +71,11 @@ export default {
         "Seiten sind Gedankenraum in Plane. Notieren Sie Besprechungsnotizen, formatieren Sie sie einfach, betten Sie Arbeitselemente ein, ordnen Sie sie mit einer Bibliothek von Komponenten an und behalten Sie alles im Kontext Ihres Projekts.",
       cta_primary: "Erstellen Sie Ihre Seite",
     },
+    project_overview_state_sidebar: {
+      title: "Projektzustände aktivieren",
+      description:
+        "Aktivieren Sie Projektzustände, um Eigenschaften wie Status, Priorität, Fälligkeitsdaten und mehr anzuzeigen und zu verwalten.",
+    },
   },
   settings_empty_state: {
     teamspace: {

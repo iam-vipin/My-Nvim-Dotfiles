@@ -31,6 +31,7 @@ import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 type Props = {
   workspaceSlug: string;
@@ -119,9 +120,9 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
   if (!currentUser) return <></>;
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-y-12">
       {Object.entries(PROJECT_FEATURES_LIST).map(([featureSectionKey, feature]) => (
-        <div key={featureSectionKey} className="">
+        <div key={featureSectionKey} className="flex flex-col gap-y-4">
           <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
           {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => {
             const flagKey = FEATURE_FLAG_BY_PROPERTY[featureItem.property];
@@ -144,36 +145,35 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                     );
                   }
                 }}
-                className={cn("gap-x-8 gap-y-2 border-b border-subtle bg-surface-1 py-4", {
+                className={cn("", {
                   "cursor-pointer": featureItem.href,
                 })}
+                role="button"
               >
-                <div key={featureItemKey} className="flex items-center justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center rounded-sm bg-layer-1 p-3">{featureItem.icon}</div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-13 font-medium leading-5">{t(featureItem.key)}</h4>
-                        {featureItem.isPro && (
-                          <Tooltip tooltipContent="Pro feature" position="top">
-                            <UpgradeBadge flag={flagKey} className="rounded" />
-                          </Tooltip>
-                        )}
-                      </div>
-                      <p className="text-13 leading-5 tracking-tight text-tertiary">
-                        {t(`${featureItem.key}_description`)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <ProjectFeatureToggle
-                    featureItem={featureItem}
-                    value={isFeatureEnabled(featureItem.property)}
-                    handleSubmit={handleSubmit}
-                    disabled={!isEnabled || !isAdmin}
-                    isCreateModal={isCreateModal}
-                  />
-                </div>
+                <SettingsBoxedControlItem
+                  title={
+                    <span className="flex items-center gap-2">
+                      <span>
+                        Enable <span className="lowercase">{t(featureItem.key)}</span>
+                      </span>
+                      {featureItem.isPro && (
+                        <Tooltip tooltipContent="Pro feature" position="top">
+                          <UpgradeBadge flag={flagKey} className="rounded" />
+                        </Tooltip>
+                      )}
+                    </span>
+                  }
+                  description={t(`${featureItem.key}_description`)}
+                  control={
+                    <ProjectFeatureToggle
+                      featureItem={featureItem}
+                      value={isFeatureEnabled(featureItem.property)}
+                      handleSubmit={handleSubmit}
+                      disabled={!isEnabled || !isAdmin}
+                      isCreateModal={isCreateModal}
+                    />
+                  }
+                />
               </div>
             );
           })}

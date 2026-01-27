@@ -24,10 +24,11 @@ import { NotificationItem } from "./item";
 type TNotificationCardListRoot = {
   workspaceSlug: string;
   workspaceId: string;
+  onNotificationClick?: () => void;
 };
 
 export const NotificationCardListRoot = observer(function NotificationCardListRoot(props: TNotificationCardListRoot) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug, workspaceId, onNotificationClick } = props;
   // hooks
   const { loader, paginationInfo, getNotifications, getIssueIdsSortedByLatestNotification, setHighlightedActivityIds } =
     useWorkspaceNotifications();
@@ -50,7 +51,13 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
   return (
     <>
       {notificationIssueIds.map((issueId: string) => (
-        <NotificationItem issueId={issueId} key={issueId} workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+        <NotificationItem
+          issueId={issueId}
+          key={issueId}
+          workspaceSlug={workspaceSlug}
+          workspaceId={workspaceId}
+          onNotificationClick={onNotificationClick}
+        />
       ))}
 
       {/* fetch next page notifications */}

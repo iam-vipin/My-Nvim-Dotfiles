@@ -13,8 +13,9 @@
 
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { TIssuePropertiesActivity } from "@plane/types";
-// helpers
+import { EIssueServiceType } from "@plane/types";
+import type { TIssuePropertiesActivity, TIssueServiceType } from "@plane/types";
+
 // services
 import { APIService } from "@/services/api.service";
 
@@ -31,11 +32,15 @@ export class IssuePropertiesActivityService extends APIService {
       | {
           created_at__gt: string;
         }
-      | object = {}
+      | object = {},
+    serviceType: TIssueServiceType = EIssueServiceType.ISSUES
   ): Promise<TIssuePropertiesActivity[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/property-activity/`, {
-      params,
-    })
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${serviceType === EIssueServiceType.EPICS ? "epics" : "issues"}/${issueId}/property-activity/`,
+      {
+        params,
+      }
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

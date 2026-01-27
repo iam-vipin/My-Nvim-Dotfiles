@@ -53,7 +53,7 @@ def enterprise_member_sync_task():
         response = requests.post(
             f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/enterprise/sync/",
             json={
-                "members_list": users,
+                "members_list": list(users),
             },
             headers={
                 "content-type": "application/json",

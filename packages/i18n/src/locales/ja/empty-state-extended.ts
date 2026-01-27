@@ -69,6 +69,10 @@ export default {
         "ページはPlaneでの思考スポッティングスペースです。会議のメモを取り、簡単にフォーマットし、作業項目を埋め込み、コンポーネントのライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストで保管します。",
       cta_primary: "ページを作成",
     },
+    project_overview_state_sidebar: {
+      title: "プロジェクトの状態を有効化",
+      description: "プロジェクトの状態を有効にして、状態、優先度、期日などのプロパティを表示および管理します。",
+    },
   },
   settings_empty_state: {
     teamspace: {

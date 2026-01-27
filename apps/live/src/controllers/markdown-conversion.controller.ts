@@ -32,6 +32,11 @@ export type TCustomComponentsMetaData = {
     project__identifier: string;
     sequence_id: string;
   }[];
+  work_item_mentions: {
+    id: string;
+    project__identifier: string;
+    sequence_id: string;
+  }[];
   user_mentions: {
     id: string;
     display_name: string;

@@ -16,7 +16,6 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { ENotificationLoader } from "@plane/constants";
-import type { TNotification } from "@plane/types";
 // helpers
 import { convertToEpoch } from "@plane/utils";
 // services
@@ -26,8 +25,6 @@ import type { RootStore } from "@/plane-web/store/root.store";
 import type { INotification } from "@/store/notifications/notification";
 import type { IWorkspaceNotificationStore as IWorkspaceNotificationStoreCore } from "@/store/notifications/workspace-notifications.store";
 import { WorkspaceNotificationStore as WorkspaceNotificationStoreCore } from "@/store/notifications/workspace-notifications.store";
-
-export type TGroupedNotifications = Record<string, TNotification[]>;
 
 export interface IWorkspaceNotificationStore extends IWorkspaceNotificationStoreCore {
   higlightedActivityIds: string[];
@@ -49,7 +46,6 @@ export interface IWorkspaceNotificationStore extends IWorkspaceNotificationStore
 
 export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore implements IWorkspaceNotificationStore {
   higlightedActivityIds: string[] = [];
-
   constructor(protected store: RootStore) {
     super(store);
     makeObservable(this, {

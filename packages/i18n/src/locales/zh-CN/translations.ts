@@ -752,6 +752,7 @@ export default {
     link_copied: "链接已复制！",
     link_copied_to_clipboard: "链接已复制到剪贴板",
     copied_to_clipboard: "工作项链接已复制到剪贴板",
+    branch_name_copied_to_clipboard: "分支名称已复制到剪贴板",
     is_copied_to_clipboard: "工作项已复制到剪贴板",
     no_links_added_yet: "暂无添加的链接",
     add_link: "添加链接",
@@ -806,6 +807,7 @@ export default {
       make_a_copy: "创建副本",
       open_in_new_tab: "在新标签页中打开",
       copy_link: "复制链接",
+      copy_branch_name: "复制分支名称",
       archive: "归档",
       delete: "删除",
       remove_relation: "移除关系",
@@ -1558,6 +1560,11 @@ export default {
           sending: "发送中…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "选择默认视图",
+      compact: "紧凑",
+      full: "全屏",
     },
   },
   workspace_settings: {

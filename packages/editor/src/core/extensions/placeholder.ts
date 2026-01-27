@@ -52,7 +52,7 @@ export const CustomPlaceholderExtension = (args: TArgs) => {
 
       if (placeholder) {
         if (typeof placeholder === "string") return placeholder;
-        else return placeholder(editor.isFocused, editor.getHTML());
+        else return placeholder(editor.isFocused, editor.isEmpty);
       }
 
       return "Press '/' for commands...";

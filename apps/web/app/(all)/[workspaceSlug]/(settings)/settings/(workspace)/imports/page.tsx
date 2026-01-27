@@ -13,27 +13,27 @@
 
 import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-
+// hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web components
+// plane web imports
 import { ImportersList } from "@/plane-web/components/importers";
+// local imports
 import type { Route } from "./+types/page";
+import { ImportsWorkspaceSettingsHeader } from "./header";
 
-function ImportsPage({ params }: Route.ComponentProps) {
+function ImportsPage(props: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = params;
+  const { workspaceSlug } = props.params;
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
@@ -41,13 +41,10 @@ function ImportsPage({ params }: Route.ComponentProps) {
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper header={<ImportsWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
-      <section className="w-full">
-        <SettingsHeading
-          title={t("workspace_settings.settings.imports.heading")}
-          description={t("workspace_settings.settings.imports.description")}
-        />
+      <section className="w-full flex flex-col gap-y-6">
+        <SettingsHeading title="Imports" />
         <ImportersList workspaceSlug={workspaceSlug} />
       </section>
     </SettingsContentWrapper>

@@ -36,7 +36,7 @@ type TProps = {
   isSubmitting: boolean;
   descriptionEditorRef: React.RefObject<EditorRefApi>;
   anchor: string;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
+  placeholder?: string | ((isFocused: boolean, isEmpty: boolean) => string);
 };
 
 const IssueForm = observer(function IssueForm(props: TProps) {

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ import { cn } from "@plane/utils";
 // components
 import { DeleteProjectModal } from "@/components/project/delete-project-modal";
 import { JoinProjectModal } from "@/components/project/join-project-modal";
-import { ArchiveRestoreProjectModal } from "@/components/project/settings/archive-project/archive-restore-modal";
+import { ArchiveRestoreProjectModal } from "@/components/project/archive-restore-modal";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";

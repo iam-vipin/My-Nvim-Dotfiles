@@ -58,15 +58,15 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
 
   return (
     <>
-      <div className={cn(isTooltip ? "divide-y divide-subtle-1/50" : "mt-3", className)}>
+      <div className={cn(isTooltip ? "divide-y divide-subtle-1/50" : "", className)}>
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)
           .map((featureKey) => {
             const feature = featureList[featureKey];
 
             return (
-              <div key={featureKey} className={cn("gap-x-8 gap-y-3 py-3", isTooltip ? "bg-surface-1" : "bg-layer-1")}>
-                <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
+              <div key={featureKey} className="gap-x-8 gap-y-3 py-3">
+                <div key={featureKey} className="flex justify-between gap-2">
                   <div className="flex gap-2 w-full">
                     <div
                       className={cn("flex justify-center rounded-sm mt-1", {

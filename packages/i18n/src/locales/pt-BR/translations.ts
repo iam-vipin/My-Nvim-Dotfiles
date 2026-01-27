@@ -775,6 +775,7 @@ export default {
     link_copied: "Link copiado!",
     link_copied_to_clipboard: "Link copiado para a área de transferência",
     copied_to_clipboard: "Link do item de trabalho copiado para a área de transferência",
+    branch_name_copied_to_clipboard: "Nome do branch copiado para a área de transferência",
     is_copied_to_clipboard: "O link do item de trabalho foi copiado para a área de transferência",
     no_links_added_yet: "Nenhum link adicionado ainda",
     add_link: "Adicionar link",
@@ -829,6 +830,7 @@ export default {
       make_a_copy: "Fazer uma cópia",
       open_in_new_tab: "Abrir em nova aba",
       copy_link: "Copiar link",
+      copy_branch_name: "Copiar nome do branch",
       archive: "Arquivar",
       restore: "Restaurar",
       delete: "Excluir",
@@ -1596,6 +1598,11 @@ export default {
           sending: "Enviando…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "Selecionar visualização padrão",
+      compact: "Compacto",
+      full: "Tela cheia",
     },
   },
   workspace_settings: {

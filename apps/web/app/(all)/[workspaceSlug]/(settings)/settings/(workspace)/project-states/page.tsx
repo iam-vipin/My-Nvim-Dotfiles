@@ -21,20 +21,20 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-// store hooks
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web components
+// plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import {
   WorkspaceProjectStatesUpgrade,
   WorkspaceProjectStatesRoot,
 } from "@/plane-web/components/workspace-project-states";
-// plane web constants
-// plane web hooks
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import type { Route } from "./+types/page";
+import { ProjectStatessWorkspaceSettingsHeader } from "./header";
 
 function WorklogsPage({ params }: Route.ComponentProps) {
   // router
@@ -69,34 +69,32 @@ function WorklogsPage({ params }: Route.ComponentProps) {
   };
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<ProjectStatessWorkspaceSettingsHeader />}>
       <div className="w-full">
         <PageHead title={pageTitle} />
         <SettingsHeading
-          title={t("workspace_settings.settings.project_states.heading")}
+          title={t("workspace_settings.settings.project_states.title")}
           description={t("workspace_settings.settings.project_states.description")}
           appendToRight={
-            <>
-              {isFeatureEnabled && (
-                <ToggleSwitch value={isProjectGroupingEnabled} onChange={toggleProjectGroupingFeature} size="sm" />
-              )}
-            </>
+            isFeatureEnabled && (
+              <ToggleSwitch value={isProjectGroupingEnabled} onChange={toggleProjectGroupingFeature} size="sm" />
+            )
           }
         />
-        <WithFeatureFlagHOC
-          flag="PROJECT_GROUPING"
-          fallback={<WorkspaceProjectStatesUpgrade />}
-          workspaceSlug={workspaceSlug}
-        >
-          <main className="container mx-auto space-y-4 w-full">
+        <div className="mt-6">
+          <WithFeatureFlagHOC
+            flag="PROJECT_GROUPING"
+            fallback={<WorkspaceProjectStatesUpgrade />}
+            workspaceSlug={workspaceSlug}
+          >
             <WorkspaceProjectStatesRoot
               isProjectGroupingEnabled={isProjectGroupingEnabled}
               workspaceSlug={workspaceSlug}
               workspaceId={currentWorkspace?.id}
               toggleProjectGroupingFeature={toggleProjectGroupingFeature}
             />
-          </main>
-        </WithFeatureFlagHOC>
+          </WithFeatureFlagHOC>
+        </div>
       </div>
     </SettingsContentWrapper>
   );

@@ -467,12 +467,15 @@ def create_issue_property_values(
             else:
                 converted_properties[actual_property_id] = property.get("values", [])
 
-    # Validate the data
-    property_validators(
-        properties=issue_properties,
-        property_values=converted_properties,
-        existing_prop_values=existing_prop_values,
-    )
+    try:
+        # Validate the data
+        property_validators(
+            properties=issue_properties,
+            property_values=converted_properties,
+            existing_prop_values=existing_prop_values,
+        )
+    except Exception as e:
+        log_exception(e, warning=True)
 
     # Save the data
     bulk_issue_property_values = property_savers(
@@ -532,6 +535,7 @@ def create_workitems(
 
     """
     created_workitems = []
+
     # Create workitems
     for blueprint in workitem_blueprints:
         # Check if the state is present in the state map

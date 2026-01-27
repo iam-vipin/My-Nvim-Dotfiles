@@ -763,6 +763,7 @@ export default {
     link_copied: "リンクをコピーしました！",
     link_copied_to_clipboard: "リンクをクリップボードにコピーしました",
     copied_to_clipboard: "作業項目のリンクをクリップボードにコピーしました",
+    branch_name_copied_to_clipboard: "ブランチ名をクリップボードにコピーしました",
     is_copied_to_clipboard: "作業項目をクリップボードにコピーしました",
     no_links_added_yet: "リンクはまだ追加されていません",
     add_link: "リンクを追加",
@@ -817,6 +818,7 @@ export default {
       make_a_copy: "コピーを作成",
       open_in_new_tab: "新しいタブで開く",
       copy_link: "リンクをコピー",
+      copy_branch_name: "ブランチ名をコピー",
       archive: "アーカイブ",
       delete: "削除",
       remove_relation: "関連を削除",
@@ -1574,6 +1576,11 @@ export default {
           sending: "送信中…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "デフォルト表示を選択",
+      compact: "コンパクト",
+      full: "全画面",
     },
   },
   workspace_settings: {

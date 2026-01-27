@@ -27,6 +27,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { IssueTypesRoot } from "@/plane-web/components/issue-types";
 // types
 import type { Route } from "./+types/page";
+import { WorkItemTypesProjectSettingsHeader } from "./header";
 
 function WorkItemTypesSettingsPage({ params }: Route.ComponentProps) {
   // router params
@@ -47,7 +48,7 @@ function WorkItemTypesSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<WorkItemTypesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full`}>
         <IssueTypesRoot workspaceSlug={workspaceSlug} projectId={projectId} />

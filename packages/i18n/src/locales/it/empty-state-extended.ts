@@ -69,6 +69,11 @@ export default {
         "Le pagine sono spazi per catturare pensieri in Plane. Prendi note di riunioni, formattale facilmente, incorpora elementi di lavoro, organizzali usando una libreria di componenti e mantienili tutti nel contesto del tuo progetto.",
       cta_primary: "Crea la tua pagina",
     },
+    project_overview_state_sidebar: {
+      title: "Abilita stati del progetto",
+      description:
+        "Abilita gli stati del progetto per visualizzare e gestire proprietà come stato, priorità, date di scadenza e altro.",
+    },
   },
   settings_empty_state: {
     teamspace: {

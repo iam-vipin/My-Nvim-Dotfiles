@@ -16,7 +16,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 
-from langchain.tools import tool
+from langchain_core.tools import tool
 from pydantic import BaseModel
 from pydantic import Field
 from pydantic import field_validator

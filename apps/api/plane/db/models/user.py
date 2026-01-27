@@ -302,25 +302,7 @@ class Account(TimeAuditModel):
         ordering = ("-created_at",)
 
 
-@receiver(post_save, sender=User)
-def create_user_notification(sender, instance, created, **kwargs):
-    # create preferences
-    if created and not instance.is_bot:
-        # Module imports
-        from plane.db.models import UserNotificationPreference
-
-        UserNotificationPreference.objects.create(
-            user=instance,
-            property_change=True,
-            state_change=True,
-            comment=True,
-            mention=True,
-            issue_completed=True,
-        )
-
-
-@receiver(post_save, sender=User)
-def send_welcome_slack(sender, instance, created, **kwargs):
+def send_welcome_slack(instance: User, created: bool):
     try:
         if created and not instance.is_bot:
             # Send message on slack as well
@@ -336,3 +318,49 @@ def send_welcome_slack(sender, instance, created, **kwargs):
         return
     except Exception:
         return
+
+
+def create_user_notification_preferences(instance: User):
+    from plane.db.models import UserNotificationPreference
+
+    try:
+        UserNotificationPreference.objects.create(
+            user=instance,
+            property_change=True,
+            state_change=True,
+            comment=True,
+            mention=True,
+            issue_completed=True,
+        )
+    except Exception:
+        return
+
+
+def track_signup_event(instance: User):
+    from plane.bgtasks.event_tracking_task import track_event
+    from plane.utils.analytics_events import USER_SIGNED_UP
+
+    try:
+        track_event.delay(
+            user_id=instance.id,
+            event_name=USER_SIGNED_UP,
+            event_properties={
+                "user_id": instance.id,
+                "email": instance.email,
+                "first_name": instance.first_name,
+                "last_name": instance.last_name,
+                "last_login_medium": instance.last_login_medium,
+                "last_login_time": str(instance.last_login_time),
+            },
+        )
+    except Exception:
+        return
+
+
+@receiver(post_save, sender=User)
+def trigger_user_post_save_operations(sender, instance, created, **kwargs):
+    # create preferences
+    if created and not instance.is_bot:
+        create_user_notification_preferences(instance)
+        send_welcome_slack(instance, created)
+        track_signup_event(instance)

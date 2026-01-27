@@ -64,9 +64,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       onClick: () => {
         void navigate("/sso");
       },
-      // TODO: Enable SSO once production testing is complete
-      enabled: false,
-      // enabled: config?.is_self_managed === false,
+      enabled: config?.is_self_managed === false,
     },
   ];
   const isOAuthEnabled = oAuthOptions.some((option) => option.enabled);

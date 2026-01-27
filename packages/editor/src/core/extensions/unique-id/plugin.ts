@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { combineTransactionSteps, findChildrenInRange, findDuplicates, getChangedRanges } from "@tiptap/core";
+import { combineTransactionSteps, findChildrenInRange, getChangedRanges } from "@tiptap/core";
 import { Fragment, Slice } from "@tiptap/pm/model";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
@@ -19,7 +19,7 @@ import type { Transaction } from "@tiptap/pm/state";
 // types
 import type { UniqueIDOptions } from "./extension";
 // utils
-import { createIdsForView } from "./utils";
+import { createIdsForView, findDuplicates } from "./utils";
 
 export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
   let dragSourceElement: Element | null = null;
@@ -29,43 +29,37 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
   return new Plugin({
     key: new PluginKey("uniqueID"),
     appendTransaction: (transactions, oldState, newState) => {
+      // Early exit for collab transactions - check first for performance
+      const isCollabTransaction = transactions.some((tr) => tr.getMeta("y-sync$"));
+      if (isCollabTransaction) {
+        return;
+      }
+
       const hasDocChanges =
         transactions.some((transaction) => transaction.docChanged) && !oldState.doc.eq(newState.doc);
       const filterTransactions =
         options.filterTransaction && transactions.some((tr) => !options.filterTransaction?.(tr));
-
-      const isCollabTransaction = transactions.find((tr) => tr.getMeta("y-sync$"));
-
-      if (isCollabTransaction) {
-        return;
-      }
 
       if (!hasDocChanges || filterTransactions) {
         return;
       }
 
       const { tr } = newState;
-
       const { types, attributeName, generateUniqueID } = options;
       const transform = combineTransactionSteps(oldState.doc, transactions as Transaction[]);
-
       const { mapping } = transform;
 
       // get changed ranges based on the old state
       const changes = getChangedRanges(transform);
 
-      // Get all IDs from the entire document to check for duplicates globally
-      const allNodesInDoc: Array<{ node: ProseMirrorNode; pos: number }> = [];
-      newState.doc.descendants((node, pos) => {
-        if (types.includes(node.type.name)) {
-          allNodesInDoc.push({ node, pos });
-        }
-      });
-      const allIds = allNodesInDoc.map(({ node }) => node.attrs[attributeName]).filter((id) => id !== null);
-      const duplicatedIds = findDuplicates(allIds);
-
       changes.forEach(({ newRange }) => {
         const newNodes = findChildrenInRange(newState.doc, newRange, (node) => types.includes(node.type.name));
+
+        // Only check duplicates within the changed range - much faster than scanning entire doc
+        const newIds = newNodes
+          .map(({ node }) => node.attrs[attributeName])
+          .filter((id) => id !== null);
+        const duplicatedNewIds = findDuplicates(newIds);
 
         newNodes.forEach(({ node, pos }) => {
           // instead of checking `node.attrs[attributeName]` directly
@@ -86,8 +80,8 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
           // check if the node doesn't exist in the old state
           const { deleted } = mapping.invert().mapResult(pos);
 
-          // If this is a new node (didn't exist in old state) and its ID is duplicated in the entire document
-          const newNode = deleted && duplicatedIds.includes(id);
+          // If this is a new node (didn't exist in old state) and its ID is duplicated
+          const newNode = deleted && duplicatedNewIds.includes(id);
 
           if (newNode) {
             tr.setNodeMarkup(pos, undefined, {

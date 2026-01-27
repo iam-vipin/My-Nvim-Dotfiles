@@ -18,14 +18,24 @@ import type { TNotificationListRoot } from "ce/components/workspace-notification
 import { NotificationCardListRoot as NotificationCardListRootEe } from "./notification-card/root";
 
 export const NotificationListRoot = observer(function NotificationListRoot(props: TNotificationListRoot) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug, workspaceId, onNotificationClick } = props;
   return (
     <WithFeatureFlagHOC
       workspaceSlug={workspaceSlug.toString()}
       flag="INBOX_STACKING"
-      fallback={<NotificationCardListRootCe workspaceSlug={workspaceSlug.toString()} workspaceId={workspaceId} />}
+      fallback={
+        <NotificationCardListRootCe
+          workspaceSlug={workspaceSlug.toString()}
+          workspaceId={workspaceId}
+          onNotificationClick={onNotificationClick}
+        />
+      }
     >
-      <NotificationCardListRootEe workspaceSlug={workspaceSlug.toString()} workspaceId={workspaceId} />
+      <NotificationCardListRootEe
+        workspaceSlug={workspaceSlug.toString()}
+        workspaceId={workspaceId}
+        onNotificationClick={onNotificationClick}
+      />
     </WithFeatureFlagHOC>
   );
 });

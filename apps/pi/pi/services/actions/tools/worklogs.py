@@ -38,7 +38,6 @@ async def _worklog_pre_handler(
     # 1. Project ID Resolution
     issue_id = kwargs.get("issue_id")
     project_id = kwargs.get("project_id")
-
     should_resolve = False
     if issue_id and not project_id:
         should_resolve = True
@@ -72,11 +71,13 @@ async def _worklog_pre_handler(
 
             if hours_match:
                 with contextlib.suppress(ValueError):
-                    total_minutes += int(float(hours_match.group(1)) * 60)
+                    hours = int(float(hours_match.group(1)) * 60)
+                    total_minutes += hours
 
             if minutes_match:
                 with contextlib.suppress(ValueError):
-                    total_minutes += int(float(minutes_match.group(1)))
+                    mins = int(float(minutes_match.group(1)))
+                    total_minutes += mins
 
             # If regex matched nothing but it's a digit string, treat as minutes
             if not hours_match and not minutes_match:
@@ -90,7 +91,6 @@ async def _worklog_pre_handler(
         # If int/float passed directly, ensure int
         elif isinstance(duration, (int, float)):
             kwargs["duration"] = int(duration)
-
     return kwargs
 
 

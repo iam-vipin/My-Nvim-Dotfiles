@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TExtendedInstanceAuthenticationModeKeys } from "./auth-ee";
+import type { TExtendedInstanceAuthenticationModeKeys, TInstanceEnterpriseAuthenticationMethodKeys } from "./auth-ee";
 
 export type TCoreInstanceAuthenticationModeKeys =
   | "unique-codes"
@@ -31,6 +31,7 @@ export type TInstanceAuthenticationModes = {
   description: string;
   icon: React.ReactNode;
   config: React.ReactNode;
+  enabledConfigKey: TInstanceAuthenticationMethodKeys | TInstanceEnterpriseAuthenticationMethodKeys;
   unavailable?: boolean;
 };
 

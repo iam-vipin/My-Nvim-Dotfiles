@@ -12,7 +12,7 @@
  */
 
 import { orderBy, isEmpty, update, set } from "lodash-es";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { TNotificationTab } from "@plane/constants";
@@ -37,10 +37,14 @@ import type { CoreRootStore } from "@/store/root.store";
 type TNotificationLoader = ENotificationLoader | undefined;
 type TNotificationQueryParamType = ENotificationQueryParamType;
 
+export type TGroupedNotifications = Record<string, TNotification[]>;
+export type TNotificationsViewMode = "full" | "compact";
+
 export interface IWorkspaceNotificationStore {
   // observables
   loader: TNotificationLoader;
   unreadNotificationsCount: TUnreadNotificationsCount;
+  viewMode: TNotificationsViewMode;
   notifications: Record<string, INotification>; // notification_id -> notification
   currentNotificationTab: TNotificationTab;
   currentSelectedNotificationId: string | undefined;
@@ -65,6 +69,7 @@ export interface IWorkspaceNotificationStore {
     queryCursorType?: TNotificationQueryParamType
   ) => Promise<TNotificationPaginatedInfo | undefined>;
   markAllNotificationsAsRead: (workspaceId: string) => Promise<void>;
+  setViewMode: (viewMode: TNotificationsViewMode) => void;
 }
 
 export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
@@ -102,6 +107,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       paginationInfo: observable,
       filters: observable,
       // computed
+      viewMode: computed,
       // helper actions
       setCurrentNotificationTab: action,
       setCurrentSelectedNotificationId: action,
@@ -113,10 +119,21 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       getUnreadNotificationsCount: action,
       getNotifications: action,
       markAllNotificationsAsRead: action,
+      setViewMode: action,
     });
   }
 
+  setViewMode = (viewMode: TNotificationsViewMode): void => {
+    if (this.store.user.userProfile.data) {
+      this.store.user.userProfile.data.notification_view_mode = viewMode;
+    }
+    this.store.user.userProfile.updateUserProfile({ notification_view_mode: viewMode });
+  };
+
   // computed
+  get viewMode(): TNotificationsViewMode {
+    return this.store.user.userProfile.data?.notification_view_mode || "full";
+  }
 
   // computed functions
   /**

@@ -26,7 +26,9 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+// local imports
 import type { Route } from "./+types/layout";
+import { RecurringWorkItemsProjectSettingsHeader } from "./header";
 
 function RecurringWorkItemsProjectSettingsLayout({ params }: Route.ComponentProps) {
   // router
@@ -56,11 +58,7 @@ function RecurringWorkItemsProjectSettingsLayout({ params }: Route.ComponentProp
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 
-  return (
-    <SettingsContentWrapper>
-      <Outlet />
-    </SettingsContentWrapper>
-  );
+  return <Outlet />;
 }
 
 export default observer(RecurringWorkItemsProjectSettingsLayout);

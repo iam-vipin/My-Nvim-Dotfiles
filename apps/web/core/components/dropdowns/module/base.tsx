@@ -200,6 +200,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
           multiple={multiple}
           getModuleById={getModuleById}
           moduleIds={moduleIds}
+          value={value}
         />
       )}
     </ComboDropDown>

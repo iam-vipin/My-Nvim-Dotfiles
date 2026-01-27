@@ -140,7 +140,7 @@ Your task: Based on the user's intent and any advisory text (like method lists) 
 - modules: Create/list/update/delete modules, add/remove workitems to/from modules
 - pages: Create and manage project and workspace pages/documentation (rich text, fonts, images, styles)
 - users: Get current user information
-- intake: Handle intake forms, guest submissions, triage workflow
+- intake: Create/update/list/delete intake work items (triage queue items). Handle intake forms, guest submissions, triage workflow
 - members: Workspace and project member management, listings
 - activity: Track work item activities, history, and audit logs
 - comments: Comments and discussions on work items

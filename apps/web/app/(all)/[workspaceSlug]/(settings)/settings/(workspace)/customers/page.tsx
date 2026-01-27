@@ -32,7 +32,10 @@ import { CustomerUpgrade, CustomerSettingsRoot } from "@/plane-web/components/cu
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { useCustomers, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import type { Route } from "./+types/page";
+import { CustomersWorkspaceSettingsHeader } from "./header";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function CustomerSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -91,22 +94,26 @@ function CustomerSettingsPage({ params }: Route.ComponentProps) {
   };
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<CustomersWorkspaceSettingsHeader />}>
       <div className="w-full">
-        <PageHead title={pageTitle} />{" "}
+        <PageHead title={pageTitle} />
         <SettingsHeading
-          title={t("project_settings.customers.settings_heading")}
+          title={t("project_settings.customers.heading")}
           description={t("project_settings.customers.description")}
-          appendToRight={
-            <>
-              {isFeatureFlagEnabled && (
+        />
+        <div className="mt-6">
+          <SettingsBoxedControlItem
+            title="Enable customers"
+            description="Link customer requests to work items and track progress by customer."
+            control={
+              isFeatureFlagEnabled && (
                 <div className={cn(isCustomersFeatureEnabled && "cursor-not-allowed")}>
                   <ToggleSwitch value={!!isCustomersFeatureEnabled} onChange={toggleCustomersFeature} size="sm" />
                 </div>
-              )}
-            </>
-          }
-        />
+              )
+            }
+          />
+        </div>
         <WithFeatureFlagHOC flag="CUSTOMERS" fallback={<CustomerUpgrade />} workspaceSlug={workspaceSlug}>
           <CustomerSettingsRoot
             workspaceId={currentWorkspace?.id}

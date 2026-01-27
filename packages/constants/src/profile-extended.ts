@@ -11,15 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export const EXTENDED_PROFILE_ACTION_LINKS = {
-  connections: {
-    key: "connections",
-    i18n_label: "profile.actions.connections",
-    href: `/settings/account/connections`,
-    highlight: (pathname: string) => pathname === "/settings/account/connections/",
-  },
-};
-
 export enum E_INTEGRATION_KEYS {
   GITHUB = "GITHUB",
   GITHUB_ENTERPRISE = "GITHUB_ENTERPRISE",

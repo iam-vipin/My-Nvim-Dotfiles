@@ -38,13 +38,14 @@ import type {
 } from "@/components/issues/issue-modal/context";
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web imports
-import { useIssuePropertiesActivity, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
 import { IssueService } from "@/plane-web/services/issue/issue.service";
 import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local imports
@@ -83,7 +84,12 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
     getProjectWorkItemPropertiesFetchedMap,
     fetchAllPropertiesAndOptions,
   } = useIssueTypes();
-  const { fetchPropertyActivities } = useIssuePropertiesActivity();
+  const {
+    activity: {
+      issuePropertiesActivity: { fetchPropertyActivities },
+    },
+  } = useIssueDetail();
+
   // derived values
   const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
 

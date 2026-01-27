@@ -23,11 +23,11 @@ import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
 // plane web components
 import { WorkspaceRightSidebar } from "@/plane-web/components/workspace/right-sidebar";
+// components
+import { WorkspaceSettingsSidebarRoot } from "@/components/settings/workspace/sidebar";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// local components
-import { WorkspaceSettingsSidebar } from "./sidebar";
-
+// local imports
 import type { Route } from "./+types/layout";
 
 const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params }: Route.ComponentProps) {
@@ -49,18 +49,18 @@ const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params
   return (
     <>
       <SettingsMobileNav
-        hamburgerContent={WorkspaceSettingsSidebar}
+        hamburgerContent={WorkspaceSettingsSidebarRoot}
         activePath={getWorkspaceActivePath(pathname) || ""}
       />
       <div className="inset-y-0 flex flex-row w-full h-full">
         {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" className="h-auto" />
         ) : (
-          <div className="relative flex h-full w-full">
-            <div className="hidden md:block">{<WorkspaceSettingsSidebar />}</div>
-            <div className="w-full h-full overflow-y-scroll md:pt-page-y">
-              <Outlet />
+          <div className="relative flex size-full">
+            <div className="h-full hidden md:block">
+              <WorkspaceSettingsSidebarRoot />
             </div>
+            <Outlet />
             <WorkspaceRightSidebar workspaceSlug={workspaceSlug} />
           </div>
         )}

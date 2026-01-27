@@ -26,6 +26,7 @@ export type HorizontalStackAssetType =
   | "project"
   | "settings"
   | "state"
+  | "state-square"
   | "template"
   | "token"
   | "unknown"

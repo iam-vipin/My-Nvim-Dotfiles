@@ -764,6 +764,7 @@ export default {
     link_copied: "Odkaz skopírovaný!",
     link_copied_to_clipboard: "Odkaz skopírovaný do schránky",
     copied_to_clipboard: "Odkaz na pracovnú položku bol skopírovaný do schránky",
+    branch_name_copied_to_clipboard: "Názov vetvy skopírovaný do schránky",
     is_copied_to_clipboard: "Pracovná položka skopírovaná do schránky",
     no_links_added_yet: "Zatiaľ neboli pridané žiadne odkazy",
     add_link: "Pridať odkaz",
@@ -818,6 +819,7 @@ export default {
       make_a_copy: "Vytvoriť kópiu",
       open_in_new_tab: "Otvoriť na novej karte",
       copy_link: "Kopírovať odkaz",
+      copy_branch_name: "Kopírovať názov vetvy",
       archive: "Archivovať",
       restore: "Obnoviť",
       delete: "Zmazať",
@@ -1578,6 +1580,11 @@ export default {
           sending: "Odosielanie…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "Vybrať predvolené zobrazenie",
+      compact: "Kompaktné",
+      full: "Celá obrazovka",
     },
   },
   workspace_settings: {

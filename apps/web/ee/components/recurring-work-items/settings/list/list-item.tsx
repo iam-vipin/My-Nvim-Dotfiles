@@ -57,7 +57,8 @@ export const RecurringWorkItemListItem = observer(function RecurringWorkItemList
         <div className="text-body-xs-medium text-primary truncate">{recurringWorkItem.workitem_blueprint.name}</div>
       </div>
       <div className="w-full text-right text-caption-sm-medium text-tertiary">
-        repeats every {getRecurringWorkItemIntervalTypeLabel(recurringWorkItem.interval_type)}
+        repeats every {recurringWorkItem.interval_count > 1 ? `${recurringWorkItem.interval_count} ` : ""}
+        {getRecurringWorkItemIntervalTypeLabel(recurringWorkItem.interval_type, recurringWorkItem.interval_count)}
       </div>
       <div className="flex flex-shrink-0 items-center gap-3">
         <RecurringWorkItemQuickActions {...props} parentRef={parentRef} />

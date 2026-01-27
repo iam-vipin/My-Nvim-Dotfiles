@@ -142,6 +142,11 @@ EE_JOBS = {
         "task": "plane.ee.bgtasks.cycle_automation_task.maintain_future_cycles",
         "schedule": crontab(minute="*/2"),  # Every 2 minutes
     },
+    # Batch scheduler for recurring work items - runs every 6 hours
+    "recurring-batch-scheduler": {
+        "task": "plane.ee.bgtasks.recurring_work_item_scheduler.schedule_batch",
+        "schedule": crontab(hour="*/6", minute=0),  # Every 6 hours at minute 0
+    },
 }
 
 

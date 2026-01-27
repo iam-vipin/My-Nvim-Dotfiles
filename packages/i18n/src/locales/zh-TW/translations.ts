@@ -751,6 +751,7 @@ export default {
     link_copied: "連結已複製！",
     link_copied_to_clipboard: "連結已複製到剪貼簿",
     copied_to_clipboard: "工作事項連結已複製到剪貼簿",
+    branch_name_copied_to_clipboard: "分支名稱已複製到剪貼簿",
     is_copied_to_clipboard: "工作事項已複製到剪貼簿",
     no_links_added_yet: "尚未新增連結",
     add_link: "新增連結",
@@ -805,6 +806,7 @@ export default {
       make_a_copy: "複製一份",
       open_in_new_tab: "在新分頁中開啟",
       copy_link: "複製連結",
+      copy_branch_name: "複製分支名稱",
       archive: "封存",
       restore: "還原",
       delete: "刪除",
@@ -1559,6 +1561,11 @@ export default {
           sending: "傳送中…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "選擇預設檢視",
+      compact: "緊湊",
+      full: "全螢幕",
     },
   },
   workspace_settings: {

@@ -18,8 +18,9 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 import { PageHead } from "@/components/core/page-title";
-// store hooks
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// store hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
@@ -29,7 +30,9 @@ import { RecurringWorkItemsSettingsRoot } from "@/plane-web/components/recurring
 import { RecurringWorkItemsUpgrade } from "@/plane-web/components/recurring-work-items/settings/upgrade";
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+// local imports
 import type { Route } from "./+types/page";
+import { RecurringWorkItemsProjectSettingsHeader } from "./header";
 
 function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -50,7 +53,7 @@ function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps)
   const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
-    <>
+    <SettingsContentWrapper header={<RecurringWorkItemsProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <SettingsHeading
         title={t("recurring_work_items.settings.heading")}
@@ -65,11 +68,11 @@ function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps)
         fallback={<RecurringWorkItemsUpgrade />}
         workspaceSlug={workspaceSlug}
       >
-        <div className="flex flex-col gap-10 py-6 w-full">
+        <div className="mt-6">
           <RecurringWorkItemsSettingsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
         </div>
       </WithFeatureFlagHOC>
-    </>
+    </SettingsContentWrapper>
   );
 }
 

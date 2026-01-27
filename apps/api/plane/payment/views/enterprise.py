@@ -216,7 +216,7 @@ class InstanceLicenseSyncEndpoint(BaseAPIView):
                         "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
                     },
                     json={
-                        "members_list": users,
+                        "members_list": list(users),
                     },
                 )
                 # raise an exception if the request is not successful
@@ -487,23 +487,23 @@ class EnterpriseLicenseActivateUploadEndpoint(BaseAPIView):
                 )
 
             # Get all active workspace members
-            workspace_members = (
-                WorkspaceMember.objects.filter(is_active=True, member__is_bot=False)
+            users = (
+                User.objects.filter(is_active=True, is_bot=False)
                 .annotate(
-                    user_email=F("member__email"),
-                    user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_email=F("email"),
+                    user_id=F("id"),
+                    user_role=Value(20),
                 )
                 .values("user_email", "user_id", "user_role")
             )
 
             # Convert user_id to string
-            for member in workspace_members:
-                member["user_id"] = str(member["user_id"])
+            for user in users:
+                user["user_id"] = str(user["user_id"])
 
             # Prepare form data
             form_data = {
-                "members_list": json.dumps(list(workspace_members)),
+                "members_list": json.dumps(list(users)),
             }
 
             new_file = ContentFile(file_content, name=file.name)

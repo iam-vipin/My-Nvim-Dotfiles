@@ -18,6 +18,43 @@ from pi.services.actions.tool_metadata import ToolMetadata
 from pi.services.actions.tool_metadata import ToolParameter
 
 # ============================================================================
+# POST-PROCESSING HANDLERS
+# ============================================================================
+
+
+async def _intake_create_post_processor(metadata, result, kwargs, context, method_executor, category, method_key):
+    """Post-process intake creation to also store the underlying work item entity.
+
+    When an intake is created, the API returns both the intake ID and the underlying
+    work item (issue) ID. We store both entities so placeholders can reference either.
+    """
+    if not result.get("success"):
+        return result
+
+    data = result.get("data", {})
+    if not data:
+        return result
+
+    work_item_id = data.get("issue")
+    if not work_item_id:
+        return result
+
+    intake_name = kwargs.get("name")
+    if not intake_name:
+        return result
+
+    # Create workitem entity for placeholder resolution
+    result["workitem_entity"] = {
+        "entity_type": "workitem",
+        "entity_name": intake_name,
+        "entity_id": str(work_item_id),
+        "entity_identifier": data.get("identifier"),
+    }
+
+    return result
+
+
+# ============================================================================
 # TOOL METADATA DEFINITIONS
 # ============================================================================
 
@@ -37,6 +74,7 @@ INTAKE_TOOL_DEFINITIONS = {
             ToolParameter(name="labels", type="Optional[list]", required=False, description="List of label IDs"),
         ],
         returns_entity_type="intake",
+        post_handler=_intake_create_post_processor,
     ),
     "list": ToolMetadata(
         name="intake_list",

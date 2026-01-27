@@ -18,7 +18,8 @@ import useSWR from "swr";
 import type { TIssuePropertyValues } from "@plane/types";
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // plane web imports
-import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local imports
 import type { TIssueAdditionalPropertyValuesUpdateProps } from "./addition-properties-update-base";
@@ -45,7 +46,12 @@ export const IssueAdditionalPropertyValuesUpdate = observer(function IssueAdditi
     getProjectWorkItemPropertiesLoader,
     fetchAllPropertiesAndOptions,
   } = useIssueTypes();
-  const { fetchPropertyActivities } = useIssuePropertiesActivity();
+  const {
+    activity: {
+      issuePropertiesActivity: { fetchPropertyActivities },
+    },
+  } = useIssueDetail(issueServiceType);
+
   // services
   const issuePropertyValuesService = new IssuePropertyValuesService(issueServiceType);
   // derived values
@@ -97,7 +103,9 @@ export const IssueAdditionalPropertyValuesUpdate = observer(function IssueAdditi
       arePropertyValuesInitializing={isLoading}
       issuePropertyValues={issuePropertyValues || {}}
       isWorkItemTypeEntityEnabled={isWorkItemTypeEntityEnabledForProject}
-      propertyValueChangeCallback={() => fetchPropertyActivities(workspaceSlug, projectId, issueId)}
+      propertyValueChangeCallback={() =>
+        fetchPropertyActivities(workspaceSlug, projectId, issueId, "init-loader", issueServiceType)
+      }
       onPropertyValueChange={handlePropertyValueChange}
       updateService={issuePropertyValuesService.update.bind(
         issuePropertyValuesService,

@@ -574,7 +574,7 @@ def fetch_page_markdown(page_id, slug):
         work_item_mentions_serializable = [
             {
                 "id": str(w["id"]),
-                "project_identifier": str(w["project__identifier"]),
+                "project__identifier": str(w["project__identifier"]),
                 "sequence_id": str(w["sequence_id"]),
             }
             for w in work_item_mentions

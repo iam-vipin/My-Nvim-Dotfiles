@@ -12,6 +12,7 @@
  */
 
 import { useState } from "react";
+import { toJS } from "mobx";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArrowRightLeft } from "lucide-react";
@@ -54,7 +55,7 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
 
   const handleEditIssue = () => {
     if (disabled) return;
-    setIssueToEdit(issue);
+    setIssueToEdit(toJS(issue));
     setIsCreateUpdateIssueModalOpen(true);
     toggleCreateIssueModal(true);
   };

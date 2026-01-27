@@ -58,7 +58,7 @@ export const ProjectStateGroupListItem = observer(function ProjectStateGroupList
   const dropElementRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div className="space-y-1 border border-subtle-1 rounded-sm bg-layer-1 transition-all p-2" ref={dropElementRef}>
+    <div className="space-y-1 border border-subtle rounded-lg bg-layer-1 transition-all p-2" ref={dropElementRef}>
       <div className="flex justify-between items-center gap-2">
         <div
           className="w-full flex items-center cursor-pointer py-1"

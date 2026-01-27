@@ -14,12 +14,28 @@
 import type { TNotificationContentMap } from "@/components/workspace-notifications/sidebar/notification-card/content";
 import { getPageName, replaceUnderscoreIfSnakeCase } from "@plane/utils";
 
+// Additional notification content map for EE-specific fields
+export const ADDITIONAL_NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {
+  page: ({ newValue, oldValue, verb }) => ({
+    action: verb === "added" ? "added a new page" : "removed the page",
+    value: getPageName(newValue || oldValue || ""),
+    showConnector: false,
+  }),
+  milestones: ({ newValue, oldValue }) => ({
+    action: newValue ? "set the milestone" : "removed the milestone",
+    value: newValue || oldValue || "",
+    showConnector: !!newValue, // "to" only when setting, not when removing
+  }),
+};
+
+// Fallback action renderer for fields not in the map
 export const renderAdditionalAction = (notificationField: string, verb: string | undefined) => {
   if (notificationField === "page") return verb === "added" ? "added a new page" : "removed the page";
   const baseAction = !["comment", "archived_at"].includes(notificationField) ? verb : "";
   return `${baseAction} ${replaceUnderscoreIfSnakeCase(notificationField)}`;
 };
 
+// Fallback value renderer for fields not in the map
 export const renderAdditionalValue = (
   notificationField: string | undefined,
   newValue: string | undefined,
@@ -35,6 +51,4 @@ export const shouldShowConnector = (notificationField: string | undefined) =>
   );
 
 export const shouldRender = (notificationField: string | undefined, verb: string | undefined) =>
-  verb !== "deleted" || (verb === "deleted" && notificationField === "page");
-
-export const ADDITIONAL_NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {};
+  verb !== "deleted" || (verb === "deleted" && ["page", "milestones"].includes(notificationField || ""));

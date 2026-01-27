@@ -72,6 +72,11 @@ export default {
         "Sayfalar Plane'de düşünce yakalama alanıdır. Toplantı notları alın, kolayca biçimlendirin, iş öğelerini yerleştirin, bir bileşenler kütüphanesi kullanarak düzenleyin ve hepsini projenizin bağlamında tutun.",
       cta_primary: "Sayfanızı oluşturun",
     },
+    project_overview_state_sidebar: {
+      title: "Proje durumlarını etkinleştir",
+      description:
+        "Durum, öncelik, bitiş tarihleri ve daha fazlası gibi özellikleri görüntülemek ve yönetmek için Proje Durumlarını etkinleştirin.",
+    },
   },
   settings_empty_state: {
     teamspace: {

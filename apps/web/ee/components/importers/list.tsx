@@ -102,7 +102,7 @@ export const ImportersList = observer(function ImportersList(props: ImportersLis
   const { workspaceSlug } = props;
 
   return (
-    <div className="flex flex-wrap gap-4 mt-6 pb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {IMPORTERS_LIST.map((item) => (
         <ImportersListItem key={item.key} workspaceSlug={workspaceSlug} provider={item} />
       ))}

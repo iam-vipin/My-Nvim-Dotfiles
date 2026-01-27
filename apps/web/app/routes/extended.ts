@@ -355,6 +355,12 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-states/page.tsx"
           ),
 
+          // Connections
+          route(
+            ":workspaceSlug/settings/connections",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/connections/page.tsx"
+          ),
+
           // Teamspaces
           route(
             ":workspaceSlug/settings/teamspaces",
@@ -368,11 +374,12 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
           ),
 
           // Templates
+          route(
+            ":workspaceSlug/settings/templates",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/templates/page.tsx"
+          ),
+
           layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/templates/(templates)/layout.tsx", [
-            route(
-              ":workspaceSlug/settings/templates",
-              "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/templates/page.tsx"
-            ),
             route(
               ":workspaceSlug/settings/templates/page",
               "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/templates/(templates)/page/page.tsx"
@@ -496,7 +503,7 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
             layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/layout.tsx", [
               route(
                 ":workspaceSlug/settings/identity/oidc",
-                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/odic/page.tsx"
+                "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/identity/(providers)/oidc/page.tsx"
               ),
               route(
                 ":workspaceSlug/settings/identity/saml",
@@ -507,17 +514,6 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
           // --------------------------------------------------------------------
           // END: SINGLE SIGN-ON
           // --------------------------------------------------------------------
-        ]),
-
-        // --------------------------------------------------------------------
-        // ACCOUNT SETTINGS
-        // --------------------------------------------------------------------
-
-        layout("./(all)/[workspaceSlug]/(settings)/settings/account/layout.tsx", [
-          route(
-            ":workspaceSlug/settings/account/connections",
-            "./(all)/[workspaceSlug]/(settings)/settings/account/connections/page.tsx"
-          ),
         ]),
 
         // --------------------------------------------------------------------
@@ -606,12 +602,6 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
     // ======================================================================
     // STANDALONE ROUTES (outside workspace context)
     // ======================================================================
-
-    // --------------------------------------------------------------------
-    // PROFILE SETTINGS
-    // --------------------------------------------------------------------
-
-    layout("./(all)/profile/layout.tsx", [route("profile/connections", "./(all)/profile/connections/page.tsx")]),
 
     // --------------------------------------------------------------------
     // STANDALONE ROUTES

@@ -29,6 +29,7 @@ import { useDomains } from "@/plane-web/hooks/sso/use-domains";
 import { useProviders } from "@/plane-web/hooks/sso/use-providers";
 // types
 import type { Route } from "./+types/layout";
+import { IdentityWorkspaceSettingsHeader } from "./header";
 
 function IdentityLayout({ params }: Route.ComponentProps) {
   // router
@@ -51,7 +52,7 @@ function IdentityLayout({ params }: Route.ComponentProps) {
   if (!hasWorkspaceAdminPermission) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
-    <SettingsContentWrapper size={"md"}>
+    <SettingsContentWrapper header={<IdentityWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <WithFeatureFlagHOC flag="CLOUD_SSO" fallback={<IdentityUpgrade />} workspaceSlug={workspaceSlug}>
         <Outlet />

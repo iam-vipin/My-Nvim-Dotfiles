@@ -59,6 +59,7 @@ export interface IUser extends IUserLite {
   theme: IUserTheme;
   avatar: string;
   is_app_rail_docked: boolean;
+  last_login_time: string;
 }
 
 export interface IUserAccount {
@@ -67,6 +68,13 @@ export interface IUserAccount {
   created_at: Date;
   updated_at: Date;
 }
+
+export const NOTIFICATION_VIEW_MODES = [
+  { key: "full", label: "Full" },
+  { key: "compact", label: "Compact" },
+] as const;
+
+export type TNotificationsViewMode = (typeof NOTIFICATION_VIEW_MODES)[number]["key"];
 
 export type TUserProfile = {
   id: string | undefined;
@@ -93,6 +101,7 @@ export type TUserProfile = {
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;
   is_app_rail_docked?: boolean;
+  notification_view_mode: TNotificationsViewMode;
 };
 
 export interface IInstanceAdminStatus {

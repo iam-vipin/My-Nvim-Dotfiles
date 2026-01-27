@@ -276,3 +276,81 @@ class ProjectActivity(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.verb}"
+
+
+class ProjectLabel(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="project_labels",
+        null=True,
+        blank=True,
+    )
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    color = models.CharField(max_length=255, blank=True)
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_projlabel_ws_name_null",
+            )
+        ]
+
+        db_table = "project_labels"
+        verbose_name = "Project Label"
+        verbose_name_plural = "Project Labels"
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            last_id = ProjectLabel.objects.filter(workspace=self.workspace).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
+
+            if last_id is not None:
+                self.sort_order = last_id + 10000
+
+        super(ProjectLabel, self).save(*args, **kwargs)
+
+
+class ProjectLabelAssociation(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="project_label_associations",
+        null=True,
+        blank=True,
+    )
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="project_label_associations",
+    )
+    label = models.ForeignKey(
+        "ee.ProjectLabel",
+        on_delete=models.CASCADE,
+        related_name="project_label_associations",
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "label"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_plassoc_proj_lbl_null",
+            )
+        ]
+        db_table = "project_label_associations"
+        verbose_name = "Project Label Association"
+        verbose_name_plural = "Project Label Associations"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.label.name}"

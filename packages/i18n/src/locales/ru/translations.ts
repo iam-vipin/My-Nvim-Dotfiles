@@ -767,6 +767,7 @@ export default {
     link_copied: "Ссылка скопирована!",
     link_copied_to_clipboard: "Ссылка скопирована в буфер обмена",
     copied_to_clipboard: "Ссылка на рабочий элемент скопирована",
+    branch_name_copied_to_clipboard: "Название ветки скопировано в буфер обмена",
     is_copied_to_clipboard: "Рабочий элемент скопирован в буфер обмена",
     no_links_added_yet: "Нет добавленных ссылок",
     add_link: "Добавить ссылку",
@@ -821,6 +822,7 @@ export default {
       make_a_copy: "Сделать копию",
       open_in_new_tab: "Открыть в новой вкладке",
       copy_link: "Копировать ссылку",
+      copy_branch_name: "Копировать название ветки",
       archive: "Архивировать",
       restore: "Восстановить",
       delete: "Удалить",
@@ -1581,6 +1583,11 @@ export default {
           sending: "Отправка…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "Выбрать вид по умолчанию",
+      compact: "Компактный",
+      full: "Полный экран",
     },
   },
   workspace_settings: {
@@ -2607,7 +2614,6 @@ export default {
       "Выберите View Logs из setup.sh и логов Docker, чтобы убедиться.",
   },
   no_of: "Количество {entity}",
-
   page_navigation_pane: {
     tabs: {
       outline: {

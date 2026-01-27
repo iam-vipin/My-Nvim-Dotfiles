@@ -26,6 +26,8 @@ class APITokenSerializer(BaseSerializer):
             "updated_at",
             "workspace",
             "user",
+            "allowed_rate_limit",
+            "is_service",
         ]
 
 

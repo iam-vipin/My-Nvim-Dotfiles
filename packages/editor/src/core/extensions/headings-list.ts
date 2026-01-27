@@ -38,34 +38,50 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
   },
 
   addProseMirrorPlugins() {
+    const extension = this;
     const plugin = new Plugin({
       key: new PluginKey("heading-list"),
-      appendTransaction: (_, __, newState) => {
-        const headings: IMarking[] = [];
-        let h1Sequence = 0;
-        let h2Sequence = 0;
-        let h3Sequence = 0;
+      appendTransaction: (transactions, oldState, newState) => {
+        // Skip if no document changes
+        const hasDocChanges = transactions.some((tr) => tr.docChanged);
+        if (!hasDocChanges || oldState.doc.eq(newState.doc)) {
+          return null;
+        }
 
-        newState.doc.descendants((node) => {
+        const headings: IMarking[] = [];
+        // Use a Map to handle all heading levels (1-6) correctly
+        const sequenceByLevel = new Map<number, number>();
+
+        newState.doc.descendants((node, pos) => {
           if (node.type.name === "heading") {
-            const level = node.attrs.level;
+            const level = node.attrs.level as number;
             const text = node.textContent;
+            const currentSeq = (sequenceByLevel.get(level) ?? 0) + 1;
+            sequenceByLevel.set(level, currentSeq);
 
             headings.push({
               type: "heading",
               level: level,
               text: text,
-              sequence: level === 1 ? ++h1Sequence : level === 2 ? ++h2Sequence : ++h3Sequence,
+              sequence: currentSeq,
             });
           }
         });
 
-        this.storage.headings = headings;
+        // Only update storage if headings actually changed
+        const prevHeadings = extension.storage.headings;
+        const headingsChanged =
+          prevHeadings.length !== headings.length ||
+          headings.some(
+            (h, i) =>
+              h.level !== prevHeadings[i]?.level ||
+              h.text !== prevHeadings[i]?.text ||
+              h.sequence !== prevHeadings[i]?.sequence
+          );
 
-        this.editor.emit("update", {
-          editor: this.editor,
-          transaction: newState.tr,
-        });
+        if (headingsChanged) {
+          extension.storage.headings = headings;
+        }
 
         return null;
       },

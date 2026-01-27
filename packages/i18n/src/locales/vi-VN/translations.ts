@@ -771,6 +771,7 @@ export default {
     link_copied: "Đã sao chép liên kết!",
     link_copied_to_clipboard: "Đã sao chép liên kết vào bảng tạm",
     copied_to_clipboard: "Đã sao chép liên kết mục công việc vào bảng tạm",
+    branch_name_copied_to_clipboard: "Tên nhánh đã được sao chép vào bảng tạm",
     is_copied_to_clipboard: "Mục công việc đã được sao chép vào bảng tạm",
     no_links_added_yet: "Chưa có liên kết nào được thêm",
     add_link: "Thêm liên kết",
@@ -825,6 +826,7 @@ export default {
       make_a_copy: "Tạo bản sao",
       open_in_new_tab: "Mở trong tab mới",
       copy_link: "Sao chép liên kết",
+      copy_branch_name: "Sao chép tên nhánh",
       archive: "Lưu trữ",
       delete: "Xóa",
       remove_relation: "Xóa mối quan hệ",
@@ -1584,6 +1586,11 @@ export default {
           sending: "Đang gửi…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "Chọn chế độ xem mặc định",
+      compact: "Gọn",
+      full: "Toàn màn hình",
     },
   },
   workspace_settings: {

@@ -236,6 +236,16 @@ class PlaneSDKAdapter:
 
             patched = UpdateWorkItem(**payload)
 
+            if "type_id" in payload and payload["type_id"] == "":
+                original_model_dump = patched.model_dump
+
+                def patched_model_dump(*args, **kwargs):
+                    data = original_model_dump(*args, **kwargs)
+                    data["type_id"] = ""
+                    return data
+
+                object.__setattr__(patched, "model_dump", patched_model_dump)
+
             issue = self.client.work_items.update(
                 workspace_slug=workspace_slug,
                 project_id=project_id,
@@ -1597,15 +1607,15 @@ class PlaneSDKAdapter:
     ) -> Dict[str, Any]:
         """List intake work items (v0.2)."""
         try:
-            # Build query parameters for SDK
-            params: Dict[str, Any] = {}
+            # Build query parameters - pass as kwargs, not dict
+            kwargs: Dict[str, Any] = {}
             if per_page is not None:
-                params["per_page"] = per_page
+                kwargs["per_page"] = per_page
             if cursor is not None:
-                params["cursor"] = cursor
+                kwargs["cursor"] = cursor
 
-            # Pass params to SDK
-            response = self.client.intake.list(workspace_slug, project_id, params=params or None)
+            # Pass params as keyword arguments
+            response = self.client.intake.list(workspace_slug, project_id, **kwargs)
 
             # Handle both dict and Pydantic model responses
             if isinstance(response, dict):
@@ -2399,7 +2409,8 @@ class PlaneSDKAdapter:
         try:
             payload = self._filter_payload(kwargs)
             resp = self.client.work_items.work_logs.create(workspace_slug, project_id, work_item_id=issue_id, data=payload)
-            return cast(Dict[str, Any], self._model_to_dict(resp))
+            result = cast(Dict[str, Any], self._model_to_dict(resp))
+            return result
         except HttpError as e:
             log.error(f"Failed to create issue worklog: {e} ({getattr(e, "status_code", None)})")
             raise
@@ -2415,16 +2426,27 @@ class PlaneSDKAdapter:
             else:
                 # Best-effort: try project-level worklogs list
                 response = self.client.work_items.work_logs.list(workspace_slug, project_id, work_item_id="")
-            results = self._model_to_dict(getattr(response, "results", []))
+
+            # The SDK returns a list directly, not a paginated response object
+            if isinstance(response, list):
+                results = self._model_to_dict(response)
+            else:
+                # Fallback: try to get results attribute (for future SDK versions)
+                results = self._model_to_dict(getattr(response, "results", []))
+
             if not isinstance(results, list):
                 results = [results] if results else []
-            return {
+
+            # For list responses, we don't have pagination info
+            total_count = len(results)
+            final_result = {
                 "results": results,
-                "count": len(results),
-                "total_results": getattr(response, "total_count", len(results)),
-                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
-                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+                "count": total_count,
+                "total_results": total_count,
+                "next_cursor": None,
+                "prev_cursor": None,
             }
+            return final_result
         except HttpError as e:
             log.error(f"Failed to list issue worklogs: {e} ({getattr(e, "status_code", None)})")
             raise

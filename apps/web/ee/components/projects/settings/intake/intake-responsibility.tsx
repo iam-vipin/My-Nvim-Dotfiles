@@ -29,6 +29,7 @@ import type { TIntakeResponsibilityList } from "@/plane-web/constants/project/se
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { useIntakeResponsibility } from "@/plane-web/hooks/store/use-intake-responsibility";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
+import { SettingsHeading2 } from "@/components/settings/heading-2";
 
 type Props = {
   projectId?: string;
@@ -79,20 +80,20 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
 
   return (
     <>
-      <h4 className="pt-4 mt-4 mb-2 text-13 font-medium text-tertiary">{intakeT("heading")}</h4>
-      <div className="px-4 rounded-sm border transition-all border-subtle-1 bg-layer-1">
+      <SettingsHeading2 title={intakeT("heading")} />
+      <div className="mt-4 px-4 rounded-lg border transition-all border-subtle bg-layer-2">
         {Object.entries(featureList).map(([featureKey, feature]) => (
-          <div key={featureKey} className={cn("gap-y-3 gap-x-8 py-3 bg-layer-1")}>
-            <div key={featureKey} className={cn("flex gap-2 justify-between", {})}>
+          <div key={featureKey} className="gap-y-3 gap-x-8 py-3">
+            <div key={featureKey} className="flex gap-2 justify-between">
               <div className="flex gap-2 w-full">
                 <div className="flex justify-center mt-1 rounded">{feature.icon}</div>
                 <div className="w-full">
-                  <div className={cn("flex gap-2 justify-between", {})}>
+                  <div className="flex gap-2 justify-between">
                     <div className="flex-1 w-full">
                       <div className="flex gap-2">
                         <div className="text-13 font-medium leading-5 align-top">{intakeT(`${featureKey}.title`)}</div>
                         {!isResponsibilityEnabled && (
-                          <div className="rounded-sm px-2 py-[1px] text-11 font-medium capitalize items-center text-plans-brand-primary bg-plans-brand-subtle">
+                          <div className="rounded-sm px-2 py-px text-11 font-medium capitalize items-center text-plans-brand-primary bg-plans-brand-subtle">
                             <h1>{getSubscriptionName(EProductSubscriptionEnum.BUSINESS)}</h1>
                           </div>
                         )}
@@ -121,9 +122,9 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
                           onClick={() => togglePaidPlanModal(true)}
                         >
                           <div className="h-full w-full flex items-center gap-1.5 border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded-sm px-2 py-0.5 text-11">
-                            <MembersPropertyIcon className={cn("flex-shrink-0 w-3 h-3 mx-[4px]")} />
-                            <span className="flex-grow leading-5 truncate">{t("no_assignee")}</span>
-                            <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />
+                            <MembersPropertyIcon className={cn("shrink-0 w-3 h-3 mx-1")} />
+                            <span className="grow leading-5 truncate">{t("no_assignee")}</span>
+                            <ChevronDownIcon className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
                           </div>
                         </button>
                       )}

@@ -486,6 +486,7 @@ def get_entity_search_tools(method_executor, context):
     async def search_user_by_name(
         display_name: Optional[str] = None,
         workspace_slug: Optional[str] = None,
+        project_id: Optional[str] = None,
         first_name: Optional[str] = None,
         last_name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -494,10 +495,13 @@ def get_entity_search_tools(method_executor, context):
         Args:
             display_name: User display name to search for (required)
             workspace_slug: Workspace slug (optional, auto-filled from context)
+            project_id: Project ID to search within (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
+        if project_id is None and "project_id" in context:
+            project_id = str(context["project_id"]) if context["project_id"] else None
 
         try:
             from pi.app.api.v1.helpers.plane_sql_queries import search_user_by_name
@@ -529,9 +533,13 @@ def get_entity_search_tools(method_executor, context):
                         first_name = dn
                         last_name = dn
 
+            # Normalize project_id if an identifier like 'OGX' was passed
+            project_id = await _normalize_project_id(project_id, workspace_slug)
+
             result = await search_user_by_name(
                 display_name=display_name,
                 workspace_slug=workspace_slug,
+                project_id=project_id,
                 first_name=first_name,
                 last_name=last_name,
             )

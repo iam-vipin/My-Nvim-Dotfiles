@@ -17,13 +17,16 @@ import Link from "next/link";
 import { MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+import { generateWorkItemLink } from "@plane/utils";
+// components
+import { CopyBranchNameButton } from "@/components/work-item/copy-branch-name";
+import { CopyWorkItemURLButton } from "@/components/work-item/copy-work-item-url";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -37,7 +40,6 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
-import { IconButton } from "@plane/propel/icon-button";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -126,25 +128,11 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     isArchived,
   });
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(workItemLink).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("common.link_copied"),
-        message: t("common.link_copied_to_clipboard"),
-      });
-    });
-  };
-
   const handleDeleteIssue = async () => {
     try {
       const deleteIssue = issueDetails?.archived_at ? removeArchivedIssue : removeIssue;
-
-      return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
-        setPeekIssue(undefined);
-      });
+      await deleteIssue(workspaceSlug, projectId, issueId);
+      setPeekIssue(undefined);
     } catch (_error) {
       setToast({
         title: t("toast.error"),
@@ -222,9 +210,20 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
               disabled={disabled || isArchived}
             />
           </WithFeatureFlagHOC>
-          <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
-          </Tooltip>
+          {currentUser && issueDetails?.sequence_id && projectIdentifier && (
+            <CopyBranchNameButton
+              user={currentUser}
+              projectIdentifier={projectIdentifier}
+              sequenceId={issueDetails?.sequence_id}
+            />
+          )}
+          {workspaceSlug && projectIdentifier && issueDetails?.sequence_id && (
+            <CopyWorkItemURLButton
+              workspaceSlug={workspaceSlug}
+              projectIdentifier={projectIdentifier}
+              sequenceId={issueDetails?.sequence_id}
+            />
+          )}
           {issueDetails && (
             <WorkItemDetailQuickActions
               parentRef={parentRef}

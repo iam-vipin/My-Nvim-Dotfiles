@@ -765,6 +765,7 @@ export default {
     link_copied: "Bağlantı kopyalandı!",
     link_copied_to_clipboard: "Bağlantı panoya kopyalandı",
     copied_to_clipboard: "İş öğesi bağlantısı panoya kopyalandı",
+    branch_name_copied_to_clipboard: "Dal adı panoya kopyalandı",
     is_copied_to_clipboard: "İş öğesi panoya kopyalandı",
     no_links_added_yet: "Henüz bağlantı eklenmedi",
     add_link: "Bağlantı ekle",
@@ -819,6 +820,7 @@ export default {
       make_a_copy: "Kopyasını oluştur",
       open_in_new_tab: "Yeni sekmede aç",
       copy_link: "Bağlantıyı kopyala",
+      copy_branch_name: "Dal adını kopyala",
       archive: "Arşivle",
       restore: "Geri yükle",
       delete: "Sil",
@@ -1583,6 +1585,11 @@ export default {
           sending: "Gönderiliyor…",
         },
       },
+    },
+    notifications: {
+      select_default_view: "Varsayılan görünümü seç",
+      compact: "Kompakt",
+      full: "Tam ekran",
     },
   },
   workspace_settings: {

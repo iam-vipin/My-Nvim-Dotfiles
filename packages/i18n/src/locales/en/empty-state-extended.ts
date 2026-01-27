@@ -70,6 +70,10 @@ export default {
         "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context.",
       cta_primary: "Create your page",
     },
+    project_overview_state_sidebar: {
+      title: "Enable project states",
+      description: "Enable Project States to view and manage properties like state, priority, due dates and more.",
+    },
   },
   settings_empty_state: {
     teamspace: {

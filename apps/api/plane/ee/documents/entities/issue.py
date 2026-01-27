@@ -58,7 +58,7 @@ class IssueDocument(BaseDocument):
 
     # KNN Vector fields for semantic search
     description_semantic = KnnVectorField(
-        dimension=1536,
+        dimension=django_settings.OPENSEARCH_EMBEDDING_DIMENSION,
         space_type="cosinesimil",
         method={
             "name": "hnsw",
@@ -68,7 +68,7 @@ class IssueDocument(BaseDocument):
     )
 
     name_semantic = KnnVectorField(
-        dimension=1536,
+        dimension=django_settings.OPENSEARCH_EMBEDDING_DIMENSION,
         space_type="cosinesimil",
         method={
             "name": "hnsw",
@@ -78,7 +78,7 @@ class IssueDocument(BaseDocument):
     )
 
     content_semantic = KnnVectorField(
-        dimension=1536,
+        dimension=django_settings.OPENSEARCH_EMBEDDING_DIMENSION,
         space_type="cosinesimil",
         method={
             "name": "hnsw",

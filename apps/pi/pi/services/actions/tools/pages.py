@@ -34,6 +34,7 @@ async def _pages_pre_handler(
     context: Dict[str, Any],
     category: str,
     method_key: str,
+    method_executor: Any = None,
 ) -> Dict[str, Any]:
     """Pre-processing handler for pages tools.
 

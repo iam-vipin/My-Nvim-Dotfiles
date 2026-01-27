@@ -606,6 +606,7 @@ export default {
     link_copied: "Link copied!",
     link_copied_to_clipboard: "Link copied to clipboard",
     copied_to_clipboard: "Work item link copied to clipboard",
+    branch_name_copied_to_clipboard: "Branch name copied to clipboard",
     is_copied_to_clipboard: "Work item is copied to clipboard",
     no_links_added_yet: "No links added yet",
     add_link: "Add link",
@@ -676,6 +677,7 @@ export default {
       make_a_copy: "Make a copy",
       open_in_new_tab: "Open in new tab",
       copy_link: "Copy link",
+      copy_branch_name: "Copy branch name",
       archive: "Archive",
       restore: "Restore",
       delete: "Delete",
@@ -1426,6 +1428,9 @@ export default {
     notifications: {
       heading: "Email notifications",
       description: "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
+      select_default_view: "Select default view",
+      compact: "Compact",
+      full: "Full Screen",
     },
     security: {
       heading: "Security",

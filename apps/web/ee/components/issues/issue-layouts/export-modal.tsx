@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@plane/propel/button";
 import { ModalCore, EModalWidth, EModalPosition } from "@plane/ui";
 export type TExportProvider = "csv" | "xlsx" | "json";

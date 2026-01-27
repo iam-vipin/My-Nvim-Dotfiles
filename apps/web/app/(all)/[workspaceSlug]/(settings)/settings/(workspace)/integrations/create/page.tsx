@@ -29,6 +29,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateApplication } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
+// local imports
 import type { Route } from "./+types/page";
 
 function ApplicationCreatePage({ params }: Route.ComponentProps) {
@@ -70,7 +71,7 @@ function ApplicationCreatePage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-full h-full">
+      <div className="size-full">
         <Link
           href={`/${workspaceSlug}/settings/integrations`}
           className="flex items-center gap-2 text-body-xs-semibold text-tertiary mb-6"

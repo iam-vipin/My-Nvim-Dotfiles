@@ -21,7 +21,9 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
+// local imports
 import type { Route } from "./+types/page";
+import { FeaturesProjectSettingsHeader } from "./header";
 
 function FeaturesSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
@@ -38,7 +40,7 @@ function FeaturesSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<FeaturesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <ProjectFeaturesList

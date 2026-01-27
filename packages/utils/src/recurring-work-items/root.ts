@@ -60,18 +60,23 @@ export const getCreateUpdateRecurringWorkItemSettingsPath = (props: TCreateUpdat
 /**
  * Gets the label for the recurring work item interval type
  * @param intervalType - The interval type
+ * @param intervalCount - The interval count (default 1)
  * @returns The label for the recurring work item interval type
  */
-export const getRecurringWorkItemIntervalTypeLabel = (intervalType: ERecurringWorkItemIntervalType) => {
+export const getRecurringWorkItemIntervalTypeLabel = (
+  intervalType: ERecurringWorkItemIntervalType,
+  intervalCount: number = 1
+) => {
+  const plural = intervalCount > 1;
   switch (intervalType) {
     case ERecurringWorkItemIntervalType.DAILY:
-      return "day";
+      return plural ? "days" : "day";
     case ERecurringWorkItemIntervalType.WEEKLY:
-      return "week";
+      return plural ? "weeks" : "week";
     case ERecurringWorkItemIntervalType.MONTHLY:
-      return "month";
+      return plural ? "months" : "month";
     case ERecurringWorkItemIntervalType.YEARLY:
-      return "year";
+      return plural ? "years" : "year";
   }
 };
 
@@ -103,6 +108,7 @@ export const recurringWorkItemDataToSanitizedFormData = (
       start_at: data.recurringWorkItem.start_at,
       end_at: data.recurringWorkItem.end_at,
       interval_type: data.recurringWorkItem.interval_type,
+      interval_count: data.recurringWorkItem.interval_count,
       workitem_blueprint: sanitizationResult.valid,
     },
     invalidIds: sanitizationResult.invalid,

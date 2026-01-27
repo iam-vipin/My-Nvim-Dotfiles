@@ -15,7 +15,6 @@ import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { TableMap } from "@tiptap/pm/tables";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
-import { ReactRenderer } from "@tiptap/react";
 // extensions
 import {
   findTable,
@@ -23,16 +22,20 @@ import {
   haveTableRelatedChanges,
 } from "@/extensions/table/table/utilities/helpers";
 // local imports
-import type { ColumnDragHandleProps } from "./drag-handle";
-import { ColumnDragHandle } from "./drag-handle";
+import { createColumnDragHandle } from "./drag-handle";
+
+type DragHandleInstance = {
+  element: HTMLElement;
+  destroy: () => void;
+};
 
 type TableColumnDragHandlePluginState = {
   decorations?: DecorationSet;
   // track table structure to detect changes
   tableWidth?: number;
   tableNodePos?: number;
-  // track renderers for cleanup
-  renderers?: ReactRenderer[];
+  // track drag handle instances for cleanup
+  dragHandles?: DragHandleInstance[];
 };
 
 const TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY = new PluginKey("tableColumnHandlerDecorationPlugin");
@@ -73,43 +76,45 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
             decorations: mapped,
             tableWidth: tableMap.width,
             tableNodePos: table.pos,
-            renderers: prev.renderers,
+            dragHandles: prev.dragHandles,
           };
         }
 
-        // Clean up old renderers before creating new ones
-        prev.renderers?.forEach((renderer) => {
+        // Clean up old drag handles before creating new ones
+        prev.dragHandles?.forEach((handle) => {
           try {
-            renderer.destroy();
+            handle.destroy();
           } catch (error) {
-            console.error("Error destroying renderer:", error);
+            console.error("Error destroying drag handle:", error);
           }
         });
 
         // recreate all decorations
         const decorations: Decoration[] = [];
-        const renderers: ReactRenderer[] = [];
+        const dragHandles: DragHandleInstance[] = [];
 
         for (let col = 0; col < tableMap.width; col++) {
           const pos = getTableCellWidgetDecorationPos(table, tableMap, col);
 
-          const dragHandleComponent = new ReactRenderer(ColumnDragHandle, {
-            props: {
-              col,
-              editor,
-            } satisfies ColumnDragHandleProps,
+          const dragHandle = createColumnDragHandle({
             editor,
+            col,
           });
 
-          renderers.push(dragHandleComponent);
-          decorations.push(Decoration.widget(pos, () => dragHandleComponent.element));
+          dragHandles.push(dragHandle);
+          decorations.push(
+            Decoration.widget(pos, () => dragHandle.element, {
+              key: `col-drag-handle-${col}`,
+              side: -1, 
+            })
+          );
         }
 
         return {
           decorations: DecorationSet.create(newState.doc, decorations),
           tableWidth: tableMap.width,
           tableNodePos: table.pos,
-          renderers,
+          dragHandles,
         };
       },
     },
@@ -120,15 +125,15 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
       },
     },
     destroy() {
-      // Clean up all renderers when plugin is destroyed
+      // Clean up all drag handles when plugin is destroyed
       const state =
         editor.state &&
         (TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY.getState(editor.state) as TableColumnDragHandlePluginState | undefined);
-      state?.renderers?.forEach((renderer: ReactRenderer) => {
+      state?.dragHandles?.forEach((handle: DragHandleInstance) => {
         try {
-          renderer.destroy();
+          handle.destroy();
         } catch (error) {
-          console.error("Error destroying renderer:", error);
+          console.error("Error destroying drag handle:", error);
         }
       });
     },

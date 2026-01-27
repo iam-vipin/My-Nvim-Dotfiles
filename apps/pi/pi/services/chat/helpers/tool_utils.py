@@ -1564,7 +1564,23 @@ def format_clarification_as_text(clarification_data: Dict[str, Any]) -> str:
                         else:
                             text_parts.append(f"{i}. **{display_name}**\n")
                     else:
-                        text_parts.append(f"{i}. {str(option)}\n")
+                        # Handle custom dict formats (e.g., intake items with custom keys)
+                        # Extract meaningful values and format them nicely
+                        formatted_parts = []
+                        for key, value in option.items():
+                            if key in ("id", "type", "url"):
+                                # Skip internal/metadata fields
+                                continue
+                            if isinstance(value, (str, int, float)) and value:
+                                # Format key nicely: 'intake_item_title' -> 'Intake Item Title'
+                                nice_key = key.replace("_", " ").title()
+                                formatted_parts.append(f"{nice_key}: {value}")
+
+                        if formatted_parts:
+                            text_parts.append(f"{i}. **{" | ".join(formatted_parts)}**\n")
+                        else:
+                            # Final fallback if dict has no useful data
+                            text_parts.append(f"{i}. {str(option)}\n")
                 else:
                     text_parts.append(f"{i}. {str(option)}\n")
 

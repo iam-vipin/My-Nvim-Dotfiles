@@ -415,11 +415,18 @@ class Settings:
         colorlog.getLogger("anthropic").setLevel(colorlog.WARNING)
         colorlog.getLogger("anthropic._base_client").setLevel(colorlog.WARNING)
 
+        # Suppress watchfiles debug logs
+        colorlog.getLogger("watchfiles").setLevel(colorlog.WARNING)
+        colorlog.getLogger("watchfiles").propagate = False
+        colorlog.getLogger("watchfiles.main").setLevel(colorlog.WARNING)
+        colorlog.getLogger("watchfiles.main").propagate = False
+
+        # Suppress AMQP debug logs
+        colorlog.getLogger("amqp").setLevel(colorlog.WARNING)
+        colorlog.getLogger("amqp").propagate = False
+        
         # Suppress matplotlib debug logs (especially font_manager)
         colorlog.getLogger("matplotlib").setLevel(colorlog.WARNING)
-
-        # Suppress amqp debug logs
-        colorlog.getLogger("amqp").setLevel(colorlog.WARNING)
 
         # Suppress markdown_it debug logs
         colorlog.getLogger("markdown_it").setLevel(colorlog.WARNING)

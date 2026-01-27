@@ -618,23 +618,24 @@ IMPORTANT:
         log.info(f"✅ Stored in context: {entity_type}:{actual_name} (with {len(keys)} lookup keys)")
 
         # If result includes a workitem_entity (e.g., from intake creation), also store it
-        workitem_entity = result.get("workitem_entity")
-        if workitem_entity:
+        if "workitem_entity" in result:
+            workitem_entity = result["workitem_entity"]
             workitem_name = workitem_entity.get("entity_name")
+            workitem_type = workitem_entity.get("entity_type", "workitem")
             if workitem_name:
                 workitem_result = {"entity_info": workitem_entity, **result}
 
                 workitem_keys = [
-                    f"workitem:{workitem_name.lower()}",
-                    f"workitem:{actual_name.lower()}",
+                    f"{workitem_type}:{workitem_name.lower()}",
+                    f"{workitem_type}:{actual_name.lower()}",
                 ]
                 if planned_name:
-                    workitem_keys.append(f"workitem:{planned_name.lower()}")
+                    workitem_keys.append(f"{workitem_type}:{planned_name.lower()}")
 
                 for key in workitem_keys:
                     self.execution_context[key] = workitem_result
 
-                log.info(f"✅ Also stored work item entity: workitem:{workitem_name} (ID: {workitem_entity.get("entity_id")})")
+                log.info(f"✅ Also stored secondary entity: {workitem_type}:{workitem_name} (ID: {workitem_entity.get("entity_id")})")
 
     def _can_resolve_from_context(self, entity_type: Optional[str], entity_name: Optional[str]) -> bool:
         """

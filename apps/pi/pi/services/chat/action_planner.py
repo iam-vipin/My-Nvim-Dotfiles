@@ -546,7 +546,28 @@ async def execute_tools_for_build_mode(
 
             # Execute all tool calls in this round
             log.info(f"ChatID: {chat_id} - Entering the for loop to execute selected tool calls in this iteration: {iteration_count}")
-            for tool_call in getattr(response, "tool_calls", []):
+
+            # Priority Check for Clarification
+            # If ask_for_clarification is present, it MUST override all other tools in this batch
+            # and we should also discard any actions planned in previous iterations to avoid mixed state.
+            current_response_tool_calls = getattr(response, "tool_calls", []) or []
+            clarification_call = None
+            for tc in current_response_tool_calls:
+                tc_name = tc.get("name") if isinstance(tc, dict) else getattr(tc, "name", "")
+                if tc_name == "ask_for_clarification":
+                    clarification_call = tc
+                    break
+
+            if clarification_call:
+                log.info(
+                    f"ChatID: {chat_id} - DETECTED CLARIFICATION: Discarding {len(current_response_tool_calls) - 1} other tools and {len(planned_actions)} pending actions."  # noqa: E501
+                )
+                # Filter to run ONLY the clarification
+                current_response_tool_calls = [clarification_call]
+                # Clear pending actions to prevent mixed response (actions + clarification)
+                planned_actions = []
+
+            for tool_call in current_response_tool_calls:
                 # Handle both dictionary and object access patterns for LangChain tool calls
                 if isinstance(tool_call, dict):
                     tool_name = tool_call.get("name", "")

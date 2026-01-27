@@ -1606,16 +1606,15 @@ class PlaneSDKAdapter:
         cursor: Optional[str] = None,
     ) -> Dict[str, Any]:
         """List intake work items (v0.2)."""
-        try:
-            # Build query parameters - pass as kwargs, not dict
-            kwargs: Dict[str, Any] = {}
-            if per_page is not None:
-                kwargs["per_page"] = per_page
-            if cursor is not None:
-                kwargs["cursor"] = cursor
+        from plane.models.query_params import PaginatedQueryParams
 
-            # Pass params as keyword arguments
-            response = self.client.intake.list(workspace_slug, project_id, **kwargs)
+        try:
+            # Build query parameters using the proper SDK model
+            params = None
+            if per_page is not None or cursor is not None:
+                params = PaginatedQueryParams(per_page=per_page, cursor=cursor)
+
+            response = self.client.intake.list(workspace_slug, project_id, params=params)
 
             # Handle both dict and Pydantic model responses
             if isinstance(response, dict):
@@ -1647,10 +1646,14 @@ class PlaneSDKAdapter:
             log.error(f"Failed to list intake work items: {str(e)}")
             raise
 
-    def retrieve_intake_work_item(self, workspace_slug: str, project_id: str, intake_id: str) -> Dict[str, Any]:
-        """Retrieve a specific intake work item (v0.2)."""
+    def retrieve_intake_work_item(self, workspace_slug: str, project_id: str, intake_issue_id: str) -> Dict[str, Any]:
+        """Retrieve a specific intake work item (v0.2).
+
+        Args:
+            intake_issue_id: The work item (issue) ID, NOT the intake_issues table primary key.
+        """
         try:
-            resp = self.client.intake.retrieve(workspace_slug, project_id, intake_id)
+            resp = self.client.intake.retrieve(workspace_slug, project_id, intake_issue_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
             log.error(f"Failed to retrieve intake work item: {e} ({getattr(e, "status_code", None)})")
@@ -1659,7 +1662,7 @@ class PlaneSDKAdapter:
             log.error(f"Failed to retrieve intake work item: {str(e)}")
             raise
 
-    def update_intake_work_item(self, workspace_slug: str, project_id: str, intake_id: str, **kwargs) -> Dict[str, Any]:
+    def update_intake_work_item(self, workspace_slug: str, project_id: str, intake_issue_id: str, **kwargs) -> Dict[str, Any]:
         """Update an intake work item (v0.2).
 
         The SDK expects issue fields in: UpdateIntakeWorkItem(issue={...})
@@ -1667,6 +1670,9 @@ class PlaneSDKAdapter:
 
         Note: WorkItemForIntakeRequest requires 'name'. If updating other issue fields without name,
         we must fetch the current name first to satisfy the SDK model validation.
+
+        Args:
+            intake_issue_id: The work item (issue) ID, NOT the intake_issues table primary key.
         """
         try:
             # Separate issue fields from other intake fields
@@ -1688,7 +1694,7 @@ class PlaneSDKAdapter:
                 # If name is missing but we have other issue fields, fetch current name
                 if "name" not in issue_fields:
                     try:
-                        current_item = self.retrieve_intake_work_item(workspace_slug, project_id, intake_id)
+                        current_item = self.retrieve_intake_work_item(workspace_slug, project_id, intake_issue_id)
                         # The retrieve response has 'issue_detail' which contains the name
                         issue_name = (current_item or {}).get("issue_detail", {}).get("name")
                         if issue_name:
@@ -1700,7 +1706,7 @@ class PlaneSDKAdapter:
                 intake_fields["issue"] = issue_fields  # Pass as dict to let Pydantic handle it
 
             data_model = UpdateIntakeWorkItem(**intake_fields)
-            resp = self.client.intake.update(workspace_slug, project_id, intake_id, data=data_model)
+            resp = self.client.intake.update(workspace_slug, project_id, intake_issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
             log.error(f"Failed to update intake work item: {e} ({getattr(e, "status_code", None)})")
@@ -1709,10 +1715,14 @@ class PlaneSDKAdapter:
             log.error(f"Failed to update intake work item: {str(e)}")
             raise
 
-    def delete_intake_work_item(self, workspace_slug: str, project_id: str, intake_id: str) -> Dict[str, Any]:
-        """Delete an intake work item (v0.2)."""
+    def delete_intake_work_item(self, workspace_slug: str, project_id: str, intake_issue_id: str) -> Dict[str, Any]:
+        """Delete an intake work item (v0.2).
+
+        Args:
+            intake_issue_id: The work item (issue) ID, NOT the intake_issues table primary key.
+        """
         try:
-            self.client.intake.delete(workspace_slug, project_id, intake_id)
+            self.client.intake.delete(workspace_slug, project_id, intake_issue_id)
             return {"success": True}
         except HttpError as e:
             log.error(f"Failed to delete intake work item: {e} ({getattr(e, "status_code", None)})")

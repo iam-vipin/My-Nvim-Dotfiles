@@ -1138,10 +1138,21 @@ async def construct_action_entity_url(
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         elif entity_type == "intake":
-            # For intake: /workspace_slug/projects/project_id/intake/?currentTab=open&inboxIssueId=entity_id
+            # For intake: /workspace_slug/projects/project_id/intake/?currentTab=open&inboxIssueId=inbox_issue_id
             project_id = entity_data.get("project")
+
+            # The 'inboxIssueId' param expects the Issue ID, not the Intake ID.
+            # Try to resolve the correct issue ID from the entity data.
+            inbox_issue_id = entity_data.get("issue")
+            if not inbox_issue_id and isinstance(entity_data.get("issue_detail"), dict):
+                inbox_issue_id = entity_data.get("issue_detail", {}).get("id")
+
+            # Fallback to entity_id if no specific issue ID found
+            if not inbox_issue_id:
+                inbox_issue_id = entity_id
+
             if project_id:
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/intake/?currentTab=open&inboxIssueId={entity_id}"
+                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/intake/?currentTab=open&inboxIssueId={inbox_issue_id}"
                 return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
             else:
                 return None

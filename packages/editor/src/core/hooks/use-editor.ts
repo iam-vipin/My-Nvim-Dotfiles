@@ -67,34 +67,60 @@ export const useEditor = (props: TEditorHookProps) => {
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
+  // Track pending debounced changes for flush-on-unmount
+  const hasPendingOnChangeRef = useRef(false);
+  const pendingEditorRef = useRef<ReturnType<typeof useTiptapEditor>>(null);
+
+  // Flush pending onChange before editor is destroyed (unmount or docKey change)
+  const flushPendingOnChange = useCallback(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+      debounceTimeoutRef.current = null;
+    }
+
+    // No onChange callback = nothing to flush (e.g., CollaborativeDocumentEditor with Yjs)
+    if (!onChangeRef.current || !hasPendingOnChangeRef.current) {
+      hasPendingOnChangeRef.current = false;
+      pendingEditorRef.current = null;
+      return;
+    }
+
+    const editorInstance = pendingEditorRef.current;
+    hasPendingOnChangeRef.current = false;
+    pendingEditorRef.current = null;
+
+    if (editorInstance && !editorInstance.isDestroyed) {
+      onChangeRef.current(editorInstance.getJSON(), editorInstance.getHTML(), { isMigrationUpdate: false });
+    }
+  }, []);
+
   const debouncedOnChange = useCallback(
     (editorInstance: typeof editor, isMigrationUpdate: boolean) => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
 
-      // For migration updates, call immediately
+      // For migration updates, call immediately and clear pending state
       if (isMigrationUpdate) {
+        hasPendingOnChangeRef.current = false;
+        pendingEditorRef.current = null;
         onChangeRef.current?.(editorInstance!.getJSON(), editorInstance!.getHTML(), { isMigrationUpdate: true });
         return;
       }
 
+      // Mark as pending and store editor instance for potential flush
+      hasPendingOnChangeRef.current = true;
+      pendingEditorRef.current = editorInstance;
+
       // Debounce regular updates by 150ms to batch rapid keystrokes
       debounceTimeoutRef.current = setTimeout(() => {
+        debounceTimeoutRef.current = null;
         if (editorInstance && !editorInstance.isDestroyed) {
+          hasPendingOnChangeRef.current = false;
+          pendingEditorRef.current = null;
           onChangeRef.current?.(editorInstance.getJSON(), editorInstance.getHTML(), { isMigrationUpdate: false });
         }
       }, 150);
-    },
-    []
-  );
-
-  // Cleanup debounce timeout on unmount
-  useEffect(
-    () => () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
     },
     []
   );
@@ -145,6 +171,15 @@ export const useEditor = (props: TEditorHookProps) => {
       onFocus: onEditorFocus,
     },
     [editable, docKey]
+  );
+
+  // Flush pending onChange before editor is destroyed (on unmount or docKey change)
+  // This effect MUST be after useTiptapEditor so its cleanup runs before TipTap destroys the editor
+  useEffect(
+    () => () => {
+      flushPendingOnChange();
+    },
+    [editor, flushPendingOnChange]
   );
 
   // Effect for syncing SWR data

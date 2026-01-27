@@ -29,19 +29,54 @@ type TArgs = {
   page: TPageInstance;
 };
 
+/**
+ * Performs the fallback save operation. Extracted as a standalone function
+ * to avoid recreating callbacks when page content changes (which would cause
+ * POST requests on every keystroke).
+ */
+async function performFallbackSave(
+  editor: EditorRefApi,
+  page: TPageInstance,
+  fetchPageDescription: () => Promise<ArrayBuffer>,
+  updatePageDescription: (data: TDocumentPayload) => Promise<void>
+) {
+  const latestEncodedDescription = await fetchPageDescription();
+  let latestDecodedDescription: Uint8Array;
+
+  if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
+    latestDecodedDescription = new Uint8Array(latestEncodedDescription);
+  } else {
+    latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString(page.description_html ?? "<p></p>", page.name);
+  }
+
+  editor.setProviderDocument(latestDecodedDescription);
+  const { binary, html, json } = editor.getDocument();
+  if (!binary || !json) return;
+
+  const encodedBinary = convertBinaryDataToBase64String(binary);
+  await updatePageDescription({
+    description_binary: encodedBinary,
+    description_html: html,
+    description_json: json,
+  });
+}
+
 export const usePageFallback = (args: TArgs) => {
   const { editorRef, fetchPageDescription, collaborationState, updatePageDescription, page } = args;
   const hasShownFallbackToast = useRef(false);
+  const isSavingRef = useRef(false);
 
   const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] = useState(false);
 
   // Derive connection failure from collaboration state
   const hasConnectionFailed = collaborationState?.stage.kind === "disconnected";
 
+  // Stable callback that reads latest values on-demand when called
+  // No dependencies on page content - reads directly from args when invoked
   const handleUpdateDescription = useCallback(async () => {
     if (!hasConnectionFailed) return;
     const editor = editorRef.current;
-    if (!editor) return;
+    if (!editor || isSavingRef.current) return;
 
     // Show toast notification when fallback mechanism kicks in (only once)
     if (!hasShownFallbackToast.current) {
@@ -50,37 +85,20 @@ export const usePageFallback = (args: TArgs) => {
     }
 
     try {
+      isSavingRef.current = true;
       setIsFetchingFallbackBinary(true);
-
-      const latestEncodedDescription = await fetchPageDescription();
-      let latestDecodedDescription: Uint8Array;
-      if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
-        latestDecodedDescription = new Uint8Array(latestEncodedDescription);
-      } else {
-        const pageDescriptionHtml = page.description_html;
-        latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString(
-          pageDescriptionHtml ?? "<p></p>",
-          page.name
-        );
-      }
-
-      editor.setProviderDocument(latestDecodedDescription);
-      const { binary, html, json } = editor.getDocument();
-      if (!binary || !json) return;
-      const encodedBinary = convertBinaryDataToBase64String(binary);
-
-      await updatePageDescription({
-        description_binary: encodedBinary,
-        description_html: html,
-        description: json,
-      });
+      // Read latest page/functions at call time, not at callback creation time
+      await performFallbackSave(editor, page, fetchPageDescription, updatePageDescription);
     } catch (error: any) {
       console.error(error);
     } finally {
+      isSavingRef.current = false;
       setIsFetchingFallbackBinary(false);
     }
-  }, [editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription, page.description_html, page.name]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentionally stable: reads latest values on-demand
+  }, [hasConnectionFailed, editorRef]);
 
+  // Only trigger on connection state change, not on callback recreation
   useEffect(() => {
     if (hasConnectionFailed) {
       handleUpdateDescription();
@@ -88,7 +106,7 @@ export const usePageFallback = (args: TArgs) => {
       // Reset toast flag when connection is restored
       hasShownFallbackToast.current = false;
     }
-  }, [handleUpdateDescription, hasConnectionFailed]);
+  }, [hasConnectionFailed, handleUpdateDescription]);
 
   useAutoSave(handleUpdateDescription);
 

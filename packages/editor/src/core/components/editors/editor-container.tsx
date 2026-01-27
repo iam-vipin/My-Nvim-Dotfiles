@@ -13,6 +13,7 @@
 
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
 import type { ReactNode } from "react";
 import { memo, useCallback, useEffect, useRef } from "react";
 // plane utils
@@ -41,6 +42,14 @@ type Props = {
 
 export const EditorContainer = memo(function EditorContainer(props: Props) {
   const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice, provider, state } = props;
+  // Subscribe to focus state changes so memo() doesn't freeze focus-dependent UI
+  const { isFocused, isEditable } = useEditorState({
+    editor,
+    selector: ({ editor: e }) => ({
+      isFocused: e?.isFocused ?? false,
+      isEditable: e?.isEditable ?? false,
+    }),
+  });
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const hasScrolledOnce = useRef(false);
@@ -177,7 +186,7 @@ export const EditorContainer = memo(function EditorContainer(props: Props) {
         className={cn(
           `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
           {
-            "active-editor": editor?.isFocused && editor?.isEditable,
+            "active-editor": isFocused && isEditable,
           },
           displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
           displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,

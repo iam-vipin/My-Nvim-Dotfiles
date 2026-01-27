@@ -49,20 +49,21 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
         }
 
         const headings: IMarking[] = [];
-        let h1Sequence = 0;
-        let h2Sequence = 0;
-        let h3Sequence = 0;
+        // Use a Map to handle all heading levels (1-6) correctly
+        const sequenceByLevel = new Map<number, number>();
 
-        newState.doc.descendants((node) => {
+        newState.doc.descendants((node, pos) => {
           if (node.type.name === "heading") {
-            const level = node.attrs.level;
+            const level = node.attrs.level as number;
             const text = node.textContent;
+            const currentSeq = (sequenceByLevel.get(level) ?? 0) + 1;
+            sequenceByLevel.set(level, currentSeq);
 
             headings.push({
               type: "heading",
               level: level,
               text: text,
-              sequence: level === 1 ? ++h1Sequence : level === 2 ? ++h2Sequence : ++h3Sequence,
+              sequence: currentSeq,
             });
           }
         });

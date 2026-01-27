@@ -70,6 +70,7 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
                 "entity_name": "Intake",
                 "entity_type": "intake",
                 "entity_id": str(project_id),  # No specific entity after delete
+            }
         # Customer URL: /{workspace}/customers/{customer_id}/
         customer_id = args.get("customer_id")
         if workspace_slug and customer_id and hint == "customer":

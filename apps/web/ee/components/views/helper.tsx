@@ -22,6 +22,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useFlag } from "@/plane-web/hooks/store";
 import { WorkspaceGanttRoot } from "../issues/issue-layouts/gantt/root";
 import { WorkspaceViewBoardLayout } from "../issues/issue-layouts/board/workspace-view-root";
+import { WorkspaceCalendarLayout } from "@/components/issues/issue-layouts/calendar/roots/workspace-view-root";
 
 export type TLayoutSelectionProps = {
   onChange: (layout: EIssueLayoutTypes) => void;
@@ -50,7 +51,7 @@ export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceS
 
   // Feature flag checks for each layout
   const isGanttEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
-  const isKanbanEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CAL_BOARD");
+  const isBoardAndCalendarEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CAL_BOARD");
   // Add new layout feature flags here, e.g.:
   // const isCalendarEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CALENDAR");
 
@@ -58,11 +59,11 @@ export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceS
   const LAYOUT_CONFIGS = useMemo(
     () => [
       { layout: EIssueLayoutTypes.GANTT, enabled: isGanttEnabled },
-      { layout: EIssueLayoutTypes.KANBAN, enabled: isKanbanEnabled },
+      { layout: EIssueLayoutTypes.KANBAN, enabled: isBoardAndCalendarEnabled },
       // Add new layouts here, e.g.:
       // { layout: EIssueLayoutTypes.CALENDAR, enabled: isCalendarEnabled },
     ],
-    [isGanttEnabled, isKanbanEnabled]
+    [isGanttEnabled, isBoardAndCalendarEnabled]
   );
 
   // Compute enabled layouts
@@ -92,7 +93,9 @@ export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
     case EIssueLayoutTypes.GANTT:
       return <WorkspaceGanttRoot {...props} />;
     case EIssueLayoutTypes.KANBAN:
-      return <WorkspaceViewBoardLayout globalViewId={props.globalViewId} workspaceSlug={props.workspaceSlug} />;
+      return <WorkspaceViewBoardLayout {...props} />;
+    case EIssueLayoutTypes.CALENDAR:
+      return <WorkspaceCalendarLayout {...props} />;
     default:
       return null;
   }

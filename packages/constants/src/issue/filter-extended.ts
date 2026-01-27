@@ -283,6 +283,16 @@ export const ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS: TFiltersLayoutOptions = {
       values: ["sub_issue", "show_empty_groups"],
     },
   },
+  calendar: {
+    display_properties: ["key", "issue_type"],
+    display_filters: {
+      type: ["active", "backlog"],
+    },
+    extra_options: {
+      access: true,
+      values: [],
+    },
+  },
 };
 
 export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_INITIATIVES_PAGE: (keyof IIssueFilterOptions)[] = [

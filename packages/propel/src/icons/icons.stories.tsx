@@ -17,6 +17,7 @@ import {
   ArrowsIconsMap,
   LayoutIconsMap,
   MiscIconsMap,
+  OtherProductsIconsMap,
   ProjectIconsMap,
   PropertyIconsMap,
   SubBrandIconsMap,
@@ -125,6 +126,18 @@ export const AllIcons: Story = {
             <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
               <div className="text-secondary">{item.icon}</div>
               <p className="text-11 text-tertiary text-center">{item.title}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-custom-text-100">Other Products Icons</h3>
+        <div className="grid grid-cols-12 gap-6 w-full">
+          {OtherProductsIconsMap.map((item) => (
+            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+              <div className="text-custom-text-200">{item.icon}</div>
+              <p className="text-xs text-custom-text-300 text-center">{item.title}</p>
             </div>
           ))}
         </div>

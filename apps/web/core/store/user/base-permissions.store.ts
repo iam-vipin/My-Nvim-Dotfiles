@@ -21,14 +21,7 @@ import {
   EUserPermissionsLevel,
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
-import type {
-  EUserProjectRoles,
-  IUserProjectsRole,
-  IWorkspaceMemberMe,
-  TExploredFeatures,
-  TProjectMembership,
-  TTips,
-} from "@plane/types";
+import type { EUserProjectRoles, IUserProjectsRole, IWorkspaceMemberMe, TProjectMembership } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 // plane web imports
 import { WorkspaceService } from "@/services/workspace.service";
@@ -66,11 +59,6 @@ export interface IBaseUserPermissionStore {
   ) => boolean;
   // actions
   fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMemberMe>;
-  updateExploredFeatures: (
-    workspaceSlug: string,
-    exploredFeatures: Partial<Record<TExploredFeatures, boolean>>
-  ) => Promise<IWorkspaceMemberMe>;
-  updateTips: (workspaceSlug: string, tips: Partial<Record<TTips, boolean>>) => Promise<IWorkspaceMemberMe>;
   leaveWorkspace: (workspaceSlug: string) => Promise<void>;
   fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<TProjectMembership>;
   fetchUserProjectPermissions: (workspaceSlug: string) => Promise<IUserProjectsRole>;
@@ -101,8 +89,6 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
       // computed
       // actions
       fetchUserWorkspaceInfo: action,
-      updateExploredFeatures: action,
-      updateTips: action,
       leaveWorkspace: action,
       fetchUserProjectInfo: action,
       fetchUserProjectPermissions: action,
@@ -274,91 +260,6 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
   };
 
   /**
-   * @description Updates the explored features for the current user in a workspace
-   * @param { string } workspaceSlug
-   * @param { Partial<Record<TExploredFeatures, boolean>> } exploredFeatures
-   * @returns { Promise<IWorkspaceMemberMe> }
-   */
-  updateExploredFeatures = async (
-    workspaceSlug: string,
-    exploredFeatures: Partial<Record<TExploredFeatures, boolean>>
-  ): Promise<IWorkspaceMemberMe> => {
-    try {
-      const existingFeatures = this.workspaceUserInfo[workspaceSlug]?.explored_features;
-      const filteredExisting: Partial<Record<TExploredFeatures, boolean>> = {};
-
-      if (existingFeatures) {
-        (Object.keys(existingFeatures) as TExploredFeatures[]).forEach((key) => {
-          const value = existingFeatures[key];
-          if (value !== null) {
-            filteredExisting[key] = value;
-          }
-        });
-      }
-
-      const response = await workspaceService.updateMemberOnboarding(workspaceSlug, {
-        explored_features: {
-          ...filteredExisting,
-          ...exploredFeatures,
-        },
-      });
-      if (response) {
-        runInAction(() => {
-          set(this.workspaceUserInfo, [workspaceSlug], {
-            ...this.workspaceUserInfo[workspaceSlug],
-            explored_features: {
-              ...this.workspaceUserInfo[workspaceSlug]?.explored_features,
-              ...exploredFeatures,
-            },
-          });
-        });
-      }
-      return response;
-    } catch (error) {
-      console.error("Error updating explored features", error);
-      throw error;
-    }
-  };
-
-  updateTips = async (workspaceSlug: string, tips: Partial<Record<TTips, boolean>>): Promise<IWorkspaceMemberMe> => {
-    try {
-      const existingTips = this.workspaceUserInfo[workspaceSlug]?.tips;
-      const filteredExisting: Partial<Record<TTips, boolean>> = {};
-
-      if (existingTips) {
-        (Object.keys(existingTips) as TTips[]).forEach((key) => {
-          const value = existingTips[key];
-          if (value !== null) {
-            filteredExisting[key] = value;
-          }
-        });
-      }
-
-      const response = await workspaceService.updateMemberOnboarding(workspaceSlug, {
-        tips: {
-          ...filteredExisting,
-          ...tips,
-        },
-      });
-      if (response) {
-        runInAction(() => {
-          set(this.workspaceUserInfo, [workspaceSlug], {
-            ...this.workspaceUserInfo[workspaceSlug],
-            tips: {
-              ...this.workspaceUserInfo[workspaceSlug]?.tips,
-              ...tips,
-            },
-          });
-        });
-      }
-      return response;
-    } catch (error) {
-      console.error("Error updating tips", error);
-      throw error;
-    }
-  };
-
-  /**
    * @description Leaves a workspace
    * @param { string } workspaceSlug
    * @returns { Promise<void | undefined> }
@@ -425,6 +326,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    */
   joinProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const response = await userService.joinProject(workspaceSlug, [projectId]);
       const projectMemberRole = this.getWorkspaceRoleByWorkspaceSlug(workspaceSlug) ?? EUserPermissions.MEMBER;
       if (response) {
@@ -432,6 +334,8 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
           set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], projectMemberRole);
         });
         void this.fetchWorkspaceLevelProjectEntities(workspaceSlug, projectId);
+        // Auto-complete getting started checklist
+        void this.store.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "project_joined");
       }
     } catch (error) {
       console.error("Error user joining the project", error);

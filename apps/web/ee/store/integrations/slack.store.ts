@@ -197,6 +197,14 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       plane_app_installation_id: appInstallation?.id,
     });
     await this.fetchWebhookConnection(`${SILO_BASE_PATH}/api/slack/plane/events`);
+
+    // Auto-complete getting started checklist
+    if (workspaceSlug) {
+      void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
+        workspaceSlug.toString(),
+        "view_created"
+      );
+    }
     return response;
   };
 

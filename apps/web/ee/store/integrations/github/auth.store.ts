@@ -232,6 +232,7 @@ export class GithubAuthStore implements IGithubAuthStore {
       await this.store.fetchWebhookConnection(
         `${SILO_BASE_PATH}/api/${this.isEnterprise ? "github-enterprise" : "github"}/plane-webhook`
       );
+
       return response;
     } catch (error) {
       console.error("error in connectWorkspaceConnection", error);

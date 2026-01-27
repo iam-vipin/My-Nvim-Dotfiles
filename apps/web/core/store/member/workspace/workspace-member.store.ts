@@ -16,7 +16,15 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import type { EUserPermissions } from "@plane/constants";
-import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
+import type {
+  IWorkspaceBulkInviteFormData,
+  IWorkspaceMember,
+  IWorkspaceMemberInvitation,
+  IWorkspaceMemberMe,
+  TExploredFeatures,
+  TGettingStartedChecklistKeys,
+  TTips,
+} from "@plane/types";
 // plane-web constants
 // services
 import { WorkspaceService } from "@/services/workspace.service";
@@ -68,6 +76,21 @@ export interface IBaseWorkspaceMemberStore {
   ) => Promise<void>;
   deleteMemberInvitation: (workspaceSlug: string, invitationId: string) => Promise<void>;
   isUserSuspended: (userId: string, workspaceSlug: string) => boolean;
+  // onboarding helpers
+  getGettingStartedChecklistByWorkspaceSlug: (
+    workspaceSlug: string
+  ) => Partial<Record<TGettingStartedChecklistKeys, boolean>> | undefined;
+  // onboarding actions
+  updateExploredFeatures: (
+    workspaceSlug: string,
+    exploredFeatures: Partial<Record<TExploredFeatures, boolean>>
+  ) => Promise<IWorkspaceMemberMe>;
+  updateTips: (workspaceSlug: string, tips: Partial<Record<TTips, boolean>>) => Promise<IWorkspaceMemberMe>;
+  updateChecklist: (
+    workspaceSlug: string,
+    checklist: Partial<Record<TGettingStartedChecklistKeys, boolean>>
+  ) => Promise<IWorkspaceMemberMe>;
+  updateChecklistIfNotDoneAlready: (workspaceSlug: string, key: TGettingStartedChecklistKeys) => Promise<void>;
 }
 
 export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberStore {
@@ -102,6 +125,9 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
       fetchWorkspaceMemberInvitations: action,
       updateMemberInvitation: action,
       deleteMemberInvitation: action,
+      updateExploredFeatures: action,
+      updateTips: action,
+      updateChecklist: action,
     });
     // initialize filters store
     this.filtersStore = new WorkspaceMemberFiltersStore();
@@ -316,6 +342,8 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
   async inviteMembersToWorkspace(workspaceSlug: string, data: IWorkspaceBulkInviteFormData) {
     await this.workspaceService.inviteWorkspace(workspaceSlug, data);
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
+    // Auto-complete getting started checklist
+    void this.updateChecklistIfNotDoneAlready(workspaceSlug, "team_members_invited");
   }
 
   /**
@@ -368,4 +396,151 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
     const workspaceMember = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
     return workspaceMember?.is_active === false;
   });
+
+  /**
+   * @description Returns the getting started checklist for a workspace
+   * @param { string } workspaceSlug
+   * @returns { Partial<Record<TGettingStartedChecklistKeys, boolean>> | undefined }
+   */
+  getGettingStartedChecklistByWorkspaceSlug = computedFn(
+    (workspaceSlug: string): Partial<Record<TGettingStartedChecklistKeys, boolean>> | undefined => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const checklist = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.getting_started_checklist;
+      if (!checklist) return undefined;
+
+      // Filter out null values to match return type
+      const filtered: Partial<Record<TGettingStartedChecklistKeys, boolean>> = {};
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      (Object.keys(checklist) as TGettingStartedChecklistKeys[]).forEach((key) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        const value = checklist[key];
+        if (value !== null) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          filtered[key] = value;
+        }
+      });
+      return filtered;
+    }
+  );
+
+  /**
+   * @description Generic helper to update member onboarding fields
+   * @private
+   * @param { string } workspaceSlug
+   * @param { "explored_features" | "tips" | "getting_started_checklist" } fieldKey - The key of the field in IWorkspaceMemberMe
+   * @param { Partial<Record<string, boolean>> } updates - The updates to apply
+   * @param { string } errorMessage - Custom error message for this field
+   * @returns { Promise<IWorkspaceMemberMe> }
+   */
+  private updateMemberOnboardingField = async (
+    workspaceSlug: string,
+    fieldKey: "explored_features" | "tips" | "getting_started_checklist",
+    updates: Partial<Record<string, boolean>>,
+    errorMessage: string
+  ): Promise<IWorkspaceMemberMe> => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const existingData = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.[fieldKey];
+      const filteredExisting: Record<string, boolean> = {};
+
+      if (existingData && typeof existingData === "object") {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        Object.entries(existingData).forEach(([key, value]) => {
+          if (value !== null && typeof value === "boolean") {
+            filteredExisting[key] = value;
+          }
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const response = await this.workspaceService.updateMemberOnboarding(workspaceSlug, {
+        [fieldKey]: {
+          ...filteredExisting,
+          ...updates,
+        },
+      });
+
+      if (response) {
+        runInAction(() => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const currentFieldData = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.[fieldKey];
+          const mergedData: Record<string, boolean> = {};
+
+          if (currentFieldData && typeof currentFieldData === "object") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            Object.entries(currentFieldData).forEach(([key, value]) => {
+              if (value !== null && typeof value === "boolean") {
+                mergedData[key] = value;
+              }
+            });
+          }
+
+          set(this.rootStore.user.permission.workspaceUserInfo, [workspaceSlug], {
+            ...this.rootStore.user.permission.workspaceUserInfo[workspaceSlug],
+            [fieldKey]: {
+              ...mergedData,
+              ...updates,
+            },
+          });
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return response;
+    } catch (error) {
+      console.error(errorMessage, error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Updates the explored features for the current user in a workspace
+   * @param { string } workspaceSlug
+   * @param { Partial<Record<TExploredFeatures, boolean>> } exploredFeatures
+   * @returns { Promise<IWorkspaceMemberMe> }
+   */
+  updateExploredFeatures = async (
+    workspaceSlug: string,
+    exploredFeatures: Partial<Record<TExploredFeatures, boolean>>
+  ): Promise<IWorkspaceMemberMe> =>
+    this.updateMemberOnboardingField(
+      workspaceSlug,
+      "explored_features",
+      exploredFeatures,
+      "Error updating explored features"
+    );
+
+  /**
+   * @description Updates the tips for the current user in a workspace
+   * @param { string } workspaceSlug
+   * @param { Partial<Record<TTips, boolean>> } tips
+   * @returns { Promise<IWorkspaceMemberMe> }
+   */
+  updateTips = async (workspaceSlug: string, tips: Partial<Record<TTips, boolean>>): Promise<IWorkspaceMemberMe> =>
+    this.updateMemberOnboardingField(workspaceSlug, "tips", tips, "Error updating tips");
+
+  /**
+   * @description Updates the getting started checklist for the current user in a workspace
+   * @param { string } workspaceSlug
+   * @param { Partial<Record<TGettingStartedChecklistKeys, boolean>> } checklist
+   * @returns { Promise<IWorkspaceMemberMe> }
+   */
+  updateChecklist = async (
+    workspaceSlug: string,
+    checklist: Partial<Record<TGettingStartedChecklistKeys, boolean>>
+  ): Promise<IWorkspaceMemberMe> =>
+    this.updateMemberOnboardingField(workspaceSlug, "getting_started_checklist", checklist, "Error updating checklist");
+
+  /**
+   * @description Updates a checklist item only if it hasn't been completed already
+   * @param { string } workspaceSlug
+   * @param { TGettingStartedChecklistKeys } key
+   * @returns { Promise<void> }
+   */
+  updateChecklistIfNotDoneAlready = async (workspaceSlug: string, key: TGettingStartedChecklistKeys): Promise<void> => {
+    const checklistData = this.getGettingStartedChecklistByWorkspaceSlug(workspaceSlug);
+    if (!checklistData?.[key]) {
+      await this.updateChecklist(workspaceSlug, { [key]: true });
+    }
+  };
 }

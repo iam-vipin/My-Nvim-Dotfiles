@@ -18,6 +18,7 @@ import { observer } from "mobx-react";
 import type { TTips } from "@plane/types";
 import { IconButton } from "@plane/propel/icon-button";
 import { CloseIcon } from "@plane/propel/icons";
+import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 
 type TTipItem = {
@@ -42,7 +43,10 @@ const TIPS_CONFIG: TTipItem[] = [
 export const SidebarTipSection = observer(() => {
   const { workspaceSlug } = useParams();
   const { resolvedTheme } = useTheme();
-  const { workspaceInfoBySlug, updateTips } = useUserPermissions();
+  const { workspaceInfoBySlug } = useUserPermissions();
+  const {
+    workspace: { updateTips },
+  } = useMember();
 
   const workspaceSlugStr = workspaceSlug?.toString() ?? "";
   const currentWorkspaceInfo = workspaceInfoBySlug(workspaceSlugStr);

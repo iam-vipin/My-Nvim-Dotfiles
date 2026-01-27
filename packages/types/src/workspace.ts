@@ -95,6 +95,17 @@ export type TExploredFeatures = "github_integrated" | "slack_integrated" | "ai_c
 
 export type TTips = "mobile_app_download";
 
+export type TGettingStartedChecklistKeys =
+  | "ai_chat_tried"
+  | "integration_linked"
+  | "page_created"
+  | "project_created"
+  | "project_joined"
+  | "sticky_created"
+  | "team_members_invited"
+  | "view_created"
+  | "work_item_created";
+
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
@@ -126,6 +137,7 @@ export interface IWorkspaceMemberMe {
   active_cycles_count: number;
   explored_features: Record<TExploredFeatures, boolean | null>;
   tips: Record<TTips, boolean | null>;
+  getting_started_checklist?: Record<TGettingStartedChecklistKeys, boolean | null>;
 }
 
 export interface ILastActiveWorkspaceDetails {

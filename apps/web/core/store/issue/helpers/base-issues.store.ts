@@ -552,6 +552,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // If shouldUpdateList is true, call fetchParentStats
     shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
 
+    // Auto-complete getting started checklist
+    void this.rootIssueStore.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
+      workspaceSlug,
+      "work_item_created"
+    );
+
     return response;
   }
 

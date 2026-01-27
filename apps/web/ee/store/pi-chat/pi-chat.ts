@@ -381,6 +381,16 @@ export class PiChatStore implements IPiChatStore {
       this.piThreads = [newChatId, ...this.piThreads];
     }
 
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
+
+    // Auto-complete getting started checklist
+    if (workspaceSlug) {
+      void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
+        workspaceSlug.toString(),
+        "view_created"
+      );
+    }
+
     return newChatId;
   };
 

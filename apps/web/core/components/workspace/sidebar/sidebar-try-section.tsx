@@ -22,6 +22,7 @@ import { IconButton } from "@plane/propel/icon-button";
 import { ChevronRightIcon, GithubIcon, SlackIcon, PiIcon, CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
+import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@plane/propel/collapsible";
@@ -37,7 +38,10 @@ export const SidebarTrySection = observer(() => {
   const [isOpen, setIsOpen] = useState(true);
   const { workspaceSlug } = useParams();
 
-  const { workspaceInfoBySlug, updateExploredFeatures } = useUserPermissions();
+  const { workspaceInfoBySlug } = useUserPermissions();
+  const {
+    workspace: { updateExploredFeatures },
+  } = useMember();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 
   const workspaceSlugStr = workspaceSlug?.toString() ?? "";

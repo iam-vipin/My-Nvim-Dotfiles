@@ -42,6 +42,7 @@ import type {
   TWorkspaceMemberImportSummary,
   TExploredFeatures,
   TTips,
+  TGettingStartedChecklistKeys,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -143,7 +144,11 @@ export class WorkspaceService extends APIService {
 
   async updateMemberOnboarding(
     workspaceSlug: string,
-    data: { explored_features?: Partial<Record<TExploredFeatures, boolean>>; tips?: Partial<Record<TTips, boolean>> }
+    data: {
+      explored_features?: Partial<Record<TExploredFeatures, boolean>>;
+      tips?: Partial<Record<TTips, boolean>>;
+      getting_started_checklist?: Partial<Record<TGettingStartedChecklistKeys, boolean>>;
+    }
   ): Promise<IWorkspaceMemberMe> {
     return this.patch(`/api/workspaces/${workspaceSlug}/workspace-member/me/onboarding/`, data)
       .then((response) => response?.data)

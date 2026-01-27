@@ -39,7 +39,6 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
 
   addProseMirrorPlugins() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const extension = this;
     const plugin = new Plugin({
       key: new PluginKey("heading-list"),
       appendTransaction: (transactions, oldState, newState) => {
@@ -70,7 +69,7 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
         });
 
         // Only update storage if headings actually changed
-        const prevHeadings = extension.storage.headings;
+        const prevHeadings = this.storage.headings;
         const headingsChanged =
           prevHeadings.length !== headings.length ||
           headings.some(
@@ -81,7 +80,7 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
           );
 
         if (headingsChanged) {
-          extension.storage.headings = headings;
+          this.storage.headings = headings;
         }
 
         return null;

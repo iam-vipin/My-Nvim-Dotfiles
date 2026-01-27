@@ -543,6 +543,8 @@ export class ProjectStore implements IProjectStore {
     try {
       const response = await this.projectService.createProject(workspaceSlug, data);
       this.processProjectAfterCreation(workspaceSlug, response);
+      // Auto-complete getting started checklist
+      void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "project_created");
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");

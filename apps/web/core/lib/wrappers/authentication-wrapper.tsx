@@ -62,7 +62,7 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
       currentUserProfile?.onboarding_step?.workspace_join) ||
     false;
 
-  const getWorkspaceRedirectionUrl = (): string => {
+  const getWorkspaceRedirectionUrl = (isFirstTimeOnboarding = false): string => {
     let redirectionRoute = "/create-workspace";
 
     // validating the nextPath from the router query
@@ -80,7 +80,10 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
       (workspace) => workspace.slug === currentWorkspaceSlug
     );
 
-    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
+    if (isCurrentWorkspaceValid >= 0) {
+      // Redirect first-time users to get-started page
+      redirectionRoute = isFirstTimeOnboarding ? `/${currentWorkspaceSlug}/get-started` : `/${currentWorkspaceSlug}`;
+    }
 
     return redirectionRoute;
   };
@@ -114,7 +117,8 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
+        // User just completed onboarding, redirect to get-started page
+        const currentRedirectRoute = getWorkspaceRedirectionUrl(true);
         router.replace(currentRedirectRoute);
         return <></>;
       } else return <>{children}</>;

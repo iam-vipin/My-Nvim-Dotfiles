@@ -21,6 +21,8 @@ import { EModalWidth, ModalCore, Loader } from "@plane/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
 import { GithubEnterpriseServerAppForm } from "./server-app-form";
+import { useParams } from "next/navigation";
+import { useMember } from "@/hooks/store/use-member";
 
 interface IConnectOrganizationProps {
   isEnterprise: boolean;
@@ -38,6 +40,11 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
       disconnectWorkspaceConnection,
     },
   } = useGithubIntegration(isEnterprise);
+  const {
+    workspace: { updateChecklistIfNotDoneAlready },
+  } = useMember();
+
+  const { workspaceSlug } = useParams();
 
   // states
   const [isConnectionSetup, setIsConnectionSetup] = useState<boolean>(false);
@@ -60,6 +67,10 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
     try {
       setIsConnectionSetup(true);
       const response = await connectWorkspaceConnection();
+      // Auto-complete getting started checklist
+      if (workspaceSlug) {
+        void updateChecklistIfNotDoneAlready(workspaceSlug.toString(), "view_created");
+      }
       if (response) window.open(response, "_self");
     } catch (error) {
       console.error("connectWorkspaceConnection", error);

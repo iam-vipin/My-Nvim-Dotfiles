@@ -217,6 +217,9 @@ export class ProjectViewStore implements IProjectViewStore {
       set(this.viewMap, [response.id], response);
     });
 
+    // Auto-complete getting started checklist
+    void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "view_created");
+
     return response;
   }
 

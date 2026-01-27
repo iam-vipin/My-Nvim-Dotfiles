@@ -13,20 +13,25 @@
 
 import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { CloseIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import type { TGettingStartedChecklistKeys } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
+import { ADMIN_USER_CHECKLIST, MEMBER_USER_CHECKLIST } from "@/components/get-started/widgets/constant";
 import { TopNavPowerK } from "@/components/navigation";
 import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
 import { UserMenuRoot } from "@/components/workspace/sidebar/user-menu-root";
 import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu-root";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useAppRailVisibility } from "@/lib/app-rail/context";
@@ -39,12 +44,15 @@ import { TopNavSearch } from "./top-nav-search";
 import { NotificationsPopoverRoot } from "@/components/notifications/popover/root";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import useSWR from "swr";
+import { Button } from "@plane/propel/button";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
   const { config } = useInstance();
   const { activeSidecar, openPiChatSidecar, closeSidecar } = useTheme();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { workspace: workspaceMemberStore } = useMember();
   // derived values
   const isPiChatSidecarOpen = activeSidecar === "pi-chat";
   const { preferences } = useAppRailPreferences();
@@ -52,6 +60,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
   const { workspaceSlug, projectId, workItem } = useParams();
   const { getUnreadNotificationsCount } = useWorkspaceNotifications();
+  const router = useRouter();
 
   const pathname = usePathname();
   // derived
@@ -75,6 +84,25 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // Show WorkspaceAppSwitcher when app rail is enabled and collapsed
   const shouldShowAppSwitcher = isAppRailEnabled && isAppRailCollapsed;
 
+  const shouldRenderGetStartedButton = useMemo(() => {
+    if (!workspaceSlug) return false;
+
+    const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+    const checklistData = workspaceMemberStore.getGettingStartedChecklistByWorkspaceSlug(workspaceSlug.toString());
+
+    // Select checklist based on role
+    const checklist = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN ? ADMIN_USER_CHECKLIST : MEMBER_USER_CHECKLIST;
+
+    // Check if all items in the checklist are completed
+    const allCompleted = checklist.every((item) => {
+      const key = item.id as TGettingStartedChecklistKeys;
+      return checklistData?.[key] === true;
+    });
+
+    // Show button if NOT all completed
+    return !allCompleted;
+  }, [workspaceSlug, getWorkspaceRoleByWorkspaceSlug, workspaceMemberStore]);
+
   return (
     <div
       className={cn("desktop-header flex items-center min-h-10 w-full px-3.5 z-27 transition-all duration-300", {
@@ -95,6 +123,16 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
       </div>
       {/* Additional Actions */}
       <div className="desktop-header-actions shrink-0 flex-1 flex items-center gap-1 justify-end">
+        {shouldRenderGetStartedButton && (
+          <Button
+            variant="secondary"
+            onClick={() => {
+              router.push(`${workspaceSlug}/get-started/`);
+            }}
+          >
+            Get Started
+          </Button>
+        )}
         <NotificationsPopoverRoot workspaceSlug={workspaceSlug?.toString()} />
         <HelpMenuRoot />
         {shouldRenderPiChat && (

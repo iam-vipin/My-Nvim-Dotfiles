@@ -821,6 +821,9 @@ export class ProjectPageStore implements IProjectPageStore {
         this.loader = undefined;
       });
 
+      // Auto-complete getting started checklist
+      void this.store.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "page_created");
+
       return page;
     } catch (error) {
       runInAction(() => {

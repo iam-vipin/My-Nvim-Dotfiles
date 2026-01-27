@@ -17,9 +17,9 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseServiceAPIView
-from plane.ee.models import ImportReport
-from plane.silo.serializers import ImportReportAPISerializer
-
+from plane.ee.models import ImportReport, ImportExecutionLog, ImportJob
+from plane.silo.serializers import ImportReportAPISerializer, ImportJobAPISerializer, ImportExecutionLogSerializer
+from plane.utils.paginator import OffsetPaginator
 
 class ImportReportAPIView(BaseServiceAPIView):
     def get(self, request, pk=None):
@@ -80,6 +80,45 @@ class ImportReportCountIncrementAPIView(BaseServiceAPIView):
                 import_report.errored_page_count = import_report.errored_page_count + int(
                     request.data.get("errored_page_count", 0)
                 )
+
                 import_report.save()
                 return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class ImportExecutionLogAPIView(BaseServiceAPIView):
+    def post(self, request, job_id, report_id):
+        # Bulk create execution logs
+        logs_data = request.data
+        if not isinstance(logs_data, list):
+            return Response(
+                {"error": "Data must be a list of log records"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not ImportJob.objects.filter(pk=job_id).exists():
+            return Response(
+                {"error": "Import Job not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Verify report exists
+        if not ImportReport.objects.filter(pk=report_id).exists():
+             return Response(
+                 {"error": "Import report not found"},
+                 status=status.HTTP_404_NOT_FOUND
+             )
+
+        serializer = ImportExecutionLogSerializer(data=logs_data, many=True)
+        if serializer.is_valid():
+            logs_to_create = [
+                ImportExecutionLog(
+                    job_id=job_id,
+                    report_id=report_id,
+                    **log_data
+                ) for log_data in serializer.validated_data
+            ]
+            ImportExecutionLog.objects.bulk_create(logs_to_create, batch_size=1000)
+            return Response(status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

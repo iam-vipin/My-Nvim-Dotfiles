@@ -9,7 +9,14 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .workspace_credential import WorkspaceCredentialAPISerializer
-from .workspace_connection import WorkspaceConnectionAPISerializer
-from .workspace_entity_connection import WorkspaceEntityConnectionAPISerializer
-from .job import ImportReportAPISerializer, ImportJobAPISerializer, ImportExecutionLogSerializer
+# Django imports
+from django.urls import path
+
+# Module imports
+from plane.silo.views import ImportExecutionLogAPIView
+
+
+# Report endpoints
+urlpatterns = [
+    path("execution-logs/jobs/<uuid:job_id>/reports/<uuid:report_id>/execution-logs/", ImportExecutionLogAPIView.as_view(), name="import-execution-log"),
+]

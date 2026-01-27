@@ -90,7 +90,7 @@ from .workflow import (
     WorkflowTransitionActivity,
 )
 
-from .job import ImportReport, ImportJob
+from .job import ImportReport, ImportJob, ImportExecutionLog
 
 from .customer import (
     Customer,

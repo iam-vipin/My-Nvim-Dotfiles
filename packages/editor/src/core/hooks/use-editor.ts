@@ -94,36 +94,33 @@ export const useEditor = (props: TEditorHookProps) => {
     }
   }, []);
 
-  const debouncedOnChange = useCallback(
-    (editorInstance: typeof editor, isMigrationUpdate: boolean) => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
+  const debouncedOnChange = useCallback((editorInstance: typeof editor, isMigrationUpdate: boolean) => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
 
-      // For migration updates, call immediately and clear pending state
-      if (isMigrationUpdate) {
+    // For migration updates, call immediately and clear pending state
+    if (isMigrationUpdate) {
+      hasPendingOnChangeRef.current = false;
+      pendingEditorRef.current = null;
+      onChangeRef.current?.(editorInstance!.getJSON(), editorInstance!.getHTML(), { isMigrationUpdate: true });
+      return;
+    }
+
+    // Mark as pending and store editor instance for potential flush
+    hasPendingOnChangeRef.current = true;
+    pendingEditorRef.current = editorInstance;
+
+    // Debounce regular updates by 150ms to batch rapid keystrokes
+    debounceTimeoutRef.current = setTimeout(() => {
+      debounceTimeoutRef.current = null;
+      if (editorInstance && !editorInstance.isDestroyed) {
         hasPendingOnChangeRef.current = false;
         pendingEditorRef.current = null;
-        onChangeRef.current?.(editorInstance!.getJSON(), editorInstance!.getHTML(), { isMigrationUpdate: true });
-        return;
+        onChangeRef.current?.(editorInstance.getJSON(), editorInstance.getHTML(), { isMigrationUpdate: false });
       }
-
-      // Mark as pending and store editor instance for potential flush
-      hasPendingOnChangeRef.current = true;
-      pendingEditorRef.current = editorInstance;
-
-      // Debounce regular updates by 150ms to batch rapid keystrokes
-      debounceTimeoutRef.current = setTimeout(() => {
-        debounceTimeoutRef.current = null;
-        if (editorInstance && !editorInstance.isDestroyed) {
-          hasPendingOnChangeRef.current = false;
-          pendingEditorRef.current = null;
-          onChangeRef.current?.(editorInstance.getJSON(), editorInstance.getHTML(), { isMigrationUpdate: false });
-        }
-      }, 150);
-    },
-    []
-  );
+    }, 150);
+  }, []);
 
   const editor = useTiptapEditor(
     {

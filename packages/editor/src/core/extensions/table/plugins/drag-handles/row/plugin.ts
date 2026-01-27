@@ -105,7 +105,7 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
           decorations.push(
             Decoration.widget(pos, () => dragHandle.element, {
               key: `row-drag-handle-${row}`,
-              side: -1, 
+              side: -1,
             })
           );
         }

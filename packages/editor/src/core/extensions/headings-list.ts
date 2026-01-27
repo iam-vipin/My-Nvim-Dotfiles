@@ -38,6 +38,7 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
   },
 
   addProseMirrorPlugins() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const extension = this;
     const plugin = new Plugin({
       key: new PluginKey("heading-list"),

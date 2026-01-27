@@ -12,7 +12,7 @@
  */
 
 import { useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
-import { useImperativeHandle, useEffect } from "react";
+import { useImperativeHandle, useEffect, useRef, useCallback } from "react";
 import type { MarkdownStorage } from "tiptap-markdown";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
@@ -62,6 +62,43 @@ export const useEditor = (props: TEditorHookProps) => {
   // Force editor recreation when Y.Doc changes (provider.document.guid)
   const docKey = provider?.document?.guid ?? id;
 
+  // Debounce onChange to prevent expensive getJSON/getHTML calls on every keystroke
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const debouncedOnChange = useCallback(
+    (editorInstance: typeof editor, isMigrationUpdate: boolean) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+
+      // For migration updates, call immediately
+      if (isMigrationUpdate) {
+        onChangeRef.current?.(editorInstance!.getJSON(), editorInstance!.getHTML(), { isMigrationUpdate: true });
+        return;
+      }
+
+      // Debounce regular updates by 150ms to batch rapid keystrokes
+      debounceTimeoutRef.current = setTimeout(() => {
+        if (editorInstance && !editorInstance.isDestroyed) {
+          onChangeRef.current?.(editorInstance.getJSON(), editorInstance.getHTML(), { isMigrationUpdate: false });
+        }
+      }, 150);
+    },
+    []
+  );
+
+  // Cleanup debounce timeout on unmount
+  useEffect(
+    () => () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    },
+    []
+  );
+
   const editor = useTiptapEditor(
     {
       editable,
@@ -98,10 +135,11 @@ export const useEditor = (props: TEditorHookProps) => {
       onTransaction: () => {
         onTransaction?.();
       },
-      onUpdate: ({ editor, transaction }) => {
+      onUpdate: ({ editor: editorInstance, transaction }) => {
         // Check if this update is only due to migration update
         const isMigrationUpdate = transaction?.getMeta("uniqueIdOnlyChange") === true;
-        onChange?.(editor.getJSON(), editor.getHTML(), { isMigrationUpdate });
+        // Use debounced onChange to prevent expensive serialization on every keystroke
+        debouncedOnChange(editorInstance, isMigrationUpdate);
       },
       onDestroy: () => handleEditorReady?.(false),
       onFocus: onEditorFocus,

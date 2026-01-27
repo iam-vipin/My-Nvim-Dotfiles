@@ -160,10 +160,10 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
             handleFormDataChange("description_json", description_json);
             handleFormDataChange("description_html", description_html);
           }}
-          placeholder={(isFocused, value) =>
-            isEditorEmpty(value)
+          placeholder={(isFocused, isEmpty) =>
+            isEmpty
               ? "Include a helpful description for members you add to this teamspace."
-              : t(getDescriptionPlaceholderI18n(isFocused, value))
+              : t(getDescriptionPlaceholderI18n(isFocused, isEmpty))
           }
           searchMentionCallback={searchEntity}
           editorClassName="text-caption-xs-regular"

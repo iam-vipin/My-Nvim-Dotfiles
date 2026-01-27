@@ -13,8 +13,8 @@
 
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
-import type { FC, ReactNode } from "react";
-import { useCallback, useEffect, useRef } from "react";
+import type { ReactNode } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -39,7 +39,7 @@ type Props = {
   state?: TCollabValue["state"];
 };
 
-export function EditorContainer(props: Props) {
+export const EditorContainer = memo(function EditorContainer(props: Props) {
   const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice, provider, state } = props;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -189,4 +189,4 @@ export function EditorContainer(props: Props) {
       </div>
     </>
   );
-}
+});

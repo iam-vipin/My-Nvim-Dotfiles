@@ -201,7 +201,7 @@ export type IEditorProps = {
   onChange?: (json: object, html: string, { isMigrationUpdate }?: { isMigrationUpdate?: boolean }) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
+  placeholder?: string | ((isFocused: boolean, isEmpty: boolean) => string);
   showPlaceholderOnEmpty?: boolean;
   tabIndex?: number;
   value?: Content | null;

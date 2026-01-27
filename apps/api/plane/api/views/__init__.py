@@ -77,6 +77,8 @@ from .member import (
     ProjectMemberSiloEndpoint,
 )
 
+from .milestone import MilestoneViewSet, MilestoneWorkItemsViewSet
+
 from .module import (
     ModuleListCreateAPIEndpoint,
     ModuleDetailAPIEndpoint,
@@ -108,7 +110,6 @@ from .sticky import StickyViewSet
 from .teamspace import TeamspaceViewSet
 
 from .user import UserEndpoint
-
 
 from .worklog import (
     WorkItemWorklogEndpoint,

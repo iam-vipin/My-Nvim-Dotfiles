@@ -113,6 +113,75 @@ def get_presigned_url_preview(attachment: MessageAttachment, expires_in: int = 3
         return None
 
 
+async def get_attachment_urls_internal(
+    attachment_id: str,
+    chat_id: str,
+    user_id: str,
+    db,
+) -> dict:
+    """
+    Internal utility to validate attachment access and generate presigned URLs.
+
+    This is shared logic used by both web and mobile get_attachment_url endpoints,
+    as well as the new view redirect endpoint.
+
+    Args:
+        attachment_id: Attachment UUID (as string)
+        chat_id: Chat UUID (as string)
+        user_id: User UUID (as string or UUID object)
+        db: AsyncSession database connection
+
+    Returns:
+        Dictionary with attachment details and URLs
+
+    Raises:
+        ValueError: If UUIDs are invalid format
+        FileNotFoundError: If attachment not found or not in S3
+        PermissionError: If user doesn't own attachment
+    """
+    import uuid
+
+    from sqlmodel import select
+
+    # Convert string IDs to UUIDs
+    attachment_uuid = uuid.UUID(attachment_id)
+    chat_uuid = uuid.UUID(chat_id)
+    user_uuid = uuid.UUID(str(user_id))  # Handle both string and UUID
+
+    # Get attachment owned by this user
+    stmt = select(MessageAttachment).where(
+        MessageAttachment.id == attachment_uuid,
+        MessageAttachment.chat_id == chat_uuid,
+        MessageAttachment.user_id == user_uuid,
+        MessageAttachment.status == "uploaded",
+    )
+    result = await db.execute(stmt)
+    attachment = result.scalar_one_or_none()
+
+    if not attachment:
+        raise FileNotFoundError("Attachment not found")
+
+    # Verify file exists in S3
+    try:
+        s3_client = get_s3_client()
+        s3_client.head_object(Bucket=S3_BUCKET, Key=attachment.file_path)
+    except Exception as s3_error:
+        log.error(f"S3 file verification failed for {attachment.file_path}: {s3_error}")
+        raise FileNotFoundError("File not found in S3")
+
+    # Generate presigned URLs
+    download_url = get_presigned_url_download(attachment)
+    preview_url = get_presigned_url_preview(attachment)
+
+    return {
+        "download_url": download_url,
+        "preview_url": preview_url,
+        "filename": attachment.original_filename,
+        "content_type": attachment.content_type,
+        "file_size": attachment.file_size,
+    }
+
+
 async def get_attachment_base64_data(attachment: MessageAttachment) -> Optional[str]:
     """
     Fetch file data from S3 and return as base64 encoded string.

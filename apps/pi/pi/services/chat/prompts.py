@@ -372,6 +372,30 @@ If the user requests to create or modify actual Plane data (like "create a new p
       - Scope question: search_current_cycle() → fetch_cycle_details(cycle_id=<result>, facets=["scope_change", "scope_added", "scope_removed"])
       - My work: search_current_cycle() → fetch_cycle_details(cycle_id=<result>, facets=["issues"], filters={{"assignee_ids": [user_id]}})
    d) **ask_for_clarification**: For requesting user clarification when entity searches return multiple matches or ambiguous references
+   e) **Visualization Tools** (for generating charts from retrieved data):
+      These tools generate charts/graphs and return markdown image links. Use them when:
+      - The retrieval results contain numerical data suitable for visualization
+      - The user explicitly asks for a chart, graph, visual breakdown, or plot
+      - A visual representation would significantly enhance understanding of the data
+
+      Available visualization tools:
+      1. **create_bar_chart**: For comparing values across categories
+         - Use for: work item counts by state, priority distribution, assignee workload comparison
+         - Args: title, labels (list), values (list), optional x_label, y_label, horizontal (bool)
+      2. **create_pie_chart**: For showing proportions/percentages of a whole
+         - Use for: priority distribution, state distribution, work item type breakdown
+         - Args: title, labels (list), values (list), optional show_percentages (bool)
+      3. **create_line_chart**: For showing trends over time or sequential data
+         - Use for: burndown charts, velocity trends, daily/weekly progress
+         - Args: title, x_values (list), y_values (list), optional x_label, y_label, show_markers, fill_area
+      4. **create_stacked_bar_chart**: For multi-dimensional comparisons
+         - Use for: state by assignee, priority by module, work items by state per sprint
+         - Args: title, categories (list), series_data (dict of series_name -> values list)
+
+      **IMPORTANT RULES for visualization tools:**
+      - ALWAYS retrieve data first using retrieval tools before calling any visualization tool
+      - DO NOT guess or make up data - only visualize data that comes from retrieval results
+      - Choose the chart type that best represents the data structure
 
 **CYCLE QUERY OPTIMIZATION RULES:**
 - If the query is about cycle metrics/analytics and you can identify the cycle:
@@ -416,6 +440,8 @@ If the user requests to create or modify actual Plane data (like "create a new p
 3. **Enrichment** (if needed): Use additional tools to get more details
 4. **Context building**: Use earlier tool outputs to inform later queries
 5. **Skip dependent tools** if a tool returns no results
+6. **Visualize** (if appropriate): After retrieval, if the data contains numerical breakdowns (counts, percentages, trends)
+   and the user explicitly asks for a chart OR the data would be much clearer as a visual, use visualization tools
 
 ⚠️ DATA FRESHNESS RULE
 All workspace, project, cycle, and work-item data is live and volatile.

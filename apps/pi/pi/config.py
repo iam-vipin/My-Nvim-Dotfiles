@@ -415,6 +415,15 @@ class Settings:
         colorlog.getLogger("anthropic").setLevel(colorlog.WARNING)
         colorlog.getLogger("anthropic._base_client").setLevel(colorlog.WARNING)
 
+        # Suppress matplotlib debug logs (especially font_manager)
+        colorlog.getLogger("matplotlib").setLevel(colorlog.WARNING)
+
+        # Suppress amqp debug logs
+        colorlog.getLogger("amqp").setLevel(colorlog.WARNING)
+
+        # Suppress markdown_it debug logs
+        colorlog.getLogger("markdown_it").setLevel(colorlog.WARNING)
+
         # Suppress boto3/botocore debug logs
         colorlog.getLogger("boto3").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore").setLevel(colorlog.INFO)

@@ -168,10 +168,10 @@ export function WorkItemBlueprintDetails<T extends FieldValues>(props: TWorkItem
               ref={editorRef}
               searchMentionCallback={searchEntity}
               onChange={(_description_json, description_html) => onChange(description_html)}
-              placeholder={(isFocused, value) =>
-                isEditorEmpty(value)
+              placeholder={(isFocused, isEmpty) =>
+                isEmpty
                   ? placeholders?.description || t("templates.settings.form.work_item.description.placeholder")
-                  : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
+                  : t(`${getDescriptionPlaceholderI18n(isFocused, isEmpty)}`)
               }
               containerClassName={cn("min-h-[120px]", {
                 "border border-subtle py-2": inputBorderVariant === "primary",

@@ -13,6 +13,7 @@
 
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
+import { memo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -48,7 +49,7 @@ type Props = {
   state?: TCollabValue["state"];
 };
 
-export function PageRenderer(props: Props) {
+export const PageRenderer = memo(function PageRenderer(props: Props) {
   const {
     bubbleMenuEnabled,
     disabledExtensions,
@@ -134,4 +135,4 @@ export function PageRenderer(props: Props) {
       )}
     </div>
   );
-}
+});

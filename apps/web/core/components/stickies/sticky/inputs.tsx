@@ -87,9 +87,8 @@ export function StickyInput(props: TProps) {
               onChange(description_html);
               handleSubmit(handleFormSubmit)();
             }}
-            placeholder={(_, value) => {
-              const isContentEmpty = isCommentEmpty(value);
-              if (!isContentEmpty) return "";
+            placeholder={(_, isEmpty) => {
+              if (!isEmpty) return "";
               return "Click to type here";
             }}
             containerClassName={cn(

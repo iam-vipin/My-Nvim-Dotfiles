@@ -27,7 +27,13 @@ export const createCommentsOrderPlugin = (options: TCommentsOrderPluginOptions) 
 
   return new Plugin({
     key: new PluginKey("commentsOrderTracker"),
-    appendTransaction: (_, __, newState) => {
+    appendTransaction: (transactions, oldState, newState) => {
+      // Skip if no document changes
+      const hasDocChanges = transactions.some((tr) => tr.docChanged);
+      if (!hasDocChanges || oldState.doc.eq(newState.doc)) {
+        return null;
+      }
+
       const commentPositions: { commentId: string; position: number }[] = [];
 
       // Traverse the document to find all comment marks and their positions

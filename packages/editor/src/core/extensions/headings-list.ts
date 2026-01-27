@@ -38,9 +38,16 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
   },
 
   addProseMirrorPlugins() {
+    const extension = this;
     const plugin = new Plugin({
       key: new PluginKey("heading-list"),
-      appendTransaction: (_, __, newState) => {
+      appendTransaction: (transactions, oldState, newState) => {
+        // Skip if no document changes
+        const hasDocChanges = transactions.some((tr) => tr.docChanged);
+        if (!hasDocChanges || oldState.doc.eq(newState.doc)) {
+          return null;
+        }
+
         const headings: IMarking[] = [];
         let h1Sequence = 0;
         let h2Sequence = 0;
@@ -60,12 +67,20 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
           }
         });
 
-        this.storage.headings = headings;
+        // Only update storage if headings actually changed
+        const prevHeadings = extension.storage.headings;
+        const headingsChanged =
+          prevHeadings.length !== headings.length ||
+          headings.some(
+            (h, i) =>
+              h.level !== prevHeadings[i]?.level ||
+              h.text !== prevHeadings[i]?.text ||
+              h.sequence !== prevHeadings[i]?.sequence
+          );
 
-        this.editor.emit("update", {
-          editor: this.editor,
-          transaction: newState.tr,
-        });
+        if (headingsChanged) {
+          extension.storage.headings = headings;
+        }
 
         return null;
       },

@@ -154,10 +154,10 @@ export const TemplateBasicDetails = observer(function TemplateBasicDetails<T ext
               ref={editorRef}
               onChange={(_description_json, description_html) => onChange(description_html)}
               searchMentionCallback={searchEntity}
-              placeholder={(isFocused, value) =>
-                isEditorEmpty(value)
+              placeholder={(isFocused, isEmpty) =>
+                isEmpty
                   ? t("templates.settings.form.publish.description.placeholder")
-                  : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
+                  : t(`${getDescriptionPlaceholderI18n(isFocused, isEmpty)}`)
               }
               containerClassName="min-h-[240px] md:min-h-[120px] border py-2 border-subtle rounded-md"
               disabledExtensions={["image", "issue-embed", "attachments"]}

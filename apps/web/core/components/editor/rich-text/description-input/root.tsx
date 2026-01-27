@@ -82,7 +82,7 @@ type Props = {
   /**
    * @description Placeholder, if not provided, the placeholder will be the default placeholder
    */
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
+  placeholder?: string | ((isFocused: boolean, isEmpty: boolean) => string);
   /**
    * @description projectId, if not provided, the entity will be considered as a workspace entity
    */

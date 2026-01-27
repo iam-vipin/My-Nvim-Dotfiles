@@ -1,6 +1,11 @@
 {
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": false,
+    "noEmit": true,
     "exactOptionalPropertyTypes": false,
     "noUnusedParameters": false,
     "noImplicitOverride": false,

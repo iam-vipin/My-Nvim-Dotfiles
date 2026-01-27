@@ -3,6 +3,7 @@
   "extends": "./base.json",
   "compilerOptions": {
     "composite": false,
+    "emitDeclarationOnly": true,
     "lib": ["es2023"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",

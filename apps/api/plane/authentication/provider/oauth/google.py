@@ -17,7 +17,6 @@ from urllib.parse import urlencode
 import pytz
 
 # Django imports
-from django.conf import settings
 
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter

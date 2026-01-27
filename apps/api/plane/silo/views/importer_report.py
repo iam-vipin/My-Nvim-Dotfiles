@@ -18,8 +18,7 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseServiceAPIView
 from plane.ee.models import ImportReport, ImportExecutionLog, ImportJob
-from plane.silo.serializers import ImportReportAPISerializer, ImportJobAPISerializer, ImportExecutionLogSerializer
-from plane.utils.paginator import OffsetPaginator
+from plane.silo.serializers import ImportReportAPISerializer, ImportExecutionLogSerializer
 
 class ImportReportAPIView(BaseServiceAPIView):
     def get(self, request, pk=None):

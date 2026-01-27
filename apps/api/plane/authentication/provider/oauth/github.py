@@ -19,7 +19,6 @@ import pytz
 import requests
 
 # Django imports
-from django.conf import settings
 
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter

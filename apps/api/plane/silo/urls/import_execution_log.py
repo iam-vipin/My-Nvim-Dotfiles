@@ -18,5 +18,9 @@ from plane.silo.views import ImportExecutionLogAPIView
 
 # Report endpoints
 urlpatterns = [
-    path("execution-logs/jobs/<uuid:job_id>/reports/<uuid:report_id>/execution-logs/", ImportExecutionLogAPIView.as_view(), name="import-execution-log"),
+    path(
+        "execution-logs/jobs/<uuid:job_id>/reports/<uuid:report_id>/execution-logs/",
+        ImportExecutionLogAPIView.as_view(),
+        name="import-execution-log",
+    ),
 ]

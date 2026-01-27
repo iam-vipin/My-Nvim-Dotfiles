@@ -14,7 +14,6 @@ import uuid
 from urllib.parse import urlencode, urljoin
 
 # Django import
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.views import View

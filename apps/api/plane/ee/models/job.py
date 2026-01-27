@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models import TextChoices
 from plane.db.models.base import BaseModel
 
+
 class ImportExecutionLog(BaseModel):
     """
     Stores individual execution log records for import jobs
@@ -20,8 +21,14 @@ class ImportExecutionLog(BaseModel):
     """
 
     class ImportExecutionLogLevel(models.TextChoices):
-        INFO = "info", "Info",
-        SUCCESS = "success", "Success",
+        INFO = (
+            "info",
+            "Info",
+        )
+        SUCCESS = (
+            "success",
+            "Success",
+        )
         ERROR = "error", "Error"
 
     class ImportExecutionLogEntityType(models.TextChoices):
@@ -58,42 +65,31 @@ class ImportExecutionLog(BaseModel):
 
     # Core fields
     entity_type = models.CharField(
-        max_length=50,
-        db_index=True,
-        help_text="Type of the entity (USER, WORK_ITEM_TYPE, WORK_ITEM, etc.)"
+        max_length=50, db_index=True, help_text="Type of the entity (USER, WORK_ITEM_TYPE, WORK_ITEM, etc.)"
     )
     level = models.CharField(
         max_length=20,
         choices=ImportExecutionLogLevel.choices,
         default=ImportExecutionLogLevel.INFO,
         db_index=True,
-        help_text="Log level"
+        help_text="Log level",
     )
     phase = models.CharField(
         max_length=100,
         null=True,
         blank=True,
         db_index=True,
-        help_text="Phase of execution (PULL_USERS, PUSH_ISSUES, etc.)"
+        help_text="Phase of execution (PULL_USERS, PUSH_ISSUES, etc.)",
     )
 
     # Optional fields
     related_entity = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        help_text="External ID this log relates to"
+        max_length=255, null=True, blank=True, help_text="External ID this log relates to"
     )
     related_entity_type = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        help_text="Type of the related entity, USER, WORK_ITEM_TYPE, WORK_ITEM"
+        max_length=255, null=True, blank=True, help_text="Type of the related entity, USER, WORK_ITEM_TYPE, WORK_ITEM"
     )
-    ignore_summarization = models.BooleanField(
-        default=False,
-        help_text="Whether to exclude from summary calculations"
-    )
+    ignore_summarization = models.BooleanField(default=False, help_text="Whether to exclude from summary calculations")
 
     # Common fields across SUCCESS/ERROR levels (nullable for INFO)
     entity_name = models.CharField(max_length=255, null=True, blank=True)
@@ -102,23 +98,14 @@ class ImportExecutionLog(BaseModel):
     already_exists = models.BooleanField(null=True, blank=True)
 
     # INFO level: metrics
-    metrics = models.JSONField(
-        default=dict,
-        help_text="Metrics for INFO logs (total, pulled, imported, etc.)"
-    )
+    metrics = models.JSONField(default=dict, help_text="Metrics for INFO logs (total, pulled, imported, etc.)")
 
     # ERROR level: error details
     is_fatal = models.BooleanField(default=False)
-    error = models.JSONField(
-        default=dict,
-        help_text="Error details (message, stack, etc.)"
-    )
+    error = models.JSONField(default=dict, help_text="Error details (message, stack, etc.)")
 
     # Additional context data
-    additional_data = models.JSONField(
-        default=dict,
-        help_text="Additional contextual data"
-    )
+    additional_data = models.JSONField(default=dict, help_text="Additional contextual data")
 
     class Meta:
         verbose_name = "Import Execution Log"
@@ -147,7 +134,12 @@ class ImportReport(BaseModel):
     end_time = models.DateTimeField(null=True)
 
     # Summary Asset Id
-    summary_asset = models.ForeignKey("db.fileasset",on_delete=models.SET_NULL, null=True, related_name="job_summary_asset")
+    summary_asset = models.ForeignKey(
+        "db.fileasset",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="job_summary_asset",
+    )
 
     class Meta:
         verbose_name = "Import Report"

@@ -713,7 +713,15 @@ class PlaneChatBot(ChatKit):
                     if collecting_final_response:
                         final_response_chunks.append(chunk)
 
-                    yield chunk
+                    # Replace plane-attachment:// placeholders with presigned URLs before yielding to client
+                    # The original placeholder is preserved in final_response_chunks for DB storage
+                    chunk_to_yield = chunk
+                    if isinstance(chunk, str) and "plane-attachment://" in chunk:
+                        from pi.services.retrievers.pg_store.chat import replace_plot_attachment_urls
+
+                        chunk_to_yield = await replace_plot_attachment_urls(chunk, db)
+
+                    yield chunk_to_yield
 
                 # Update reasoning from the container
                 reasoning = reasoning_container["content"]

@@ -491,6 +491,8 @@ async def execute_tools_for_ask_mode(
             final_content = str(ai_message.content)
             log.info(f"ChatID: {chat_id} - Final response length: {len(final_content)} chars")
             # Stream the final answer in chunks to simulate streaming
+            # Note: plane-attachment:// placeholders are replaced with presigned URLs in chat.py
+            # before yielding to the client, while the original placeholders are stored in DB
             async for chunk in stream_content_in_chunks(final_content):
                 yield chunk
         else:

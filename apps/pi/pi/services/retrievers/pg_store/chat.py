@@ -58,6 +58,62 @@ internal_reasoning_format_dict = {
 }
 
 
+async def replace_plot_attachment_urls(content: str, db) -> str:
+    """
+    Replace plane-attachment:// placeholders with fresh presigned S3 URLs.
+
+    Plot images use plane-attachment://<attachment_id>/<chat_id> scheme which
+    gets replaced with a fresh presigned URL on each chat history fetch.
+    This ensures plots work forever (same pattern as user attachments).
+
+    Args:
+        content: Message content that may contain plane-attachment:// URLs
+        db: Database session
+
+    Returns:
+        Content with plane-attachment:// URLs replaced with presigned S3 URLs
+    """
+    import re
+    import uuid
+
+    from sqlmodel import select
+
+    if "plane-attachment://" not in content:
+        return content
+
+    # Pattern: plane-attachment://<attachment_id>/<chat_id>
+    pattern = r"plane-attachment://([a-f0-9-]+)/([a-f0-9-]+)"
+    matches = re.findall(pattern, content)
+
+    if not matches:
+        return content
+
+    result_content = content
+    for attachment_id_str, chat_id_str in matches:
+        try:
+            attachment_uuid = uuid.UUID(attachment_id_str)
+
+            # Fetch attachment from database
+            stmt = select(MessageAttachment).where(
+                MessageAttachment.id == attachment_uuid,
+                MessageAttachment.status == "uploaded",
+            )
+            result = await db.execute(stmt)
+            attachment = result.scalar_one_or_none()
+
+            if attachment:
+                # Generate fresh presigned URL
+                presigned_url = get_presigned_url_preview(attachment)
+                if presigned_url:
+                    old_url = f"plane-attachment://{attachment_id_str}/{chat_id_str}"
+                    result_content = result_content.replace(old_url, presigned_url)
+        except Exception as e:
+            log.warning(f"Failed to replace plot attachment URL {attachment_id_str}: {e}")
+            continue
+
+    return result_content
+
+
 def parse_flow_step_content(content: str) -> Union[str, Dict[str, Any], List[Any], int, float, bool, None]:
     """
     Parse content from MessageFlowStep.
@@ -506,7 +562,7 @@ async def retrieve_chat_history(
 
                         qa_pair: Dict[str, Any] = {
                             "query": user_message.content or "",
-                            "answer": assistant_message.content or "",
+                            "answer": await replace_plot_attachment_urls(assistant_message.content or "", db),
                             "reasoning": assistant_message.reasoning or "",
                             "feedback": feedback,
                             "llm": assistant_message.llm_model or "",

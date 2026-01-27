@@ -1168,6 +1168,17 @@ Provide concise, relevant context from the attachment(s):"""
                 if tool.name in ["vector_search_tool", "structured_db_tool", "pages_search_tool", "docs_search_tool", "fetch_cycle_details"]
             ]
             clarification_tool = next((t for t in all_tools if getattr(t, "name", "") == "ask_for_clarification"), None)
+
+            # Add plotting/visualization tools for generating charts from retrieval results
+            from pi.services.chat.plotting import get_plotting_tools
+
+            plotting_tools = get_plotting_tools(
+                workspace_id=workspace_id,
+                chat_id=chat_id,
+                user_id=user_id,
+                db=db,
+            )
+            retrieval_tools.extend(plotting_tools)
             # Add all the entity search tools
             from pi.services.actions.tools.entity_search import get_entity_search_tools
 

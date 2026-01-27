@@ -89,13 +89,13 @@ CUSTOMER_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 name="stage",
                 type="Optional[str]",
                 required=False,
-                description="Customer stage/lifecycle (optional)",
+                description="Customer stage/lifecycle. Valid values: 'lead', 'sales_qualified_lead', 'contract_negotiation', 'closed_won', 'closed_lost' (optional)",  # noqa E501
             ),
             ToolParameter(
                 name="contract_status",
                 type="Optional[str]",
                 required=False,
-                description="Contract status (optional)",
+                description="Contract status. Valid values: 'active', 'pre_contract', 'signed', 'inactive' (optional)",
             ),
             ToolParameter(
                 name="revenue",
@@ -210,13 +210,13 @@ CUSTOMER_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 name="stage",
                 type="Optional[str]",
                 required=False,
-                description="New customer stage",
+                description="New customer stage. Valid values: 'lead', 'sales_qualified_lead', 'contract_negotiation', 'closed_won', 'closed_lost'",
             ),
             ToolParameter(
                 name="contract_status",
                 type="Optional[str]",
                 required=False,
-                description="New contract status",
+                description="New contract status. Valid values: 'active', 'pre_contract', 'signed', 'inactive'",
             ),
             ToolParameter(
                 name="revenue",

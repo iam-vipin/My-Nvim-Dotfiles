@@ -3087,6 +3087,11 @@ class PlaneSDKAdapter:
             from plane.models.customers import CreateCustomer  # type: ignore[attr-defined]
 
             payload = self._filter_payload(kwargs)
+
+            # SDK expects 'revenue' as a string, convert if numeric
+            if payload.get("revenue"):
+                payload["revenue"] = str(payload["revenue"])
+
             data_model = CreateCustomer(**payload)
             customer = self.client.customers.create(workspace_slug=workspace_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(customer))
@@ -3136,6 +3141,11 @@ class PlaneSDKAdapter:
             from plane.models.customers import UpdateCustomer  # type: ignore[attr-defined]
 
             payload = self._filter_payload(kwargs)
+
+            # SDK expects 'revenue' as a string, convert if numeric
+            if payload.get("revenue"):
+                payload["revenue"] = str(payload["revenue"])
+
             data_model = UpdateCustomer(**payload)
             customer = self.client.customers.update(workspace_slug=workspace_slug, customer_id=customer_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(customer))

@@ -1133,8 +1133,8 @@ async def construct_action_entity_url(
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         elif entity_type == "customer":
-            # For customers: /workspace_slug/customers/
-            url = f"{api_base_url}/{workspace_slug}/customers/"
+            # For customers: /workspace_slug/customers/{customer_id}/
+            url = f"{api_base_url}/{workspace_slug}/customers/{entity_id}/"
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         elif entity_type == "intake":

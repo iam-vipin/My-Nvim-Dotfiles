@@ -11,19 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 import { Button } from "@plane/propel/button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 
 export const WorkspaceWorklogsUpgrade = observer(function WorkspaceWorklogsUpgrade() {
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  const resolvedEmptyStatePath = `/empty-state/worklogs/worklog-${resolvedTheme === "light" ? "light" : "dark"}.png`;
 
   return (
     <div className="w-full">
@@ -36,17 +32,19 @@ export const WorkspaceWorklogsUpgrade = observer(function WorkspaceWorklogsUpgra
           Upgrade
         </Button>
       </div>
-      <DetailedEmptyState
-        title={"Get detailed time-tracking reports from your workspace"}
-        description={
-          "Set date ranges for logged time by any member in any project in your workspace and get full CSVs in a click."
-        }
-        assetPath={resolvedEmptyStatePath}
-        className="w-[600px] !px-0 min-h-fit"
-        primaryButton={{
-          text: "Upgrade",
-          onClick: () => togglePaidPlanModal(true),
-        }}
+      <EmptyStateCompact
+        assetKey="worklog"
+        title="Get detailed time-tracking reports from your workspace"
+        description="Set date ranges for logged time by any member in any project in your workspace and get full CSVs in a click."
+        align="start"
+        rootClassName="py-20"
+        actions={[
+          {
+            label: "Upgrade",
+            onClick: () => togglePaidPlanModal(true),
+            variant: "primary",
+          },
+        ]}
       />
     </div>
   );

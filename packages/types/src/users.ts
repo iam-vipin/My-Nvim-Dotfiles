@@ -47,6 +47,7 @@ export interface IUser extends IUserLite {
   cover_image_url: string | null;
   date_joined: string;
   email: string;
+  email_hash: string | null;
   is_active: boolean;
   is_email_verified: boolean;
   is_password_autoset: boolean;

@@ -20,11 +20,11 @@ import { Switch } from "@plane/propel/switch";
 // hooks
 import { useInstance } from "@/hooks/store";
 
-type TIntercomConfig = {
+type TChatSupportConfig = {
   isTelemetryEnabled: boolean;
 };
 
-export const IntercomConfig = observer(function IntercomConfig(props: TIntercomConfig) {
+export const ChatSupportConfig = observer(function ChatSupportConfig(props: TChatSupportConfig) {
   const { isTelemetryEnabled } = props;
   // hooks
   const { instanceConfigurations, updateInstanceConfigurations, fetchInstanceConfigurations } = useInstance();
@@ -32,9 +32,9 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // derived values
-  const isIntercomEnabled = isTelemetryEnabled
+  const isChatSupportEnabled = isTelemetryEnabled
     ? instanceConfigurations
-      ? instanceConfigurations?.find((config) => config.key === "IS_INTERCOM_ENABLED")?.value === "1"
+      ? instanceConfigurations?.find((config) => config.key === "IS_CHAT_SUPPORT_ENABLED")?.value === "1"
         ? true
         : false
       : undefined
@@ -44,7 +44,7 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
     isTelemetryEnabled ? fetchInstanceConfigurations() : null
   );
 
-  const initialLoader = isLoading && isIntercomEnabled === undefined;
+  const initialLoader = isLoading && isChatSupportEnabled === undefined;
 
   const submitInstanceConfigurations = async (payload: Partial<IFormattedInstanceConfiguration>) => {
     try {
@@ -56,8 +56,8 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
     }
   };
 
-  const enableIntercomConfig = () => {
-    void submitInstanceConfigurations({ IS_INTERCOM_ENABLED: isIntercomEnabled ? "0" : "1" });
+  const enableChatSupportConfig = () => {
+    void submitInstanceConfigurations({ IS_CHAT_SUPPORT_ENABLED: isChatSupportEnabled ? "0" : "1" });
   };
 
   return (
@@ -73,15 +73,14 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
           <div className="grow">
             <div className="text-13 font-medium text-primary leading-5">Chat with us</div>
             <div className="text-11 font-regular text-tertiary leading-5">
-              Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
-              automatically.
+              Let your users chat with us. Toggling Telemetry off turns this off automatically.
             </div>
           </div>
 
           <div className="ml-auto">
             <Switch
-              value={isIntercomEnabled ? true : false}
-              onChange={enableIntercomConfig}
+              value={isChatSupportEnabled ? true : false}
+              onChange={enableChatSupportConfig}
               disabled={!isTelemetryEnabled || isSubmitting || initialLoader}
             />
           </div>

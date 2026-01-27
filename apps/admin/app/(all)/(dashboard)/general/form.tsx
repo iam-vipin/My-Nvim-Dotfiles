@@ -25,7 +25,7 @@ import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
-import { IntercomConfig } from "./intercom";
+import { ChatSupportConfig } from "./chat-support";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;
@@ -53,12 +53,12 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
   const onSubmit = async (formData: Partial<IInstance>) => {
     const payload: Partial<IInstance> = { ...formData };
 
-    // update the intercom configuration
-    const isIntercomEnabled =
-      instanceConfigurations?.find((config) => config.key === "IS_INTERCOM_ENABLED")?.value === "1";
-    if (!payload.is_telemetry_enabled && isIntercomEnabled) {
+    // update the chat support configuration
+    const isChatSupportEnabled =
+      instanceConfigurations?.find((config) => config.key === "IS_CHAT_SUPPORT_ENABLED")?.value === "1";
+    if (!payload.is_telemetry_enabled && isChatSupportEnabled) {
       try {
-        await updateInstanceConfigurations({ IS_INTERCOM_ENABLED: "0" });
+        await updateInstanceConfigurations({ IS_CHAT_SUPPORT_ENABLED: "0" });
       } catch (error) {
         console.error(error);
       }
@@ -121,7 +121,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
 
       <div className="space-y-6">
         <div className="text-16 font-medium text-primary pb-1.5 border-b border-subtle">Chat + telemetry</div>
-        <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
+        <ChatSupportConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
         <div className="flex items-center gap-14">
           <div className="grow flex items-center gap-4">
             <div className="shrink-0">

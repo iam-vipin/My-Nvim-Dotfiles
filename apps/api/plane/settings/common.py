@@ -322,8 +322,16 @@ CELERY_IMPORTS = (
     "plane.payment.bgtasks.free_seat_sync",
     "plane.payment.bgtasks.update_license_task",
     # management tasks
+    "plane.bgtasks.transfer_api_log_task",
+    "plane.bgtasks.hard_delete_api_log_task",
+    "plane.bgtasks.transfer_email_notification_log_task",
+    "plane.bgtasks.hard_delete_email_notification_log_task",
+    "plane.bgtasks.transfer_webhook_log_task",
+    "plane.bgtasks.hard_delete_webhook_log_task",
+    "plane.bgtasks.hard_delete_user_recent_visit_task",
     "plane.bgtasks.dummy_data_task",
     "plane.bgtasks.copy_project_data_task",
+    "plane.bgtasks.copy_workspace_data_task",
     # issue version tasks
     "plane.bgtasks.issue_version_sync",
     "plane.bgtasks.issue_description_version_sync",

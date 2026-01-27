@@ -87,6 +87,7 @@ def track_event(
         # preprocess the data properties for massaging the payload
         # in the correct format for posthog
         data_properties = preprocess_data_properties(user_id, event_name, workspace_slug, event_properties)
+
         if workspace_slug:
             groups = {
                 "workspace": workspace_slug,

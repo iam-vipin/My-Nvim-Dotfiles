@@ -49,7 +49,7 @@ class MobileGoogleOauthInitiateEndpoint(View):
 
         try:
             invitation_id = request.GET.get("invitation_id")
-            scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
+            scheme = "https" if request.is_secure() else "http"
             redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/google/callback/"""
 
             state = uuid.uuid4().hex
@@ -98,7 +98,7 @@ class MobileGoogleCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
+            scheme = "https" if request.is_secure() else "http"
             redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/google/callback/"""
             provider = GoogleOAuthProvider(
                 request=request,

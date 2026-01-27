@@ -136,6 +136,3 @@ LOGGING = {
         },
     },
 }
-
-
-IS_HEROKU = os.environ.get("IS_HEROKU", "0") == "1"

@@ -11,10 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { findParentNodeClosestToPos } from "@tiptap/core";
 import type { AnyExtension, Extensions } from "@tiptap/core";
 import { PenTool, Presentation } from "lucide-react";
 // plane imports
-import { LayersIcon, PageIcon } from "@plane/propel/icons";
+import { LayersIcon, PageIcon, PiIcon } from "@plane/propel/icons";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // ce imports
 import type {
@@ -34,13 +35,15 @@ import {
   PageEmbedReadOnlyExtension,
 } from "@/plane-editor/extensions";
 // types
-import type { TExtensions, TFileHandler } from "@/types";
+import type { TExtensions } from "@/types";
 // local imports
 import { CustomAIBlockExtension } from "./ai-block/extension";
 import { CustomCollaborationCaret } from "./collaboration-caret";
 import { CommentsExtension } from "./comments";
 import { DrawioExtension } from "./drawio/extension";
 import { EDrawioMode } from "./drawio/types";
+import { ProBadge } from "../components/badges/pro-badge";
+import { insertAIBlock } from "../helpers/editor-commands";
 
 /**
 
@@ -142,6 +145,33 @@ const slashCommandRegistry: {
       section: "general",
       pushAfter: "drawio-diagram",
     }),
+  },
+  {
+    // AI block slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !flaggedExtensions?.includes("ai-block") && !disabledExtensions?.includes("ai-block"),
+    getOption: ({ flaggedExtensions }) => {
+      return {
+        commandKey: "ai-block",
+        key: "ai-block",
+        title: "AI Block",
+        icon: <PiIcon className="size-3.5 text-icon-secondary" />,
+        description: "Insert an AI block",
+        searchTerms: ["ai", "artificial", "intelligence", "smart", "assistant", "prompt", "generate"],
+        command: ({ editor, range }) => insertAIBlock(editor, range),
+        badge: flaggedExtensions?.includes("ai-block") ? <ProBadge /> : undefined,
+        section: "general",
+        pushAfter: "callout",
+        // Prevent showing AI block option when already inside an AI block
+        shouldShow: (editor) => {
+          const { $from } = editor.state.selection;
+          const aiBlockName: string = ADDITIONAL_EXTENSIONS.AI_BLOCK;
+          const isInsideAIBlock = (node: { type: { name: string } }) => node.type.name === aiBlockName;
+          const parentAIBlock = findParentNodeClosestToPos($from, isInsideAIBlock);
+          return !parentAIBlock;
+        },
+      };
+    },
   },
 ];
 

@@ -32,7 +32,6 @@ import {
   insertBlockMath,
   insertExternalEmbed,
   insertInlineMath,
-  insertAIBlock,
   insertColumnListCommand,
 } from "../helpers/editor-commands";
 import { EMBED_SEARCH_TERMS } from "./external-embed/constants";
@@ -146,33 +145,6 @@ const coreSlashCommandRegistry: {
         badge: flaggedExtensions?.includes("external-embed") ? <ProBadge /> : undefined,
         section: "general",
         pushAfter: "code",
-      },
-    ],
-  },
-  {
-    // AI block slash command
-    isEnabled: (disabledExtensions, flaggedExtensions) =>
-      !flaggedExtensions?.includes("ai-block") && !disabledExtensions?.includes("ai-block"),
-    getOptions: ({ flaggedExtensions }) => [
-      {
-        commandKey: "ai-block",
-        key: "ai-block",
-        title: "AI Block",
-        icon: <PiIcon className="size-3.5 text-icon-secondary" />,
-        description: "Insert an AI block",
-        searchTerms: ["ai", "artificial", "intelligence", "smart", "assistant", "prompt", "generate"],
-        command: ({ editor, range }: CommandProps) => insertAIBlock(editor, range),
-        badge: flaggedExtensions?.includes("ai-block") ? <ProBadge /> : undefined,
-        section: "general",
-        pushAfter: "callout",
-        // Prevent showing AI block option when already inside an AI block
-        shouldShow: (editor) => {
-          const { $from } = editor.state.selection;
-          const aiBlockName: string = ADDITIONAL_EXTENSIONS.AI_BLOCK;
-          const isInsideAIBlock = (node: { type: { name: string } }) => node.type.name === aiBlockName;
-          const parentAIBlock = findParentNodeClosestToPos($from, isInsideAIBlock);
-          return !parentAIBlock;
-        },
       },
     ],
   },

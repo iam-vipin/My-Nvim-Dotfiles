@@ -87,7 +87,9 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
     document.disabled.add("ai");
   }
   if (!isEditorAiBlocksEnabled) {
-    document.disabled.add("ai-block");
+    document.flagged.add("ai-block");
+    richText.disabled.add("ai-block");
+    liteText.disabled.add("ai-block");
   }
   if (!isCollaborationCursorEnabled) {
     document.disabled.add("collaboration-caret");

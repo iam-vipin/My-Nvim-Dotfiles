@@ -36,7 +36,7 @@ env:
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
@@ -174,7 +174,7 @@ jobs:
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
@@ -197,7 +197,7 @@ jobs:
 
   branch_build_push_web:
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Load Vault Secrets
@@ -225,7 +225,7 @@ jobs:
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Load Vault Secrets
@@ -253,7 +253,7 @@ jobs:
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
@@ -275,7 +275,7 @@ jobs:
 
   branch_build_push_silo:
     name: Build-Push Silo Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Silo Build and Push
@@ -293,7 +293,7 @@ jobs:
 
   branch_build_push_api:
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
@@ -315,7 +315,7 @@ jobs:
 
   branch_build_push_email:
     name: Build-Push Email Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - id: checkout_files
@@ -341,7 +341,7 @@ jobs:
 
   branch_build_push_plane_pi:
     name: Build-Push Plane PI Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Plane PI Build and Push
@@ -363,7 +363,7 @@ jobs:
 
   branch_build_push_relay:
     name: Build-Push Relay Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Relay Build and Push
@@ -386,7 +386,7 @@ jobs:
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       [
         branch_build_setup,

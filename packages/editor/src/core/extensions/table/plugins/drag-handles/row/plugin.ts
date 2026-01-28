@@ -34,8 +34,8 @@ type TableRowDragHandlePluginState = {
   // track table structure to detect changes
   tableHeight?: number;
   tableNodePos?: number;
-  // track drag handle instances for cleanup
-  dragHandles?: DragHandleInstance[];
+  // track drag handle instances for cleanup, keyed by row index
+  dragHandles?: Map<number, DragHandleInstance>;
 };
 
 const TABLE_ROW_DRAG_HANDLE_PLUGIN_KEY = new PluginKey("tableRowDragHandlePlugin");
@@ -59,8 +59,8 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
         let isStale = tableStructureChanged;
 
         // Only do position-based stale check if structure hasn't changed
+        const mapped = prev.decorations?.map(tr.mapping, tr.doc);
         if (!isStale) {
-          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
           for (let row = 0; row < tableMap.height; row++) {
             const pos = getTableCellWidgetDecorationPos(table, tableMap, row * tableMap.width);
             if (mapped?.find(pos, pos + 1)?.length !== 1) {
@@ -71,7 +71,6 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
         }
 
         if (!isStale) {
-          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
           return {
             decorations: mapped,
             tableHeight: tableMap.height,
@@ -80,35 +79,43 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
           };
         }
 
-        // Clean up old drag handles before creating new ones
-        prev.dragHandles?.forEach((handle) => {
-          try {
-            handle.destroy();
-          } catch (error) {
-            console.error("Error destroying drag handle:", error);
-          }
-        });
-
-        // recreate all decorations
+        // Reuse existing drag handles where possible
         const decorations: Decoration[] = [];
-        const dragHandles: DragHandleInstance[] = [];
+        const dragHandles: Map<number, DragHandleInstance> = new Map();
+        const prevDragHandles: Map<number, DragHandleInstance> | undefined = prev.dragHandles || new Map();
 
         for (let row = 0; row < tableMap.height; row++) {
           const pos = getTableCellWidgetDecorationPos(table, tableMap, row * tableMap.width);
 
-          const dragHandle = createRowDragHandle({
-            editor,
-            row,
-          });
+          // Reuse existing drag handle if it exists for this row
+          let dragHandle: DragHandleInstance | undefined = prevDragHandles.get(row);
+          if (!dragHandle) {
+            // Create new drag handle only if one doesn't exist for this row
+            dragHandle = createRowDragHandle({
+              editor,
+              row,
+            });
+          }
 
-          dragHandles.push(dragHandle);
+          dragHandles.set(row, dragHandle);
+          const handleElement = dragHandle.element;
           decorations.push(
-            Decoration.widget(pos, () => dragHandle.element, {
+            Decoration.widget(pos, () => handleElement, {
               key: `row-drag-handle-${row}`,
-              side: -1, 
             })
           );
         }
+
+        // Clean up drag handles that are no longer needed (rows that don't exist anymore)
+        prevDragHandles.forEach((handle: DragHandleInstance, row: number) => {
+          if (!dragHandles.has(row)) {
+            try {
+              handle.destroy();
+            } catch (error) {
+              console.error("Error destroying drag handle:", error);
+            }
+          }
+        });
 
         return {
           decorations: DecorationSet.create(newState.doc, decorations),

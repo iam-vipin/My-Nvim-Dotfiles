@@ -61,12 +61,12 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
   // Create container
   const container = document.createElement("div");
   container.className =
-    "table-row-handle-container absolute z-20 top-0 left-0 flex justify-center items-center h-full -translate-x-1/2 pointer-events-none";
+    "table-row-handle-container absolute z-20 top-0 left-0 flex justify-center items-center h-full -translate-x-1/2";
 
   // Create button
   const button = document.createElement("button");
   button.type = "button";
-  button.className = "default-state pointer-events-auto";
+  button.className = "default-state";
 
   // Create icon (Ellipsis lucide icon as SVG)
   const icon = createSvgElement(DRAG_HANDLE_ICONS.ellipsis, "size-4 text-primary");

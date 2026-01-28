@@ -56,19 +56,7 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
         // Check if table structure changed (height or position)
         const tableStructureChanged = prev.tableHeight !== tableMap.height || prev.tableNodePos !== table.pos;
 
-        let isStale = tableStructureChanged;
-
-        // Only do position-based stale check if structure hasn't changed
-        if (!isStale) {
-          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
-          for (let row = 0; row < tableMap.height; row++) {
-            const pos = getTableCellWidgetDecorationPos(table, tableMap, row * tableMap.width);
-            if (mapped?.find(pos, pos + 1)?.length !== 1) {
-              isStale = true;
-              break;
-            }
-          }
-        }
+        const isStale = tableStructureChanged;
 
         if (!isStale) {
           const mapped = prev.decorations?.map(tr.mapping, tr.doc);
@@ -105,7 +93,6 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
           decorations.push(
             Decoration.widget(pos, () => dragHandle.element, {
               key: `row-drag-handle-${row}`,
-              side: -1, 
             })
           );
         }

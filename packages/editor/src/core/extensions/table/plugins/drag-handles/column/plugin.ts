@@ -56,19 +56,7 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
         // Check if table structure changed (width or position)
         const tableStructureChanged = prev.tableWidth !== tableMap.width || prev.tableNodePos !== table.pos;
 
-        let isStale = tableStructureChanged;
-
-        // Only do position-based stale check if structure hasn't changed
-        if (!isStale) {
-          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
-          for (let col = 0; col < tableMap.width; col++) {
-            const pos = getTableCellWidgetDecorationPos(table, tableMap, col);
-            if (mapped?.find(pos, pos + 1)?.length !== 1) {
-              isStale = true;
-              break;
-            }
-          }
-        }
+        const isStale = tableStructureChanged;
 
         if (!isStale) {
           const mapped = prev.decorations?.map(tr.mapping, tr.doc);
@@ -105,7 +93,6 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
           decorations.push(
             Decoration.widget(pos, () => dragHandle.element, {
               key: `col-drag-handle-${col}`,
-              side: -1, 
             })
           );
         }

@@ -34,8 +34,8 @@ type TableColumnDragHandlePluginState = {
   // track table structure to detect changes
   tableWidth?: number;
   tableNodePos?: number;
-  // track drag handle instances for cleanup
-  dragHandles?: DragHandleInstance[];
+  // track drag handle instances for cleanup, keyed by column index
+  dragHandles?: Map<number, DragHandleInstance>;
 };
 
 const TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY = new PluginKey("tableColumnHandlerDecorationPlugin");
@@ -56,10 +56,21 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
         // Check if table structure changed (width or position)
         const tableStructureChanged = prev.tableWidth !== tableMap.width || prev.tableNodePos !== table.pos;
 
-        const isStale = tableStructureChanged;
+        let isStale = tableStructureChanged;
+
+        // Only do position-based stale check if structure hasn't changed
+        const mapped = prev.decorations?.map(tr.mapping, tr.doc);
+        if (!isStale) {
+          for (let col = 0; col < tableMap.width; col++) {
+            const pos = getTableCellWidgetDecorationPos(table, tableMap, col);
+            if (mapped?.find(pos, pos + 1)?.length !== 1) {
+              isStale = true;
+              break;
+            }
+          }
+        }
 
         if (!isStale) {
-          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
           return {
             decorations: mapped,
             tableWidth: tableMap.width,
@@ -68,34 +79,43 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
           };
         }
 
-        // Clean up old drag handles before creating new ones
-        prev.dragHandles?.forEach((handle) => {
-          try {
-            handle.destroy();
-          } catch (error) {
-            console.error("Error destroying drag handle:", error);
-          }
-        });
-
-        // recreate all decorations
+        // Reuse existing drag handles where possible
         const decorations: Decoration[] = [];
-        const dragHandles: DragHandleInstance[] = [];
+        const dragHandles: Map<number, DragHandleInstance> = new Map();
+        const prevDragHandles: Map<number, DragHandleInstance> | undefined = prev.dragHandles || new Map();
 
         for (let col = 0; col < tableMap.width; col++) {
           const pos = getTableCellWidgetDecorationPos(table, tableMap, col);
 
-          const dragHandle = createColumnDragHandle({
-            editor,
-            col,
-          });
+          // Reuse existing drag handle if it exists for this column
+          let dragHandle: DragHandleInstance | undefined = prevDragHandles.get(col);
+          if (!dragHandle) {
+            // Create new drag handle only if one doesn't exist for this column
+            dragHandle = createColumnDragHandle({
+              editor,
+              col,
+            });
+          }
 
-          dragHandles.push(dragHandle);
+          dragHandles.set(col, dragHandle);
+          const handleElement = dragHandle.element;
           decorations.push(
-            Decoration.widget(pos, () => dragHandle.element, {
+            Decoration.widget(pos, () => handleElement, {
               key: `col-drag-handle-${col}`,
             })
           );
         }
+
+        // Clean up drag handles that are no longer needed (columns that don't exist anymore)
+        prevDragHandles.forEach((handle: DragHandleInstance, col: number) => {
+          if (!dragHandles.has(col)) {
+            try {
+              handle.destroy();
+            } catch (error) {
+              console.error("Error destroying drag handle:", error);
+            }
+          }
+        });
 
         return {
           decorations: DecorationSet.create(newState.doc, decorations),

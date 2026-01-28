@@ -11,12 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { capitalize } from "lodash-es";
 import { observer } from "mobx-react";
 import { MoveRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+// plane imports
 import { Button } from "@plane/propel/button";
 import { ChevronLeftIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -27,13 +28,14 @@ import type {
   TEstimateTypeError,
   TEstimateUpdateStageKeys,
 } from "@plane/types";
-// hooks
-import { useEstimate } from "@/hooks/store/estimates";
-// plane web components
-import { EstimatePointItemSwitchPreview, EstimateSwitchDropdown } from "@/plane-web/components/estimates";
-// plane web constants
+// constants
 import type { EEstimateUpdateStages } from "@/constants/estimates";
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/constants/estimates";
+// hooks
+import { useEstimate } from "@/hooks/store/estimates";
+// local imports
+import { EstimatePointItemSwitchPreview } from "./preview";
+import { EstimateSwitchDropdown } from "./estimate-dropdown";
 
 type TEstimatePointSwitchRoot = {
   setEstimateEditType?: Dispatch<SetStateAction<TEstimateUpdateStageKeys | undefined>>;

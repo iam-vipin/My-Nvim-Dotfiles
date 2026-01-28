@@ -11,19 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import type { TEstimateSystemKeys, TEstimateUpdateStageKeys } from "@plane/types";
+// plane imports
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// plane web components
-import {
-  EstimateUpdateStageOne,
-  EstimatePointEditRoot,
-  EstimatePointSwitchRoot,
-} from "@/plane-web/components/estimates";
-// plane web constants
+import type { TEstimateSystemKeys, TEstimateUpdateStageKeys } from "@plane/types";
+// constants
 import { EEstimateUpdateStages } from "@/constants/estimates";
+// local imports
+import { EstimateUpdateStageOne } from "./stage-one";
+import { EstimatePointEditRoot } from "../points/edit-root";
+import { EstimatePointSwitchRoot } from "../points/switch/root";
 
 type TUpdateEstimateModal = {
   workspaceSlug: string;

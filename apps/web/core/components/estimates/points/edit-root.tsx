@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon, ChevronLeftIcon } from "@plane/propel/icons";

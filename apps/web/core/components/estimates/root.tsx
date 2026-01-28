@@ -23,11 +23,10 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
-import { UpdateEstimateModal } from "@/plane-web/components/estimates";
 // local imports
 import { CreateEstimateModal } from "./create/modal";
 import { DeleteEstimateModal } from "./delete/modal";
+import { UpdateEstimateModal } from "./update/modal";
 import { EstimateDisableSwitch } from "./estimate-disable-switch";
 import { EstimateList } from "./estimate-list";
 import { EstimateLoaderScreen } from "./loader-screen";

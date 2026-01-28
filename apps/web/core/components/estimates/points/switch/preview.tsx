@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { MoveRight } from "lucide-react";
 import { InfoIcon } from "@plane/propel/icons";
@@ -55,17 +54,6 @@ export const EstimatePointItemSwitchPreview = observer(function EstimatePointIte
     if (value.length <= MAX_ESTIMATE_POINT_INPUT_LENGTH) {
       handleEstimatePoint(value);
     }
-  };
-
-  // derived values
-  const inputFieldType =
-    estimateSystemSwitchType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateSystemSwitchType)
-      ? "number"
-      : "text";
-  const inputProps = {
-    type: inputFieldType,
-    pattern: inputFieldType === "number" ? "[0-9]*" : undefined,
-    maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
   };
 
   if (!estimatePoint) return <></>;

@@ -11,11 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useMemo } from "react";
 import { Input } from "@plane/ui";
 import { convertMinutesToHoursAndMinutes, convertHoursMinutesToMinutes } from "@plane/utils";
-import type { TEstimateTimeInputProps } from "@/ce/components/estimates/inputs";
+
+type TEstimateTimeInputProps = {
+  value?: number;
+  handleEstimateInputValue: (value: string) => void;
+};
 
 export function EstimateTimeInput(props: TEstimateTimeInputProps) {
   const { value, handleEstimateInputValue } = props;

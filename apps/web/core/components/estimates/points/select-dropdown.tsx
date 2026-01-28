@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { CheckIcon, InfoIcon, ChevronDownIcon } from "@plane/propel/icons";

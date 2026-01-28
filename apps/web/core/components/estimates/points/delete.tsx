@@ -11,24 +11,34 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight } from "lucide-react";
 import { TrashIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TEstimatePointsObject } from "@plane/types";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // ce imports
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-import type { TEstimatePointDelete } from "@/ce/components/estimates/points/delete";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store/estimates";
 // plane web components
-import { EstimatePointDropdown } from "@/plane-web/components/estimates";
+import { EstimatePointDropdown } from "./select-dropdown";
 // plane web constants
 import { estimateCount } from "@/constants/estimates";
+
+export type TEstimatePointDelete = {
+  workspaceSlug: string;
+  projectId: string;
+  estimateId: string;
+  estimatePointId: string;
+  estimatePoints: TEstimatePointsObject[];
+  callback: () => void;
+  estimatePointError?: TEstimateTypeErrorObject | undefined;
+  handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
+  estimateSystem: TEstimateSystemKeys;
+};
 
 export const EstimatePointDelete = observer(function EstimatePointDelete(props: TEstimatePointDelete) {
   const {

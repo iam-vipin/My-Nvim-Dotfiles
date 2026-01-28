@@ -33,7 +33,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
+import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
 
 export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHeader() {
   // router

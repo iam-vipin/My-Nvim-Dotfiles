@@ -27,6 +27,7 @@ import type {
   TPropertyValuesValidationProps,
 } from "@/components/issues/issue-modal/context";
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
+import { ConversionToastActionItems } from "@/plane-web/components/issues/conversion-toast-action-items";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user/user-user";
@@ -35,8 +36,6 @@ import { useUser } from "@/hooks/store/user/user-user";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/services/issue-types";
-// local components
-import { ConversionToastActionItems } from "../../issues/conversion-toast-action-items";
 
 type TEpicModalProviderProps = {
   children: React.ReactNode;

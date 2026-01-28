@@ -20,7 +20,7 @@ import { EUserWorkspaceRoles, EIssueLayoutTypes } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
+import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
 import { InitiativeScopeGanttView } from "./gantt/root";

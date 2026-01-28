@@ -21,7 +21,7 @@ import { QuickAddIssueFormRoot as BaseQuickAddIssueFormRoot } from "@/ce/compone
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // plane web imports
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
+import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export type TQuickAddIssueFormRoot = {

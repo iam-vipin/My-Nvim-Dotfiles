@@ -28,7 +28,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
+import { ConvertWorkItemAction } from "@/components/epics/conversions";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 // local imports
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";

@@ -31,8 +31,8 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-import { EpicLayoutQuickActions } from "@/plane-web/components/epics/quick-actions/layout-quick-actions";
+import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
+import { EpicLayoutQuickActions } from "@/components/epics/quick-actions/layout-quick-actions";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const EpicsHeader = observer(function EpicsHeader() {

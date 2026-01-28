@@ -24,7 +24,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
+import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import type { TIssueRelationTypes } from "@/types";
 // helper

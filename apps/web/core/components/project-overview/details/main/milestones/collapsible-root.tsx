@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { useProject } from "@/hooks/store/use-project";
 import { CollapsibleDetailSection } from "@/plane-web/components/common/layout/main/sections/collapsible-root";
-import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
+import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { AddMilestoneButton } from "./add-milestone-button";
 import { CreateUpdateMilestoneModal } from "./create-update-modal";

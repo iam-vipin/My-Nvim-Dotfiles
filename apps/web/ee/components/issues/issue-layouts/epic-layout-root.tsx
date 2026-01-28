@@ -28,7 +28,7 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // plane web imports
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local imports
-import { EpicPeekOverview } from "../../epics/peek-overview";
+import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { EpicCalendarLayout } from "./calendar-epic-root";
 import { EpicKanBanLayout } from "./kanban-epic-root";
 import { EpicListLayout } from "./list-epic-root";

@@ -30,7 +30,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
+import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 

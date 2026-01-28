@@ -32,7 +32,7 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
+import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/services/workspace.service";
 import { WorkspacePageService } from "@/services/page/workspace-page.service";

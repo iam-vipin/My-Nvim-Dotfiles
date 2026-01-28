@@ -17,7 +17,7 @@ import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { CustomerUpgrade } from "@/components/customers";
-import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
+import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 function CustomersLayout() {

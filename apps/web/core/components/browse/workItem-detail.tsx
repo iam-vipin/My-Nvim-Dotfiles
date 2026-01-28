@@ -18,7 +18,7 @@ import type { TIssue } from "@plane/types";
 import type { EditorRefApi } from "@plane/editor";
 import { IssueDetailRoot } from "@/components/issues/issue-detail/root";
 // plane web imports
-import { EpicDetailRoot } from "@/plane-web/components/epics/details/root";
+import { EpicDetailRoot } from "@/components/epics/details/root";
 
 export type TWorkItemDetailRoot = {
   workspaceSlug: string;

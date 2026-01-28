@@ -22,7 +22,7 @@ import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-r
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
+import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
 
 export const EpicListLayout = observer(function EpicListLayout() {
   const { workspaceSlug, projectId } = useParams();

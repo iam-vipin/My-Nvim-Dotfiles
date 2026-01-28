@@ -19,7 +19,7 @@ import type { TProjectTemplateForm } from "@plane/types";
 import { Switch } from "@plane/propel/switch";
 import { cn } from "@plane/utils";
 // plane web imports
-import { EpicPropertiesRoot } from "@/plane-web/components/epics/settings/epics-properties";
+import { EpicPropertiesRoot } from "@/components/epics/settings/epics-properties";
 import { TemplateCollapsibleWrapper } from "@/components/templates/settings/common";
 
 export const ProjectEpicWorkItemType = observer(function ProjectEpicWorkItemType() {

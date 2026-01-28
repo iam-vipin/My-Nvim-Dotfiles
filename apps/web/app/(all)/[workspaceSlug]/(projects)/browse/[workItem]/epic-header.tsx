@@ -35,8 +35,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web components
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
-import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
+import { ConvertWorkItemAction } from "@/components/epics/conversions";
+import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 
 export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {

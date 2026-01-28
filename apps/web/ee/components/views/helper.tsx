@@ -52,16 +52,13 @@ export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceS
   // Feature flag checks for each layout
   const isGanttEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
   const isBoardAndCalendarEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CAL_BOARD");
-  // Add new layout feature flags here, e.g.:
-  // const isCalendarEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CALENDAR");
 
   // Configuration mapping layouts to their enabled state
   const LAYOUT_CONFIGS = useMemo(
     () => [
       { layout: EIssueLayoutTypes.GANTT, enabled: isGanttEnabled },
       { layout: EIssueLayoutTypes.KANBAN, enabled: isBoardAndCalendarEnabled },
-      // Add new layouts here, e.g.:
-      // { layout: EIssueLayoutTypes.CALENDAR, enabled: isCalendarEnabled },
+      { layout: EIssueLayoutTypes.CALENDAR, enabled: isBoardAndCalendarEnabled },
     ],
     [isGanttEnabled, isBoardAndCalendarEnabled]
   );

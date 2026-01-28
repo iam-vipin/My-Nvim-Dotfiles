@@ -13,12 +13,10 @@
 
 import type { Editor } from "@tiptap/core";
 // extensions
-import { findParentNodeClosestToPos } from "@tiptap/react";
+
 import { Columns2, Columns3, Columns4, FileCode2, Paperclip, Sigma, SquareRadical } from "lucide-react";
-import { PiIcon, VideoIcon } from "@plane/propel/icons";
+import { VideoIcon } from "@plane/propel/icons";
 import type { TSlashCommandAdditionalOption } from "@/extensions";
-// constants
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import type { CommandProps, IEditorProps, TExtensions } from "@/types";

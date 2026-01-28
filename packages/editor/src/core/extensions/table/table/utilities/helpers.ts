@@ -39,14 +39,17 @@ export const isCellEmpty = (cell: ProseMirrorNode | null): boolean => {
 
   // Check if cell has any non-empty content
   let hasContent = false;
-  cell.content.forEach((node) => {
-    if (node.type.name === CORE_EXTENSIONS.PARAGRAPH) {
-      if (node.content.size > 0) {
+  cell.descendants((node) => {
+    if (hasContent) return false;
+
+    if (node.isText) {
+      if (node.text && node.text.trim().length > 0) {
         hasContent = true;
       }
-    } else if (node.content.size > 0 || node.isText) {
+    } else if (node.isLeaf) {
       hasContent = true;
     }
+    return !hasContent;
   });
 
   return !hasContent;

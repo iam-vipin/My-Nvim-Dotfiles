@@ -42,7 +42,7 @@ export const SidebarCustomersList = observer(function SidebarCustomersList(props
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
   return (
     <SidebarPropertyListItem icon={CustomersIcon} label={t("customers.label", { count: 2 })}>
-      <div className="px-2">
+      <div className="flex  flex-col gap-0.5 px-2 truncate">
         {customerIds?.length
           ? customerIds?.map((id) => (
               <CustomerSidebarListitem workspaceSlug={workspaceSlug} isPeekView={isPeekView} key={id} customerId={id} />

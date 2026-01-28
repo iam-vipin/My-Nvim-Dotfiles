@@ -46,18 +46,18 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
         render={
           <button
             type="button"
-            className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary"
+            className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary truncate"
           >
             {customer.logo_url ? (
               <img
                 src={getFileURL(customer.logo_url)}
                 alt="customer-logo"
-                className="rounded-md w-3 h-3 object-cover"
+                className="rounded-md w-3 h-3 object-cover flex-shrink-0"
               />
             ) : (
-              <CustomersIcon className="size-4 opacity-50" />
+              <CustomersIcon className="size-4 opacity-50 flex-shrink-0" />
             )}
-            <span className="shrink-0 text-body-xs-regular truncate">{customer.name}</span>
+            <span className="text-body-xs-regular truncate">{customer.name}</span>
           </button>
         }
       />

@@ -19,7 +19,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { LayoutRoot } from "@/plane-web/components/common/layout";
+import { LayoutRoot } from "@/components/common/layout";
 // local imports
 import { ProjectOverviewMainContentRoot } from "./main/root";
 import { ProjectOverviewSidebarRoot } from "./sidebar/root";

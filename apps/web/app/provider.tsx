@@ -39,11 +39,11 @@ const InstanceWrapper = lazy(function InstanceWrapper() {
 });
 
 const ChatSupport = lazy(function ChatSupport() {
-  return import("@/components/global/chat-support");
+  return import("@/components/common/chat-support");
 });
 
 const PostHogProvider = lazy(function PostHogProvider() {
-  return import("@/components/global/posthog-provider");
+  return import("@/components/common/posthog-provider");
 });
 
 export interface IAppProvider {

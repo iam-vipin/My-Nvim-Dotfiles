@@ -29,7 +29,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // lib
 import { useAppRailVisibility } from "@/lib/app-rail/context";
 // plane web imports
-import { DesktopSidebarWorkspaceMenu } from "@/plane-web/components/desktop";
+import { DesktopSidebarWorkspaceMenu } from "@/components/desktop";
 // local imports
 import { AppSidebarItemsRoot } from "./items-root";
 

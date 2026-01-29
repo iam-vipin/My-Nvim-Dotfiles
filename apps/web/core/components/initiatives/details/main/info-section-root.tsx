@@ -20,7 +20,7 @@ import { EmojiIconPickerTypes, EmojiPicker, Logo } from "@plane/propel/emoji-ico
 import { InitiativeIcon } from "@plane/propel/icons";
 import { EFileAssetType } from "@plane/types";
 // plane web components
-import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";
+import { InfoSection } from "@/components/common/layout/main/sections/info-root";
 import { UpdateStatusPills } from "@/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components

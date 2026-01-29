@@ -23,7 +23,7 @@ import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { LayoutRoot } from "@/plane-web/components/common/layout";
+import { LayoutRoot } from "@/components/common/layout";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
 import { EpicEmptyState } from "./empty-state";

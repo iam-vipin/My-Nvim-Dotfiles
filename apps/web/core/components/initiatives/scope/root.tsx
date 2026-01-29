@@ -23,7 +23,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
-import { InitiativeScopeGanttView } from "./gantt/root";
+import { InitiativeScopeTimelineView } from "./timeline/root";
 import { InitiativeScopeListView } from "./list/root";
 
 export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
@@ -68,7 +68,7 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
   const INITIATIVE_SCOPE_ACTIVE_LAYOUTS = useMemo(
     () => ({
       [EIssueLayoutTypes.LIST]: <InitiativeScopeListView {...scopeViewProps} />,
-      [EIssueLayoutTypes.GANTT]: <InitiativeScopeGanttView {...scopeViewProps} />,
+      [EIssueLayoutTypes.GANTT]: <InitiativeScopeTimelineView {...scopeViewProps} />,
     }),
     [scopeViewProps]
   );

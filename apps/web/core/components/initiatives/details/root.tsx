@@ -21,7 +21,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { LayoutRoot } from "@/plane-web/components/common/layout";
+import { LayoutRoot } from "@/components/common/layout";
 import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports

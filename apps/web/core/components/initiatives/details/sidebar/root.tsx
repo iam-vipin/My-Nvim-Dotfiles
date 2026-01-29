@@ -20,7 +20,7 @@ import { CommentFillIcon, InfoFillIcon } from "@plane/propel/icons";
 import type { TInitiativeStates } from "@plane/types";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
-import { SidebarRoot } from "@/plane-web/components/common/layout/sidebar";
+import { SidebarRoot } from "@/components/common/layout/sidebar";
 // local components
 import { InitiativeSidebarActivityRoot } from "./activity-tab-root";
 import { InitiativeSidebarCommentsRoot } from "./comment-tab-root";

@@ -29,7 +29,7 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 // local components
 import { EpicActivityItem, EpicAdditionalPropertiesActivity } from "./activity/activity-block";
 

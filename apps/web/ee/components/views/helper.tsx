@@ -20,7 +20,7 @@ import { LayoutSelection } from "@/components/issues/issue-layouts/filters";
 import type { TWorkspaceLayoutProps } from "@/components/views/helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useFlag } from "@/plane-web/hooks/store";
-import { WorkspaceGanttRoot } from "../issues/issue-layouts/gantt/root";
+import { WorkspaceTimelineRoot } from "../issues/issue-layouts/timeline/root";
 import { WorkspaceViewBoardLayout } from "../issues/issue-layouts/board/workspace-view-root";
 import { WorkspaceCalendarLayout } from "@/components/issues/issue-layouts/calendar/roots/workspace-view-root";
 
@@ -50,17 +50,17 @@ export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceS
   } = useIssues(EIssuesStoreType.GLOBAL);
 
   // Feature flag checks for each layout
-  const isGanttEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
+  const isTimelineEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
   const isBoardAndCalendarEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CAL_BOARD");
 
   // Configuration mapping layouts to their enabled state
   const LAYOUT_CONFIGS = useMemo(
     () => [
-      { layout: EIssueLayoutTypes.GANTT, enabled: isGanttEnabled },
+      { layout: EIssueLayoutTypes.GANTT, enabled: isTimelineEnabled },
       { layout: EIssueLayoutTypes.KANBAN, enabled: isBoardAndCalendarEnabled },
       { layout: EIssueLayoutTypes.CALENDAR, enabled: isBoardAndCalendarEnabled },
     ],
-    [isGanttEnabled, isBoardAndCalendarEnabled]
+    [isTimelineEnabled, isBoardAndCalendarEnabled]
   );
 
   // Compute enabled layouts
@@ -88,7 +88,7 @@ export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceS
 export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.GANTT:
-      return <WorkspaceGanttRoot {...props} />;
+      return <WorkspaceTimelineRoot {...props} />;
     case EIssueLayoutTypes.KANBAN:
       return <WorkspaceViewBoardLayout {...props} />;
     case EIssueLayoutTypes.CALENDAR:

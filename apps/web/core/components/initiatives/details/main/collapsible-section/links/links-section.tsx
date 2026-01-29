@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web
-import { CollapsibleDetailSection } from "@/plane-web/components/common/layout/main/sections/collapsible-root";
+import { CollapsibleDetailSection } from "@/components/common/layout/main/sections/collapsible-root";
 // local imports
 import { InitiativeLinksActionButton } from "../../info-section/link-button";
 import { InitiativeLinksCollapsibleContent } from "./link-components/content";

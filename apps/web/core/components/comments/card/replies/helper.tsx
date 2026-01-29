@@ -20,7 +20,7 @@ import type { TContextMenuItem } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
-import { useQuickActionsFactory } from "@/plane-web/components/common/quick-actions-factory";
+import { useQuickActionsFactory } from "@/components/common/quick-actions-factory";
 import type { IIssueCommentStoreExtended } from "@/plane-web/store/issue/issue-details/comments/comment.store";
 
 export const useCommentRepliesOperations = (

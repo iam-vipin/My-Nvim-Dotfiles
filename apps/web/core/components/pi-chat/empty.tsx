@@ -25,7 +25,7 @@ import PiLight from "@/app/assets/empty-state/pi/chat-light.webp?url";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { BetaBadge } from "@/plane-web/components/common/beta";
+import { BetaBadge } from "@/components/common/beta";
 import { PiIcon } from "@plane/propel/icons";
 
 export const EmptyPiChat = observer(function EmptyPiChat() {

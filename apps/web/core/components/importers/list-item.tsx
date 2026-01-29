@@ -19,7 +19,7 @@ import { cn } from "@plane/utils";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
 // local imports
-import { BetaBadge } from "@/plane-web/components/common/beta";
+import { BetaBadge } from "@/components/common/beta";
 import type { ImporterProps } from "./list";
 
 type Props = {

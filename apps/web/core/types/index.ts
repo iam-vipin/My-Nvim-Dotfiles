@@ -17,7 +17,7 @@ export * from "./pages";
 export * from "./workspace-worklog.d";
 export * from "./cycles";
 export * from "./pi-chat.d";
-export * from "./gantt-chart";
+export * from "./timeline";
 export * from "./teamspace";
 export * from "./initiative";
 // importers

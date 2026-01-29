@@ -18,7 +18,7 @@ import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { CustomerRequestIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 
 type TProps = {
   addRequest: () => void;

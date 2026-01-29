@@ -16,7 +16,7 @@ import { ScrollArea } from "@plane/propel/scrollarea";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomer } from "@plane/types";
 // plane web imports
-import { SidebarWrapper } from "@/plane-web/components/common/layout/sidebar/sidebar-wrapper";
+import { SidebarWrapper } from "@/components/common/layout/sidebar/sidebar-wrapper";
 import { CustomerAdditionalPropertyValuesUpdate, CustomerDefaultSidebarProperties } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 

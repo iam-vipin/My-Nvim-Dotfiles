@@ -42,7 +42,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
 import { IssueAdditionalPropertyValuesUpdate } from "@/components/work-item-types/values/addition-properties-update";
 // common components

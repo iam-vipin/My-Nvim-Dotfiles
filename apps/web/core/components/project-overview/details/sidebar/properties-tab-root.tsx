@@ -40,7 +40,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
 import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
 import { PriorityDropdown } from "@/plane-web/components/projects/dropdowns/priority-dropdown";

@@ -26,7 +26,7 @@ import allFiltersLightSvg from "@/app/assets/empty-state/project/all-filters-lig
 // components
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
+import { TimelineLayoutLoader } from "@/components/ui/loader/layouts/timeline-layout-loader";
 import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
@@ -48,7 +48,7 @@ function ActiveLoader(props: { layout: EProjectLayouts }) {
     case EProjectLayouts.GALLERY:
       return <ProjectsLoader />;
     case EProjectLayouts.TIMELINE:
-      return <GanttLayoutLoader />;
+      return <TimelineLayoutLoader />;
     default:
       return null;
   }

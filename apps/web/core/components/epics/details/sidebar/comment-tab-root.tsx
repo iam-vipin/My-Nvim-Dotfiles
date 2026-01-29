@@ -26,7 +26,7 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // constants
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 // local components
 import { useCommentOperations } from "./helper";
 

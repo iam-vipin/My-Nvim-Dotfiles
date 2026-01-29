@@ -20,8 +20,8 @@ import { CircularProgressIndicator, ControlLink, Loader } from "@plane/ui";
 import { PlusIcon, ScopeIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 // plane web imports
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
-import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
+import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
+import { SectionWrapper } from "@/components/common/layout/main/common/section-wrapper";
 import { AddScopeButton } from "@/components/initiatives/common/add-scope-button";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiativeAnalyticData } from "@/types/initiative";

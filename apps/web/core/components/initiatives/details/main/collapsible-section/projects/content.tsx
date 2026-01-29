@@ -17,7 +17,7 @@ import React from "react";
 import { getButtonStyling } from "@plane/propel/button";
 import { ProjectIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 import { ProjectList } from "./project-list";
 
 type Props = {

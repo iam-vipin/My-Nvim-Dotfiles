@@ -18,7 +18,7 @@ import { PlaneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // plane web imports
-import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
+import { SubscriptionButton } from "@/components/common/subscription/subscription-button";
 import { PlaneOneEditionBadge } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

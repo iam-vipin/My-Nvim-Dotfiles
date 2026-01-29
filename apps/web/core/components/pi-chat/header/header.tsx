@@ -23,7 +23,7 @@ import { Breadcrumbs, Header as HeaderUI } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppHeader } from "@/components/core/app-header";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { BetaBadge } from "@/plane-web/components/common/beta";
+import { BetaBadge } from "@/components/common/beta";
 import { ModelsDropdown } from "./models-dropdown";
 import { AiSidecarQuickActions } from "./quick-actions";
 import { IconButton } from "@plane/propel/icon-button";

@@ -23,7 +23,7 @@ import { CycleListItemAction } from "@/components/cycles/list/cycle-list-item-ac
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { BetaBadge } from "@/plane-web/components/common/beta";
+import { BetaBadge } from "@/components/common/beta";
 import ProgressDonut from "./progress-donut";
 
 type Props = {

@@ -28,8 +28,8 @@ import { DescriptionInput } from "@/components/editor/rich-text/description-inpu
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { TitleInput } from "@/plane-web/components/common/input/title-input";
-import { MainWrapper } from "@/plane-web/components/common/layout/main/main-wrapper";
+import { TitleInput } from "@/components/common/input/title-input";
+import { MainWrapper } from "@/components/common/layout/main/main-wrapper";
 import { CustomerRequestsRoot, WorkItemsList } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 // services

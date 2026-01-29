@@ -23,7 +23,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent, CollapsibleButton } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 // plane web imports
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 import { useTeamspaces, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
 import type { TStatisticsFilter } from "@/types/teamspace";

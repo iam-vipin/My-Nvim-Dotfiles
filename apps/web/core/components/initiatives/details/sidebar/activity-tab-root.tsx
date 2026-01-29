@@ -21,7 +21,7 @@ import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiativeActivity, TInitiativeActivityComment } from "@/types/initiative";
 // local components

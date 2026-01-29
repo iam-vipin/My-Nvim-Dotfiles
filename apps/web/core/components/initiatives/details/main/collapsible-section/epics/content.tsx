@@ -24,7 +24,7 @@ import type { GroupByColumnTypes } from "@plane/types";
 import { cn } from "@plane/utils";
 import { getGroupByColumns } from "@/components/issues/issue-layouts/utils";
 // plane-web
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { EpicsGroup } from "./epic-list-item/epics-list-group";

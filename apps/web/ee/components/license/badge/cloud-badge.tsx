@@ -21,7 +21,7 @@ import { getSubscriptionName } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
+import { SubscriptionButton } from "@/components/common/subscription/subscription-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const CloudEditionBadge = observer(function CloudEditionBadge() {

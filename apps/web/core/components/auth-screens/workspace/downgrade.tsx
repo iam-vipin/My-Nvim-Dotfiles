@@ -26,7 +26,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
-import { GlobalModals } from "@/plane-web/components/common/modal/global";
+import { GlobalModals } from "@/components/common/modal/global";
 
 export const WorkspaceDowngradePage = observer(function WorkspaceDowngradePage() {
   // router

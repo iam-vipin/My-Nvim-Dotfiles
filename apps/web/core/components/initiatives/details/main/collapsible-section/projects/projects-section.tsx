@@ -17,7 +17,7 @@ import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web
-import { CollapsibleDetailSection } from "@/plane-web/components/common/layout/main/sections/collapsible-root";
+import { CollapsibleDetailSection } from "@/components/common/layout/main/sections/collapsible-root";
 // local components
 import { InitiativeProjectsCollapsibleContent } from "./content";
 

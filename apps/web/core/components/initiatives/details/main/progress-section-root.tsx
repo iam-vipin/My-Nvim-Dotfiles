@@ -19,7 +19,7 @@ import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TStateAnalytics } from "@plane/types";
 // plane web
-import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
+import { ProgressSection } from "@/components/common/layout/main/sections/progress-root";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {

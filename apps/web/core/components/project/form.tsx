@@ -28,7 +28,7 @@ import { renderFormattedDate } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
-import { TimezoneSelect } from "@/components/global";
+import { TimezoneSelect } from "@/components/common/timezone-select";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks

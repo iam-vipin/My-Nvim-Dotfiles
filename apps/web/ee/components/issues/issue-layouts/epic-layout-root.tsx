@@ -19,7 +19,7 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
-import { BaseGanttRoot } from "@/components/issues/issue-layouts/gantt";
+import { BaseTimelineRoot } from "@/components/issues/issue-layouts/timeline";
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
@@ -43,7 +43,7 @@ function ProjectEpicsLayout(props: { activeLayout: EIssueLayoutTypes | undefined
     case EIssueLayoutTypes.CALENDAR:
       return <EpicCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <BaseGanttRoot isEpic />;
+      return <BaseTimelineRoot isEpic />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <EpicSpreadsheetLayout />;
     default:

@@ -21,9 +21,9 @@ import { EUpdateEntityType } from "@plane/types";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
-import { SidebarRoot } from "@/plane-web/components/common/layout/sidebar";
+import { SidebarRoot } from "@/components/common/layout/sidebar";
 // local components
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { UpdatesWrapper } from "@/components/updates/root";
 import { EpicSidebarActivityRoot } from "./activity-tab-root";
 import { EpicSidebarCommentsRoot } from "./comment-tab-root";

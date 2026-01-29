@@ -24,7 +24,7 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 // services
 import { ProjectActivityService } from "@/services/project/project-activity.service";
 

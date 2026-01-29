@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
-import { PaginationBar } from "@/plane-web/components/common/pagination-bar";
+import { PaginationBar } from "@/components/common/pagination-bar";
 // hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 

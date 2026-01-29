@@ -23,7 +23,7 @@ import type { TIssueComment } from "@plane/types";
 import { CommentsWrapper } from "@/components/comments";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiativeActivityComment } from "@/types/initiative";
 import { useCommentOperations } from "./helper";

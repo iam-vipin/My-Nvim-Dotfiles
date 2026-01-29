@@ -27,7 +27,7 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssuePeekOverview } from "../../peek-overview";
 import { ProjectViewCalendarLayout } from "../calendar/roots/project-view-root";
-import { BaseGanttRoot } from "../gantt";
+import { BaseTimelineRoot } from "../timeline";
 import { ProjectViewKanBanLayout } from "../kanban/roots/project-view-root";
 import { ProjectViewListLayout } from "../list/roots/project-view-root";
 import { ProjectViewSpreadsheetLayout } from "../spreadsheet/roots/project-view-root";
@@ -41,7 +41,7 @@ function ProjectViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undef
     case EIssueLayoutTypes.CALENDAR:
       return <ProjectViewCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <BaseGanttRoot viewId={props.viewId} />;
+      return <BaseTimelineRoot viewId={props.viewId} />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <ProjectViewSpreadsheetLayout />;
     default:

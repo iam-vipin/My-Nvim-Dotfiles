@@ -22,7 +22,7 @@ import { EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
-import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
+import { ProgressSection } from "@/components/common/layout/main/sections/progress-root";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type Props = {

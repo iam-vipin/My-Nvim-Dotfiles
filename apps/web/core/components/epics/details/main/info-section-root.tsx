@@ -20,7 +20,7 @@ import { EFileAssetType, EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
-import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";
+import { InfoSection } from "@/components/common/layout/main/sections/info-root";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
 import { useEpicOperations } from "../helper";

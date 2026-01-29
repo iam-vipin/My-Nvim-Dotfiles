@@ -33,7 +33,7 @@ import { DEFAULT_INITIATIVE_LAYOUT } from "@/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
 import InitiativeLayoutLoader from "./initiative-layout-loader";
-import { InitiativeGanttLayout } from "./layouts/gantt";
+import { InitiativeTimelineLayout } from "./layouts/timeline";
 import { InitiativeKanbanLayout } from "./layouts/kanban";
 import { InitiativesListLayout } from "./layouts/list";
 
@@ -60,7 +60,7 @@ export const InitiativesRoot = observer(function InitiativesRoot() {
     () => ({
       list: <InitiativesListLayout />,
       kanban: <InitiativeKanbanLayout />,
-      gantt: <InitiativeGanttLayout />,
+      gantt: <InitiativeTimelineLayout />,
     }),
     []
   );

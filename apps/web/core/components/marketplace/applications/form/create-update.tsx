@@ -33,7 +33,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { AppImageUploadModal } from "@/plane-web/components/common/modal/upload-app-image";
+import { AppImageUploadModal } from "@/components/common/modal/upload-app-image";
 import { GeneratedCredentialsModal } from "@/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/services/workspace.service";

@@ -20,9 +20,9 @@ import { renderFormattedPayloadDate } from "@plane/utils";
 // components
 import type { IBaseTimelineStore as IExtendableTimelineStore } from "@/ce/store/timeline/base-timeline.store";
 import { BaseTimeLineStore as ExtendableTimelineStore } from "@/ce/store/timeline/base-timeline.store";
-import { getDateFromPositionOnGantt } from "@/components/gantt-chart/views";
+import { getDateFromPositionOnGantt } from "@/components/timeline/views";
 // Plane-web
-import type { EDependencyPosition } from "@/constants/gantt-chart";
+import type { EDependencyPosition } from "@/constants/timeline";
 import type { DependencyDraggingDetails, Relation } from "@/types";
 // local
 import type { RootStore } from "../root.store";

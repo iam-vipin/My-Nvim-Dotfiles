@@ -35,7 +35,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web components
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { InitiativeLabelDropdown } from "@/components/initiatives/components/labels/initiative-label-dropdown";
 import { InitiativeStateDropdown } from "@/components/initiatives/components/states/initiative-state-dropdown";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

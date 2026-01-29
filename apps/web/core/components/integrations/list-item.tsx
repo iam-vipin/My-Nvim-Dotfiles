@@ -22,7 +22,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { IntegrationProps } from "@/components/integrations";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { BetaBadge } from "@/plane-web/components/common/beta";
+import { BetaBadge } from "@/components/common/beta";
 
 export type IntegrationListItemProps = {
   provider: IntegrationProps;

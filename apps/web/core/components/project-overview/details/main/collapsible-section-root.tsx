@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { CollapsibleDetailSection } from "@/plane-web/components/common/layout/main/sections/collapsible-root";
+import { CollapsibleDetailSection } from "@/components/common/layout/main/sections/collapsible-root";
 import { useProjectLinks } from "@/plane-web/hooks/store";
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 // local components

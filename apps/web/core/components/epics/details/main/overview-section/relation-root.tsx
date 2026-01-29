@@ -24,7 +24,7 @@ import { RelationActionButton, RelationsCollapsibleContent } from "@/components/
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 
 type Props = {
   workspaceSlug: string;

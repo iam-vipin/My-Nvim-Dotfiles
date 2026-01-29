@@ -18,7 +18,7 @@ import { EProjectLayouts } from "@/types/workspace-project-filters";
 // local imports
 import { ProjectBoardLayout } from "./board";
 import { BaseProjectRoot } from "./gallery/base-gallery-root";
-import { BaseGanttRoot } from "./gantt/base-gantt-root";
+import { BaseTimelineRoot } from "./timeline/base-timeline-root";
 import { BaseListRoot } from "./list/base-list-root";
 
 export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
@@ -32,7 +32,7 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
       case EProjectLayouts.BOARD:
         return <ProjectBoardLayout />;
       case EProjectLayouts.TIMELINE:
-        return <BaseGanttRoot />;
+        return <BaseTimelineRoot />;
       case EProjectLayouts.GALLERY:
         return <BaseProjectRoot />;
       case EProjectLayouts.TABLE:

@@ -23,7 +23,7 @@ import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { LayoutRoot } from "@/plane-web/components/common/layout";
+import { LayoutRoot } from "@/components/common/layout";
 import { CustomerDetailSidebar, CustomerEmptyState, CustomerMainRoot } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 

@@ -19,8 +19,8 @@ import { EmptyStateCompact } from "@plane/propel/empty-state";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
-import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
+import { SectionWrapper } from "@/components/common/layout/main/common/section-wrapper";
+import { ProgressSection } from "@/components/common/layout/main/sections/progress-root";
 import projectService from "@/services/project/project.service";
 
 type Props = {

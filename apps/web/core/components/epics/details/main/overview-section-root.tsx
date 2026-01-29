@@ -21,7 +21,7 @@ import { EIssueServiceType } from "@plane/types";
 // components
 import { RelationActionButton } from "@/components/issues/issue-detail-widgets/relations";
 // plane web
-import { OverviewSection } from "@/plane-web/components/common/layout/main/sections/overview-root";
+import { OverviewSection } from "@/components/common/layout/main/sections/overview-root";
 // local components
 import { useCustomers } from "@/plane-web/hooks/store";
 import { EpicCustomersRoot } from "./overview-section/customers-root";

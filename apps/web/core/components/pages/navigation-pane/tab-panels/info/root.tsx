@@ -57,7 +57,7 @@ export const PageNavigationPaneInfoTabPanel = observer(function PageNavigationPa
   }, [highlightChanges, updateQueryParams, router]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full px-4">
       <div className="flex-1 overflow-y-auto mt-5">
         <PageNavigationPaneInfoTabDocumentInfo page={page} />
         <PageNavigationPaneInfoTabActorsInfo page={page} />

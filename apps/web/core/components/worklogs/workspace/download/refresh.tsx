@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC, MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import { Loader, RefreshCcw } from "lucide-react";
 import { Button } from "@plane/propel/button";
 // plane web constants
@@ -21,10 +21,11 @@ import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
 
 type TWorkspaceWorklogDownloadRefresh = {
   workspaceSlug: string;
+  projectId?: string;
 };
 
 export function WorkspaceWorklogDownloadRefresh(props: TWorkspaceWorklogDownloadRefresh) {
-  const { workspaceSlug } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks
   const { loader, paginationInfo, getWorkspaceWorklogDownloads } = useWorkspaceWorklogDownloads();
 
@@ -36,7 +37,8 @@ export function WorkspaceWorklogDownloadRefresh(props: TWorkspaceWorklogDownload
       await getWorkspaceWorklogDownloads(
         workspaceSlug,
         EWorklogDownloadLoader.MUTATION_LOADER,
-        EWorklogDownloadQueryParamType.CURRENT
+        EWorklogDownloadQueryParamType.CURRENT,
+        projectId
       );
     } catch (error) {
       console.error("Error while refreshing download status", error);

@@ -23,8 +23,8 @@ import { EWorklogLoader, EWorklogQueryParamType } from "@/constants/workspace-wo
 import worklogService from "@/services/workspace-worklog.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IWorklog } from "@/plane-web/store/workspace-worklog";
-import { Worklog } from "@/plane-web/store/workspace-worklog";
+import type { IWorklog } from "@/plane-web/store/worklog";
+import { Worklog } from "@/plane-web/store/worklog";
 // plane web types
 import type {
   TDefaultPaginatedInfo,
@@ -39,7 +39,7 @@ import type {
 type TWorklogLoader = EWorklogLoader | undefined;
 type TWorklogQueryParamType = EWorklogQueryParamType;
 
-export interface IWorkspaceWorklogStore {
+export interface IWorklogStore {
   // constants
   perPage: number;
   // observables
@@ -61,13 +61,15 @@ export interface IWorkspaceWorklogStore {
   // helper actions
   updateFilters: <T extends keyof TWorklogFilter>(workspaceSlug: string, key: T, value: string | string[]) => void;
   setCurrentPaginatedKey: (key: string | undefined) => void;
-  getPreviousWorklogs: (workspaceSlug: string) => Promise<void>;
-  getNextWorklogs: (workspaceSlug: string) => Promise<void>;
+  resetState: (projectId: string | undefined, loader?: TWorklogLoader) => void;
+  getPreviousWorklogs: (workspaceSlug: string, projectId?: string) => Promise<void>;
+  getNextWorklogs: (workspaceSlug: string, projectId?: string) => Promise<void>;
   // actions
-  getWorkspaceWorklogs: (
+  getWorklogs: (
     workspaceSlug: string,
     loader?: EWorklogLoader,
-    paramType?: TWorklogQueryParamType
+    paramType?: TWorklogQueryParamType,
+    projectId?: string
   ) => Promise<TWorklogPaginatedInfo | undefined>;
   getWorklogsByIssueId: (
     workspaceSlug: string,
@@ -89,7 +91,7 @@ export interface IWorkspaceWorklogStore {
   deleteWorklogById: (workspaceSlug: string, projectId: string, issueId: string, worklogId: string) => Promise<void>;
 }
 
-export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
+export class WorklogStore implements IWorklogStore {
   // constants
   perPage = 10;
   // observables
@@ -120,14 +122,35 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
       // helper actions
       updateFilters: action,
       setCurrentPaginatedKey: action,
+      resetState: action,
       // actions
-      getWorkspaceWorklogs: action,
+      getWorklogs: action,
       getWorklogsByIssueId: action,
       getIssueWorklogTotalMinutes: action,
       createWorklog: action,
       deleteWorklogById: action,
     });
   }
+
+  /**
+   * Reset store state when projectId changes
+   * @param { string | undefined } projectId
+   * @param { TWorklogLoader } loader
+   */
+  resetState = (projectId: string | undefined, loader: TWorklogLoader = undefined) => {
+    runInAction(() => {
+      this.loader = loader;
+      this.paginationInfo = undefined;
+      set(this, "worklogs", {});
+      this.setCurrentPaginatedKey(undefined);
+      set(this, "paginatedWorklogIds", {});
+
+      Object.keys(this.filters).forEach((key) => {
+        if (key === "project") set(this.filters, key, projectId ? [projectId] : []);
+        else set(this.filters, key, []);
+      });
+    });
+  };
 
   // computed
   /**
@@ -196,9 +219,10 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
   /**
    * @description generate notification query params
    * @param { TWorklogQueryParamType } paramType
+   * @param { string | undefined } projectId
    * @returns { object }
    */
-  generateNotificationQueryParams = (paramType: TWorklogQueryParamType): TWorklogQueryParams => {
+  generateNotificationQueryParams = (paramType: TWorklogQueryParamType, projectId?: string): TWorklogQueryParams => {
     let queryCursorNext: string = `${this.perPage}:${0}:0`;
     switch (paramType) {
       case EWorklogQueryParamType.INIT:
@@ -219,6 +243,10 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
 
     const filterQueryParams = Object.keys(this.filters).reduce((acc: TWorklogFilterQueryParams, key) => {
       const filterKey = key as keyof TWorklogFilterQueryParams;
+      // Skip project filter when projectId is present (project is already in API endpoint)
+      if (projectId && filterKey === "project") {
+        return acc;
+      }
       const filterValue = this.filters[filterKey];
       if (filterValue && filterValue.length > 0) {
         acc[filterKey] = filterValue.join(",");
@@ -265,7 +293,7 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
     set(this, "worklogs", {});
     this.setCurrentPaginatedKey(undefined);
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.getWorkspaceWorklogs(workspaceSlug, EWorklogLoader.WORKSPACE_PAGINATION_LOADER, EWorklogQueryParamType.INIT);
+    this.getWorklogs(workspaceSlug, EWorklogLoader.WORKSPACE_PAGINATION_LOADER, EWorklogQueryParamType.INIT);
   };
 
   /**
@@ -277,15 +305,17 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
   /**
    * @description get previous worklogs
    * @param { string } workspaceSlug
+   * @param { string | undefined } projectId
    * @returns { void }
    */
-  getPreviousWorklogs = async (workspaceSlug: string): Promise<void> => {
+  getPreviousWorklogs = async (workspaceSlug: string, projectId?: string): Promise<void> => {
     try {
       set(this, "worklogs", {});
-      await this.getWorkspaceWorklogs(
+      await this.getWorklogs(
         workspaceSlug,
         EWorklogLoader.WORKSPACE_PAGINATION_LOADER,
-        EWorklogQueryParamType.PREV
+        EWorklogQueryParamType.PREV,
+        projectId
       );
     } catch (error) {
       console.error("worklog -> getPreviousWorklogs -> error", error);
@@ -296,15 +326,17 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
   /**
    * @description get next worklogs
    * @param { string } workspaceSlug
+   * @param { string | undefined } projectId
    * @returns { void }
    */
-  getNextWorklogs = async (workspaceSlug: string): Promise<void> => {
+  getNextWorklogs = async (workspaceSlug: string, projectId?: string): Promise<void> => {
     try {
       set(this, "worklogs", {});
-      await this.getWorkspaceWorklogs(
+      await this.getWorklogs(
         workspaceSlug,
         EWorklogLoader.WORKSPACE_PAGINATION_LOADER,
-        EWorklogQueryParamType.NEXT
+        EWorklogQueryParamType.NEXT,
+        projectId
       );
     } catch (error) {
       console.error("worklog -> getNextWorklogs -> error", error);
@@ -317,19 +349,26 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
    * @description fetch worklogs for a workspace
    * @param { string } workspaceSlug
    * @param { TWorklogLoader } loader
+   * @param { string | undefined } projectId
    * @returns { Promise<TWorklogPaginatedInfo | undefined> }
    */
-  getWorkspaceWorklogs = async (
+  getWorklogs = async (
     workspaceSlug: string,
     loader: TWorklogLoader = EWorklogLoader.WORKSPACE_INIT_LOADER,
-    paramType: TWorklogQueryParamType = EWorklogQueryParamType.INIT
+    paramType: TWorklogQueryParamType = EWorklogQueryParamType.INIT,
+    projectId: string | undefined = undefined
   ): Promise<TWorklogPaginatedInfo | undefined> => {
     try {
       this.loader = loader;
-      const queryParams = this.generateNotificationQueryParams(paramType);
-      const workspaceWorklogsResponse = await worklogService.fetchWorkspaceWorklogs(workspaceSlug, queryParams);
-      if (workspaceWorklogsResponse) {
-        const { results, ...paginationInfo } = workspaceWorklogsResponse;
+      const queryParams = this.generateNotificationQueryParams(paramType, projectId);
+
+      // Use project API if projectId is provided, otherwise use workspace API
+      const worklogsResponse = projectId
+        ? await worklogService.fetchProjectWorklogs(workspaceSlug, projectId, queryParams)
+        : await worklogService.fetchWorkspaceWorklogs(workspaceSlug, queryParams);
+
+      if (worklogsResponse) {
+        const { results, ...paginationInfo } = worklogsResponse;
 
         runInAction(() => {
           if (results) {
@@ -337,7 +376,7 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
           }
           set(this, "paginationInfo", paginationInfo);
           this.setCurrentPaginatedKey(queryParams.cursor);
-          update(this, "paginatedWorklogIds", (prev) => {
+          update(this, "paginatedWorklogIds", (prev: Record<string, string[]>) => {
             if (results && queryParams.cursor) {
               const workspaceWorklogIds = results.map((log) => log.id);
               return { ...prev, [queryParams.cursor]: workspaceWorklogIds };
@@ -347,9 +386,9 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
           });
         });
       }
-      return workspaceWorklogsResponse;
+      return worklogsResponse;
     } catch (error) {
-      console.error("worklog -> getWorkspaceWorklogs -> error", error);
+      console.error("worklog -> getWorklogs -> error", error);
       throw error;
     } finally {
       runInAction(() => (this.loader = undefined));

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
@@ -33,13 +33,21 @@ import { SettingsHeading } from "@/components/settings/heading";
 type TWorkspaceWorklogRoot = {
   workspaceSlug: string;
   workspaceId: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props: TWorkspaceWorklogRoot) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug, workspaceId, projectId } = props;
   // hooks
-  const { loader, paginationInfo, worklogIdsByWorkspaceId, getWorkspaceWorklogs } = useWorkspaceWorklogs();
+  const { loader, paginationInfo, worklogIdsByWorkspaceId, getWorklogs, resetState } = useWorkspaceWorklogs();
   const { t } = useTranslation();
+
+  // Reset state when projectId changes
+  useEffect(() => {
+    resetState(projectId, EWorklogLoader.WORKSPACE_INIT_LOADER);
+    // cleanup function
+    return () => resetState(projectId);
+  }, [projectId, resetState]);
 
   // derived values
   const workspaceWorklogIds = (workspaceId && worklogIdsByWorkspaceId(workspaceId)) || undefined;
@@ -51,8 +59,8 @@ export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props
       : EWorklogLoader.WORKSPACE_INIT_LOADER;
 
   // fetching workspace worklogs
-  useSWR(workspaceSlug ? `WORKSPACE_WORKLOGS_${workspaceSlug}` : null, () =>
-    workspaceSlug ? getWorkspaceWorklogs(workspaceSlug.toString(), worklogLoader, worklogPagination) : null
+  useSWR(`WORKSPACE_WORKLOGS_${workspaceSlug}_${projectId}`, () =>
+    getWorklogs(workspaceSlug.toString(), worklogLoader, worklogPagination, projectId)
   );
 
   return (
@@ -64,7 +72,7 @@ export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props
         ) : (
           <>
             {/* header section */}
-            <WorkspaceWorklogHeaderRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+            <WorkspaceWorklogHeaderRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} projectId={projectId} />
 
             {/* table section */}
             <div className="space-y-3">
@@ -81,7 +89,7 @@ export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props
               ) : (
                 <WorklogsPaginatedTableRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
               )}
-              <WorkspaceTablePaginationBar workspaceSlug={workspaceSlug} />
+              <WorkspaceTablePaginationBar workspaceSlug={workspaceSlug} projectId={projectId} />
             </div>
           </>
         )}
@@ -89,7 +97,7 @@ export const WorkspaceWorklogRoot = observer(function WorkspaceWorklogRoot(props
 
       {/* download section */}
       <div className="pt-8">
-        <WorkspaceWorklogDownloadRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+        <WorkspaceWorklogDownloadRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} projectId={projectId} />
       </div>
     </main>
   );

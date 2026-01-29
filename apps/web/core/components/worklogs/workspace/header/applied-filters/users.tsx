@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane ui
 import { Avatar } from "@plane/ui";
@@ -27,15 +26,17 @@ import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 type TWorkspaceWorklogAppliedFilterUsers = {
   workspaceSlug: string;
   workspaceId: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogAppliedFilterUsers = observer(function WorkspaceWorklogAppliedFilterUsers(
   props: TWorkspaceWorklogAppliedFilterUsers
 ) {
-  const { workspaceSlug } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks
   const {
     workspace: { getWorkspaceMemberDetails },
+    project: { getProjectMemberDetails },
   } = useMember();
   const { filters, updateFilters } = useWorkspaceWorklogs();
 
@@ -54,7 +55,7 @@ export const WorkspaceWorklogAppliedFilterUsers = observer(function WorkspaceWor
   };
 
   const appliedFiltersData = selectedIds?.map((userId) => {
-    const userDetails = getWorkspaceMemberDetails(userId);
+    const userDetails = projectId ? getProjectMemberDetails(userId, projectId) : getWorkspaceMemberDetails(userId);
     return {
       value: userDetails?.member?.id,
       onClick: selectedIds.length === 1 ? undefined : () => handleSelectedOptions(userDetails?.member?.id),

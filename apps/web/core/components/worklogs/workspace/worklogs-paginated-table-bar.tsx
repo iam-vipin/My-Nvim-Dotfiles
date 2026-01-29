@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { PaginationBar } from "@/components/common/pagination-bar";
@@ -20,19 +19,20 @@ import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 
 type TWorkspaceTablePaginationBar = {
   workspaceSlug: string;
+  projectId?: string;
 };
 
 export const WorkspaceTablePaginationBar = observer(function WorkspaceTablePaginationBar(
   props: TWorkspaceTablePaginationBar
 ) {
-  const { workspaceSlug } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks
   const { perPage, paginationInfo, getPreviousWorklogs, getNextWorklogs } = useWorkspaceWorklogs();
 
   const getPrevDownloads = async () => {
     try {
       if (!workspaceSlug) return;
-      await getPreviousWorklogs(workspaceSlug);
+      await getPreviousWorklogs(workspaceSlug, projectId);
     } catch (error) {
       console.error("Error while showing prev worklogs", error);
     }
@@ -41,7 +41,7 @@ export const WorkspaceTablePaginationBar = observer(function WorkspaceTablePagin
   const getNextDownloads = async () => {
     try {
       if (!workspaceSlug) return;
-      await getNextWorklogs(workspaceSlug);
+      await getNextWorklogs(workspaceSlug, projectId);
     } catch (error) {
       console.error("Error while showing next worklogs", error);
     }

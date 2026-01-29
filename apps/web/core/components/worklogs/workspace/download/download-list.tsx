@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { Table } from "@plane/ui";
@@ -24,18 +23,19 @@ import {
 import { EWorklogDownloadLoader } from "@/constants/workspace-worklog";
 // plane web hooks
 import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
-import type { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
+import type { IWorklogDownload } from "@/plane-web/store/worklog";
 import { useExportColumns } from "./column";
 
 type TWorkspaceWorklogDownloadList = {
   workspaceSlug: string;
   workspaceId: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogDownloadList = observer(function WorkspaceWorklogDownloadList(
   props: TWorkspaceWorklogDownloadList
 ) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug, workspaceId, projectId } = props;
   // hooks
   const { loader, orderedWorklogDownloads } = useWorkspaceWorklogDownloads();
   const columns = useExportColumns();
@@ -66,7 +66,7 @@ export const WorkspaceWorklogDownloadList = observer(function WorkspaceWorklogDo
       )}
 
       <div className="pt-3">
-        <WorkspaceWorklogDownloadPaginationBar workspaceSlug={workspaceSlug} />
+        <WorkspaceWorklogDownloadPaginationBar workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
     </div>
   );

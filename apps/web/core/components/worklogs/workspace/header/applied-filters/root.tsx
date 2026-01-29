@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import {
@@ -25,23 +24,29 @@ import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 type TWorkspaceWorklogAppliedFilterRoot = {
   workspaceSlug: string;
   workspaceId: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogAppliedFilterRoot = observer(function WorkspaceWorklogAppliedFilterRoot(
   props: TWorkspaceWorklogAppliedFilterRoot
 ) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug, workspaceId, projectId } = props;
   // hooks
   const { filters } = useWorkspaceWorklogs();
 
+  const { project, ...restFilters } = filters;
   // derived values
-  const isAppliedFilters = Object.values(filters).some((filter) => filter.length > 0);
+  const isAppliedFilters = Object.values(projectId ? restFilters : filters).some((filter) => filter.length > 0);
 
   if (!isAppliedFilters) return <></>;
   return (
     <div className="relative flex items-center flex-wrap gap-2 rounded-sm p-2 bg-layer-1">
-      <WorkspaceWorklogAppliedFilterUsers workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
-      <WorkspaceWorklogAppliedFilterProjects workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+      <WorkspaceWorklogAppliedFilterUsers
+        workspaceSlug={workspaceSlug}
+        workspaceId={workspaceId}
+        projectId={projectId}
+      />
+      {!projectId && <WorkspaceWorklogAppliedFilterProjects workspaceSlug={workspaceSlug} workspaceId={workspaceId} />}
       <WorkspaceWorklogAppliedFilterDateRange workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
     </div>
   );

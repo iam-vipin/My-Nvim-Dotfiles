@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import {
@@ -23,20 +22,25 @@ import {
 type TWorkspaceWorklogHeaderRoot = {
   workspaceSlug: string;
   workspaceId: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogHeaderRoot = observer(function WorkspaceWorklogHeaderRoot(
   props: TWorkspaceWorklogHeaderRoot
 ) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug, workspaceId, projectId } = props;
 
   return (
     <div className="pb-4 space-y-4 border-b border-subtle">
       <div className="relative flex justify-between items-center gap-2">
-        <WorkspaceWorklogFilterRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+        <WorkspaceWorklogFilterRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} projectId={projectId} />
         <WorkspaceWorklogDownloadButton workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
       </div>
-      <WorkspaceWorklogAppliedFilterRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+      <WorkspaceWorklogAppliedFilterRoot
+        workspaceSlug={workspaceSlug}
+        workspaceId={workspaceId}
+        projectId={projectId}
+      />
     </div>
   );
 });

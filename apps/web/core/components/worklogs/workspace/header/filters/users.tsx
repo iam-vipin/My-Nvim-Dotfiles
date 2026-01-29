@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
@@ -24,33 +23,40 @@ import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 type TWorkspaceWorklogFilterUsers = {
   workspaceSlug: string;
   workspaceId: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogFilterUsers = observer(function WorkspaceWorklogFilterUsers(
   props: TWorkspaceWorklogFilterUsers
 ) {
-  const { workspaceSlug } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks
   const {
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+    project: { getProjectMemberDetails, getProjectMemberIds },
   } = useMember();
   const { filters, updateFilters } = useWorkspaceWorklogs();
 
   // derived values
   const selectedIds = filters.logged_by;
+  const memberIds = projectId ? getProjectMemberIds(projectId, false) : workspaceMemberIds;
 
   const dropdownLabel = () =>
     selectedIds.length === 1
-      ? workspaceMemberIds
+      ? memberIds
           ?.filter((p) => selectedIds.includes(p))
-          .map((p) => getWorkspaceMemberDetails(p)?.member?.display_name)
+          .map((p) =>
+            projectId
+              ? getProjectMemberDetails(p, projectId)?.member?.display_name
+              : getWorkspaceMemberDetails(p)?.member?.display_name
+          )
           .join(", ")
       : selectedIds.length > 1
         ? `${selectedIds?.length} Users`
         : "Users";
 
-  const dropdownOptions = workspaceMemberIds?.map((userId) => {
-    const userDetails = getWorkspaceMemberDetails(userId);
+  const dropdownOptions = memberIds?.map((userId) => {
+    const userDetails = projectId ? getProjectMemberDetails(userId, projectId) : getWorkspaceMemberDetails(userId);
     return {
       value: userDetails?.member?.id,
       query: `${userDetails?.member?.first_name} ${userDetails?.member?.last_name} ${userDetails?.member?.display_name} `,

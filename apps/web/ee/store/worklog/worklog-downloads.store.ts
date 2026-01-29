@@ -22,8 +22,8 @@ import { EWorklogDownloadLoader, EWorklogDownloadQueryParamType } from "@/consta
 import worklogService from "@/services/workspace-worklog.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
-import { WorklogDownload } from "@/plane-web/store/workspace-worklog";
+import type { IWorklogDownload } from "@/plane-web/store/worklog";
+import { WorklogDownload } from "@/plane-web/store/worklog";
 // plane web types
 import type {
   TDefaultPaginatedInfo,
@@ -37,7 +37,7 @@ import type {
 type TWorklogLoader = EWorklogDownloadLoader | undefined;
 type TWorklogQueryParamType = EWorklogDownloadQueryParamType;
 
-export interface IWorkspaceWorklogDownloadStore {
+export interface IWorklogDownloadStore {
   // constants
   perPage: number;
   // observables
@@ -46,6 +46,7 @@ export interface IWorkspaceWorklogDownloadStore {
   worklogDownloads: Record<string, IWorklogDownload>;
   currentPaginatedKey: string | undefined;
   paginatedWorklogDownloadIds: Record<string, string[]>;
+  currentProjectId: string | undefined;
   // computed functions
   worklogDownloadIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
   orderedWorklogDownloads: (workspaceId: string) => IWorklogDownload[];
@@ -53,18 +54,20 @@ export interface IWorkspaceWorklogDownloadStore {
   mutateWorklogDownloads: (worklogDownloads: TWorklogDownload[]) => void;
   // helper actions
   setCurrentPaginatedKey: (key: string | undefined) => void;
-  getPreviousWorklogDownloads: (workspaceSlug: string) => Promise<void>;
-  getNextWorklogDownloads: (workspaceSlug: string) => Promise<void>;
+  resetState: (loader?: TWorklogLoader) => void;
+  getPreviousWorklogDownloads: (workspaceSlug: string, projectId?: string) => Promise<void>;
+  getNextWorklogDownloads: (workspaceSlug: string, projectId?: string) => Promise<void>;
   // actions
   getWorkspaceWorklogDownloads: (
     workspaceSlug: string,
     loader?: EWorklogDownloadLoader,
-    paramType?: TWorklogQueryParamType
+    paramType?: TWorklogQueryParamType,
+    projectId?: string
   ) => Promise<TWorklogDownloadPaginatedInfo | undefined>;
   createWorklogDownload: (workspaceSlug: string, payload: Partial<TWorklog>) => Promise<TWorklogDownload | undefined>;
 }
 
-export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadStore {
+export class WorklogDownloadStore implements IWorklogDownloadStore {
   // constants
   perPage = 10;
   // observables
@@ -73,6 +76,9 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
   worklogDownloads: Record<string, IWorklogDownload> = {};
   currentPaginatedKey: string | undefined = undefined;
   paginatedWorklogDownloadIds: Record<string, string[]> = {};
+  currentProjectId: string | undefined = undefined;
+  // disposers for reactions
+  private disposers: (() => void)[] = [];
 
   constructor(protected store: RootStore) {
     makeObservable(this, {
@@ -81,11 +87,27 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
       paginationInfo: observable,
       worklogDownloads: observable,
       currentPaginatedKey: observable.ref,
+      currentProjectId: observable.ref,
+      resetState: action,
       // actions
       getWorkspaceWorklogDownloads: action,
       createWorklogDownload: action,
     });
   }
+
+  /**
+   * Reset store state
+   * @param { TWorklogLoader } loader
+   */
+  resetState = (loader: TWorklogLoader = undefined) => {
+    runInAction(() => {
+      this.loader = loader;
+      this.paginationInfo = undefined;
+      set(this, "worklogDownloads", {});
+      this.setCurrentPaginatedKey(undefined);
+      set(this, "paginatedWorklogDownloadIds", {});
+    });
+  };
 
   orderedWorklogDownloads = computedFn((workspaceId: string) =>
     orderBy(Object.values(this.worklogDownloads || []), (download) => convertToEpoch(download.created_at), [
@@ -168,15 +190,17 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
   /**
    * @description get previous worklog downloads
    * @param { string } workspaceSlug
+   * @param { string | undefined } projectId
    * @returns { void }
    */
-  getPreviousWorklogDownloads = async (workspaceSlug: string): Promise<void> => {
+  getPreviousWorklogDownloads = async (workspaceSlug: string, projectId?: string): Promise<void> => {
     try {
       set(this, "worklogDownloads", {});
       await this.getWorkspaceWorklogDownloads(
         workspaceSlug,
         EWorklogDownloadLoader.PAGINATION_LOADER,
-        EWorklogDownloadQueryParamType.PREV
+        EWorklogDownloadQueryParamType.PREV,
+        projectId
       );
     } catch (error) {
       console.error("worklog downloads -> getPreviousWorklogDownloads -> error", error);
@@ -187,15 +211,17 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
   /**
    * @description get next worklog downloads
    * @param { string } workspaceSlug
+   * @param { string | undefined } projectId
    * @returns { void }
    */
-  getNextWorklogDownloads = async (workspaceSlug: string): Promise<void> => {
+  getNextWorklogDownloads = async (workspaceSlug: string, projectId?: string): Promise<void> => {
     try {
       set(this, "worklogDownloads", {});
       await this.getWorkspaceWorklogDownloads(
         workspaceSlug,
         EWorklogDownloadLoader.PAGINATION_LOADER,
-        EWorklogDownloadQueryParamType.NEXT
+        EWorklogDownloadQueryParamType.NEXT,
+        projectId
       );
     } catch (error) {
       console.error("worklog downloads -> getNextWorklogDownloads -> error", error);
@@ -208,17 +234,23 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
    * @description fetch worklogs for a workspace
    * @param { string } workspaceSlug
    * @param { TWorklogLoader } loader
+   * @param { string | undefined } projectId
    * @returns { Promise<TWorklogDownloadPaginatedInfo | undefined> }
    */
   getWorkspaceWorklogDownloads = async (
     workspaceSlug: string,
     loader: TWorklogLoader = EWorklogDownloadLoader.INIT_LOADER,
-    paramType: TWorklogQueryParamType = EWorklogDownloadQueryParamType.INIT
+    paramType: TWorklogQueryParamType = EWorklogDownloadQueryParamType.INIT,
+    projectId: string | undefined = undefined
   ): Promise<TWorklogDownloadPaginatedInfo | undefined> => {
     try {
       this.loader = loader;
       const queryParams = this.generateNotificationQueryParams(paramType);
-      const workspaceWorklogsResponse = await worklogService.fetchWorkspaceWorklogDownloads(workspaceSlug, queryParams);
+      // Use project API if projectId is provided, otherwise use workspace API
+      const workspaceWorklogsResponse = projectId
+        ? await worklogService.fetchProjectWorklogDownloads(workspaceSlug, projectId, queryParams)
+        : await worklogService.fetchWorkspaceWorklogDownloads(workspaceSlug, queryParams);
+
       if (workspaceWorklogsResponse) {
         const { results, ...paginationInfo } = workspaceWorklogsResponse;
         runInAction(() => {
@@ -227,7 +259,7 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
           }
           set(this, "paginationInfo", paginationInfo);
           this.setCurrentPaginatedKey(queryParams.cursor);
-          update(this, "paginatedWorklogDownloadIds", (prev) => {
+          update(this, "paginatedWorklogDownloadIds", (prev: Record<string, string[]>) => {
             if (results && queryParams.cursor) {
               const workspaceWorklogDownloadIds = results.map((downloadLog) => downloadLog.id);
               return { ...prev, [queryParams.cursor]: workspaceWorklogDownloadIds };

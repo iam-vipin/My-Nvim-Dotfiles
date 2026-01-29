@@ -191,20 +191,24 @@ def generate_xlsx(header, workspace_id, worklogs, files):
 
 
 @shared_task
-def worklogs_export_task(provider, workspace_id, user_id, token_id, slug, filters):
+def worklogs_export_task(provider, workspace_id, user_id, token_id, slug, filters, project_id=None):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
 
+        worklogs = IssueWorkLog.objects.filter(
+            project__project_projectmember__member_id=user_id,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+        )
+
+        if project_id:
+            worklogs = worklogs.objects.filter(project_id=project_id)
+
         worklogs = (
-            IssueWorkLog.objects.filter(
-                project__project_projectmember__member_id=user_id,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-                workspace__slug=slug,
-            )
-            .filter(**filters)
+            worklogs.filter(**filters)
             .order_by("created_at")
             .select_related("logged_by", "issue", "project", "workspace")
             .values(

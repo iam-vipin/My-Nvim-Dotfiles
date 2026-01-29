@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { PaginationBar } from "@/components/common/pagination-bar";
@@ -20,12 +19,13 @@ import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
 
 type TWorkspaceWorklogDownloadPaginationBar = {
   workspaceSlug: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogDownloadPaginationBar = observer(function WorkspaceWorklogDownloadPaginationBar(
   props: TWorkspaceWorklogDownloadPaginationBar
 ) {
-  const { workspaceSlug } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks
   const { perPage, paginationInfo, getPreviousWorklogDownloads, getNextWorklogDownloads } =
     useWorkspaceWorklogDownloads();
@@ -33,7 +33,7 @@ export const WorkspaceWorklogDownloadPaginationBar = observer(function Workspace
   const getPrevDownloads = async () => {
     try {
       if (!workspaceSlug) return;
-      await getPreviousWorklogDownloads(workspaceSlug);
+      await getPreviousWorklogDownloads(workspaceSlug, projectId);
     } catch (error) {
       console.error("Error while showing prev download", error);
     }
@@ -42,7 +42,7 @@ export const WorkspaceWorklogDownloadPaginationBar = observer(function Workspace
   const getNextDownloads = async () => {
     try {
       if (!workspaceSlug) return;
-      await getNextWorklogDownloads(workspaceSlug);
+      await getNextWorklogDownloads(workspaceSlug, projectId);
     } catch (error) {
       console.error("Error while showing next download", error);
     }

@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import {
@@ -23,17 +22,18 @@ import {
 type TWorkspaceWorklogFilterRoot = {
   workspaceSlug: string;
   workspaceId: string;
+  projectId?: string;
 };
 
 export const WorkspaceWorklogFilterRoot = observer(function WorkspaceWorklogFilterRoot(
   props: TWorkspaceWorklogFilterRoot
 ) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug, workspaceId, projectId } = props;
 
   return (
     <div className="relative flex items-center gap-2">
-      <WorkspaceWorklogFilterUsers workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
-      <WorkspaceWorklogFilterProjects workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
+      <WorkspaceWorklogFilterUsers workspaceSlug={workspaceSlug} workspaceId={workspaceId} projectId={projectId} />
+      {!projectId && <WorkspaceWorklogFilterProjects workspaceSlug={workspaceSlug} workspaceId={workspaceId} />}
       <WorkspaceWorklogFilterDateRange workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
     </div>
   );

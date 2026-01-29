@@ -41,8 +41,8 @@ import type { IWorkspaceMembersActivityStore } from "@/plane-web/store/workspace
 import { WorkspaceMembersActivityStore } from "@/plane-web/store/workspace-members-activity.store";
 import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
 import { ProjectFilterStore, WorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
-import type { IWorkspaceWorklogStore, IWorkspaceWorklogDownloadStore } from "@/plane-web/store/workspace-worklog";
-import { WorkspaceWorklogStore, WorkspaceWorklogDownloadStore } from "@/plane-web/store/workspace-worklog";
+import type { IWorklogStore, IWorklogDownloadStore } from "@/plane-web/store/worklog";
+import { WorklogStore, WorklogDownloadStore } from "@/plane-web/store/worklog";
 import type { IProjectMembersActivityStore } from "@/plane-web/store/project-members-activity.store";
 import { ProjectMembersActivityStore } from "@/plane-web/store/project-members-activity.store";
 // store
@@ -145,8 +145,8 @@ export class RootStore extends CoreRootStore {
   publishPage: IPublishPageStore;
   workspaceSubscription: IWorkspaceSubscriptionStore;
   workspaceMembersActivityStore: IWorkspaceMembersActivityStore;
-  workspaceWorklogs: IWorkspaceWorklogStore;
-  workspaceWorklogDownloads: IWorkspaceWorklogDownloadStore;
+  workspaceWorklogs: IWorklogStore;
+  workspaceWorklogDownloads: IWorklogDownloadStore;
   featureFlags: IFeatureFlagsStore;
   selfHostedSubscription: ISelfHostedSubscriptionStore;
   workspaceFeatures: IWorkspaceFeatureStore;
@@ -214,8 +214,8 @@ export class RootStore extends CoreRootStore {
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
     this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this);
-    this.workspaceWorklogs = new WorkspaceWorklogStore(this);
-    this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
+    this.workspaceWorklogs = new WorklogStore(this);
+    this.workspaceWorklogDownloads = new WorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore(this);
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
@@ -286,8 +286,8 @@ export class RootStore extends CoreRootStore {
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
     this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this);
-    this.workspaceWorklogs = new WorkspaceWorklogStore(this);
-    this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
+    this.workspaceWorklogs = new WorklogStore(this);
+    this.workspaceWorklogDownloads = new WorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore(this);
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceFeatures = new WorkspaceFeatureStore(this);

@@ -9,40 +9,35 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-# Django imports
-from django.views.decorators.gzip import gzip_page
-from django.utils.decorators import method_decorator
-
 # Third Party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import ExporterHistory, Workspace, Project
+from plane.db.models import ExporterHistory, Workspace
 from plane.ee.models import IssueWorkLog
 from plane.ee.views.base import BaseAPIView
 from plane.utils.issue_filters import issue_filters
-from plane.ee.serializers import IssueWorkLogSerializer, ExporterHistorySerializer
-from plane.app.permissions import WorkSpaceAdminPermission
-from plane.ee.bgtasks.worklogs_export_task import worklogs_export_task
+from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.ee.serializers import IssueWorkLogSerializer, ExporterHistorySerializer
+from plane.ee.bgtasks.worklogs_export_task import worklogs_export_task
 
 
-class WorkspaceWorkLogsEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission]
-
+class ProjectWorkLogsEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @method_decorator(gzip_page)
-    def get(self, request, slug):
-        filters = issue_filters(request.query_params, "GET")
+    def get(self, request, slug, project_id):
+        query_params = request.query_params.copy()
+        if "project" in query_params:
+            del query_params["project"]
+
+        filters = issue_filters(query_params, "GET")
         issue_worklogs = (
-            IssueWorkLog.objects.filter(
-                project__archived_at__isnull=True,
-                workspace__slug=slug,
-            )
+            IssueWorkLog.objects.filter(project__archived_at__isnull=True, workspace__slug=slug, project_id=project_id)
             .order_by("created_at")
-            .select_related("logged_by", "issue", "project", "workspace")
+            .select_related("logged_by", "issue", "workspace")
             .accessible_to(request.user.id, slug)
         )
 
@@ -57,22 +52,33 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
         )
 
 
-class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission]
-
+class ProjectExportWorkLogsEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    def post(self, request, slug):
+    def get(self, request, slug, project_id):
+        exporter_history = ExporterHistory.objects.filter(
+            workspace__slug=slug, type="issue_worklogs", project__contains=[project_id]
+        ).select_related("workspace", "initiated_by")
+
+        return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
+            request=request,
+            queryset=exporter_history,
+            on_results=lambda exporter_history: ExporterHistorySerializer(exporter_history, many=True).data,
+        )
+
+    @allow_permission([ROLE.ADMIN])
+    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    def post(self, request, slug, project_id):
+        query_params = request.query_params.copy()
+        if "project" in query_params:
+            del query_params["project"]
+
         provider = request.data.get("provider", False)
         filters = request.data.get("filters", {False})
-        projects = request.query_params.get("project", None)
-        filterParams = issue_filters(request.query_params, "GET")
-        workspace = Workspace.objects.filter(slug=slug).first()
 
-        project_list = (
-            projects.split(",")
-            if projects
-            else list(Project.objects.filter(workspace__slug=slug).values_list("id", flat=True).distinct())
-        )
+        filterParams = issue_filters(query_params, "GET")
+        workspace = Workspace.objects.filter(slug=slug).first()
 
         if provider in ["csv", "xlsx"]:
             exporter = ExporterHistory.objects.create(
@@ -81,7 +87,7 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
                 provider=provider,
                 filters=filters,
                 type="issue_worklogs",
-                project=project_list,
+                project=[project_id],
             )
             worklogs_export_task.delay(
                 provider=exporter.provider,
@@ -90,6 +96,7 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
                 token_id=exporter.token,
                 slug=slug,
                 filters=filterParams,
+                project_id=project_id,
             )
             serializer = ExporterHistorySerializer(exporter)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -98,16 +105,3 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
                 {"error": f"Provider '{provider}' not found."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_worklogs").select_related(
-            "workspace", "initiated_by"
-        )
-
-        return self.paginate(
-            order_by=request.GET.get("order_by", "-created_at"),
-            request=request,
-            queryset=exporter_history,
-            on_results=lambda exporter_history: ExporterHistorySerializer(exporter_history, many=True).data,
-        )

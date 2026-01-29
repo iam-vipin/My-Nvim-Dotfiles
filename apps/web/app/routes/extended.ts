@@ -546,6 +546,11 @@ export const enterpriseRoutes: RouteConfigEntry[] = [
               ":workspaceSlug/settings/projects/:projectId/workflows",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
             ),
+            // Project Worklogs
+            route(
+              ":workspaceSlug/settings/projects/:projectId/worklogs",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/worklogs/page.tsx"
+            ),
             // Project Features - Time Tracking
             route(
               ":workspaceSlug/settings/projects/:projectId/features/time-tracking",

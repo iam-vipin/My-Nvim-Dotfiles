@@ -17,7 +17,7 @@ import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web types
-import type { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
+import type { IWorklogDownload } from "@/plane-web/store/worklog";
 
 type RowData = IWorklogDownload;
 const checkExpiry = (inputDateString: string) => {

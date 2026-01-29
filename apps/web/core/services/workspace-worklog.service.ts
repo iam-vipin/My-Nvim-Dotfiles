@@ -32,6 +32,26 @@ export class WorklogService extends APIService {
   }
 
   /**
+   * @description fetching project worklogs
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @param { TWorklogQueryParams } params
+   * @returns { TWorklogPaginatedInfo | undefined }
+   */
+  async fetchProjectWorklogs(
+    workspaceSlug: string,
+    projectId: string,
+    params: TWorklogQueryParams
+  ): Promise<TWorklogPaginatedInfo | undefined> {
+    try {
+      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/worklogs/`, { params });
+      return data || undefined;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * @description fetching workspace worklogs
    * @param { string } workspaceSlug
    * @param { TWorklogQueryParams } params
@@ -158,6 +178,28 @@ export class WorklogService extends APIService {
       const { data } = await this.delete(
         `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`
       );
+      return data || undefined;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * @description fetching project worklog downloads
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @param { string } params
+   * @returns { TWorklogDownloadPaginatedInfo | undefined }
+   */
+  async fetchProjectWorklogDownloads(
+    workspaceSlug: string,
+    projectId: string,
+    params: TWorklogQueryParams
+  ): Promise<TWorklogDownloadPaginatedInfo | undefined> {
+    try {
+      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/export-worklogs/`, {
+        params,
+      });
       return data || undefined;
     } catch (error) {
       throw error;

@@ -28,7 +28,6 @@ type TBlockMathContainerProps = TMathComponentProps & {
 };
 
 export function BlockMathContainer({
-  onClick,
   selected,
   editor,
   children,
@@ -61,7 +60,6 @@ export function BlockMathContainer({
     <div
       className={cn(baseClasses, variantClasses[variant], className)}
       style={borderColor ? { borderColor } : undefined}
-      onMouseDown={onClick}
       {...(isEditable && { role: "button" })}
     >
       {children}

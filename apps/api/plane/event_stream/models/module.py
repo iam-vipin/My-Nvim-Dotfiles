@@ -27,7 +27,7 @@ class ModuleIssueProxy(ModuleIssue):
                         INSERT INTO outbox (event_id, event_type, entity_type, entity_id, payload, workspace_id, project_id, created_at, initiator_id, initiator_type)
                         VALUES (
                             gen_random_uuid(),
-                            'issue.module.added',
+                            'workitem.module.added',
                             'module_issue',
                             NEW.issue_id,
                             jsonb_build_object('data', row_to_json(NEW), 'previous_attributes', '{}'),
@@ -62,7 +62,7 @@ class ModuleIssueProxy(ModuleIssue):
                             INSERT INTO outbox (event_id, event_type, entity_type, entity_id, payload, workspace_id, project_id, created_at, initiator_id, initiator_type)
                             VALUES (
                                 gen_random_uuid(),
-                                'issue.module.removed',
+                                'workitem.module.removed',
                                 'module_issue',
                                 OLD.issue_id,
                                 jsonb_build_object('data', '{}', 'previous_attributes', row_to_json(OLD)),
@@ -78,7 +78,7 @@ class ModuleIssueProxy(ModuleIssue):
                             INSERT INTO outbox (event_id, event_type, entity_type, entity_id, payload, workspace_id, project_id, created_at, initiator_id, initiator_type)
                             VALUES (
                                 gen_random_uuid(),
-                                'issue.module.moved',
+                                'workitem.module.moved',
                                 'module_issue',
                                 NEW.issue_id,
                                 jsonb_build_object('data', row_to_json(NEW), 'previous_attributes', row_to_json(OLD)),

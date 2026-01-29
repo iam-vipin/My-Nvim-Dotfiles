@@ -12,7 +12,6 @@
 from rest_framework import serializers
 
 from plane.api.serializers.base import BaseSerializer
-from plane.db.models import Issue
 from plane.ee.models import Milestone, MilestoneIssue
 
 

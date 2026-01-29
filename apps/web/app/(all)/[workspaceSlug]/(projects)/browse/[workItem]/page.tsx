@@ -116,7 +116,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
 
   useWorkItemDetailRevalidation({
     workItemId,
-    entityType: workItemDetail?.is_epic ? "epic" : "issue",
+    entityType: workItemDetail?.is_epic ? "epic" : "workitem",
     mutateFn: {
       detail: mutateWorkItemDetail,
       comments: mutateWorkItemComments,

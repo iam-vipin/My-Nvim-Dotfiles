@@ -222,8 +222,6 @@ ATTRIBUTES = {
         "rowspan",
         "colwidth",
         "background",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "td": {
@@ -233,8 +231,6 @@ ATTRIBUTES = {
         "background",
         "textColor",
         "textcolor",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "tr": {"background", "textColor", "textcolor", "style"},

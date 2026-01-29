@@ -202,7 +202,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     if (workspaceSlug) {
       void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
         workspaceSlug.toString(),
-        "view_created"
+        "integration_linked"
       );
     }
     return response;

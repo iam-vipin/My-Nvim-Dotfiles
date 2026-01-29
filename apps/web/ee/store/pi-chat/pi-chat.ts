@@ -387,7 +387,7 @@ export class PiChatStore implements IPiChatStore {
     if (workspaceSlug) {
       void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
         workspaceSlug.toString(),
-        "view_created"
+        "ai_chat_tried"
       );
     }
 

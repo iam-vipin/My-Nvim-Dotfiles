@@ -69,7 +69,7 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
       const response = await connectWorkspaceConnection();
       // Auto-complete getting started checklist
       if (workspaceSlug) {
-        void updateChecklistIfNotDoneAlready(workspaceSlug.toString(), "view_created");
+        void updateChecklistIfNotDoneAlready(workspaceSlug.toString(), "integration_linked");
       }
       if (response) window.open(response, "_self");
     } catch (error) {

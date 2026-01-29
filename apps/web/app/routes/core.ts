@@ -54,6 +54,9 @@ export const coreRoutes: RouteConfigEntry[] = [
   // ALL APP ROUTES
   // ========================================================================
   layout("./(all)/layout.tsx", [
+    // Work Items - New
+    route("work-items/new", "./(all)/work-items/new/page.tsx"),
+
     // ======================================================================
     // WORKSPACE-SCOPED ROUTES
     // ======================================================================

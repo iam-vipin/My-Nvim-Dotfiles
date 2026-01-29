@@ -23,6 +23,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -94,6 +95,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     useIssueModal();
   const { getProjectByIdentifier } = useProject();
   const { getIssueTypeById } = useIssueTypes();
+  const { updateWorkItemModalDataFromQueryParams } = useCommandPalette();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -172,6 +174,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     setChangesMade(null);
     onClose();
     handleDuplicateIssueModal(false);
+    updateWorkItemModalDataFromQueryParams(null);
   };
 
   const handleCreateIssue = async (
@@ -434,8 +437,8 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   const commonIssueModalProps: IssueFormProps = {
     issueTitleRef: issueTitleRef,
     data: {
-      ...data,
       description_html: description,
+      ...data,
       cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
       module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
     },

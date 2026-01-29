@@ -11,14 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { EIssuesStoreType, TIssue } from "@plane/types";
+import { parseQueryParamsToFormData } from "@plane/utils";
 // plane web imports
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { CreateUpdateIssueModalBase } from "./base";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
+import { useMember } from "@/hooks/store/use-member";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
@@ -44,24 +49,73 @@ export interface IssuesModalProps {
   showActionItemsOnUpdate?: boolean;
 }
 
-export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal(props: IssuesModalProps) {
+export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal({ data, ...rest }: IssuesModalProps) {
   // router params
   const { cycleId, moduleId } = useParams();
+  // store hooks
+  const { workItemModalDataFromQueryParams } = useCommandPalette();
+  const { getPartialProjectById } = useProject();
+  const { data: currentUser, projectsWithCreatePermissions } = useUser();
+  const { memberMap } = useMember();
   // derived values
-  const dataForPreload = {
-    ...props.data,
-    cycle_id: props.data?.cycle_id ? props.data?.cycle_id : cycleId ? cycleId.toString() : null,
-    module_ids: props.data?.module_ids ? props.data?.module_ids : moduleId ? [moduleId.toString()] : null,
-  };
+  const dataFromQueryParams: Partial<TIssue> = useMemo(() => {
+    const params = workItemModalDataFromQueryParams?.params;
+    if (!currentUser || !params || Object.keys(params).length === 0) return {};
+    const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
+    const projectsList = (rest.allowedProjectIds ?? projectIdsWithCreatePermissions).map((id) => ({
+      id,
+      identifier: getPartialProjectById(id)?.identifier ?? "",
+    }));
+    const usersList = Object.values(memberMap).map((member) => ({
+      id: member.id,
+      display_name: member.display_name,
+    }));
 
-  if (!props.isOpen) return null;
+    try {
+      const parsedData = parseQueryParamsToFormData({
+        queryParams: params,
+        projects: projectsList,
+        users: usersList,
+        currentUserId: currentUser.id,
+      });
+      return parsedData;
+    } catch {
+      console.error("Failed to parse query params to form data in work item create modal");
+      return {};
+    }
+  }, [
+    currentUser,
+    getPartialProjectById,
+    memberMap,
+    projectsWithCreatePermissions,
+    rest.allowedProjectIds,
+    workItemModalDataFromQueryParams,
+  ]);
+  const dataForPreload: Partial<TIssue> = useMemo(
+    () => ({
+      ...data,
+      ...dataFromQueryParams,
+      cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
+      module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
+    }),
+    [cycleId, data, dataFromQueryParams, moduleId]
+  );
+
+  if (!rest.isOpen) return null;
+
   return (
     <IssueModalProvider
-      templateId={props.templateId}
+      templateId={rest.templateId}
       dataForPreload={dataForPreload}
-      allowedProjectIds={props.allowedProjectIds}
+      allowedProjectIds={rest.allowedProjectIds}
     >
-      <CreateUpdateIssueModalBase {...props} />
+      <CreateUpdateIssueModalBase
+        data={{
+          ...data,
+          ...dataFromQueryParams,
+        }}
+        {...rest}
+      />
     </IssueModalProvider>
   );
 });

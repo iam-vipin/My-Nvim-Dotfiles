@@ -53,6 +53,10 @@ export const TemplateCollapsibleWrapper = observer(function TemplateCollapsibleW
   // plane hooks
   const { t } = useTranslation();
 
+  const handleEventPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <Collapsible
       open={isOpen}
@@ -91,7 +95,7 @@ export const TemplateCollapsibleWrapper = observer(function TemplateCollapsibleW
                 </div>
               )}
             </div>
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0" onClick={handleEventPropagation}>
               {typeof actionElement === "function" ? actionElement({ isOpen, setIsOpen }) : actionElement}
             </div>
           </div>

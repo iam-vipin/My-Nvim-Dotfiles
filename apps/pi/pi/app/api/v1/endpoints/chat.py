@@ -828,6 +828,7 @@ async def get_chat_history_object(
                     "feedback": results["feedback"],
                     "reasoning": results.get("reasoning", ""),
                     "is_focus_enabled": results.get("is_focus_enabled", False),
+                    "is_websearch_enabled": results.get("is_websearch_enabled", False),
                     "focus_entity_type": results.get("focus_entity_type", None),
                     "focus_entity_id": results.get("focus_entity_id", None),
                     "focus_project_id": results.get("focus_project_id", None),
@@ -1091,6 +1092,7 @@ async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_s
                 existing_chat.workspace_slug = resolved_workspace_slug
             # Always update workspace_in_context as it's a required field in ChatRequest
             existing_chat.workspace_in_context = data.workspace_in_context
+            existing_chat.is_websearch_enabled = data.is_websearch_enabled
             await db.commit()
         else:
             log.warning(f"Chat {data.chat_id} not found for backfill")

@@ -190,7 +190,7 @@ def is_retrieval_tool(tool_name: Any) -> bool:
     if name.endswith("_list") or name.endswith("_retrieve"):
         return True
     # Known retrieval utilities
-    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "fetch_cycle_details"}:
+    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "web_search_tool", "fetch_cycle_details"}:
         return True
     return False
 
@@ -209,6 +209,7 @@ TOOL_METADATA_REGISTRY: Dict[str, Dict[str, Any]] = {
     "structured_db_tool": {"kind": "retrieval", "plan_only": False},
     "pages_search_tool": {"kind": "retrieval", "plan_only": False},
     "docs_search_tool": {"kind": "retrieval", "plan_only": False},
+    "web_search_tool": {"kind": "retrieval", "plan_only": False},
     "fetch_cycle_details": {"kind": "retrieval", "plan_only": False},
     # Planner/system helpers
     "ask_for_clarification": {"kind": "retrieval", "plan_only": False},
@@ -252,6 +253,7 @@ def tool_name_to_retrieval_tool(tool_name: str) -> str:
         "structured_db_tool": RetrievalTools.STRUCTURED_DB_TOOL,
         "pages_search_tool": RetrievalTools.PAGES_SEARCH_TOOL,
         "docs_search_tool": RetrievalTools.DOCS_SEARCH_TOOL,
+        "web_search_tool": RetrievalTools.WEB_SEARCH_TOOL,
         "action_executor_agent": RetrievalTools.ACTION_EXECUTOR_TOOL,
     }
     return tool_to_enum_map.get(tool_name, tool_name)
@@ -267,6 +269,7 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "list_recent_cycles": "Recent Cycles",
         "pages_search_tool": "Semantic search of pages",
         "docs_search_tool": "Semantic search of docs",
+        "web_search_tool": "Web search",
         "action_executor_agent": "Action Execution",
         # Entity search tools
         "search_project_by_name": "Search Project",
@@ -543,6 +546,7 @@ def retrieval_tool_to_tool_name(retrieval_tool: str) -> str:
         "structured_db_tool": "structured_db_tool",
         "pages_search_tool": "pages_search_tool",
         "docs_search_tool": "docs_search_tool",
+        "web_search_tool": "web_search_tool",
         "action_executor_tool": "action_executor_agent",
     }
     return enum_to_tool_map.get(retrieval_tool, retrieval_tool)
@@ -836,6 +840,7 @@ def build_method_prompt(
     clarification_context: Optional[Dict[str, Any]] = None,
     user_meta: Optional[Dict[str, Any]] = None,
     source: Optional[str] = None,
+    websearch_enabled: bool = False,
 ) -> str:
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
     from pi.services.chat.prompts import plane_context
@@ -844,10 +849,24 @@ def build_method_prompt(
 
     WORK_TREE_INSTRUCTIONS = work_tree_instructions_app_response if source == "app" else work_tree_instructions_normal_response
 
+    # Add citation instructions when web search is enabled
+    web_search_citation_block = ""
+    if websearch_enabled:
+        web_search_citation_block = """
+**WEB SEARCH CITATION INSTRUCTIONS (IMPORTANT):**
+When using information from web_search_tool results:
+- Embed clickable source links directly inline after facts/claims
+- Format: fact or claim [[Source Title](URL)]
+- Example: "Plane has 44K stars [[GitHub](https://github.com/makeplane)]"
+- Use short, descriptive titles (e.g., "GitHub", "Official Blog", "Reuters")
+- Do NOT include a separate Sources section - all citations should be inline
+"""
+
     method_prompt = f"""You are an AI assistant that helps users perform actions in Plane.
 
 Context about Plane:
 {plane_context}
+{web_search_citation_block}
 
 **IMPORTANT: You are in PLANNING mode with a TWO-PHASE APPROACH:**
 

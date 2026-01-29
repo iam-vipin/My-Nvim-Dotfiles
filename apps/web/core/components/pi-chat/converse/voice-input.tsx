@@ -34,8 +34,15 @@ type TProps = {
   focus: TFocus;
   loader: TPiLoaders;
   mode: string;
+  is_websearch_enabled: boolean;
   setLoader: Dispatch<SetStateAction<TPiLoaders>>;
-  createNewChat: (focus: TFocus, mode: string, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
+  createNewChat: (
+    focus: TFocus,
+    mode: string,
+    isProjectLevel: boolean,
+    workspaceId: string,
+    is_websearch_enabled: boolean
+  ) => Promise<string>;
 };
 const piChatService = new PiChatService();
 
@@ -51,6 +58,7 @@ function AudioRecorder(props: TProps) {
     loader,
     setLoader,
     mode,
+    is_websearch_enabled,
   } = props;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,7 +145,8 @@ function AudioRecorder(props: TProps) {
     try {
       setLoader("transcribing");
       let chatIdToUse = chatId;
-      if (!chatIdToUse) chatIdToUse = await createNewChat(focus, mode, isProjectLevel, workspaceId);
+      if (!chatIdToUse)
+        chatIdToUse = await createNewChat(focus, mode, isProjectLevel, workspaceId, is_websearch_enabled);
       const response = await piChatService.transcribeAudio(workspaceId, formData, chatIdToUse);
       editorRef.current?.appendText(" " + response);
     } catch (err) {

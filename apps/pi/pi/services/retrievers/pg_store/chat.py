@@ -1308,6 +1308,9 @@ async def retrieve_chat_history(
             "reasoning": "",
             "llm": chat_llm,
             "is_focus_enabled": user_chat_preference.is_focus_enabled if user_chat_preference else False,
+            "is_websearch_enabled": (
+                user_chat_preference.is_websearch_enabled if user_chat_preference else (chat.is_websearch_enabled if chat else False)
+            ),
             # New polymorphic structure
             "focus_entity_type": user_chat_preference.focus_entity_type if user_chat_preference and user_chat_preference.focus_entity_type else None,
             "focus_entity_id": str(user_chat_preference.focus_entity_id) if user_chat_preference and user_chat_preference.focus_entity_id else None,
@@ -1332,6 +1335,7 @@ async def retrieve_chat_history(
             "reasoning": "",
             "llm": "",
             "is_focus_enabled": False,
+            "is_websearch_enabled": False,
             "focus_entity_type": None,
             "focus_entity_id": None,
             "focus_project_id": None,
@@ -1383,6 +1387,7 @@ async def upsert_chat(
     workspace_slug: Optional[str] = None,
     is_project_chat: Optional[bool] = False,
     workspace_in_context: Optional[bool] = None,
+    is_websearch_enabled: Optional[bool] = None,
 ) -> Dict[str, Any]:
     """
     Creates a new chat or updates an existing one.
@@ -1406,6 +1411,8 @@ async def upsert_chat(
                 existing_chat.is_project_chat = is_project_chat
             if workspace_in_context is not None:
                 existing_chat.workspace_in_context = workspace_in_context
+            if is_websearch_enabled is not None:
+                existing_chat.is_websearch_enabled = is_websearch_enabled
             # updated_at will be handled by SQLAlchemy
             db.add(existing_chat)
             await db.commit()
@@ -1427,6 +1434,8 @@ async def upsert_chat(
                 chat_kwargs["workspace_slug"] = workspace_slug
             if workspace_in_context is not None:
                 chat_kwargs["workspace_in_context"] = workspace_in_context
+            if is_websearch_enabled is not None:
+                chat_kwargs["is_websearch_enabled"] = is_websearch_enabled
             new_chat = Chat(**chat_kwargs)
             db.add(new_chat)
             await db.commit()
@@ -1798,6 +1807,7 @@ async def upsert_user_chat_preference(
     chat_id: UUID4,
     db: AsyncSession,
     is_focus_enabled: Optional[bool] = None,
+    is_websearch_enabled: Optional[bool] = None,
     # New polymorphic parameters
     focus_entity_type: Optional[str] = None,
     focus_entity_id: Optional[UUID4] = None,
@@ -1835,6 +1845,8 @@ async def upsert_user_chat_preference(
         if existing_user_chat_preference:
             if is_focus_enabled is not None:
                 existing_user_chat_preference.is_focus_enabled = is_focus_enabled
+            if is_websearch_enabled is not None:
+                existing_user_chat_preference.is_websearch_enabled = is_websearch_enabled
             if final_focus_entity_type is not None:
                 existing_user_chat_preference.focus_entity_type = final_focus_entity_type
             if final_focus_entity_id is not None:
@@ -1856,6 +1868,8 @@ async def upsert_user_chat_preference(
             }
             if is_focus_enabled is not None:
                 new_user_chat_preference_kwargs["is_focus_enabled"] = is_focus_enabled
+            if is_websearch_enabled is not None:
+                new_user_chat_preference_kwargs["is_websearch_enabled"] = is_websearch_enabled
             if final_focus_entity_type is not None:
                 new_user_chat_preference_kwargs["focus_entity_type"] = final_focus_entity_type
             if final_focus_entity_id is not None:

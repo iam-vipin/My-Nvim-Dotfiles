@@ -309,6 +309,11 @@ def create_openai_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
         if config.use_responses_api is not None:
             openai_params["use_responses_api"] = config.use_responses_api
 
+    # Handle gpt-4o-search-preview - doesn't support temperature parameter
+    if config.model == settings.llm_model.GPT_4O_SEARCH_PREVIEW:
+        openai_params.pop("temperature", None)
+        openai_params.pop("seed", None)
+
     # Enable stream_usage for streaming models to get token usage metadata
     if config.streaming:
         openai_params["stream_usage"] = True

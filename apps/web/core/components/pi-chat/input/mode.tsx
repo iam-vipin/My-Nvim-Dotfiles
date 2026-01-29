@@ -39,7 +39,7 @@ export function AiMode(props: { aiMode: string; setAiMode: (mode: string) => voi
       <Tooltip tooltipContent="Select the mode of the AI to use for the conversation." position="top">
         <Combobox.Button
           className={cn(
-            "flex items-center gap-1 rounded-lg h-[27px] px-2 bg-layer-2 border border-subtle-1 overflow-hidden hover:bg-surface-1 hover:shadow-raised-100 shrink-0"
+            "flex items-center gap-1 rounded-lg h-[28px] px-2 bg-layer-2 border border-subtle-1 overflow-hidden hover:bg-surface-1 hover:shadow-raised-100 shrink-0"
           )}
         >
           <span className="flex items-center gap-2 text-icon-secondary">{selectedMode?.icon}</span>

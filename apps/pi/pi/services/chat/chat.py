@@ -92,6 +92,7 @@ class PlaneChatBot(ChatKit):
         is_project_chat = data.is_project_chat or False
 
         is_focus_enabled = data.workspace_in_context
+        is_websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
         # Use new polymorphic fields if available, otherwise fall back to legacy fields
         focus_entity_type = getattr(data, "focus_entity_type", None)
         focus_entity_id = getattr(data, "focus_entity_id", None)
@@ -114,6 +115,7 @@ class PlaneChatBot(ChatKit):
                     workspace_slug=data.workspace_slug,
                     is_project_chat=is_project_chat,
                     workspace_in_context=data.workspace_in_context,
+                    is_websearch_enabled=is_websearch_enabled,
                 )
 
                 # Chat search index upserted via Celery background task
@@ -129,6 +131,7 @@ class PlaneChatBot(ChatKit):
                 chat_id=chat_id,
                 db=db,
                 is_focus_enabled=is_focus_enabled,
+                is_websearch_enabled=is_websearch_enabled,
                 focus_entity_type=focus_entity_type,
                 focus_entity_id=focus_entity_id,
                 focus_project_id=focus_project_id,
@@ -166,6 +169,7 @@ class PlaneChatBot(ChatKit):
             "tool_response": "",
             "answer": "",
             "workspace_in_context": workspace_in_context,
+            "websearch_enabled": bool(getattr(data, "is_websearch_enabled", False)),
         }
 
     async def _execute_tools_for_build_mode(
@@ -189,6 +193,7 @@ class PlaneChatBot(ChatKit):
         pi_sidebar_open=None,
         sidebar_open_url=None,
         source=None,
+        websearch_enabled: bool = False,
     ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
         """Execute tools for build mode"""
         async for chunk in action_planner.execute_tools_for_build_mode(
@@ -212,6 +217,7 @@ class PlaneChatBot(ChatKit):
             pi_sidebar_open,
             sidebar_open_url,
             source,
+            websearch_enabled=websearch_enabled,
         ):
             yield chunk
 
@@ -232,6 +238,8 @@ class PlaneChatBot(ChatKit):
         db,
         parsed_query,
         reasoning_container=None,
+        websearch_enabled: bool = False,
+        web_search_context: str | None = None,
     ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
         """Execute tools for ask mode."""
         async for chunk in askmode_tool_executor.execute_tools_for_ask_mode(
@@ -251,6 +259,8 @@ class PlaneChatBot(ChatKit):
             db,
             parsed_query,
             reasoning_container,
+            websearch_enabled=websearch_enabled,
+            web_search_context=web_search_context,
         ):
             yield chunk
 
@@ -363,6 +373,7 @@ class PlaneChatBot(ChatKit):
         # is_temp = data.is_temp
         user_meta = data.context
         workspace_in_context = data.workspace_in_context
+        websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
         workspace_slug = data.workspace_slug
         attachment_ids = data.attachment_ids or []
         step_order = 0
@@ -446,6 +457,19 @@ class PlaneChatBot(ChatKit):
         if attachment_context:
             log.info(f"ChatID: {chat_id} - Enhanced query with attachment context for routing")
 
+        # Prefetch web search only when workspace context is OFF (fast path)
+        web_search_context: str | None = None
+        if websearch_enabled and not workspace_in_context:
+            try:
+                web_search_context = await self.fetch_web_search_context(
+                    parsed_query,
+                    workspace_in_context=workspace_in_context,
+                    db=db,
+                    message_id=query_id,
+                )
+            except Exception as e:
+                log.warning(f"ChatID: {chat_id} - Web search failed: {e}")
+
         # Link attachments to the created message
         if data.attachment_ids:
             await link_attachments_to_message(attachment_ids=data.attachment_ids, message_id=query_id, chat_id=data.chat_id, user_id=user_id, db=db)
@@ -459,6 +483,7 @@ class PlaneChatBot(ChatKit):
                 "workspace_in_context": workspace_in_context,
                 "workspace_slug": workspace_slug,
                 "workspace_id": workspace_id,
+                "websearch_enabled": websearch_enabled,
             },
         )
 
@@ -551,6 +576,7 @@ class PlaneChatBot(ChatKit):
                         enhanced_query_for_processing=enhanced_query_for_processing,
                         enhanced_conversation_history=enhanced_conversation_history,
                         reasoning_container=reasoning_container,
+                        web_search_context=web_search_context,
                     )
 
                 # Mode-specific execution branch
@@ -623,6 +649,7 @@ class PlaneChatBot(ChatKit):
                         pi_sidebar_open=data.pi_sidebar_open,
                         sidebar_open_url=data.sidebar_open_url,
                         source=getattr(data, "source", None),
+                        websearch_enabled=websearch_enabled,
                     )
                 else:
                     # Ask mode: Retrieval and answering
@@ -643,6 +670,8 @@ class PlaneChatBot(ChatKit):
                         db,
                         parsed_query,
                         reasoning_container=reasoning_container,
+                        websearch_enabled=websearch_enabled,
+                        web_search_context=web_search_context,
                     )
 
                 async for chunk in execution_stream:
@@ -883,6 +912,16 @@ class PlaneChatBot(ChatKit):
             return await self.handle_pages_query(query, workspace_id, project_id, user_id, vector_search_page_ids)
         if tool == RetrievalTools.DOCS_SEARCH_TOOL:
             return await self.handle_docs_query(query)
+        if tool == RetrievalTools.WEB_SEARCH_TOOL:
+            workspace_context = True
+            if isinstance(query_flow_store, dict):
+                workspace_context = query_flow_store.get("workspace_in_context", True)
+            return await self.handle_web_search_query(
+                query,
+                workspace_in_context=workspace_context,
+                db=db,
+                message_id=message_id,
+            )
 
         return StandardAgentResponse.create_response("Sorry, I couldn't retrieve the information you asked for at this time. Please try again later.")
 

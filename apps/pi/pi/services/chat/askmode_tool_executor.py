@@ -115,6 +115,8 @@ async def execute_tools_for_ask_mode(
     db,
     parsed_query,
     reasoning_container=None,
+    websearch_enabled: bool = False,
+    web_search_context: str | None = None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """Execute tools for ask mode"""
     log.info(f"ChatID: {chat_id} - Executing tools for ask mode with enhanced_conversation_history: {enhanced_conversation_history}")
@@ -145,6 +147,7 @@ async def execute_tools_for_ask_mode(
             conversation_history,
             query_id,
             workspace_in_context=workspace_in_context,
+            websearch_enabled=websearch_enabled,
             chatbot_instance=chatbot_instance,
         )
 
@@ -174,6 +177,7 @@ async def execute_tools_for_ask_mode(
             user_id=user_id,
             user_meta=user_meta,
             workspace_in_context=workspace_in_context,
+            web_search_context=web_search_context,
         )
 
         # Bind tools to the LLM - explicitly set tool_choice to 'auto' to ensure tool use is enabled
@@ -306,6 +310,11 @@ async def execute_tools_for_ask_mode(
                     # Find and execute the tool (decorator persists success/error)
                     tool_to_execute = next((t for t in tools if t.name == tool_name), None)
                     if tool_to_execute:
+                        if tool_name == "web_search_tool":
+                            original_query = enhanced_query_for_processing
+                            tool_query = tool_args.get("query") if isinstance(tool_args, dict) else None
+                            if tool_query and tool_query != original_query:
+                                log.info(f"ChatID: {chat_id} - Web search query rewritten. Original: '{original_query}' | Tool: '{tool_query}'")
                         log.info(f"ChatID: {chat_id} - Executing tool: {tool_name} with args: {str(tool_args)[:100]}")
                         try:
                             # Yield tool execution status

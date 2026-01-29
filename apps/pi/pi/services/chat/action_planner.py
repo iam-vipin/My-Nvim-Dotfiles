@@ -173,6 +173,7 @@ async def execute_tools_for_build_mode(
     pi_sidebar_open=None,
     sidebar_open_url=None,
     source=None,
+    websearch_enabled: bool = False,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """
     Execute action planner with access to retrieval tools
@@ -322,6 +323,8 @@ async def execute_tools_for_build_mode(
             query_id,
             is_project_chat=is_project_chat,
             source=source,
+            workspace_in_context=True,
+            websearch_enabled=websearch_enabled,
         )
 
         combined_tools, all_method_tools, built_categories = build_planning_tools(
@@ -360,6 +363,7 @@ async def execute_tools_for_build_mode(
             clarification_context=clar_ctx,
             user_meta=user_meta,
             source=source,
+            websearch_enabled=websearch_enabled,
         )
 
         # Record the tool orchestration context (enhanced conversation history) before planning
@@ -583,6 +587,12 @@ async def execute_tools_for_build_mode(
                 if not tool_name or not isinstance(tool_name, str):
                     log.warning(f"Invalid tool name: {tool_name}, skipping tool call")
                     continue
+
+                if tool_name == "web_search_tool":
+                    original_query = combined_tool_query
+                    tool_query = tool_args.get("query") if isinstance(tool_args, dict) else None
+                    if tool_query and tool_query != original_query:
+                        log.info(f"ChatID: {chat_id} - Web search query rewritten. Original: '{original_query}' | Tool: '{tool_query}'")
 
                 # Log each tool call execution for debugging
                 log.info(f"ChatID: {chat_id} - EXECUTING TOOL: {tool_name} with args: {tool_args}")

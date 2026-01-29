@@ -535,6 +535,7 @@ async def queue_response(
             if resolved_workspace_slug is not None:
                 existing_chat.workspace_slug = resolved_workspace_slug
             existing_chat.workspace_in_context = data.workspace_in_context
+            existing_chat.is_websearch_enabled = data.is_websearch_enabled
             await db.commit()
         else:
             log.warning(f"Chat {data.chat_id} not found for backfill")

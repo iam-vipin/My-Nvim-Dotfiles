@@ -34,10 +34,17 @@ type Props = {
   workspaceId: string;
   chatId: string | undefined;
   isProjectLevel: boolean;
+  is_websearch_enabled: boolean;
   focus: TFocus;
   mode: string;
   showBg: boolean;
-  createNewChat: (focus: TFocus, mode: string, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
+  createNewChat: (
+    focus: TFocus,
+    mode: string,
+    isProjectLevel: boolean,
+    workspaceId: string,
+    is_websearch_enabled: boolean
+  ) => Promise<string>;
   setAttachments: Dispatch<SetStateAction<TPiAttachment[]>>;
   children: (isUploading: boolean, open: () => void) => React.ReactNode;
 };
@@ -50,6 +57,7 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
     disabled = false,
     setAttachments,
     isProjectLevel,
+    is_websearch_enabled,
     createNewChat,
     focus,
     mode,
@@ -77,7 +85,8 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
       if (rejectedFiles.length === 0) {
         setIsUploading(true);
         let chatIdToUse = chatId;
-        if (!chatIdToUse) chatIdToUse = await createNewChat(focus, mode, isProjectLevel, workspaceId);
+        if (!chatIdToUse)
+          chatIdToUse = await createNewChat(focus, mode, isProjectLevel, workspaceId, is_websearch_enabled);
         for (const file of acceptedFiles) {
           const currentFile: File = file;
           if (!currentFile) return;

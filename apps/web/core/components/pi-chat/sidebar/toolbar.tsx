@@ -59,7 +59,7 @@ export const Toolbar = observer(function Toolbar(props: Props) {
           )}
         >
           <SquarePen className="shrink-0 size-4" />
-          {!isSearchOpen && <span className="text-h6-medium text-nowrap">New chat</span>}
+          {!isSearchOpen && <span className="text-body-sm-medium text-nowrap">New chat</span>}
         </Link>
       ) : (
         <button
@@ -73,7 +73,7 @@ export const Toolbar = observer(function Toolbar(props: Props) {
           onClick={onClick}
         >
           <SquarePen className="shrink-0 size-4" />
-          {!isSearchOpen && <span className="text-h6-medium text-nowrap">New chat</span>}
+          {!isSearchOpen && <span className="text-body-sm-medium text-nowrap">New chat</span>}
         </button>
       )}
       {/* Search */}

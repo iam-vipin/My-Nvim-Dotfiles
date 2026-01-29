@@ -42,7 +42,6 @@ import { ESource, EExecutionStatus } from "@/types";
 import { ArtifactsStore } from "./artifacts";
 import { PiChatAttachmentStore } from "./attachment.store";
 import type { TSearchResults, EAiFeedback } from "@plane/types";
-import { storage } from "@/lib/local-storage";
 
 export interface IPiChatStore {
   isNewChat: boolean;
@@ -54,6 +53,7 @@ export interface IPiChatStore {
   projectThreads: string[];
   activeModel: string | undefined;
   models: TAiModels[];
+
   isAuthorized: boolean;
   isWorkspaceAuthorized: boolean;
   favoriteChats: string[];
@@ -63,12 +63,14 @@ export interface IPiChatStore {
   artifactsStore: ArtifactsStore;
   attachmentStore: PiChatAttachmentStore;
   // computed fn
+  getDefaultLLM: () => string;
   geUserThreads: () => TUserThreads[];
   geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
   geFavoriteChats: () => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
   getChatFocus: (chatId: string | undefined) => TFocus | undefined;
   getChatMode: (chatId: string) => string;
+  getChatWebSearch: (chatId: string) => boolean;
   // actions
   initPiChat: (chatId?: string) => void;
   fetchChatById: (chatId: string, workspaceId: string | undefined) => Promise<void>;
@@ -81,7 +83,8 @@ export interface IPiChatStore {
     workspaceId: string | undefined,
     callbackUrl: string,
     attachmentIds: string[],
-    aiMode: string
+    aiMode: string,
+    is_websearch_enabled: boolean
   ) => void;
   getInstance: (workspaceId: string) => Promise<TInstanceResponse>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
@@ -101,7 +104,8 @@ export interface IPiChatStore {
     focus: TFocus,
     mode: string,
     isProjectChat: boolean,
-    workspaceId: string | undefined
+    workspaceId: string | undefined,
+    is_websearch_enabled: boolean
   ) => Promise<string>;
   renameChat: (chatId: string, title: string, workspaceId: string | undefined) => Promise<void>;
   deleteChat: (chatId: string, workspaceSlug: string) => Promise<void>;
@@ -247,6 +251,8 @@ export class PiChatStore implements IPiChatStore {
   };
 
   // computed
+  getDefaultLLM = computedFn(() => this.models.find((model) => model.is_default)?.id || "gpt-5.2");
+
   geUserThreads = computedFn(() => this.piThreads.map((chatId) => this.chatMap[chatId]) || []);
 
   geUserThreadsByWorkspaceId = computedFn((workspaceId: string | undefined) => {
@@ -282,6 +288,14 @@ export class PiChatStore implements IPiChatStore {
       return chat.mode || "ask";
     }
     return "ask";
+  });
+
+  getChatWebSearch = computedFn((chatId: string) => {
+    const chat = this.chatMap[chatId];
+    if (chat) {
+      return chat.is_websearch_enabled || false;
+    }
+    return false;
   });
 
   getGroupedArtifactsByDialogue = computedFn((chatId: string, messageId: string) => {
@@ -340,7 +354,8 @@ export class PiChatStore implements IPiChatStore {
     focus: TFocus,
     mode: string,
     isProjectChat: boolean = false,
-    workspaceId: string | undefined
+    workspaceId: string | undefined,
+    is_websearch_enabled: boolean
   ) => {
     this.isNewChat = true;
     let payload: TInitPayload = {
@@ -373,6 +388,7 @@ export class PiChatStore implements IPiChatStore {
       focus_project_id: focus.entityType === "project_id" ? focus.entityIdentifier : "",
       workspace_id: workspaceId,
       mode,
+      is_websearch_enabled,
     };
 
     if (isProjectChat) {
@@ -404,7 +420,8 @@ export class PiChatStore implements IPiChatStore {
     callbackUrl: string | undefined,
     attachmentIds: string[],
     isNewChat: boolean,
-    mode: string
+    mode: string,
+    is_websearch_enabled: boolean
   ) => {
     let payload: TQuery = {
       chat_id: chatId,
@@ -413,7 +430,7 @@ export class PiChatStore implements IPiChatStore {
       is_temp: false,
       workspace_in_context: focus.isInWorkspaceContext,
       source: ESource.WEB,
-      llm: this.activeModel || "gpt-4.1",
+      llm: this.activeModel || this.getDefaultLLM(),
       context: this.userStore.data
         ? {
             first_name: this.userStore.data.first_name,
@@ -426,6 +443,7 @@ export class PiChatStore implements IPiChatStore {
       workspace_id: workspaceId,
       attachment_ids: attachmentIds,
       mode,
+      is_websearch_enabled,
     };
     if (focus.isInWorkspaceContext) {
       payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
@@ -570,7 +588,8 @@ export class PiChatStore implements IPiChatStore {
     workspaceId: string | undefined,
     callbackUrl: string,
     attachmentIds: string[],
-    aiMode: string
+    aiMode: string,
+    is_websearch_enabled: boolean
   ) => {
     if (!chatId) {
       throw new Error("Chat not initialized");
@@ -604,6 +623,7 @@ export class PiChatStore implements IPiChatStore {
             is_focus_enabled: false,
             focus_workspace_id: "",
             focus_project_id: "",
+            is_websearch_enabled,
           };
         }
         chat.dialogue = [...dialogueHistory, "latest"];
@@ -623,7 +643,8 @@ export class PiChatStore implements IPiChatStore {
       callbackUrl,
       attachmentIds,
       isNewChat,
-      aiMode
+      aiMode,
+      is_websearch_enabled
     );
     this.piChatService
       .retrieveToken(payload)
@@ -718,8 +739,8 @@ export class PiChatStore implements IPiChatStore {
 
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({
-          ...chat,
           ...response.results,
+          ...chat,
           dialogue: response.results.dialogue.map((d) => d.query_id),
           dialogueMap: response.results.dialogue.reduce(
             (acc, d) => {
@@ -732,7 +753,7 @@ export class PiChatStore implements IPiChatStore {
           llm: response.results.llm ?? chat?.llm,
         }));
         if (chatId === this.activeChatId) {
-          this.activeModel = response?.results?.llm || this.models[0]?.id || undefined;
+          this.activeModel = response?.results?.llm || this.getDefaultLLM() || undefined;
         }
         this.isLoadingMap[chatId] = false;
       });

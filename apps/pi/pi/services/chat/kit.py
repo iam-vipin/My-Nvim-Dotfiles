@@ -513,6 +513,8 @@ Provide concise, relevant context from the attachment(s):"""
         message_id,
         is_project_chat=None,
         source=None,
+        workspace_in_context: bool = True,
+        websearch_enabled: bool = False,
     ):
         """Create LangChain tools with access to current execution context."""
 
@@ -1116,10 +1118,40 @@ Provide concise, relevant context from the attachment(s):"""
                 log.error(f"Error in docs_search_tool: {str(e)}")
                 return f"Error searching documentation: {str(e)}"
 
+        @tool
+        async def web_search_tool(query: str) -> str:
+            """Search the public web for up-to-date external information."""
+            try:
+                result = await self.handle_web_search_query(
+                    query,
+                    workspace_in_context=workspace_in_context,
+                    db=db,
+                    message_id=message_id,
+                )
+
+                try:
+                    log_payload: Dict[str, Any] = dict(result)
+                    results_text = log_payload.get("results")
+                    if isinstance(results_text, str) and len(results_text) > 800:
+                        log_payload["results"] = f"{results_text[:800]}...<truncated>"
+                        log_payload["results_length"] = len(results_text)
+                    log.info(f"ChatID: {chat_id} - Web search tool response payload: {log_payload}")
+                except Exception as log_exc:
+                    log.info(f"ChatID: {chat_id} - Web search tool response payload (unformatted): {str(result)[:800]} ({log_exc})")
+
+                # Store the standardized response for consistency
+                self._store_agent_response("web_search_tool", result)
+
+                # Extract and return the results text
+                return StandardAgentResponse.extract_results(result)
+            except Exception as e:
+                log.error(f"Error in web_search_tool: {str(e)}")
+                return f"Error searching the web: {str(e)}"
+
         # Store fetch_cycle_details in self for later access by _get_selected_tools
         self._fetch_cycle_details_tool = fetch_cycle_details
 
-        return [
+        tools = [
             ask_for_clarification,
             vector_search_tool,
             structured_db_tool,
@@ -1127,6 +1159,10 @@ Provide concise, relevant context from the attachment(s):"""
             docs_search_tool,
             fetch_cycle_details,
         ]
+        if websearch_enabled:
+            tools.append(web_search_tool)
+
+        return tools
 
     async def _create_tools_for_ask_mode(
         self,
@@ -1142,6 +1178,7 @@ Provide concise, relevant context from the attachment(s):"""
         message_id,
         is_project_chat=None,
         workspace_in_context=True,
+        websearch_enabled: bool = False,
         chatbot_instance=None,
     ):
         """Create tools for ask mode.
@@ -1163,6 +1200,8 @@ Provide concise, relevant context from the attachment(s):"""
             conversation_history,
             message_id,
             is_project_chat=is_project_chat,
+            workspace_in_context=workspace_in_context,
+            websearch_enabled=websearch_enabled,
         )
 
         # Filter tools based on workspace_in_context
@@ -1171,7 +1210,15 @@ Provide concise, relevant context from the attachment(s):"""
             retrieval_tools = [
                 tool
                 for tool in all_tools
-                if tool.name in ["vector_search_tool", "structured_db_tool", "pages_search_tool", "docs_search_tool", "fetch_cycle_details"]
+                if tool.name
+                in [
+                    "vector_search_tool",
+                    "structured_db_tool",
+                    "pages_search_tool",
+                    "docs_search_tool",
+                    "web_search_tool",
+                    "fetch_cycle_details",
+                ]
             ]
             clarification_tool = next((t for t in all_tools if getattr(t, "name", "") == "ask_for_clarification"), None)
 
@@ -1225,7 +1272,7 @@ Provide concise, relevant context from the attachment(s):"""
             retrieval_tools = [
                 tool
                 for tool in all_tools
-                if tool.name in ["docs_search_tool"]  # Only general documentation search
+                if tool.name in ["docs_search_tool", "web_search_tool"]  # Only general documentation and web search
             ]
             # Don't include ask_for_clarification as it's designed for workspace entity clarifications
             return retrieval_tools
@@ -1465,6 +1512,86 @@ Provide concise, relevant context from the attachment(s):"""
         }
 
         return StandardAgentResponse.create_response(formatted_results, entity_urls, execution_metadata=execution_metadata)
+
+    async def handle_web_search_query(
+        self,
+        query: str,
+        workspace_in_context: bool = True,
+        db: AsyncSession | None = None,
+        message_id: UUID4 | None = None,
+    ) -> Dict[str, Any]:
+        from pi.services.llm.web_search import WebSearchService
+
+        search_service = WebSearchService(model=self.switch_llm)
+        result = await search_service.search(query, workspace_in_context=workspace_in_context)
+
+        if not result or not result.content:
+            return StandardAgentResponse.create_response("Sorry, I couldn't retrieve web search results at this time. Please try again later.")
+
+        if result and db is not None and message_id is not None:
+            from pi.services.llm.token_tracker import TokenTracker
+
+            tracker = TokenTracker(db, message_id)
+            await tracker.track_web_search_usage(
+                model_key=result.model,
+                input_tokens=result.input_tokens,
+                output_tokens=result.output_tokens,
+                cached_input_tokens=result.cached_input_tokens,
+            )
+
+        execution_metadata = {
+            "search_query": query,
+            "provider": result.provider,
+            "model": result.model,
+        }
+
+        return StandardAgentResponse.create_response(result.content, execution_metadata=execution_metadata)
+
+    async def fetch_web_search_context(
+        self,
+        query: str,
+        workspace_in_context: bool = True,
+        db: AsyncSession | None = None,
+        message_id: UUID4 | None = None,
+    ) -> Optional[str]:
+        from pi.services.llm.web_search import WebSearchService
+
+        search_service = WebSearchService(model=self.switch_llm)
+        result = await search_service.search(query, workspace_in_context=workspace_in_context)
+        if result and result.content:
+            log.info(f"Web search completed using {result.provider} ({result.model})")
+            try:
+                content_preview = result.content
+                content_length = len(content_preview)
+                if content_length > 800:
+                    content_preview = f"{content_preview[:800]}...<truncated>"
+                log.info(
+                    "Web search prefetch payload: %s",
+                    {
+                        "search_query": query,
+                        "provider": result.provider,
+                        "model": result.model,
+                        "input_tokens": result.input_tokens,
+                        "output_tokens": result.output_tokens,
+                        "cached_input_tokens": result.cached_input_tokens,
+                        "content_preview": content_preview,
+                        "content_length": content_length,
+                    },
+                )
+            except Exception as log_exc:
+                log.info(f"Web search prefetch payload (unformatted): {str(result)[:800]} ({log_exc})")
+            if db is not None and message_id is not None:
+                from pi.services.llm.token_tracker import TokenTracker
+
+                tracker = TokenTracker(db, message_id)
+                await tracker.track_web_search_usage(
+                    model_key=result.model,
+                    input_tokens=result.input_tokens,
+                    output_tokens=result.output_tokens,
+                    cached_input_tokens=result.cached_input_tokens,
+                )
+            return result.content
+        return None
 
     async def _create_simple_stream(self, message: str) -> AsyncIterator[str]:
         """Create a simple async stream that yields a single message"""

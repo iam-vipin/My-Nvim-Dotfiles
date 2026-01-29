@@ -122,6 +122,10 @@ RETRIEVAL_TOOL_DESCRIPTIONS = """
 4. **docs_search_tool**: For searching Plane's official documentation.
    - USE FOR: Finding documentation by topics, features, how-to guides
    - RETURNS: Formatted documentation search results
+
+5. **web_search_tool**: For searching the public web for up-to-date external information.
+   - USE FOR: Current events, external references, or info not covered by Plane data/docs
+   - RETURNS: Summarized web search results with sources
 """
 
 
@@ -153,7 +157,7 @@ Your task: Based on the user's intent and any advisory text (like method lists) 
 - stickies: Create/list/update/delete sticky notes (short plain text notes, like 3M stickers, no rich media)
 - customers: Manage customer records and CRM integrations
 - workspaces: Workspace-level operations and feature management
-- retrieval_tools: text2sql, vector_search_tool, pages_search_tool, docs_search_tool
+- retrieval_tools: text2sql, vector_search_tool, pages_search_tool, docs_search_tool, web_search_tool
 
 Rules:
 - "wiki", "knowledge base", "kb", "handbook", "runbook", and "notes" (BUT NOT "sticky notes") are all synonyms for pages. Route these to the pages category, not projects.
@@ -351,6 +355,9 @@ If the user requests to create or modify actual Plane data (like "create a new p
        - "How to" questions related to Plane app and its features (e.g., "how to create a module?", "how do I set up cycles?")
        - Setup/configuration questions (e.g., "how to configure project settings?")
        **When NOT to use:** Questions about specific data in the user's workspace (use structured_db_tool or vector_search_tool or some other retrieval tool instead)
+    5. web_search_tool: For searching the public web for up-to-date external information.
+       **Use this tool for:**
+       - Current events, external references, or info not covered by Plane data/docs
    b) **Entity Search Tools** (for disambiguation): search_user_by_name, search_workitem_by_name, search_project_by_name, search_module_by_name, search_cycle_by_name, search_current_cycle, list_recent_cycles, search_label_by_name, search_state_by_name, search_workitem_by_identifier, list_member_projects (active-only, membership-filtered projects)
    c) **fetch_cycle_details**: CRITICAL - Use this FIRST when user asks about cycle metrics, progress, or details.
       Requires cycle_id (get it first using search_cycle_by_name or search_current_cycle).
@@ -435,7 +442,8 @@ If the user requests to create or modify actual Plane data (like "create a new p
 2. **Choose primary retrieval tool:**
    - Cycle metrics/progress → fetch_cycle_details (see cycle rules above)
    - Semantic/content search → vector_search_tool or pages_search_tool
-   - Documentation questions → docs_search_tool
+  - Documentation questions → docs_search_tool
+  - External or current info → web_search_tool
    - Structured queries (assignments, states, counts) → structured_db_tool
 3. **Enrichment** (if needed): Use additional tools to get more details
 4. **Context building**: Use earlier tool outputs to inform later queries
@@ -551,6 +559,13 @@ Rules to follow while formatting the final content section while answering the u
    - In tables with separate columns: make the unique key/identifier column clickable [PAI-123](URL)
    - Skip linking if entity not in Entity URLs section
 9. When using tables to present data: Never include UUIDs (must be suppressed), and apply URL embedding rules from Rule 8.
+10. **WEB SEARCH CITATIONS** (IMPORTANT - when web_search_tool was used):
+   - Embed clickable source links directly in your answer after facts/claims
+   - Format: fact or claim [[Source Title](URL)]
+   - Example: "Plane has 44K stars [[GitHub](https://github.com/makeplane)]"
+   - Use short, descriptive titles (e.g., "GitHub", "Official Blog", "Reuters")
+   - Only cite sources you actually used
+   - Do NOT include a separate Sources section - all citations should be inline
 """  # noqa: E501
 
 

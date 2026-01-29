@@ -181,6 +181,7 @@ async def add_llm_pricing_by_id(
     text_input_price: Optional[float] = None,
     text_output_price: Optional[float] = None,
     cached_text_input_price: Optional[float] = None,
+    web_search_call_price: Optional[float] = None,
 ) -> Tuple[bool, str]:
     """
     Add LLM pricing data for a specific model ID.
@@ -197,7 +198,7 @@ async def add_llm_pricing_by_id(
     """
     try:
         # Validate that at least one pricing option is provided
-        if text_input_price is None and text_output_price is None and cached_text_input_price is None:
+        if text_input_price is None and text_output_price is None and cached_text_input_price is None and web_search_call_price is None:
             return False, "At least one pricing option must be provided"
 
         # Create new pricing entry
@@ -207,6 +208,7 @@ async def add_llm_pricing_by_id(
             text_input_price=text_input_price,
             text_output_price=text_output_price,
             cached_text_input_price=cached_text_input_price,
+            web_search_call_price=web_search_call_price,
         )
 
         db.add(new_pricing)

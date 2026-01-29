@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 import { v4 as uuidv4 } from "uuid";
-import { ArrowUp, Disc, Square } from "lucide-react";
+import { ArrowUp, Disc, Globe, Square } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 
 import { PiChatEditorWithRef } from "@plane/editor";
@@ -81,6 +81,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     fetchModels,
     abortStream,
     getChatMode,
+    getChatWebSearch,
     attachmentStore: { getAttachmentsUploadStatusByChatId },
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -97,6 +98,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const projectIdToUse = projectDetails?.id || projectId;
   const chatFocus = getChatFocus(activeChatId);
   const chatMode = getChatMode(activeChatId || "");
+  const chatWebSearch = getChatWebSearch(activeChatId || "");
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   // state
   const [focus, setFocus] = useState<TFocus>(
@@ -110,6 +112,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const [attachments, setAttachments] = useState<TPiAttachment[]>([]);
   const [aiMode, setAiMode] = useState<string>(chatMode);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const [isWebSerachEnabled, setIsWebSerachEnabled] = useState(chatWebSearch);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
   const editorRef = useRef<TPiChatEditorRefApi>(null);
@@ -176,7 +179,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     let chatIdToUse = activeChatId;
     setLoader("submitting");
     if (!chatIdToUse) {
-      chatIdToUse = await createNewChat(focus, aiMode, isProjectLevel, workspaceId);
+      chatIdToUse = await createNewChat(focus, aiMode, isProjectLevel, workspaceId, isWebSerachEnabled);
     }
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect && !routeChatId)
@@ -193,7 +196,8 @@ export const InputBox = observer(function InputBox(props: TProps) {
       workspaceId,
       pathname,
       attachmentIds,
-      aiMode
+      aiMode,
+      isWebSerachEnabled
     );
     editorCommands.current?.clear();
     addContext();
@@ -232,7 +236,10 @@ export const InputBox = observer(function InputBox(props: TProps) {
     if (chatMode) {
       setAiMode(chatMode);
     }
-  }, [isChatLoading, chatFocus, chatMode]);
+    if (chatWebSearch !== undefined) {
+      setIsWebSerachEnabled(chatWebSearch);
+    }
+  }, [isChatLoading, chatFocus, chatMode, chatWebSearch]);
 
   // Adding context for the sidecar
   useEffect(() => {
@@ -322,6 +329,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
             workspaceSlug={workspaceSlug?.toString()}
             workspaceId={workspaceId}
             chatId={activeChatId}
+            is_websearch_enabled={isWebSerachEnabled}
             setAttachments={setAttachments}
             isProjectLevel={isProjectLevel}
             mode={aiMode}
@@ -376,6 +384,24 @@ export const InputBox = observer(function InputBox(props: TProps) {
                 <div className="flex items-center w-full gap-3 justify-between">
                   {/* Focus */}
                   {!SPEECH_LOADERS.includes(loader) && <AiMode aiMode={aiMode} setAiMode={setAiMode} />}
+                  {!SPEECH_LOADERS.includes(loader) && (
+                    <button
+                      type="button"
+                      className={cn(
+                        "size-7 flex items-center justify-center rounded-lg transition-all duration-300 shrink-0",
+                        {
+                          "text-icon-accent-primary bg-accent-subtle hover:text-secondary hover:bg-layer-1 ":
+                            isWebSerachEnabled,
+                          "text-secondary bg-layer-1 hover:bg-accent-subtle hover:text-icon-accent-primary ":
+                            !isWebSerachEnabled,
+                        }
+                      )}
+                      color={isWebSerachEnabled ? "primary" : "secondary"}
+                      onClick={() => setIsWebSerachEnabled(!isWebSerachEnabled)}
+                    >
+                      <Globe className="size-4" />
+                    </button>
+                  )}
                   <div className="flex items-center w-full justify-end gap-2">
                     <div className="flex w-full justify-end">
                       {/* speech recorder */}
@@ -395,6 +421,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
                           isFullScreen={isFullScreen}
                           focus={focus}
                           mode={aiMode}
+                          is_websearch_enabled={isWebSerachEnabled}
                         />
                       </WithFeatureFlagHOC>
                       {!SPEECH_LOADERS.includes(loader) && (

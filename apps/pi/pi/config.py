@@ -161,6 +161,8 @@ class LLMModels:
     GPT_4_1: str = "gpt-4.1"
     GPT_4_1_NANO: str = "gpt-4.1-nano"
     GPT_4O_MINI: str = "gpt-4o-mini"
+    GPT_4O_SEARCH_PREVIEW: str = "gpt-4o-search-preview"  # OpenAI model with built-in web search
+    LITE_LLM_CLAUDE_SONNET_4: str = "us.anthropic.claude-sonnet-4-20250514-v1:0"
     GPT_5_STANDARD: str = "gpt-5-standard"
     GPT_5_FAST: str = "gpt-5-fast"
     GPT_5_1: str = "gpt-5.1"
@@ -229,6 +231,12 @@ class LLMConfig:
     # Timeout in seconds for SQL table selection LLM calls
     # If a call exceeds this time, it will retry with a fallback model (GPT-4o)
     SQL_TABLE_SELECTION_TIMEOUT: float = 5.0
+
+    # Web Search Configuration
+    # Anthropic server-side web search tool type (versioned by Anthropic)
+    ANTHROPIC_WEB_SEARCH_TOOL_TYPE: str = "web_search_20250305"
+    # Maximum number of web search results to return
+    WEB_SEARCH_MAX_RESULTS: int = 5
 
 
 @dataclass

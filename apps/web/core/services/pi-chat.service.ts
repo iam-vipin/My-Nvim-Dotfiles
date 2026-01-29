@@ -43,6 +43,7 @@ type TChatHistoryResponse = {
     last_modified: string;
     is_favorite: boolean;
     is_focus_enabled: boolean;
+    is_websearch_enabled: boolean;
     focus_workspace_id: string;
     focus_project_id: string;
     workspace_id?: string;

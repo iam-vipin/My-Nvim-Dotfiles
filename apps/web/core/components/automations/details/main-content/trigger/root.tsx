@@ -19,7 +19,7 @@ import { AUTOMATION_TRIGGER_SELECT_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EAutomationSidebarTab } from "@plane/types";
 // plane web imports
-import { AutomationTriggerIcon } from "@/plane-web/components/automations/details/sidebar/trigger/icon";
+import { AutomationTriggerIcon } from "@/components/automations/details/sidebar/trigger/icon";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
 import { AutomationDetailsMainContentAddNodeButton } from "../common/add-node-button";

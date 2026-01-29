@@ -28,8 +28,8 @@ import type {
 import { EActionNodeHandlerName } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // plane web imports
-import { AutomationDetailsSidebarActionButtons } from "@/plane-web/components/automations/details/sidebar/action-buttons";
-import { AutomationDetailsSidebarSectionWrapper } from "@/plane-web/components/automations/details/sidebar/section-wrapper";
+import { AutomationDetailsSidebarActionButtons } from "@/components/automations/details/sidebar/action-buttons";
+import { AutomationDetailsSidebarSectionWrapper } from "@/components/automations/details/sidebar/section-wrapper";
 // local imports
 import { AutomationActionConfigurationRoot } from "./configuration/root";
 import { AutomationActionHandlerDropdown } from "./handler/root";

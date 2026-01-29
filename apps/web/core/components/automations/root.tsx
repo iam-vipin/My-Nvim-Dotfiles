@@ -11,18 +11,20 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-// ce imports
-import type { TCustomAutomationsRootProps } from "@/ce/components/automations/root";
-// plane web imports
-import { CreateAutomationButton } from "@/plane-web/components/automations/create-button";
-import { AutomationsListRoot } from "@/plane-web/components/automations/list/root";
+// components
+import { CreateAutomationButton } from "@/components/automations/create-button";
+import { AutomationsListRoot } from "@/components/automations/list/root";
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
+// plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
+
+export type TCustomAutomationsRootProps = {
+  projectId: string;
+  workspaceSlug: string;
+};
 
 export const CustomAutomationsRoot = observer(function CustomAutomationsRoot(props: TCustomAutomationsRootProps) {
   const { projectId, workspaceSlug } = props;
@@ -33,7 +35,6 @@ export const CustomAutomationsRoot = observer(function CustomAutomationsRoot(pro
   // translation
   const { t } = useTranslation();
 
-  // TODO: Add upgrade empty state as fallback
   return (
     <WithFeatureFlagHOC flag="PROJECT_AUTOMATIONS" fallback={<></>} workspaceSlug={workspaceSlug}>
       <div className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-between border-b border-subtle py-4">

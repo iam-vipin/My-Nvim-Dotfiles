@@ -16,8 +16,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web imports
-import { ConjunctionLabel } from "@/plane-web/components/automations/details/main-content/common/conjunction-label";
-import { AutomationConditionFilterHOC } from "@/plane-web/components/automations/details/sidebar/trigger/condition/filter-provider";
+import { ConjunctionLabel } from "@/components/automations/details/main-content/common/conjunction-label";
+import { AutomationConditionFilterHOC } from "@/components/automations/details/sidebar/trigger/condition/filter-provider";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
 import { AutomationDetailsMainContentTriggerConditionItem } from "./condition-item";

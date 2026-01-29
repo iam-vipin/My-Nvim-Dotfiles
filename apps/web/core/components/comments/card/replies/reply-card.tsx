@@ -19,7 +19,7 @@ import type { TCommentsOperations, TIssueComment } from "@plane/types";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // plane web imports
-import { CommentCardDisplay } from "@/plane-web/components/comments/card/display";
+import { CommentCardDisplay } from "@/components/comments/card/display/root";
 // local imports
 import { ReplyQuickActions } from "./reply-quick-actions";
 

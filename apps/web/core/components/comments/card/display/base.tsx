@@ -25,8 +25,8 @@ import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedT
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
-import { CommentReactions } from "../comment-reaction";
-import { CommentCardEditForm } from "./edit-form";
+import { CommentReactions } from "../../comment-reaction";
+import { CommentCardEditForm } from "../edit-form";
 import { EmojiReactionButton, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
 import { Avatar, Tooltip } from "@plane/ui";
 import { useMember } from "@/hooks/store/use-member";

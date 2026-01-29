@@ -22,8 +22,8 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar } from "@plane/propel/avatar";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
-import { CommentCardDisplay as BaseCommentCardDisplay } from "@/components/comments/card/display";
-import type { TCommentCardDisplayProps } from "@/components/comments/card/display";
+import { CommentCardDisplay as BaseCommentCardDisplay } from "@/components/comments/card/display/base";
+import type { TCommentCardDisplayProps } from "@/components/comments/card/display/base";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // local imports

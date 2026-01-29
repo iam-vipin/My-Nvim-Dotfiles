@@ -568,7 +568,7 @@ def create_workitems(
             state_id=state_id,
             parent_id=None,
             name=blueprint.name,
-            description=blueprint.description,
+            description_json=blueprint.description,
             description_html=blueprint.description_html,
             description_stripped=blueprint.description_stripped,
             description_binary=blueprint.description_binary,
@@ -786,7 +786,7 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
             issue = Issue.objects.create(
                 project_id=project_id,
                 name=sub_workitem_template.name,
-                description=sub_workitem_template.description,
+                description_json=sub_workitem_template.description,
                 description_html=sub_workitem_template.description_html,
                 description_binary=sub_workitem_template.description_binary,
                 description_stripped=sub_workitem_template.description_stripped,

@@ -837,7 +837,7 @@ class ProjectDataCopier:
                 workspace=self.target_workspace,
                 project=self.new_project,
                 name=issue["name"],
-                description=issue.get("description", {}),
+                description_json=issue.get("description_json", {}),
                 description_html=issue.get("description_html", "<p></p>"),
                 description_stripped=issue.get("description_stripped"),
                 description_binary=issue.get("description_binary"),

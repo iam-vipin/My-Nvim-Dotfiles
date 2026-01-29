@@ -939,7 +939,12 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
             if issue_detail and isinstance(issue_detail, dict):
                 entity_data["name"] = issue_detail.get("name")
             # Also store the underlying work item ID for reference
+            # Also store the underlying work item ID for reference
             entity_data["issue"] = data.get("issue")
+        elif entity_type == "customer_request":
+            # Extract customer_id (it was injected by tool_generator from sdk adapter result)
+            entity_data["customer"] = data.get("customer")
+            entity_data["customer_id"] = data.get("customer_id")
 
         # Validate required fields
         if not entity_data["id"]:
@@ -1156,6 +1161,23 @@ async def construct_action_entity_url(
                 return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
             else:
                 return None
+
+        elif entity_type == "customer_property":
+            # For customer properties: /workspace_slug/settings/properties/
+            # Note: Assuming customer properties are in workspace settings
+            url = f"{api_base_url}/{workspace_slug}/settings/customers/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "customer_request":
+            # For customer requests: /workspace_slug/customers/{customer_id}/
+            customer_id = entity_data.get("customer") or entity_data.get("customer_id")
+            if customer_id:
+                url = f"{api_base_url}/{workspace_slug}/customers/{customer_id}/"
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+            else:
+                # Fallback to customers list if customer_id not found
+                url = f"{api_base_url}/{workspace_slug}/customers/"
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         else:
             # Unknown entity type

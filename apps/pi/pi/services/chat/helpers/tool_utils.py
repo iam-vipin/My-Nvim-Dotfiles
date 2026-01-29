@@ -142,6 +142,18 @@ TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
     "customers_retrieve": {"entity_type": "customer", "action_type": "retrieve", "front_facing_name": "Retrieve Customer"},
     "customers_update": {"entity_type": "customer", "action_type": "update", "front_facing_name": "Update Customer"},
     "customers_delete": {"entity_type": "customer", "action_type": "delete", "front_facing_name": "Delete Customer"},
+    # Customer Properties
+    "customers_create_property": {"entity_type": "customer", "action_type": "create", "front_facing_name": "Create Customer Property"},
+    "customers_list_properties": {"entity_type": "customer", "action_type": "list", "front_facing_name": "List Customer Properties"},
+    "customers_retrieve_property": {"entity_type": "customer", "action_type": "retrieve", "front_facing_name": "Retrieve Customer Property"},
+    "customers_update_property": {"entity_type": "customer", "action_type": "update", "front_facing_name": "Update Customer Property"},
+    "customers_delete_property": {"entity_type": "customer", "action_type": "delete", "front_facing_name": "Delete Customer Property"},
+    # Customer Requests
+    "customers_create_request": {"entity_type": "customer", "action_type": "create", "front_facing_name": "Create Customer Request"},
+    "customers_list_requests": {"entity_type": "customer", "action_type": "list", "front_facing_name": "List Customer Requests"},
+    "customers_retrieve_request": {"entity_type": "customer", "action_type": "retrieve", "front_facing_name": "Retrieve Customer Request"},
+    "customers_update_request": {"entity_type": "customer", "action_type": "update", "front_facing_name": "Update Customer Request"},
+    "customers_delete_request": {"entity_type": "customer", "action_type": "delete", "front_facing_name": "Delete Customer Request"},
     # Workspaces (SDK v0.2.2 - features)
     "workspaces_get_features": {"entity_type": "workspace", "action_type": "get", "front_facing_name": "Get Workspace Features"},
     "workspaces_update_features": {"entity_type": "workspace", "action_type": "update", "front_facing_name": "Update Workspace Features"},

@@ -3177,3 +3177,179 @@ class PlaneSDKAdapter:
         except Exception as e:
             log.error(f"Failed to delete customer: {str(e)}")
             raise
+
+    # Customer Properties
+    def create_customer_property(self, workspace_slug: str, **kwargs) -> Dict[str, Any]:
+        """Create a customer property (v0.2.1+)."""
+        try:
+            from plane.models.customers import CreateCustomerProperty  # type: ignore[attr-defined]
+
+            filtered_kwargs = self._filter_payload(kwargs)
+            data_model = CreateCustomerProperty(**filtered_kwargs)
+            prop = self.client.customers.properties.create(workspace_slug=workspace_slug, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(prop))
+        except HttpError as e:
+            log.error(f"Failed to create customer property: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create customer property: {str(e)}")
+            raise
+
+    def list_customer_properties(self, workspace_slug: str) -> Dict[str, Any]:
+        """List customer properties (v0.2.1+)."""
+        try:
+            response = self.client.customers.properties.list(workspace_slug=workspace_slug)
+            results = self._model_to_dict(getattr(response, "results", []))
+            if not isinstance(results, list):
+                results = [results] if results else []
+            return {
+                "results": results,
+                "count": len(results),
+                "total_results": getattr(response, "total_count", len(results)),
+                "next_cursor": str(getattr(response, "next_page_number", "")) if getattr(response, "next_page_number", None) else None,
+                "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
+            }
+        except HttpError as e:
+            log.error(f"Failed to list customer properties: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list customer properties: {str(e)}")
+            raise
+
+    def retrieve_customer_property(self, workspace_slug: str, property_id: str) -> Dict[str, Any]:
+        """Retrieve a customer property (v0.2.1+)."""
+        try:
+            prop = self.client.customers.properties.retrieve(workspace_slug=workspace_slug, property_id=property_id)
+            return cast(Dict[str, Any], self._model_to_dict(prop))
+        except HttpError as e:
+            log.error(f"Failed to retrieve customer property: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve customer property: {str(e)}")
+            raise
+
+    def update_customer_property(self, workspace_slug: str, property_id: str, **kwargs) -> Dict[str, Any]:
+        """Update a customer property (v0.2.1+)."""
+        try:
+            from plane.models.customers import UpdateCustomerProperty  # type: ignore[attr-defined]
+
+            filtered_kwargs = self._filter_payload(kwargs)
+            data_model = UpdateCustomerProperty(**filtered_kwargs)
+            prop = self.client.customers.properties.update(workspace_slug=workspace_slug, property_id=property_id, data=data_model)
+            return cast(Dict[str, Any], self._model_to_dict(prop))
+        except HttpError as e:
+            log.error(f"Failed to update customer property: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update customer property: {str(e)}")
+            raise
+
+    def delete_customer_property(self, workspace_slug: str, property_id: str) -> Dict[str, Any]:
+        """Delete a customer property (v0.2.1+)."""
+        try:
+            self.client.customers.properties.delete(workspace_slug=workspace_slug, property_id=property_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete customer property: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete customer property: {str(e)}")
+            raise
+
+    # Customer Requests
+    def create_customer_request(self, workspace_slug: str, customer_id: str, **kwargs) -> Dict[str, Any]:
+        """Create a customer request (v0.2.1+)."""
+        try:
+            from plane.models.customers import CustomerRequest  # type: ignore[attr-defined]
+
+            filtered_kwargs = self._filter_payload(kwargs)
+            data_model = CustomerRequest(**filtered_kwargs)
+            request = self.client.customers.requests.create(workspace_slug=workspace_slug, customer_id=customer_id, data=data_model)
+            result = cast(Dict[str, Any], self._model_to_dict(request))
+            # Inject customer_id into the response for URL construction
+            result["customer_id"] = customer_id
+            return result
+        except HttpError as e:
+            log.error(f"Failed to create customer request: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to create customer request: {str(e)}")
+            raise
+
+    def list_customer_requests(self, workspace_slug: str, customer_id: str) -> Dict[str, Any]:
+        """List customer requests (v0.2.1+)."""
+        try:
+            # Bypass SDK's list method which incorrectly swallows non-list responses
+            # The SDK expects a list but the API might return a paginated dict
+            response = self.client.customers.requests._get(f"{workspace_slug}/customers/{customer_id}/requests")
+
+            # Handle both paginated response (object with results) and direct list
+            if isinstance(response, dict) and "results" in response:
+                raw_results = response["results"]
+            elif isinstance(response, list):
+                raw_results = response
+            else:
+                raw_results = []
+
+            results = self._model_to_dict(raw_results)
+            if not isinstance(results, list):
+                results = [results] if results else []
+
+            return {
+                "results": results,
+                "count": len(results),
+            }
+        except HttpError as e:
+            log.error(f"Failed to list customer requests: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to list customer requests: {str(e)}")
+            raise
+
+    def retrieve_customer_request(self, workspace_slug: str, customer_id: str, request_id: str) -> Dict[str, Any]:
+        """Retrieve a customer request (v0.2.1+)."""
+        try:
+            request = self.client.customers.requests.retrieve(workspace_slug=workspace_slug, customer_id=customer_id, request_id=request_id)
+            result = cast(Dict[str, Any], self._model_to_dict(request))
+            # Inject customer_id into the response for URL construction
+            result["customer_id"] = customer_id
+            return result
+        except HttpError as e:
+            log.error(f"Failed to retrieve customer request: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to retrieve customer request: {str(e)}")
+            raise
+
+    def update_customer_request(self, workspace_slug: str, customer_id: str, request_id: str, **kwargs) -> Dict[str, Any]:
+        """Update a customer request (v0.2.1+)."""
+        try:
+            from plane.models.customers import UpdateCustomerRequest  # type: ignore[attr-defined]
+
+            filtered_kwargs = self._filter_payload(kwargs)
+            data_model = UpdateCustomerRequest(**filtered_kwargs)
+            request = self.client.customers.requests.update(
+                workspace_slug=workspace_slug, customer_id=customer_id, request_id=request_id, data=data_model
+            )
+            result = cast(Dict[str, Any], self._model_to_dict(request))
+            # Inject customer_id into the response for URL construction
+            result["customer_id"] = customer_id
+            return result
+        except HttpError as e:
+            log.error(f"Failed to update customer request: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to update customer request: {str(e)}")
+            raise
+
+    def delete_customer_request(self, workspace_slug: str, customer_id: str, request_id: str) -> Dict[str, Any]:
+        """Delete a customer request (v0.2.1+)."""
+        try:
+            self.client.customers.requests.delete(workspace_slug=workspace_slug, customer_id=customer_id, request_id=request_id)
+            return {"success": True}
+        except HttpError as e:
+            log.error(f"Failed to delete customer request: {e} ({getattr(e, "status_code", None)})")
+            raise
+        except Exception as e:
+            log.error(f"Failed to delete customer request: {str(e)}")
+            raise

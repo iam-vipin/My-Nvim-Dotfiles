@@ -95,9 +95,19 @@ def get_file_changes_between_commits(repo_owner: str, repo_name: str, base_sha: 
         data = response.json()
         files = data.get("files", [])
 
-        # Filter for documentation files only (.mdx and .txt)
+        # Filter for documentation files only (.mdx, .md, and .txt)
+        # Exclude README.md and CONTRIBUTING.md
         def is_doc_file(filename: str) -> bool:
-            return filename.endswith(".mdx") or filename.endswith(".txt")
+            # Check if it's a documentation file
+            if not (filename.endswith(".mdx") or filename.endswith(".md") or filename.endswith(".txt")):
+                return False
+
+            # Exclude README.md and CONTRIBUTING.md (case-insensitive, any path)
+            basename = filename.split("/")[-1].upper()
+            if basename in ["README.MD", "CONTRIBUTING.MD"]:
+                return False
+
+            return True
 
         added = []
         modified = []
@@ -194,8 +204,21 @@ def get_all_doc_files_from_tree(repo_owner: str, repo_name: str, branch: str) ->
         data = response.json()
         tree = data.get("tree", [])
 
-        # Filter for documentation files
-        doc_files = [item["path"] for item in tree if item["type"] == "blob" and (item["path"].endswith(".mdx") or item["path"].endswith(".txt"))]
+        # Filter for documentation files (.mdx, .md, .txt)
+        # Exclude README.md and CONTRIBUTING.md
+        def is_doc_file(path: str) -> bool:
+            # Check if it's a documentation file
+            if not (path.endswith(".mdx") or path.endswith(".md") or path.endswith(".txt")):
+                return False
+
+            # Exclude README.md and CONTRIBUTING.md (case-insensitive, any path)
+            basename = path.split("/")[-1].upper()
+            if basename in ["README.MD", "CONTRIBUTING.MD"]:
+                return False
+
+            return True
+
+        doc_files = [item["path"] for item in tree if item["type"] == "blob" and is_doc_file(item["path"])]
 
         log.info(f"Found {len(doc_files)} documentation files in {repo_name}/{branch}")
         return doc_files, None

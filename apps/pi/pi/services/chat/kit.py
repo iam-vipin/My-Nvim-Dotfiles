@@ -285,7 +285,6 @@ Provide concise, relevant context from the attachment(s):"""
             return None
 
         entity_urls = []
-        mdx = False
         try:
             for doc in retrieved_docs:
                 section = doc.metadata.get("section")
@@ -304,11 +303,9 @@ Provide concise, relevant context from the attachment(s):"""
                     elif section == "docs":
                         doc_type = "docs"
                         section_name = None
-                        mdx = True
                     elif "mdx" in section:
                         doc_type = "docs"
                         section_name = None
-                        mdx = True
                     else:
                         doc_type = section
                         section_name = None
@@ -316,19 +313,28 @@ Provide concise, relevant context from the attachment(s):"""
                     log.error(f"Error constructing entity URL for doc {doc_id}: {e}")
                     continue
 
-                if doc_type == "docs":
+                if doc_type == "api-reference":
+                    # developers.plane.so/api-reference
+                    api_base_url = f"{settings.vector_db.DEVELOPER_DOCS_URL_BASE}/api-reference"
+                elif doc_type == "dev-tools":
+                    # developers.plane.so/dev-tools
+                    api_base_url = f"{settings.vector_db.DEVELOPER_DOCS_URL_BASE}/dev-tools"
+                elif doc_type == "self-hosting":
+                    # developers.plane.so/self-hosting
+                    api_base_url = f"{settings.vector_db.DEVELOPER_DOCS_URL_BASE}/self-hosting"
+                elif doc_type == "docs" or "/" in doc_type:
+                    # docs.plane.so (handles both root docs and nested like introduction/, core-concepts/, etc.)
                     api_base_url = settings.vector_db.DOCS_URL_BASE
-                elif doc_type == "api-reference":
-                    api_base_url = f"{settings.vector_db.DEVELOPER_DOCS_URL_BASE}/{doc_type}"
                 else:
-                    continue
+                    # Fallback: assume it's a docs.plane.so page
+                    api_base_url = settings.vector_db.DOCS_URL_BASE
 
                 try:
                     if section_name:
+                        # Has nested path: api-reference/customer, introduction/quickstart, etc.
                         url = f"{api_base_url}/{section_name}/{subsection}"
-                    elif doc_type and not mdx:
-                        url = f"{api_base_url}/{doc_type}/{subsection}"
                     else:
+                        # Single level: dev-tools, self-hosting, api-reference root, or regular docs
                         url = f"{api_base_url}/{subsection}"
 
                     entity_urls.append({"name": subsection, "id": doc_id, "url": url, "type": "doc"})

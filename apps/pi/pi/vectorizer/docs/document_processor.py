@@ -36,7 +36,7 @@ def process_file_from_raw_content(repo_name: str, file_path: str, content: str) 
     Returns:
         Dictionary with processed file data
     """
-    unique_id = file_path.replace("/", "_").replace("-", "_").replace(".mdx", "").replace(".txt", "")
+    unique_id = file_path.replace("/", "_").replace("-", "_").replace(".mdx", "").replace(".md", "").replace(".txt", "")
 
     if content is None or content.strip() == "":
         log.warning(f"Empty or invalid content for file: {file_path}")
@@ -53,7 +53,7 @@ def process_file_from_raw_content(repo_name: str, file_path: str, content: str) 
     # Clean the text to remove control characters
     processed_content = clean_text(processed_content)
     section = clean_text(section)
-    subsection = clean_text(subsection.replace(".mdx", "").replace(".txt", ""))
+    subsection = clean_text(subsection.replace(".mdx", "").replace(".md", "").replace(".txt", ""))
 
     return {
         "id": unique_id,

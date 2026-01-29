@@ -424,7 +424,7 @@ class Settings:
         # Suppress AMQP debug logs
         colorlog.getLogger("amqp").setLevel(colorlog.WARNING)
         colorlog.getLogger("amqp").propagate = False
-        
+
         # Suppress matplotlib debug logs (especially font_manager)
         colorlog.getLogger("matplotlib").setLevel(colorlog.WARNING)
 

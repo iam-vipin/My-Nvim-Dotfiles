@@ -1983,7 +1983,9 @@ def sync_docs_periodic_task(self):
                                 removed_count = 0
                                 for file_path in files_to_remove:
                                     try:
-                                        unique_id = file_path.replace("/", "_").replace("-", "_").replace(".mdx", "").replace(".txt", "")
+                                        unique_id = (
+                                            file_path.replace("/", "_").replace("-", "_").replace(".mdx", "").replace(".md", "").replace(".txt", "")
+                                        )
                                         resp = await vdb.async_delete_document(index_name=settings.vector_db.DOCS_INDEX, document_id=unique_id)
                                         if resp.get("result") == "deleted":
                                             success_count += 1

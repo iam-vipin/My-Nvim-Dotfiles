@@ -35,17 +35,26 @@ def parse_path(file_path: str) -> tuple[str, str]:
     """
     Parses file path to extract section and subsection.
 
+    Strips leading 'docs/' prefix to maintain compatibility with URL construction.
+    This handles the new repository structure where files are organized under docs/.
+
     Args:
-        file_path: Path to file in repository (e.g., "docs/core-concepts/issues.mdx")
+        file_path: Path to file in repository (e.g., "docs/api-reference/customer/add-customer.md")
 
     Returns:
         Tuple of (section, subsection)
 
     Examples:
-        "issues.mdx" -> ("issues", "issues")
-        "core-concepts/issues.mdx" -> ("core-concepts", "issues.mdx")
-        "docs/core/issues/overview.mdx" -> ("docs/core/issues", "overview.mdx")
+        "issues.md" -> ("issues", "issues")
+        "api-reference/customer/add-customer.md" -> ("api-reference/customer", "add-customer.md")
+        "docs/api-reference/customer/add-customer.md" -> ("api-reference/customer", "add-customer.md")
+        "docs/plane-one/introduction.md" -> ("plane-one", "introduction.md")
     """
+    # Strip leading 'docs/' prefix to maintain consistent section extraction
+    # New repo structure: docs/api-reference/... should become api-reference/...
+    if file_path.startswith("docs/"):
+        file_path = file_path[5:]  # Remove 'docs/' prefix
+
     parts = file_path.split("/")
     if len(parts) == 1:
         return parts[0], parts[0]

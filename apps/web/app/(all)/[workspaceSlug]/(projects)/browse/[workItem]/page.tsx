@@ -26,6 +26,8 @@ import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?u
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
+import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
+import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -36,9 +38,8 @@ import { useWorkItemDetailRevalidation } from "@/lib/socket/hooks/work-item-deta
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
-import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
+// types
 import type { Route } from "./+types/page";
-import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
 
 export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: Route.ComponentProps) {
   // router
@@ -187,8 +188,8 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
           <WorkItemDetailRoot
             workspaceSlug={workspaceSlug}
             projectId={projectId}
-            issueId={workItemId}
-            issue={workItemDetail}
+            workItemId={workItemId}
+            workItem={workItemDetail}
           />
         </ProjectAuthWrapper>
       )}

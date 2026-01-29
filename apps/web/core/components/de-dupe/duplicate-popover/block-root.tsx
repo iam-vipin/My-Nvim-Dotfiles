@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 // plane imports
 import type { TDeDupeIssue } from "@plane/types";
 // components

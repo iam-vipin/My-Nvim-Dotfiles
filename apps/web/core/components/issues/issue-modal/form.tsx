@@ -52,8 +52,8 @@ import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web imports
-import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
-import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
+import { DeDupeButtonRoot } from "@/components/de-dupe/de-dupe-button";
+import { DuplicateModalRoot } from "@/components/de-dupe/duplicate-modal";
 import { IssueTypeSelect } from "@/plane-web/components/issues/issue-modal/issue-type-select";
 import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
 import { WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal/template-select";

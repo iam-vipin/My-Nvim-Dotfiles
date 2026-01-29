@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";

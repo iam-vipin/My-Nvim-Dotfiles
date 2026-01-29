@@ -182,7 +182,7 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                             {feature.icon} <span className="text-11 font-medium">{feature.fieldName}</span>
                           </div>
                           <div className="flex gap-2 h-[30px] w-full">
-                            {settings?.anchors[feature.key] ? (
+                            {settings?.anchors?.[feature.key] ? (
                               <div
                                 className={cn(
                                   "flex items-center text-13 rounded-md border-[0.5px] border-subtle-1 flex-1 py-1 px-2 gap-2 h-full",
@@ -207,7 +207,7 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                                 <Loader.Item height="30px" width="250px" className="rounded" />
                               </Loader>
                             )}
-                            {allowEdit && settings?.anchors[feature.key] && (
+                            {allowEdit && settings?.anchors?.[feature.key] && (
                               <Button
                                 tabIndex={-1}
                                 variant="secondary"

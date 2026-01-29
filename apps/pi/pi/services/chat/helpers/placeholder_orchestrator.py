@@ -200,6 +200,7 @@ class PlaceholderOrchestrator:
                         "result": f"❌ Failed to execute: {formatted_error}",
                         "entity_info": None,
                         "artifact_id": action.get("artifact_id"),
+                        "version_id": action.get("version_id"),  # Include version_id for execution status update
                         "sequence": len(self.results) + 1,
                         "artifact_type": action.get("entity_type"),
                         "executed_at": datetime.utcnow().isoformat(),
@@ -557,6 +558,7 @@ IMPORTANT:
             "result": message,
             "entity_info": entity_info,
             "artifact_id": action.get("artifact_id"),
+            "version_id": action.get("version_id"),  # Include version_id for execution status update
             "sequence": len(self.results) + 1,
             "artifact_type": action.get("entity_type"),
             "executed_at": datetime.utcnow().isoformat(),
@@ -704,6 +706,7 @@ IMPORTANT:
                             "result": f"Cannot execute: prerequisite '{entity_name}' ({entity_type}) failed to create",
                             "entity_info": None,
                             "artifact_id": action.get("artifact_id"),
+                            "version_id": action.get("version_id"),  # Include version_id for execution status update
                             "sequence": len(self.results) + 1,
                             "artifact_type": action.get("entity_type"),
                             "executed_at": datetime.utcnow().isoformat(),

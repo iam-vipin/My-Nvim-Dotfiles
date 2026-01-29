@@ -13,12 +13,14 @@
 
 import { Effect, Layer, Logger, LogLevel } from "effect";
 import { NodeRuntime } from "@effect/platform-node";
-import { AppConfigLive } from "./services";
+import { AppConfigLive, Telemetry, TelemetryTracingLive } from "./services";
 import { RelayServer, RelayServerLive } from "./server";
 
-const MainLive = Layer.mergeAll(AppConfigLive, RelayServerLive);
+const MainLive = Layer.mergeAll(AppConfigLive, TelemetryTracingLive, RelayServerLive);
 
 const program = Effect.gen(function* () {
+  // Initialize telemetry first (Sentry must be ready before other services)
+  yield* Telemetry;
   const server = yield* RelayServer;
   yield* server.start;
   yield* Effect.never;

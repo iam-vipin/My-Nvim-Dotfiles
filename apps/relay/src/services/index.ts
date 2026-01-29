@@ -16,3 +16,4 @@ export * from "./redis";
 export * from "./amqp";
 export * from "./auth";
 export * from "./socket-emitter";
+export * from "./telemetry";

@@ -13,7 +13,7 @@
 
 import { Effect, Layer, Schema, Fiber } from "effect";
 import { NodeRuntime } from "@effect/platform-node";
-import { AppConfig, AmqpService, SocketEmitter } from "./services";
+import { AppConfig, AmqpService, SocketEmitter, Telemetry, TelemetryTracingLive } from "./services";
 import { MessageParseError } from "./schema";
 import type { AmqpMessage } from "./services/amqp";
 
@@ -102,9 +102,11 @@ const createMessageHandler = (emitter: SocketEmitter) =>
 
 const AmqpLive = AmqpService.Default.pipe(Layer.provide(AppConfig.Default));
 const SocketEmitterLive = SocketEmitter.Default.pipe(Layer.provide(AppConfig.Default));
-const ConsumerLive = Layer.mergeAll(AppConfig.Default, AmqpLive, SocketEmitterLive);
+const ConsumerLive = Layer.mergeAll(AppConfig.Default, TelemetryTracingLive, AmqpLive, SocketEmitterLive);
 
 const main = Effect.gen(function* () {
+  // Initialize telemetry first (Sentry must be ready before other services)
+  yield* Telemetry;
   const amqp = yield* AmqpService;
   const emitter = yield* SocketEmitter;
 

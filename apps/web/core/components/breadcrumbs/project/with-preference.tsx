@@ -13,14 +13,14 @@
 
 // local components
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
-import { ProjectBreadcrumb } from "./project";
+import { ProjectBreadcrumb } from "./root";
 
 type TCommonProjectBreadcrumbProps = {
   workspaceSlug: string;
   projectId: string;
 };
 
-export function CommonProjectBreadcrumbs(props: TCommonProjectBreadcrumbProps) {
+export function ProjectBreadcrumbWithPreference(props: TCommonProjectBreadcrumbProps) {
   const { workspaceSlug, projectId } = props;
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();

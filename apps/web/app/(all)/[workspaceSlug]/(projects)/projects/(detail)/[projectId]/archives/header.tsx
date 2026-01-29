@@ -26,7 +26,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
@@ -79,7 +79,10 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <ProjectBreadcrumbWithPreference
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

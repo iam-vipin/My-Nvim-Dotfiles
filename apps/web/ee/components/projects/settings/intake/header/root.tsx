@@ -31,7 +31,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 import { useFlag } from "@/plane-web/hooks/store";
 // local imports
 import IntakeTooltip from "../intake-tooltip";
@@ -101,7 +101,10 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
       <Header.LeftItem>
         <div className="flex items-center gap-1">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <ProjectBreadcrumbWithPreference
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

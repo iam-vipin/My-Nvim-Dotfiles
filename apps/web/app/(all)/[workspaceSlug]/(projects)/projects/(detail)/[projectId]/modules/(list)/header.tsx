@@ -29,7 +29,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
@@ -54,7 +54,10 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <ProjectBreadcrumbWithPreference
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

@@ -24,7 +24,7 @@ import { ViewListHeader } from "@/components/views/view-list-header";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 
 export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
   const { workspaceSlug, projectId } = useParams();
@@ -37,7 +37,10 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
       <Header>
         <Header.LeftItem>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <ProjectBreadcrumbWithPreference
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

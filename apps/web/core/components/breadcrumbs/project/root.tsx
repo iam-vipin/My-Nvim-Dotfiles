@@ -26,11 +26,10 @@ import type { TProject } from "@/types";
 type TProjectBreadcrumbProps = {
   workspaceSlug: string;
   projectId: string;
-  handleOnClick?: () => void;
 };
 
 export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TProjectBreadcrumbProps) {
-  const { workspaceSlug, projectId, handleOnClick } = props;
+  const { workspaceSlug, projectId } = props;
   // router
   const router = useAppRouter();
   // store hooks
@@ -79,10 +78,7 @@ export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TPro
             }}
             title={currentProjectDetails?.name}
             icon={renderIcon(currentProjectDetails)}
-            handleOnClick={() => {
-              if (handleOnClick) handleOnClick();
-              else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`);
-            }}
+            handleOnClick={() => router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`)}
             shouldTruncate
           />
         }

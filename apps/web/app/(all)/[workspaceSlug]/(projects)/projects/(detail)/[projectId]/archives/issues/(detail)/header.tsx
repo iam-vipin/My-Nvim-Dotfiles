@@ -25,7 +25,7 @@ import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
+import { ProjectBreadcrumb } from "@/components/breadcrumbs/project/root";
 // services
 import { IssueService } from "@/services/issue";
 

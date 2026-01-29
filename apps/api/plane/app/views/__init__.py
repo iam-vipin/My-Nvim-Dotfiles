@@ -31,6 +31,11 @@ from .project.member import (
     ProjectMemberPreferenceEndpoint,
 )
 
+from .project.label import (
+    ProjectLabelsEndpoint,
+    ProjectLabelDetailEndpoint,
+)
+
 from .user.base import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,

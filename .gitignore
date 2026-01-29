@@ -73,6 +73,7 @@ pnpm-debug.log
 *.sln
 package-lock.json
 .vscode
+.zed
 
 # Sentry
 .sentryclirc

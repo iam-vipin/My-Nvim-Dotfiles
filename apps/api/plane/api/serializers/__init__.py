@@ -106,3 +106,8 @@ from .work_item_property import (
     WorkItemPropertyValueRequestSerializer,
     WorkItemPropertyValueResponseSerializer,
 )
+
+from .project_label import (
+    ProjectLabelSerializer,
+    ProjectLabelCreateUpdateSerializer,
+)

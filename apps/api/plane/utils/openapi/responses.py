@@ -260,6 +260,34 @@ LABEL_NAME_EXISTS_RESPONSE = OpenApiResponse(
     ],
 )
 
+# Project Label-specific Responses
+PROJECT_LABEL_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Project label not found",
+    examples=[
+        OpenApiExample(
+            name="Project Label Not Found",
+            value={
+                "error": "Project label not found",
+                "code": "NOT_FOUND",
+            },
+        )
+    ],
+)
+
+PROJECT_LABEL_NAME_EXISTS_RESPONSE = OpenApiResponse(
+    description="Project label with the same name already exists in the workspace",
+    examples=[
+        OpenApiExample(
+            name="Project Label Name Exists",
+            value={
+                "error": "Project label with the same name already exists in the workspace",
+                "code": "PROJECT_LABEL_ALREADY_EXISTS",
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+            },
+        )
+    ],
+)
+
 # Module-specific Responses
 MODULE_NOT_FOUND_RESPONSE = OpenApiResponse(
     description="Module not found",

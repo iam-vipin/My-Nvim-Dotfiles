@@ -138,6 +138,11 @@ from .workspace import (
     WorkspaceFeatureAPIEndpoint,
 )
 
+from .project_label import (
+    ProjectLabelListCreateAPIEndpoint,
+    ProjectLabelDetailAPIEndpoint,
+)
+
 from .workspace_page import (
     WorkspacePageDetailAPIEndpoint,
     WorkspacePageAPIEndpoint,

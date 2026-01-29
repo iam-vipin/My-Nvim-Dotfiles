@@ -14,23 +14,28 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Search } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-// ce imports
-import type { TPowerKModalNoSearchResultsCommandProps } from "@/ce/components/command-palette/power-k/search/no-results-command";
-import { PowerKModalNoSearchResultsCommand as BasePowerKModalNoSearchResultsCommand } from "@/ce/components/command-palette/power-k/search/no-results-command";
+import { SearchIcon } from "@plane/propel/icons";
 // components
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
+// types
+import type { TPowerKContext } from "@/components/power-k/core/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
 
+type TPowerKModalNoSearchResultsCommandProps = {
+  context: TPowerKContext;
+  searchTerm: string;
+  updateSearchTerm: (value: string) => void;
+};
+
 export const PowerKModalNoSearchResultsCommand = observer(function PowerKModalNoSearchResultsCommand(
   props: TPowerKModalNoSearchResultsCommandProps
 ) {
-  const { context, searchTerm } = props;
+  const { context, searchTerm, updateSearchTerm } = props;
   // navigation
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
@@ -39,12 +44,28 @@ export const PowerKModalNoSearchResultsCommand = observer(function PowerKModalNo
   // translation
   const { t } = useTranslation();
 
-  if (!isAdvancedSearchEnabled) return <BasePowerKModalNoSearchResultsCommand {...props} />;
+  if (!isAdvancedSearchEnabled) {
+    return (
+      <Command.Group>
+        <PowerKModalCommandItem
+          icon={SearchIcon}
+          value="no-results"
+          label={
+            <p className="flex items-center gap-2">
+              {t("power_k.search_menu.no_results")}{" "}
+              <span className="shrink-0 text-13 text-tertiary">{t("power_k.search_menu.clear_search")}</span>
+            </p>
+          }
+          onSelect={() => updateSearchTerm("")}
+        />
+      </Command.Group>
+    );
+  }
 
   return (
     <Command.Group>
       <PowerKModalCommandItem
-        icon={Search}
+        icon={SearchIcon}
         value="no-results"
         label={
           <p className="flex items-center gap-2">

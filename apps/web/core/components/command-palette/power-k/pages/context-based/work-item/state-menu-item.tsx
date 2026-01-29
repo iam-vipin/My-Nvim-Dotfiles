@@ -15,14 +15,20 @@ import { observer } from "mobx-react";
 // plane types
 import { StateGroupIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-// ce imports
-import type { TPowerKProjectStatesMenuItemsProps } from "@/ce/components/command-palette/power-k/pages/context-based/work-item/state-menu-item";
-import { PowerKProjectStatesMenuItems as PowerKProjectStatesMenuItemsCE } from "@/ce/components/command-palette/power-k/pages/context-based/work-item/state-menu-item";
+import type { IState } from "@plane/types";
 // components
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow/workflow-tree/workflow-disabled-message";
+
+export type TPowerKProjectStatesMenuItemsProps = {
+  handleSelect: (stateId: string) => void;
+  projectId: string | undefined;
+  selectedStateId: string | undefined;
+  states: IState[];
+  workspaceSlug: string;
+};
 
 export const PowerKProjectStatesMenuItems = observer(function PowerKProjectStatesMenuItems(
   props: TPowerKProjectStatesMenuItemsProps
@@ -35,7 +41,19 @@ export const PowerKProjectStatesMenuItems = observer(function PowerKProjectState
   const availableStateIdMap = getAvailableProjectStateIdMap(projectId, selectedStateId);
 
   if (!isWorkflowEnabled) {
-    return <PowerKProjectStatesMenuItemsCE {...props} />;
+    return (
+      <>
+        {states.map((state) => (
+          <StateMenuItem
+            key={state.id}
+            state={state}
+            isSelected={state.id === selectedStateId}
+            isDisabled={false}
+            onSelect={() => handleSelect(state.id)}
+          />
+        ))}
+      </>
+    );
   }
 
   return (
@@ -46,16 +64,14 @@ export const PowerKProjectStatesMenuItems = observer(function PowerKProjectState
         return (
           <Tooltip
             key={state.id}
-            tooltipContent={<WorkFlowDisabledMessage parentStateId={selectedStateId ?? ""} />}
+            tooltipContent={selectedStateId ? <WorkFlowDisabledMessage parentStateId={selectedStateId} /> : undefined}
             position="right-start"
             className="border-[0.5px] border-subtle-1 mx-0.5 shadow-lg"
             disabled={!isDisabled}
           >
             <div>
-              <PowerKModalCommandItem
-                key={state.id}
-                iconNode={<StateGroupIcon stateGroup={state.group} color={state.color} className="shrink-0 size-3.5" />}
-                label={state.name}
+              <StateMenuItem
+                state={state}
                 isSelected={isSelected}
                 isDisabled={isDisabled}
                 onSelect={() => handleSelect(state.id)}
@@ -67,3 +83,24 @@ export const PowerKProjectStatesMenuItems = observer(function PowerKProjectState
     </>
   );
 });
+
+type TStateMenuItemProps = {
+  state: IState;
+  isSelected: boolean;
+  isDisabled: boolean;
+  onSelect: () => void;
+};
+
+const StateMenuItem = (props: TStateMenuItemProps) => {
+  const { state, isSelected, isDisabled, onSelect } = props;
+  return (
+    <PowerKModalCommandItem
+      key={state.id}
+      iconNode={<StateGroupIcon stateGroup={state.group} color={state.color} className="shrink-0 size-3.5" />}
+      label={state.name}
+      isSelected={isSelected}
+      isDisabled={isDisabled}
+      onSelect={onSelect}
+    />
+  );
+};

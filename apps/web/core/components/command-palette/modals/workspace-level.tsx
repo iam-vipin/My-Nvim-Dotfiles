@@ -11,25 +11,49 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
-// ce components
-import type { TWorkspaceLevelModalsProps } from "@/ce/components/command-palette/modals/workspace-level";
-import { WorkspaceLevelModals as BaseWorkspaceLevelModals } from "@/ce/components/command-palette/modals/workspace-level";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-// plane web components
-import { CreateUpdateCustomerModal } from "@/components/customers/customer-modal";
-import { CreateUpdateWorkspaceDashboardModal } from "@/components/dashboards/modals";
-import { CreateUpdateInitiativeModal } from "@/components/initiatives/components/create-update-initiatives-modal";
-import { CreateOrUpdateTeamspaceModal } from "@/components/teamspaces/create-update/modal";
-import { CreateUpdateTeamspaceViewModal } from "@/components/teamspaces/views/modals/create-update";
 import { useDashboards } from "@/plane-web/hooks/store";
+
+// lazy imports
+const CreateProjectModal = lazy(() =>
+  import("@/components/project/create-project-modal").then((module) => ({ default: module.CreateProjectModal }))
+);
+const CreateUpdateCustomerModal = lazy(() =>
+  import("@/components/customers/customer-modal").then((module) => ({ default: module.CreateUpdateCustomerModal }))
+);
+const CreateUpdateWorkspaceDashboardModal = lazy(() =>
+  import("@/components/dashboards/modals").then((module) => ({ default: module.CreateUpdateWorkspaceDashboardModal }))
+);
+const CreateUpdateInitiativeModal = lazy(() =>
+  import("@/components/initiatives/components/create-update-initiatives-modal").then((module) => ({
+    default: module.CreateUpdateInitiativeModal,
+  }))
+);
+const CreateOrUpdateTeamspaceModal = lazy(() =>
+  import("@/components/teamspaces/create-update/modal").then((module) => ({
+    default: module.CreateOrUpdateTeamspaceModal,
+  }))
+);
+const CreateUpdateTeamspaceViewModal = lazy(() =>
+  import("@/components/teamspaces/views/modals/create-update").then((module) => ({
+    default: module.CreateUpdateTeamspaceViewModal,
+  }))
+);
+
+export type TWorkspaceLevelModalsProps = {
+  workspaceSlug: string;
+};
 
 export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props: TWorkspaceLevelModalsProps) {
   // router
   const { workspaceSlug } = props;
-
+  // store hooks
   const {
+    isCreateProjectModalOpen,
+    toggleCreateProjectModal,
     createUpdateTeamspaceModal,
     toggleCreateTeamspaceModal,
     createUpdateTeamspaceViewModal,
@@ -49,8 +73,12 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
   } = useDashboards();
 
   return (
-    <>
-      <BaseWorkspaceLevelModals {...props} />
+    <Suspense>
+      <CreateProjectModal
+        isOpen={isCreateProjectModalOpen}
+        onClose={() => toggleCreateProjectModal(false)}
+        workspaceSlug={workspaceSlug}
+      />
       <CreateOrUpdateTeamspaceModal
         teamspaceId={createUpdateTeamspaceModal.teamspaceId}
         isModalOpen={createUpdateTeamspaceModal.isOpen}
@@ -60,7 +88,7 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
         <CreateUpdateTeamspaceViewModal
           isOpen={createUpdateTeamspaceViewModal.isOpen}
           onClose={() => toggleCreateTeamspaceViewModal({ isOpen: false, teamspaceId: undefined })}
-          workspaceSlug={workspaceSlug.toString()}
+          workspaceSlug={workspaceSlug}
           teamspaceId={createUpdateTeamspaceViewModal.teamspaceId}
         />
       )}
@@ -83,6 +111,6 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
         customerId={createUpdateCustomerModal.customerId}
         onClose={() => toggleCreateCustomerModal({ isOpen: false, customerId: undefined })}
       />
-    </>
+    </Suspense>
   );
 });

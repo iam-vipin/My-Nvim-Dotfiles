@@ -23,7 +23,7 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";
+import { WorkspaceLevelModals } from "@/components/command-palette/modals/workspace-level";
 // local imports
 import { PlaneAiAppPowerKCommandsList } from "./commands-list";
 import { usePlaneAiAppPowerKCommands } from "./config/commands";

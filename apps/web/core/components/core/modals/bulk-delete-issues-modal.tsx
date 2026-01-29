@@ -48,7 +48,6 @@ type FormInput = {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  user: IUser | undefined;
 };
 
 const projectService = new ProjectService();

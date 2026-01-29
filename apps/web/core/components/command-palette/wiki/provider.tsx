@@ -24,9 +24,9 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";
+import { WorkspaceLevelModals } from "@/components/command-palette/modals/workspace-level";
+import { WikiCreatePageModal } from "@/plane-web/components/pages/modals/create-page-modal";
 // local imports
-import { WikiCreatePageModal } from "../../pages";
 import { WikiAppPowerKCommandsList } from "./commands-list";
 import { useWikiAppPowerKCommands } from "./config/commands";
 

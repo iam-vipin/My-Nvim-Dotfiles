@@ -18,7 +18,7 @@ import { EUserPermissions } from "@plane/constants";
 // wrappers
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 // plane web components
-import { WikiAppPowerKProvider } from "@/plane-web/components/command-palette/wiki/provider";
+import { WikiAppPowerKProvider } from "@/components/command-palette/wiki/provider";
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 import { WikiUpgradeScreen } from "@/components/wiki/upgrade-screen";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";

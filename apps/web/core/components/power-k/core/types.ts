@@ -17,7 +17,7 @@ import type {
   TPowerKContextTypeExtended,
   TPowerKPageTypeExtended,
   TPowerKSearchResultsKeysExtended,
-} from "@/plane-web/components/command-palette/power-k/types";
+} from "@/components/command-palette/power-k/types";
 
 export type TPowerKContextType = "work-item" | "page" | "cycle" | "module" | TPowerKContextTypeExtended;
 

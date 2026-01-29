@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 // plane web imports
-import { PlaneAiAppPowerKProvider } from "@/plane-web/components/command-palette/plane-ai/provider";
+import { PlaneAiAppPowerKProvider } from "@/components/command-palette/plane-ai/provider";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { EmptyPiChat } from "@/components/pi-chat/empty";
 import { PiChatLayout } from "@/components/pi-chat/layout";

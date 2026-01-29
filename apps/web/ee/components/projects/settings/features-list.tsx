@@ -136,20 +136,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
             const isEnabled = featureStatus ? Boolean(featureStatus.isEnabled) : true;
 
             return (
-              <div
-                key={featureItemKey}
-                onClick={() => {
-                  if (featureItem.href) {
-                    navigate(
-                      joinUrlPath(workspaceSlug, "settings", "projects", projectId, "features", featureItem.href)
-                    );
-                  }
-                }}
-                className={cn("", {
-                  "cursor-pointer": featureItem.href,
-                })}
-                role="button"
-              >
+              <div key={featureItemKey} role="button">
                 <SettingsBoxedControlItem
                   title={
                     <span className="flex items-center gap-2">

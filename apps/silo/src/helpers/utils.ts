@@ -75,7 +75,7 @@ export const downloadFile = async (url: string, authToken?: string): Promise<Blo
       },
     });
 
-    if (Number(headResponse.headers["content-length"]) > env.FILE_SIZE_LIMIT) {
+    if (Number(headResponse.headers["content-length"]) > Number(env.SILO_FILE_SIZE_LIMIT)) {
       logger.error("File size exceeds the limit", { fileSize: headResponse.headers["content-length"], url });
       return;
     }

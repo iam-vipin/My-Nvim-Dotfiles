@@ -57,7 +57,7 @@ const envSchema = z.object({
   WEBHOOK_SECRET: z.string().default("plane-silo"),
   MQ_PREFETCH_COUNT: z.string().default("5"),
   SILO_HMAC_SECRET_KEY: z.string().default(""),
-  FILE_SIZE_LIMIT: z.number().default(104857600), // 100MB in bytes
+  SILO_FILE_SIZE_LIMIT: z.string().default("104857600"), // 100MB in bytes
   // Feature Flags Env Variables
   FEATURE_FLAG_SERVER_BASE_URL: z.string().optional(),
   FEATURE_FLAG_SERVER_AUTH_TOKEN: z.string().optional(),

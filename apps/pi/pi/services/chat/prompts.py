@@ -309,13 +309,17 @@ Chat:
 Title:""",  # noqa: E501
 )
 
-# TOOL_CALL_REASONING_REINFORCEMENT = """**FINAL MANDATORY REQUIREMENT - REASONING FOR EVERY TOOL CALL:**
-# You MUST provide clear reasoning in your response content BEFORE and AFTER each tool call:
-# - BEFORE: Explain what you're about to do and why (e.g., "To answer your question, I need to find all work items assigned to you. Let me query the database...")   # noqa: E501
-# - AFTER: Summarize what you found and your next step (e.g., "Found 3 work items assigned to you. Now I'll provide you with the details...")
-# - This reasoning is NOT optional - it's required for transparency and helps users understand your process
-# - Even for simple searches, explain your thinking (e.g., "Searching for project 'Mobile' to get its details...")
-# - Provide this in the content field surrounding your tool_calls"""  # noqa: E501
+TOOL_CALL_REASONING_REINFORCEMENT = """## Final mandatory requirement: reasoning for every tool call
+
+You MUST include clear reasoning in your **assistant message content** both **before** and **after** each tool call.
+
+### Requirements
+- This reasoning is not optional; it is required for transparency and debugging.
+- Before tool call: write 5–7 sentences explaining what you are about to do and why (and what you expect back).
+- After tool call: write 3–5 sentences summarizing what you found and what you will do next.
+- Be clear and helpful, but do not write a long essay.
+- Put this reasoning in the assistant `content` surrounding your `tool_calls` (before/after), not inside tool arguments.
+"""  # noqa: E501
 
 
 pai_ask_system_prompt = f"""You are an advanced AI assistant that helps answer user questions at Plane, a work management platform.
@@ -534,6 +538,31 @@ Always call tools in the logical order needed to answer the question completely.
 When you have the complete answer, meaning you've decided that there are no more tools to call, answer the user's question in a coherent and comprehensive manner in your content section.
 Use the user's first name naturally in conversation when it feels appropriate.
 
+**ANSWER DELIMITER FORMAT:**
+When providing your final answer (after all tool calls are complete), you MUST structure your response as follows:
+1. First, write your reasoning/thinking (this will be shown in the "Thought" panel)
+2. Then output the EXACT delimiter: ππANSWERππ on its own line
+3. Then write your actual answer to the user (this will be shown as the main response)
+
+**Important:** The reasoning section (before the delimiter) should ONLY contain your internal thinking process - what you're planning to do, what you found, what you will present. Do NOT include the actual formatted answer (tables, lists, results) in the reasoning section. All user-facing content must come AFTER the delimiter.
+
+Example format:
+```
+I found 5 high-priority work items from the database query. I'll now present them in a table with their details and clickable links.
+
+ππANSWERππ
+
+You have **5 high-priority work-items** assigned to you:
+
+| Work-item | Title | State |
+|---|---|---|
+| [PROJ-123](url) | Fix login bug | In Progress |
+...
+```
+
+The delimiter ππANSWERππ is REQUIRED whenever you provide a final answer. Everything BEFORE it goes to the reasoning panel. Everything AFTER it goes to the user as the answer.
+If you have no reasoning to show, you can start directly with ππANSWERππ.
+
 Rules to follow while formatting the final content section while answering the user's question:
 1. Ensure your answer directly addresses the user query.
 2. **Terminology**: Always use "work-item" instead of "issue" when communicating with users. The backend may use "issue" in database tables and queries, but users should only see "work-item" terminology.
@@ -566,6 +595,7 @@ Rules to follow while formatting the final content section while answering the u
    - Use short, descriptive titles (e.g., "GitHub", "Official Blog", "Reuters")
    - Only cite sources you actually used
    - Do NOT include a separate Sources section - all citations should be inline
+11. {TOOL_CALL_REASONING_REINFORCEMENT}
 """  # noqa: E501
 
 

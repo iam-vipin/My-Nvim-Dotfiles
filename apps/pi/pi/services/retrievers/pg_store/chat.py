@@ -667,7 +667,7 @@ async def retrieve_chat_history(
                                                         sql_query_str = content_parsed.get("sql_query")
 
                                             # Build display exactly as live stream intent: success prelude + rows
-                                            prelude = "✅ Database querying execution completed"
+                                            prelude = "Database querying execution completed"
                                             rows_text = ""
                                             if results_obj is not None:
                                                 # Use bullet points formatter (async)
@@ -684,7 +684,7 @@ async def retrieve_chat_history(
                                                 cleaned_blocks.append(mask_uuids_in_text(block))
                                         except Exception:
                                             # Fail-safe: fall back to generic formatting
-                                            prelude = f"✅ {(tool_name or "Tool")} execution completed"
+                                            prelude = f"{(tool_name or "Tool")} execution completed"
                                             formatted = format_tool_message_for_display(f"{prelude}\n\nResult: {raw_str}")
                                             if formatted and formatted.strip():
                                                 cleaned_blocks.append(mask_uuids_in_text(formatted))
@@ -710,14 +710,14 @@ async def retrieve_chat_history(
 
                                         from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 
-                                        prelude = f"✅ {tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        prelude = f"{tool_name_shown_to_user(tool_name or "Tool")} execution completed"
                                         formatted = f"{prelude}\n\nResult: {truncated}"
                                         cleaned_blocks.append(mask_uuids_in_text(formatted.strip()))
 
                                     else:
                                         from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 
-                                        prelude = f"✅ {tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        prelude = f"{tool_name_shown_to_user(tool_name or "Tool")} execution completed"
                                         # Include query context when available (helps external readers)
                                         if isinstance(exec_data, dict) and exec_data.get("tool_query"):
                                             try:

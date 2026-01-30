@@ -1344,37 +1344,6 @@ async def handle_preflight_clarification(
 
 
 # ------------------------------
-# Final response builders
-# ------------------------------
-
-
-async def build_and_stream_final_response(
-    *,
-    response,
-    current_step: int,
-    iteration_count: int,
-    chat_id,
-) -> Tuple[List[str], int, Optional[Dict[str, Any]]]:
-    """Build final response chunks for when actions have been planned.
-
-    Returns: (final_response_chunks, next_step, optional_step)
-    """
-
-    final_response_chunks = []
-
-    if hasattr(response, "content") and response.content:
-        content = str(response.content).strip()
-        if content:
-            final_response_chunks.append(content + "\n")
-            return final_response_chunks, current_step, None
-
-    # Fallback if no content provided
-    content = "Planned these actions for you"
-    final_response_chunks.append(content + "\n")
-    return final_response_chunks, current_step, None
-
-
-# ------------------------------
 # Planner summary helper
 # ------------------------------
 def build_planner_summary_step(

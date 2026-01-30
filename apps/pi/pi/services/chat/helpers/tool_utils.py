@@ -17,6 +17,7 @@ so that `action_executor.execute_action_with_retrieval` stays lean and readable.
 """
 
 import asyncio
+import contextlib
 import logging
 import re
 from collections.abc import AsyncIterator
@@ -25,11 +26,285 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
+from typing import TypedDict
 from typing import Union
 
 from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 
 log = logging.getLogger(__name__)
+
+
+# ------------------------------------
+# Smart Buffering Streaming Utility
+# ------------------------------------
+
+
+class StreamEvent(TypedDict, total=False):
+    """Event types yielded by stream_llm_with_smart_buffering.
+
+    Types:
+    - "reasoning_chunk": Content that should go to reasoning/thought panel
+    - "final_answer_chunk": Content that should go to final answer stream
+    - "tool_detected": A tool name was detected in the stream
+    - "complete": Streaming finished, contains the accumulated message
+    """
+
+    type: str  # "reasoning_chunk" | "final_answer_chunk" | "tool_detected" | "complete"
+    content: str  # Text content for chunks
+    tool_name: str  # For tool_detected events
+    accumulated_message: Any  # Final AIMessage for "complete" event
+    saw_tool_calls: bool  # Whether any tool calls were detected
+    streamed_reasoning: bool  # Whether any reasoning was streamed
+
+
+async def stream_llm_with_delimiter(
+    llm: Any,
+    messages: Any,
+    *,
+    stream_final_answer: bool = False,
+) -> AsyncIterator[StreamEvent]:
+    """
+    Shared streaming utility using delimiter-based answer routing.
+
+    Streams content immediately as reasoning (or pre-answer text) until
+    the answer delimiter (ππANSWERππ) is encountered, then switches to
+    streaming the final answer.
+
+    Args:
+        llm: The LangChain LLM instance (TrackedLLM or similar)
+        messages: List of messages to send to the LLM
+        stream_final_answer: If True, stream content after delimiter as final answer
+
+    Yields:
+        StreamEvent dicts with type-specific content
+
+    Example:
+        async for event in stream_llm_with_delimiter(llm, messages):
+            if event["type"] == "reasoning_chunk":
+                # Handle reasoning content
+                pass
+            elif event["type"] == "tool_detected":
+                # Handle tool announcement
+                pass
+            elif event["type"] == "complete":
+                ai_message = event["accumulated_message"]
+    """
+    from pi.services.chat.utils import mask_uuids_in_text
+
+    accumulated: Any = None
+    saw_tool_calls = False
+    streamed_reasoning = False
+    announced_tools: set[str] = set()
+
+    # State
+    content_buffer = ""
+    stream_mode: Optional[str] = None  # "final_answer" or None (reasoning by default)
+
+    try:
+        # Get event iterator
+        try:
+            event_iter = llm.astream_events(messages, version="v2")
+        except TypeError:
+            event_iter = llm.astream_events(messages)
+
+        async for event in event_iter:
+            if not isinstance(event, dict):
+                continue
+            data = event.get("data") or {}
+            chunk = data.get("chunk")
+            if chunk is None:
+                continue
+
+            # Accumulate chunks
+            if accumulated is None:
+                accumulated = chunk
+            else:
+                try:
+                    accumulated = accumulated + chunk
+                except Exception:
+                    accumulated = chunk
+
+            # 1. Extract content from chunk
+            chunk_text = getattr(chunk, "content", None)
+            if chunk_text:
+                content_buffer += str(chunk_text)
+
+            # 2. Detect and announce tool names (for UI display only, not for routing)
+            tool_call_chunks = getattr(chunk, "tool_call_chunks", None) or []
+            for tc in tool_call_chunks:
+                name = (tc.get("name") if isinstance(tc, dict) else None) or ""
+                if name and name not in announced_tools:
+                    announced_tools.add(name)
+                    saw_tool_calls = True
+                    # Flush pending buffered reasoning BEFORE emitting tool header
+                    # Check for delimiter first to avoid breaking delimiter detection
+                    ANSWER_DELIMITER = "ππANSWERππ"
+                    delimiter_pos = content_buffer.find(ANSWER_DELIMITER)
+                    if delimiter_pos != -1:
+                        # Delimiter found - emit reasoning before it, then handle rest later
+                        reasoning_content = content_buffer[:delimiter_pos]
+                        if reasoning_content:
+                            delta = mask_uuids_in_text(reasoning_content)
+                            if delta.strip():
+                                streamed_reasoning = True
+                                yield StreamEvent(type="reasoning_chunk", content=delta)
+                        # Keep delimiter and answer in buffer for later processing
+                        content_buffer = content_buffer[delimiter_pos:]
+                    elif content_buffer:
+                        # No delimiter - safe to emit entire buffer
+                        delta = mask_uuids_in_text(content_buffer)
+                        if delta.strip():
+                            streamed_reasoning = True
+                            yield StreamEvent(type="reasoning_chunk", content=delta)
+                        content_buffer = ""
+                    yield StreamEvent(type="tool_detected", tool_name=name)
+
+            # 3. Delimiter-based routing (the ONLY logic for content routing)
+            # Before delimiter → reasoning, After delimiter → final_answer
+            ANSWER_DELIMITER = "ππANSWERππ"
+            delimiter_pos = content_buffer.find(ANSWER_DELIMITER)
+
+            if delimiter_pos != -1:
+                # Found delimiter! Split and emit
+
+                # Everything before delimiter goes to reasoning
+                reasoning_content = content_buffer[:delimiter_pos]
+                if reasoning_content:
+                    delta = mask_uuids_in_text(reasoning_content)
+                    if delta.strip():
+                        streamed_reasoning = True
+                        yield StreamEvent(type="reasoning_chunk", content=delta)
+
+                # Everything after delimiter goes to answer
+                answer_start = delimiter_pos + len(ANSWER_DELIMITER)
+                answer_content = content_buffer[answer_start:].lstrip("\n")
+
+                # Clear buffer and switch mode
+                content_buffer = ""
+                stream_mode = "final_answer"
+
+                if answer_content and stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=answer_content)
+
+            elif stream_mode == "final_answer":
+                # Already past delimiter - stream everything to answer
+                if content_buffer and stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=content_buffer)
+                    content_buffer = ""
+
+            else:
+                # Haven't found delimiter yet - stream to reasoning (with tail buffer for safety)
+                safe_tail_len = len(ANSWER_DELIMITER) - 1
+
+                if len(content_buffer) > safe_tail_len:
+                    to_emit = content_buffer[:-safe_tail_len]
+                    content_buffer = content_buffer[-safe_tail_len:]
+
+                    if to_emit:
+                        delta = mask_uuids_in_text(to_emit)
+                        if delta:
+                            streamed_reasoning = True
+                            yield StreamEvent(type="reasoning_chunk", content=delta)
+
+        # 5. End of Stream - Flush Remainder
+        ANSWER_DELIMITER = "ππANSWERππ"
+        if content_buffer:
+            # Check for delimiter in remaining buffer
+            delimiter_pos = content_buffer.find(ANSWER_DELIMITER)
+
+            if delimiter_pos != -1:
+                # Split at delimiter
+                reasoning_content = content_buffer[:delimiter_pos].strip()
+                if reasoning_content:
+                    delta = mask_uuids_in_text(reasoning_content)
+                    if delta.strip():
+                        streamed_reasoning = True
+                        yield StreamEvent(type="reasoning_chunk", content=delta)
+
+                answer_start = delimiter_pos + len(ANSWER_DELIMITER)
+                answer_content = content_buffer[answer_start:].lstrip("\n")
+                if answer_content and stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=answer_content)
+
+            elif stream_mode != "final_answer":
+                # Flush as reasoning
+                # If we haven't found a delimiter, we assume it's part of the reasoning/preamble
+                # (or the model failed to output a delimiter, in which case consistent reasoning events
+                # allow the consumer's fallback logic to handle the full message)
+                delta = mask_uuids_in_text(content_buffer)
+                if delta.strip():
+                    streamed_reasoning = True
+                    yield StreamEvent(type="reasoning_chunk", content=delta)
+            else:
+                # Flush as final answer
+                if stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=content_buffer)
+
+        # Convert accumulated chunk to message if needed
+        response = accumulated
+        if response is not None and hasattr(response, "to_message") and callable(response.to_message):
+            with contextlib.suppress(Exception):
+                response = response.to_message()
+
+        # Log the complete LLM response for debugging
+        try:
+            response_content = getattr(response, "content", None) if response else None
+            response_tool_calls = getattr(response, "tool_calls", None) if response else None
+            content_preview = str(response_content)[:500] if response_content else "None"
+            tool_calls_preview = str(response_tool_calls)[:300] if response_tool_calls else "None"
+            log.info(
+                f"stream_llm_with_delimiter - LLM Response Summary:\n"
+                f"  - Has tool_calls: {bool(response_tool_calls)}\n"
+                f"  - Tool calls: {tool_calls_preview}\n"
+                f"  - Content preview ({len(str(response_content)) if response_content else 0} chars): {content_preview}"
+            )
+
+            # DEBUG: Log full content with delimiter analysis for debugging content leakage
+            if response_content:
+                full_content = str(response_content)
+                ANSWER_DELIMITER = "ππANSWERππ"
+                delimiter_pos = full_content.find(ANSWER_DELIMITER)
+                if delimiter_pos != -1:
+                    reasoning_part = full_content[:delimiter_pos]
+                    answer_part = full_content[delimiter_pos + len(ANSWER_DELIMITER) :]
+                    log.info(
+                        f"stream_llm_with_delimiter - DELIMITER ANALYSIS:\n"
+                        f"{"=" * 80}\n"
+                        f"REASONING SECTION (before delimiter, {len(reasoning_part)} chars):\n"
+                        f"{reasoning_part}\n"
+                        f"{"=" * 80}\n"
+                        f"ANSWER SECTION (after delimiter, {len(answer_part)} chars):\n"
+                        f"{answer_part}\n"
+                        f"{"=" * 80}"
+                    )
+                else:
+                    log.info(f"stream_llm_with_delimiter - NO DELIMITER FOUND in content:\n" f"{"=" * 80}\n" f"{full_content}\n" f"{"=" * 80}")
+        except Exception as log_err:
+            log.debug(f"stream_llm_with_delimiter - Failed to log response: {log_err}")
+
+        # Yield completion event
+        yield StreamEvent(
+            type="complete",
+            accumulated_message=response,
+            saw_tool_calls=saw_tool_calls,
+            streamed_reasoning=streamed_reasoning,
+        )
+
+    except Exception as e:
+        log.warning(f"stream_llm_with_delimiter error: {e}")
+        # Fallback: non-streaming invoke
+        try:
+            response = await llm.ainvoke(messages)
+            yield StreamEvent(
+                type="complete",
+                accumulated_message=response,
+                saw_tool_calls=False,
+                streamed_reasoning=False,
+            )
+        except Exception as fallback_err:
+            log.error(f"Fallback ainvoke also failed: {fallback_err}")
+            raise
+
 
 # build a map of tool name to category
 TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
@@ -240,8 +515,6 @@ def is_plan_only_tool(name: str) -> bool:
     """Return True if the tool must not be executed during planning (planned only)."""
     return bool(TOOL_METADATA_REGISTRY.get(name, {}).get("plan_only", False))
 
-
-import contextlib
 
 from pi.services.schemas.chat import RetrievalTools
 
@@ -630,23 +903,17 @@ def log_toolset_details(tools: List[Any], chat_id: str) -> None:
 # Action Executor helper methods
 # ------------------------------
 
-# TOOL_CALL_REASONING_INSTRUCTIONS = """**MANDATORY REASONING AND COMMUNICATION (CRITICAL - REQUIRED FOR EVERY TOOL CALL):**
-# - **BEFORE EACH TOOL CALL**: You MUST explain your reasoning and intent
-#   - State what information you're trying to gather or what action you're planning
-#   - Explain why this tool is necessary for completing the user's request
-#   - Describe what you expect to get from the tool and how you'll use it
-#   - Example: "The user wants to check workitems assigned to Anil. First, I need to search for the user 'Anil' to get their ID, then I'll use that ID to filter workitems." # noqa: E501
-# - **AFTER EACH TOOL CALL**: You MUST provide a brief summary of what you learned
-#   - Summarize key information obtained from the tool
-#   - Explain how this information helps with the next step
-#   - If the tool returned unexpected results, explain how you'll adapt
-#   - Example: "Found user Anil Kumar with ID xyz-123. Now I'll use this ID to search for workitems assigned to them." # noqa: E501
-# - **THINKING OUT LOUD**: Express your thought process naturally
-#   - Share your understanding of the user's request
-#   - Explain your strategy for accomplishing the task
-#   - Mention any assumptions you're making
-# - This reasoning is MANDATORY and helps with debugging and understanding your decision-making process
-# - NEVER skip the reasoning - it's essential for transparency and troubleshooting"""  # noqa: E501
+TOOL_CALL_REASONING_INSTRUCTIONS = """## Mandatory reasoning & communication (required for every tool call)
+
+Before each tool call, write a short, natural explanation of what you are doing and why.
+After each tool call, write a short recap of what you learned and what you will do next.
+
+### Guidelines
+- Before tool call: 5–7 sentences (intent + why + what you expect back).
+- After tool call: 3–5 sentences (key result + next step).
+- Be clear and helpful, but do not write a long essay.
+- Put this reasoning in the assistant `content` surrounding your `tool_calls` (before/after), not inside tool arguments.
+"""  # noqa: E501
 
 
 # TOOL_CALL_REASONING_REINFORCEMENT = """**FINAL MANDATORY REQUIREMENT - REASONING FOR EVERY TOOL CALL:**
@@ -843,6 +1110,7 @@ def build_method_prompt(
     websearch_enabled: bool = False,
 ) -> str:
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
+    from pi.services.chat.prompts import TOOL_CALL_REASONING_REINFORCEMENT
     from pi.services.chat.prompts import plane_context
 
     address_user_by_name = True
@@ -1260,7 +1528,36 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
             method_prompt += "\nIMPORTANT: The current user message is a clarification response to the original request above. Use the clarification answer to resolve missing information and continue with the ORIGINAL request, not as a new standalone request.\n"  # noqa E501
         except Exception:
             pass
+        # Reasoning guidance is added globally below so it applies to all build-mode planning.
 
+    # Add answer delimiter instruction (same as ask mode)
+    method_prompt += """
+
+**CRITICAL - ANSWER DELIMITER FORMAT:**
+When providing your final response (after planning actions or when no actions are needed), you MUST structure your response as follows:
+1. First, write any reasoning/thinking/context as normal (this will be shown in the "Thought" panel)
+2. Then output the EXACT delimiter: ππANSWERππ on its own line
+3. Then write your actual response to the user (this will be shown as the main response)
+
+Example format:
+```
+I've analyzed the request and will create two work items with the specified details. Both will be assigned to the current user.
+
+ππANSWERππ
+
+I've planned the following actions for your approval:
+- Create work item "Fix login bug" with high priority
+- Create work item "Update dashboard" with medium priority
+
+Click **Confirm** to execute these actions.
+```
+
+The delimiter ππANSWERππ is REQUIRED whenever you provide a final response. Everything BEFORE it goes to the reasoning panel. Everything AFTER it goes to the user as the main response.
+If you have no reasoning to show, you can start directly with ππANSWERππ.
+"""  # noqa: E501
+
+    # Ensure build-mode planning uses the same "reasoning around tool_calls" guidance as ask-mode.
+    method_prompt += f"\n\n{TOOL_CALL_REASONING_REINFORCEMENT}"
     return method_prompt
 
 

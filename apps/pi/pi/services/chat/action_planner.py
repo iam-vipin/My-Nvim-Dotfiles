@@ -43,7 +43,6 @@ from pi.services.schemas.chat import ActionCategorySelection
 from .helpers.build_mode_helpers import TOOL_NAME_TO_CATEGORY_MAP
 from .helpers.build_mode_helpers import auto_resolve_missing_ids
 from .helpers.build_mode_helpers import build_advisory_tool_step
-from .helpers.build_mode_helpers import build_and_stream_final_response
 from .helpers.build_mode_helpers import build_method_executor_and_context
 from .helpers.build_mode_helpers import build_planner_summary_step
 from .helpers.build_mode_helpers import build_planner_tool_selection_step
@@ -63,7 +62,6 @@ from .helpers.tool_utils import classify_tool
 from .helpers.tool_utils import format_tool_message_for_display
 from .helpers.tool_utils import format_tool_query_for_display
 from .helpers.tool_utils import preflight_missing_required_fields
-from .helpers.tool_utils import stream_content_in_chunks
 from .helpers.tool_utils import tool_name_shown_to_user
 
 # from .tool_utils import log_toolset_details
@@ -184,6 +182,11 @@ async def execute_tools_for_build_mode(
     4. Final Response
     """
     try:
+        # Once we reach `build_mode_analyzing_results`, stop BOTH:
+        # - persisting reasoning into `reasoning_container`
+        # - streaming further reasoning blocks to the UI
+        # Final answer streaming (and actions/clarification blocks) continues as usual.
+        # Delimiter-based routing: all reasoning flows until ππANSWERππ, then final answer
         # Resolve workspace_id from project_id if needed (for project-level chats)
         # This must happen BEFORE Phase 1 tools are built
         if not workspace_id and project_id:
@@ -439,14 +442,79 @@ async def execute_tools_for_build_mode(
         # Set tracking context for method planning LLM calls
         llm_with_method_tools.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_METHOD_PLANNING, chat_id=str(chat_id))
 
-        stage = "planner_tool_selection_calling"
-        reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
-        if reasoning_container is not None:
-            reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-        yield reasoning_chunk_dict
+        # Initialize variables before nested function that uses them with nonlocal
+        final_answer_streamed = False
+        final_response_marker_emitted = False
 
-        # Continue iterative tool calling with method tools
-        response = await llm_with_method_tools.ainvoke(messages)
+        async def _ainvoke_with_ui_stream(
+            *,
+            llm: Any,
+            messages: Any,
+            result_holder: Dict[str, Any],
+            stream_final_answer: bool = False,
+        ) -> AsyncIterator[Dict[str, Any]]:
+            """
+            Build-mode streaming using the shared smart buffering utility.
+            Maps StreamEvent events to Build Mode-specific behavior.
+            """
+
+            nonlocal final_answer_streamed
+            nonlocal final_response_marker_emitted
+
+            from pi.services.chat.helpers.tool_utils import stream_llm_with_delimiter
+
+            # Emit initial planning tick
+            stage = "planner_tool_selection_calling"
+            tick = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += tick["header"] + tick["content"]
+            yield tick
+
+            answer_streaming_started = False
+            streamed_reasoning_chunks = False
+
+            async for event in stream_llm_with_delimiter(llm, messages, stream_final_answer=stream_final_answer):
+                event_type = event.get("type", "")
+
+                if event_type == "reasoning_chunk":
+                    content = event.get("content", "")
+                    if content:
+                        streamed_reasoning_chunks = True
+                        if reasoning_container is not None:
+                            reasoning_container["content"] += content
+                        yield {"chunk_type": "reasoning", "header": "", "content": content}
+
+                elif event_type == "final_answer_chunk":
+                    content = event.get("content", "")
+                    if content:
+                        # Emit final response marker on first chunk
+                        if not answer_streaming_started:
+                            answer_streaming_started = True
+                            final_answer_streamed = True
+                            if not final_response_marker_emitted:
+                                final_response_marker_emitted = True
+                                yield {"chunk_type": "reasoning", "header": "", "content": "", "stage": "final_response"}
+                        yield content  # type: ignore[misc]
+
+                elif event_type == "tool_detected":
+                    # Build mode doesn't announce individual tools during streaming
+                    # (it shows them after the response is complete)
+                    pass
+
+                elif event_type == "complete":
+                    result_holder["response"] = event.get("accumulated_message")
+                    result_holder["streamed_reasoning_chunks"] = event.get("streamed_reasoning", False) or streamed_reasoning_chunks
+                    return
+
+        # Continue iterative tool calling with method tools (streaming)
+        stream_result: Dict[str, Any] = {}
+        async for tick in _ainvoke_with_ui_stream(
+            llm=llm_with_method_tools, messages=messages, result_holder=stream_result, stream_final_answer=True
+        ):
+            yield tick
+        response = stream_result.get("response")
+        if response is None:
+            response = await llm_with_method_tools.ainvoke(messages)
         messages.append(response)
         # Stream planner's initial reasoning (if present and not a control token)
         # Only stream as reasoning if there are tool calls coming (not the final response)
@@ -485,7 +553,10 @@ async def execute_tools_for_build_mode(
                     reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=_content_preview)
                     if reasoning_container is not None:
                         reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-                    yield reasoning_chunk_dict
+                    # Avoid duplicating streamed content: if we already streamed reasoning chunks for this call,
+                    # don't emit the full aggregated `response.content` again as a reasoning block.
+                    if not bool(stream_result.get("streamed_reasoning_chunks")):
+                        yield reasoning_chunk_dict
 
             except Exception:
                 pass
@@ -865,16 +936,19 @@ async def execute_tools_for_build_mode(
                         tool_messages.append(tool_message)
                         # Format tool message content for user-friendly display (remove UUIDs, URLs, etc.)
                         ## change point: "πspecial reasoning blockπ:
-                        stage = "retrieval_tool_execution_message"
-                        cleaned_content = format_tool_message_for_display(tool_message.content)
-                        user_friendly_tool_name = tool_name_shown_to_user(tool_name)
-                        content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
-                        reasoning_chunk_dict = reasoning_dict_maker(
-                            stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query, content=content
-                        )
-                        if reasoning_container is not None:
-                            reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-                        yield reasoning_chunk_dict
+                        # IMPORTANT: For structured DB queries, do not stream raw row/column output to the UI.
+                        # The LLM still receives the full ToolMessage to generate the final response/actions.
+                        if tool_name != "structured_db_tool":
+                            stage = "retrieval_tool_execution_message"
+                            cleaned_content = format_tool_message_for_display(tool_message.content)
+                            user_friendly_tool_name = tool_name_shown_to_user(tool_name)
+                            content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
+                            reasoning_chunk_dict = reasoning_dict_maker(
+                                stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query, content=content
+                            )
+                            if reasoning_container is not None:
+                                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                            yield reasoning_chunk_dict
                     else:
                         tool_messages.append(tool_message)
                     if flow_step is not None:
@@ -902,8 +976,25 @@ async def execute_tools_for_build_mode(
             # except Exception:
             #     pass
 
-            # Get next response from LLM
-            response = await llm_with_method_tools.ainvoke(messages)
+            # Before the next LLM call, emit a final "analyzing results" tick
+            stage = "build_mode_analyzing_results"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+            yield reasoning_chunk_dict
+
+            # Get next response from LLM (streaming)
+            stream_result = {}
+            async for tick in _ainvoke_with_ui_stream(
+                llm=llm_with_method_tools,
+                messages=messages,
+                result_holder=stream_result,
+                stream_final_answer=True,
+            ):
+                yield tick
+            response = stream_result.get("response")
+            if response is None:
+                response = await llm_with_method_tools.ainvoke(messages)
 
             messages.append(response)
             # Stream planner reasoning for this iteration (if present and not a control token)
@@ -919,7 +1010,10 @@ async def execute_tools_for_build_mode(
                         reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=_iter_content)
                         if reasoning_container is not None:
                             reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-                        yield reasoning_chunk_dict
+                        # Avoid duplicating streamed content: if we already streamed reasoning chunks for this call,
+                        # don't emit the full aggregated `response.content` again as a reasoning block.
+                        if not bool(stream_result.get("streamed_reasoning_chunks")):
+                            yield reasoning_chunk_dict
                 except Exception:
                     pass
 
@@ -1025,29 +1119,21 @@ async def execute_tools_for_build_mode(
                 return
         elif len(planned_actions) == 0:
             # No actions planned - this is a retrieval-only query or unsupported feature request
-            # The LLM should have provided an answer/explanation in its content
-            log.info(f"ChatID: {chat_id} - No actions planned; streaming LLM's response as final answer")
+            # Note: Real streaming already happened via stream_llm_with_delimiter in _ainvoke_with_ui_stream
+            log.info(f"ChatID: {chat_id} - No actions planned; response already streamed")
 
-            # Stream the LLM's content as the final answer
+            # Prepare content for persistence (stripping delimiter)
+            ANSWER_DELIMITER = "ππANSWERππ"
+            content = ""
             if hasattr(response, "content") and response.content:
                 content = str(response.content).strip()
-                if content:
-                    # Stream the content in chunks for better UX
-                    async for stream_chunk in stream_content_in_chunks(content):
-                        yield stream_chunk
-                    yield "\n"
-                else:
-                    # Fallback if no content provided
-                    fallback_msg = "I wasn't able to find a suitable response. Could you please rephrase your request?"
-                    yield fallback_msg
-                    yield "\n"
-                    content = fallback_msg
-            else:
-                # Fallback if no content attribute
-                fallback_msg = "I wasn't able to find a suitable response. Could you please rephrase your request?"
-                yield fallback_msg
-                yield "\n"
-                content = fallback_msg
+                # Strip delimiter - we only want the final answer part for persistence
+                if ANSWER_DELIMITER in content:
+                    content = content.split(ANSWER_DELIMITER, 1)[-1].strip()
+
+            if not content:
+                # Fallback if no content provided
+                content = "I wasn't able to find a suitable response. Could you please rephrase your request?"
 
             # Record the flow steps
             try:
@@ -1078,36 +1164,16 @@ async def execute_tools_for_build_mode(
         else:
             log.debug(f"Tool selection loop completed successfully after {iteration_count} iterations with {len(planned_actions)} planned actions")
 
-        # Build final response and optional planner_no_actions step
-        final_response_chunks, current_step, no_actions_step = await build_and_stream_final_response(
-            response=response,
-            current_step=current_step,
-            iteration_count=iteration_count,
-            chat_id=chat_id,
-        )
-        if no_actions_step is not None:
-            tool_flow_steps.append(no_actions_step)
-
-        # Stream final response chunks - stream actual content
-        for chunk in final_response_chunks:
-            # Check if this is the actual response content
-            if hasattr(response, "content") and response.content:
-                content = str(response.content).strip()
-                # Stream actual content
-                if content:
-                    chunk_without_newline = chunk.rstrip("\n")
-                    # Check if this chunk matches the actual content (it should be content + "\n")
-                    if chunk_without_newline == content:
-                        # This is the actual response content - stream it in chunks
-                        async for stream_chunk in stream_content_in_chunks(chunk_without_newline):
-                            yield stream_chunk
-                        # Add newline if it was in the original chunk
-                        if chunk.endswith("\n"):
-                            yield "\n"
-                        continue
-
-            # Other message types - yield directly
-            yield chunk
+        # Build final response content for persistence (not for streaming - that's already done)
+        # Note: Real streaming already happened via stream_llm_with_delimiter in _ainvoke_with_ui_stream
+        ANSWER_DELIMITER = "ππANSWERππ"
+        final_response_content = ""
+        if hasattr(response, "content") and response.content:
+            content = str(response.content).strip()
+            # Strip delimiter - we only want the final answer part for persistence
+            if ANSWER_DELIMITER in content:
+                content = content.split(ANSWER_DELIMITER, 1)[-1].strip()
+            final_response_content = content
 
         # Record tool executions in database
         # Append planning summary before persisting steps
@@ -1136,11 +1202,10 @@ async def execute_tools_for_build_mode(
                 log.warning("Failed to record action execution in database")
 
         # Return the complete response for storage in chat history
-        if final_response_chunks:
+        if final_response_content:
             # Yield a special signal that can be detected by the calling function
             # This follows the same pattern as response_processor.py
-            final_response = "".join(final_response_chunks)
-            yield f"__FINAL_RESPONSE__{final_response}"
+            yield f"__FINAL_RESPONSE__{final_response_content}"
         else:
             # Signal end without free-form content
             yield "__FINAL_RESPONSE__"

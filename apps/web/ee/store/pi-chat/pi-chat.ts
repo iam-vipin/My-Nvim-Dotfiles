@@ -510,9 +510,17 @@ export class PiChatStore implements IPiChatStore {
     eventSource.addEventListener("reasoning", (event: MessageEvent<string>) => {
       try {
         const data = parseSSEData<TSSEReasoningEvent>(event.data);
-        if (!data.header) return;
-        newDialogue.current_tick = data.header;
-        newDialogue.reasoning = newDialogue.reasoning + `${data.header}${data.content ?? ""}`;
+        const header = data.header ?? "";
+        const content = data.content ?? "";
+        // Allow content-only reasoning updates (used for streaming LLM reasoning chunks without repeating the header)
+        if (!header && !content) return;
+        if (header) {
+          newDialogue.current_tick = header;
+          newDialogue.reasoning = newDialogue.reasoning + header;
+        }
+        if (content) {
+          newDialogue.reasoning = newDialogue.reasoning + content;
+        }
         this.updateDialogue(chatId, token, newDialogue);
       } catch (e) {
         console.error("Reasoning parse error", e);

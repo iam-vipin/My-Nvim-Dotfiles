@@ -181,72 +181,76 @@ def reasoning_header_factory(stage: str, tool_name: str, tool_query: str) -> str
     """Factory function to create a reasoning header for a given stage"""
     stage_dict = {
         "build_beginning": [
-            "🧠 Assembling the action sequence...\n\n",
-            "🤔 Planning next steps...\n\n",
-            "🧠 Brainstorming the best approach...\n\n",
-            "🛤️ Mapping out the action path...\n\n",
-            "🚧 Constructing your request workflow...\n\n",
-            "🔍 Evaluating available options...\n\n",
-            "⏳ Orchestrating the next steps...\n\n",
+            "\n\nAssembling the action sequence...\n\n",
+            "\n\nPlanning next steps...\n\n",
+            "\n\nBrainstorming the best approach...\n\n",
+            "\n\nMapping out the action path...\n\n",
+            "\n\nConstructing your request workflow...\n\n",
+            "\n\nEvaluating available options...\n\n",
+            "\n\nOrchestrating the next steps...\n\n",
         ],
         "selected_action_categories": [
-            "🧭 Identified planning focus\n\n",
-            "🔍 Evaluated relevant areas\n\n",
+            "\n\nIdentified planning focus\n\n",
+            "\n\nEvaluated relevant areas\n\n",
         ],
         "actions_clarification_followup": [
-            "🧠 Continuing with your request...\n\n",
+            "\n\nContinuing with your request...\n\n",
         ],
         "planner_tool_selection_calling": [
-            "🧠 Zeroing in on the best tool...\n\n",
-            "🔍 Narrowing down the next moves...\n\n",
-            "🧭 Steps to take next...\n\n",
+            "\n\nZeroing in on the best step...\n\n",
+            "\n\nNarrowing down the next moves...\n\n",
+            "\n\nSteps to take next...\n\n",
         ],
         "planner_tool_selection": [
-            "💭 Contemplating...\n\n",
+            "\n\nContemplating...\n\n",
         ],
         "planner_tool_selection_final": [
-            f"🤖 {tool_name} ({tool_query})\n\n" if tool_query else f"🤖 {tool_name}\n\n",
+            f"\n\n{tool_name} ({tool_query})\n\n" if tool_query else f"\n\n{tool_name}\n\n",
         ],
         "retrieval_tool_execution": [
-            f"🔧 Executing: {tool_name}: {tool_query}\n\n",
-            f"Calling {tool_name} for {tool_query}\n\n",
+            f"\n\nExecuting: {tool_name}: {tool_query}\n\n",
+            f"\n\nCalling {tool_name} for {tool_query}\n\n",
         ],
         "retrieval_tool_execution_message": [
-            f"✅Tool {tool_name} returned its output...\n\n",
-            f"I received {tool_name}'s result..\n\n",
+            f"\n\nTool {tool_name} returned its output...\n\n",
+            f"\n\nI received {tool_name}'s result..\n\n",
         ],
         "tool_complete": [
-            f"✅ {tool_name} execution completed\n\n",
-            f"{tool_name} is executed successfully\n\n",
+            f"\n\n{tool_name} execution completed\n\n",
+            f"\n\n{tool_name} is executed successfully\n\n",
         ],
         "tool_error": [
-            f"⚠️ Error executing {tool_name}\n\n",
+            f"\n\nError executing {tool_name}\n\n",
         ],
         "tool_unavailable": [
-            "⚠️ A required capability was unavailable.\n\n",
+            "\n\nA required capability was unavailable.\n\n",
         ],
         "ask_mode_clarification_followup": [
-            "🤖 Processing your clarification...\n\n",
+            "\n\nProcessing your clarification...\n\n",
         ],
         "ask_mode_beginning": [
-            "🤖 Retrieving information...\n\n",
-            "🤖 Processing your request...\n\n",
-            "🧠 Planning next steps...\n\n",
-            "🤔 Planning next steps...\n\n",
-            "🧠 Brainstorming the best approach...\n\n",
+            "\n\nRetrieving information...\n\n",
+            "\n\nProcessing your request...\n\n",
+            "\n\nPlanning next steps...\n\n",
+            "\n\nPlanning next steps...\n\n",
+            "\n\nBrainstorming the best approach...\n\n",
         ],
         "ask_mode_analyzing_results": [
-            "🤖 Analyzing results...\n\n",
-            "🧠 Reviewing tool outputs...\n\n",
+            "\n\nAnalyzing results...\n\n",
+            "\n\nReviewing tool outputs...\n\n",
+        ],
+        "build_mode_analyzing_results": [
+            "\n\nAnalyzing results...\n\n",
+            "\n\nReviewing tool outputs...\n\n",
         ],
         "ask_preset_reasoning": [
-            "🧭 Using optimized path...\n\n",
-            "💡 Applying optimized insights...\n\n",
-            "🧠 Following optimized guidance...\n\n",
+            "\n\nUsing optimized path...\n\n",
+            "\n\nApplying optimized insights...\n\n",
+            "\n\nFollowing optimized guidance...\n\n",
         ],
-        "final_response": ["📝 Generating final response...\n\n"],
+        "final_response": ["\n\nGenerating final response...\n\n"],
     }
-    stage_list = stage_dict.get(stage, "🧠 {stage}\n\n")
+    stage_list = stage_dict.get(stage, "{stage}\n\n")
     return random.choice(stage_list)
 
 

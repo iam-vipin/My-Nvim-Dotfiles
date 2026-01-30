@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Markdown from "react-markdown";
 import { Brain, ChevronDownIcon } from "lucide-react";
 import { cn } from "@plane/utils";
@@ -26,12 +26,39 @@ const stripEmojis = (str: string) => str.replace(/\p{Emoji}/gu, "");
 
 export const ReasoningBlock = (props: TProps) => {
   const { reasoning, isThinking, currentTick } = props;
-  const [isOpen, setIsOpen] = useState(false);
+  const [manuallyToggled, setManuallyToggled] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when reasoning content updates
+  useEffect(() => {
+    if (isThinking && contentRef.current) {
+      contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    }
+  }, [reasoning, isThinking]);
+
+  // Handle auto-close with delay when thinking stops
+  useEffect(() => {
+    if (!isThinking && !manuallyToggled && isOpen) {
+      // Use setTimeout to avoid synchronous setState in effect
+      const closeTimer = setTimeout(() => {
+        setIsOpen(false);
+      }, 5000);
+      return () => {
+        clearTimeout(closeTimer);
+      };
+    }
+  }, [isThinking, manuallyToggled, isOpen]);
+
+  const handleToggle = () => {
+    setManuallyToggled(true);
+    setIsOpen((prev) => !prev);
+  };
 
   return (
     <div className={cn("flex flex-col")}>
       {!isThinking && (
-        <button className="flex items-center gap-2" onClick={() => setIsOpen(!isOpen)}>
+        <button className="flex items-center gap-2" onClick={handleToggle}>
           <Brain className="w-4 h-4 text-secondary flex-shrink-0" />
           <span className="text-body-sm-medium text-secondary">Thought for a few seconds</span>
           <ChevronDownIcon
@@ -41,16 +68,16 @@ export const ReasoningBlock = (props: TProps) => {
       )}
       <div
         className={cn("rounded-xl bg-surface-1  border-subtle transition-all duration-500 ease-in-out ", {
-          border: isThinking,
-          "border mt-2": !isThinking && isOpen,
+          "my-2": isOpen,
+          "border ": isThinking || isOpen,
         })}
       >
         {isThinking && (
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={handleToggle}
             aria-expanded={isOpen}
             className={cn(
-              "flex items-center gap-2 w-full px-3 transition-all duration-500 ease-in-out hover:border-transparent pt-2",
+              "flex items-center gap-2 w-full px-3 transition-all duration-500 ease-in-out hover:border-transparent py-2",
               {
                 "pb-2": !isOpen,
               }
@@ -70,10 +97,13 @@ export const ReasoningBlock = (props: TProps) => {
             "overflow-hidden",
             "transition-all duration-500 ease-in-out",
 
-            isOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 mt-0"
+            isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 mt-0"
           )}
         >
-          <div className="mx-3 overflow-hidden text-tertiary relative">
+          <div
+            ref={contentRef}
+            className="mx-3 overflow-y-auto text-tertiary relative max-h-80 scrollbar-thin scrollbar-thumb-subtle scrollbar-track-transparent"
+          >
             <Markdown className="pi-chat-root [&>*]:mt-0 text-body-xs-regular border-l border-subtle-1 [&>*]:pl-4 [&>*]:relative">
               {reasoning}
             </Markdown>

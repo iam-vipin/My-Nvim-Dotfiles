@@ -88,7 +88,8 @@ export const InitiativeTimelineBlock = observer(function InitiativeTimelineBlock
           <div>{message}</div>
         </div>
       }
-      position="top-start"
+      position="bottom-start"
+      className="z-auto"
       disabled={!message}
     >
       <div

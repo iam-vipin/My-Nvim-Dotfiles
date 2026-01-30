@@ -57,7 +57,8 @@ export const ModuleTimelineBlock = observer(function ModuleTimelineBlock(props: 
           <div>{message}</div>
         </div>
       }
-      position="top-start"
+      position="bottom-start"
+      className="z-auto"
     >
       <div
         className="relative flex h-full w-full cursor-pointer items-center rounded-sm"

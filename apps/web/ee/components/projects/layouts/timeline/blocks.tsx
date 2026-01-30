@@ -66,7 +66,8 @@ export const ProjectTimelineBlock = observer(function ProjectTimelineBlock(props
             </div>
           </div>
         }
-        position="top-start"
+        position="bottom-start"
+        className="z-auto"
       >
         <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-13 text-primary">
           {projectDetails?.name}

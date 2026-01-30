@@ -308,7 +308,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 template_name = "emails/notifications/issue-updates.html"
                 formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
             elif entity_name == EntityName.INTAKE.value:
-                summary = f"{actor.display_name} has accepted this work item"
+                summary = f"{actor.display_name} has made updates to this work item"
                 template_name = "emails/notifications/intake-updates.html"
                 formatted_time = activity_time
 

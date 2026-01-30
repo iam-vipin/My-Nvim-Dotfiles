@@ -73,7 +73,8 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
-  const { currentProjectDetails } = useProject();
+  const { getPartialProjectById } = useProject();
+  const currentProjectDetails = getPartialProjectById(projectId);
   const { t } = useTranslation();
 
   const router = useAppRouter();

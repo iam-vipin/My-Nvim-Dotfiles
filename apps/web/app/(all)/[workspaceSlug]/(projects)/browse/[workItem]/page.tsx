@@ -18,7 +18,7 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
+import { EInboxIssueCurrentTab, EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // assets
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
@@ -28,6 +28,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
 import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
+import { InboxIssueRoot } from "@/components/inbox/root";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -67,7 +68,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   );
 
   // derived values
-  const [projectIdentifier] = workItem.split("-");
+  const [projectIdentifier] = workItem?.toString()?.split("-");
   const projectDetails = getProjectByIdentifier(projectIdentifier);
   const workItemId = data?.id;
   const projectId = data?.project_id ?? projectDetails?.id ?? undefined;
@@ -141,12 +142,6 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
   }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
 
-  useEffect(() => {
-    if (data?.is_intake) {
-      router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
-    }
-  }, [workspaceSlug, data, router]);
-
   if (error && !isLoading) {
     return (
       <EmptyState
@@ -185,12 +180,22 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
       <PageHead title={pageTitle} />
       {workspaceSlug && projectId && workItemId && (
         <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-          <WorkItemDetailRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            workItemId={workItemId}
-            workItem={workItemDetail}
-          />
+          {data?.is_intake ? (
+            <InboxIssueRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              inboxIssueId={workItemId || undefined}
+              inboxAccessible={true}
+              navigationTab={EInboxIssueCurrentTab.OPEN}
+            />
+          ) : (
+            <WorkItemDetailRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              workItemId={workItemId}
+              workItem={workItemDetail}
+            />
+          )}
         </ProjectAuthWrapper>
       )}
     </>

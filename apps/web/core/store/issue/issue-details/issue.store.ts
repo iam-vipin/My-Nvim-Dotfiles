@@ -198,6 +198,7 @@ export class IssueStore implements IIssueStore {
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
       is_epic: issue?.is_epic,
+      is_intake: issue?.is_intake,
       customer_request_ids: issue?.customer_request_ids,
       initiative_ids: issue?.initiative_ids,
       milestone_id: issue?.milestone_id,

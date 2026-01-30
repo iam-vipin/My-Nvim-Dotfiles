@@ -52,7 +52,8 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
 
   const router = useAppRouter();
   // store hooks
-  const { currentProjectDetails } = useProject();
+  const { getPartialProjectById } = useProject();
+  const currentProjectDetails = getPartialProjectById(projectId);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());

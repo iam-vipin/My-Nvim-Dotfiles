@@ -17,8 +17,12 @@ import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
 import type { EditorRefApi } from "@plane/editor";
 import { IssueDetailRoot } from "@/components/issues/issue-detail/root";
-// plane web imports
 import { EpicDetailRoot } from "@/components/epics/details/root";
+import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { ArchiveIcon } from "@plane/propel/icons";
+import { Button } from "@plane/propel/button";
+import { Banner } from "@plane/propel/banner";
 
 export type TWorkItemDetailRoot = {
   workspaceSlug: string;
@@ -31,6 +35,8 @@ export const WorkItemDetailRoot = observer(function WorkItemDetailRoot(props: TW
   const { workspaceSlug, projectId, workItemId, workItem } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  // router
+  const router = useAppRouter();
 
   if (workItem.is_epic) {
     return (
@@ -39,11 +45,29 @@ export const WorkItemDetailRoot = observer(function WorkItemDetailRoot(props: TW
   }
 
   return (
-    <IssueDetailRoot
-      workspaceSlug={workspaceSlug}
-      projectId={projectId}
-      issueId={workItemId}
-      is_archived={!!workItem.archived_at}
-    />
+    <>
+      {workItem?.archived_at && (
+        <Banner
+          variant="warning"
+          title="This work item has been archived. Visit the Archives section to restore it."
+          icon={<ArchiveIcon className="size-4" />}
+          action={
+            <Button
+              variant="secondary"
+              onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
+            >
+              Go to archives
+            </Button>
+          }
+          className="border-b border-subtle"
+        />
+      )}
+      <IssueDetailRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={workItemId}
+        is_archived={!!workItem.archived_at}
+      />
+    </>
   );
 });

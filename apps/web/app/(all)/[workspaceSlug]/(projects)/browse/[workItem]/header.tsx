@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -24,7 +25,10 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
+// plane web imports
+import { ProjectInboxHeader } from "@/plane-web/components/projects/settings/intake/header";
 // local components
+import { ProjectArchivedIssueDetailsHeader } from "../../projects/(detail)/[projectId]/archives/issues/(detail)/header";
 import { EpicItemDetailsHeader } from "./epic-header";
 import { WorkItemDetailsHeader } from "./work-item-header";
 
@@ -41,6 +45,25 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
   const issueDetails = issueId ? getIssueById(issueId?.toString()) : undefined;
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
+
+  // Memoize header component selection to avoid unnecessary re-renders
+  const headerComponent = useMemo(() => {
+    if (!issueDetails) return <WorkItemDetailsHeader />;
+
+    if (issueDetails.archived_at) {
+      return <ProjectArchivedIssueDetailsHeader />;
+    }
+
+    if (issueDetails.is_intake) {
+      return <ProjectInboxHeader />;
+    }
+
+    if (issueDetails.is_epic) {
+      return <EpicItemDetailsHeader />;
+    }
+
+    return <WorkItemDetailsHeader />;
+  }, [issueDetails]);
 
   return (
     <>
@@ -67,7 +90,7 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
           </Row>
         </div>
       )}
-      <AppHeader header={issueDetails?.is_epic ? <EpicItemDetailsHeader /> : <WorkItemDetailsHeader />} />
+      <AppHeader header={headerComponent} />
     </>
   );
 });

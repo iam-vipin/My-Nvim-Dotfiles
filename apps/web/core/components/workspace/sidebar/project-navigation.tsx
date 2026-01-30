@@ -167,13 +167,19 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       const workItemCondition = workItemId && workItem && !workItem?.is_epic && workItem?.project_id === projectId;
       // epic condition
       const epicCondition = workItemId && workItem && workItem?.is_epic && workItem?.project_id === projectId;
+      // intake condition
+      const intakeCondition = workItemId && workItem && workItem?.is_intake && workItem?.project_id === projectId;
+      // archive condition
+      const archiveCondition = workItemId && workItem && workItem?.archived_at && workItem?.project_id === projectId;
       // is active
-      const isWorkItemActive = item.key === "work_items" && workItemCondition;
+      const isWorkItemActive = item.key === "work_items" && workItemCondition && !archiveCondition && !intakeCondition;
       const isEpicActive = item.key === "epics" && epicCondition;
+      const isIntakeActive = item.key === "intake" && intakeCondition;
+      const isArchiveActive = item.key === "archive" && archiveCondition;
       // pathname condition
       const isPathnameActive = pathname.includes(item.href);
       // return
-      return isWorkItemActive || isEpicActive || isPathnameActive;
+      return isWorkItemActive || isEpicActive || isIntakeActive || isArchiveActive || isPathnameActive;
     },
     [pathname, workItem, workItemId, projectId]
   );

@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -38,18 +37,33 @@ import IntakeTooltip from "../intake-tooltip";
 import { IntakeHeaderQuickActions } from "./quick-actions";
 
 export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
+  // router
+  const { workspaceSlug, projectId: projectIdFromRouter, workItem } = useParams();
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
-  // router
-  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { intakeForms, fetchIntakeForms } = useProjectInbox();
   const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
   const isFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
   const isAdvancedIntakeEnabled = isEmailEnabled || isFormEnabled;
-  const { currentProjectDetails, loader: currentProjectDetailsLoader, isUpdatingProject } = useProject();
+  const {
+    getPartialProjectById,
+    getProjectByIdentifier,
+    loader: currentProjectDetailsLoader,
+    isUpdatingProject,
+  } = useProject();
   const { loader } = useProjectInbox();
+
+  // derived values
+  const [projectIdentifier] = workItem ? workItem?.toString()?.split("-") : [];
+  const projectId = projectIdFromRouter
+    ? projectIdFromRouter?.toString()
+    : projectIdentifier
+      ? getProjectByIdentifier(projectIdentifier)?.id
+      : undefined;
+
+  const currentProjectDetails = getPartialProjectById(projectId);
 
   // fetching intake forms
   useSWR(
@@ -68,6 +82,8 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   );
   // ref
   const popoverButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  if (!projectId) return null;
 
   const getCTA = () => {
     if (!isAdvancedIntakeEnabled) {

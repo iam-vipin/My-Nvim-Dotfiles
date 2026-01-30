@@ -60,7 +60,8 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
   // plane hooks
   const { t } = useTranslation();
   // store
-  const { currentProjectDetails } = useProject();
+  const { getPartialProjectById } = useProject();
+  const currentProjectDetails = getPartialProjectById(projectId);
   const {
     currentTab,
     handleCurrentTab,
